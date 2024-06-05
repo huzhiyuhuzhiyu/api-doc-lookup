@@ -3,7 +3,7 @@ const path = require('path')
 const defaultSettings = require('./src/settings.js')
 const define = require('./src/utils/define.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -67,14 +67,24 @@ module.exports = {
       new MonacoWebpackPlugin({
         // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
         languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
+      }),
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+            drop_debugger: true,
+            pure_funcs: ['console.log']
+          }
+        }
       })
     ]
   },
   chainWebpack(config) {
     config.externals({
       // 'monaco-editor': 'monaco-editor',
-      'echarts': 'echarts',
-      'vue': 'Vue'
+      'echarts': 'echarts'
+      // 'vue': 'Vue',
+      // 'element-ui': 'Element'
     })
     // it can improve the speed of the first screen, it is recommended to turn on preload
     config.plugin('preload').tap(() => [{
@@ -148,20 +158,6 @@ module.exports = {
             })
           config.optimization.runtimeChunk('single')
           // config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
-          config.optimization.minimizer = [
-            // UglifyJSPlugin 可以略微降低文件大小
-            new UglifyJSPlugin({
-              uglifyOptions: {
-                compress: {
-                  drop_debugger: true,
-                  drop_console: true, // 生产环境自动删除console
-                },
-                warnings: false,
-              },
-              sourceMap: false,
-              parallel: true // 使用多进程并行运行来提高构建速度。默认并发运行数：os.cpus().length - 1。
-            })
-          ]
         }
       )
   }

@@ -42,16 +42,6 @@ export const constantRoutes = [{
         path: '/redirect/:path*',
         component: (resolve) => require(['@/views/redirect'], resolve)
     },
-        {
-            path: '/studyDetail',
-            component: (resolve) => require(['@/views/knowledge/myStudyTask/studyDetail'], resolve),
-            hidden: true
-        },
-        // {
-        //     path: '/courseDetail',
-        //     component: (resolve) => require(['@/views/knowledge/myCourse/studyDetail'], resolve),
-        //     hidden: true
-        // }
     ]
 },
     {
@@ -69,17 +59,6 @@ export const constantRoutes = [{
         component: (resolve) => require(['@/views/login/auth-redirect'], resolve),
         hidden: true
     },
-    //新增
-    {
-        path: '/examination',
-        component: (resolve) => require(['@/views/knowledge/myExamTask/Examination'], resolve),
-        hidden: true
-    },
-    {
-        path: '/courseDetail',
-        component: (resolve) => require(['@/views/knowledge/myCourse/studyDetail'], resolve),
-        hidden: true
-    }
 ]
 
 const createRouter = () => new Router({

@@ -1,0 +1,488 @@
+<template>
+  <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left">
+      <div class="JNPF-common-title">
+        <h2>物料分类</h2>
+        <span class="options">
+          <el-dropdown>
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="reset()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+      </div>
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+            <i
+              :class="[data.childrenList && data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <span class="text" :title="data.name">{{ data.name }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+    </div>
+
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="请输入产品编码"
+                clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="请输入产品名称"
+                clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.drawNo" @keyup.enter.native="search()" placeholder="请输入产品图号" clearable />
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.documentStatus" placeholder="请选择单据状态" clearable style="width: 100%;">
+                <el-option v-for="item in global.documentStatusList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="6">
+            <el-form-item>
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                {{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+            icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
+        </el-form>
+      </el-row>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head" style="padding:10px">
+          <topOpts @add="addOrUpdateHandle()">
+            <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
+              :loading="btnLoading">计算胶管长</el-button>
+          </topOpts>
+          <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+            </el-tooltip>
+          </div>
+        </div>
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
+          fixedNO hasC @selection-change="selectionChange" :element-loading-text="loadingText">
+          <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.productId, 'look')">
+                {{ scope.row.productCode }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom" />
+          <el-table-column prop="drawNo" label="产品图号" min-width="600" sortable="custom" />
+          <el-table-column prop="pickingWay" label="领料方式" min-width="180">
+            <template slot-scope="{row}">
+              <template v-if="row.pickingWay == 'production_order'">按生产订单领料</template>
+              <template v-else-if="row.pickingWay == 'dispatch_list'">按派工单领料</template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center"
+            fixed="right">
+            <template slot-scope="scope">
+              <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
+              <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+            fixed="right">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
+              <el-tag type="success"
+                v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">审批通过</el-tag>
+              <el-tag type="danger"
+                v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">审批拒绝</el-tag>
+              <div v-else-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'"><el-tag
+                  type="warning">审批撤回</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.productId, 'edit', scope.row)"
+                @del="handleDel(scope.row.id)" :delDisabled="scope.row.documentStatus !== 'draft'">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      @click.native="addOrUpdateHandle(scope.row.productId, 'add', scope.row)">
+                      重新提交
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                      审批撤回
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.productId, 'look', scope.row)">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
+      </div>
+    </div>
+
+
+
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+
+    <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
+      <el-row :gutter="20">
+        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
+          <!-- <el-col :span="12">
+            <el-form-item label="BOM编码">
+              <el-input v-model="listQuery.code" placeholder="请输入BOM编码" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="BOM名称">
+              <el-input v-model="listQuery.name" placeholder="请输入BOM名称" clearable />
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="12">
+            <el-form-item label="产品编码">
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品名称">
+              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品图号">
+              <el-input v-model="listQuery.drawNo" placeholder="请输入产品图号" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单据状态">
+              <el-select v-model="listQuery.documentStatus" placeholder="请选择单据状态" clearable style="width: 100%;">
+                <el-option v-for="item in global.documentStatusList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="审批状态">
+              <el-select v-model="listQuery.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
+                <el-option v-for="item in global.approvalStateList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="创建时间">
+              <el-date-picker v-model="listQuery.startAndEndTime" type="datetimerange"
+                value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" start-placeholder="请选择开始时间"
+                end-placeholder="请选择结束时间" :picker-options="global.timePickerOptions"
+                :default-time="['00:00:00', '23:59:59']" clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="search()">
+          {{ $t('common.search') }}
+        </el-button>
+      </span>
+    </el-dialog>
+  </div>
+</template>
+
+<script>
+import { getBomList, deleteBomData, batchCalculateLen } from '@/api/basicData/index'
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import Form from './Form'
+import { withdrawn } from '@/api/basicData/approvalAdministrator'
+export default {
+  components: { Form },
+  data() {
+    return {
+      formVisible: false,
+      visible: false,
+      tableData: [],
+
+      listLoading: false,
+      listQuery: {
+        code: "",
+        name: "",
+        drawNo: "",
+        productCode: "",
+        productName: "",
+        startTime: "",
+        endTime: "",
+        startAndEndTime: [],
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        approvalStatus: "",
+        documentStatus: "",
+        pageNum: 1,
+        pageSize: 20,
+      },
+      total: 0,
+
+      treeLoading: true,
+      treeData: [],
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      expands: true,
+      refreshTree: true,
+
+      loadingText: '',
+      btnLoading: false,
+      selectedData: [],
+    }
+  },
+  created() {
+    this.getcategoryTree()
+    // this.initData()
+  },
+  methods: {
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop === 'productCode' || prop === 'productName' || prop === 'drawNo') { newProp = prop }
+      else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.initData()
+    },
+    // 关闭新建、编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.initData()
+      }
+    },
+    initData() {
+      this.listLoading = true
+      if (this.listQuery.startAndEndTime && this.listQuery.startAndEndTime.length > 0) {
+        this.listQuery.startTime = this.listQuery.startAndEndTime[0].replace(/ 0(?!0)/g, " ")
+        this.listQuery.endTime = this.listQuery.startAndEndTime[1].replace(/ 0(?!0)/g, " ")
+      } else {
+        this.listQuery.startTime = ""
+        this.listQuery.endTime = ""
+      }
+      getBomList(this.listQuery).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.treeLoading = false
+        this.listLoading = false
+      }).catch(() => {
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+    search() {
+      this.visible = false
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuery.pageNum = 1
+      this.initData()
+    },
+    reset() {
+      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      this.listQuery = {
+        code: "",
+        name: "",
+        drawNo: "",
+        productCode: "",
+        productName: "",
+        startTime: "",
+        endTime: "",
+        startAndEndTime: [],
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        approvalStatus: "",
+        documentStatus: "",
+        pageNum: 1,
+        pageSize: 20,
+      }
+      this.getcategoryTree()
+    },
+    addOrUpdateHandle(productId, btnType, approvalStatus) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(productId, btnType || 'add', approvalStatus)
+      })
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteBomData(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+
+    getcategoryTree() {
+      this.treeLoading = true
+      this.listLoading = true
+      let methodArr = { method: getcategoryTree, requestObj: { classAttribute: "material" } }
+      getcategoryTree({ classAttribute: "material" }).then(res => {
+        this.treeData = res.data
+        this.initData()
+      })
+    },
+
+    // 展开或折叠全部
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+
+    handleNodeClick(data, node) {
+      if (this.listQuery.productCategoryId === data.id) return
+      this.listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
+      // this.listQuery.classAttribute = data.classAttribute
+      this.search()
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    withdrawnHandle(formId) {
+      let _data = {
+        formId
+      }
+      this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        withdrawn(_data).then(res => {
+          this.$message({
+            type: 'success',
+            message: "撤回成功",
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
+    selectionChange(data) {
+      this.selectedData = data
+    },
+    // 批量操作
+    handleBatch() {
+      if (!this.selectedData.length) return this.$message.error('请先选择数据')
+      this.loadingText = '正在计算，请稍等'
+      this.btnLoading = true
+      this.listLoading = true
+      batchCalculateLen(this.selectedData.map(item => item.id)).then(res => {
+        this.selectedData = []
+        this.$refs['tableForm'].$refs.JNPFTable.clearSelection()
+        this.$message.success('操作成功')
+        this.btnLoading = false
+        this.listLoading = false
+        this.loadingText = ''
+      }).catch(err => {
+        this.btnLoading = false
+        this.listLoading = false
+        this.loadingText = ''
+        // let msg = err.substring(err.indexOf('Error: ') + 7, err.indexOf('at') - 2)
+        // this.$confirm(msg, this.$t('common.tipTitle'), { type: 'error' }).then(() => { }).catch(() => { })
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+  padding: 0 10px;
+}
+
+.JNPF-common-search-box {
+  padding: 8px 0 0 0;
+  margin-left: 0 !important;
+  margin-bottom: 5px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 8px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+  margin-top: 0px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding: 0;
+}
+
+::v-deep.el-tree-node__content {
+  height: 30px;
+  line-height: 30px;
+}
+
+.JNPF-common-el-tree {
+  margin: 5px 0;
+}
+
+.el-tabs__nav-scroll {
+  padding-left: 0;
+}
+</style>

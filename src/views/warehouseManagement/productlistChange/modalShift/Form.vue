@@ -1,0 +1,869 @@
+<template>
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main org-form">
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+        <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建形态转换' : btnType == 'edit' ? '编辑形态转换' : '查看形态转换'" />
+        <div class="options" v-if="btnType != 'look'">
+          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
+          <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="formLoading">
+        <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
+          <el-tab-pane label="订单信息" name="orderInfo">
+            <div
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
+              <h5>基本信息</h5>
+            </div>
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-row :gutter="30" class="custom-row">
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="仓库" prop="warehouseName">
+                    <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                      v-model="dataForm.warehouseName" :warehouseId="dataForm.warehouseId"
+                      :isdisabled="btnType === 'look'" :method="getWarehouseList" placeholder="请选择仓库"
+                      @change="changeWarehouse" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="24" :xs="24">
+                  <el-form-item label="备注" prop="remark">
+                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false"
+                      type="textarea" :rows="2" maxlength="200" />
+                  </el-form-item>
+                </el-col>
+              </el-row>
+            </el-form>
+            <div
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
+              <h5>产品信息</h5>
+            </div>
+            <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+                :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialogtes()">选择产品</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+            </div>
+            <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+              <el-table class="TableForm table" ref="product" :data="dataFormTwo.data" v-bind="dataFormTwo.data" hasC
+                hasNO fixedNO @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee;">
+                <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType != 'look'"
+                  key="1" />
+                <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="index" />
+                <el-table-column prop="productName" label="原产品名称" width="200" show-overflow-tooltip key="productName" />
+                <el-table-column prop="shelfSpaceName" label="原库位" width="260" show-overflow-tooltip key="shelfSpaceName" />
+                <el-table-column prop="originBatchNumber" label="原批次号" width="230" show-overflow-tooltip key="originBatchNumber" />
+                <el-table-column prop="availableQuantity" label="原批次数量" width="120" show-overflow-tooltip
+                  v-if="btnType !== 'look'" key="availableQuantity" />
+                <!-- <el-table-column prop="availableQuantity" label="可用库存数量" width="170" show-overflow-tooltip
+                  v-if="btnType != 'look'" key="3"></el-table-column> -->
+
+                <el-table-column prop="originBoxBarcode" label="原箱条码" width="220" key="originBoxBarcode">
+                  <template slot="header">
+                    <span class="required">*</span>原箱条码
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'originBoxBarcode'"
+                      :rules='productRules.originBoxBarcode'>
+                      <ComSelect-page :placeholder="'请选择原箱条码'" :value="scope.row.originBoxBarcode" :dialogTitle="'选择条码'"
+                        @change="addth" :tableItems="barCodeTableItems" :renderTree="false" :listMethod="TransferBarCode"
+                        :listRequestObj="dataRequestObj[scope.$index]" :isdisabled="btnType === 'look'"
+                        :paramsObj="{ scope }" :searchList="barCodeSearchList" :elementShow="true" />
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="originRealityTotalNum" label="原箱数量" width="120" v-if="btnType !== 'look'" key="originRealityTotalNum" />
+                <el-table-column prop="mainUnit" label="单位" width="110" show-overflow-tooltip key="mainUnit" />
+                <el-table-column prop="num" label="转换数量" width="170" key="num">
+                  <template slot="header">
+                    <span class="required">*</span>转换数量
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
+                      <el-input v-model="scope.row.num"
+                        :disabled="scope.row.targetBoxBarcode === '整箱转换' || btnType === 'look'" maxlength="11"
+                        placeholder="请输入转换数量" @input="watchnums(scope.row, scope.$index)" style="width: 145px;">{{
+                          scope.row.num }}
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetProductsName" label="目标产品名称" width="260" key="targetProductsName">
+                  <template slot="header">
+                    <span class="required">*</span>目标产品名称
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetProductsName'"
+                      :rules='productRules.targetProductsName'>
+                      <ComSelect-page v-model="scope.row.targetProductsName" @change="submitCustomerProduct1"
+                        :tableItems="targetProductTableItems" dialogTitle="选择产品" treeTitle="产品分类"
+                        :methodArr="productMethodArr" :listMethod="getProductList"
+                        :listRequestObj="targetProductListQueryObj" :searchList="productTableSearchList"
+                        placeholder="请选择目标产品" :paramsObj="{ scope }" :isdisabled="btnType === 'look'" />
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetNum" label="转换目标数量" width="170" key="targetNum">
+                  <template slot="header">
+                    <span class="required">*</span>转换目标数量
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetNum'" :rules='productRules.targetNum'>
+                      <el-input v-model="scope.row.targetNum" :disabled="btnType === 'look'" maxlength="11"
+                        placeholder="请输入转换目标数量">{{ scope.row.targetNum }}
+                      </el-input>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetShelfSpaceId" label="目标库位" width="260" key="targetShelfSpaceId">
+                  <template slot="header">
+                    <span class="required">*</span>目标库位
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetShelfSpaceName'"
+                      :rules='productRules.targetShelfSpaceName'>
+                      <ComSelect-list :requestObj="shelfSpaceRequestObj" :dialogTitle="'选择目标库位'" placeholder="请选择目标库位"
+                        v-model="scope.row.targetShelfSpaceName" :beforeSubmit="beforeSubmitPartner"
+                        :isdisabled="btnType === 'look' || !dataForm.warehouseName" :method="stockDisassemblykw"
+                        :paramsObj="{ scope }" @change="changeWarehousekwmb"></ComSelect-list>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetBatchNumber" label="目标产品批次号" width="230" key="targetBatchNumber">
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBatchNumber'">
+                      <el-select v-model="scope.row.targetBatchNumber" filterable remote reserve-keyword
+                        placeholder="请选择目标产品批次号" style="width:100%" clearable :disabled="btnType == 'look'"
+                        :remote-method="remoteMethod" :loading="loading" @focus="action">
+                        <el-option v-for="item in options" :key="item.value" :label="item.value" :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetBoxBarcode" label="目标箱条码" width="220" key="targetBoxBarcode">
+                  <template slot="header">
+                    <span class="required">*</span>目标箱条码
+                  </template>
+                  <template slot-scope="scope">
+                    <el-form-item :prop="'data.' + scope.$index + '.' + 'targetBoxBarcode'"
+                      :rules='productRules.targetBoxBarcode'>
+                      <ComSelect-page :listDataFormatting="listDataFormatting" :placeholder="'请选择目标箱条码'"
+                        :isdisabled="!scope.row.targetShelfSpaceId || btnType == 'look'"
+                        :value="scope.row.targetBoxBarcode" :dialogTitle="'选择条码'" @change="targetBox"
+                        :tableItems="barCodeTableItems" :renderTree="false" :listMethod="TransferBarCode"
+                        :listRequestObj="barCodeRequestObjList[scope.$index]" :paramsObj="{ scope }"
+                        :searchList="barCodeSearchList" />
+                    </el-form-item>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="targetRealityTotalNum" label="目标箱数量" width="120"
+                  v-if="btnType !== 'look'" key="targetRealityTotalNum" />
+                <el-table-column prop="targetProductsMainUnit" label="单位" width="110"
+                  show-overflow-tooltip key="targetProductsMainUnit" />
+                <el-table-column prop="remark" label="备注" min-width="230" key="remark">
+                  <template slot-scope="scope">
+                    <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btnType == 'look' ? true : false"
+                      maxlength="200" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="66">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </el-form>
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex">
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+
+      <!-- 选择产品 -->
+      <ComSelect-page ref="ComSelect-page" @change="submitAllProduct" :tableItems="productTableItems" dialogTitle="选择产品"
+        treeTitle="物料分类" :methodArr="productMethodArr" :listMethod="getProductList" :listRequestObj="productRequestObj"
+        :searchList="productTableSearchList" :elementShow="false" multiple />
+
+    </div>
+  </transition>
+</template>
+
+<script>
+
+import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { InventorymodalShiftdata, updateInventorymodalShift, detaInventorymodalShiftData } from '@/api/warehouseManagement/modalShift'
+import { stockDisassemblykw } from '@/api/warehouseManagement/productlistChange'
+import { inventorySpaceList } from '@/api/warehouseManagement/inventory'
+import { getWarehouseList } from '@/api/basicData/index'// 仓库树
+import { getProductionLotList } from '@/api/basicData/index'
+export default {
+  data() {
+    return {
+      TransferBarCode,
+      getProductList,
+      getWarehouseList,
+      stockDisassemblykw,
+
+      dataForm: {
+        remark: '',
+        warehouseId: '',
+        warehouseName: ''
+      },
+      dataFormTwo: {
+        data: []
+      },
+
+      options: [],      //批次号
+      loading: false,
+      btnType: undefined,
+      activeName: "orderInfo",
+      visible: false,
+      btnLoading: false,
+      formLoading: false,
+      selectRows: [],
+      dataRequestObj: [],
+
+
+      dataRule: {
+        warehouseName: [
+          { required: true, message: '仓库不能为空', trigger: 'change' }
+        ],
+      },
+      productRules: {
+        targetShelfSpaceName: [{ required: true, trigger: 'change' }],
+        targetProductsName: [{ required: true, trigger: 'change' }],
+        originBoxBarcode: [{ required: true, trigger: 'change' }],
+        targetBoxBarcode: [{ required: true, trigger: 'change' }],
+        num: [
+          { required: true, trigger: 'change' },
+          { validator: this.formValidate('noZero', '不能为0', (errMsg) => { this.$message.error('转换数量：' + errMsg) }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => Number(this.dataFormTwo.data[rowIndex].num) <= Number(this.dataFormTwo.data[rowIndex].availableQuantity), "不能超过对应源产品批次数量", (errMsg) => { this.$message.error('转换数量：' + errMsg) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'calc', params: [(rowIndex, value) => Number(this.dataFormTwo.data[rowIndex].num) <= Number(this.dataFormTwo.data[rowIndex].originRealityTotalNum), "不能超过对应原箱数量", (errMsg) => { this.$message.error('转换数量：' + errMsg) }] }), trigger: 'blur' }
+        ],
+        targetNum: [
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }
+        ]
+      },
+
+      // 添加产品组件相关参数
+      productMethodArr: [ // &
+        { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
+      ],
+      productTableSearchList: [ // &
+        { prop: "code", label: "产品编码", type: "input" },
+        { prop: "name", label: "产品名称", type: "input" },
+        { prop: "drawingNo", label: "产品图号", type: 'input' }
+      ],
+      productRequestObj: { // 明细
+        classAttribute: "",
+        classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        productStatus: "enable",
+        pageNum: 1,
+        pageSize: 20,
+        queryType: 6,
+        hideStockZero: true,
+        userSelfWarehouse: true,
+        selfWarehouseIds: [""]
+      },
+      productTableItems: [ // 明细
+        { prop: 'code', label: '产品编码', fixed: 'left', minWidth: 160 },
+        { prop: 'name', label: '产品名称', fixed: 'left', minWidth: 160 },
+        { prop: 'drawingNo', label: '产品图号', minWidth: 120 },
+        { prop: 'spec', label: '规格型号', minWidth: 120 },
+        { prop: 'shelfSpaceName', label: '库位', minWidth: 120 },
+        { prop: 'availableQuantity', label: '当前库存', minWidth: 120 },
+        { prop: 'mainUnit', label: '单位', minWidth: 120 },
+        { prop: 'batchNumber', label: '批次号', minWidth: 180 },
+      ],
+      targetProductListQueryObj: { // 目标产品
+        drawingNo: "",
+        productCategoryId: "",
+        code: "",
+        name: "",
+        queryType: 1,
+        classAttributeList: ["raw_material", "accessories", "semi_finished", "finish_product"],
+        classAttribute: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      targetProductTableItems: [ // 目标产品
+        { prop: "code", label: "产品编码", fixed: "left" },
+        { prop: "name", label: "产品名称", fixed: "left" },
+        { prop: "drawingNo", label: "图号" },
+        { prop: "spec", label: "规格型号" },
+        { prop: "productCategoryIdText", label: "产品分类" },
+        { prop: "mainUnit", label: "单位" },
+      ],
+
+      // 条码选择组件相关参数
+      barCodeRequestObjList: [],
+      barCodeTableItems: [
+        { prop: 'barCode', label: '条码', minWidth: 200 },
+        { prop: 'realityTotalNum', label: '实际数量', minWidth: 120 },
+      ],
+      barCodeSearchList: [{ prop: 'barcode', label: '条码', type: 'input', },],
+
+
+      // 选择批次号
+      batchNumerRequestObj: {
+        keyword: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      // 选择目标库位
+      shelfSpaceRequestObj: {
+        orderItems: [{
+          "asc": true,
+          "column": ""
+        }],
+        pageNum: 1,
+        pageSize: 20,
+        warehouseId: '',
+        locationType: 'goods_allocation'
+      },
+    }
+  },
+  mounted() {
+    this.calcHeight()
+  },
+  methods: {
+    // 选择原箱条码
+    addth(id, data, paramsObj) {
+      let index = paramsObj.scope.$index
+      let targetIndex = this.dataFormTwo.data.findIndex(line => line.originBoxBarcode === data[0].all.barCode)
+      if (targetIndex !== -1 && index !== targetIndex) return this.$message.error(`这个条码已经用在产品信息第${targetIndex + 1}行`)
+      this.$nextTick(() => { this.$refs.productForm.validateField('data.' + index + '.' + 'originBoxBarcode') })
+      if (!data || !data.length) {
+        this.dataFormTwo.data[index].originBoxBarcode = ""
+        this.dataFormTwo.data[index].originRealityTotalNum = ""
+      } else {
+        if (this.dataFormTwo.data[index].targetBoxBarcode == '整箱转换') {
+          this.dataFormTwo.data[index].originBoxBarcode = data[0].all.barCode
+          this.dataFormTwo.data[index].originRealityTotalNum = data[0].all.realityTotalNum
+          this.dataFormTwo.data[index].num = this.dataFormTwo.data[index].originRealityTotalNum
+        } else {
+          this.dataFormTwo.data[index].originBoxBarcode = data[0].all.barCode
+          this.dataFormTwo.data[index].originRealityTotalNum = data[0].all.realityTotalNum
+        }
+      }
+    },
+    // 选择目标箱条码
+    targetBox(id, data, paramsObj) {
+      this.$nextTick(() => { this.$refs.productForm.validateField('data.' + index + '.' + 'targetBoxBarcode') })
+      let index = paramsObj.scope.$index
+      if (!data || !data.length) {
+        this.dataFormTwo.data[index].targetBoxBarcode = ""
+        this.dataFormTwo.data[index].targetRealityTotalNum = ""
+      } else {
+        this.dataFormTwo.data[index].targetBoxBarcode = data[0].all.barCode
+        this.dataFormTwo.data[index].targetRealityTotalNum = data[0].all.realityTotalNum ? data[0].all.realityTotalNum : 0
+        if (this.dataFormTwo.data[index].originRealityTotalNum && data[0].all.barCode === '整箱转换') {
+          this.dataFormTwo.data[index].num = this.dataFormTwo.data[index].originRealityTotalNum
+        }
+      }
+    },
+    listDataFormatting(res) {
+      let data = { barCode: '整箱转换', realityTotalNum: '' }
+      let treeData = res.data
+      treeData.unshift(data)
+      return treeData
+    },
+    //输入批次号
+    action() {
+      this.options = []
+    },
+    remoteMethod(query) {
+      if (query !== '') {
+        this.loading = true;
+        this.batchNumerRequestObj.keyword = query
+        this.options = []
+        setTimeout(() => {
+          getProductionLotList(this.batchNumerRequestObj).then(res => {
+            this.loading = false;
+            res.data.records.forEach((item) => {
+              item.value = item.batchNumber
+              this.options.push(item)
+            })
+          }).catch(() => {
+            this.loading = false;
+          })
+        }, 200);
+      } else {
+        this.options = [];
+      }
+    },
+    //选择仓库
+    changeWarehouse(val, data) {
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('warehouseName') })
+      if (!val && !data.length) {
+        this.dataFormTwo.data = []
+        this.dataForm.warehouseId = ''
+        this.dataForm.warehouseName = ''
+        this.shelfSpaceRequestObj.warehouseId = ''
+        this.productRequestObj.selfWarehouseIds[0] = ''
+        return
+      }
+      this.dataFormTwo.data = []
+      this.dataForm.warehouseId = data[0].id
+      this.dataForm.warehouseName = data[0].name
+      this.shelfSpaceRequestObj.warehouseId = data[0].id
+      this.productRequestObj.selfWarehouseIds[0] = data[0].id
+    },
+    async beforeSubmitPartner(val, data, paramsObj) {
+      let index = paramsObj.scope.$index
+      if (!val && data.length) return true // 忽略处理自动回显的数据
+      if (!this.dataFormTwo.data[index].targetShelfSpaceName || !this.dataFormTwo.data[index].targetBoxBarcode) return true // 如果判断条件真，直接提交，不弹出提示
+      let flag = await this.$confirm('此操作将清空目标箱条码', '提示', { type: 'warning' }).catch(err => false)
+      return flag
+    },
+    //目标库位选择
+    changeWarehousekwmb(val, data, params) {
+      this.$nextTick(() => {
+        this.$refs.productForm.validateField('data.' + index + '.' + 'targetShelfSpaceName')
+      })
+      if (!val && data.length) return
+      let index = params.scope.$index
+      this.dataFormTwo.data[index].targetBoxBarcode = ""
+      this.dataFormTwo.data[index].targetRealityTotalNum = ""
+      if (data[0].all.parentId == -1) {
+        this.dataFormTwo.data[index].goodsShelvesId = null
+      } else {
+        this.dataFormTwo.data[index].goodsShelvesId = data[0].all.parentId
+        this.dataFormTwo.data[index].targetGoodsShelvesId = data[0].all.parentId
+      }
+      this.dataFormTwo.data[index].targetShelfSpaceId = data[0].id
+      this.dataFormTwo.data[index].targetShelfSpaceName = data[0].name
+      this.barCodeRequestObjList = []
+      this.dataFormTwo.data.forEach(item => {
+        this.barCodeRequestObjList.push({
+          removeShelfSpaceId: item.targetShelfSpaceId,
+          isTarget: true,
+          productsId: '',
+          routingLineId: '',
+          barcode: ''
+        })
+      })
+    },
+    calcHeight() {
+      this.$nextTick(() => {
+        let tBodyList = document.querySelectorAll('.TableForm.table')
+        tBodyList.forEach(item => {
+          item.style.height = 'auto'
+          item.querySelector('.el-table__body-wrapper').style.height = 'auto'
+        })
+      });
+    },
+    goBack() {
+      this.$emit('close')
+    },
+    // 产品列表选中 
+    handeleProductInfoData(val) {
+      this.selectRows = val
+    },
+    // 批量删除
+    batchDelete() {
+      // 遍历选中的行的数据
+      if (!this.selectRows.length) return this.$message.error('请选择要删除的产品')
+
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
+      this.dataRequestObj = []
+      this.dataFormTwo.data.forEach(item => {
+        this.dataRequestObj.push({
+          removeShelfSpaceId: item.shelfSpaceId,
+          isTarget: false,
+          productsId: item.originProductsId,
+          routingLineId: '',
+          barcode: ''
+        })
+      })
+      this.barCodeRequestObjList = []
+      this.dataFormTwo.data.forEach(item => {
+        this.barCodeRequestObjList.push({
+          removeShelfSpaceId: item.targetShelfSpaceId,
+          isTarget: true,
+          productsId: '',
+          routingLineId: '',
+          barcode: ''
+        })
+      })
+    },
+    // 单个删除
+    handleDel(data) {
+      this.dataFormTwo.data.splice(data.$index, 1)
+      this.dataRequestObj = []
+      this.dataFormTwo.data.forEach(item => {
+        this.dataRequestObj.push({
+          removeShelfSpaceId: item.shelfSpaceId,
+          isTarget: false,
+          productsId: item.originProductsId,
+          routingLineId: '',
+          barcode: ''
+        })
+      })
+      this.barCodeRequestObjList = []
+      this.dataFormTwo.data.forEach(item => {
+        this.barCodeRequestObjList.push({
+          removeShelfSpaceId: item.targetShelfSpaceId,
+          isTarget: true,
+          productsId: '',
+          routingLineId: '',
+          barcode: ''
+        })
+      })
+    },
+    // 目标产品提交
+    submitCustomerProduct1(val, data, paramsObj) {
+      let index = paramsObj.scope.$index
+      this.$nextTick(() => { this.$refs.productForm.validateField('data.' + index + '.' + 'targetProductsName') })
+      this.$set(this.dataFormTwo.data[index], 'targetProductsName', data[0].all.name)
+      this.$set(this.dataFormTwo.data[index], 'targetProductsId', data[0].all.id)
+      this.$set(this.dataFormTwo.data[index], 'targetProductsCode', data[0].all.code)
+      this.$set(this.dataFormTwo.data[index], 'targetProductsMainUnit', data[0].all.mainUnit)
+    },
+    //选择库存产品
+    openSeleceProductDialogtes() {
+      if (this.dataForm.warehouseId) {
+        console.log(this.$refs);
+        this.$refs['ComSelect-page'].openDialog()
+      } else {
+        this.$message.error('请先选择仓库')
+      }
+    },
+    // 监听主数量输入
+    watchnums(row, index) {
+      // console.log("主数量", row, index);
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      // if (!row.contractQuantity || !row.price || !row.taxRate) {
+      //   return
+      // }
+      return
+      row.num = row.num.replace(/[^0-9.]/g, '');
+
+      if (row.num.length == 1 && row.num == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.num = '';
+      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
+      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
+        row.num = row.num.substring(1, row.num.length)
+      }
+      if (row.num.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.num.length; i++) {
+          const char = row.num[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+        row.num = result;
+        let arr = row.num.split('.')
+        console.log(arr[0].length);
+        if (arr[0].length > 16) {
+          arr[0] = arr[0].substring(0, 16)
+        }
+        if (arr[1].length > 4) {
+          arr[1] = arr[1].substring(0, 4)
+        }
+        row.num = arr[0] + '.' + arr[1]
+      } else {
+        if (row.num.length > 20) {
+          row.num = row.num.substring(0, 20);
+        }
+      }
+      // this.dataFormTwo.data[index].targetRealityTotalNum = row.num
+    },
+    // 添加产品
+    submitAllProduct(val, data, paramsObj) {
+      data = data.map(item => item.all)
+      let tempList = JSON.parse(JSON.stringify(this.dataFormTwo.data))
+      let hasItemList = []
+      for (let i = 0; i < data.length; i++) {
+        let item = {
+          originProductsId: data[i].id,
+          productCode: data[i].code,
+          productName: data[i].name,
+          mainUnit: data[i].mainUnit,
+          deputyUnit: data[i].deputyUnit,
+          calculationDirection: data[i].calculationDirection,
+          ratio: data[i].ratio,
+          availableQuantity: data[i].availableQuantity,
+          originBatchNumber: data[i].batchNumber,
+          num: '',
+          targetNum: '',
+          shelfSpaceId: data[i].shelfSpaceId,
+          shelfSpaceName: data[i].shelfSpaceName,
+          goodsShelvesId: data[i].goodsShelvesId,
+          originBoxBarcode: '',
+          originRealityTotalNum: '',
+          targetBoxBarcode: '',
+          targetRealityTotalNum: '',
+        }
+
+        // 找出this.linesList中与item 产品id、货位id、批次号 完全相同的项
+        const hasFlag = this.dataFormTwo.data.some(i => {
+          let flag = false
+          if (i.originProductsId === item.originProductsId && i.shelfSpaceId === item.shelfSpaceId && i.originBatchNumber === item.originBatchNumber) { flag = true }
+          return flag
+        })
+        if (hasFlag) { hasItemList.push(`${item.productName} - ${item.shelfSpaceName} - ${item.originBatchNumber}`) }
+        else { tempList.push(item) }
+        if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
+      }
+      this.dataFormTwo.data = JSON.parse(JSON.stringify(tempList))
+
+      this.dataRequestObj = this.dataFormTwo.data.map(item => {
+        return {
+          removeShelfSpaceId: item.shelfSpaceId,
+          isTarget: false,
+          productsId: item.originProductsId,
+          routingLineId: '',
+          barcode: ''
+        }
+      })
+    },
+    // 切换table
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+    init(id, btnType) {
+      this.dataForm.id = id || ''
+      this.btnType = btnType
+      this.formLoading = true
+      if (this.dataForm.id) {
+        detaInventorymodalShiftData(this.dataForm.id).then(res => {
+          this.dataForm = res.data.shift
+          this.dataFormTwo.data = res.data.shiftLineList
+          this.productRequestObj.selfWarehouseIds = [this.dataForm.warehouseId]
+          this.shelfSpaceRequestObj.warehouseId = this.dataForm.warehouseId
+
+          this.dataRequestObj = [] // 明细数据
+          this.barCodeRequestObjList = [] // 选择目标箱条码的入参列表
+
+          this.dataFormTwo.data.forEach(item => {
+            this.dataRequestObj.push({
+              removeShelfSpaceId: item.shelfSpaceId,
+              isTarget: false,
+              productsId: item.originProductsId,
+              routingLineId: '',
+              barcode: ''
+            })
+            this.barCodeRequestObjList.push({
+              removeShelfSpaceId: item.targetShelfSpaceId,
+              isTarget: true,
+              productsId: '',
+              routingLineId: '',
+              barcode: ''
+            })
+          })
+          this.formLoading = false
+        })
+      } else {
+        this.formLoading = false
+      }
+    },
+    async handleConfirm(value) {
+      this.btnLoading = true
+      let submitFlag = true
+
+      const form_1 = this.$refs.dataForm
+      const valid_1 = await form_1.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.jnpf.focusErrValidItem(form_1.fields)
+      }
+
+      const form_2 = this.$refs.productForm
+      const valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        submitFlag = false
+        this.jnpf.focusErrValidItem(form_2.fields)
+      }
+
+      if (!this.dataFormTwo.data.length && submitFlag) {
+        this.$message.error('请选择产品')
+        submitFlag = false
+      }
+
+      // 目标产品不能与原产品相同
+      if (submitFlag) {
+        let flag = this.dataFormTwo.data.some((line, index) => {
+          if (line.originProductsId === line.targetProductsId) {
+            this.$message.error(`产品信息第${index + 1}行：未对产品进行转换，请选择不同的目标产品`)
+            submitFlag = false
+            return true
+          }
+        })
+      }
+
+      // 库位相同，原箱条码不能与目标箱条码相同
+      if (submitFlag) {
+        let flag = this.dataFormTwo.data.some((line, index) => {
+          if (line.shelfSpaceId === line.targetShelfSpaceId && ((line.originBoxBarcode === line.targetBoxBarcode) || line.targetBoxBarcode === '整箱移')) {
+            this.$message.error(`产品信息第${index + 1}行：库位相同，原箱条码不能与目标箱条码相同`)
+            submitFlag = false
+            return true
+          }
+        })
+      }
+
+      if (submitFlag) {
+        this.dataForm.documentStatus = value
+        let formMethod = null;
+        if (this.btnType == 'edit') {
+          formMethod = updateInventorymodalShift
+        } else if (this.btnType == 'add') {
+          formMethod = InventorymodalShiftdata
+        }
+        let barCodeFlag = true
+        let lines = JSON.parse(JSON.stringify(this.dataFormTwo.data))
+        lines.forEach((item, index) => {
+          if (item.targetBoxBarcode === '整箱转换') {
+            item.targetBoxBarcode = item.originBoxBarcode
+          }
+        })
+        let obj = {
+          shift: this.dataForm,
+          shiftLineList: lines
+        }
+        if (barCodeFlag) {
+          formMethod(obj).then(res => {
+            let msg = "";
+            if (formMethod == InventorymodalShiftdata) {
+              msg = "新建成功"
+            } else if (value == 'draft') {
+              msg = "保存成功"
+            } else if (value == 'submit') {
+              msg = '提交成功'
+            }
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
+          }).catch(() => {
+            this.btnLoading = false
+          })
+        }
+      } else {
+        this.btnLoading = false
+      }
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+// .main {
+//   padding: 10px 30px 0;
+// }
+.required {
+  color: red;
+  margin-right: 4px;
+}
+
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+}
+
+::v-deep .data-form {
+  .el-form-item--small.el-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+
+::v-deep .el-tabs__header {
+  padding-left: 0 !important;
+}
+</style>
+<style scoped>
+::v-deep .el-tabs__content {
+  height: auto !important;
+  padding: 0 20px;
+}
+
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
+}
+
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 11px 10px;
+}
+</style>
+<style scoped>
+.required {
+  color: red;
+  margin-right: 4px;
+}
+
+.el-dialog .el-dialog__body {
+  padding: 20px 0px 2px !important;
+}
+
+::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 5px 0 10px !important;
+}
+
+.el-button span {
+  font-size: 14px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+}
+
+::v-deep .el-input-group__append {
+  background-color: #48a2ff;
+  color: #fff;
+}
+</style>

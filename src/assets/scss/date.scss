@@ -1,0 +1,31 @@
+.date_form {
+  .el-year-table td.current:not(.disabled) .cell{
+    color: #409eff;
+    font-weight: bold !important;
+    background-color: var(--el-datepicker-active-color); // 这里应用的是项目的默认样式颜色，跟整个系统保持统一
+    border-radius: 100px;
+  }
+  .el-year-table td.today .cell {
+    font-weight: normal;
+    color: #606266;
+  }
+  .el-month-table td.current:not(.disabled) .cell{
+    color: #409eff;
+    font-weight: bold !important;
+    background-color: var(--el-datepicker-active-color);
+    border-radius: 100px;
+  }
+  .el-month-table td.today .cell {
+    font-weight: normal;
+    color: #606266;
+  }
+  .el-date-table td.today .el-date-table-cell__text {
+    color: #606266;
+    font-weight: normal;
+  }
+  .el-date-table td.current:not(.disabled) .el-date-table-cell__text {
+    color: #409eff;
+    font-weight: bold !important;
+    background-color: var(--el-datepicker-active-color);
+  }
+}

@@ -1,0 +1,152 @@
+import request from '@/utils/request'
+// 销售订单-根据条件查询 订单列表
+
+export function getsaleOrderList(data) {
+    return request({
+      url: `/api/erp/sale/orders/list`,
+      method: 'post',
+      data
+    })
+  }
+//   明细列表
+export function getsaleOrderDetailList(data) {
+    return request({
+      url: `/api/erp/sale/orders/line/list`,
+      method: 'post',
+      data
+    })
+  }
+  // 订单详情
+  export const getOrderDetail = (id) => {
+    return request({
+      url: `/api/erp/sale/orders/detail/${id}`,
+      method: 'get'
+    })
+  }
+  // 销售订单-详情bom列表
+  export const getbomOrderDetail = (id) => {
+    return request({
+      url: `/api/erp/sale/orders/bom/${id}`,
+      method: 'get'
+    })
+  }
+  // 新增订单
+  export function addOrders(data) {
+    return request({
+      url: `/api/erp/sale/orders/insert`,
+      method: 'post',
+      data
+    })
+  }
+  // 修改订单
+  export function editOrders(data) {
+    return request({
+      url: `/api/erp/sale/orders/modify`,
+      method: 'put',
+      data
+    })
+  }
+// 删除订单
+export const deleteOrders = (id) => {
+  return request({
+    url: `/api/erp/sale/orders/remove/${id}`,
+    method: 'delete'
+  })
+}
+
+// 获取订单类型的编排属性
+export const getAttributeline = (type) => {
+  return request({
+    url: `/api/erp/arrange/attribute/line/all/order?businessCode=`+type,
+    method: 'get'
+  })
+}
+export function getcategoryTrees(data) {
+  return request({
+    url: `/api/erp/partner/category/tree`,
+    method: 'post',
+    data: data
+  })
+}
+// 获取客户产品列表数据
+export function getcooperativeProduct(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/product/list`,
+    method: 'post',
+    data: data
+  })
+}
+
+// 订单分配
+
+export function allocateOrders(data) {
+  return request({
+    url: `/api/erp/sale/orders/distribute`,
+    method: 'post',
+    data: data
+  })
+}
+// 复制订单
+export const getCopyOrders = (id) => {
+  return request({
+    url: `/api/erp/sale/orders/copy/${id}`,
+    method: 'get'
+  })
+}
+
+// 销售订单获取工作令号
+export const getWorkOrderNo = (type) => {
+  return request({
+    url: `/api/erp/sale/orders/generate/work/no?type=`+type,
+    method: 'get'
+  })
+}
+// 导入产品
+export function uploadProduct(data) {
+  return request({
+    url: `/api/erp/sale/orders/upload/data`,
+    method: 'post',
+    data: data
+  })
+}
+// 导入金工产品
+export function uploadmetalworkProduct(data) {
+  return request({
+    url: `/api/erp/sale/orders/upload/metalworking/data`,
+    method: 'post',
+    data: data
+  })
+}
+
+// 明细列表汇总
+
+
+export function getSaleordersTotal(data) {
+  return request({
+    url: `/api/erp/sale/orders/line/total`,
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+// 一键分配
+export function distribute(data) {
+  return request({
+    url: `/api/erp/sale/orders/distribute/oneKey`,
+    method: 'post',
+    data: data
+  })
+} 
+
+
+// 一键分配转计划
+
+export function distributeTransferPlan(data) {
+  return request({
+    url: `/api/erp/sale/orders/distributeTransferPlan/oneKey`,
+    method: 'post',
+    data: data
+  })
+} 

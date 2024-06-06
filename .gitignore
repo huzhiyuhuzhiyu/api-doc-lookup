@@ -66,6 +66,7 @@ components/**/*.jsx
 !components/**/__tests__/**/*.js.snap
 /.history
 *.tmp
+/package.json
 /package-lock.json
 /tttttttt/
 .vscode/extensions.json

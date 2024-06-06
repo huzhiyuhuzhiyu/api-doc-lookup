@@ -71,4 +71,3 @@ components/**/*.jsx
 /tttttttt/
 .vscode/extensions.json
 .vscode/launch.json
-src/utils/define.js

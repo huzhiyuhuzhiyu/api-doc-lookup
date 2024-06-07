@@ -30,7 +30,7 @@
         :filterable="item.filterable || false" reserve-keyword :remote-method="item.remoteMethod || (() => { })"
         :remote="item.remote || false" @input="item.hasOwnProperty('input') ? item.input($event) : ''"
         @change="item.hasOwnProperty('change') ? item.change($event) : ''">
-        <el-option class="select_item" v-for="(o, index) in rowOptions" :key="o.label + index" :label="o.label" :value="o.value"
+        <el-option v-for="(o, index) in rowOptions" :key="o.label + index" :label="o.label" :value="o.value"
           :disabled="o.disabled">
         </el-option>
       </el-select>
@@ -227,10 +227,4 @@ export default {
 
     }
   }
-}
-.select_item{
-  height: 25px;
-  line-height: 25px;
-  font-size: 12px;
-}
-</style>
+}</style>

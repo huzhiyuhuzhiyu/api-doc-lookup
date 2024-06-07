@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-07 13:23:29
+ * @LastEditTime: 2024-06-07 13:38:27
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\accessories\params.js
  * @Description: 成品的表单字段
  */
@@ -14,7 +14,7 @@ export default () => [
     tabName: "基本信息",
     tabContent: [
       { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], itemReadOnly: true },
-      { prop: "spec", label: "规格型号", value: "", type: "input", maxlength: "50" },
+      { prop: "drawingNo", label: "规格型号", value: "", type: "input", maxlength: "1000" },
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, itemRules: [{ required: true, trigger: "blur" }], itemReadOnly: true },
       { prop: "mainUnit", label: "主单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },
       { prop: "deputyUnit", label: "副单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },

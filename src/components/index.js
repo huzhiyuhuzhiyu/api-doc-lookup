@@ -4,6 +4,7 @@ import tableOperation from '@/components/JNPF-tableOperation'
 import Pagination from '@/components/Pagination'
 import JNPFTable from '@/components/JNPF-table'
 import JNPFCol from '@/components/JNPF-col'
+import SuperCol from '@/components/Super-col'
 import JNPFColTable from '@/components/JNPF-col-table'
 import jnpfFormTipItem from '@/components/jnpf-form-tip-item'
 import jnpfOpenData from '@/components/jnpf-open-data'
@@ -56,6 +57,7 @@ export default {
     Vue.component('Pagination', Pagination)
     Vue.component('JNPFTable', JNPFTable)
     Vue.component('JNPFCol', JNPFCol)
+    Vue.component('SuperCol', SuperCol)
     Vue.component('JNPFColTable', JNPFColTable)
     Vue.component('jnpfFormTipItem', jnpfFormTipItem)
     Vue.component('jnpfOpenData', jnpfOpenData)

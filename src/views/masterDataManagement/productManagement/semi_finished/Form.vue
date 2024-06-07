@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
-        <el-page-header @back="goBack" :content="btnType ? '查看原材料档案' : title" />
+        <el-page-header @back="goBack" :content="btnType ? '查看套筒档案' : title" />
         <div class="options" v-if="!btnType">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton')
           }}</el-button>
@@ -14,15 +14,12 @@
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <!-- 普通属性 -->
-          <template v-for="item in tabs">
-            <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"
-              v-if="item.tabName !== '胶管属性' ? true : dataForm.productType === 'pt003'">
-              <JNPF-Col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-            </el-tab-pane>
-          </template>
+          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
+            <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+          </el-tab-pane>
           <!-- 自定义属性 -->
           <el-tab-pane :label="attributeLine.tabName" :name="attributeLine.tabCode">
-            <JNPF-Col v-if="attributeFlag" v-model="attributeForm[pid]" :tabContent="attributeLine.tabContent"
+            <JNPF-col v-if="attributeFlag" v-model="attributeForm[pid]" :tabContent="attributeLine.tabContent"
               ref="attributeLine" :openMode="openMode" />
           </el-tab-pane>
           <!-- 套筒属性 -->
@@ -40,14 +37,15 @@
 </template>
 
 <script>
-import { detailProductData, addProductData, updateProductData, checkCodeExist, checkDrawExist, productsCalculateGross } from "@/api/basicData/materialFiles"
+import { detailProductData, addProductData, updateProductData, checkCodeExist, checkDrawExist } from "@/api/basicData/materialFiles"
 
 import { getcategoryTree, detailArrange } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getMaterialList } from '@/api/basicData/index' // 材质
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 
 import { getArrange } from "@/api/basicData/materialSettings"; // 编排属性列表
-import tabs from './params'
+
+import tabs from '../raw_material/params'
 export default {
   data() {
     return {
@@ -65,7 +63,7 @@ export default {
       tempCodeRules: [],
       tempDrawingNoRules: [],
       dataForm: {
-        classAttribute: "raw_material",
+        classAttribute: "semi_finished",
       },
       sleeveItems: [
         { prop: "sleeveName", label: "套筒", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }] },
@@ -87,23 +85,6 @@ export default {
       ProductMethodArr: [
         { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
       ], // 产品选择弹出框树状列表
-      ProductListRequestObj: {
-        classAttribute: "material",
-        // classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
-        productCategoryId: "",
-        code: "",
-        name: "",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
-        productStatus: "enable",
-        pageNum: 1,
-        pageSize: 20,
-      }, // 产品选择弹出框列表请求参数
       ProductListRequestObj1: {
         productCategoryType: "packaging",
         classAttribute: "material",
@@ -122,19 +103,35 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
+      ProductListRequestObj: {
+        classAttribute: "material",
+        // classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        productStatus: "enable",
+        pageNum: 1,
+        pageSize: 20,
+      }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '图号' },
         { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeText', label: '产品类别' }
+        { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input', },
         { prop: "name", label: "产品名称", type: 'input', },
         { prop: "drawingNo", label: "产品图号", type: 'input' }
       ], // 产品选择弹出框搜索条件
-      productTypeDictionary: [] // 产品类型列表
     }
   },
   created() {
@@ -195,37 +192,7 @@ export default {
             }
           }
           // 若干需要选择的产品
-          else if (tc.prop === 'steelWireJointText' // 钢丝接头
-            || tc.prop === 'copperTubeText' // 铜管
-            || tc.prop === 'wireText' // 钢丝
-            || tc.prop === 'whiteXiumingNylonSheathText' // 钢丝白色透明尼龙护套PNS
-            || tc.prop === 'stainlessSteelSheathText' // 不锈钢护套WS
-            || tc.prop === 'spiralNylonSheathText' // 螺旋尼龙护套RNL
-            || tc.prop === 'protectiveSpringText' // 保护簧Rs
-            || tc.prop === 'fireproofSleeveText' // 防火套FJ
-            || tc.prop === 'zrtSheathText' // ZRT护套
-            || tc.prop === 'baojia1Text' // 保甲1（卡箍固定）
-            || tc.prop === 'baojia2Text' // 保甲2（铝套扣压）
-            || tc.prop === 'baojia3Text' // 保甲3（C环扣压）
-            || tc.prop === 'baojia4Text' // 保甲4
-            || tc.prop === 'clampText' // 卡箍
-            // || tc.prop === 'clamp1Text' //卡箍1
-            // || tc.prop === 'clamp2Text' // 卡箍2
-            // || tc.prop === 'clamp3Text' // 卡箍3
-            // || tc.prop === 'clamp4Text' // 卡箍4
-            || tc.prop === 'pipeClampText' // 管夹
-          ) {
-            tc.dialogTitle = '选择产品'
-            tc.treeTitle = '产品分类'
-            tc.methodArr = this.ProductMethodArr
-            tc.listMethod = getProductList
-            tc.listRequestObj = this.ProductListRequestObj
-            tc.tableItems = this.ProductTableItems
-            tc.searchList = this.ProductTableSearchList
-            tc.clearable = true
-            tc.change = this.ProductChange
-            tc.paramsObj = { prop: tc.prop, tabInd, oldVal: this.dataForm[tc.prop.slice(0, -4)] }
-          }else if(tc.prop === 'packagingMaterialsText'){//包材
+          else if (tc.prop === 'packagingMaterialsText') {
             tc.dialogTitle = '选择产品'
             tc.treeTitle = '产品分类'
             tc.renderTree = false
@@ -241,45 +208,6 @@ export default {
           else { console.warn(tc.prop + "不在判断条件内") }
         }
 
-        // 理论重量计算功能
-        if (tc.prop === 'grossWeightCoefficient') {
-          this.$nextTick(() => {
-            const style = {
-              backgroundColor: '#f5f7fa',
-              color: '#909399',
-              borderTopLeftRadius: 'unset',
-              borderBottomLeftRadius: 'unset',
-              transform: 'translate(0px, 1px)'
-            }
-            if (this.openMode === '编辑') {
-              style.backgroundColor = '#409eff'
-              style.color = '#fff'
-            }
-            tc.itemSlot = {
-              position: 'append', content: '计算并保存', click: async (e, item) => {
-                if (this.openMode === '只读') return
-                if (!this.dataForm.grossWeightCoefficient) return this.$message.error('理论重量不能为空')
-                this.$refs.dataForm[0].$refs.main.validateField('grossWeightCoefficient', (error) => {
-                  if (!error) {
-                    if (this.flag) return
-                    this.flag = true
-                    productsCalculateGross({
-                      id: this.dataForm.id,
-                      grossWeightCoefficient: this.dataForm.grossWeightCoefficient,
-                      drawingNo: this.dataForm.drawingNo
-                    }).then(res => {
-                      this.flag = false
-                      this.$message.success('操作成功')
-                    })
-                  } else {
-                    this.flag = false
-                  }
-                })
-              }, style, size: 'mini'
-            }
-          })
-        }
-
         // 添加校验编码和图号唯一性的规则
         if (tc.prop === 'code') {
           if (!tc.itemRules) { tc.itemRules = [] }
@@ -288,7 +216,7 @@ export default {
               if (!value) { callback() }
               else if (this.dataForm.code === this.autoCode) { callback() }
               else {
-                checkCodeExist({ classAttribute: "raw_material", code: this.dataForm.code }).then((res) => {
+                checkCodeExist({ classAttribute: "semi_finished", code: this.dataForm.code }).then((res) => {
                   if (!res.data) { callback() }
                   else { callback(new Error('此产品编码已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })
@@ -314,35 +242,39 @@ export default {
           })
         }
 
-
         // 产品类别的选项需要从数据字典中获取
         if (tc.prop === 'productType') {
-          this.$store.dispatch('base/getDictionaryData', { sort: 'productType' }).then(async res => {
+          this.$store.dispatch('base/getDictionaryData', { sort: 'productType' }).then(res => {
             tc.options = res.map(item => { return { label: item.fullName, value: item.enCode } })
-            tc.change = this.productTypeChange
-            this.productTypeDictionary = res
+            tc.change = e => {
+              this.formLoading = true
+              let option = res.find(item => { return item.enCode === e })
+              // 恢复所有rules至初始状态
+              Object.keys(this.tempRules).forEach(key => {
+                const keyItem = this.tabs.flatMap(tab => tab.tabContent).find(content => content.prop === key);
+                keyItem.itemRules = this.tempRules[key]
+                delete this.tempRules[key]
+              })
+              if (option) {
+                // 如果选择后的产品类型是label，则对应的ruleProp的rules设为必填
+                let determineList = [{ label: "胶管", ruleProp: "compressionElongation" }, { label: "套筒", ruleProp: "economize" }, { label: "软管接头总成", ruleProp: "shoulderLength" }, { label: "钢管接头总成", ruleProp: "shoulderLength" }]
+                let witchItem = determineList.find(o2 => o2.label === option.fullName)
+                if (witchItem) {
+                  const item = this.tabs.flatMap(tab => tab.tabContent).find(content => content.prop === witchItem.ruleProp); // 找到要添加必填校验的项
+                  if (item) {
+                    this.tempRules[witchItem.ruleProp] = [...item.itemRules] // 存储初始状态的rules
+                    item.itemRules.push({ required: true, trigger: "blur" }) // 添加新的rules
+                  }
+                }
+              }
+              this.formLoading = false
+            }
           })
         }
 
-        // 特殊处理(毛重系数、最小库存、最大库存、安全库存、版本、检验方式在页面新建时不渲染)
-        if (['grossWeightCoefficient', 'minInventory', 'maxInventory', 'safeInventory', 'version', 'inspectionMethod'].includes(tc.prop)) {
+        // 特殊处理(最小库存、最大库存、安全库存、检验方式在页面新建时不渲染)
+        if (['minInventory', 'maxInventory', 'safeInventory', 'inspectionMethod'].includes(tc.prop)) {
           this.$nextTick(() => { tc.render = this.openMode !== '新建' })
-        }
-        // 标准单价是从原材料标准价格设置页面查看才显示的
-        if (['standardPrice'].includes(tc.prop)) {
-          this.$nextTick(() => { tc.render = this.priceFlag })
-        }
-        // 长宽高输入自动计算单位体积
-        if (tc.prop === 'extent' || tc.prop === 'width' || tc.prop === 'height') {
-          tc.input = (val) => {
-            this.$nextTick(() => {
-              const extent = this.dataForm.extent || 0
-              const width = this.dataForm.width || 0
-              const height = this.dataForm.height || 0
-              if (!extent || !width || !height) return this.dataForm.unitVolume = ''
-              this.dataForm.unitVolume = this.jnpf.numberFormat((extent * width * height) / 1000)
-            })
-          }
         }
       })
     })
@@ -369,7 +301,7 @@ export default {
   },
   computed: {
     openMode() {
-      return this.title === '新建原材料档案' ? '新建' : this.title === '编辑原材料档案' ? '编辑' : '只读'
+      return this.title === '新建套筒档案' ? '新建' : this.title === '编辑套筒档案' ? '编辑' : '只读'
     }
   },
   methods: {
@@ -463,14 +395,13 @@ export default {
       }
     },
 
-    init(id, btnType = false, priceFlag = false) {
+    init(id, btnType = false) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
-      this.priceFlag = priceFlag
       if (!!id) {
         this.dataForm.id = id
-        this.title = btnType ? '查看原材料档案' : '编辑原材料档案'
+        this.title = btnType ? '查看套筒档案' : '编辑套筒档案'
         // 获取详情
         detailProductData(id).then(res => {
           // 记录编码和图号，用于校验唯一性
@@ -490,9 +421,6 @@ export default {
             let target = this.tabs[0].tabContent.find(tc => tc.prop === 'productType')
             target.itemDisabled = true
           }
-
-          // 判断产品类型，定制校验规则
-          this.productTypeChange(this.dataForm.productType)
 
           // 处理套筒属性
           this.sleeveList = res.data.sleeveList || []
@@ -535,7 +463,7 @@ export default {
           this.getSpecialAttributes() // 获取自定义属性表单元素
         })
       } else {
-        this.title = '新建原材料档案'
+        this.title = '新建套筒档案'
         this.formLoading = false
       }
     },
@@ -638,7 +566,7 @@ export default {
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
             item.bimAttachments = {
-              businessType: 'customer',
+              businessType: '',
               documentId: item.id,
               fileFlag: '',
               sort: index
@@ -652,13 +580,6 @@ export default {
           businessCode: "product", // 业务编码
           product: this.dataForm,
           sleeveList: this.sleeveList
-        }
-
-        // 如果产品类型不是胶管，则清除胶管属性填写的数据
-        if (dataObj.product.productType !== 'pt003') {
-          const rubberTubeTab = this.tabs.find(tab => tab.tabCode === 'rubberTube')
-          const fields = rubberTubeTab.tabContent.map(item => item.prop)
-          fields.forEach(prop => { this.dataForm[prop] = '' })
         }
         formMethod(dataObj).then(res => {
           let msg = res.msg
@@ -727,38 +648,6 @@ export default {
     deleteth(row, index) {
       this.sleeveList.splice(row.$index, 1)
     },
-    async productTypeChange(val) {
-      if (!this.productTypeDictionary.length) { // 避免触发时未从数据字典获取完成产品类型
-        this.productTypeDictionary = await this.$store.dispatch('base/getDictionaryData', { sort: 'productType' }).catch(err => [])
-      }
-      // this.formLoading = true
-      let option = this.productTypeDictionary.find(item => { return item.enCode === val })
-      // 恢复所有rules至初始状态
-      Object.keys(this.tempRules).forEach(key => {
-        const keyItem = this.tabs.flatMap(tab => tab.tabContent).find(content => content.prop === key);
-        keyItem.itemRules = this.tempRules[key]
-        delete this.tempRules[key]
-      })
-      if (option) {
-        // 一些定制必填字段的选项：如果选择后的产品类型是label，则把对应的ruleProps设为必填
-        let determineList = [
-          { label: "胶管", ruleProps: ["compressionElongation", "layerCount", "hoseNo"] },
-          { label: "套筒", ruleProps: ["economize"] },
-          { label: "软管接头总成", ruleProps: ["shoulderLength"] },
-          { label: "钢管接头总成", ruleProps: ["shoulderLength"] }
-        ]
-        let witchItem = determineList.find(o2 => o2.label === option.fullName) // 找到需要哪个必填项
-        if (witchItem) {
-          const targetFields = this.tabs.flatMap(tab => tab.tabContent).filter(field => witchItem.ruleProps.includes(field.prop)); // 找到要添加必填校验的字段
-          targetFields.forEach(field => {
-            this.tempRules[field.prop] = [...field.itemRules] // 存储初始状态的rules
-            const trigger = ['input', 'textarea'].includes(field.type) ? 'blur' : 'change'
-            field.itemRules.push({ required: true, trigger }) // 添加新的rules
-          })
-        }
-      }
-      // this.formLoading = false
-    }
   },
 }
 </script>

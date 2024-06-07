@@ -26,12 +26,13 @@
 <!-- openMode 表单打开方式（新建、编辑、只读） -->
 <template>
   <el-form label-position="top" :model="value" v-bind="tabContent" ref="main">
-    <el-row :gutter="30" class="custom-row">
+    
+    <el-row :gutter="30" class="custom-row" v-for="(row,index) in tabContent" :key="index">
 
-      <FormItem v-for="item in tabContent" :key="item.prop" :item="item" v-bind="item" :value="value[item.prop]"
+      <FormItem v-for="item in row.row" :key="item.prop" :item="item" v-bind="item" :value="value[item.prop]"
         @input="handleInput($event, item.prop)" :ref="item.prop" :openMode="realOpenMode" />
 
-      <div style="color:#aaa" v-if="tabContent.length === 0" :style="{ 'textAlign': 'center', 'padding': '10%' }">
+      <div style="color:#aaa" v-if="row.row.length === 0" :style="{ 'textAlign': 'center', 'padding': '10%' }">
         暂无数据
       </div>
 

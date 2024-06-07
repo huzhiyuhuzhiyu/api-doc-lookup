@@ -45,12 +45,18 @@
                                 </div>
                                 <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules"
                                     autocomplete="on" label-position="left">
-                                    <el-form-item>
+                                    <!-- <el-form-item>
                                         <el-select class="sel-item" v-model="loginForm.sys" @change="getConfig"
                                             size="medium" v-show="showTenancy">
                                             <el-option v-for="(value, key) in tanants" :key="key" :value="value.enCode"
                                                 :label="value.companyName"></el-option>
                                         </el-select>
+                                    </el-form-item> -->
+                                    <el-form-item prop="busCode">
+                                        <el-input ref="account" v-model="loginForm.busCode"
+                                            :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1"
+                                            autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                                        </el-input>
                                     </el-form-item>
                                     <el-form-item prop="account">
                                         <el-input ref="account" v-model="loginForm.account"
@@ -132,7 +138,8 @@ export default {
                 password: '',
                 code: '',
                 origin: 'password',
-                passCode: true
+                passCode: true,
+                busCode:'',
             },
             loginRules: {
                 account: [{
@@ -149,6 +156,11 @@ export default {
                     required: true,
                     trigger: 'blur',
                     message: this.$t('login.codeTip')
+                }],
+                busCode: [{
+                    required: true,
+                    trigger: 'blur',
+                    message: this.$t('login.busCodeTip')
                 }],
             },
             imgUrl: "",
@@ -188,7 +200,7 @@ export default {
                     aaa = 'iot'
                 } else {
                     aaa = 'zgt'
-                    this.aaa = '数字化生产平台'
+                    this.aaa = '轴管通'
                 }
                 localStorage.setItem('aaa', aaa)
                 const query = route.query
@@ -224,35 +236,36 @@ export default {
 
 
         this.loginForm.sys = this.argSys ? this.argSys : this.localSys
-        getConfig('isTenancy').then(res => {
+        // getConfig('isTenancy').then(res => {
 
 
-            this.isTenancy = res.data.tenancy
-            this.tanants = res.data.tanants
-            if (this.argSys && uname && pass) {
-                this.isLogin = true
+        //     this.isTenancy = res.data.tenancy
+        //     this.tanants = res.data.tanants
+        //     if (this.argSys && uname && pass) {
+        //         this.isLogin = true
 
-                this.loginForm.account = uname
-                this.loginForm.password = pass
-                this.loginForm.account1 = this.loginForm.sys + "@" + this.loginForm.account
+        //         this.loginForm.account = uname
+        //         this.loginForm.password = pass
+        //         this.loginForm.account1 = this.loginForm.sys + "@" + this.loginForm.account
 
-                this.handleLogin()
-            } else {
+        //         this.handleLogin()
+        //     } else {
                 this.isLogin = false;
-                if (this.isTenancy) {
-                    this.showTenancy = (this.argSys == 'all' || location.host.indexOf("localhost") > -1 || '默认展示租户')
-                    if (this.showTenancy) {
-                        // this.loginForm.sys = res.data.tanants[0].enCode
-                    } else {
-                        this.loginForm.sys = this.argSys ? this.argSys : this.localSys
-                    }
+                this.loginForm.account1 = this.loginForm.busCode + "@" + this.loginForm.account
+        //         if (this.isTenancy) {
+        //             this.showTenancy = (this.argSys == 'all' || location.host.indexOf("localhost") > -1 || '默认展示租户')
+        //             if (this.showTenancy) {
+        //                 // this.loginForm.sys = res.data.tanants[0].enCode
+        //             } else {
+        //                 this.loginForm.sys = this.argSys ? this.argSys : this.localSys
+        //             }
 
-                }
-                this.getConfig('lbq')
+        //         }
+        //         this.getConfig('lbq')
 
-            }
+        //     }
 
-        })
+        // })
         this.changeImg()
         // this.loginForm.account = ''
         const _this = this
@@ -295,11 +308,12 @@ export default {
             this.capsTooltip = key && key.length === 1 && key >= 'A' && key <= 'Z'
         },
         getConfig(val) {
+            if (!this.loginForm.busCode) return
             if (this.isTenancy) {
                 if (this.loginForm.sys == '') return
-                this.loginForm.account1 = this.loginForm.sys + '@' + (this.loginForm.account ? this.loginForm.account : 'admin')
+                this.loginForm.account1 = this.loginForm.busCode + '@' + (this.loginForm.account ? this.loginForm.account : 'admin')
             } else {
-                this.loginForm.account1 = this.loginForm.account
+                this.loginForm.account1 = this.loginForm.busCode + '@' + this.loginForm.account
             }
             if (!val) return
 
@@ -331,11 +345,11 @@ export default {
 
                         } else if (this.loginForm.sys == 'jz') {
                             localStorage.setItem('aaa', 'jz')
-
+                            
                         } 
                         localStorage.setItem('qhxt', false)
                         this.$store.commit('jx/SET_LOGO')
-                        localStorage.setItem("sys", this.loginForm.sys)
+                        localStorage.setItem("sys", this.loginForm.busCode)
                         location.reload()
                         this.$router.push({
                             path: this.redirect || '/home',

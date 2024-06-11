@@ -1,5 +1,5 @@
 // 开发环境接口配置
-const APIURl = 'http://36.140.134.173:40004/'  
+const APIURl = 'http://36.140.134.173:30004/'  
 module.exports = {
   APIURl: APIURl,
   timeout: process.env.NODE_ENV === 'development' ? 1000000 : 1000000,

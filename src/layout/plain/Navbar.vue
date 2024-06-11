@@ -5,9 +5,9 @@
       <!-- <template v-if="showSwitch" id="hamburger-container" class="hamburger-container">
         <system-select class="right-menu-item hover-effect" />
       </template> -->
-      <template v-if="showSearch" class="hamburger-container">
+      <!-- <template v-if="showSearch" class="hamburger-container">
         <search id="header-search" class="right-menu-item" />
-      </template>
+      </template> -->
     </template>
     <NavbarRight />
   </div>

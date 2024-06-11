@@ -1,9 +1,9 @@
 <template>
     <div class="right-menu">
         <template v-if="device!=='mobile'">
-            <!-- <template v-if="showSearch">
+            <template v-if="showSearch">
                 <search id="header-search" class="right-menu-item" />
-            </template> -->
+            </template>
             <!-- <screenfull id="screenfull" class="right-menu-item hover-effect" /> -->
             <el-tooltip :content="$t('navbar.chat')" placement="bottom">
                 <i class="icon-ym icon-ym-header-IM right-menu-item hover-effect" @click="openUserList()"
@@ -16,11 +16,12 @@
                     </el-badge>
                 </div>
             </el-tooltip>
-            <!-- <template v-if="showSwitch">
-                <system-select class="right-menu-item hover-effect" />
-            </template> -->
+         
             <template v-if="showLanguage">
                 <lang-select class="right-menu-item hover-effect" />
+            </template>
+            <template v-if="showSwitch">
+                <system-select class="right-menu-item hover-effect" />
             </template>
         </template>
         <el-dropdown class="avatar-container right-menu-item hover-effect" trigger='click'>

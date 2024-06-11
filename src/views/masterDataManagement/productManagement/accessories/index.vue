@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left">
       <div class="JNPF-common-title">
-        <h2>物料分类</h2>
+        <h2>产品分类</h2>
         <span class="options">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />

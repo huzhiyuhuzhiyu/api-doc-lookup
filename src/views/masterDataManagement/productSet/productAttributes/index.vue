@@ -19,7 +19,7 @@
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
+        <el-form @submit.native.prevent :rules="rules">
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="form.code" placeholder="请输入编码" clearable />
@@ -74,15 +74,15 @@
 
 <script>
 import {
-  getCooperativeData,
-  deleteCooperative,
-} from "@/api/basicData/index";
+  getBimProductAttributesInfo,
+  updataBimProductAttributes,
+  delBimProductAttributes,
+  addBimProductAttributes,
+  getbimProductAttributesList,
+} from "@/api/masterDataManagement/index";
 import Form from "./Form";
 import moment from "moment";
-import {
-  getDictionaryType,
-  getDictionaryDataList,
-} from "@/api/systemData/dictionary";
+
 export default {
   name: "supplierProfile",
   components: { Form },
@@ -163,6 +163,7 @@ export default {
         name: "",
         pageNum: 1,
         pageSize: 20,
+        typeCode:"",
         orderItems: [
           {
             asc: false,
@@ -180,7 +181,11 @@ export default {
         children: "childrenList",
         label: "name",
       },
-
+      rules:{
+        code:[
+          {}
+        ]
+      },
       total: 0,
       diagramVisible: false,
       formVisible: false,
@@ -195,9 +200,11 @@ export default {
     },
   },
   created() {
-    this.$nextTick(() => {
+    this.$nextTick(()=>{
       this.$refs.treeBox.setCurrentKey(this.treeData[0].code) // 默认选中节点第一个
+      this.form.typeCode=this.treeData[0].code
     })
+
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -221,9 +228,8 @@ export default {
 
     initData() {
       console.log(this.form);
-      this.listLoading = true;
-
-      getCooperativeData(this.form)
+      this.listLoading = true; 
+      getbimProductAttributesList(this.form)
         .then((res) => {
           console.log("res++", res);
           this.tableData = res.data.records;
@@ -242,9 +248,11 @@ export default {
     },
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
+      
       this.form = {
-        code: "",
+        code:'' ,
         name: "",
+        typeCode:this.treeData[0].code,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -263,31 +271,22 @@ export default {
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
-      this.form.code = node.data.code
+      this.form.typeCode = node.data.code
       this.search();
     },
-    getNodePath(node) {
-      let fullPath = [];
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data);
-        if (node.parent) loop(node.parent);
-      };
-      loop(node);
-      return fullPath;
-    },
+  
     addSupplier() {
       this.formVisible = true;
       this.$nextTick(() => {
-        this.$refs.Form.init();
+        this.$refs.Form.init(this.form.typeCode,'add');
       });
     },
-    addOrUpdateHandle(id, parentId) {
-      console.log("121342134", id, parentId);
+    addOrUpdateHandle(id ) { 
       this.formVisible = true;
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, parentId);
+          this.$refs.Form.init(id,'edit');
         });
         // }, 600);
       }
@@ -298,7 +297,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          deleteCooperative(id).then((res) => {
+          delBimProductAttributes(id).then((res) => {
             this.initData();
             this.$message({
               type: "success",

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-dialog :title="!dataForm.id ? '新建我的联系人' : '编辑我的联系人'" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
       label-width="120px">
@@ -15,7 +15,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+      <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交</el-button>
     </span>
@@ -23,13 +23,8 @@
 </template>
 
 <script>
-import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
-  delBimProductAttributes,
-  addBimProductAttributes,
-  getbimProductAttributesList,
-} from "@/api/masterDataManagement/index";
+import { updateDepartment } from '@/api/permission/department'
+import { addCategory, getCategoryInfo, editCategory, checkCategorychildNode } from "@/api/basicData/index";
 
 export default {
   data() {
@@ -40,12 +35,12 @@ export default {
       dataForm: {
         name: '',
         remark: '',
-        code: '',
-        typeCode:"",
+        type: 'customer',
+        parentId: '',
+        parentName: ""
       },
       isdisabled: false,
       organizeIdTree: [],
-      btntype:"",
       dataRule: {
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
@@ -67,40 +62,55 @@ export default {
     }
   },
   methods: {
-    init(code,btntype) {
-      console.log(code);
+    init(id, parentId) {
       this.visible = true
-      if(btntype=='add'){
-        this.dataForm.typeCode=code
-      }else{
-        getBimProductAttributesInfo(code).then(res=>{
-          console.log("res=>详情",res);
-          this.dataForm.code=res.data.code
-          this.dataForm.typeCode=res.data.typeCode
-          this.dataForm.name=res.data.name
-          this.dataForm.remark=res.data.remark
-        })
+      this.dataForm.id = id || ''
+      this.parentId = parentId || ''
+      this.organizeIdTree = []
+      this.formLoading = true
+      if (parentId == '-1') {
+        this.isdisabled = true
+      } else {
+        this.isdisabled = false
       }
-      this.btntype=btntype
-   
-     
+      this.$nextTick(() => {
+        this.$refs['dataForm'].resetFields()
+        if (this.dataForm.id) {
+          getCategoryInfo(this.dataForm.id).then(res => {
+            this.dataForm = res.data
+            this.organizeIdTree = res.data
+            this.formLoading = false
+          })
+        } else {
+          this.formLoading = false
+        }
+      })
     },
-    cancelFun(){
-      this.visible=false
-      console.log("this.$refs['dataForm']",);
-      this.$refs['dataForm'].resetFields()
+    onOrganizeChange(val, data) {
+      console.log("val", val, data);
+
+      this.dataForm.parentId = data[0].id
+      this.dataForm.parentName = data[0].name
     },
     dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
 
-          let formMethod = this.btntype=='add' ? addBimProductAttributes :  updataBimProductAttributes
+          let formMethod = this.dataForm.id ? editCategory : addCategory
           console.log("formMethod", formMethod);
-          if (formMethod == updataBimProductAttributes) {
-            formMethod(this.dataForm).then(response => {
+          if (formMethod == editCategory) {
+            checkCategorychildNode(this.dataForm).then(res => {
+              console.log(res);
+              formMethod(this.dataForm).then(response => {
+                let msg = ""
+                if (formMethod == editCategory) {
+                  msg = '修改成功'
+                } else {
+                  msg = '新建成功'
+                }
                 this.$message({
-                  message: "修改成功",
+                  message: msg,
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
@@ -112,11 +122,19 @@ export default {
               }).catch(() => {
                 this.btnLoading = false
               })
+            }).catch(() => {
+              this.btnLoading = false
+            })
           } else {
             formMethod(this.dataForm).then(res => {
-            
+              let msg = ""
+              if (formMethod == editCategory) {
+                msg = '修改成功'
+              } else {
+                msg = '新建成功'
+              }
               this.$message({
-                message: "新建成功",
+                message: msg,
                 type: 'success',
                 duration: 1500,
                 onClose: () => {

@@ -4,11 +4,13 @@
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
       label-position="top" label-width="120px">
       <el-form-item label="上级分类" prop="parentName">
-        <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
-          :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
+      
+        <ComSelect-list :isdisabled="false" v-model="dataForm.parentName" placeholder="请选择上级分类" auth
+          @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
+          :paramsObj="{}" />
       </el-form-item>
-      <el-form-item label="类别属性" prop="classType">
-        <el-select v-model="dataForm.classType" placeholder="请选择类别属性" clearable style="width: 100%;">
+      <el-form-item label="类别属性" prop="classAttribute" v-if="!dataForm.parentName">
+        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable style="width: 100%;">
           <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
             :value="item.value"></el-option>
         </el-select>
@@ -39,11 +41,15 @@
 </template>
 
 <script>
-import { detailCategory, updateCategory, addCategory, checkCategoryCode } from "@/api/basicData/materialSettings"
-
+import { detailCategory, updateCategory, addCategory, checkCategoryCode,getcategoryTree } from "@/api/basicData/materialSettings"
 export default {
   data() {
     return {
+      requestObjTwo: {
+        pageSize: -1,
+        classAttribute: ''
+      },
+      getcategoryTree,
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -54,21 +60,21 @@ export default {
         code: '',
         name: '',
         remark: '',
-        classAttribute: "material"
+        classAttribute: ""
       },
-      categoryPropertList:[
+      categoryPropertList: [
         {
-          label:"原材料",
-          value:"1",
+          label: "原材料",
+          value: "raw_material",
         }, {
-          label:"半成品",
-          value:"1",
+          label: "半成品",
+          value: "semi_finished",
         }, {
-          label:"成品",
-          value:"1",
+          label: "成品",
+          value: "finish_product",
         }, {
-          label:"辅料",
-          value:"1",
+          label: "辅料",
+          value: "accessories",
         },
       ],
       autoCode: '',
@@ -115,12 +121,14 @@ export default {
       })
     },
     onOrganizeChange(val, data) {
+      console.log("data", data);
       if (!data) {
         this.dataForm.parentId = ''
         this.dataForm.parentName = ''
       } else {
         this.dataForm.parentId = data[0].id
         this.dataForm.parentName = data[0].name
+        this.dataForm.classAttribute=data[0].all.classAttribute
       }
     },
     async dataFormSubmit() {

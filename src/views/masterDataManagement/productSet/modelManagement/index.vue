@@ -66,9 +66,13 @@
 
 <script>
 import {
-  getattribute,
-  deleteattribute,
-} from "@/api/basicData/materialSettings";
+  updataBimProductsModelCheck,
+  getbimProductsModelInfo,
+  updataBimProductsModel,
+  delBimProductsModel,
+  getbimProductsModelList,
+  addBimProductsModel
+} from "@/api/masterDataManagement/index";
 import JNPFForm from "./Form";
 export default {
   components: { JNPFForm },

@@ -33,6 +33,15 @@
           </el-table-column>
           <el-table-column prop="code" label="分类编码" min-width="120" />
           <el-table-column prop="parentName" label="上级分类" min-width="120" />
+          <el-table-column prop="classAttribute" label="类别属性" min-width="120" >
+            <template slot-scope="scope">
+              <div v-if="scope.row.classAttribute=='raw_material'">原材料</div>
+              <div v-if="scope.row.classAttribute=='semi_finished'">半成品</div>
+              <div v-if="scope.row.classAttribute=='finish_product'">成品</div>
+              <div v-if="scope.row.classAttribute=='accessories'">辅料</div>
+            </template>
+          </el-table-column>
+        
           <el-table-column prop="classType" label="类型" min-width="130">
             <template slot-scope="scope">
               <div v-if="scope.row.classType == 'packaging'">包装物</div>
@@ -69,7 +78,7 @@ export default {
   data() {
     return {
       listQuery: {
-        classAttribute: "material",
+        classAttribute: "",
         orderItems: [
           {
             asc: false,
@@ -134,7 +143,7 @@ export default {
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
       this.listQuery = {
-        classAttribute: "material",
+        classAttribute: "",
         orderItems: [
           {
             asc: false,

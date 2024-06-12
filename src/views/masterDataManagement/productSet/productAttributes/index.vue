@@ -204,7 +204,7 @@ export default {
       this.$refs.treeBox.setCurrentKey(this.treeData[0].code) // 默认选中节点第一个
       this.form.typeCode=this.treeData[0].code
     })
-
+    this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {

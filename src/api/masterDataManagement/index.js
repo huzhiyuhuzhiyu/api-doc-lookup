@@ -39,3 +39,52 @@ export function getBimProductAttributesInfo(id) {
       method: 'get',
   })
 }
+
+
+
+// 型号管理——列表
+export function getbimProductsModelList(data) {
+  return request({
+      url: '/api/erp/bimProductsModel/list',
+      method: 'post',
+      data: data
+  })
+}
+// 型号管理——新增
+export function addBimProductsModel(data) {
+  return request({
+      url: '/api/erp/bimProductsModel/insert',
+      method: 'post',
+      data: data
+  })
+}
+// 型号管理——删除
+export function delBimProductsModel(id) {
+  return request({
+      url: '/api/erp/bimProductsModel/remove/'+id,
+      method: 'delete',
+  })
+}
+// 型号管理—修改
+export function updataBimProductsModel(data) {
+  return request({
+      url: '/api/erp/bimProductsModel/modify',
+      method: 'put',
+      data: data
+  })
+}
+// 型号管理—详情
+export function getbimProductsModelInfo(id) {
+  return request({
+      url: '/api/erp/bimProductsModel/detail/'+id,
+      method: 'get',
+  })
+}
+// 型号管理——唯一性
+
+export function updataBimProductsModelCheck(data) {
+  return request({
+      url: '/api/erp/bimProductsModel/check/model/exist?model='+data,
+      method: 'get',
+  })
+}

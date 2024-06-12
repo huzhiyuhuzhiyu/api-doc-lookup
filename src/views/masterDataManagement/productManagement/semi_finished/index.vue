@@ -1,8 +1,8 @@
 <template>
   <div class="JNPF-common-layout">
-    <!-- <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left">
       <div class="JNPF-common-title">
-        <h2>物料分类</h2>
+        <h2>产品分类</h2>
         <span class="options">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
@@ -25,7 +25,7 @@
           </span>
         </el-tree>
       </el-scrollbar>
-    </div> -->
+    </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
@@ -223,13 +223,61 @@ export default {
       formVisible: false,
       expands: true,
       refreshTree: true,
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
     }
   },
   created() {
+    this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
   methods: {
+    // 展开或折叠全部
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    // 获取指定树状列表
+    getcategoryTree() {
+      function getQueryString(name) {
+        const url_string = location.href;
+        const url = new URL(url_string);
+        return url.searchParams.get(name) || void (0);
+      }
+      this.listLoading = true
+      this.treeLoading = true
+      this.listQuery.productCategoryId = "" // 重置数据类型id筛选
+      this.listQuery.productCategoryCode = getQueryString('productCategoryCode')
+      getcategoryTree({ classAttribute: "material", code: getQueryString('productCategoryCode') }).then(res => {
+        this.treeData = res.data.length ? res.data[0].childrenList : []
+        this.$nextTick(() => {
+          this.treeLoading = false
+          this.initData()
+        })
+      }).catch(() => {
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+    handleNodeClick(data, node) {
+      if (this.listQuery.productCategoryId === data.id) return
+      this.listQuery.productCategoryId = data.id
+      this.listQuery.productCategoryCode = data.code
+      this.search()
+    },
     moreQueries() {
       this.visible = true
     },

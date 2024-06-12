@@ -3,11 +3,11 @@
     <div>
       <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container"
         @toggleClick="toggleSideBar" />
-      <template v-if="device !== 'mobile'">
+      <!-- <template v-if="device !== 'mobile'">
         <template v-if="showSearch" class="hamburger-container">
           <search id="header-search" class="right-menu-item" />
         </template>
-      </template>
+      </template> -->
     </div>
     <NavbarRight />
   </div>

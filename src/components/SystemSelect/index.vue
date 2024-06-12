@@ -1,5 +1,5 @@
 <template>
-  <div @keyup.native="close">
+  <!-- <div @keyup.native="close">
 
     <div class="international">
       <span @click="showSystem" style="cursor:pointer;">
@@ -57,11 +57,10 @@
         </div>
       </div>
     </transition>
-  </div>
-  <!-- <el-dropdown class="international" placement="bottom-start" trigger="click">
+  </div> -->
+  <el-dropdown class="international" placement="bottom-start" trigger="click">
     <span>
-      <i class="iconfont icon-caidan ym yc"></i>
-      <span class="ym yc">{{ systemName }}</span>
+      <i class="icon-ym icon-ym-systemToggle ym yc"></i>
     </span>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item v-for="item in userInfo.systemIds" :key="item.id"
@@ -69,7 +68,7 @@
           :class="item.icon"></i>{{ item.name }}
       </el-dropdown-item>
     </el-dropdown-menu>
-  </el-dropdown> -->
+  </el-dropdown>
 </template>
 
 <script>

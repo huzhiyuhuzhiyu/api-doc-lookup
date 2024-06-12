@@ -1,11 +1,11 @@
 <template>
   <div class="navbar" :class="headClass" :style="{backgroundColor:head}">
     <logo />
-    <template v-if="device !== 'mobile'">
+    <!-- <template v-if="device !== 'mobile'">
       <template v-if="showSearch" class="hamburger-container">
         <search id="header-search" class="right-menu-item" />
       </template>
-    </template>
+    </template> -->
     <Menu class="main-menu top-menu" />
     <NavbarRight />
   </div>

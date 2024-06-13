@@ -82,10 +82,10 @@ export default {
         { prop: "drawingNo", label: "产品图号", type: 'input' }
       ], // 产品选择弹出框搜索条件
       ProductMethodArr: [
-      { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
+      { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
       ],
       ProductListRequestObj: {
-        classAttribute: "",
+        classAttribute: "material",
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
         productCategoryId: "",
         code: "",

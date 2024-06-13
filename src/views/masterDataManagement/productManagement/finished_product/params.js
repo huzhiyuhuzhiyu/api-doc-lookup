@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-07 13:38:27
+ * @LastEditTime: 2024-06-12 17:59:57
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\accessories\params.js
  * @Description: 成品的表单字段
  */
@@ -13,6 +13,7 @@ export default () => [
     tabCode: "basicInfo",
     tabName: "基本信息",
     tabContent: [
+      { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }] },
       { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], itemReadOnly: true },
       { prop: "drawingNo", label: "规格型号", value: "", type: "input", maxlength: "1000" },
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, itemRules: [{ required: true, trigger: "blur" }], itemReadOnly: true },
@@ -24,9 +25,9 @@ export default () => [
       { prop: "productStatus", label: "产品状态", value: "enable", type: "select", options: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], itemRules: [{ required: true, trigger: "change" }] },
 
       //  一下全部都是 custom，组件选择
-      { prop: "brand", label: "品牌", value: "", type: 'custom', customComponent: 'ComSelect-list',},
+      { prop: "brand", label: "品牌", value: "",typeCode:'pa011', type: 'custom', customComponent: 'ComSelect-list',},
       { prop: "model", label: "型号", value: "", type: 'custom', customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }] },
-      { prop: "sealingCoverStructure", label: "密封盖-结构", value: "", type: 'custom', customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }] },
+      { prop: "sealingCoverStructure", label: "密封盖-结构", value: "", typeCode:'pa012', type: 'custom', customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }] },
       { prop: "sealingCoverTyping", label: "密封盖-打字", value: "", type: 'custom', customComponent: 'ComSelect-list', },
       { prop: "structureType", label: "结构类型", value: "", type: "custom",customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }]  },
       { prop: "clearance", label: "游隙", value: "", type: "custom",customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }]  },

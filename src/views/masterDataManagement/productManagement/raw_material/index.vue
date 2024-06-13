@@ -21,7 +21,7 @@
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i
               :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-            <span class="text" :title="data.name">{{ `${data.fullCode} - ${data.name}` }}</span>
+            <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
@@ -81,7 +81,7 @@
           <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
 
-          <el-table-column prop="productCategoryIdText" label="产品分类" width="120"  />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
           <el-table-column prop="productSource" label="产品来源" width="120" >
             <template slot-scope="{row}">
@@ -110,7 +110,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="btnType(scope.row.id, true)">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -181,7 +181,7 @@
 
 <script>
 
-import { getProductList, deleteProductData } from '@/api/basicData/materialFiles'
+import { getProductList, deleteProduct } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 export default {
@@ -214,7 +214,8 @@ export default {
         productCategoryId: "", // 类型id
         productStatus: "", // 产品状态
         customerQueryFields: [],
-        createTimeArr:[]
+        createTimeArr:[],
+        classAttribute: "raw_material"
       },
       listQuery: {},
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
@@ -252,17 +253,11 @@ export default {
     },
     // 获取指定树状列表
     getcategoryTree() {
-      function getQueryString(name) {
-        const url_string = location.href;
-        const url = new URL(url_string);
-        return url.searchParams.get(name) || void (0);
-      }
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      this.listQuery.productCategoryCode = getQueryString('productCategoryCode')
-      getcategoryTree({ classAttribute: "material", code: getQueryString('productCategoryCode') }).then(res => {
-        this.treeData = res.data.length ? res.data[0].childrenList : []
+      getcategoryTree({ classAttribute: "raw_material" }).then(res => {
+        this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false
           this.initData()
@@ -275,7 +270,6 @@ export default {
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
-      this.listQuery.productCategoryCode = data.code
       this.search()
     },
     moreQueries() {
@@ -291,6 +285,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       if (isRefresh) {
+        this.getcategoryTree()
         this.initData()
       }
     },
@@ -330,7 +325,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteProductData(id).then(res => {
+        deleteProduct(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-06 16:49:57
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-07 11:04:37
+ * @LastEditTime: 2024-06-12 14:10:55
  * @FilePath: \os-web-zgt4.0\src\views\configManagement\paramSetting\index.vue
  * @Description: 参数设置页面
 -->
@@ -30,6 +30,7 @@ export default {
       activeName: 'codeSet',
       tabs: tabs(),
       dataForm: {},
+      productForm: {},
       formLoading: false,
     }
   },
@@ -45,10 +46,11 @@ export default {
           this.dataForm[row.prop] = row.value || ""; // 设置默认value
           if (row.type == "custom") {
             if (row.prop === 'code'){
+              this.productForm = row.value
               if (row.tabContent){
                 row.tabContent.forEach(child=>{
-                  row.value[child.prop] = child.value || ''
-                  
+                  this.productForm[child.prop] = child.value || ""; 
+                  // row.value[child.prop] = child.value || ''
                 })
               }
             }

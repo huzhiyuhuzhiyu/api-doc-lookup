@@ -10,8 +10,8 @@
           </el-col>
           <el-col :span="8">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
-                value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%" start-placeholder="创建开始时间"
+              <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd" style="width: 100%" start-placeholder="创建开始时间"
                 end-placeholder="创建结束时间" clearable>
               </el-date-picker>
             </el-form-item>
@@ -30,7 +30,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
-          <topOpts @add="addOrUpdateHandle()" />
+          <topOpts @add="addOrUpdateHandle('','add')" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -39,19 +39,19 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable">
-          <el-table-column prop="code" label="型号" width="220" sortable="custom" />
-          <el-table-column prop="code" label="内圈" width="220" />
-          <el-table-column prop="code" label="外圈" width="220" />
-          <el-table-column prop="code" label="钢球型号" width="220" />
-          <el-table-column prop="code" label="钢球用量" width="220" />
-          <el-table-column prop="code" label="油脂用量" width="220" />
-          <el-table-column prop="code" label="保持架用量" width="220" />
-          <el-table-column prop="code" label="创建时间" width="220" sortable="custom" />
-          <el-table-column prop="code" label="创建人" width="220" />
+          <el-table-column prop="model" label="型号" width="220" sortable="custom" />
+          <el-table-column prop="innerCircle" label="内圈" width="220" />
+          <el-table-column prop="outerCircle" label="外圈" width="220" />
+          <el-table-column prop="steelBall" label="钢球型号" width="220" />
+          <el-table-column prop="steelBallNum" label="钢球用量" width="220" />
+          <el-table-column prop="oilNum" label="油脂用量" width="220" />
+          <el-table-column prop="holderNum" label="保持架用量" width="220" />
+          <el-table-column prop="createTime" label="创建时间" width="220" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="220" />
 
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"></tableOpts>
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)"></tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -98,24 +98,12 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
+        model:"",
       },
 
       total: 0,
       formVisible: false,
-      typeList: [
-        {
-          label: "文本",
-          value: "text",
-        },
-        {
-          label: "下拉选",
-          value: "select",
-        },
-        {
-          label: "复选项",
-          value: "multiple",
-        },
-      ],
+   
     };
   },
   created() {
@@ -133,7 +121,7 @@ export default {
     },
     initData() {
       this.listLoading = true;
-      getattribute(this.listQuery)
+      getbimProductsModelList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records;
           this.tableData.forEach((item) => {
@@ -153,6 +141,13 @@ export default {
         });
     },
     search() {
+      if (this.createTimeArr && this.createTimeArr.length > 0) {
+        this.listQuery.startTime = this.createTimeArr[0]
+        this.listQuery.endTime = this.createTimeArr[1]
+      } else {
+        this.listQuery.startTime = ""
+        this.listQuery.endTime = ""
+      }
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key];
         this.listQuery[key] = typeof item === "string" ? item.trim() : item;
@@ -167,9 +162,9 @@ export default {
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
       this.listQuery = {
-        businessCode: "product", // 业务编码
-        name: "", // 属性名称
-        code: "", // 属性编码
+        startTime: "",
+        endTime: "",
+        model:"",
         orderItems: [
           {
             asc: false,
@@ -182,14 +177,13 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        type: "",
       };
       this.initData();
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,type) {
       this.formVisible = true;
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id, this.tableData);
+        this.$refs.JNPFForm.init(id, type);
       });
     },
     handleDel(id) {

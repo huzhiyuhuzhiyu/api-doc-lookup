@@ -8,27 +8,22 @@
 
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerCode" @keyup.enter.native="search()"
-                  placeholder="请输入客户编码" clearable />
+                <el-input v-model="dataForm.code" @keyup.enter.native="search()" placeholder="请输入客户编码" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
-                  placeholder="请输入客户名称" clearable />
+                <el-input v-model="dataForm.name" @keyup.enter.native="search()" placeholder="请输入客户名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
+                <el-input v-model="dataForm.bimCustomerServiceRecords" @keyup.enter.native="search()"
                   placeholder="请输入服务记录" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.phone" @keyup.enter.native="search()" placeholder="请输入手机" clearable />
-              </el-form-item>
-            </el-col>
+
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -53,16 +48,17 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" />
-            <el-table-column prop="lxr" label="服务记录" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" />
+            <el-table-column prop="bimCustomerServiceRecords" label="服务记录" />
 
 
             <el-table-column prop="createTime" label="创建时间" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -80,7 +76,7 @@
             </el-table-column>
 
           </JNPF-table>
-          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+          <pagination :total="total" :page.sync="dataForm.pageNum" :limit.sync="dataForm.pageSize"
             @pagination="initData">
 
           </pagination>
@@ -89,27 +85,27 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
 
-        <el-form ref="diaForm" :model="orderForm" label-width="120px" label-position="top">
+        <el-form ref="diaForm" :model="dataForm" label-width="120px" label-position="top">
 
           <el-col :span="12">
             <el-form-item label="客户编码">
-              <el-input v-model="orderForm.cooperativePartnerCode" placeholder="请输入客户编码" clearable />
+              <el-input v-model="dataForm.code" placeholder="请输入客户编码" clearable />
             </el-form-item>
 
           </el-col>
           <el-col :span="12">
             <el-form-item label="客户名称">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
+              <el-input v-model="dataForm.name" placeholder="请输入客户名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="服务记录">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入服务记录" clearable />
+              <el-input v-model="dataForm.bimCustomerServiceRecords" placeholder="请输入服务记录" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -136,8 +132,6 @@
 </template>
 
 <script>
-import { UserListAll, } from '@/api/permission/user'
-import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import moment from 'moment'
@@ -147,7 +141,6 @@ export default {
   components: { Form },
   data() {
     return {
-      customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
       tableData: [
@@ -190,7 +183,7 @@ export default {
 
 
 
-      orderForm: {
+      dataForm: {
         orderNo: "",
         cooperativePartnerCode: "",
         cooperativePartnerName: "",
@@ -246,8 +239,8 @@ export default {
     let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
     this.orderDateArr[0] = startDate
     this.orderDateArr[1] = endDate
-    this.orderForm.orderStartDate = startDate
-    this.orderForm.orderEndDate = endDate
+    this.dataForm.orderStartDate = startDate
+    this.dataForm.orderEndDate = endDate
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -280,8 +273,8 @@ export default {
       if (prop == "createByName") {
         newProp = "create_by"
       }
-      this.orderForm.orderItems[0].asc = order === "ascending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.dataForm.orderItems[0].asc = order === "ascending"
+      this.dataForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
 
@@ -289,38 +282,38 @@ export default {
       this.visible = true
     },
     dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      this.dataForm.pageNum = 1
+      Object.keys(this.dataForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.dataForm[key]
+        this.dataForm[key] = typeof item === 'string' ? item.trim() : item
       })
       if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.orderStartDate = this.orderDateArr[0]
-        this.orderForm.orderEndDate = this.orderDateArr[1]
+        this.dataForm.orderStartDate = this.orderDateArr[0]
+        this.dataForm.orderEndDate = this.orderDateArr[1]
       } else {
-        this.orderForm.orderStartDate = ""
-        this.orderForm.orderEndDate = ""
+        this.dataForm.orderStartDate = ""
+        this.dataForm.orderEndDate = ""
       }
       if (this.CompletionDate && this.CompletionDate.length > 0) {
-        this.orderForm.deliveryStartDate = this.CompletionDate[0]
-        this.orderForm.deliveryEndDate = this.CompletionDate[1]
+        this.dataForm.deliveryStartDate = this.CompletionDate[0]
+        this.dataForm.deliveryEndDate = this.CompletionDate[1]
       } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
+        this.dataForm.deliveryStartDate = ""
+        this.dataForm.deliveryEndDate = ""
       }
       if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+        this.dataForm.deliveryStartDate = this.deliveryDateArr[0]
+        this.dataForm.deliveryEndDate = this.deliveryDateArr[1]
       } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
+        this.dataForm.deliveryStartDate = ""
+        this.dataForm.deliveryEndDate = ""
       }
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0]
-        this.orderForm.endTime = this.createTimeArr[1]
+        this.dataForm.startTime = this.createTimeArr[0]
+        this.dataForm.endTime = this.createTimeArr[1]
       } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
+        this.dataForm.startTime = ""
+        this.dataForm.endTime = ""
       }
       this.initData()
 
@@ -338,7 +331,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getsaleOrderList(this.orderForm).then(res => {
+      getsaleOrderList(this.dataForm).then(res => {
         // this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -360,7 +353,7 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.CompletionDate = []
-      this.orderForm = {
+      this.dataForm = {
         orderNo: "",
         cooperativePartnerCode: "",
         cooperativePartnerName: "",

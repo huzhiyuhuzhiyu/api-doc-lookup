@@ -58,7 +58,7 @@
             <el-table-column label="操作" width="280" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,)">转为正式</el-button>
-                <el-button size="mini" type="text" @click="handleDel(scope.row.id)">创建服务记录</el-button>
+                <el-button size="mini" type="text" @click="handleDel(scope.row.id)">写记录</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">

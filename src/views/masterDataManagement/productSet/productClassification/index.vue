@@ -52,7 +52,7 @@
    
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
                  
               </tableOpts>

@@ -12,25 +12,25 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="内圈" prop="innerCircleName" ref="innerCircleName">
+            <el-form-item label="内圈" prop="innerCircle" ref="innerCircle">
 
-              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.innerCircleName"
+              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.innerCircle"
                 placeholder="请选择产品" auth @change="onOrganizeChangeThree1" :title="'选择产品'" :listMethod="getProductList"
                 :requestObj="requestObj" :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
                 :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="外圈" prop="outerCircleName" ref="outerCircleName">
-              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.outerCircleName"
+            <el-form-item label="外圈" prop="outerCircle" ref="outerCircle">
+              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.outerCircle"
                 placeholder="请选择产品" auth @change="onOrganizeChangeThree2" :title="'选择产品'" :listMethod="getProductList"
                 :requestObj="requestObj" :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
                 :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="钢球型号" prop="steelBallName" ref="steelBallName">
-              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.steelBallName"
+            <el-form-item label="钢球型号" prop="steelBall" ref="steelBall">
+              <ComSelect-page ref="productRef" :searchList="ProductTableSearchList" :value="dataForm.steelBall"
                 placeholder="请选择产品" auth @change="onOrganizeChangeThree3" :title="'选择产品'" :listMethod="getProductList"
                 :requestObj="requestObj" :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
                 :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
@@ -140,9 +140,9 @@ export default {
         model: "",
         innerCircleId: "",
         holderNum: "",
-        innerCircleName: "",
-        outerCircleName: "",
-        steelBallName: "",
+        innerCircle: "",
+        outerCircle: "",
+        steelBall: "",
       },
       dataFormTwo: [],
       dataFormTwoTemp: [],
@@ -165,17 +165,17 @@ export default {
           },
           trigger: 'blur'
         }],
-        innerCircleName: [{
+        innerCircle: [{
           required: true,
           message: '请选择内圈',
           trigger: ['chang']
         },],
-        outerCircleName: [{
+        outerCircle: [{
           required: true,
           message: '请选择外圈',
           trigger: ['chang']
         }],
-        steelBallName: [{
+        steelBall: [{
           required: true,
           message: '请选择钢球型号',
           trigger: ['chang']
@@ -219,7 +219,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.outerCircleId = data[0].all.id
-        this.dataForm.outerCircleName = data[0].all.name
+        this.dataForm.outerCircle = data[0].all.name
       } else {
       }
 
@@ -231,7 +231,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.innerCircleId = data[0].all.id
-        this.dataForm.innerCircleName = data[0].all.name
+        this.dataForm.innerCircle = data[0].all.name
       } else {
       }
 
@@ -243,7 +243,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.steelBallId = data[0].all.id
-        this.dataForm.steelBallName = data[0].all.name
+        this.dataForm.steelBall = data[0].all.name
       } else {
       }
 

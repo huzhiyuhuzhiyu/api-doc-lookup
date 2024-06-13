@@ -88,3 +88,15 @@ export function updataBimProductsModelCheck(data) {
       method: 'get',
   })
 }
+
+
+
+// 产品列表——所有
+
+export function getProducts(data) {
+  return request({
+      url: '/api/erp/products/list',
+      method: 'post',
+      data: data
+  })
+}

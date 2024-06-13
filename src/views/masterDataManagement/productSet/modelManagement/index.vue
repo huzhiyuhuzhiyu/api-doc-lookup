@@ -39,15 +39,15 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable">
-          <el-table-column prop="model" label="型号" width="220" sortable="custom" />
-          <el-table-column prop="innerCircle" label="内圈" width="220" />
-          <el-table-column prop="outerCircle" label="外圈" width="220" />
-          <el-table-column prop="steelBall" label="钢球型号" width="220" />
-          <el-table-column prop="steelBallNum" label="钢球用量" width="220" />
-          <el-table-column prop="oilNum" label="油脂用量" width="220" />
-          <el-table-column prop="holderNum" label="保持架用量" width="220" />
-          <el-table-column prop="createTime" label="创建时间" width="220" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="220" />
+          <el-table-column prop="model" label="型号"  sortable="custom" />
+          <el-table-column prop="innerCircle" label="内圈"  />
+          <el-table-column prop="outerCircle" label="外圈"  />
+          <el-table-column prop="steelBall" label="钢球型号"  />
+          <el-table-column prop="steelBallNum" label="钢球用量"  />
+          <el-table-column prop="oilNum" label="油脂用量"  />
+          <el-table-column prop="holderNum" label="保持架用量"  />
+          <el-table-column prop="createTime" label="创建时间"  sortable="custom" />
+          <el-table-column prop="createByName" label="创建人"  />
 
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
@@ -93,7 +93,7 @@ export default {
           },
           {
             asc: false,
-            column: "createTime",
+            column: "create_time",
           },
         ],
         pageNum: 1,
@@ -111,10 +111,7 @@ export default {
   },
   methods: {
     sortChange({ prop, order }) {
-      const newProp = prop.replace(
-        /[A-Z]/g,
-        (match) => "_" + match.toLowerCase()
-      );
+      const newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
       this.listQuery.orderItems[0].asc = order === "ascending";
       this.listQuery.orderItems[0].column = order === null ? "" : newProp;
       this.initData();
@@ -124,14 +121,7 @@ export default {
       getbimProductsModelList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records;
-          this.tableData.forEach((item) => {
-            item.typeName =
-              item.type === "text"
-                ? "文本"
-                : item.type === "select"
-                  ? "下拉选"
-                  : "复选项";
-          });
+       
           this.total = res.data.total;
           this.listLoading = false;
           // this.visible = false
@@ -142,8 +132,8 @@ export default {
     },
     search() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.listQuery.startTime = this.createTimeArr[0]
-        this.listQuery.endTime = this.createTimeArr[1]
+        this.listQuery.startTime = this.createTimeArr[0]+" 00:00:00"
+        this.listQuery.endTime = this.createTimeArr[1]+" 23:59:59"
       } else {
         this.listQuery.startTime = ""
         this.listQuery.endTime = ""
@@ -172,7 +162,7 @@ export default {
           },
           {
             asc: false,
-            column: "createTime",
+            column: "create_time",
           },
         ],
         pageNum: 1,
@@ -191,7 +181,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          deleteattribute(id).then((res) => {
+          delBimProductsModel(id).then((res) => {
             if (res.msg === "Success") {
               this.initData();
               this.$message({

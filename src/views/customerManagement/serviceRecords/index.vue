@@ -21,7 +21,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
-                  placeholder="请输入姓名" clearable />
+                  placeholder="请输入服务记录" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -44,7 +44,6 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="text" icon="el-icon-download" @click="releaseFun('dataTable')">释放</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -53,25 +52,37 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column> 
+            @sort-change="sortChange" custom-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" />
-            <el-table-column prop="lxr" label="姓名"  />
-            <el-table-column prop="tel" label="性别"  />
-            <el-table-column prop="phone" label="电话" sortable="custom" />
-            <el-table-column prop="phone" label="邮箱" sortable="custom" />
-            <el-table-column prop="phone" label="地址"  />
-            <el-table-column prop="phone" label="职务"  />
-            <el-table-column prop="phone" label="部门"  />
-            <el-table-column prop="phone" label="爱好"  />
-            <el-table-column prop="phone" label="备注"  />
+            <el-table-column prop="lxr" label="服务记录" />
+
+
             <el-table-column prop="createTime" label="创建时间" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-     
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            
+
           </pagination>
         </div>
       </div>
@@ -97,28 +108,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="姓名">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入姓名" clearable />
+            <el-form-item label="服务记录">
+              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入服务记录" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="性别">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请选择性别" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="电话">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入电话" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入邮箱机" clearable />
-            </el-form-item>
-          </el-col>
-         
-          
-        
           <el-col :span="12">
             <el-form-item label="创建时间">
               <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
@@ -153,50 +146,50 @@ export default {
   name: 'carrierProfile',
   components: { Form },
   data() {
-    return { 
+    return {
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
-      visible: false, 
+      visible: false,
       tableData: [
-                {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }
-               ], 
+        {
+          cooperativePartnerCode: "1234",
+          cooperativePartnerName: "怡盛客户",
+          lxr: "李生",
+          tel: "12345678",
+          phone: "12345678",
+          createTime: "2024-06-11",
+          createByName: "管理员",
+        }, {
+          cooperativePartnerCode: "1234",
+          cooperativePartnerName: "怡盛客户",
+          lxr: "李生",
+          tel: "12345678",
+          phone: "12345678",
+          createTime: "2024-06-11",
+          createByName: "管理员",
+        }, {
+          cooperativePartnerCode: "1234",
+          cooperativePartnerName: "怡盛客户",
+          lxr: "李生",
+          tel: "12345678",
+          phone: "12345678",
+          createTime: "2024-06-11",
+          createByName: "管理员",
+        }, {
+          cooperativePartnerCode: "1234",
+          cooperativePartnerName: "怡盛客户",
+          lxr: "李生",
+          tel: "12345678",
+          phone: "12345678",
+          createTime: "2024-06-11",
+          createByName: "管理员",
+        }
+      ],
       treeLoading: false,
-      listLoading: false, 
- 
-      
-  
+      listLoading: false,
+
+
+
       orderForm: {
         orderNo: "",
         cooperativePartnerCode: "",
@@ -229,16 +222,16 @@ export default {
           column: "create_time"
         }],
       },
- 
-       
-       
-      createTimeArr: [], 
+
+
+
+      createTimeArr: [],
       orderDateArr: [],
       CompletionDate: [],
       total: 0,
       diagramVisible: false,
       formVisible: false,
-      filterText: '', 
+      filterText: '',
     }
   },
   watch: {
@@ -248,7 +241,7 @@ export default {
   },
 
 
-  created() {  
+  created() {
     let endDate = new Date().toISOString().slice(0, 10);
     let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
     this.orderDateArr[0] = startDate
@@ -259,7 +252,7 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-     
+
     initDataDetail() {
       this.listLoading = true
       getsaleOrderDetailList(this.orderDetailForm).then(res => {
@@ -272,9 +265,9 @@ export default {
         this.listLoading = false
       })
     },
- 
-    
-    
+
+
+
 
 
     sortChange({ prop, order }) {
@@ -291,7 +284,7 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
- 
+
     moreQueries() {
       this.visible = true
     },
@@ -332,8 +325,8 @@ export default {
       this.initData()
 
     },
- 
-  
+
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -353,14 +346,14 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-      
+
     },
 
 
     search() {
       this.dataFormSubmit()
     },
-  
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
@@ -403,16 +396,16 @@ export default {
 
       this.search()
     },
- 
 
-  
+
+
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype)
       })
     },
-  
+
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
@@ -423,7 +416,7 @@ export default {
         // }, 600);
       }
     },
- 
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -445,7 +438,7 @@ export default {
         this.$refs.Form.init(id, btnType)
       })
     },
-   
+
   }
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle()" />
+          <topOpts @add="addOrUpdateHandle('','','add')" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
@@ -160,13 +160,13 @@ export default {
 
       this.initData();
     },
-    addOrUpdateHandle(id, parentId) {
-      this.addOrUpdateDep(id, parentId);
+    addOrUpdateHandle(id, parentId,type) {
+      this.addOrUpdateDep(id, parentId,type);
     },
-    addOrUpdateDep(id, parentId) {
+    addOrUpdateDep(id, parentId,type) {
       this.depFormVisible = true;
       this.$nextTick(() => {
-        this.$refs.depForm.init(id, parentId);
+        this.$refs.depForm.init(id, parentId,type);
       });
     },
     closeDepForm(isRefresh) {

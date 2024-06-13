@@ -5,12 +5,12 @@
       label-position="top" label-width="120px">
       <el-form-item label="上级分类" prop="parentName">
       
-        <ComSelect-list :isdisabled="false" v-model="dataForm.parentName" placeholder="请选择上级分类" auth
+        <ComSelect-list :isdisabled="dataForm.id" v-model="dataForm.parentName" placeholder="请选择上级分类" auth
           @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
           :paramsObj="{}" />
       </el-form-item>
       <el-form-item label="类别属性" prop="classAttribute" v-if="!dataForm.parentName">
-        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable style="width: 100%;">
+        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable style="width: 100%;" :disabled="dataForm.id">
           <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
             :value="item.value"></el-option>
         </el-select>
@@ -103,7 +103,8 @@ export default {
     }
   },
   methods: {
-    init(id, parentId) {
+    init(id, parentId,btntype) {
+      console.log(btntype);
       this.visible = true
       this.dataForm.id = id || ''
       this.dataForm.parentId = parentId || '-1'

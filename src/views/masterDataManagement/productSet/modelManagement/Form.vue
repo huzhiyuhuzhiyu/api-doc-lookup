@@ -6,57 +6,50 @@
         <template>
 
           <el-col :span="12">
-            <el-form-item label="型号" prop="code" ref="code">
-              <el-input v-model="dataForm.code" placeholder="请输入型号" clearable :style='{ "width": "100%" }'
+            <el-form-item label="型号" prop="model" ref="model">
+              <el-input v-model="dataForm.model" placeholder="请输入型号" clearable :style='{ "width": "100%" }' :disabled="btnType=='add'?false:true"
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="内圈" prop="name" ref="name">
-              <el-input v-model="dataForm.name" placeholder="请输入内圈" clearable :style='{ "width": "100%" }'
-                maxlength="20"></el-input>
+            <el-form-item label="内圈" prop="innerCircleId" ref="innerCircleId">
+              <el-input readonly placeholder="请选择产品" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.innerCircleId" @focus="openProductDialog"></el-input>
+                      <ComSelect-page  ref="productRef" :searchList="ProductTableSearchList"  
+              v-model="dataForm.innerCircleId" placeholder="请选择产品" auth @change="onOrganizeChangeThree" :title="'选择产品'"
+              :listMethod="getProductList" :requestObj="requestObj" :methodArr="ProductMethodArr"
+              :listRequestObj="ProductListRequestObj" :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="属性类型" prop="type" ref="type">
-              <el-select v-model="dataForm.type" placeholder="请选择属性类型">
-                <el-option v-for="item in typeOptions" :key="item.type" :label="item.name"
-                  :value="item.type"></el-option>
-              </el-select>
+            <el-form-item label="外圈" prop="outerCircleId" ref="outerCircleId">
+              <el-input readonly placeholder="请选择产品" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.outerCircleId" @focus="openProductDialog"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="!addButtonFlag">
-            <el-form-item label-width="0">
-              <el-table :data="dataFormTwo" size='mini' height="200" id="table">
-                <el-table-column type="index" width="60" label="序号" align="center" />
-                <el-table-column prop="itemKey" label="请选择项名称">
-                  <template slot-scope="{row}">
-                    <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                      <el-form-item prop="itemKey" ref="itemKey">
-                        <el-input v-model="row.itemKey" placeholder="请输入选择项名称" clearable maxlength="20"></el-input>
-                      </el-form-item>
-                    </el-form>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="itemVal" label="请选择项值">
-                  <template slot-scope="{row}">
-                    <el-form :ref="`tableForm_2_${row.index}`" :model="row" :rules="rulesTwo">
-                      <el-form-item prop="itemVal" ref="itemVal">
-                        <el-input v-model="row.itemVal" placeholder="请输入选择项值" clearable maxlength="20"></el-input>
-                      </el-form-item>
-                    </el-form>
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作" width="60">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                      @click="delequipment_process_relList(scope.$index)">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-              <div class="table-actions" @click="addequipment_process_relList()">
-                <el-button type="text" icon="el-icon-plus">添加</el-button>
-              </div>
+          <el-col :span="12">
+            <el-form-item label="钢球型号" prop="steelBallId" ref="steelBallId">
+              <el-input readonly placeholder="请选择产品" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.steelBallId" @focus="openProductDialog"></el-input>
+            </el-form-item>
+          </el-col>
+          
+          <el-col :span="12">
+            <el-form-item label="钢球用量" prop="steelBallNum" ref="steelBallNum">
+              <el-input  placeholder="请输入钢球用量" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.steelBallNum" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="油脂用量" prop="oilNum" ref="oilNum">
+              <el-input  placeholder="请输入油脂用量" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.oilNum" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="保持架用量" prop="holderNum" ref="holderNum">
+              <el-input  placeholder="请输入保持架用量" :disabled="btnType == 'look' ? true : false"
+                      v-model="dataForm.holderNum" ></el-input>
             </el-form-item>
           </el-col>
         </template>
@@ -68,12 +61,64 @@
     </span>
   </el-dialog>
 </template>
-<script>
-import { updateattribute, addattribute, detailattribute, checkAttributeCode } from '@/api/basicData/materialSettings'
-
+<script> 
+import {
+  updataBimProductsModelCheck,
+  getbimProductsModelInfo,
+  updataBimProductsModel,
+  delBimProductsModel,
+  getbimProductsModelList,
+  addBimProductsModel
+} from "@/api/masterDataManagement/index";
+import {
+  getcategoryTree,
+} from "@/api/basicData/materialSettings";
 export default {
   data() {
     return {
+      ProductTableSearchList: [
+        { prop: "code", label: "产品编码", type: 'input', },
+        { prop: "name", label: "产品名称", type: 'input', },
+        { prop: "drawingNo", label: "产品图号", type: 'input' }
+      ], // 产品选择弹出框搜索条件
+      ProductMethodArr: [
+      { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
+      ],
+      ProductListRequestObj: {
+        classAttribute: "",
+        classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        productSource: 'purchase',
+        productStatus: "enable",
+        pageNum: 1,
+        pageSize: 20,
+      },
+      ProductTableItems: [
+        { prop: 'code', label: '产品编码', fixed: 'left' },
+        { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'drawingNo', label: '产品图号', minWidth: 0 },
+        { prop: 'mainUnit', label: '主单位', minWidth: 0 },
+        { prop: 'productType', label: '产品类别', minWidth: 0 },
+        { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
+      ],
+      requestObj: {
+        type: "",
+        orderItems: [{
+          asc: false,
+          column: 'createTime'
+        }],
+        pageNum: 1,
+
+      },
       dialogTitle: '',
       visible: false,
       loading: false,
@@ -82,36 +127,28 @@ export default {
       parentData: [],
       dataForm: {
         id: "",
-        attributeItemName: "", // 属性选择项名称
-        attributeItemVal: "", // 属性选择项值
-        businessCode: "product", // 业务编码 - product（产品）
-        code: "",
-        name: "",
-        type: ""
+        steelBallNum:"",
+        steelBallId:"",
+        outerCircleId:"",
+        oilNum:"",
+        model:"",
+        innerCircleId:"",
+        holderNum:"",
       },
-      autoCode: undefined,
       dataFormTwo: [],
       dataFormTwoTemp: [],
       rules: {
-        businessCode: [{
+        model: [{
           required: true,
-          message: '请输入业务名称',
+          message: '请输入型号',
           trigger: ['blur']
-        }],
-        code: [{
-          required: true,
-          message: '请输入属性编码',
-          trigger: ['blur']
-        }, {
-          validator: this.formValidate('enCode'),
-          trigger: 'blur'
-        }, {
+        },{
           validator: (rule, value, callback) => {
             // 没有value不进行此校验
             if (!value) { callback() }
-            else if (this.dataForm.code === this.autoCode) { callback() }
+            else if (this.dataForm.model === this.autoModel) { callback() }
             else {
-              checkAttributeCode({ code: this.dataForm.code, businessCode: this.dataForm.businessCode }).then((res) => {
+              updataBimProductsModelCheck(this.dataForm.model).then((res) => {
                 if (!res.data) { callback() }
                 else { callback(new Error('当前属性编码已存在')) }
               }).catch((err) => { callback(new Error(" ")) })
@@ -119,63 +156,64 @@ export default {
           },
           trigger: 'blur'
         }],
-        name: [{
+        innerCircleId: [{
           required: true,
-          message: '请输入属性名称',
+          message: '请选择内圈',
+          trigger: ['blur']
+        }, ],
+        outerCircleId: [{
+          required: true,
+          message: '请选择外圈',
           trigger: ['blur']
         }],
-        type: [{
+        steelBallId: [{
           required: true,
-          message: '请选择属性类型',
+          message: '请选择钢球型号',
           trigger: ['blur']
-        }]
+        }],
+        steelBallNum: [{
+          required: true,
+          message: '请输入钢球用量',
+          trigger: ['blur']
+        },{
+          validator:this.formValidate('number'),
+          trigger: ['blur']
+        }],
+        oilNum: [{
+          required: true,
+          message: '请输入油脂用量',
+          trigger: ['blur']
+        },{
+          validator:this.formValidate('number'),
+          trigger: ['blur']
+        }],
+        holderNum: [{
+          required: true,
+          message: '请输入保持架用量',
+          trigger: ['blur']
+        },{
+          validator:this.formValidate('number'),
+          trigger: ['blur']
+        }],
       },
-      rulesTwo: {
-        itemKey: [{
-          required: true,
-          message: '请输入选择项名称',
-          trigger: ['blur']
-        }],
-        itemVal: [{
-          required: true,
-          message: '请输入选择项值',
-          trigger: ['change']
-        }],
-      },
-      formItems: [
-        { ref: 'businessCode', message: '请输入业务名称' },
-        { ref: 'code', message: '请输入属性编码' },
-        { ref: 'name', message: '请输入属性名称' },
-        { ref: 'type', message: '请选择属性类型' },
-      ],
-      typeOptions: [{
-        name: '文本',
-        type: 'text'
-      }, {
-        name: '下拉选',
-        type: 'select'
-      }, {
-        name: '复选项',
-        type: 'multiple'
-      }]
+      
+    
+      autoModel:"",
+      btnType:"",
     }
   },
-  watch: {
-    dataForm: {
-      handler: function (val) {
-        if (val.type === "text" || val.type === "") {
-          this.addButtonFlag = true
-          this.dataFormTwoTemp = this.dataFormTwo
-          this.dataFormTwo = []
-        } else {
-          this.addButtonFlag = false
-          this.dataFormTwoTemp.length ? this.dataFormTwo = this.dataFormTwoTemp : ''
-        }
-      },
-      deep: true
-    },
-  },
+ 
   methods: {
+    
+
+
+
+
+
+
+
+
+
     clearData() {
       this.dataForm = {
         id: "",
@@ -188,14 +226,20 @@ export default {
       }
       this.dataFormTwo = [];
     },
-    init(id, parentData) {
-      this.parentData = parentData
+    init(id, type) {
+      this.btnType = type
       this.dataForm.id = id ? id : ""
-      this.dialogTitle = id ? '编辑属性' : '新增属性'
+      this.dialogTitle = id ? '修改型号' : '新增型号'
       this.visible = true;
-      this.autoCode = undefined
+      this.autoModel = undefined
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields();
+        if(this.btnType=='edit'){
+          getbimProductsModelInfo(this.dataForm.id).then(res=>{
+            console.log("详情",res);
+          })
+        }
+        return
         if (this.dialogTitle === "新增属性") { this.clearData() }
         else {
           this.loading = true
@@ -301,38 +345,9 @@ export default {
 
     },
 
-    request() {
-      let requestMethod = this.dialogTitle === "新增属性" ? addattribute : updateattribute
-      let successTip = this.dialogTitle === "新增属性" ? "新增" : "修改"
-      requestMethod(this.dataForm).then(res => {
-        this.$message({
-          message: successTip + '成功',
-          type: 'success',
-          duration: 1000,
-          onClose: () => {
-            this.visible = false
-            this.btnLoading = false
-            this.$emit('refresh', true)
-          }
-        })
-      }).catch(() => {
-        this.btnLoading = false
-      })
-    },
-    // 添加项
-    addequipment_process_relList() {
-      let ind = this.dataFormTwo.length
-      let item = {
-        index: ind,
-        ratio: "",
-        targetUnitCode: ""
-      }
-      this.dataFormTwo.push(item)
-    },
-    // 删除项
-    delequipment_process_relList(index) {
-      this.dataFormTwo.splice(index, 1);
-    }
+  
+    
+    
   },
 }
 </script>

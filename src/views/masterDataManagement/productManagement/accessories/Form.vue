@@ -71,9 +71,9 @@ export default {
               }else{
                 this.dataForm['productCategoryId'] = ''
                 this.dataForm['productCategoryName'] = ''
+                tc.dataFormatting = (res) => res.data[0].childrenList
               }
             })
-            tc.dataFormatting = (res) => res.data[0].childrenList
             tc.change = (val, data) => {
               // dom更新后重新校验此元素
               this.$nextTick(() => { this.$refs['dataForm'][0].$children[0].validateField('productCategoryName') })

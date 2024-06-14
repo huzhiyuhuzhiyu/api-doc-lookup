@@ -150,6 +150,7 @@
 <script>
 
 export default {
+  name: "FormItem",
   data() {
     return {}
   },

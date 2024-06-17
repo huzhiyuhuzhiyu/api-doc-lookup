@@ -205,6 +205,7 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 export default {
   components: { Form, ExportForm },
+  name:'finished_product',
   data() {
     return {
       exportFormVisible: false,

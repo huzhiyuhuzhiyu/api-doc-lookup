@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-13 16:55:22
+ * @LastEditTime: 2024-06-17 11:04:54
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\accessories\params.js
  * @Description: 成品的表单字段
  */
@@ -14,8 +14,8 @@ export default () => [
     tabName: "基本信息",
     tabContent: [
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }] },
-      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], itemReadOnly: true },
-      { prop: "drawingNo", label: "规格型号", value: "", type: "input", maxlength: "1000" },
+      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }],render:true},
+      { prop: "drawingNo", label: "规格型号", value: "", type: "input", maxlength: "1000",itemDisabled: true},
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, itemRules: [{ required: true, trigger: "blur" }], },
       { prop: "mainUnit", label: "主单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },
       { prop: "deputyUnit", label: "副单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },
@@ -27,16 +27,16 @@ export default () => [
       //  一下全部都是 custom，组件选择
       { prop: "brand", label: "品牌", value: "",typeCode:'pa011', type: 'custom', customComponent: 'ComSelect-list',},
       // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
-      { prop: "model", label: "型号", value: "", type: 'custom', customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }] },
-      { prop: "sealingCoverStructure", label: "密封盖-结构",typeCode:'pa012', value: "", type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }] },
+      { prop: "model", label: "型号", value: "", type: 'custom', customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }] ,itemDisabled: false},
+      { prop: "sealingCoverStructure", label: "密封盖-结构",typeCode:'pa012', value: "", type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }] ,itemDisabled: false},
       { prop: "sealingCoverTyping", label: "密封盖-打字", value: "", type: "custom",customComponent: 'ComSelect-list', typeCode:'pa007', },
-      { prop: "structureType", label: "结构类型", value: "",typeCode:'pa013', type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }]  },
-      { prop: "clearance", label: "游隙", value: "", type: "custom",typeCode:'pa001', customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }]  },
-      { prop: "steelBallManufacturer", label: "钢球厂家", value: "",type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }]  },
-      { prop: "oil", label: "油脂", value: "",typeCode:'pa002',type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }]  },
+      { prop: "structureType", label: "结构类型", value: "",typeCode:'pa013', type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }],itemDisabled: false  },
+      { prop: "clearance", label: "游隙", value: "", type: "custom",typeCode:'pa001', customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }] ,itemDisabled: false },
+      { prop: "steelBallManufacturer", label: "钢球厂家", value: "",type: "custom",customComponent: 'ComSelect-page', itemRules: [{ required: true, trigger: "change" }] ,itemDisabled: false },
+      { prop: "oil", label: "油脂", value: "",typeCode:'pa002',type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }],itemDisabled: false  },
       { prop: "oilQuantity", label: "油脂量", value: "",typeCode:'pa003', type: "custom",customComponent: 'ComSelect-list' },
-      { prop: "noise", label: "噪音", value: "",typeCode:'pa014', type: "custom",customComponent: 'ComSelect-list',},
-      { prop: "holder", label: "保持架", value: "",typeCode:'pa004', type: "custom",customComponent: 'ComSelect-list',},
+      { prop: "noise", label: "噪音", value: "",typeCode:'pa014', type: "custom",customComponent: 'ComSelect-list',itemRules: [{ required: true, trigger: "change" }],itemDisabled: false },
+      { prop: "holder", label: "保持架", value: "",typeCode:'pa004', type: "custom",customComponent: 'ComSelect-list', itemRules: [{ required: true, trigger: "change" }],itemDisabled: false },
       { prop: "vibrationLevel", label: "振动等级", value: "", type: "custom",customComponent: 'ComSelect-list',typeCode:'pa005' },
       { prop: "accuracyLevel", label: "精度等级", value: "", type: "custom",customComponent: 'ComSelect-list', typeCode:'pa006'},
       { prop: "colour", label: "颜色", value: "",type: "custom",customComponent: 'ComSelect-list',typeCode:'pa010' },

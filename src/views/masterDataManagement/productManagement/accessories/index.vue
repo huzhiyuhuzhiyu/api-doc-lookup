@@ -190,6 +190,7 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 export default {
   components: { Form , ExportForm},
+  name:'accessories',
   data() {
     return {
       exportFormVisible: false,

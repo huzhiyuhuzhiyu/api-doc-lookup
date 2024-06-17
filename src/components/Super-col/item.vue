@@ -29,7 +29,7 @@
         style="width:100%" :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         :filterable="item.filterable || false" reserve-keyword :remote-method="item.remoteMethod || (() => { })"
         :remote="item.remote || false" @input="item.hasOwnProperty('input') ? item.input($event) : ''"
-        @change="item.hasOwnProperty('change') ? item.change($event) : ''">
+        @change="item.hasOwnProperty('change') ? item.change($event,item) : ''">
         <el-option v-for="(o, index) in rowOptions" :key="o.label + index" :label="o.label" :value="o.value"
           :disabled="o.disabled">
         </el-option>
@@ -150,6 +150,7 @@
 <script>
 
 export default {
+  name: "SuperFormItem",
   data() {
     return {}
   },

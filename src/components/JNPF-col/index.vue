@@ -28,7 +28,7 @@
   <el-form label-position="top" :model="value" v-bind="tabContent" ref="main">
     <el-row :gutter="30" class="custom-row">
 
-      <FormItem v-for="item in tabContent" :key="item.prop" :item="item" v-bind="item" :value="value[item.prop]"
+      <FormItem v-for="item in tabContent" :key="item.prop+item.label" :item="item" v-bind="item" :value="value[item.prop]"
         @input="handleInput($event, item.prop)" :ref="item.prop" :openMode="realOpenMode" />
 
       <div style="color:#aaa" v-if="tabContent.length === 0" :style="{ 'textAlign': 'center', 'padding': '10%' }">
@@ -80,7 +80,7 @@ export default {
     handleInput(val, key) {
       this.$emit('input', { ...this.value, [key]: val });
     },
-    setDefaultValue() {
+    async setDefaultValue() {
       const formData = { ...this.value };
       this.tabContent.forEach(item => {
         const { prop, value } = item;

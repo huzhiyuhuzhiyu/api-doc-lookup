@@ -151,6 +151,7 @@ export default {
     scanTip: 'APP Scan code login',
     accountTip: 'Please enter the account number',
     passwordTip: 'Please enter your password',
+    busCodeTip: 'Please enter the company code',
     codeTip: 'Please enter your verification code',
     changeCode: 'Click to switch verification code',
     mobile: 'Please enter mobile number',

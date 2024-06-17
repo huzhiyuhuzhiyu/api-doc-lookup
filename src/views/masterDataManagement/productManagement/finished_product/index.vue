@@ -21,7 +21,7 @@
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
             <i
               :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-            <span class="text" :title="data.name">{{ `${data.fullCode} - ${data.name}` }}</span>
+            <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
@@ -62,7 +62,9 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addOrUpdateHandle()" />
+          <topOpts @add="addOrUpdateHandle()">
+            <el-button :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+          </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -81,7 +83,7 @@
           <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
 
-          <el-table-column prop="productCategoryIdText" label="产品分类" width="120"  />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
           <el-table-column prop="productSource" label="产品来源" width="120" >
             <template slot-scope="{row}">
@@ -191,18 +193,22 @@
         </el-button>
       </span>
     </el-dialog>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
-
-import { getProductList, deleteProductData } from '@/api/basicData/materialFiles'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
+import { getProductList, deleteProduct } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 export default {
-  components: { Form },
+  components: { Form, ExportForm },
+  name:'finished_product',
   data() {
     return {
+      exportFormVisible: false,
       title: "更多查询",
       background: true,//分页器背景颜色
       visible: false,
@@ -229,7 +235,8 @@ export default {
         productCategoryId: "", // 类型id
         productStatus: "", // 产品状态
         customerQueryFields: [],
-        createTimeArr:[]
+        createTimeArr:[],
+         classAttribute: "finish_product"
       },
       listQuery: {},
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
@@ -250,6 +257,34 @@ export default {
     this.initData()
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) { 
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        } 
+        let _data = {
+          ...this.listQuery,
+          exportType: '1200',
+          exportName: '成品信息',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
     // 展开或折叠全部
     toggleExpand(expands) {
       this.refreshTree = false
@@ -267,17 +302,11 @@ export default {
     },
     // 获取指定树状列表
     getcategoryTree() {
-      function getQueryString(name) {
-        const url_string = location.href;
-        const url = new URL(url_string);
-        return url.searchParams.get(name) || void (0);
-      }
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      this.listQuery.productCategoryCode = getQueryString('productCategoryCode')
-      getcategoryTree({ classAttribute: "material", code: getQueryString('productCategoryCode') }).then(res => {
-        this.treeData = res.data.length ? res.data[0].childrenList : []
+      getcategoryTree({ classAttribute: "finish_product" }).then(res => {
+        this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false
           this.initData()
@@ -345,7 +374,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteProductData(id).then(res => {
+        deleteProduct(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

@@ -28,7 +28,7 @@
 
 <script>
 import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
-
+import { getBimBusinessInfo } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 
 import tabs from './params'
@@ -51,6 +51,7 @@ export default {
       dataForm: {
         classAttribute: "raw_material",
       },
+      businessType:'', //  参数设置  自动  还是 手输
     }
   },
   created() {
@@ -125,6 +126,13 @@ export default {
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
+      getBimBusinessInfo('309228585019769286').then(res=>{
+        this.businessType = res.data.configValue1
+        if (this.businessType === '1'){
+          let target = this.tabs[0].tabContent.find(tc => tc.prop === 'code')
+          target.render = false
+        }
+      })
       if (!!id) {
         this.title = btnType ? '查看原材料档案' : '编辑原材料档案'
         // 获取详情

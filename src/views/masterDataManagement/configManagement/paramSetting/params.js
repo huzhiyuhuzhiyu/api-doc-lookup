@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger '1'9'0'9446527@qq.com
  * @Date: 2'0'24-'0'6-'0'7 '0'8:32:45
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-14 10:46:05
+ * @LastEditTime: 2024-06-17 11:41:31
  * @FilePath: \os-web-zgt4.'0'\src\views\configManagement\paramSetting\params.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro'1'/koro'1'FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,9 +15,9 @@ export default () => [
     tabContent: [
       {
         row: [
-          { prop: "bm_cp_ycl", clearable: false, label: "成品产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
+          { prop: "bm_cp_cp", clearable: false, label: "成品产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
           { prop: "bm_cp_bcp", clearable: false, label: "半成品产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
-          { prop: "bm_cp_cp", clearable: false, label: "原材料产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
+          { prop: "bm_cp_ycl", clearable: false, label: "原材料产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
           { prop: "bm_cp_fl", clearable: false, label: "辅料产品编码", sm: 6,   value: '0', type: 'select', options: [{ label: "手动输入", value: '0' }, { label: "默认生成", value: '1' }], itemRules: [{ required: true, trigger: "blur" }],change:undefined },
         ]
       },

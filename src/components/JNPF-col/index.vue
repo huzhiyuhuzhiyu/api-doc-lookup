@@ -80,7 +80,7 @@ export default {
     handleInput(val, key) {
       this.$emit('input', { ...this.value, [key]: val });
     },
-    setDefaultValue() {
+    async setDefaultValue() {
       const formData = { ...this.value };
       this.tabContent.forEach(item => {
         const { prop, value } = item;

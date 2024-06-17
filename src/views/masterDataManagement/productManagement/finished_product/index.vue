@@ -127,7 +127,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="btnType(scope.row.id, true)">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -362,6 +362,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.initData()
     },
 
     addOrUpdateHandle(id,btnType) {

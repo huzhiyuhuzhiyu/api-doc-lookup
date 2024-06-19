@@ -1,5 +1,5 @@
 <template>
-  <div class="JNPF-common-layout" :element-loading-text="loadingText">
+  <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left">
       <div class="JNPF-common-title">
         <h2>产品分类</h2>
@@ -63,11 +63,9 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts @add="addOrUpdateHandle()">
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button>
             <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
-              @click="exportForm">导出</el-button>
+            <el-button :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -87,37 +85,22 @@
           <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
 
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
-          <el-table-column prop="productSource" label="产品来源" width="120">
+          <el-table-column prop="productSource" label="产品来源" width="120" >
             <template slot-scope="{row}">
               <template v-if="row.productSource == 'produce'">自制</template>
               <template v-else-if="row.productSource == 'purchase'">采购</template>
               <template v-else-if="row.productSource == 'out'">外协</template>
             </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" fixed="right" align="center">
+          <el-table-column prop="productStatus" label="产品状态" width="120"  fixed="right" align="center">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
-            </template>
-          </el-table-column>
+              </template>
+              </el-table-column>
           <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="model" label="型号" width="120" />
-          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
-          <el-table-column prop="structureType" label="结构类型" width="120" />
-          <el-table-column prop="clearance" label="游隙" width="120" />
-          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-          <el-table-column prop="oil" label="油脂" width="120" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-          <el-table-column prop="noise" label="噪音" width="120" />
-          <el-table-column prop="holder" label="保持架" width="120" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" />
-          <el-table-column prop="colour" label="颜色" width="120" />
-          <el-table-column prop="aperture" label="孔径" width="120" />
-          <el-table-column prop="remark" label="备注" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -144,8 +127,7 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm"  @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId"/>
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
@@ -185,7 +167,7 @@
             <el-form-item label="创建时间">
               <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable>
+                end-placeholder="请选择创建结束时间" clearable >
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -199,8 +181,8 @@
       </span>
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+     <!-- 导入产品 -->
+     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
   </div>
 </template>
@@ -208,47 +190,60 @@
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct , uploadCpProductData } from '@/api/masterDataManagement/productManage'
+import { getProductList, deleteProduct,uploadProductData } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
-import aiForm from './aiForm'
 import { mapState } from 'vuex'
 export default {
-  components: { Form, ExportForm ,aiForm},
-  name: 'finished_product',
+  components: { Form , ExportForm},
+  name:'productCom',
+  props:{
+    initListQuery:{
+      type:Object,
+      default(){
+        return {
+          code: "",
+          name: "",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          pageNum: 1,
+          pageSize: 20,
+          drawingNo: "", // 图号
+          productSource: "", // 产品来源
+          startAndEndTime: [], // 创建时间
+          productCategoryId: "", // 类型id
+          productStatus: "", // 产品状态
+          customerQueryFields: [],
+          createTimeArr:[],
+          classAttribute: "raw_material"
+        }
+      }
+    },
+    productName:{
+      type:String,
+      default:""
+    },
+    busSetId:{
+      type:String,
+      default:""
+    }
+  },
   data() {
     return {
       exportFormVisible: false,
       title: "更多查询",
       background: true,//分页器背景颜色
       visible: false,
-      aiformVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
       loadingText: false,
-      initListQuery: {
-        code: "",
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-        drawingNo: "", // 图号
-        productSource: "", // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: "", // 类型id
-        productStatus: "", // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: "finish_product"
-      },
       listQuery: {},
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
       productSourceList: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], // 产品来源
@@ -278,17 +273,17 @@ export default {
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
-    download(data) {
+    download(data) { 
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
+        } 
         let _data = {
           ...this.listQuery,
           exportType: '1200',
-          exportName: '成品信息',
+          exportName: this.productName + '信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }
@@ -319,7 +314,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: "finish_product" }).then(res => {
+      getcategoryTree({ classAttribute: "raw_material" }).then(res => {
         this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false
@@ -333,7 +328,6 @@ export default {
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
-      this.listQuery.productCategoryCode = data.code
       this.search()
     },
     moreQueries() {
@@ -348,8 +342,8 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.aiformVisible = false
       if (isRefresh) {
+        this.getcategoryTree()
         this.initData()
       }
     },
@@ -377,14 +371,13 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.initData()
     },
 
-    addOrUpdateHandle(id, btnType) {
+    addOrUpdateHandle(id,btnType) {
       this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
+        this.$nextTick(() => {
+          this.$refs.Form.init(id,btnType)
+        })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -400,8 +393,8 @@ export default {
         })
       }).catch(() => { })
     },
-    // 导入
-    importForm() {
+     // 导入
+     importForm() {
       if (!this.listQuery.productCategoryId){
         this.$message.warning('请先选择产品分类')
       }else{
@@ -412,7 +405,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/产品导入模板.xlsx')
       a.click()
     },
     // 上传产品
@@ -424,7 +417,7 @@ export default {
       formData.append("productCategoryId", this.listQuery.productCategoryId)
       formData.append("classAttribute", this.listQuery.classAttribute)
       //调用上传文件接口
-      uploadCpProductData(formData).then(res => {
+      uploadProductData(formData).then(res => {
         if (!res.data){
           this.$message.success(`导入成功`)
         }else{
@@ -456,7 +449,7 @@ export default {
                 style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
               },
             [
-                h('p',{style:'font-size:14px;'},'导入成功，存在成品产品档案错误！'),
+                h('p',{style:'font-size:14px;'},`导入成功，存在${this.productName}产品档案错误！`),
                 h('el-button',{
                   props:{
                     type:'text',
@@ -479,13 +472,6 @@ export default {
             ),
           })
       return
-    },
-    // 智能新建
-    aiAdd(){
-      this.aiformVisible = true
-      this.$nextTick(()=>{
-        this.$refs.aiForm.init()
-      })
     },
   }
 }

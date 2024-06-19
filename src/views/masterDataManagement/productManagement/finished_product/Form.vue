@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { detailProduct, addProduct, updateProductData, checkCodeExist, checkModelExist, } from "@/api/masterDataManagement/productManage"
+import { detailProduct, cpAddProduct, updateProductData, checkCodeExist, checkModelExist, } from "@/api/masterDataManagement/productManage"
 import { getCooperativeData, getcategoryTree as getcategoryCoop ,getBimBusinessInfo } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from "@/api/masterDataManagement/index";
@@ -319,10 +319,10 @@ export default {
       // 判断条件后发送请求
       if (submitFlag) {
         this.dataForm.drawingNo = this.dataForm.model+this.dataForm.sealingCoverStructure+this.dataForm.structureType+'.'+this.dataForm.clearance+this.dataForm.steelBallManufacturer+this.dataForm.oil+this.dataForm.noise+this.dataForm.holder
-        const formMethod = this.dataForm.id ? updateProductData : addProduct
+        const formMethod = this.dataForm.id ? updateProductData : cpAddProduct
         formMethod(this.dataForm).then(res => {
           let msg = res.msg
-          if (res.msg === 'Success') { msg = formMethod == addProduct ? "新建成功" : "修改成功" }
+          if (res.msg === 'Success') { msg = formMethod == cpAddProduct ? "新建成功" : "修改成功" }
           this.$message({
             message: msg,
             type: 'success',

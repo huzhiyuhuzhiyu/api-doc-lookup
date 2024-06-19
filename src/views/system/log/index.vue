@@ -277,7 +277,7 @@ export default {
     overflow: hidden;
     word-break: break-all;
   }
-  >>> .el-tabs__content {
+  ::v-deep .el-tabs__content {
     height: calc(100% - 40px);
     padding: 0;
     .el-tab-pane {

@@ -295,8 +295,10 @@ export default {
         if (valid) {
           this.btnLoading = true
           console.log(this.dataForm);
-          addBimProductsModel(this.dataForm).then(res=>{
-            this.$message.success("新增型号成功")
+          let formMethod = this.dataForm.id ? updataBimProductsModel : addBimProductsModel
+          formMethod(this.dataForm).then(res=>{
+            let msg = formMethod === updataBimProductsModel ? '编辑成功' : '新增成功'
+            this.$message.success(msg)
             this.visible = false
             this.btnLoading = false
             this.$emit('refresh', true)

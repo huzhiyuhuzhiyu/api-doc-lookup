@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
-        <el-page-header @back="goBack" :content="btnType ? '查看半成品档案' : title" />
+        <el-page-header @back="goBack" :content="btnType ? `查看${productName}档案` : title" />
         <div class="options" v-if="!btnType">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton')
           }}</el-button>
@@ -15,8 +15,7 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <template v-for="item in tabs">
-            <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"
-              v-if="item.tabName !== '胶管属性' ? true : dataForm.productType === 'pt003'">
+            <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode">
               <JNPF-Col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
             </el-tab-pane>
           </template>
@@ -30,8 +29,23 @@
 import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
 import { getBimBusinessInfo } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import tabs from '../raw_material/params'
+
+import tabs from './params'
 export default {
+  props:{
+    productName:{
+      type:String,
+      default:""
+    },
+    classAttribute:{
+       type:String,
+       default:"raw_material"
+    },
+    busSetId:{
+      type:String,
+      default:""
+    }
+  },
   data() {
     return {
       datafilelist: [],
@@ -48,7 +62,7 @@ export default {
       tempCodeRules: [],
       tempDrawingNoRules: [],
       dataForm: {
-        classAttribute: "semi_finished",
+        classAttribute: this.classAttribute,
       },
       businessType:'', //  参数设置  自动  还是 手输
     }
@@ -71,7 +85,7 @@ export default {
               this.dataForm['productCategoryId'] = data[0].id
               this.dataForm['productCategoryName'] = data[0].name
             }
-            tc.requestObj = { classAttribute: "semi_finished"}
+            tc.requestObj = { classAttribute: this.classAttribute}
             tc.dialogTitle = '选择产品分类'
           } else { console.warn(tc.prop + "不在判断条件内") }
         }
@@ -116,7 +130,7 @@ export default {
   },
   computed: {
     openMode() {
-      return this.title === '新建半成品档案' ? '新建' : this.title === '编辑半成品档案' ? '编辑' : '只读'
+      return this.title === `新建${this.productName}档案` ? '新建' : this.title === `编辑${this.productName}档案` ? '编辑' : '只读'
     }
   },
   methods: {
@@ -125,7 +139,7 @@ export default {
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
-      getBimBusinessInfo('371948346044055558').then(res=>{
+      getBimBusinessInfo(this.busSetId).then(res=>{
         this.businessType = res.data.configValue1
         if (this.businessType === '1'){
           let target = this.tabs[0].tabContent.find(tc => tc.prop === 'code')
@@ -133,7 +147,7 @@ export default {
         }
       })
       if (!!id) {
-        this.title = btnType ? '查看半成品档案' : '编辑半成品档案'
+        this.title = btnType ? `查看${this.productName}档案` : `编辑${this.productName}档案`
         // 获取详情
         detailProduct(id).then(res => {
           // 记录编码和图号，用于校验唯一性
@@ -145,7 +159,7 @@ export default {
           for (const key in detailObj) { this.dataForm[key] = detailObj[key] }
         })
       } else {
-        this.title = '新建半成品档案'
+        this.title = `新建${this.productName}档案`
       }
       this.formLoading = false
     },

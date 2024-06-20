@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-17 12:35:26
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-19 16:25:24
+ * @LastEditTime: 2024-06-20 11:25:38
  * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\Form.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -24,7 +24,7 @@
       </el-col>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+      <el-button @click="visibleDialog = false">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" @click="confirm" :loading="btnLoading">确 认</el-button>
     </span>
   </el-dialog>
@@ -74,7 +74,16 @@ export default {
       })
     },
     onPartnerChange(id,data){
-
+      if (!data.length) return
+      this.$nextTick(() => this.$refs['dataForm'].validateField('name'))
+      if (data){
+        this.dataForm.cooperativePartnerId = data[0].id
+        this.dataForm.name = data[0].name
+      }else{
+        this.dataForm.cooperativePartnerId = ''
+        this.dataForm.name = ''
+      }
+      console.log(data);
     },
     confirm() {
       this.btnLoading = true

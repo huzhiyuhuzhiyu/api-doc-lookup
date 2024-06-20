@@ -24,7 +24,7 @@
                       :type="dataForm.type" />
                   </el-form-item>
                 </el-col>
-                <el-col :sm="8" :xs="24">
+                <el-col :sm="8" :xs="24" v-if="businessType">
                   <el-form-item label="客户编码" prop="code">
                     <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
                       :disabled="btnType ? true : false" />
@@ -61,7 +61,7 @@
                       :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
-                <el-col :sm="8" :xs="24">
+                <!-- <el-col :sm="8" :xs="24">
                   <el-form-item label="所属部门" prop="departmentId">
                     <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
                       @change="onOrganizeChangeHandle" :currOrgId="dataForm.departmentId || '0'" />
@@ -76,11 +76,11 @@
                         :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="内勤人员" prop="internalStaffId"  ref="euqPeople">
-                    <user-select v-model="dataForm.internalStaffId" :disabled="salesFlag"  placeholder="请选择设备人员" @change="changePerple" clearable style="width: 100%;">
+                    <user-select v-model="dataForm.internalStaffId" :disabled="salesFlag"  placeholder="请选择内勤人员" @change="changePerple" clearable style="width: 100%;">
                     </user-select>
                   </el-form-item>
                 </el-col>
@@ -243,6 +243,21 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
+                </el-col>
+
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账开始日期" prop="reconciliationStartDate">
+                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                </el-col>
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账结束日期" prop="reconciliationEndDate">
+                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
                 </el-col>
 
                 <el-col :sm="8" :xs="24">
@@ -549,7 +564,7 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
   editPartner, addPartner
-  , getCooperativeInfo, getCounryData, checkCode
+  , getCooperativeInfo, getCounryData, checkCode , getBimBusinessInfo
 } from '@/api/basicData/index'
 import {
   getProvinceList,
@@ -658,7 +673,7 @@ export default {
         email: "",
         taxRate: "",
         paymentCycle: "",
-        salespersonId: "",
+        salespersonId: '',
         salespersonIdText: "",
         website: "",
         orderFreezeFlag: false,
@@ -666,8 +681,9 @@ export default {
         modeTransport: "",
         transportationTime: "",
         remark: "",
-        departmentId: "",
-        departmentIdText: ""
+        departmentId:'',
+        departmentIdText: "",
+        customerStatus:'private_sea',  // 私海
       },
       organizeIdTree: [],
       parentId: '',
@@ -678,17 +694,17 @@ export default {
       },
       dataRule: {
         internalStaffId: [
-          { required: true, message: '请选择人员', trigger: 'blur' },
+          { required: false, message: '请选择人员', trigger: 'blur' },
         ],
         // 编码、税号、名称、地区、国家、省、市、区、地址、联系人、电话和手机选填一项、付款方式、含税计价精度（默认2）、不含简况计价精度
         partnerCategoryIdText: [
-          { required: true, message: '所属分类不能为空', trigger: 'change' }
+          { required: false, message: '所属分类不能为空', trigger: 'change' }
         ],
         departmentId: [
-          { required: true, message: '所属部门不能为空', trigger: 'change' }
+          { required: false, message: '所属部门不能为空', trigger: 'change' }
         ],
         salespersonId: [
-          { required: true, message: '所属销售不能为空', trigger: 'change' }
+          { required: false, message: '所属销售不能为空', trigger: 'change' }
         ],
 
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
@@ -717,58 +733,61 @@ export default {
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
         regionCode: [
-          { required: true, message: '地区不能为空', trigger: 'change' }
+          { required: false, message: '地区不能为空', trigger: 'change' }
 
         ],
         country: [
-          { required: true, message: '国家不能为空', trigger: 'change' },
+          { required: false, message: '国家不能为空', trigger: 'change' },
 
         ],
         province: [
-          { required: true, message: '省份不能为空', trigger: 'change' }
+          { required: false, message: '省份不能为空', trigger: 'change' }
 
         ],
         city: [
-          { required: true, message: '城市不能为空', trigger: 'change' }
+          { required: false, message: '城市不能为空', trigger: 'change' }
 
         ],
         area: [
-          { required: true, message: '区不能为空', trigger: 'change' }
+          { required: false, message: '区不能为空', trigger: 'change' }
 
         ],
         address: [
-          { required: true, message: '请输入地址', trigger: 'blur' },
+          { required: false, message: '请输入地址', trigger: 'blur' },
 
         ],
         contacts: [
-          { required: true, message: '请输入联系人', trigger: 'blur' },
+          { required: false, message: '请输入联系人', trigger: 'blur' },
 
         ],
         taxRate: [
-          { required: true, message: '请输入税率', trigger: 'blur' },
+          { required: false, message: '请输入税率', trigger: 'blur' },
         ],
         includingTaxPrecision: [
-          { required: true, message: '请输入含税计价精度', trigger: 'blur' },
+          { required: false, message: '请输入含税计价精度', trigger: 'blur' },
 
         ],
         excludingTaxPrecision: [
-          { required: true, message: '请输入不含税计价精度', trigger: 'blur' },
+          { required: false, message: '请输入不含税计价精度', trigger: 'blur' },
         ],
         paymentMethod: [
-          { required: true, message: '请选择付款方式', trigger: 'change' },
+          { required: false, message: '请选择付款方式', trigger: 'change' },
         ],
         paymentCycle: [
-          { required: true, message: '请选择付款周期', trigger: 'change' },
+          { required: false, message: '请选择付款周期', trigger: 'change' },
         ]
 
       },
       salesList: [],
       organizeIdTrees: [],
       salesFlag: false,
+      businessType:'',
     }
   },
   created() {
     console.log(this.userInfo);
+    this.dataForm.salespersonId = this.userInfo.userId
+    this.dataForm.departmentId = this.userInfo.departmentId,
     this.getProvinceList()
     this.getDictionaryType()
   },
@@ -1142,6 +1161,9 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
+      getBimBusinessInfo('460918012862529542').then(res=>{
+        this.businessType = res.data.configValue1
+      })
       if (this.btnType) {
         this.salesFlag = true
         this.isdisabled = true

@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-19 15:09:11
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-19 15:55:32
+ * @LastEditTime: 2024-06-24 08:56:11
  * @FilePath: \os-web-zgt4.0\src\api\customerManagement\index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,6 +14,46 @@ export function getPartnerList(data) {
     url: '/api/erp/cooperative/partner/potential/list/condition',
     method: 'post',
     data
+  })
+}
+// 我的客户 新增
+export function addPartner(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/insert',
+    method: 'post',
+    data
+  })
+}
+// 我的客户 编辑
+export function updatePartner(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/modify',
+    method: 'post',
+    data
+  })
+}
+// 我的客户 详情
+export function detailPartner(id) {
+  return request({
+    url: `/api/erp/cooperative/partner/detail/${id}`,
+    method: 'get',
+    data
+  })
+}
+// 我的客户 详情
+export function checkPartner(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/check/code/exist?id=${data.id}&code=${data.code}&type=${data.type}`,
+    method: 'get',
+    data
+  })
+}
+
+// 我的客户 删除
+export function deletePartner(id) {
+  return request({
+    url: `/api/erp/cooperative/partner/remove/${id}`,
+    method: 'delete',
   })
 }
 // 我的联系人 列表

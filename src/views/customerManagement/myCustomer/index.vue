@@ -36,7 +36,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
-              <el-button type="text" icon="el-icon-download" @click="releaseFun('dataTable')">释放</el-button>
+              <el-button type="primary" icon="el-icon-bangzhu" @click="releaseFun('dataTable')">释放</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">

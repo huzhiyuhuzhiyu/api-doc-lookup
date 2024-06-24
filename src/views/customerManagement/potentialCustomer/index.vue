@@ -20,11 +20,9 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.name" @keyup.enter.native="search()"
-                  placeholder="请输入姓名" clearable />
+                <el-input v-model="orderForm.phone" @keyup.enter.native="search()" placeholder="请输入手机" clearable />
               </el-form-item>
             </el-col>
-          
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -40,7 +38,9 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="text" icon="el-icon-download" @click="releaseFun('dataTable')">释放</el-button>
+              <el-button type="primary" icon="iconfont icon-lingqu" @click="distributionFun()">分配</el-button>
+              <el-button type="text"  icon="el-icon-plus" @click="importFun()">导入</el-button>
+              <el-button type="text"icon="el-icon-download" @click="exportFun()">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -52,18 +52,30 @@
             @sort-change="sortChange" custom-column> 
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" />
-            <el-table-column prop="name" label="姓名"  />
-            <el-table-column prop="sex" label="性别"  />
-            <el-table-column prop="phone" label="电话" sortable="custom" />
-            <el-table-column prop="email" label="邮箱" sortable="custom" />
-            <el-table-column prop="address" label="地址"  />
-            <el-table-column prop="displayName" label="职务"  />
-            <el-table-column prop="departmentName" label="部门"  />
-            <el-table-column prop="hobby" label="爱好"  />
-            <el-table-column prop="remark" label="备注"  />
+            <el-table-column prop="lxr" label="联系人" sortable="custom" />
+            <el-table-column prop="tel" label="电话" sortable="custom" />
+            <el-table-column prop="phone" label="手机" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-     
+            <el-table-column label="操作" width="280" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,)">转为正式</el-button>
+                <el-button size="mini" type="text" @click="handleDel(scope.row.id)">写记录</el-button>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
@@ -93,25 +105,21 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="姓名">
-              <el-input v-model="orderForm.name" placeholder="请输入姓名" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="性别">
-              <el-input v-model="orderForm.sex" placeholder="请选择性别" clearable />
+            <el-form-item label="联系人">
+              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入联系人" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="电话">
-              <el-input v-model="orderForm.phone" placeholder="请输入电话" clearable />
+              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入电话" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="orderForm.email" placeholder="请输入邮箱机" clearable />
+            <el-form-item label="手机">
+              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入手机" clearable />
             </el-form-item>
           </el-col>
+          
          
           
         
@@ -268,8 +276,15 @@ export default {
         this.listLoading = false
       })
     },
- 
-    
+    distributionFun(){
+
+    },
+    exportFun(){
+
+    },
+    importFun(){
+
+    },
     
 
 
@@ -483,7 +498,7 @@ export default {
   padding-top: 2px;
   padding-bottom: 2px;
 }
-
+z
 .main {
   padding: 10px 30px 0;
 }

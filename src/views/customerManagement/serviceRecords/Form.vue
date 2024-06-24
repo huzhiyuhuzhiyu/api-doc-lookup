@@ -3,13 +3,13 @@
   <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" label-position="top" label-width="120px">
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请选择所属客户" readonly @focus="openDialog"
+      <el-form-item label="客户名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="请选择客户" readonly @focus="openDialog"
           :disabled="btnType == 'add' ? false : true">
         </el-input>
       </el-form-item>
-      <el-form-item label="编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" disabled />
+      <el-form-item label="客户编码" prop="code">
+        <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20" disabled />
 
       </el-form-item>
 

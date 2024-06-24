@@ -308,7 +308,7 @@ export default {
             this.capsTooltip = key && key.length === 1 && key >= 'A' && key <= 'Z'
         },
         getConfig(val) {
-            if (!this.loginForm.busCode) return
+            if (!this.loginForm.busCode || !this.loginForm.account) return
             if (this.isTenancy) {
                 if (this.loginForm.sys == '') return
                 this.loginForm.account1 = this.loginForm.busCode + '@' + (this.loginForm.account ? this.loginForm.account : 'admin')

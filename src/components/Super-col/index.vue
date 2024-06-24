@@ -29,7 +29,7 @@
     
     <el-row :gutter="30" class="custom-row" v-for="(row,index) in tabContent" :key="index">
 
-      <FormItem v-for="item in row.row" :key="item.prop" :item="item" v-bind="item" :value="value[item.prop]"
+      <FormItems v-for="item in row.row" :key="item.prop+item.label" :item="item" v-bind="item" :value="value[item.prop]"
         @input="handleInput($event, item.prop)" :ref="item.prop" :openMode="realOpenMode" />
 
       <div style="color:#aaa" v-if="row.row.length === 0" :style="{ 'textAlign': 'center', 'padding': '10%' }">
@@ -41,10 +41,10 @@
 </template>
 
 <script>
-import FormItem from "./item.vue"
+import FormItems from "./item.vue"
 export default {
-  components: { FormItem },
-  name: 'JNPF-col',
+  components: { FormItems },
+  name: 'Super-col',
   data() {
     return {}
   },

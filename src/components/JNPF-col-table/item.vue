@@ -20,9 +20,10 @@
         </el-input>
 
         <!-- 下拉框 -->
+         <!-- 远程搜索改为高阶函数 可增加自定义传参 -->
         <el-select v-else-if="item.type === 'select'" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
           style="width:100%" :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
-          :filterable="item.filterable || false" reserve-keyword :remote-method="item.remoteMethod || (() => { })"
+          :filterable="item.filterable || false" reserve-keyword :remote-method="(val)=>item.remoteMethod(val,item) || (() => { })"
           :remote="item.remote || false" @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''">
           <el-option v-for="(o, index) in rowOptions" :key="o.label + index" :label="o.label" :value="o.value"

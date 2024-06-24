@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-12 17:12:57
+ * @LastEditTime: 2024-06-17 12:33:47
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\raw_material\params.js
  * @Description: 半成品、原材料、辅料 表单配置项
  */
@@ -14,7 +14,7 @@ export default () => [
     tabName: "基本信息",
     tabContent: [
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }] },
-      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], },
+      { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }],render:true },
       { prop: "drawingNo", label: "规格型号", value: "", type: 'input', maxlength: 1000,itemRules: [{ required: true, trigger: "blur" },] },
       { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, },
       { prop: "mainUnit", label: "主单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },

@@ -24,7 +24,7 @@
                       :type="dataForm.type" />
                   </el-form-item>
                 </el-col>
-                <el-col :sm="8" :xs="24">
+                <el-col :sm="8" :xs="24" v-if="businessType">
                   <el-form-item label="客户编码" prop="code">
                     <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
                       :disabled="btnType ? true : false" />
@@ -61,7 +61,7 @@
                       :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
-                <el-col :sm="8" :xs="24">
+                <!-- <el-col :sm="8" :xs="24">
                   <el-form-item label="所属部门" prop="departmentId">
                     <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
                       @change="onOrganizeChangeHandle" :currOrgId="dataForm.departmentId || '0'" />
@@ -76,11 +76,11 @@
                         :value="item.id"></el-option>
                     </el-select>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
                 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="内勤人员" prop="internalStaffId"  ref="euqPeople">
-                    <user-select v-model="dataForm.internalStaffId" :disabled="salesFlag"  placeholder="请选择设备人员" @change="changePerple" clearable style="width: 100%;">
+                    <user-select v-model="dataForm.internalStaffId" :disabled="salesFlag"  placeholder="请选择内勤人员" @change="changePerple" clearable style="width: 100%;">
                     </user-select>
                   </el-form-item>
                 </el-col>
@@ -243,6 +243,21 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
+                </el-col>
+
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账开始日期" prop="reconciliationStartDate">
+                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                </el-col>
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账结束日期" prop="reconciliationEndDate">
+                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
                 </el-col>
 
                 <el-col :sm="8" :xs="24">
@@ -549,11 +564,12 @@ import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
   editPartner, addPartner
-  , getCooperativeInfo, getCounryData, checkCode
+  , getCooperativeInfo, getCounryData, checkCode , getBimBusinessInfo
 } from '@/api/basicData/index'
 import {
   getProvinceList,
 } from '@/api/system/province'
+import { mapGetters, mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -657,7 +673,7 @@ export default {
         email: "",
         taxRate: "",
         paymentCycle: "",
-        salespersonId: "",
+        salespersonId: '',
         salespersonIdText: "",
         website: "",
         orderFreezeFlag: false,
@@ -665,8 +681,9 @@ export default {
         modeTransport: "",
         transportationTime: "",
         remark: "",
-        departmentId: "",
-        departmentIdText: ""
+        departmentId:'',
+        departmentIdText: "",
+        customerStatus:'private_sea',  // 私海
       },
       organizeIdTree: [],
       parentId: '',
@@ -677,17 +694,17 @@ export default {
       },
       dataRule: {
         internalStaffId: [
-          { required: true, message: '请选择人员', trigger: 'blur' },
+          { required: false, message: '请选择人员', trigger: 'blur' },
         ],
         // 编码、税号、名称、地区、国家、省、市、区、地址、联系人、电话和手机选填一项、付款方式、含税计价精度（默认2）、不含简况计价精度
         partnerCategoryIdText: [
-          { required: true, message: '所属分类不能为空', trigger: 'change' }
+          { required: false, message: '所属分类不能为空', trigger: 'change' }
         ],
         departmentId: [
-          { required: true, message: '所属部门不能为空', trigger: 'change' }
+          { required: false, message: '所属部门不能为空', trigger: 'change' }
         ],
         salespersonId: [
-          { required: true, message: '所属销售不能为空', trigger: 'change' }
+          { required: false, message: '所属销售不能为空', trigger: 'change' }
         ],
 
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
@@ -695,10 +712,8 @@ export default {
           { required: true, message: '请输入编码', trigger: 'blur' },
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
-            validator: (rule, value, callback) => {
-              console.log(this.dataForm.id);
-              checkCode(value, this.dataForm.id, this.dataForm.type).then(res => {
-                console.log('res===>', res);
+            validator: (rule, value, callback) => { 
+              checkCode(value, this.dataForm.id, this.dataForm.type).then(res => { 
                 if (res.data) {
                   callback(new Error("编码重复"));
                 } else {
@@ -718,63 +733,66 @@ export default {
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
         regionCode: [
-          { required: true, message: '地区不能为空', trigger: 'change' }
+          { required: false, message: '地区不能为空', trigger: 'change' }
 
         ],
         country: [
-          { required: true, message: '国家不能为空', trigger: 'change' },
+          { required: false, message: '国家不能为空', trigger: 'change' },
 
         ],
         province: [
-          { required: true, message: '省份不能为空', trigger: 'change' }
+          { required: false, message: '省份不能为空', trigger: 'change' }
 
         ],
         city: [
-          { required: true, message: '城市不能为空', trigger: 'change' }
+          { required: false, message: '城市不能为空', trigger: 'change' }
 
         ],
         area: [
-          { required: true, message: '区不能为空', trigger: 'change' }
+          { required: false, message: '区不能为空', trigger: 'change' }
 
         ],
         address: [
-          { required: true, message: '请输入地址', trigger: 'blur' },
+          { required: false, message: '请输入地址', trigger: 'blur' },
 
         ],
         contacts: [
-          { required: true, message: '请输入联系人', trigger: 'blur' },
+          { required: false, message: '请输入联系人', trigger: 'blur' },
 
         ],
         taxRate: [
-          { required: true, message: '请输入税率', trigger: 'blur' },
+          { required: false, message: '请输入税率', trigger: 'blur' },
         ],
         includingTaxPrecision: [
-          { required: true, message: '请输入含税计价精度', trigger: 'blur' },
+          { required: false, message: '请输入含税计价精度', trigger: 'blur' },
 
         ],
         excludingTaxPrecision: [
-          { required: true, message: '请输入不含税计价精度', trigger: 'blur' },
+          { required: false, message: '请输入不含税计价精度', trigger: 'blur' },
         ],
         paymentMethod: [
-          { required: true, message: '请选择付款方式', trigger: 'change' },
+          { required: false, message: '请选择付款方式', trigger: 'change' },
         ],
         paymentCycle: [
-          { required: true, message: '请选择付款周期', trigger: 'change' },
+          { required: false, message: '请选择付款周期', trigger: 'change' },
         ]
 
       },
       salesList: [],
       organizeIdTrees: [],
       salesFlag: false,
+      businessType:'',
     }
   },
   created() {
+    console.log(this.userInfo);
+    this.dataForm.salespersonId = this.userInfo.userId
+    this.dataForm.departmentId = this.userInfo.departmentId,
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
-    changePerple(internalStaffId, data) {
-      // console.log(data);
+    changePerple(internalStaffId, data) { 
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')
       if (data) {
@@ -825,11 +843,9 @@ export default {
         callback();
       }
     },
-    changeCountry(e, index) {
-      console.log(e);
+    changeCountry(e, index) { 
       this.dataForm.country = e.code
-      if (this.dataForm.country != 'CN') {
-        console.log(this.deliveryAddressList, '收货地址');
+      if (this.dataForm.country != 'CN') { 
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -838,13 +854,11 @@ export default {
         this.dataForm.area = ''
       }
     },
-    hangleSelectSales(e, r) {
-      console.log("销售人员", e, r);
+    hangleSelectSales(e, r) { 
       this.dataForm.departmentId = r.parentId
       this.dataForm.departmentIdText = r.organize
     },
-    handleAddress(e) {
-      console.log(123, e);
+    handleAddress(e) { 
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -854,15 +868,13 @@ export default {
         })
       }
     },
-    selectsales(val) {
-      console.log(val);
+    selectsales(val) { 
       this.dataForm.salespersonId = val
       // this.dataForm.salespersonIdText = val
 
     },
     onOrganizeChangeHandle(val) {
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
-      console.log("val,val", val);
+      this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') }) 
       this.dataForm.salespersonIdText = ""
       this.dataForm.salespersonId = ""
       this.$forceUpdate()
@@ -870,20 +882,17 @@ export default {
       this.dataForm.departmentId = val[val.length - 1]
       this.salesFlag = false
 
-      getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
-        console.log("用户", res);
+      getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => { 
         if (res.data.length > 0) {
           res.data.forEach(item => {
             item.name = item.fullName.split('/')[0]
           });
-        }
-        console.log(this.salesList);
+        } 
         this.salesList = res.data
 
       })
     },
-    handleChange($event) {
-      console.log(123, $event);
+    handleChange($event) { 
       if ($event == 'domestic') {
         // 国内
         this.countryList = [{
@@ -912,8 +921,7 @@ export default {
           "pageNum": 1,
           "pageSize": -1
         }
-        getCounryData(obj).then(res => {
-          console.log("国家数据", res);
+        getCounryData(obj).then(res => { 
           this.countryList = res.data.records.filter((item) => {
             return item.name !== '中国'
           })
@@ -922,8 +930,7 @@ export default {
       }
     },
     // 切换table
-    handleClick(tab, event) {
-      console.log(tab.label, event);
+    handleClick(tab, event) { 
       if(tab.label=='收货信息'){
         // 国内
         this.countryList1 = [{
@@ -993,13 +1000,11 @@ export default {
 
     },
     // 联系人信息删除当前行
-    deltable(row, index) {
-      console.log("row", row, index);
+    deltable(row, index) { 
       this.contactsList.splice(row.$index, 1)
     },
     // 根据选择的省份获取相应的城市数据
-    changeProvince(item, row) {
-      console.log("item", item);
+    changeProvince(item, row) { 
 
       if (row) {
         row.area = ''
@@ -1012,8 +1017,7 @@ export default {
       this.cities = []
       this.area = []
 
-      getProvinceList(item.id).then(res => {
-        console.log(res);
+      getProvinceList(item.id).then(res => { 
         this.cities = res.data.list
       })
     },
@@ -1029,8 +1033,7 @@ export default {
       })
     },
     // 根据选择的城市获取各区的数据
-    changeCity(item, row) {
-      console.log("item", item);
+    changeCity(item, row) { 
       if (row) {
         row.area = ''
 
@@ -1038,8 +1041,7 @@ export default {
         this.dataForm.area = ""
 
       }
-      getProvinceList(item.id).then(res => {
-        console.log(res);
+      getProvinceList(item.id).then(res => { 
         this.area = res.data.list
       })
     },
@@ -1053,8 +1055,7 @@ export default {
     },
     // 获取省份数据
     getProvinceList() {
-      getProvinceList(this.nodeId, this.listQuery).then(res => {
-        console.log("省份数据", res);
+      getProvinceList(this.nodeId, this.listQuery).then(res => { 
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
@@ -1160,6 +1161,9 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
+      getBimBusinessInfo('460918012862529542').then(res=>{
+        this.businessType = res.data.configValue1
+      })
       if (this.btnType) {
         this.salesFlag = true
         this.isdisabled = true
@@ -1172,8 +1176,7 @@ export default {
           this.dataForm = res.data.cooperativePartner
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
-              this.organizeIdTrees = sss.data.organizeIdTree || []
-              console.log("this.dataForm.departmentId", this.dataForm.departmentId);
+              this.organizeIdTrees = sss.data.organizeIdTree || [] 
               this.organizeIdTrees.push(this.dataForm.departmentId)
             })
             getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
@@ -1181,8 +1184,7 @@ export default {
                 res.data.forEach(item => {
                   item.name = item.fullName.split('/')[0]
                 });
-              }
-              console.log(this.salesList);
+              } 
               this.salesList = res.data
             })
           }
@@ -1220,8 +1222,7 @@ export default {
             let obj = {
               id: res.data.cooperativePartner.province
             }
-            getProvinceList(res.data.cooperativePartner.province).then(res => {
-              console.log(res);
+            getProvinceList(res.data.cooperativePartner.province).then(res => { 
               this.cities = res.data.list
             })
 
@@ -1231,8 +1232,7 @@ export default {
               id: res.data.cooperativePartner.city
             }
             // this.changeCity(ooo)
-            getProvinceList(res.data.cooperativePartner.city).then(res => {
-              console.log(res);
+            getProvinceList(res.data.cooperativePartner.city).then(res => { 
               this.area = res.data.list
             })
           }
@@ -1273,20 +1273,14 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    onOrganizeChange(val, data) {
-      console.log("123", val, data);
+    onOrganizeChange(val, data) { 
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryIdText')
-      })
-      console.log(this.$refs['dataForm']);
+      }) 
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-      console.log("表单", this.dataForm);
-      console.log("联系人", this.contactsList);
-      console.log("收货地址", this.deliveryAddressList);
-      console.log("附件", this.datafilelist);
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1460,7 +1454,11 @@ export default {
         }
       })
     }
-  }
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+  },
 }
 </script>
 <style lang="scss" scoped>

@@ -54,12 +54,29 @@ export function checkPartner(data) {
     method: 'get',
   })
 }
+// 领取客户
 
+export function receiveCustomer(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/modify/customer/acquisition',
+    method: 'post',
+    data
+  })
+}
 // 我的客户 删除
 export function deletePartner(id) {
   return request({
     url: `/api/erp/cooperative/partner/remove/${id}`,
     method: 'delete',
+  })
+}
+// 潜在客户——分配
+
+export function distributionCustomer(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/modify/customer/allocation',
+    method: 'post',
+    data
   })
 }
 // 我的联系人 列表
@@ -70,6 +87,7 @@ export function getMyContactsList(data) {
     data
   })
 }
+
 // 服务记录 列表
 export function getServiceRecordList(data) {
   return request({
@@ -106,5 +124,13 @@ export function deleteServiceRecord(id) {
   return request({
     url: `/api/erp/bimCustomerServiceRecords/remove/${id}`,
     method: 'delete',
+  })
+}
+// 导入文件(除了正式客户)
+export function uploadProduct(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/upload/Customer`,
+    method: 'post',
+    data: data
   })
 }

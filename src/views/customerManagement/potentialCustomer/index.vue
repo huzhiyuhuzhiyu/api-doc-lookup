@@ -70,12 +70,9 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id)">
-                      转为正式
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id)">转为正式</el-dropdown-item>
+                    <el-dropdown-item @click.native="handleRecord(scope.row)">写记录</el-dropdown-item>
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-dropdown-item>
 
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -171,6 +168,7 @@
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
 
   </div>
 </template>
@@ -183,13 +181,14 @@ import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
+import RecordForm from '../myCustomer/RecordForm.vue'
 import deForm from './deForm'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'carrierProfile',
-  components: { Form, deForm, ExportForm },
+  components: { Form, deForm, ExportForm,RecordForm },
   data() {
     return {
       customerDataForm: {
@@ -197,6 +196,7 @@ export default {
         idList: [],
       },
       exportFormVisible: false,
+      recordFormVisible:false,
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
@@ -256,18 +256,22 @@ export default {
     this.initData()
   },
   methods: {
+    handleRecord(row){
+      this.recordFormVisible = true
+      this.$nextTick(()=>{
+        this.$refs.RecordForm.init(row.id)
+      })
+    },
     // 提交分配客户
     submit() {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {
           let idList = this.selectArr.map(item => item.id);
           this.customerDataForm.idList=idList
-          let obj=[]
-          obj.push(this.customerDataForm)
-          distributionCustomer(obj).then(res => {
+          distributionCustomer(this.customerDataForm).then(res => {
             this.customerVisi = false
             this.initData()
-
+            this.$message.success("分配成功")
           })
         }
       })
@@ -459,6 +463,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.deFormVisi = false
+      this.recordFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

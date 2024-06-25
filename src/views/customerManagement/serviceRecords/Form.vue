@@ -18,7 +18,7 @@
       </el-col>
       <el-col :span="24">
         <el-form-item prop="serviceDescription" ref="serviceDescription" label="服务说明">
-          <el-input type="textarea" :rows="4" v-model="dataForm.serviceDescription" placeholder="请输入服务说明" maxlength="200">
+          <el-input type="textarea" :rows="4" :disabled="btnType=== 'look'" v-model="dataForm.serviceDescription" placeholder="请输入服务说明" maxlength="200">
           </el-input>
         </el-form-item>
       </el-col>

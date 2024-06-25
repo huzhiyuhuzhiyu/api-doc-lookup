@@ -8,19 +8,19 @@
 
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerCode" @keyup.enter.native="search()"
-                  placeholder="请输入客户编码" clearable />
+                <el-input v-model="dataForm.code" @keyup.enter.native="search()" clearable
+                  placeholder="请输入客户编码"  />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
-                  placeholder="请输入客户名称" clearable />
+                <el-input v-model="dataForm.name" @keyup.enter.native="search()" clearable
+                  placeholder="请输入客户名称"  />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.phone" @keyup.enter.native="search()" placeholder="请输入手机" clearable />
+                <el-input v-model="dataForm.mobilePhone" @keyup.enter.native="search()" placeholder="请输入手机" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -38,8 +38,11 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="text"  icon="el-icon-plus" @click="importFun()">导入</el-button>
-              <el-button type="text"icon="el-icon-download" @click="exportFun()">导出</el-button>
+              <el-button type="primary" icon="iconfont icon-lingqu" @click="receiveFun()">领取</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
+              @click="exportFun">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -48,15 +51,15 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column> 
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" />
-            <el-table-column prop="lxr" label="联系人" sortable="custom" />
-            <el-table-column prop="tel" label="电话" sortable="custom" />
-            <el-table-column prop="phone" label="手机" sortable="custom" />
+            @sort-change="sortChange" custom-column  hasC @selection-change="selectCustomerFun"> 
+            <el-table-column prop="code" label="客户编码" sortable="custom" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" />
+            <el-table-column prop="contacts" label="联系人" sortable="custom" />
+            <el-table-column prop="phone" label="电话" sortable="custom" />
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" width="280" fixed="right">
+            <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">修改</el-button>
                 <el-button size="mini" type="text"  class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">删除</el-button>
@@ -76,7 +79,7 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+          <pagination :total="total" :page.sync="dataForm.pageNum" :limit.sync="dataForm.pageSize"
             @pagination="initData">
             
           </pagination>
@@ -90,32 +93,32 @@
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
 
-        <el-form ref="diaForm" :model="orderForm" label-width="120px" label-position="top">
+        <el-form ref="diaForm" :model="dataForm" label-width="120px" label-position="top">
 
           <el-col :span="12">
             <el-form-item label="客户编码">
-              <el-input v-model="orderForm.cooperativePartnerCode" placeholder="请输入客户编码" clearable />
+              <el-input v-model="dataForm.code" placeholder="请输入客户编码" clearable />
             </el-form-item>
 
           </el-col>
           <el-col :span="12">
             <el-form-item label="客户名称">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
+              <el-input v-model="dataForm.name" placeholder="请输入客户名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入联系人" clearable />
+              <el-input v-model="dataForm.contacts" placeholder="请输入联系人" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="电话">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入电话" clearable />
+              <el-input v-model="dataForm.phone" placeholder="请输入电话" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="手机">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入手机" clearable />
+              <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机" clearable />
             </el-form-item>
           </el-col>
           
@@ -140,18 +143,21 @@
           搜索</el-button>
       </span>
     </el-dialog>
-
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+      :http-request="UploadProduct" />
 
   </div>
 </template>
 
 <script>
+import { getPartnerList, uploadProduct,deletePartner } from '@/api/customerManagement'
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import Form from './Form'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'carrierProfile',
   components: { Form },
@@ -160,68 +166,21 @@ export default {
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false, 
-      tableData: [
-                {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }, {
-                  cooperativePartnerCode:"1234",
-                  cooperativePartnerName:"怡盛客户",
-                  lxr:"李生",
-                  tel:"12345678",
-                  phone:"12345678",
-                  createTime:"2024-06-11",
-                  createByName:"管理员",
-                }
-               ], 
+      tableData: [], 
       treeLoading: false,
       listLoading: false, 
  
       
   
-      orderForm: {
-        orderNo: "",
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        orderCategory: "assembly",
-        shipmentStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
+      dataForm: {
+        code: "",
+        name: "",
+        contacts: "",
+        phone: "",
+        mobilePhone: "",
         startTime: "",
         endTime: "",
-
+        customerStatus: "formal",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -236,12 +195,10 @@ export default {
        
        
       createTimeArr: [], 
-      orderDateArr: [],
-      CompletionDate: [],
       total: 0,
-      diagramVisible: false,
       formVisible: false,
       filterText: '', 
+      selectArr:[],
     }
   },
   watch: {
@@ -249,31 +206,102 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+  computed: {
+    ...mapGetters(['userInfo']),
+    ...mapState('user', ['token']),
+  },
 
-
-  created() {  
-    let endDate = new Date().toISOString().slice(0, 10);
-    let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
-    this.orderDateArr[0] = startDate
-    this.orderDateArr[1] = endDate
-    this.orderForm.orderStartDate = startDate
-    this.orderForm.orderEndDate = endDate
+  created() {
+    this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
     this.initData()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-     
-    initDataDetail() {
-      this.listLoading = true
-      getsaleOrderDetailList(this.orderDetailForm).then(res => {
-        this.detailTableData = res.data.records
-        this.detailTotal = res.data.total
-        this.listLoading = false
-        this.detailVisible = false
-        this.$forceUpdate()
-      }).catch(() => {
-        this.listLoading = false
+    selectCustomerFun(val){
+      this.selectArr=val
+    },
+    receiveFun(){
+      if(!this.selectArr.length) return this.$message.error("请先选择你要领取的客户")
+    },
+      // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/公海客户导入模板.xlsx')
+      a.click()
+    },
+
+ 
+    exportFun() {
+
+    },
+    importFun() {
+
+      this.$refs.UploadProduct.$el.querySelector('input').click()
+    },
+        // 上传产品
+        UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append("file", data.file)
+      formData.append("customerSea","formal")
+      //调用上传文件接口
+      uploadProduct(formData).then(res => {
+        if (!res.data) {
+          this.$message.success(`导入成功`)
+         this.initData()
+          this.formLoading = false
+          this.loadingText = ''
+        } else {
+          this.handleMessage(res.data)
+        }
+
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.formLoading = false
+        this.loadingText = ''
       })
+    },
+     // 提示
+     handleMessage(data){
+      const h = this.$createElement
+          this.$message({
+            type:"error",
+            duration:0,
+            showClose: true,
+            customClass: 'my-message', // 自定义类名，用于设置样式
+            message: h('div',
+              {
+                style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+              },
+            [
+                h('p',{style:'font-size:14px;'},'导入成功，存在潜在客户信息错误！'),
+                h('el-button',{
+                  props:{
+                    type:'text',
+                    size:"mini",
+                    icon:'el-icon-download'
+                  },
+                  on:{
+                    click:()=>{
+                      this.downNoProduct(data)
+                    }
+                  },
+                style :{
+                  border:"none",
+                  textAlign:"center",
+                  // width:"20%",
+                  margin:"0 5px 0 5px ",
+                },
+                },'下载导入错误数据')
+              ]
+            ),
+          })
+      return
+    },
+      // 导入产品  下载导入错误数据
+      downNoProduct(res){
+      this.jnpf.downloadFile(res.url, res.name)
     },
  
     
@@ -290,8 +318,8 @@ export default {
       if (prop == "createByName") {
         newProp = "create_by"
       }
-      this.orderForm.orderItems[0].asc = order === "ascending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.dataForm.orderItems[0].asc = order === "ascending"
+      this.dataForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
  
@@ -299,38 +327,18 @@ export default {
       this.visible = true
     },
     dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      this.dataForm.pageNum = 1
+      Object.keys(this.dataForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.dataForm[key]
+        this.dataForm[key] = typeof item === 'string' ? item.trim() : item
       })
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.orderStartDate = this.orderDateArr[0]
-        this.orderForm.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.orderForm.orderStartDate = ""
-        this.orderForm.orderEndDate = ""
-      }
-      if (this.CompletionDate && this.CompletionDate.length > 0) {
-        this.orderForm.deliveryStartDate = this.CompletionDate[0]
-        this.orderForm.deliveryEndDate = this.CompletionDate[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
+  
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0]
-        this.orderForm.endTime = this.createTimeArr[1]
+        this.dataForm.startTime = this.createTimeArr[0]
+        this.dataForm.endTime = this.createTimeArr[1]
       } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
+        this.dataForm.startTime = ""
+        this.dataForm.endTime = ""
       }
       this.initData()
 
@@ -348,8 +356,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getsaleOrderList(this.orderForm).then(res => {
-        // this.tableData = res.data.records
+      getPartnerList(this.dataForm).then(res => {
+        this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
         this.visible = false
@@ -367,43 +375,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
-      this.CompletionDate = []
-      this.orderForm = {
-        orderNo: "",
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        orderCategory: "assembly",
-        shipmentStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
-        startTime: "",
-        endTime: "",
-
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-
-      }
-
+      this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
       this.search()
     },
  
@@ -431,7 +403,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteOrders(id).then(res => {
+        deletePartner(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -513,5 +485,8 @@ export default {
 
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
+}
+::v-deep .icon-lingqu{
+  margin-right:8px
 }
 </style>

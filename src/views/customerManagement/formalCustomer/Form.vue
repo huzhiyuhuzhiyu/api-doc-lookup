@@ -4,7 +4,7 @@
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack"
-          :content="btnType=='look' ? '查看客户档案' : btnType=='add' ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" />
+          :content="btnType=='look' ? '查看公海客户' :btnType=='add'? '新增公海客户' :'编辑公海客户'" />
         <div class="options" v-if="btnType!='look'">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
@@ -25,7 +25,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户编码" prop="code">
+                  <el-form-item label="客户编码" prop="code" v-if="businessType">
                     <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
                       :disabled="btnType=='look' ? true : false" />
                   </el-form-item>
@@ -84,19 +84,7 @@
                     </user-select>
                   </el-form-item>
                 </el-col>
-                <!-- <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属销售人员" prop="salesperssalesFlagonId">
-                    <user-select v-model="dataForm.salespersonId" placeholder="请选择所属销售人员" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false" @change="hangleSelectSales">
-                    </user-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属部门" prop="departmentIdText">
-                    <el-input v-model="dataForm.departmentIdText" readonly placeholder="请输入所属部门"
-                      :disabled="btnType=='look' ? true : false" />
-                  </el-form-item>
-                </el-col> -->
+          
 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="认定日期" prop="customerRecognitionTime">
@@ -127,11 +115,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="国家" prop="country">
-                    <!-- <el-select v-model="dataForm.country" placeholder="请选择国家"  style="width: 100%;"
-                      v-if="dataForm.regionCode == 'foreign'" :disabled="btnType=='look' ? true : false" filterable>
-                      <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
-                        :disabled="item.code == 'CN'" :value="item.code"></el-option>
-                    </el-select> -->
+                    
                     <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
                       :disabled="btnType=='look' ? true : false">
                       <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
@@ -202,7 +186,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType=='look'=='look' ? true : false"
                       maxlength="100" />
                   </el-form-item>
                 </el-col>
@@ -212,7 +196,7 @@
                       maxlength="512" />
                   </el-form-item>
                 </el-col>
-         
+                
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="付款方式" prop="paymentMethod">
                     <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
@@ -273,7 +257,7 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-             
+                
                 <el-col :sm="8" :xs="24" v-if="btnType=='look'">
                   <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
                     <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;"
@@ -511,12 +495,12 @@
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="adddeliveryAddressList()" v-if="!btnType=='look'">
+            <div class="table-actions" @click="adddeliveryAddressList()" v-if="!btnType">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
-            <UploadWj v-model="datafilelist" :disabled="!!btnType" :detailed="!!btnType"></UploadWj>
+            <UploadWj v-model="datafilelist" :disabled="btnType=='look'" :detailed="btnType=='look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -525,13 +509,12 @@
 </template>
 
 <script>
+import { checkPartner,addPartner,updatePartner,detailPartner} from '@/api/customerManagement'
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import {
-  editPartner, addPartner
-  , getCooperativeInfo, getCounryData, checkCode
-} from '@/api/basicData/index'
+import {getBimBusinessInfo,getCooperativeInfo, getCounryData, checkCode} from '@/api/basicData/index'
+
 import {
   getProvinceList,
 } from '@/api/system/province'
@@ -647,7 +630,8 @@ export default {
         transportationTime: "",
         remark: "",
         departmentId: "",
-        departmentIdText: ""
+        departmentIdText: "",
+        customerStatus:"formal"
       },
       organizeIdTree: [],
       parentId: '',
@@ -657,16 +641,21 @@ export default {
         }
       },
       dataRule: {
-    
-
+   
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
+        // phone: [{ validator: this.validateField2, trigger: 'blur' }],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               console.log(this.dataForm.id);
-              checkCode(value, this.dataForm.id, this.dataForm.type).then(res => {
+              let obj={
+                id:this.dataForm.id,
+                code:value,
+                type:this.dataForm.type
+              }
+              checkPartner(obj).then(res => {
                 console.log('res===>', res);
                 if (res.data) {
                   callback(new Error("编码重复"));
@@ -678,21 +667,17 @@ export default {
             }, trigger: 'blur'
           },
         ],
-        // taxId: [
-        //   { required: true, message: '请输入税号', trigger: 'blur' }
-        // ],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-          // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
-          // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
+         
         ],
-     
-       
-
+        
+ 
       },
       salesList: [],
       organizeIdTrees: [],
       salesFlag: false,
+      businessType:"",
     }
   },
   created() {
@@ -701,7 +686,6 @@ export default {
   },
   methods: {
     changePerple(internalStaffId, data) {
-      // console.log(data);
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')
       if (data) {
@@ -1082,11 +1066,15 @@ export default {
 
 
 
-    init(id, btnType) {
+    init(id, parentId, btnType) {
+      console.log("btntype",btnType);
       this.visible = true
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
+      getBimBusinessInfo('460918012862529542').then(res=>{
+        this.businessType = res.data.configValue1
+      })
       if (this.btnType=='look') {
         this.salesFlag = true
         this.isdisabled = true
@@ -1095,7 +1083,7 @@ export default {
 
       }
       if (this.dataForm.id) {
-        getCooperativeInfo(this.dataForm.id).then(res => {
+        detailPartner(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
@@ -1359,10 +1347,10 @@ export default {
           }
           if (flag === false) return
           this.btnLoading = true
-          const formMethod = this.dataForm.id ? editPartner : addPartner
+          const formMethod = this.dataForm.id ? updatePartner : addPartner
           formMethod(obj).then(res => {
             let msg = "";
-            if (formMethod == editPartner) {
+            if (formMethod == updatePartner) {
               msg = "修改成功"
             } else {
               msg = "新建成功"

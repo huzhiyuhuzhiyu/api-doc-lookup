@@ -244,6 +244,10 @@ export default {
     addCustomer: '新建客户档案',
     editCustomer: '编辑客户档案'
   },
+  potentialCustomer: {
+    addCustomer: '新建潜在客户',
+    editCustomer: '编辑潜在客户'
+  },
   outsourcing_suppliers: {
     addOutsourcing_suppliers: '新建外协供应商档案',
     editOutsourcing_suppliers: '编辑外协供应商档案'

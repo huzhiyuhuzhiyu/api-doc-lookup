@@ -62,7 +62,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addOrUpdateHandle()">
+          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
             <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
@@ -105,7 +105,7 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
                 @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -258,8 +258,8 @@ export default {
     }
   },
   created() {
-    this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getcategoryTree()
     this.initData()
   },
   computed: {
@@ -314,7 +314,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: "raw_material" }).then(res => {
+      getcategoryTree({ classAttribute: this.listQuery.classAttribute }).then(res => {
         this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false

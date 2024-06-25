@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建物料分类' : '编辑物料分类'" :close-on-click-modal="false" :close-on-press-escape="false"
+  <el-dialog :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :close-on-click-modal="false" :close-on-press-escape="false"
     :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
       label-position="top" label-width="120px">

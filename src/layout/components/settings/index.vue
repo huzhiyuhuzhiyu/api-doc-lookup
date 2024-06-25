@@ -170,6 +170,11 @@ export default {
           className: 'oceans',
           color: '#13C2C2',
         },
+        {
+          name: '少女粉',
+          className: 'girlPink',
+          color: '#ED1299',
+        },
       ],
       imgUrl3: [
         {
@@ -216,6 +221,11 @@ export default {
           name: '热情',
           className: 'red',
           color: themeColor.redTheme,
+        },
+        {
+          name: '樱桃红',
+          className: 'cherryRed',
+          color: themeColor.cherryRedTheme,
         },
       ],
       imgUrl4: [
@@ -264,7 +274,11 @@ export default {
           className: 'red',
           color: headColor.redHead,
         },
-     
+        {
+          name: '少女粉',
+          className: 'girlPink',
+          color: headColor.girlPinkHead,
+        },
       ]
     }
   },

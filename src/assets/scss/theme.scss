@@ -72,7 +72,9 @@ $cherryRedSub:#54133b;
       color: $color;
     }
   }
-
+  .cardGrobal .box-card .el-card__body .card-item .card-icon {
+    background-color: $color;
+  }
   .JNPF-Portal .el-main .layout-area .vue-grid-item {
     &.active-item {
       border: 1px solid $color;

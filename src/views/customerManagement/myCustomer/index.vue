@@ -163,7 +163,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         phone: "",
-        publicFlag: 0,
+        customerStatus: 'private_sea',
         startTime: "",
         startUpdateTime: "",
         totalRowFlag: false,

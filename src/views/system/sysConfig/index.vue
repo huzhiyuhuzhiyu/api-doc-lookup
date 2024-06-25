@@ -2,79 +2,8 @@
   <div class="app-container JNPF-flex-main systemConfig">
     <el-form ref="baseForm" :model="baseForm" :rules="rules" label-width="100px">
       <el-tabs v-model="activeName" type="border-card" class="JNPF-el_tabs">
-        <el-tab-pane label="基本设置" name="first">
+        <el-tab-pane label="企业设置" name="first">
           <el-row :gutter="20">
-            <el-col :span="24">
-              <el-form-item label="系统图标">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginIcon" tip="11:1" />
-                    <div class="img_box_text">登录图标</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginBg"  tip="11:1" />
-                    <div class="img_box_text">登录背景</div>
-                    <!-- <div class="img_box_text">11:1</div> -->
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.navigationIcon" tip="7:2" />
-                    <div class="img_box_text">导航图标</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.logoIcon" tip="7:2" />
-                    <div class="img_box_text">LOGO图标</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.appIcon" tip="1:1" />
-                    <div class="img_box_text">APP图标</div>
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="APP轮播图">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.home1Url" tip="16:9" />
-                    <div class="img_box_text">手机轮播图1</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.home2Url" tip="16:9" />
-                    <div class="img_box_text">手机轮播图2</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.home3Url" tip="16:9" />
-                    <div class="img_box_text">手机轮播图3</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.home4Url" tip="16:9" />
-                    <div class="img_box_text">手机轮播图4</div>
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="二维码">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.androidURL" tip="1:1" />
-                    <div class="img_box_text">安卓APP</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.iosURL" tip='1:1' />
-                    <div class="img_box_text">IOS APP</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.xsxURL" tip='1:1' />
-                    <div class="img_box_text">小程序</div>
-                  </div>
-                  <div class="img_box">
-                    <single-img v-model="baseForm.h5URL" tip='1:1' />
-                    <div class="img_box_text">H5页面</div>
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
             <el-col :span="12">
               <el-form-item label="系统名称" prop="sysName">
                 <el-input v-model="baseForm.sysName" clearable placeholder="系统名称" />
@@ -127,17 +56,109 @@
             </el-col>
             <el-col>
               <el-form-item label="系统描述" prop="sysDescription">
-                <el-input v-model="baseForm.sysDescription" type="textarea"
-                  :autosize="{ minRows: 5, maxRows: 10}" placeholder="系统描述" />
+                <el-input v-model="baseForm.sysDescription" type="textarea" :autosize="{ minRows: 5, maxRows: 10 }"
+                  placeholder="系统描述" />
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                  @click="submitForm()">保 存</el-button>
+                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
+                  存</el-button>
               </el-form-item>
             </el-col>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="安全设置" name="second">
+        <el-tab-pane label="PC端设置" name="second">
+          <el-form label-position="left">
+            <el-form-item label="登录图标:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.loginIcon" tip="11:1" />
+                  <div class="img_box_text">该登录图标应用于登录界面 
+                    <i class="el-icon-question"></i>
+                  </div>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="登录背景:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.loginBg" tip="11:1" />
+                  <div class="img_box_text">
+                    该登录背景应用于登录界面
+                    <i class="el-icon-question"></i>
+                  </div>
+                  <!-- <div class="img_box_text">11:1</div> -->
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="导航图标:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.navigationIcon" tip="7:2" />
+                  <div class="img_box_text">
+                    该导航图标应用于导航栏
+                    <i class="el-icon-question"></i>
+                  </div>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="LOGO图:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.logoIcon" tip="7:2" />
+                  <div class="img_box_text">
+                    该LOGO图标应用于系统LOGO
+                    <i class="el-icon-question"></i>
+                  </div>
+                </div>
+              </div>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="移动端设置" name="third">
+          <el-form label-position="left">
+            <el-form-item label="APP轮播图:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.home1Url" tip="16:9" />
+                  <div class="img_box_text">手机轮播图1</div>
+                </div>
+                <div class="img_box">
+                  <single-img v-model="baseForm.home2Url" tip="16:9" />
+                  <div class="img_box_text">手机轮播图2</div>
+                </div>
+                <div class="img_box">
+                  <single-img v-model="baseForm.home3Url" tip="16:9" />
+                  <div class="img_box_text">手机轮播图3</div>
+                </div>
+                <div class="img_box">
+                  <single-img v-model="baseForm.home4Url" tip="16:9" />
+                  <div class="img_box_text">手机轮播图4</div>
+                </div>
+              </div>
+            </el-form-item>
+            <el-form-item label="二维码图标:">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.androidURL" tip="1:1" />
+                  <div class="img_box_text">安卓APP</div>
+                </div>
+                <div class="img_box">
+                  <single-img v-model="baseForm.iosURL" tip='1:1' />
+                  <div class="img_box_text">IOS APP</div>
+                </div>
+                <!-- <div class="img_box">
+                  <single-img v-model="baseForm.xsxURL" tip='1:1' />
+                  <div class="img_box_text">小程序</div>
+                </div>
+                <div class="img_box">
+                  <single-img v-model="baseForm.h5URL" tip='1:1' />
+                  <div class="img_box_text">H5页面</div>
+                </div> -->
+              </div>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <!-- <el-tab-pane label="安全设置" name="second">
           <el-alert title="注意：系统登录安全、黑名单IP限制" type="warning" :closable="false" show-icon />
           <el-row class="mt-20">
             <el-col :span="18">
@@ -152,34 +173,31 @@
                   controls-position="right" /> 分钟
               </el-form-item>
               <el-form-item label="密码错误次数">
-                <el-input-number v-model="baseForm.passwordErrorsNumber" :min="0" :precision="0"
-                  :step="1" controls-position="right" /> 次
+                <el-input-number v-model="baseForm.passwordErrorsNumber" :min="0" :precision="0" :step="1"
+                  controls-position="right" /> 次
                 <div class="tip">输入密码错误将用户锁定，设置3以下值表示不启动该功能</div>
                 <el-radio-group v-model="baseForm.lockType">
                   <el-radio :label="1">账号锁定</el-radio>
                   <el-radio :label="2">延时登录</el-radio>
                 </el-radio-group>
-                <div v-if="baseForm.lockType===2">
+                <div v-if="baseForm.lockType === 2">
                   <span class="lockTime">延迟时间</span>
                   <el-input-number v-model="baseForm.lockTime" :min="1" :precision="0" :step="1"
                     controls-position="right" /> 分钟
                 </div>
               </el-form-item>
               <el-form-item label="登录验证码">
-                <el-switch v-model="baseForm.enableVerificationCode" :active-value="1"
-                  :inactive-value="0" />
+                <el-switch v-model="baseForm.enableVerificationCode" :active-value="1" :inactive-value="0" />
               </el-form-item>
               <el-form-item label="验证码位数" v-if="baseForm.enableVerificationCode">
-                <el-input-number v-model="baseForm.verificationCodeNumber" :min="3" :max="6"
-                  :precision="0" :step="1" controls-position="right" /> 位
+                <el-input-number v-model="baseForm.verificationCodeNumber" :min="3" :max="6" :precision="0" :step="1"
+                  controls-position="right" /> 位
               </el-form-item>
               <el-form-item label="登录提示语">
-                <el-switch v-model="baseForm.lastLoginTimeSwitch" :active-value="1"
-                  :inactive-value="0" />
+                <el-switch v-model="baseForm.lastLoginTimeSwitch" :active-value="1" :inactive-value="0" />
               </el-form-item>
               <el-form-item v-if="baseForm.lastLoginTimeSwitch">
-                <el-card class="box-card" shadow="never" style="width: 300px;"
-                  :body-style="{ padding: '0px 20px' }">
+                <el-card class="box-card" shadow="never" style="width: 300px;" :body-style="{ padding: '0px 20px' }">
                   <div slot="header">
                     <span>上次登录信息提示</span>
                     <i style="float: right; padding: 11px 0" class="el-icon-close" />
@@ -192,36 +210,32 @@
                 </el-card>
               </el-form-item>
               <el-form-item label="白名单验证">
-                <el-switch v-model="baseForm.whitelistSwitch" :active-value="1"
-                  :inactive-value="0" />
+                <el-switch v-model="baseForm.whitelistSwitch" :active-value="1" :inactive-value="0" />
               </el-form-item>
               <el-form-item label="白名单设置" v-if="baseForm.whitelistSwitch">
-                <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 10}"
-                  v-model="baseForm.whiteListIp" placeholder="允许访问IP" />
+                <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 10 }" v-model="baseForm.whiteListIp"
+                  placeholder="允许访问IP" />
                 <div class="tip">多个IP设置，用英文符号隔开，如192.168.0.1,192.168.0.2</div>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                  @click="submitForm()">保 存</el-button>
+                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
+                  存</el-button>
               </el-form-item>
             </el-col>
           </el-row>
-        </el-tab-pane>
-        <el-tab-pane label="第三方设置" name="third">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="第三方设置" name="third">
           <el-tabs tab-position="left" style="height:100%" v-model="thirdTab" class="thirdTab">
             <el-tab-pane label="阿里短信">
-              <!-- <el-alert title="注意：请在短信厂家官网网站开通申请" type="warning" :closable="false" show-icon /> -->
-              <el-row style="margin-top: 15px" v-if="thirdTab=='0'">
+              <el-row style="margin-top: 15px" v-if="thirdTab == '0'">
                 <el-col :span="12">
                   <jnpf-form-tip-item label="AccessKey ID" prop="aliAccessKey" label-width="180px"
                     tip-label="授权ID，【AccessKey管理】中的 AccessKey ID">
-                    <el-input v-model="baseForm.aliAccessKey" clearable
-                      placeholder="请输入AccessKey ID" />
+                    <el-input v-model="baseForm.aliAccessKey" clearable placeholder="请输入AccessKey ID" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="AccessKey Secret" prop="aliSecret" label-width="180px"
                     tip-label="授权密钥,【AccessKey管理】中的 AccessKey Secret">
-                    <el-input v-model="baseForm.aliSecret" show-password clearable
-                      placeholder="请输入AccessKey Secret" />
+                    <el-input v-model="baseForm.aliSecret" show-password clearable placeholder="请输入AccessKey Secret" />
                   </jnpf-form-tip-item>
                   <el-form-item label-width="180px">
                     <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
@@ -231,27 +245,23 @@
               </el-row>
             </el-tab-pane>
             <el-tab-pane label="腾讯短信">
-              <el-row style="margin-top: 15px" v-if="thirdTab=='1'">
+              <el-row style="margin-top: 15px" v-if="thirdTab == '1'">
                 <el-col :span="12">
                   <jnpf-form-tip-item label="SecretId" prop="tencentSecretId" label-width="180px"
                     tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretId">
-                    <el-input v-model="baseForm.tencentSecretId" clearable
-                      placeholder="请输入SecretId" />
+                    <el-input v-model="baseForm.tencentSecretId" clearable placeholder="请输入SecretId" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="SecretKey" prop="tencentSecretKey" label-width="180px"
                     tip-label="在【访问管理】-【访问密钥】- 【API密钥管理】中获取 SecretKey">
-                    <el-input v-model="baseForm.tencentSecretKey" show-password clearable
-                      placeholder="请输入SecretKey" />
+                    <el-input v-model="baseForm.tencentSecretKey" show-password clearable placeholder="请输入SecretKey" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="SDK AppID" prop="tencentAppId" label-width="180px"
                     tip-label="【应⽤管理】-【应⽤列表】应⽤中的 SDK AppID">
-                    <el-input v-model="baseForm.tencentAppId" clearable show-password
-                      placeholder="请输入SDK AppID" />
+                    <el-input v-model="baseForm.tencentAppId" clearable show-password placeholder="请输入SDK AppID" />
                   </jnpf-form-tip-item>
                   <jnpf-form-tip-item label="App Key" prop="tencentAppKey" label-width="180px"
                     tip-label="【应⽤管理】-【应⽤列表】应⽤中的 App Key">
-                    <el-input v-model="baseForm.tencentAppKey" clearable show-password
-                      placeholder="请输入App Key" />
+                    <el-input v-model="baseForm.tencentAppKey" clearable show-password placeholder="请输入App Key" />
                   </jnpf-form-tip-item>
                   <el-form-item label-width="180px">
                     <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
@@ -261,8 +271,7 @@
               </el-row>
             </el-tab-pane>
             <el-tab-pane label="电子邮箱">
-              <el-alert title="注意：系统邮件设置成功后所有邮件会由此邮箱发出" type="warning" :closable="false"
-                show-icon />
+              <el-alert title="注意：系统邮件设置成功后所有邮件会由此邮箱发出" type="warning" :closable="false" show-icon />
               <el-row :gutter="20" style="margin-top: 15px">
                 <el-col :span="12">
                   <el-form-item label="POP3服务" prop="emailPop3Host">
@@ -307,8 +316,8 @@
                     <el-switch v-model="baseForm.emailSsl" :active-value="1" :inactive-value="0" />
                   </el-form-item>
                   <el-form-item>
-                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                      @click="submitForm()">保 存</el-button>
+                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
+                      存</el-button>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -327,8 +336,7 @@
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
                   <el-form-item label="凭证密钥" prop="qyhAgentSecret">
-                    <el-input v-model="baseForm.qyhAgentSecret" placeholder="请输入AppSecret"
-                      show-password>
+                    <el-input v-model="baseForm.qyhAgentSecret" placeholder="请输入AppSecret" show-password>
                       <el-button slot="append" @click="checkQy(0)" :loading="testQyLoading">连接测试
                       </el-button>
                     </el-input>
@@ -336,8 +344,7 @@
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
                   <el-form-item label="同步密钥" prop="qyhCorpSecret">
-                    <el-input v-model="baseForm.qyhCorpSecret" placeholder="请输入CorpSecret"
-                      show-password>
+                    <el-input v-model="baseForm.qyhCorpSecret" placeholder="请输入CorpSecret" show-password>
                       <el-button slot="append" @click="checkQy(1)" :loading="testSyncLoading">同步测试
                       </el-button>
                     </el-input>
@@ -364,8 +371,7 @@
                       <el-table-column prop="synSuccessCount" label="同步成功数" />
                       <el-table-column prop="synFailCount" label="同步失败数" />
                       <el-table-column prop="unSynCount" label="未同步数" />
-                      <el-table-column prop="synDate" label="同步时间"
-                        :formatter="jnpf.tableDateFormat" width="150" />
+                      <el-table-column prop="synDate" label="同步时间" :formatter="jnpf.tableDateFormat" width="150" />
                       <el-table-column label="操作" width="70">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="syncWechat(scope.row)"
@@ -377,8 +383,8 @@
                 </el-col>
                 <el-col>
                   <el-form-item>
-                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                      @click="submitForm()">保 存</el-button>
+                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
+                      存</el-button>
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -397,8 +403,7 @@
                 </el-col>
                 <el-col :span="12" :offset="6" :pull="6">
                   <el-form-item label="凭证密钥" prop="dingSynAppSecret">
-                    <el-input v-model="baseForm.dingSynAppSecret" placeholder="请输入AppSecret"
-                      show-password>
+                    <el-input v-model="baseForm.dingSynAppSecret" placeholder="请输入AppSecret" show-password>
                       <el-button slot="append" @click="checkDing" :loading="testDingLoading">连接测试
                       </el-button>
                     </el-input>
@@ -425,8 +430,7 @@
                       <el-table-column prop="synSuccessCount" label="同步成功数" />
                       <el-table-column prop="synFailCount" label="同步失败数" />
                       <el-table-column prop="unSynCount" label="未同步数" />
-                      <el-table-column prop="synDate" label="同步时间"
-                        :formatter="jnpf.tableDateFormat" width="150" />
+                      <el-table-column prop="synDate" label="同步时间" :formatter="jnpf.tableDateFormat" width="150" />
                       <el-table-column label="操作" width="70">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" @click="syncDingVisible(scope.row)">同步
@@ -438,15 +442,15 @@
                 </el-col>
                 <el-col>
                   <el-form-item>
-                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                      @click="submitForm()">保 存</el-button>
+                    <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
+                      存</el-button>
                   </el-form-item>
                 </el-col>
               </el-row>
             </el-tab-pane>
           </el-tabs>
-        </el-tab-pane>
-        <el-tab-pane label="管理员设置" name="fourth">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="管理员设置" name="fourth">
           <el-alert title="注意：设为超级管理员后该用户拥有系统最高权限" type="warning" :closable="false" show-icon />
           <el-row :gutter="20" style="margin-top: 15px">
             <el-col :span="12">
@@ -456,25 +460,25 @@
             </el-col>
             <el-col>
               <el-form-item>
-                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn"
-                  @click="setAdminList()">保 存</el-button>
+                <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="setAdminList()">保
+                  存</el-button>
               </el-form-item>
             </el-col>
           </el-row>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </el-form>
-    <el-dialog title="数据同步" :visible.sync="visible"
-      class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll width="450px">
+    <el-dialog title="数据同步" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
+      width="450px">
       <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icon icon-ym icon-ym-upload"></i>
           <div class="add-txt">
-            <p class="add-title">{{name}}</p>
-            <p class="add-desc">{{names}}</p>
+            <p class="add-title">{{ name }}</p>
+            <p class="add-desc">{{ names }}</p>
           </div>
           <div class="add-button">
-            <el-button type="primary" size="small" @click="name==='同步到企业微信'?syncQy(0):syncDing(0)"
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(0) : syncDing(0)"
               :loading="wechatLoading" :disabled="dingLoading">
               同步</el-button>
           </div>
@@ -485,10 +489,10 @@
           <i class="add-icons icon-ym icon-ym-download"></i>
           <div class="add-txt">
             <p class="add-title">同步到系统</p>
-            <p class="add-desc">{{synchronization}}</p>
+            <p class="add-desc">{{ synchronization }}</p>
           </div>
           <div class="add-button">
-            <el-button type="primary" size="small" @click="name==='同步到企业微信'?syncQy(1):syncDing(1)"
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(1) : syncDing(1)"
               :loading="dingLoading" :disabled="wechatLoading">
               同步</el-button>
           </div>
@@ -900,71 +904,99 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-	
-	.el-form-item__content p{border-width: 0px;}
-	.el-form-item__content p::before{content: "";}
+.el-form-item__content p {
+  border-width: 0px;
+}
+
+.el-form-item__content p::before {
+  content: "";
+}
 
 .systemConfig {
   padding: 0;
-  >>> .el-card__header {
+
+  >>>.el-card__header {
     padding: 6px 20px;
   }
-  >>> .el-tabs--border-card {
+
+  >>>.el-tabs--border-card {
     box-shadow: none;
     height: calc(100vh - 120px);
   }
-  >>> .el-tabs--border-card > .el-tabs__content {
+
+  >>>.el-tabs--border-card>.el-tabs__content {
     padding: 30px 36px 10px 36px;
   }
+
   .saveBtn {
     width: 100px;
   }
-  .el-table >>> th {
+
+  .el-table>>>th {
     line-height: 23px;
   }
-  .thirdTab >>> .el-tabs__content {
+
+  .thirdTab>>>.el-tabs__content {
     height: 100%;
+
     .el-tab-pane {
       height: auto;
     }
   }
+
   .tip {
     font-size: 14px;
     color: #a5a5a5;
   }
+
   .lockTime {
     line-height: 32px;
     padding-right: 12px;
     color: #606266;
     font-size: 14px;
   }
+
   .img-list {
     display: flex;
-    >>> .img_box_text{text-align: center;margin-right: 20px;}
-    >>> .singleImg-container {
+
+    .img_box_text {
+      text-align: center;
       margin-right: 20px;
+      i{
+        cursor: pointer;
+        font-size: 16px;
+      }
+    }
+
+    ::v-deep .singleImg-container {
+      margin-right: 20px;
+
       :last-child {
         margin-right: 0;
       }
     }
   }
 }
+
 .add-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   .add-item {
     width: 450px;
     height: 100px;
     display: flex;
     align-items: center;
     cursor: pointer;
+
     &.add-item-sys {
       .add-icon {
         background: #75d8f791;
         color: #08c0f8;
       }
     }
+
     .add-icon {
       width: 56px;
       height: 56px;
@@ -977,9 +1009,11 @@ export default {
       line-height: 56px;
       text-align: center;
     }
+
     .add-button {
       margin-left: 80px;
     }
+
     .add-icons {
       width: 56px;
       height: 56px;
@@ -992,15 +1026,19 @@ export default {
       line-height: 56px;
       text-align: center;
     }
+
     .add-txt {
       height: 56px;
+
       P {
         line-height: 28px;
       }
+
       .add-title {
         font-size: 18px;
         font-weight: bold;
       }
+
       .add-desc {
         color: #8d8989;
         font-size: 12px;
@@ -1009,7 +1047,12 @@ export default {
     }
   }
 }
->>> .sync-dialog .el-dialog__body {
+
+>>>.sync-dialog .el-dialog__body {
   padding: 20px 50px !important;
+}
+
+::v-deep .el-form {
+  height: 100% !important;
 }
 </style>

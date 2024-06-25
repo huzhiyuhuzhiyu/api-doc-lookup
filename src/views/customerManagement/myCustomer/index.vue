@@ -36,7 +36,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
-              <el-button type="primary" icon="el-icon-bangzhu" @click="releaseFun('dataTable')">释放</el-button>
+              <el-button type="primary" icon="el-icon-bangzhu" @click="releaseFun">释放</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -51,12 +51,12 @@
             <el-table-column prop="lxr" label="联系人" sortable="custom" />
             <el-table-column prop="tel" label="电话" sortable="custom" />
             <el-table-column prop="phone" label="手机" sortable="custom" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180"/>
             <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" width="280" fixed="right">
+            <el-table-column label="操作" min-width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,)">转为正式</el-button>
-                <el-button size="mini" type="text" @click="handleRecord(scope.row.id)">写记录</el-button>
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转为正式</el-button>
+                <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -64,7 +64,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -132,18 +132,21 @@
     </el-dialog>
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
 
   </div>
 </template>
 
 <script>
-import { getPartnerList } from '@/api/customerManagement/index'
+import { getPartnerList , releasePartner } from '@/api/customerManagement/index'
 import Form from './Form'
+import RecordForm from './RecordForm'
 export default {
   name: 'myCustomer',
-  components: { Form },
+  components: { Form , RecordForm },
   data() {
     return {
+      recordFormVisible:false,
       title: "更多查询",
       visible: false,
       tableData: [],
@@ -176,6 +179,7 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      selectData:[],
     }
   },
   created() {
@@ -184,7 +188,7 @@ export default {
   },
   methods: {
     handeleInfoData(val){
-
+      this.selectData = val
     },
     initData() {
       this.listLoading = true
@@ -213,6 +217,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.recordFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -234,8 +239,11 @@ export default {
       })
     },
     // 写记录
-    handleRecord(id) {
-
+    handleRecord(row) {
+      this.recordFormVisible = true
+      this.$nextTick(()=>{
+        this.$refs.RecordForm.init(row.id)
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -251,69 +259,22 @@ export default {
         })
       }).catch(() => { })
     },
+    releaseFun(){
+      if (this.selectData.length){
+        let idList = this.selectData.map(item=>item.id)
+        releasePartner(idList).then(res=>{
+          this.initData()
+          this.$message({
+            type:'success',
+            message: "释放成功",
+            duration: 1500,
+          })
+        }).catch(()=>{})
+      }else{
+        this.$message.warning('请选择您要释放的客户数据！')
+      }     
+    },
   }
 }
 </script>
-<style scoped>
-.el-tab-pane {
-  height: calc(100% - 10px);
-}
-
-::v-deep .el-tabs__content {
-  height: calc(100% - 40px);
-}
-
-.el-tabs {
-  height: 100%;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 10px;
-}
-
-.JNPF-common-head {
-  padding: 10px;
-}
-
-.JNPF-common-search-box {
-  padding-top: 5px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.main {
-  padding: 10px 30px 0;
-}
-
-.aaa ::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0;
-  padding-left: 10px !important;
-  background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
-}
-
-::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding-bottom: 0;
-}
-</style>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />

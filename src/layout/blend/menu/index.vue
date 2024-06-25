@@ -1,6 +1,6 @@
 <template>
   <div :class="classObj" class="top-menu" id="topMenu">
-    <el-menu mode="horizontal" :unique-opened="true" :default-active="activeName">
+    <el-menu mode="horizontal" :unique-opened="true" :default-active="activeName" :background-color="head">
       <sidebar-item v-for="route in list" :key="route.enCode" :item="route" :base-path="route.path"
         ref="sidebarItem" />
     </el-menu>
@@ -23,6 +23,7 @@ export default {
     ]),
     ...mapState({
       slideClass: state => state.settings.slideClass,
+      head: state => state.settings.head,
     }),
     classObj() {
       return {

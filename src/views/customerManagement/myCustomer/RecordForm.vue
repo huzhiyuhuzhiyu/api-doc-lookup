@@ -2,20 +2,14 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-17 12:35:26
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-24 10:56:25
- * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\Form.vue
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ * @LastEditTime: 2024-06-24 11:09:43
+ * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\RecordForm.vue
+ * @Description: 我的客户写记录
 -->
 <template>
   <el-dialog title="服务说明" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
     width="600px">
     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
-      <el-col :span="24">
-        <el-form-item prop="name" ref="cooperativePartnerName" label="客户名称">
-          <ComSelect-list :isdisabled="btnType=== 'look'" v-model="dataForm.name" placeholder="请选择客户名称"
-            @change="onPartnerChange" :title="'选择客户'" :method="getPartnerList" :requestObj="requestObj" />
-        </el-form-item>
-      </el-col>
       <el-col :span="24">
         <el-form-item prop="serviceDescription" ref="serviceDescription" label="服务说明">
           <el-input type="textarea" :rows="4" v-model="dataForm.serviceDescription" placeholder="请输入服务说明" maxlength="200">
@@ -49,9 +43,6 @@ export default {
         publicFlag: 0,
       },
       rules: {
-        name: [
-          { required: true, message: '请选择客户', trigger: ['change'] },
-        ],
         serviceDescription: [
           { required: true, message: '请输入服务说明', trigger: ['blur'] },
         ],
@@ -63,7 +54,7 @@ export default {
       this.visibleDialog = true
       this.btnLoading = false
       this.btnType = btnType
-      this.dataForm.id = id || ''
+      this.dataForm.cooperativePartnerId = id || ''
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
         if (this.dataForm.id) {
@@ -82,8 +73,7 @@ export default {
       }else{
         this.dataForm.cooperativePartnerId = ''
         this.dataForm.name = ''
-      }
-      console.log(data);
+      } 
     },
     confirm() {
       this.btnLoading = true

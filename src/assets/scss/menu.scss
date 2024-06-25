@@ -1,0 +1,59 @@
+// theme color
+$dark: #304156;
+$black: #000000;
+$blueblack: #1c253e;
+$lightWhite: #fff;
+$gray: #394664;
+$darkgray: #344058;
+$blues: #1890ff;
+$purples: #722ED1;
+$oceans: #13C2C2;
+$girlPink: #ED1299;
+
+$map: (dark: $dark, black: $black, blueblack: $blueblack, lightWhite: $lightWhite,gray: $gray,darkgray: $darkgray,blues: $blues,purples: $purples,oceans: $oceans,girlPink: $girlPink,);
+
+@mixin mixinPopup($color) {
+  &.functional.el-menu--horizontal,
+  &.blend.el-menu--horizontal {
+    background-color: $color;
+    .el-menu.el-menu--popup{
+      background-color: $color;
+    }
+    .el-menu .nest-menu {
+      background-color: $color;
+      .el-submenu {
+        background-color: $color;
+      }
+      .el-menu-item,
+      .el-submenu__title {
+        background-color: $color;
+      }
+    }
+  }
+
+
+  &.JNPF-select-tree {
+    .el-tree.single .is-current>.el-tree-node__content .custom-tree-node {
+      color: $color;
+    }
+  }
+}
+
+@each $key, $value in $map {
+  .#{$key} {
+    @include mixinPopup($value);
+  }
+}
+
+:export {
+  dark: $dark;
+  black: $black;
+  blueblack: $blueblack;
+  lightWhite: $lightWhite;
+  gray: $gray;
+  darkgray: $darkgray;
+  blues: $blues;
+  purples: $purples;
+  oceans: $oceans;
+  girlPink: $girlPink;
+}

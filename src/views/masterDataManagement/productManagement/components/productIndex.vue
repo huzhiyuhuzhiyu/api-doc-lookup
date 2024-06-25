@@ -258,8 +258,8 @@ export default {
     }
   },
   created() {
-    this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getcategoryTree()
     this.initData()
   },
   computed: {
@@ -314,7 +314,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: "raw_material" }).then(res => {
+      getcategoryTree({ classAttribute: this.listQuery.classAttribute }).then(res => {
         this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false

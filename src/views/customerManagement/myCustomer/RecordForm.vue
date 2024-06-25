@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-17 12:35:26
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-24 11:09:43
+ * @LastEditTime: 2024-06-25 17:14:28
  * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\RecordForm.vue
  * @Description: 我的客户写记录
 -->
@@ -40,7 +40,7 @@ export default {
        serviceDescription:'',
       },
       requestObj:{
-        publicFlag: 0,
+        customerStatus: 'private_sea',
       },
       rules: {
         serviceDescription: [

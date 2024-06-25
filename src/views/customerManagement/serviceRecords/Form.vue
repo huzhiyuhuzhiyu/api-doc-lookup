@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-17 12:35:26
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-24 10:56:25
+ * @LastEditTime: 2024-06-25 17:14:46
  * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\Form.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -46,7 +46,7 @@ export default {
        serviceDescription:'',
       },
       requestObj:{
-        publicFlag: 0,
+        customerStatus: 'private_sea',
       },
       rules: {
         name: [

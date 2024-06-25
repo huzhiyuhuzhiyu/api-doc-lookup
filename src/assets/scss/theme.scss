@@ -1,24 +1,26 @@
 // theme color
-$purple: #722ED1;
+$purple: #C34AFF;
 $purpleSub: #C34AFF;
 $azure: #211BCE;
 $azureSub: #4D89F1;
-$blackblue:#211BCE;
-$blackblueSub:#4D89F1;
-$blue:#1890ff;
+$blackblue:#54133b;
+$blackblueSub:#54133b;
+$blue:#3FB9F8;
 $blueSub:#3FB9F8;
 $ocean:#13C2C2;
 $oceanSub:#69D5E6;
-$green: #3EAC12;
+$green: #5BDECC;
 $greenSub: #5BDECC;
-$yellow: #F8BC18;
+$yellow: #FF9C1C;
 $yellowSub: #FF9C1C;
-$orange: #F5811C;
+$orange: #FEB814;
 $orangeSub: #FEB814;
-$red: #F5222D;
+$red: #FF5D65;
 $redSub: #FF5D65;
-$pick: #ff5c93;
+$pick: #e87ca0;
 $pickSub: #e87ca0;
+$cherryRed:#54133b;
+$cherryRedSub:#54133b;
 
 // @mixin mixinNavbar($color, $subColor) {
 
@@ -273,7 +275,6 @@ $pickSub: #e87ca0;
 
       .el-menu-item,
       .el-submenu__title {
-
         &:hover {
           color: $color;
 
@@ -480,7 +481,22 @@ $pickSub: #e87ca0;
     background: #13C2C2 !important;
   }
 }
+#app .girlPink{
+  background-color: #ED1299 !important;
+  .el-menu{
+    background: #ED1299 !important;
+  }
+}
+#app .cherryRed{
+  // @include mixinNavbar($red, $redSub);
+  @include mixinCommon($cherryRed,$cherryRed);
+  @include mixinSidebar($cherryRed);
+  @extend .ligthNavbar;
+}
 
+.cherryRed {
+  @include mixinPopup($cherryRed);
+}
 
 
 .lightWhite.classic.el-menu--vertical,
@@ -634,6 +650,7 @@ $pickSub: #e87ca0;
   @include mixinPopup($pick);
 }
 
+
 :export {
   purpleTheme: $purple;
   azureTheme: $azure;
@@ -646,4 +663,5 @@ $pickSub: #e87ca0;
   redTheme: $red;
   pickTheme: $pick;
   defaultTheme: #409EFF;
+  cherryRedTheme:$cherryRed;
 }

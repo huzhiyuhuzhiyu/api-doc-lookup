@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-19 15:09:11
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-24 08:56:11
+ * @LastEditTime: 2024-06-24 10:52:42
  * @FilePath: \os-web-zgt4.0\src\api\customerManagement\index.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,11 +24,19 @@ export function addPartner(data) {
     data
   })
 }
+// 我的客户 释放
+export function releasePartner(data) {
+  return request({
+    url: '/api/erp/cooperative/partner/modify/release/customer',
+    method: 'post',
+    data
+  })
+}
 // 我的客户 编辑
 export function updatePartner(data) {
   return request({
     url: '/api/erp/cooperative/partner/modify',
-    method: 'post',
+    method: 'put',
     data
   })
 }
@@ -37,15 +45,13 @@ export function detailPartner(id) {
   return request({
     url: `/api/erp/cooperative/partner/detail/${id}`,
     method: 'get',
-    data
   })
 }
-// 我的客户 详情
+// 我的客户 验证编码
 export function checkPartner(data) {
   return request({
     url: `/api/erp/cooperative/partner/check/code/exist?id=${data.id}&code=${data.code}&type=${data.type}`,
     method: 'get',
-    data
   })
 }
 

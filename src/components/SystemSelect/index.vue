@@ -208,7 +208,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .international {
-  float: left;
+  // float: left;
   padding: 0 8px;
   height: 100vh;
 

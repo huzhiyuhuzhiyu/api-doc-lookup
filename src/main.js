@@ -11,6 +11,7 @@ import "./assets/scss/date.scss";
 
 import '@/styles/index.scss' // global css
 import './assets/scss/theme.scss' // 主题
+import './assets/scss/menu.scss' // 主题
 
 import '@/styles/jx.scss' // Custom styles
 import App from './App'

@@ -279,7 +279,7 @@ $cherryRedSub:#54133b;
           color: $color;
 
           i {
-            color:#fff !important;
+            color:#fff;
           }
         }
 
@@ -287,7 +287,41 @@ $cherryRedSub:#54133b;
           color:#fff !important;
 
           i {
-            color:#fff !important;
+            color:#fff;
+          }
+        }
+      }
+    }
+  }
+  &.lightWhite.functional.el-menu--horizontal{
+    .el-menu .nest-menu {
+      .el-submenu {
+        &.is-active {
+          .el-submenu__title {
+            color: $color;
+  
+            i {
+              color: $color;
+            }
+          }
+        }
+      }
+  
+      .el-menu-item,
+      .el-submenu__title {
+        &:hover {
+          color: $color;
+  
+          i {
+            color:$color !important;
+          }
+        }
+  
+        &.is-active {
+          color:$color;
+  
+          i {
+            color:$color !important;
           }
         }
       }

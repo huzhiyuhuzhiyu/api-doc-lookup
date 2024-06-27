@@ -134,3 +134,12 @@ export function uploadProduct(data) {
     data: data
   })
 }
+
+// 导入文件(正式客户)
+export function uploadPartner(data) {
+  return request({
+    url: `/api/erp/cooperative/partner/upload/data`,
+    method: 'post',
+    data: data
+  })
+}

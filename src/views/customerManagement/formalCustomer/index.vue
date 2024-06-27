@@ -42,7 +42,7 @@
               <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus"
                 @click="importFun">导入</el-button>
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportFun">导出</el-button>
+                icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import { getPartnerList, uploadProduct, deletePartner } from '@/api/customerManagement'
+import { getPartnerList,  deletePartner,uploadPartner} from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import RecordForm from '../myCustomer/RecordForm.vue'
 import { UserListAll, } from '@/api/permission/user'
@@ -354,14 +354,12 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/公海客户导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/客户导入模板.xlsx')
       a.click()
     },
 
 
-    exportFun() {
-
-    },
+    
     importFun() {
 
       this.$refs.UploadProduct.$el.querySelector('input').click()
@@ -374,7 +372,7 @@ export default {
       formData.append("file", data.file)
       formData.append("customerSea", "formal")
       //调用上传文件接口
-      uploadProduct(formData).then(res => {
+      uploadPartner(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.initData()

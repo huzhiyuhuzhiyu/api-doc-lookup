@@ -35,11 +35,12 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" icon="iconfont icon-lingqu" @click="receiveFun()" :loading="btnLoading" :disabled="btnLoading">领取</el-button>
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')">
+              <el-button type="primary" icon="iconfont icon-lingqu" @click="receiveFun()" :loading="btnLoading"
+                :disabled="btnLoading">领取</el-button>
               <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              <el-button size="mini"  v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
+              <el-button v-has="'btn_export'"  :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
@@ -59,22 +60,22 @@
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">修改</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  @click="handleDel(scope.row.id)">删除</el-button>
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
+                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
+                  @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
 
-                  </el-dropdown-menu>
-                </el-dropdown>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -144,15 +145,15 @@
     </el-dialog>
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
-      <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+
   </div>
 </template>
 
 <script>
 import { getPartnerList, uploadProduct, deletePartner, receiveCustomer } from '@/api/customerManagement'
 import { UserListAll, } from '@/api/permission/user'
-import  ExportForm from '@/components/no_mount/ExportBox/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
@@ -162,7 +163,7 @@ import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dicti
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'carrierProfile',
-  components: { Form,ExportForm },
+  components: { Form, ExportForm },
   data() {
     return {
       customList: [], // 列表中显示的自定义属性
@@ -171,7 +172,7 @@ export default {
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      btnLoading:false,
+      btnLoading: false,
       exportFormVisible: false,
 
 
@@ -219,35 +220,35 @@ export default {
     this.initData()
   },
   methods: {
-    exportType(data,ref){
-    if (data.length){
-          this.exportFormVisible = true
-          let domRef = this.$refs[`${ref}`]
-          console.log(domRef);
-          let columnList = domRef.columnList.filter(item => !!item.label && !!item.prop)
-          columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-          this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
-        }else{
-          this.$message({
-            message: "暂无数据导出",
-            type: "error",
-            duration: 1500,
-          })
-    }
-  },
+    exportType(data, ref) {
+      if (data.length) {
+        this.exportFormVisible = true
+        let domRef = this.$refs[`${ref}`]
+        console.log(domRef);
+        let columnList = domRef.columnList.filter(item => !!item.label && !!item.prop)
+        columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+        this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      } else {
+        this.$message({
+          message: "暂无数据导出",
+          type: "error",
+          duration: 1500,
+        })
+      }
+    },
     // 导出
-    exportForm(){ 
-        this.exportType(this.tableData,'dataTable')
- 
+    exportForm() {
+      this.exportType(this.tableData, 'dataTable')
+
 
     },
-    download(data) { 
+    download(data) {
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        } 
+        }
         let query = this.dataForm
         let _data = {
           ...query,
@@ -275,14 +276,14 @@ export default {
       if (!this.selectArr.length) return this.$message.error("请先选择你要领取的客户")
       let idList = this.selectArr.map(item => item.id);
       console.log("id", idList);
-      this.btnLoading=true
+      this.btnLoading = true
       receiveCustomer(idList).then(res => {
         this.$message.success("领取成功")
-        this.selectArr=[]
-        this.btnLoading=false
+        this.selectArr = []
+        this.btnLoading = false
         this.initData()
-      }).catch(error=>{
-        this.btnLoading=false
+      }).catch(error => {
+        this.btnLoading = false
 
       })
 
@@ -297,7 +298,7 @@ export default {
     },
 
 
-    
+
     importFun() {
 
       this.$refs.UploadProduct.$el.querySelector('input').click()
@@ -481,7 +482,7 @@ export default {
     handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id,'', btnType)
+        this.$refs.Form.init(id, '', btnType)
       })
     },
 

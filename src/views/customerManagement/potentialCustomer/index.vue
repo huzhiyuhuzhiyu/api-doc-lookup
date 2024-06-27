@@ -36,11 +36,11 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main" :element-loading-text="loadingText">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts  :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')">
               <el-button type="primary" icon="iconfont icon-fenpei" @click="distributionFun()">分配</el-button>
               <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
-              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
+              <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
@@ -60,9 +60,8 @@
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="editPotentialCustomer(scope.row.id, 'edit')">编辑</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  @click="handleDel(scope.row.id)">删除</el-button>
+                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"  @edit="editPotentialCustomer(scope.row.id, scope.row.partnerCategoryId,'edit')"
+                @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -72,10 +71,12 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id)">转为正式</el-dropdown-item>
                     <el-dropdown-item @click.native="handleRecord(scope.row)">写记录</el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">查看详情</el-dropdown-item>
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id,scope.row.partnerCategoryId, 'look')">查看详情</el-dropdown-item>
 
                   </el-dropdown-menu>
                 </el-dropdown>
+              </tableOpts>
+
               </template>
             </el-table-column>
           </JNPF-table>
@@ -532,16 +533,16 @@ export default {
       }).catch(() => { })
 
     },
-    handleUserRelation(id, btnType) {
+    handleUserRelation(id,partnerCategoryId, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, '', btnType)
+        this.$refs.Form.init(id, partnerCategoryId, btnType)
       })
     },
-    editPotentialCustomer(id, btnType) {
+    editPotentialCustomer(id,partnerCategoryId, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, '', btnType)
+        this.$refs.Form.init(id, partnerCategoryId, btnType)
       })
     },
 

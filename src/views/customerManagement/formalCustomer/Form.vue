@@ -4,7 +4,7 @@
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack"
-          :content="btnType=='look' ? '查看公海客户' :btnType=='add'? '新增公海客户' :'编辑公海客户'" />
+          :content="btnType=='look' ? '查看正式客户' :btnType=='add'? '新增正式客户' :'编辑正式客户'" />
         <div class="options" v-if="btnType!='look'">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>

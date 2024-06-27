@@ -21,15 +21,13 @@ export default {
     // window.removeEventListener('beforeunload', this.beforeUnload)
   },
   created() {
-    let imgURL = localStorage.getItem('aaa') === 'zgt' ? location.origin + '/favicon.ico' : location.origin + '/jz.ico'
-    var head = document.getElementsByTagName('head')[0];
-    // console.log(head, 'headheadhead');
-    var linkTag = document.createElement('link');
-    linkTag.type = "image/x-icon";
-    linkTag.rel = "shortcut icon";
-    // console.log(location.origin + '/favicon.ico');
-    linkTag.setAttribute('href', imgURL)
-    head.appendChild(linkTag);
+    // let imgURL = localStorage.getItem('aaa') === 'zgt' ? location.origin + '/favicon1.ico' : location.origin + '/favicon1.ico'
+    // var head = document.getElementsByTagName('head')[0];
+    // var linkTag = document.createElement('link');
+    // linkTag.type = "image/x-icon";
+    // linkTag.rel = "shortcut icon";
+    // linkTag.setAttribute('href', imgURL)
+    // head.appendChild(linkTag);
   },
   methods: {
     beforeUnload(e) {

@@ -16,7 +16,8 @@ const {
   slideClass,
   headClass,
   layoutType,
-  sysConfig
+  sysConfig,
+  systemVO
 } = defaultSettings
 
 const state = {
@@ -36,7 +37,8 @@ const state = {
   slideClass: jnpf.storageGet('slideClass') === null ? slideClass : jnpf.storageGet('slideClass'),
   headClass: jnpf.storageGet('headClass') === null ? headClass : jnpf.storageGet('headClass'),
   layoutType: jnpf.storageGet('layoutType') === null ? layoutType : jnpf.storageGet('layoutType'),
-  sysConfig: jnpf.storageGet('sysConfig') === null ? sysConfig : jnpf.storageGet('sysConfig')
+  sysConfig: jnpf.storageGet('sysConfig') === null ? sysConfig : jnpf.storageGet('sysConfig'),
+  systemVO: jnpf.storageGet('systemVO') === null ? systemVO : jnpf.storageGet('systemVO'),
 }
 
 const mutations = {

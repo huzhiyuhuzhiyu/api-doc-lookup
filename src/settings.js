@@ -32,12 +32,16 @@ module.exports = {
      * If you want to also use it in dev, you can pass ['production', 'development']
      */
     sysConfig: {
-        sysVersion: "V3.4.2",
+        sysVersion: "V4.0.0",
         copyright: "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有",
         navigationIcon: "",
         logoIcon: "",
         loginIcon: "",
-        sysName:"怡盛智造" 
+        sysName:"轴管通" 
+    },
+    systemVO:{
+        shortName: "轴管通",
+        iconUrl:''
     },
     themeClass: "blue",
     headClass: "blue",

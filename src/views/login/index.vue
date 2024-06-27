@@ -10,7 +10,7 @@
 
             <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
             <el-image class="login-bg" :src="define.comUrl + sysConfig.loginBg" @load="bgload" v-show="isbgload"></el-image>
-            <img class="login-bg" src="@/assets/images/login_b_img1.jpg" alt="" v-show="!isbgload" />
+            <img class="login-bg" src="@/assets/images/login_bg.png" alt="" v-show="!isbgload" />
             <div class="body">
                 <div style="opacity: .8;">
                     <div v-for="(value, key) in berning" :key="key" :style="value" class="ber" :class="222"></div>
@@ -23,7 +23,7 @@
                                 <!-- <el-image class="login-logo" :src="define.comUrl+sysConfig.loginIcon" v-if="sysConfig && sysConfig.loginIcon"> -->
                                 <!-- <template slot="error"> -->
                                 <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt=""> -->
-                                <img class="login-logo" src="@/assets/images/jnpf2.png" alt="">
+                                <img class="login-logo" src="@/assets/images/jnpf.png" alt="">
                                 <!-- </template> -->
                                 <!-- </el-image> -->
                                 <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt="" v-else> -->

@@ -2,20 +2,27 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo 8" :src="define.comUrl+sysConfig.logoIcon" v-if="sysConfig && sysConfig.logoIcon">
+        <el-image class="sidebar-logo 8" :src="define.comUrl+systemVO.iconUrl" :style="{ backgroundColor: head }" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
             <img class="sidebar-logo 9" :class="headClass" :style="{backgroundColor:head}" src="@/assets/images/jnpf2.png" alt="">
           </template>
         </el-image>
-        <img src="@/assets/images/jnpf2.png" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 10" v-else />
+        <img src="@/assets/images/jnpf.png" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 10" v-else />
       </router-link>
-      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+      <!-- <router-link v-else key="expand" class="sidebar-logo-link" to="/">
         <el-image class="sidebar-logo 11" :src="define.comUrl+sysConfig.navigationIcon" v-if="sysConfig && sysConfig.navigationIcon">
           <template slot="error">
             <img class="sidebar-logo 12" :class="headClass" :style="{backgroundColor:head}" :src="$store.state.jx.logo1" alt="">
           </template>
         </el-image>
         <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 13" v-else />
+      </router-link> -->
+      <router-link v-else key="expand" class="sidebar-logo-link" to="/">
+        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
+          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+          <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
+          <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+        </div>
       </router-link>
     </transition>
   </div>
@@ -35,11 +42,14 @@ export default {
     sysConfig() {
       return this.$store.state.settings.sysConfig
     },
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
     ...mapState({
       headClass: state => state.settings.headClass,
       head: state => state.settings.head,
     }),
-  }
+  },
 }
 </script>
 
@@ -70,5 +80,19 @@ export default {
       width: 100%;
     }
   }
+}
+.imagesClass {
+  height: 60px;
+  width: 60px;
+}
+.logo-text {
+  font-size: 24px !important;
+  font-weight: bold;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  // margin-left: -11px;
+  // margin-top:-20px;
 }
 </style>

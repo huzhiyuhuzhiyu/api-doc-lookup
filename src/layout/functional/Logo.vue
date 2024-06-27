@@ -1,13 +1,11 @@
 <template>
   <div class="functional-logo-container">
-    <router-link class="sidebar-logo-link" to="/">
-      <el-image class="sidebar-logo" :src="define.comUrl+sysConfig.navigationIcon"
-        v-if="sysConfig && sysConfig.navigationIcon">
-        <template slot="error">
-            <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo"  />
-        </template>
-      </el-image>
-        <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo" v-else />
+    <router-link  class="sidebar-logo-link" to="/">
+        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
+          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" :style="{ backgroundColor: head }" />
+          <img src="$store.state.jx.logo" class="imagesClass" :style="{backgroundColor:head}" v-else />
+          <div  class="logo-text">{{systemVO.shortName || '轴管通' }}</div>
+        </div>
     </router-link>
   </div>
 </template>
@@ -22,9 +20,12 @@ export default {
       headClass: state => state.settings.headClass,
       head: state => state.settings.head,
     }),
-    sysConfig() {
+    systemVO() {
       return this.$store.state.settings.sysConfig
-    }
+    },
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
   },
 }
 </script>
@@ -47,5 +48,17 @@ export default {
       width: 100%;
     }
   }
+}
+.imagesClass {
+  height: 60px;
+  width: 60px;
+}
+.logo-text {
+  font-size: 24px !important;
+  font-weight: bold;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

@@ -1,21 +1,29 @@
 <template>
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}">
+  <div class="sidebar-logo-container" :class="{ 'collapse': collapse }">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo" :src="define.comUrl+sysConfig.logoIcon" v-if="sysConfig && sysConfig.logoIcon">
+        <el-image class="sidebar-logo imagesClass" :style="{ backgroundColor: head }" :src="define.comUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
-            <img class="sidebar-logo" :class="headClass" :style="{backgroundColor:head}" src="@/assets/images/jnpf2.png" alt="">
+            <img class="sidebar-logo" :class="headClass" :style="{ backgroundColor: head }" src="@/assets/images/jnpf.png"
+              alt="">
           </template>
         </el-image>
-        <img src="@/assets/images/jnpf2.png" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo" v-else />
+        <img src="@/assets/images/jnpf.png" :class="headClass" :style="{ backgroundColor: head }" class="sidebar-logo"
+          v-else />
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <el-image class="sidebar-logo" :src="define.comUrl+sysConfig.navigationIcon" v-if="sysConfig && sysConfig.navigationIcon">
+        <!-- <el-image class="imagesClass" :style="{ backgroundColor: head }" :src="define.comUrl + systemVO.iconUrl"
+          v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
-            <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo"/>
+            <img :src="$store.state.jx.logo" :class="headClass" :style="{ backgroundColor: head }" class="sidebar-logo" />
           </template>
-        </el-image>
-          <img :src="$store.state.jx.logo1" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo" v-else />
+        </el-image> -->
+        <!-- <img :src="$store.state.jx.logo" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo" v-else /> -->
+        <div style="display:flex;align-items: center" :style="{ backgroundColor: head }">
+          <img v-if="systemVO.iconUrl" :src="define.comUrl + systemVO.iconUrl" class="imagesClass" />
+          <img src="@/assets/images/jnpf.png" class="imagesClass" v-else />
+          <span class="logo-text">{{ systemVO.shortName || '轴管通' }}</span>
+        </div>
       </router-link>
     </transition>
   </div>
@@ -33,7 +41,10 @@ export default {
     }),
     sysConfig() {
       return this.$store.state.settings.sysConfig
-    }
+    },
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
   },
   props: {
     collapse: {
@@ -62,6 +73,7 @@ export default {
   background: #29384a;
   text-align: center;
   overflow: hidden;
+
   .sidebar-logo-link {
     height: 100%;
     width: 100%;
@@ -71,5 +83,17 @@ export default {
       width: 100%;
     }
   }
+}
+.imagesClass {
+  height: 60px;
+  width: 60px;
+}
+.logo-text {
+  font-size: 24px !important;
+  font-weight: bold;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

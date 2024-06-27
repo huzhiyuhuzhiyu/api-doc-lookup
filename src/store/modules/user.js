@@ -218,7 +218,9 @@ const actions = {
         commit('SET_USERINFO', userInfo)
         commit('SET_PERMISSION_LIST', permissionList)
         const sysConfigInfo = data.sysConfigInfo || defaultSettings.sysConfig
+        const systemVO = data.systemVO || defaultSettings.systemVO
         commit('settings/CHANGE_SETTING', { key: "sysConfig", value: sysConfigInfo }, { root: true })
+        commit('settings/CHANGE_SETTING', { key: "systemVO", value: systemVO }, { root: true })
         resolve(routerList)
       }).catch(error => {
         reject(error)

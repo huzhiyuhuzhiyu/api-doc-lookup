@@ -2,7 +2,7 @@ import defaultSettings from '@/settings'
 import i18n from '@/lang'
 import { getLanguage } from '@/lang/index'
 
-const title =localStorage.getItem('aaa') === "zgt" ? '怡盛液压' : "极智液压" 
+const title =localStorage.getItem('aaa') === "zgt" ? '轴管通' : "" 
 
 export default function getPageTitle(key, fullName) {
   const realTitle = getLanguage() === 'en' ? 'JNPF' : getLanguage() === 'zhtw' ? 'JNPF軟件開發平臺' : title

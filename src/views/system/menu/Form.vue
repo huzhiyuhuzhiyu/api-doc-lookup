@@ -10,6 +10,16 @@
       <el-form-item label="应用编码" prop="enCode">
         <el-input v-model="dataForm.enCode" placeholder="输入编码" />
       </el-form-item>
+      <el-form-item label="应用简称" prop="shortName">
+        <el-input v-model="dataForm.shortName" placeholder="输入简称" maxlength="6"/>
+      </el-form-item>
+      <el-form-item label="应用logo" prop="iconUrl">
+          <el-upload class="avatar-uploader" :action="define.comUploadUrl + '/annex'" :show-file-list="false" :on-success="handleAvatarSuccess" accept="image/*">
+            <img v-if="dataForm.iconUrl" :src="define.comUrl + dataForm.iconUrl" class="avatar" />
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+      </el-form-item>
+
       <el-form-item label="图标" prop="icon">
         <el-row type="flex">
           <div style="flex:1;margin-right:10px">
@@ -80,10 +90,18 @@ export default {
         propertyJson: {
           iconBackgroundColor: ''
         },
+        shortName:'',
+        iconUrl:'',
       },
       dataRule: {
         fullName: [
           { required: true, message: '应用不能为空', trigger: 'blur' },
+        ],
+        shortName: [
+          { required: true, message: '应用简称不能为空', trigger: 'blur' },
+        ],
+        iconUrl: [
+          { required: true, message: '应用LOGO不能为空', trigger: 'change' },
         ],
         enCode: [
           { required: true, message: '应用编码不能为空', trigger: 'blur' },
@@ -154,8 +172,45 @@ export default {
     },
     choiceIcon(value) {
       this.dataForm.icon = value
-    }
+    },
+    handleAvatarSuccess(res) {
+      if (res.code === 200 && res.data && res.data.url) {
+        this.dataForm.iconUrl = res.data.url
+      } else {
+        this.$message.error('头像上传失败')
+      }
+    },
   },
 
 }
 </script>
+<style lang="scss" scoped>
+::v-deep .avatar-uploader {
+  .el-upload {
+    border: 1px dashed #dcdfe6;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .el-upload:hover {
+    border-color: #409eff;
+  }
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 130px;
+  height: 130px;
+  line-height: 130px;
+  text-align: center;
+}
+
+.avatar {
+  width: 130px;
+  height: 130px;
+  display: block;
+}
+</style>

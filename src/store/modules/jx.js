@@ -13,6 +13,7 @@ const state = {
     loadingBackground: 'rgba(255, 255, 255, 0.8)',
     loadingSpinner: 'el-icon-loading',
 
+    logo : require("@/assets/images/jnpf.png"),
     logo1 : require("@/assets/images/os1_"+(localStorage.getItem('aaa') ? localStorage.getItem('aaa') : 'zgt')+".png"),
     logo2 : require("@/assets/images/os2_"+(localStorage.getItem('aaa') ? localStorage.getItem('aaa') : 'iot')+".png"),
 }

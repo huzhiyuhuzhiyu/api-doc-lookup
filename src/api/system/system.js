@@ -54,3 +54,11 @@ export const copy = (id) => {
     })
 }
 
+// 企业首页 更新说明
+ export const updateInstructions = (data) => {
+  return request({
+    url: '/api/crm/bim/update/instructions/list',
+    method: 'post',
+    data
+  })
+}

@@ -499,6 +499,16 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
+            <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  
+            custom-column>
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
+            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" />
+          </JNPF-table>
+          </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="btnType=='look'" :detailed="btnType=='look'"></UploadWj>
           </el-tab-pane>
@@ -521,6 +531,7 @@ import {
 export default {
   data() {
     return {
+      tableData:[],
       loadingareafoundation:false,
       foundationloadingcity:false,
       loadingarea:false,
@@ -641,7 +652,9 @@ export default {
         }
       },
       dataRule: {
-   
+        partnerCategoryIdText: [
+          { required: true, message: '所属分类不能为空', trigger: 'change' }
+        ],
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
         // phone: [{ validator: this.validateField2, trigger: 'blur' }],
         code: [
@@ -671,7 +684,45 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' },
          
         ],
-        
+        regionCode: [
+          { required: true, message: '地区不能为空', trigger: 'change' }
+
+        ],
+        country: [
+          { required: true, message: '国家不能为空', trigger: 'change' },
+
+        ],
+        province: [
+          { required: true, message: '省份不能为空', trigger: 'change' }
+
+        ],
+        city: [
+          { required: true, message: '城市不能为空', trigger: 'change' }
+
+        ],
+        area: [
+          { required: true, message: '区不能为空', trigger: 'change' }
+
+        ],
+        address: [
+          { required: true, message: '请输入地址', trigger: 'blur' },
+
+        ],
+        taxRate: [
+          { required: true, message: '请输入税率', trigger: 'blur' },
+        ],
+        paymentMethod: [
+          { required: true, message: '请选择付款方式', trigger: 'change' },
+        ],
+        paymentCycle: [
+          { required: true, message: '请选择付款周期', trigger: 'change' },
+        ],
+        reconciliationStartDate: [
+          { required: true, message: '请选择对账开始日期', trigger: 'change' },
+        ],
+        reconciliationEndDate: [
+          { required: true, message: '请选择对账结束日期', trigger: 'change' },
+        ],
  
       },
       salesList: [],
@@ -969,7 +1020,6 @@ export default {
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
-        this.listLoading = false
         this.btnLoading = false
         this.refreshTable = true
       })
@@ -1073,6 +1123,7 @@ export default {
       this.parentId = parentId || ''
       this.btnType = btnType
       getBimBusinessInfo('460918012862529542').then(res=>{
+        console.log("编码配置");
         this.businessType = res.data.configValue1
       })
       if (this.btnType=='look') {
@@ -1085,6 +1136,7 @@ export default {
       if (this.dataForm.id) {
         detailPartner(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
+          this.tableData=res.data.recordsList
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
               this.organizeIdTrees = sss.data.organizeIdTree || []

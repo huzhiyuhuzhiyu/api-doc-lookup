@@ -535,7 +535,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
-            <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  
+            <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true"  
             custom-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
@@ -571,6 +571,7 @@ import {
 export default {
   data() {
     return {
+      tableData:[],
       loadingareafoundation:false,
       foundationloadingcity:false,
       loadingarea:false,
@@ -1080,7 +1081,6 @@ export default {
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
-        this.listLoading = false
         this.btnLoading = false
         this.refreshTable = true
       })
@@ -1196,6 +1196,7 @@ export default {
       if (this.dataForm.id) {
         detailPartner(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
+          this.tableData=res.data.recordsList
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
               this.organizeIdTrees = sss.data.organizeIdTree || []

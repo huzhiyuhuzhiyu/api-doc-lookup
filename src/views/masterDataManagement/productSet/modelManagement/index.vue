@@ -30,7 +30,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
-          <topOpts @add="addOrUpdateHandle('','add')" />
+          <topOpts @add="addOrUpdateHandle('','add')" :isJudgePer="true" :addPerCode="'btn_add'" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -51,7 +51,7 @@
 
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)"></tableOpts>
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)"></tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>

@@ -1157,6 +1157,7 @@ export default {
       if (this.dataForm.id) {
         detailPartner(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
+          this.dataForm.customerStatus="formal"
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
               this.organizeIdTrees = sss.data.organizeIdTree || []

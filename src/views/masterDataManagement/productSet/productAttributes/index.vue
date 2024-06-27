@@ -45,9 +45,8 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
-          <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
-            新建
-          </el-button>
+          <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
+       
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -60,7 +59,7 @@
           <el-table-column prop="remark" label="备注" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>

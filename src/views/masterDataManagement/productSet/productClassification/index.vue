@@ -3,7 +3,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle('','','add')" />
+          <topOpts @add="addOrUpdateHandle('','','add')" :isJudgePer="true" :addPerCode="'btn_add'" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
@@ -52,7 +52,7 @@
    
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
                  
               </tableOpts>

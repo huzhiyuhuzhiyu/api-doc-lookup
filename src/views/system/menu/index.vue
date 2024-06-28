@@ -24,7 +24,7 @@
                 <div class="JNPF-common-head">
                     <topOpts @add="addOrUpdateHandle()" />
                     <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
-                        <div>
+                        <div style="display:flex;align-items:center">
                             <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist" >
                                 <div class="getSwitchList-p" @click="switchlist = !switchlist">
                                     <img src="@/assets/images/a2.png" alt="">
@@ -45,7 +45,7 @@
                 <JNPF-table v-loading="listLoading" :data="list" v-if="!switchlist">
                     <el-table-column prop="fullName" label="应用名称" min-width="130" key="fullName" />
                     <el-table-column prop="enCode" label="应用编码" min-width="130" key="enCode" />
-                    <el-table-column prop="description" label="应用说明" min-width="140" key="description" />
+                    <!-- <el-table-column prop="description" label="应用说明" min-width="140" key="description" /> -->
                     <el-table-column prop="applicationType" label="应用类型" min-width="100" key="applicationType">
                         <template slot-scope="scope">
                             <div v-if="scope.row.applicationType == 'Web'">
@@ -107,8 +107,8 @@
                                 <i :class="item.icon" />
                             </div>
                             <div class="card-body">
-                                <div>{{ item.fullName }}</div>
-                                <div>{{ item.enCode }}</div>
+                                <div style="color: #172b4d;font-size:16px;">{{ item.fullName }}</div>
+                                <div style="color: #6b778c;font-size:14x;">{{ item.enCode }}</div>
                             </div>
                             <div class="card-enabledMark">
                                 <div>
@@ -121,15 +121,15 @@
                             </div>
                         </div>
                         <div class="card-btn">
-                            <el-button size="mini" type="primary" round @click="addOrUpdateHandle(item.id)">编辑
+                            <el-button style="padding:5px 15px" size="mini" type="primary" round @click="addOrUpdateHandle(item.id)">编辑
                             </el-button>
-                            <el-button size="mini" type="danger" round @click="handleDel(item.id)"
+                            <el-button style="padding:5px 15px" size="mini" type="danger" round @click="handleDel(item.id)"
                                 :disabled="item.isMain == 1 ? true : false">
                                 删除
                             </el-button>
-                            <el-button size="mini" type="info" round @click.native="preview(item)">菜单管理
+                            <el-button style="padding:5px 15px" size="mini" type="info" round @click.native="preview(item)">菜单管理
                             </el-button>
-                            <el-button size="mini" type="primary" round @click.native="copy(item.id)">复制应用
+                            <el-button style="padding:5px 15px" size="mini" type="primary" round @click.native="copy(item.id)">复制应用
                             </el-button>
                         </div>
                     </el-card>
@@ -137,7 +137,7 @@
                 </el-scrollbar>
             </div>
         </div>
-        <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
+        <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
         <menuManage v-if="previewVisible" ref="menuManage" @close="closeForm" />
     </div>
 </template>
@@ -176,7 +176,8 @@ export default {
     methods: {
         closeForm(isRefresh) {
             this.previewVisible = false
-            if (isRefresh) this.refresh()
+            this.formVisible = false
+            if (isRefresh) this.initData()
         },
         reset() {
             this.listQuery.keyword = ''

@@ -541,7 +541,7 @@
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
             <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column prop="createBy" label="创建人" min-width="120" />
           </JNPF-table>
           <!-- <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
             @pagination="initData">

@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-25 17:32:00
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-26 13:28:24
+ * @LastEditTime: 2024-06-28 17:18:32
  * @FilePath: \os-web-zgt4.0\src\views\homepage\index.vue
  * @Description: 企业首页
 -->
@@ -30,7 +30,7 @@
                     <div title="剩余天数" class="text-two-line">剩余天数</div>
                     <div>-3天</div>
                   </div>
-                  <div class="progress-item-info">
+                  <div class="progress-item-info text">
                     <p title="租户起止时间" style="color: rgb(107, 119, 140);">租户起止时间</p>
                     <p>2024-06-07-2024-06-22</p>
                   </div>
@@ -42,7 +42,7 @@
                     <div title="剩余可用" class="text-two-line">剩余可用</div>
                     <div>不限人数</div>
                   </div>
-                  <div class="progress-item-info">
+                  <div class="progress-item-info text">
                     <p title="账号使用情况" style="color: rgb(107, 119, 140);">账号使用情况</p>
                     <p>不限人数</p>
                   </div>
@@ -61,7 +61,7 @@
                   <div class="quick-item-icon">
                     <i :class="item.icon"></i>
                   </div>
-                  <div class="quick-item-title">
+                  <div class="quick-item-title text">
                     <div>{{ item.title }}</div>
                     <div>{{ item.describe }}</div>
                   </div>
@@ -88,7 +88,7 @@
                     </el-input>
                   </el-form-item>
                 </el-form>
-                <el-button type="primary" size="small" @click="submit">保存</el-button>
+                <el-button type="primary" size="small" @click="submit">保 存</el-button>
               </div>
             </div>
             <div class="section section-top-border">
@@ -97,7 +97,7 @@
                 <i class="el-icon-question wk-help-tips"></i>
               </div>
               <div class="section-content is-message">
-                <div class="message-content">
+                <div class="message-content text">
                   {{ newMessage }}
                 </div>
               </div>

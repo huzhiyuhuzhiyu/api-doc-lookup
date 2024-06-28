@@ -112,6 +112,9 @@
                 </div>
               </div>
             </el-form-item>
+            <el-form-item>
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+            </el-form-item>
           </el-form>
         </el-tab-pane>
         <el-tab-pane label="移动端设置" name="third">
@@ -155,6 +158,9 @@
                   <div class="img_box_text">H5页面</div>
                 </div> -->
               </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
             </el-form-item>
           </el-form>
         </el-tab-pane>

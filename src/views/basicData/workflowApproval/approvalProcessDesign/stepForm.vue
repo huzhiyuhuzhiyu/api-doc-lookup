@@ -1,7 +1,10 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <!-- <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+      <!-- <div class="flowMain"> -->
+
+
+        <!-- <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="$emit('close')"
           content="审批模版" />
         <div class="options" v-if="btnType !== 'look'">
@@ -12,65 +15,68 @@
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div> -->
-      <!-- <div :class="['stepHeaders',btnType == 'look' ? 'noButtons' : '']"> -->
-      <div class="stepHeader">
-        <el-page-header @back="$emit('close', true)" content="流程设计" />
-        <el-steps :active="activeStep" finish-status="success" simple class="steps">
-          <el-step title="模版信息"></el-step>
-          <el-step title="流程信息"></el-step>
-        </el-steps>
-        <div class="options">
-          <el-button @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
-          <el-button @click="next" :disabled="activeStep >= 1 || loading">{{ $t('common.next') }}
-          </el-button>
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-show="btnType != 'look'">
-            保存草稿</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')" v-show="btnType != 'look'">
-            保存并提交</el-button>
-          <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
+        <!-- <div :class="['stepHeaders',btnType == 'look' ? 'noButtons' : '']"> -->
+        <div class="stepHeader">
+          <el-page-header @back="$emit('close', true)" content="流程设计" />
+          <el-steps :active="activeStep" finish-status="success" simple class="steps">
+            <el-step title="模版信息"></el-step>
+            <el-step title="流程信息"></el-step>
+          </el-steps>
+          <div class="options">
+            <el-button @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
+            <el-button @click="next" :disabled="activeStep >= 1 || loading">{{ $t('common.next') }}
+            </el-button>
+            <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-show="btnType != 'look'">
+              保存草稿</el-button>
+            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')" v-show="btnType != 'look'">
+              保存并提交</el-button>
+            <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
+          </div>
         </div>
-      </div>
+        <!-- </div> -->
+        <div class="main" v-loading="formLoading">
+          <el-row type="flex" justify="center" align="middle" v-show="!activeStep" class="basic-box">
+            <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="10" class="basicForm">
+              <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="140px" @submit.native.prevent
+                label-position="right">
+                <el-form-item label="审批模板编码" prop="code">
+                  <el-input v-model="dataForm.code" :disabled="btnType == 'edit' || btnType === 'look'"
+                    placeholder="请输入审批模板编码" maxlength="20" />
+                </el-form-item>
+
+                <el-form-item label="审批模板名称" prop="name">
+                  <el-input v-model="dataForm.name" :disabled="btnType === 'look'" placeholder="请输入审批模板名称"
+                    maxlength="20" />
+                </el-form-item>
+
+
+                <el-form-item label="审批管理员" prop="adminName">
+                  <!-- <el-input v-model="dataForm.adminId" placeholder="请输入审批管理员ID" maxlength="20" /> -->
+                  <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.adminName" ref="userRef"
+                    placeholder="请选择审批管理员名称" auth @change="sureApprover" :title="'选择审批管理员名称'"
+                    :dataFormatting="dataFormatting" :method="getApprovalAdministratorList" :requestObj="approvalObj"
+                    :paramsObj="{}" />
+                </el-form-item>
+
+
+                <el-form-item label="审批业务" prop="approvalBusinessName">
+                  <!-- <el-input v-model="dataForm.approvalBusinessName" placeholder="请输入审批业务ID" maxlength="20" /> -->
+                  <ComSelect-list :isdisabled="btnType == 'edit' || btnType === 'look'"
+                    v-model="dataForm.approvalBusinessName" placeholder="请选择审批业务" auth @change="changeBusine"
+                    :title="'选择审批业务'" :method="getApprovalListPage" :requestObj="requestObj" :paramsObj="{}" />
+                </el-form-item>
+
+
+
+
+              </el-form>
+            </el-col>
+          </el-row>
+          <workFlow :workFlowT="workFlowTemplate" v-show="activeStep" ref="workflowRef"
+            :nodeConfig.sync="busNodeConfig" />
+          <errorDialog :visible.sync="tipVisible" :list="tipList" />
+        </div>
       <!-- </div> -->
-      <div class="main" v-loading="formLoading">
-        <el-row type="flex" justify="center" align="middle" v-show="!activeStep" class="basic-box">
-          <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="10" class="basicForm">
-            <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="140px" @submit.native.prevent
-              label-position="right">
-              <el-form-item label="审批模板编码" prop="code">
-                <el-input v-model="dataForm.code" :disabled="btnType == 'edit' || btnType === 'look'"
-                  placeholder="请输入审批模板编码" maxlength="20" />
-              </el-form-item>
-
-              <el-form-item label="审批模板名称" prop="name">
-                <el-input v-model="dataForm.name" :disabled="btnType === 'look'" placeholder="请输入审批模板名称" maxlength="20" />
-              </el-form-item>
-
-
-              <el-form-item label="审批管理员" prop="adminName">
-                <!-- <el-input v-model="dataForm.adminId" placeholder="请输入审批管理员ID" maxlength="20" /> -->
-                <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.adminName" ref="userRef"
-                  placeholder="请选择审批管理员名称" auth @change="sureApprover" :title="'选择审批管理员名称'"
-                  :dataFormatting="dataFormatting" :method="getApprovalAdministratorList" :requestObj="approvalObj"
-                  :paramsObj="{}" />
-              </el-form-item>
-
-
-              <el-form-item label="审批业务" prop="approvalBusinessName">
-                <!-- <el-input v-model="dataForm.approvalBusinessName" placeholder="请输入审批业务ID" maxlength="20" /> -->
-                <ComSelect-list :isdisabled="btnType == 'edit' || btnType === 'look'"
-                  v-model="dataForm.approvalBusinessName" placeholder="请选择审批业务" auth @change="changeBusine"
-                  :title="'选择审批业务'" :method="getApprovalListPage" :requestObj="requestObj" :paramsObj="{}" />
-              </el-form-item>
-
-
-
-
-            </el-form>
-          </el-col>
-        </el-row>
-        <workFlow :workFlowT="workFlowTemplate" v-show="activeStep" ref="workflowRef" :nodeConfig.sync="busNodeConfig" />
-        <errorDialog :visible.sync="tipVisible" :list="tipList" />
-      </div>
     </div>
   </transition>
 </template>
@@ -385,9 +391,9 @@ export default {
       this.btnLoading = true
       let submitFlag = await this.$refs['dataForm'].validate().catch(err => false)
       // this.$store.commit('workflow/SET_IS_TRIED', true)
-      this.tipList = []; 
+      this.tipList = [];
       this.reErr(this.busNodeConfig);
-      if (this.tipList.length != 0) { 
+      if (this.tipList.length != 0) {
         this.tipVisible = true;
         this.btnLoading = false
         return;
@@ -568,9 +574,20 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+@media screen and (max-width: 1400px) {
+  .JNPF-preview-main {
+    width: 1400px;
+    overflow-x: auto;
+  }
+}
+
 // .stepHeaders{
 //   width:100%;
-
+.flowMain{
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 .stepHeader {
   width: 100%;
   padding: 13px 10px;
@@ -604,5 +621,4 @@ export default {
 ::v-deep .el-form-item__label {
   text-align: center !important;
 }
-
-// }</style>
+</style>

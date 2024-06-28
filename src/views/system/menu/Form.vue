@@ -1,66 +1,77 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建应用' : '编辑应用'" :close-on-click-modal="false"
+  <!-- <el-dialog :title="!dataForm.id ? '新建应用' : '编辑应用'" :close-on-click-modal="false"
     :close-on-press-escape="false" :visible.sync="visible" lock-scroll
-    class="JNPF-dialog JNPF-dialog_center" width="600px">
-    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px"
-      v-loading="formLoading" class="menuForm">
-      <el-form-item label="应用名称" prop="fullName">
-        <el-input v-model="dataForm.fullName" placeholder="输入名称" />
-      </el-form-item>
-      <el-form-item label="应用编码" prop="enCode">
-        <el-input v-model="dataForm.enCode" placeholder="输入编码" />
-      </el-form-item>
-      <el-form-item label="应用简称" prop="shortName">
-        <el-input v-model="dataForm.shortName" placeholder="输入简称" maxlength="6"/>
-      </el-form-item>
-      <el-form-item label="应用logo" prop="iconUrl">
-          <el-upload class="avatar-uploader" :action="define.comUploadUrl + '/annex'" :show-file-list="false" :on-success="handleAvatarSuccess" accept="image/*">
+    class="JNPF-dialog JNPF-dialog_center" width="600px"> -->
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main flow-form-main">
+      <div class="JNPF-common-page-header">
+        <el-page-header @back="$emit('close', true)" :content="!dataForm.id ? '新建应用' : '编辑应用'" />
+        <div class="options">
+          <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+            {{ $t('common.confirmButton') }}
+          </el-button>
+          <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" v-loading="formLoading"
+        class="menuForm">
+        <el-form-item label="应用名称" prop="fullName">
+          <el-input v-model="dataForm.fullName" placeholder="输入名称" />
+        </el-form-item>
+        <el-form-item label="应用编码" prop="enCode">
+          <el-input v-model="dataForm.enCode" placeholder="输入编码" />
+        </el-form-item>
+        <el-form-item label="应用简称" prop="shortName">
+          <el-input v-model="dataForm.shortName" placeholder="输入简称" maxlength="6" />
+        </el-form-item>
+        <el-form-item label="应用logo" prop="iconUrl">
+          <el-upload class="avatar-uploader" :action="define.comUploadUrl + '/annex'" :show-file-list="false"
+            :on-success="handleAvatarSuccess" accept="image/*">
             <img v-if="dataForm.iconUrl" :src="define.comUrl + dataForm.iconUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="图标" prop="icon">
-        <el-row type="flex">
-          <div style="flex:1;margin-right:10px">
-            <el-input v-model="dataForm.icon" placeholder="请选择图标" readonly
-              :suffix-icon="dataForm.icon">
-              <el-button slot="append" @click="openIconBox">选择</el-button>
-            </el-input>
-          </div>
-          <el-color-picker v-model="dataForm.propertyJson.iconBackgroundColor"
-            :predefine="['#188ae2', '#35b8e0', '#26bf8c','#f9c851','#ff5b5b', '#5b69bc', '#ff8acc', '#3b3e47','#282828' ]" />
-        </el-row>
-      </el-form-item>
-      <el-form-item label="应用类型" prop="applicationType">
-        <el-select v-model="dataForm.applicationType" placeholder="请选择应用类型">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="默认选中顺序" prop="defaultSorting">
-        <el-input-number :min="0" :max="999999" v-model="dataForm.defaultSorting"
-          controls-position="right" />
-      </el-form-item>
-      <el-form-item label="排序" prop="sortCode">
-        <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode"
-          controls-position="right" />
-      </el-form-item>
-      <el-form-item label="状态" prop="enabledMark">
-        <el-switch v-model="dataForm.enabledMark" :active-value="1" :inactive-value="0" />
-      </el-form-item>
-      <el-form-item label="说明" prop="bodyText">
-        <el-input v-model="dataForm.description" type="textarea" :rows="4" />
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">{{$t('common.cancelButton')}}</el-button>
-      <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-        {{$t('common.confirmButton')}}</el-button>
-    </span>
-    <icon-box :visible.sync="iconBoxVisible" ref="iconBox" :current="dataForm.icon"
-      @choiceIcon="choiceIcon" />
-  </el-dialog>
+        <el-form-item label="图标" prop="icon">
+          <el-row type="flex">
+            <div style="flex:1;margin-right:10px">
+              <el-input v-model="dataForm.icon" placeholder="请选择图标" readonly :suffix-icon="dataForm.icon">
+                <el-button slot="append" @click="openIconBox">选择</el-button>
+              </el-input>
+            </div>
+            <el-color-picker v-model="dataForm.propertyJson.iconBackgroundColor"
+              :predefine="['#188ae2', '#35b8e0', '#26bf8c', '#f9c851', '#ff5b5b', '#5b69bc', '#ff8acc', '#3b3e47', '#282828']" />
+          </el-row>
+        </el-form-item>
+        <el-form-item label="应用类型" prop="applicationType">
+          <el-select v-model="dataForm.applicationType" placeholder="请选择应用类型">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="默认选中顺序" prop="defaultSorting">
+          <el-input-number :min="0" :max="999999" v-model="dataForm.defaultSorting" controls-position="right" />
+        </el-form-item>
+        <el-form-item label="排序" prop="sortCode">
+          <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode" controls-position="right" />
+        </el-form-item>
+        <el-form-item label="状态" prop="enabledMark">
+          <el-switch v-model="dataForm.enabledMark" :active-value="1" :inactive-value="0" />
+        </el-form-item>
+        <el-form-item label="说明" prop="bodyText">
+          <el-input v-model="dataForm.description" type="textarea" :rows="4" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+          {{ $t('common.confirmButton') }}</el-button>
+      </span>
+      <icon-box :visible.sync="iconBoxVisible" ref="iconBox" :current="dataForm.icon" @choiceIcon="choiceIcon" />
+    </div>
+  </transition>
+
+  <!-- </el-dialog> -->
 </template>
 
 <script>
@@ -71,10 +82,10 @@ export default {
   components: { iconBox },
   data() {
     return {
-      options:[
-        {value: 'Web',label: 'PC端应用'},
-        {value: 'App',label: '移动端应用'},
-        {value: 'Terminal',label: '工位终端应用'}
+      options: [
+        { value: 'Web', label: 'PC端应用' },
+        { value: 'App', label: '移动端应用' },
+        { value: 'Terminal', label: '工位终端应用' }
       ],
       visible: false,
       dataForm: {
@@ -82,7 +93,7 @@ export default {
         fullName: '',
         enCode: '',
         sortCode: 0,
-        applicationType:'',
+        applicationType: '',
         defaultSorting: 0,
         icon: '',
         enabledMark: 1,
@@ -90,8 +101,8 @@ export default {
         propertyJson: {
           iconBackgroundColor: ''
         },
-        shortName:'',
-        iconUrl:'',
+        shortName: '',
+        iconUrl: '',
       },
       dataRule: {
         fullName: [

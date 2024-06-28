@@ -2,14 +2,14 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-common-layout menu-list">
       <div class="JNPF-common-layout-center">
-        <div class="JNPF-preview-main flow-form-main">
-          <div class="JNPF-common-page-header">
+        <div class="JNPF-preview-main flow-form-main" style="background:none">
+          <div class="JNPF-common-page-header" style="padding: 7px 10px;background-color:#fff;">
             <el-page-header @back="goBack" :content="title" />
             <div class="options">
               <el-button @click="goBack()">{{$t('common.cancelButton')}}</el-button>
             </div>
           </div>
-          <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-row class="JNPF-common-search-box" :gutter="16" style="height:48px;margin-bottom:5px;padding: 8px 10px 0;">
             <el-form @submit.native.prevent>
               <el-col :span="6">
                 <el-form-item label="关键词">
@@ -28,11 +28,11 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <el-tabs type="border-card" v-model="listQuery.category" class="menu-tab">
-              <el-tab-pane label="Web菜单" name="Web" v-if="systype=='Web'"></el-tab-pane>
+            <!-- <el-tabs type="border-card" v-model="listQuery.category" class="menu-tab"> -->
+              <!-- <el-tab-pane label="Web菜单" name="Web" v-if="systype=='Web'"></el-tab-pane>
               <el-tab-pane label="App菜单" name="App" v-if="systype=='App'"></el-tab-pane>
-              <el-tab-pane label="Terminal菜单" name="Terminal" v-if="systype=='Terminal'"></el-tab-pane>
-              <div class="box">
+              <el-tab-pane label="Terminal菜单" name="Terminal" v-if="systype=='Terminal'"></el-tab-pane> -->
+              <!-- <div class="box"> -->
                 <div class="JNPF-common-head">
                   <topOpts @add="addOrUpdateHandle()">
                     <upload-btn :url="'/api/system/Menu/'+systemId+'/Action/Import'"
@@ -144,8 +144,8 @@
                     </template>
                   </el-table-column>
                 </JNPF-table>
-              </div>
-            </el-tabs>
+              <!-- </div> -->
+            <!-- </el-tabs> -->
           </div>
         </div>
         <menuForm v-if="formVisible" ref="Form" @refreshDataList="initData" />
@@ -214,7 +214,8 @@ export default {
     },
     init(data) {
       this.systype = data.applicationType
-      this.title = data.fullName
+      let tt = data.applicationType === 'Web' ? 'PC端应用' : data.applicationType === 'App' ? '移动端应用' : '工位终端应用'
+      this.title = data.fullName + '('+ tt + ')'
       this.systemId = data.id
       this.listQuery.category = data.applicationType
       this.initData();

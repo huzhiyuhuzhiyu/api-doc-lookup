@@ -25,7 +25,7 @@
                     <topOpts @add="addOrUpdateHandle()" />
                     <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
                         <div>
-                            <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="switchlist" >
+                            <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist" >
                                 <div class="getSwitchList-p" @click="switchlist = !switchlist">
                                     <img src="@/assets/images/a2.png" alt="">
                                 </div>
@@ -42,7 +42,7 @@
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table v-loading="listLoading" :data="list" v-if="switchlist">
+                <JNPF-table v-loading="listLoading" :data="list" v-if="!switchlist">
                     <el-table-column prop="fullName" label="应用名称" min-width="130" key="fullName" />
                     <el-table-column prop="enCode" label="应用编码" min-width="130" key="enCode" />
                     <el-table-column prop="description" label="应用说明" min-width="140" key="description" />

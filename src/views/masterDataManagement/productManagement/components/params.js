@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-17 12:33:47
+ * @LastEditTime: 2024-06-28 10:44:01
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\raw_material\params.js
  * @Description: 半成品、原材料、辅料 表单配置项
  */
@@ -24,6 +24,8 @@ export default () => [
       { prop: "productSource", label: "产品来源", value: "", type: "select", options: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], itemRules: [{ required: true, trigger: "change" }]},
       { prop: "productStatus", label: "产品状态", value: "enable", type: "select", options: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], itemRules: [{ required: true, trigger: "change" }] },
       { prop: "brand", label: "品牌", value: "", type: 'input', maxlength: 200 },
+      { prop: "saleFlag", label: "是否可销售", value: 1, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,render:true},
+      { prop: "tradeFlag", label: "是否贸易件", value: 0, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,render:true},
       { prop: "remark", label: "备注", value: "", type: 'textarea', sm: 24 },
     ],
   },

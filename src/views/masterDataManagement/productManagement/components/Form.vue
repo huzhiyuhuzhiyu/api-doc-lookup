@@ -71,6 +71,11 @@ export default {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach(tc => {
         this.dataForm[tc.prop] = tc.value || ""; // 设置默认value
+        if (this.classAttribute !== 'semi_finished'){
+          if (tc.prop === 'saleFlag' || tc.prop === 'tradeFlag'){
+            tc.render = false
+          }
+        }
         // 添加自定义表单元素方法和参数
         if (tc.type == "custom") {
           // 产品分类

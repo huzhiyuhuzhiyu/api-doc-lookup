@@ -139,7 +139,7 @@ export default {
                 code: '',
                 origin: 'password',
                 passCode: true,
-                busCode:'',
+                busCode:localStorage.getItem("sys"),
             },
             loginRules: {
                 account: [{

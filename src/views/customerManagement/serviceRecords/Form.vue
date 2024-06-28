@@ -2,12 +2,12 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-17 12:35:26
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-25 17:14:46
+ * @LastEditTime: 2024-06-28 13:08:56
  * @FilePath: \os-web-zgt4.0\src\views\customerManagement\serviceRecords\Form.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <el-dialog title="服务说明" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
+  <el-dialog :title="btnType === 'add' ? '新建服务说明' : btnType === 'edit' ? '编辑服务说明' : '查看服务说明'" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
     width="600px">
     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
       <el-col :span="24">

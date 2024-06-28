@@ -2,7 +2,7 @@
  * @Author: DESKTOP-5E76NPE\tiger 1909446527@qq.com
  * @Date: 2024-06-05 15:44:05
  * @LastEditors: DESKTOP-5E76NPE\tiger 1909446527@qq.com
- * @LastEditTime: 2024-06-17 11:04:54
+ * @LastEditTime: 2024-06-28 11:15:10
  * @FilePath: \os-web-zgt4.0\src\views\basicData\materialFiles\accessories\params.js
  * @Description: 成品的表单字段
  */
@@ -41,6 +41,8 @@ export default () => [
       { prop: "accuracyLevel", label: "精度等级", value: "", type: "custom",customComponent: 'ComSelect-list', typeCode:'pa006'},
       { prop: "colour", label: "颜色", value: "",type: "custom",customComponent: 'ComSelect-list',typeCode:'pa010' },
       { prop: "aperture", label: "孔径", value: "", type: "custom",customComponent: 'ComSelect-list',typeCode:'pa009' },
+      { prop: "saleFlag", label: "是否可销售", value: 1, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,},
+      { prop: "tradeFlag", label: "是否贸易件", value: 0, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,},
 
       { prop: "remark", label: "备注", value: "", type: "textarea", sm: 24 },
     ],

@@ -8,11 +8,11 @@
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="enCode" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          :expand-on-click-node="false" node-key="code" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
 
-            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
+            <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
@@ -46,7 +46,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
-
+       
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -54,13 +54,17 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
-          <el-table-column prop="code" label="编码"> </el-table-column>
-          <el-table-column prop="name" label="名称" />
-          <el-table-column prop="remark" label="备注" />
+          <el-table-column prop="code" label="分类名称"> </el-table-column>
+          <el-table-column prop="name" label="属性名称" />
+          <el-table-column prop="name" label="默认显示名称" />
+          <el-table-column prop="name" label="自定义显示名称" />
+          <el-table-column prop="remark" label="排序" />
+          <el-table-column prop="remark" label="显示状态" />
+          <el-table-column prop="remark" label="创建时间" />
+          <el-table-column prop="remark" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -79,7 +83,6 @@ import {
   delBimProductAttributes,
   addBimProductAttributes,
   getbimProductAttributesList,
-  getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import Form from "./Form";
 import moment from "moment";
@@ -94,6 +97,63 @@ export default {
       activeName: "supplierPage",
       visible: false,
       treeData: [
+        {
+          name: '游隙',
+          code: 'pa001',
+        },
+        {
+          name: '油脂',
+          code: 'pa002',
+        },
+        {
+          name: '油脂量',
+          code: 'pa003',
+        },
+        {
+          name: '保持架',
+          code: 'pa004',
+        },
+        {
+          name: '振动等级',
+          code: 'pa005',
+        },
+        {
+          name: '精度等级',
+          code: 'pa006',
+        },
+        {
+          name: '打字内容',
+          code: 'pa007',
+        },
+        {
+          name: '规值',
+          code: 'pa008',
+        },
+        {
+          name: '孔径',
+          code: 'pa009',
+        },
+        {
+          name: '颜色',
+          code: 'pa010',
+        },
+        {
+          name: '品牌',
+          code: 'pa011',
+        },
+        {
+          name: '密封盖',
+          code: 'pa012',
+        },
+
+        {
+          name: '结构类型',
+          code: 'pa013',
+        },
+        {
+          name: '噪音',
+          code: 'pa014',
+        },
 
       ],
       tableData: [],
@@ -107,7 +167,7 @@ export default {
         name: "",
         pageNum: 1,
         pageSize: 20,
-        typeCode: "",
+        typeCode:"",
         orderItems: [
           {
             asc: false,
@@ -123,10 +183,10 @@ export default {
       gradeList: [],
       defaultProps: {
         children: "childrenList",
-        label: "fullName",
+        label: "name",
       },
-      rules: {
-        code: [
+      rules:{
+        code:[
           {}
         ]
       },
@@ -144,22 +204,15 @@ export default {
     },
   },
   created() {
-    this.getbimProductAttributesFun()
+    this.$nextTick(()=>{
+      this.$refs.treeBox.setCurrentKey(this.treeData[0].code) // 默认选中节点第一个
+      this.form.typeCode=this.treeData[0].code
+    })
+    this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    // 获取左侧属性分类
-    getbimProductAttributesFun() {
-      getbimProductAttributes('575966014227880773').then(res => {
 
-        this.treeData = res.data.list
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
-          this.form.typeCode = this.treeData[0].enCode
-          this.initData()
-        })
-      })
-    },
 
 
     // 关闭新建、编辑页面
@@ -173,13 +226,13 @@ export default {
 
     filterNode(value, data) {
       if (!value) return true;
-      return data.fullName.indexOf(value) !== -1;
+      return data.name.indexOf(value) !== -1;
     },
 
 
     initData() {
       console.log(this.form);
-      this.listLoading = true;
+      this.listLoading = true; 
       getbimProductAttributesList(this.form)
         .then((res) => {
           console.log("res++", res);
@@ -199,11 +252,11 @@ export default {
     },
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-
+      
       this.form = {
-        code: '',
+        code:'' ,
         name: "",
-        typeCode: this.treeData[0].enCode,
+        typeCode:this.treeData[0].code,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -222,22 +275,22 @@ export default {
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
-      this.form.typeCode = node.data.enCode
+      this.form.typeCode = node.data.code
       this.search();
     },
-
+  
     addSupplier() {
       this.formVisible = true;
       this.$nextTick(() => {
-        this.$refs.Form.init(this.form.typeCode, 'add');
+        this.$refs.Form.init(this.form.typeCode,'add');
       });
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id ) { 
       this.formVisible = true;
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit');
+          this.$refs.Form.init(id,'edit');
         });
         // }, 600);
       }

@@ -1,5 +1,12 @@
 import request from '@/utils/request'
+// 获取产品属性种类
 
+export function getbimProductAttributes(id) {
+  return request({
+      url: '/api/system/DictionaryData//'+id,
+      method: 'GET',
+  })
+}
 // 产品属性列表
 export function getbimProductAttributesList(data) {
     return request({

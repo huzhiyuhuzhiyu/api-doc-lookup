@@ -188,7 +188,7 @@ import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dicti
 import { mapGetters, mapState } from 'vuex'
 
 export default {
-  name: 'carrierProfile',
+  name: 'potentialCustomer',
   components: { Form, deForm, ExportForm,RecordForm },
   data() {
     return {

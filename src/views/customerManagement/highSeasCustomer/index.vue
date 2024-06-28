@@ -61,7 +61,7 @@
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                  @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                  @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -69,7 +69,7 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                      <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
                         查看详情
                       </el-dropdown-item>
 
@@ -449,16 +449,16 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id,'', btntype)
       })
     },
 
-    addOrUpdateHandle(id, btntype) {
+    addOrUpdateHandle(id,catrGoryId,btntype) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+          this.$refs.Form.init(id,catrGoryId, btntype)
         })
         // }, 600);
       }
@@ -479,10 +479,10 @@ export default {
       }).catch(() => { })
 
     },
-    handleUserRelation(id, btnType) {
+    handleUserRelation(id,catrGoryId, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, '', btnType)
+        this.$refs.Form.init(id, catrGoryId, btnType)
       })
     },
 

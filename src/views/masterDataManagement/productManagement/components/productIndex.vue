@@ -64,8 +64,8 @@
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
             <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -109,7 +109,7 @@
                 @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
+                    <el-button type="text" size="mini" v-has="'btn_detail'">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>

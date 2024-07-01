@@ -5,13 +5,12 @@
         <el-page-header @back="goBack" :content="!dataForm.table ? '新建表名' : '编辑表名'" />
         <div class="options">
           <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
-            {{$t('common.confirmButton')}}</el-button>
-          <el-button @click="goBack()">{{$t('common.cancelButton')}}</el-button>
+            {{ $t('common.confirmButton') }}</el-button>
+          <el-button @click="goBack()">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main">
-        <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="dataForm" class="mt-20"
-          label-width="100px">
+        <el-form :inline="true" :model="dataForm" :rules="dataRule" ref="dataForm" class="mt-20" label-width="100px">
           <el-form-item label="表名称" prop="newTable">
             <el-input v-model="dataForm.newTable" placeholder="表名称" maxlength="50"></el-input>
           </el-form-item>
@@ -29,48 +28,50 @@
               </el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="addHandle(item)" v-for="item in fieldList"
-                  :key="item.id">{{item.field}}</el-dropdown-item>
+                  :key="item.id">{{ item.field }}</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
         </div>
-        <el-table v-loading="listLoading" :data="list" size='mini' ref="dragTable"
-          :row-key="row=>row.index" v-if="refreshTable">
+        <el-table v-loading="listLoading" :data="list" size='mini' ref="dragTable" :row-key="row => row.index"
+          v-if="refreshTable">
           <el-table-column align="center" label="拖动" width="60">
             <template>
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动' />
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
             </template>
           </el-table-column>
           <el-table-column type="index" width="60" label="序号" align="center" />
           <el-table-column prop="field" label="列名">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.field" placeholder="请输入列名" maxlength="50" />
+              <el-input v-model="scope.row.field" placeholder="请输入列名" maxlength="50"
+                :disabled="scope.addFlag == false ? true : false" />
             </template>
           </el-table-column>
           <el-table-column prop="dataType" label="类型">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.dataType" placeholder="请选择">
-                <el-option v-for="item in options" :key="item.value" :label="item.label"
-                  :value="item.value" />
+              <el-select v-model="scope.row.dataType" placeholder="请选择" :disabled="scope.addFlag == false ? true : false">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
               </el-select>
             </template>
           </el-table-column>
           <el-table-column prop="dataLength" label="长度">
             <template slot-scope="scope">
+              <!-- <el-input v-model="scope.row.dataLength" placeholder="请输入长度"
+                :disabled="scope.row.dataType!=='varchar'&&scope.row.dataType!=='decimal'&&scope.row.dataType!=='json'" /> -->
               <el-input v-model="scope.row.dataLength" placeholder="请输入长度"
-                :disabled="scope.row.dataType!=='varchar'&&scope.row.dataType!=='decimal'&&scope.row.dataType!=='json'" />
+                :disabled="scope.addFlag == false ? true : false" />
             </template>
           </el-table-column>
           <el-table-column prop="primaryKey" label="是否主键" width="90" align="center">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.primaryKey" @change='changeKey($event,scope.row)'
-                :true-label="1" :false-label="0" />
+              <el-checkbox v-model="scope.row.primaryKey" @change='changeKey($event, scope.row)' :true-label="1"
+                :false-label="0" :disabled="scope.addFlag == false ? true : false" />
             </template>
           </el-table-column>
           <el-table-column prop="allowNull" label="允许空" width="70" align="center">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.allowNull" :true-label="1" :false-label="0" />
+              <el-checkbox v-model="scope.row.allowNull" :true-label="1" :false-label="0"
+                :disabled="!scope.row.customFlag" />
             </template>
           </el-table-column>
           <el-table-column prop="fieldName" label="说明">
@@ -80,8 +81,8 @@
           </el-table-column>
           <el-table-column label="操作" width="60">
             <template slot-scope="scope">
-              <el-button class="JNPF-table-delBtn" size="mini" type="text"
-                @click="handleDel(scope.$index,scope.row)">删除</el-button>
+              <el-button class="JNPF-table-delBtn" size="mini" type="text" :disabled="!scope.row.customFlag"
+                @click="handleDel(scope.$index, scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -140,6 +141,7 @@ export default {
       getList().then(res => { this.fieldList = res.data.list })
     },
     init(dataBase, table) {
+      console.log(dataBase, table);
       this.$refs['dataForm'].resetFields()
       this.dataForm.table = table || ''
       this.dataBase = dataBase
@@ -148,10 +150,17 @@ export default {
       this.$nextTick(() => {
         if (this.dataForm.table) {
           DataModelInfo(dataBase, this.dataForm.table).then(res => {
+            res.data.tableFieldList.forEach(item => {
+              item.addFlag = false
+            });
             this.dataForm = res.data.tableInfo
             this.$set(this.dataForm, 'newTable', this.dataForm.table)
             this.list = res.data.tableFieldList.map((o, i) => ({ index: i, ...o }))
+
             this.listLoading = false
+          }).catch(error => {
+            this.listLoading = false
+
           })
         } else {
           this.dataForm.newTable = table || ''
@@ -290,10 +299,11 @@ export default {
       let index = this.list.length, item = {}
       if (!row) {
         item = {
-          field: "", dataType: "varchar", dataLength: 50, allowNull: 1, primaryKey: 0, fieldName: "", index
+          addFlag: true, field: "", dataType: "varchar", dataLength: 50, allowNull: 1, primaryKey: 0, fieldName: "", index
         }
       } else {
         item = {
+          addFlag: true,
           field: row.field,
           dataType: row.dataType,
           dataLength: row.dataLength,
@@ -304,12 +314,13 @@ export default {
         }
       }
       this.list.push(item)
+      console.log(this.list);
     },
-    addAll(){
+    addAll() {
       var t = this
       getList().then(res => {
         res.data.list.forEach(function (item, index) {
-            t.addHandle(item)
+          t.addHandle(item)
         });
       })
     }

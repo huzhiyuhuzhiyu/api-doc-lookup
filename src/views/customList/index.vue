@@ -188,8 +188,8 @@ export default {
             column: "",
           },
           {
-            asc: false,
-            column: "code",
+            asc: true,
+            column: "sort",
           },
         ],
       },
@@ -239,6 +239,22 @@ export default {
           onEnd: evt => {
             const targetRow = this.tableData.splice(evt.oldIndex, 1)[0];
             this.tableData.splice(evt.newIndex, 0, targetRow);
+            console.log(this.tableData);
+            let att=[]
+            this.tableData.forEach((item,index) => {
+              let obj={
+                id:item.id,
+                sort:index,
+                attributeName:item.attributeName
+              }
+              att.push(obj)
+            });
+            console.log(att);
+            batchAttributeSort(att).then(res=>{
+              this.$message.success("批量修改排序成功")
+              this.initData()
+              
+            })
           }
         });
       },

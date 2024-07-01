@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
-              <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
+              <el-input v-model="dataForm.keyword" placeholder="请输入关键词查询" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -46,7 +46,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange"
-          :hasNO="false" custom-column>
+           custom-column>
           <!-- <el-table-column type="expand" width="40">
             <template slot-scope="props">
               <el-table v-loading="props.row.childTableLoading" :data="props.row.childTable" stripe
@@ -64,14 +64,12 @@
               </el-table>
             </template>
           </el-table-column> -->
-          <el-table-column type="index" width="60" label="序号" align="center" />
-          <el-table-column prop="table" label="表名" width="300" sortable />
-          <el-table-column prop="tableName" label="说明" show-overflow-tooltip sortable />
-          <el-table-column prop="sum" label="总数" width="90" sortable />
+          <el-table-column prop="enName" label="表名" width="300" sortable />
+          <el-table-column prop="cnName" label="说明" show-overflow-tooltip sortable />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.table)"
-                @del="handleDel(scope.$index,scope.row.table)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.enName)"
+                @del="handleDel(scope.$index,scope.row.enName)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button size="mini" type="text">
@@ -91,6 +89,9 @@
             </template>
           </el-table-column>
         </JNPF-table>
+        <pagination :total="total" :page.sync="dataForm.pageNum" :limit.sync="dataForm.pageSize"
+            @pagination="initData">
+          </pagination>
       </div>
     </div>
     <Form v-show="formVisible" ref="Form" @close="closeForm" />
@@ -101,6 +102,8 @@
 
 <script>
 import { getDataSourceListAll } from '@/api/systemData/dataSource'
+import { getDataModelList } from '@/api/masterDataManagement/index.js'
+
 import { DataModelList, DataModelDelete, DataModelFieldList, exportTpl } from '@/api/systemData/dataModel'
 import Form from './Form'
 import Preview from './Preview'
@@ -110,7 +113,7 @@ export default {
   components: { Form, Preview, FieldsList },
   data() {
     return {
-      keyword: '',
+     
       list: [],
       formVisible: false,
       dataBase: '0',
@@ -118,7 +121,13 @@ export default {
       listLoading: false,
       childTableLoading: false,
       showData: false,
-      drawer: false
+      drawer: false,
+      dataForm:{
+        keyword: '',
+        pageNum: 1,
+        pageSize: 20,
+      },
+      total:0,
     }
   },
   created() {
@@ -130,6 +139,8 @@ export default {
     },
     reset() {
       this.keyword = ''
+      THIS.dataForm.pageNum=1
+      THIS.dataForm.pageSize=20
       this.getTableData()
     },
     initData() {
@@ -142,14 +153,14 @@ export default {
     },
     getTableData() {
       this.listLoading = true
-      DataModelList(this.dataBase, { keyword: this.keyword }).then(res => {
-        this.list = res.data.list
-        for (let i = 0; i < this.list.length; i++) {
-          this.$set(this.list[i], 'isExpanded', false)
-          this.$set(this.list[i], 'childTableLoading', false)
-          this.$set(this.list[i], 'childTable', [])
-        }
+      getDataModelList(this.dataForm).then(res => {
+        console.log("表格数据",res);
+        this.list = res.data.records
+       this.total=res.data.total
         this.listLoading = false
+      }).catch(error=>{
+        this.listLoading = false
+        
       })
     },
     handleDel(index, tableName) {
@@ -178,10 +189,11 @@ export default {
       }).catch(() => { });
     },
     // 新增 / 修改
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(enName) {
+      console.log("enName",enName);
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.dataBase, id)
+        this.$refs.Form.init(this.dataBase, enName)
       })
     },
     expandChange(rows) {

@@ -22,12 +22,12 @@
         <el-form @submit.native.prevent :rules="rules">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
+              <el-input v-model="form.businessCode" placeholder="请输入业务编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
+              <el-input v-model="form.businessName" placeholder="请输入业务名称" clearable />
             </el-form-item>
           </el-col>
 
@@ -46,25 +46,42 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
-       
+
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
-          <el-table-column prop="code" label="分类名称"> </el-table-column>
-          <el-table-column prop="name" label="属性名称" />
-          <el-table-column prop="name" label="默认显示名称" />
-          <el-table-column prop="name" label="自定义显示名称" />
-          <el-table-column prop="remark" label="排序" />
-          <el-table-column prop="remark" label="显示状态" />
-          <el-table-column prop="remark" label="创建时间" />
-          <el-table-column prop="remark" label="创建人" />
-          <el-table-column label="操作" width="180" fixed="right">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData"  row-key="id">
+          <!-- <el-table-column prop="code" label="分类名称"> </el-table-column> -->
+          <el-table-column   width="60">
+            <template >
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
+                title='点击拖动' />
+            </template>
+          </el-table-column>
+          <el-table-column prop="attributeName" label="属性名称" />
+          <el-table-column prop="businessCode" label="业务代码" /><template>
+              
+            </template>
+          <el-table-column prop="businessName" label="业务名称" />
+          <el-table-column prop="defaultDisplayName" label="默认显示名称" />
+          <el-table-column prop="customDisplayName" label="自定义显示名称" />
+          <el-table-column prop="sort" label="排序" />
+          <el-table-column prop="displayState" label="显示状态">
             <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)"> </tableOpts>
+              <div>{{ scope.row.displayState == 'show' ? '显示' : '隐藏' }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="createByName" label="创建人" />
+          <el-table-column label="操作" width="180" >
+            <template slot-scope="scope">
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" @edit="addOrUpdateHandle(scope.row.id, 'edit')">
+                <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" @change="changeState(scope.row)" style="margin-left: 10px">
+                </el-switch>
+              </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -78,14 +95,11 @@
 
 <script>
 import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
-  delBimProductAttributes,
-  addBimProductAttributes,
-  getbimProductAttributesList,
+  getColumnList, editColumnList, addColumnList, checkAttributeexist, detailColumnList, batchAttributeSort, editAttributState
 } from "@/api/masterDataManagement/index";
 import Form from "./Form";
 import moment from "moment";
+import Sortable from 'sortablejs'
 
 export default {
   name: "supplierProfile",
@@ -163,11 +177,11 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       form: {
-        code: "",
-        name: "",
+        listCategoryId: "",
+        businessCode: "",
+        businessName: "",
         pageNum: 1,
         pageSize: 20,
-        typeCode:"",
         orderItems: [
           {
             asc: false,
@@ -185,8 +199,8 @@ export default {
         children: "childrenList",
         label: "name",
       },
-      rules:{
-        code:[
+      rules: {
+        code: [
           {}
         ]
       },
@@ -204,15 +218,46 @@ export default {
     },
   },
   created() {
-    this.$nextTick(()=>{
+    this.$nextTick(() => {
       this.$refs.treeBox.setCurrentKey(this.treeData[0].code) // 默认选中节点第一个
-      this.form.typeCode=this.treeData[0].code
+      this.form.typeCode = this.treeData[0].code
     })
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
+  mounted () {
+    this.rowDrop(); //声明表格拖动排序方法
+  },
   methods: {
-
+    rowDrop() {
+        const el = this.$refs.dataTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+        this.sortable = Sortable.create(el, {
+          ghostClass: 'sortable-ghost',
+          setData: function(dataTransfer) {
+            dataTransfer.setData('Text', '')
+          },
+          onEnd: evt => {
+            const targetRow = this.tableData.splice(evt.oldIndex, 1)[0];
+            this.tableData.splice(evt.newIndex, 0, targetRow);
+          }
+        });
+      },
+    // 修改显示状态
+    changeState(e){
+      console.log(e);
+      let obj={
+        attributeName:e.attributeName,
+        customDisplayName:e.customDisplayName,
+        displayState:e.state==true?'show':'hidden',
+        id:e.id,
+        listCategoryId:e.listCategoryId,
+        sort:e.sort,
+      }
+      editAttributState(obj).then(res=>{
+        this.initData();
+        this.$message.success("修改显示状态成功")
+      })
+    },
 
 
     // 关闭新建、编辑页面
@@ -232,10 +277,17 @@ export default {
 
     initData() {
       console.log(this.form);
-      this.listLoading = true; 
-      getbimProductAttributesList(this.form)
+      this.listLoading = true;
+      getColumnList(this.form)
         .then((res) => {
           console.log("res++", res);
+          res.data.records.forEach(item => {
+            if(item.displayState=="show"){
+              item.state=true
+            }else{
+              item.state=false
+            }
+          });
           this.tableData = res.data.records;
           this.total = res.data.total;
           this.listLoading = false;
@@ -252,11 +304,11 @@ export default {
     },
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      
+
       this.form = {
-        code:'' ,
+        code: '',
         name: "",
-        typeCode:this.treeData[0].code,
+        typeCode: this.treeData[0].code,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -271,26 +323,26 @@ export default {
         ],
       };
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
-      this.form.typeCode = node.data.code
+      this.form.listCategoryId = node.data.listCategoryId
       this.search();
     },
-  
+
     addSupplier() {
       this.formVisible = true;
       this.$nextTick(() => {
-        this.$refs.Form.init(this.form.typeCode,'add');
+        this.$refs.Form.init('', 'add');
       });
     },
-    addOrUpdateHandle(id ) { 
+    addOrUpdateHandle(id, type) {
       this.formVisible = true;
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id,'edit');
+          this.$refs.Form.init(id, type);
         });
         // }, 600);
       }

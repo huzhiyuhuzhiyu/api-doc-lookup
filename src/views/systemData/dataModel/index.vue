@@ -9,7 +9,7 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item label="数据链接">
               <el-select v-model="dataBase" placeholder="请选择数据链接" @change="getTableData">
                 <el-option-group v-for="group in dbOptions" :key="group.fullName"
@@ -19,7 +19,7 @@
                 </el-option-group>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search()">
@@ -47,7 +47,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange"
           :hasNO="false" custom-column>
-          <el-table-column type="expand" width="40">
+          <!-- <el-table-column type="expand" width="40">
             <template slot-scope="props">
               <el-table v-loading="props.row.childTableLoading" :data="props.row.childTable" stripe
                 size='mini'>
@@ -63,7 +63,7 @@
                 <el-table-column prop="defaults" label="默认值" />
               </el-table>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column type="index" width="60" label="序号" align="center" />
           <el-table-column prop="table" label="表名" width="300" sortable />
           <el-table-column prop="tableName" label="说明" show-overflow-tooltip sortable />

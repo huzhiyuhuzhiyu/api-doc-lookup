@@ -1,0 +1,204 @@
+<template>
+  <div class="JNPF-common-layout">
+
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+    
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head" style="display:block">
+       
+            <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
+            custom-column>
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
+            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
+                @del="handleDel(scope.row.id)">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+            @pagination="initData">
+          </pagination>
+        </div>
+      </div>
+    </div>
+
+    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
+      <el-row :gutter="20">
+
+        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
+
+          <el-col :span="12">
+            <el-form-item label="客户编码">
+              <el-input v-model="listQuery.code" placeholder="请输入客户编码" clearable />
+            </el-form-item>
+
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="客户名称">
+              <el-input v-model="listQuery.name" placeholder="请输入客户名称" clearable />
+            </el-form-item>
+          </el-col>
+         
+          <el-col :span="12">
+            <el-form-item label="服务记录">
+              <el-input v-model="listQuery.serviceDescription" placeholder="请输入服务记录" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="创建时间">
+              <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
+                value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%;" start-placeholder="创建开始时间" end-placeholder="创建结束时间"
+                clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="search()">搜 索</el-button>
+      </span>
+    </el-dialog>
+    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+  </div>
+</template>
+
+<script>
+import { detailbimDataCustomTableList,deletebimDataCustomTableList,editbimDataCustomTableList,addbimDataCustomTableList,getbimDataCustomTableList} from '@/api/masterDataManagement/index'
+import Form from './Form'
+export default {
+  name: 'serviceRecords',
+  components: { Form },
+  data() {
+    return {
+      title: "更多查询",
+      visible: false,
+      tableData: [],
+      listLoading: false,
+      initListQuery: {
+        cooperativePartnerCode: "",
+        cooperativePartnerName: "",
+        createByName: "",
+        endTime: "",
+        endUpdateTime: "",
+        keyword: "",
+        pageNum: 1,
+        pageSize: 20,
+        serviceDescription: "",
+        startTime: "",
+        startUpdateTime: "",
+        totalRowFlag: false,
+        createTimeArr: [],
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+      listQuery: {},
+      total: 0,
+      formVisible: false,
+    }
+  },
+  created() {
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.initData()
+  },
+  methods: {
+    initData() {
+      this.listLoading = true
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuery.pageNum = 1
+      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
+      getbimDataCustomTableList(this.listQuery).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+        this.visible = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+    sortChange({ prop, order }) {
+      let newProp
+      if (['cooperativePartnerCode', 'cooperativePartnerName'].includes(prop)) { newProp = prop }
+      else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.initData()
+    },
+
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
+      }
+    },
+    search() {
+      this.initData()
+    },
+    reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.initData()
+    },
+    addOrUpdateHandle(id,btnType){
+      this.formVisible = true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(id,btnType)
+      })
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteServiceRecord(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+  }
+}
+</script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />

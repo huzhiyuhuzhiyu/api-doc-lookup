@@ -151,8 +151,8 @@ export default {
             } else if (name == "WMS（仓储物流系统）") {
 
               location.href = location.origin + "/portal/WMSsystem"
-            } else if (name == "基础管理系统" || name == "BI（报表分析系统）" || name == "电子看板系统" || name == "消息推送系统" || name == "后台管理系统" || name == "开发管理系统") {
-              location.href = location.origin + "/portal/home"
+            } else if (name == "后台管理系统" || name == "开发管理系统") {
+              location.href = location.origin + "/homepage"
             } else {
               location.href = location.origin
             }

@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout commonIng_box">
     <!-- <img src="@/assets/images/commonImg.png" alt="" srcset="" class="commonImg"> -->
-    <img src="@/assets/images/欢迎页.png" alt="" srcset="" class="commonImg" />
+    <img src="@/assets/images/welcomePage.jpg" alt="" srcset="" class="commonImg" />
     <!-- <div class="commonImg">欢迎使用数字化生产平台</div> -->
   </div>
 </template>

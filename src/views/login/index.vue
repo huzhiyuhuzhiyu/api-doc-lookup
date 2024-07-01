@@ -31,8 +31,8 @@
                                 &nbsp;<span class="title">{{ aaa }}</span>
                             </div>
                             <!-- <img class="login-logo" :src="define.comUrl+sysConfig.loginIcon"> -->
-                            <div v-if="sysConfig && sysConfig.sysVersion" class="login-version">
-                                {{ sysConfig.sysVersion }}
+                            <div  class="login-version">
+                                {{ sysConfig.sysVersion || 'V4.0.0' }}
                             </div>
                         </div>
                         <div class="login-content">

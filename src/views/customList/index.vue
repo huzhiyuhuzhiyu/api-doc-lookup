@@ -1,9 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left" :style="leftFlag?'width:50px':''">
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
-          <h2>业务分类</h2>
+          <h2 v-if="!leftFlag">业务分类</h2>
         <span class="options">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
@@ -13,11 +13,12 @@
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
               <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+              <el-dropdown-item @click.native="changeLeft()">{{btnTitle}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
         </div>
-       <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block">
+       <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block">
       </el-input></div>
       </div>
      
@@ -194,6 +195,8 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: "",
+      leftFlag:false,
+      btnTitle:"向左收起"
     };
   },
   watch: {
@@ -218,6 +221,16 @@ export default {
 
   },
   methods: {
+    changeLeft(){
+      this.leftFlag=!this.leftFlag
+      if(this.btnTitle=="向左收起"){
+        console.log(1);
+        this.btnTitle="向右展开"
+      }else{
+        console.log(2);
+        this.btnTitle="向左收起"
+      }
+    },
     // 设置默认展开
     setexpand(expands) {
       console.log("expands", expands);

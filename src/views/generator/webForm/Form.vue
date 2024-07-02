@@ -3,7 +3,14 @@
     :show-close="false" :modal="false">
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
-        <img src="@/assets/images/jnpf2.png" class="header-logo" />
+        <el-image class="header-logo imagesClass"  :src="define.comUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
+          <template slot="error">
+            <img class="header-logo" :class="headClass"  src="@/assets/images/jnpf.png"
+              alt="">
+          </template>
+        </el-image>
+        <img src="@/assets/images/jnpf.png" :class="headClass"  class="header-logo"
+          v-else />
         <p class="header-txt"> · 代码生成</p>
       </div>
       <el-steps :active="activeStep" finish-status="success" simple
@@ -13,7 +20,7 @@
         <el-step title="列表设计" @click.native="stepChick(2)" v-if="maxStep>=2" />
         <el-step title="流程设计" @click.native="stepChick(3)" v-if="maxStep>=3" />
       </el-steps>
-      <div class="options">
+      <div class="options"  style="width:400px">
         <el-button @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
         <el-button @click="next" :disabled="activeStep>=maxStep || loading">{{$t('common.next')}}
         </el-button>
@@ -128,6 +135,7 @@ import ColumnDesign from '@/components/ColumnDesign'
 import Process from "@/components/Process"
 import TableForm from '../TableForm'
 import mixin from '@/mixins/generator/form'
+import { mapState } from 'vuex'
 export default {
   mixins: [mixin],
   components: { Generator, ColumnDesign, Process, TableForm },
@@ -146,6 +154,19 @@ export default {
         ]
       }
     }
-  }
+  },
+  computed: {
+    ...mapState({
+      slideClass: state => state.settings.slideClass,
+      headClass: state => state.settings.headClass,
+      head: state => state.settings.head,
+    }),
+    sysConfig() {
+      return this.$store.state.settings.sysConfig
+    },
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
+  },
 }
 </script>

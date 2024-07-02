@@ -143,14 +143,15 @@ export default {
           type: 'success',
           duration: 1500,
           onClose: () => {
+            console.log(name);
             this.$store.commit('user/SET_TOAST', false)
             if (name == "ERP（企业资源计划管理）") {
               location.href = location.origin + "/portal/ERPsystem"
             } else if (name == "MES（生产制造执行系统）") {
               location.href = location.origin + "/portal/MESsystem"
-            } else if (name == "WMS（仓储物流系统）") {
+            } else if (name == "轴管通4.0") {
 
-              location.href = location.origin + "/portal/WMSsystem"
+              location.href = location.origin + "/commonPage"
             } else if (name == "后台管理系统" || name == "开发管理系统") {
               location.href = location.origin + "/homepage"
             } else {

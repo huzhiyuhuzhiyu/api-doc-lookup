@@ -1,6 +1,6 @@
 <template>
   <el-drawer :visible.sync="drawer" direction="rtl" :with-header="false"
-    class="drawer-container setting" size="280px">
+    class="drawer-container setting" size="299px">
     <el-divider>{{$t('settings.mode')}}</el-divider>
     <ul class="nav_items">
       <li v-for="(item1,index1) in imgUrl1" :key="index1" @click="checkList(item1)">

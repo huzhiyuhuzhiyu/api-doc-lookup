@@ -31,7 +31,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-
+        
         <el-form-item label="图标" prop="icon">
           <el-row type="flex">
             <div style="flex:1;margin-right:10px">

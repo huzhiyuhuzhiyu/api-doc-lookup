@@ -127,9 +127,9 @@
                                 :disabled="item.isMain == 1 ? true : false">
                                 删除
                             </el-button>
-                            <el-button style="padding:5px 15px" size="mini" type="info" round @click.native="preview(item)">菜单管理
+                            <el-button style="padding:5px 15px; " size="mini" type="success" round @click.native="preview(item)">菜单管理
                             </el-button>
-                            <el-button style="padding:5px 15px" size="mini" type="primary" round @click.native="copy(item.id)">复制应用
+                            <el-button style="padding:5px 15px;background:#ce93d8;border-color: #ce93d8" size="mini" type="primary" round @click.native="copy(item.id)">复制应用
                             </el-button>
                         </div>
                     </el-card>

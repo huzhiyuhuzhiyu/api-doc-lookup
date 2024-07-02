@@ -1,9 +1,34 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent >
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.code" placeholder="请输入业务编码" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.name" placeholder="请输入业务名称" clearable />
+            </el-form-item>
+          </el-col>
+
+
+          <el-col :span="6">
+            <el-form-item>
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                {{ $t("common.search") }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+
+        </el-form>
+      </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle('','','add')" :isJudgePer="true" :addPerCode="'btn_add'" />
+          <topOpts @add="addOrUpdateHandle('', '', 'add')" :isJudgePer="true" :addPerCode="'btn_add'" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
@@ -33,28 +58,17 @@
           </el-table-column>
           <el-table-column prop="code" label="分类编码" min-width="120" />
           <el-table-column prop="parentName" label="上级分类" min-width="120" />
-          <el-table-column prop="classAttribute" label="类别属性" min-width="120" >
-            <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute=='raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute=='semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute=='finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute=='accessories'">辅料</div>
-            </template>
-          </el-table-column>
-        
-          <el-table-column prop="classType" label="类型" min-width="130">
-            <template slot-scope="scope">
-              <div v-if="scope.row.classType == 'packaging'">包装物</div>
-            </template>
-          </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
-   
+
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
-                @del="handleDel(scope.row.id, scope.row.parentId)">
-                 
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
+                @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
+                @del="handleDel(scope.row.id, scope.row.parentId)" 
+                :delDisabled="scope.row.childrenList.length>0?true:false"
+                >
+
               </tableOpts>
             </template>
           </el-table-column>
@@ -68,17 +82,17 @@
 
 <script>
 import {
-  getcategoryTree,
-  deleteCategory,
-  productPlmSync,
-} from "@/api/basicData/materialSettings";
+  checkBusinessListCategoryCode, detailBusinessListCategoryAPI, delBusinessListCategoryAPI, editBusinessListCategoryAPI, addBusinessListCategoryAPI, getBusinessListCategoryAPI
+} from "@/api/masterDataManagement/index.js";
 import DepForm from "./depForm";
 export default {
   components: { DepForm },
   data() {
     return {
+      getBusinessListCategoryAPI,
       listQuery: {
-        classAttribute: "",
+        code: "",
+        name: "",
         orderItems: [
           {
             asc: false,
@@ -88,9 +102,7 @@ export default {
             asc: false,
             column: "create_time",
           },
-        ],
-        pageNum: 1,
-        pageSize: 20,
+        ], 
       },
       treeList: [],
       treeDataAll: [],
@@ -107,7 +119,7 @@ export default {
   methods: {
     initData() {
       this.loading = true;
-      getcategoryTree(this.listQuery)
+      getBusinessListCategoryAPI(this.listQuery)
         .then((res) => {
           this.treeList = res.data;
           if (this.treeList.length > 0) this.setTableIndex(this.treeList);
@@ -123,8 +135,7 @@ export default {
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key];
         this.listQuery[key] = typeof item === "string" ? item.trim() : item;
-      });
-      this.listQuery.pageNum = 1;
+      }); 
       this.initData();
     },
     // 树形列表index层级，实现方法（可复制直接调用）
@@ -142,8 +153,7 @@ export default {
     },
     reset() {
       this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      this.listQuery = {
-        classAttribute: "",
+      this.listQuery = { 
         orderItems: [
           {
             asc: false,
@@ -153,20 +163,18 @@ export default {
             asc: false,
             column: "create_time",
           },
-        ],
-        pageNum: 1,
-        pageSize: 20,
+        ], 
       };
 
       this.initData();
     },
-    addOrUpdateHandle(id, parentId,type) {
-      this.addOrUpdateDep(id, parentId,type);
+    addOrUpdateHandle(id, parentId, type) {
+      this.addOrUpdateDep(id, parentId, type);
     },
-    addOrUpdateDep(id, parentId,type) {
+    addOrUpdateDep(id, parentId, type) {
       this.depFormVisible = true;
       this.$nextTick(() => {
-        this.$refs.depForm.init(id, parentId,type);
+        this.$refs.depForm.init(id, parentId, type);
       });
     },
     closeDepForm(isRefresh) {
@@ -183,26 +191,13 @@ export default {
         this.refreshTable = true;
       });
     },
-    PLMchange(id) {
-      this.listLoading = true;
-      productPlmSync(id)
-        .then((res) => {
-          if (res.msg === "Success") {
-            this.$message.success("同步成功");
-            this.initData();
-          }
-          this.listLoading = false;
-        })
-        .catch((err) => {
-          this.listLoading = false;
-        });
-    },
+
     handleDel(id) {
       this.$confirm(this.$t("common.delTip"), this.$t("common.tipTitle"), {
         type: "warning",
       })
         .then(() => {
-          deleteCategory(id).then((res) => {
+          delBusinessListCategoryAPI(id).then((res) => {
             if (res.msg === "Success") {
               this.initData();
               this.$message({

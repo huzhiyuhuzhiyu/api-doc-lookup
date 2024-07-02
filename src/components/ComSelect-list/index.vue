@@ -426,6 +426,7 @@ export default {
       this.$refs.tree && this.$refs.tree.filter(this.keyword)
     },
     filterNode(value, data) {
+      console.log(value,data,this.props);
       if (!value) return true;
       return data[this.props.label].indexOf(value) !== -1;
     },

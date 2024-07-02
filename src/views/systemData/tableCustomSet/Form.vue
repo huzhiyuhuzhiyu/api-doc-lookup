@@ -7,21 +7,22 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <el-dialog :title="btnType === 'add' ? '新建服务说明' : btnType === 'edit' ? '编辑服务说明' : '查看服务说明'" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
+  <el-dialog :title="'自定义表设置'" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
     width="600px">
     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
       <el-col :span="24">
-        <el-form-item prop="name" ref="cooperativePartnerName" label="客户名称">
-          <ComSelect-list :isdisabled="btnType=== 'look'" v-model="dataForm.name" placeholder="请选择客户名称"
-            @change="onPartnerChange" :title="'选择客户'" :method="getPartnerList" :requestObj="requestObj" />
-        </el-form-item>
+        <el-form-item label="表名" prop="tableName">
+        <el-input v-model="dataForm.tableName" placeholder="请输入表名" maxlength="100" />
+      </el-form-item>
       </el-col>
       <el-col :span="24">
-        <el-form-item prop="serviceDescription" ref="serviceDescription" label="服务说明">
-          <el-input type="textarea" :rows="4" :disabled="btnType=== 'look'" v-model="dataForm.serviceDescription" placeholder="请输入服务说明" maxlength="200">
-          </el-input>
-        </el-form-item>
+        <el-form-item label="显示状态" prop="state" >
+        <el-switch v-model="states" active-color="#13ce66" inactive-color="#ff4949"  >
+        </el-switch>
+      </el-form-item>
       </el-col>
+      
+      
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visibleDialog = false">{{ $t('common.cancelButton') }}</el-button>
@@ -31,30 +32,25 @@
 </template>
 
 <script>
-import { detailbimDataCustomTableList,deletebimDataCustomTableList,editbimDataCustomTableList,addbimDataCustomTableList,getbimDataCustomTableList} from '@/api/masterDataManagement/index'
+import {
+getbimDataCustomTableList,addbimDataCustomTableList,editbimDataCustomTableList,deletebimDataCustomTableList,detailbimDataCustomTableList
+} from "@/api/masterDataManagement/index";
 export default {
   data() {
     return {
-      getPartnerList,
       visibleDialog: false,
       btnLoading: false,
       btnType: '',
       dataForm: {
-       id:'',
-       cooperativePartnerId:'',
-       name:'',
-       serviceDescription:'',
+        tableName:'',
+       state:'',
       },
-      requestObj:{
-        customerStatus: 'private_sea',
-      },
+      states:true,
       rules: {
-        name: [
-          { required: true, message: '请选择客户', trigger: ['change'] },
+        tableName: [
+          { required: true, message: '请输入表名', trigger: ['blur'] },
         ],
-        serviceDescription: [
-          { required: true, message: '请输入服务说明', trigger: ['blur'] },
-        ],
+      
       },
     }
   },
@@ -63,36 +59,21 @@ export default {
       this.visibleDialog = true
       this.btnLoading = false
       this.btnType = btnType
-      this.dataForm.id = id || ''
-      this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
-        if (this.dataForm.id) {
-          detailServiceRecord(this.dataForm.id).then(res => {
-            this.dataForm = res.data
-          })
-        }
-      })
+   
     },
-    onPartnerChange(id,data){
-      if (!data.length) return
-      this.$nextTick(() => this.$refs['elForm'].validateField('name'))
-      if (data){
-        this.dataForm.cooperativePartnerId = data[0].id
-        this.dataForm.name = data[0].name
-      }else{
-        this.dataForm.cooperativePartnerId = ''
-        this.dataForm.name = ''
-      }
-      console.log(data);
-    },
+  
     confirm() {
       this.btnLoading = true
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
-          let formMethod = this.dataForm.id ? updateServiceRecord : addServiceRecord
-          formMethod(this.dataForm).then(res => {
+          if(this.states==true){
+            this.dataForm.state='enable'
+          }else{
+            this.dataForm.state='disabled'
+          }
+          addbimDataCustomTableList(this.dataForm).then(res => {
             this.$message({
-              message:  this.dataForm.id ? '修改成功' : '新建成功',
+              message:  '新建成功',
               type: 'success',
               duration: 1500,
               onClose: () => {

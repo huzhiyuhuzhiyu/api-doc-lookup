@@ -39,7 +39,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.JNPF-dialog {
+::v-deep .JNPF-dialog {
   >>> .el-dialog__body {
     padding: 50px 30px !important;
   }

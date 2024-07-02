@@ -168,16 +168,15 @@ export function getbimDataCustomTableList(data) {
 
 export function addbimDataCustomTableList(data) {
   return request({
-      url: '/api/erp/bimDataCategory/add',
+      url: '/api/erp/bimDataCustomTable/add',
       method: 'post',
       data: data
   })
 }
 // 自定义表设置(编辑)
-
 export function editbimDataCustomTableList(data) {
   return request({
-      url: '/api/erp/bimDataCategory/modify',
+      url: '/api/erp/bimDataCustomTable/modify',
       method: 'put',
       data: data
   })
@@ -187,14 +186,14 @@ export function editbimDataCustomTableList(data) {
 
 export function deletebimDataCustomTableList(id) {
   return request({
-      url: '/api/erp/bimDataCategory/remove/'+id,
+      url: '/api/erp/bimDataCustomTable/remove/'+id,
       method: 'delete',
   })
 }
 // 自定义表设置(详情)
 export function detailbimDataCustomTableList(id) {
   return request({
-      url: '/api/erp/bimDataCategory/detail/'+id,
+      url: '/api/erp/bimDataCustomTable/detail/'+id,
       method: 'get',
   })
 }
@@ -268,12 +267,99 @@ export function editAttributState(data) {
 
 
 // 数据建模——列表
-
-
 export function getDataModelList(data) {
   return request({
       url: '/api/crm/db/backup/table/list',
       method: 'post',
       data: data
+  })
+}
+
+
+// 业务列表分类——列表
+export function getBusinessListCategoryAPI(data) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/tree',
+      method: 'post',
+      data: data
+  })
+}
+
+// 业务列表分类——新增
+export function addBusinessListCategoryAPI(data) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/add',
+      method: 'post',
+      data: data
+  })
+}
+// 业务列表分类——修改
+export function editBusinessListCategoryAPI(data) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/modify',
+      method: 'put',
+      data: data
+  })
+}
+// 业务列表分类——删除
+export function delBusinessListCategoryAPI(id) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/remove/'+id,
+      method: 'delete',
+  })
+}
+// 业务列表分类——详情
+export function detailBusinessListCategoryAPI(id) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/detail/'+id,
+      method: 'get',
+  })
+}
+// 业务列表分类——校验编码唯一
+export function checkBusinessListCategoryCode(data) {
+  return request({
+      url: '/api/erp/bimBusinessListCategory/check/code/exist?id='+data.id+"&code="+data.code,
+      method: 'get',
+  })
+}
+
+
+
+// 系统版本说明——列表
+export function getInstructionsList(data) {
+  return request({
+      url: '/api/crm/bim/update/instructions/list',
+      method: 'post',
+      data: data
+  })
+}
+// 系统版本说明——新增
+export function addInstructionsList(data) {
+  return request({
+      url: '/api/crm/bim/update/instructions/add',
+      method: 'post',
+      data: data
+  })
+}
+// 系统版本说明——修改
+export function editInstructionsList(data) {
+  return request({
+      url: '/api/crm/bim/update/instructions/modify',
+      method: 'pus',
+      data: data
+  })
+}
+// 系统版本说明——删除
+export function deleteInstructionsList(id) {
+  return request({
+      url: '/api/crm/bim/update/instructions/remove/'+id,
+      method: 'delete',
+  })
+}
+// 系统版本说明——详情
+export function  detailInstructionsList(id) {
+  return request({
+      url: '/api/crm/bim/update/instructions/detail/'+id,
+      method: 'get',
   })
 }

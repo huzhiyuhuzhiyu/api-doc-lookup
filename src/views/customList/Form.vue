@@ -5,7 +5,7 @@
       label-width="120px">
       <el-form-item label="业务分类" prop="listCategoryName" >
         <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.listCategoryName" placeholder="请选择业务分类" auth
-          @change="onOrganizeChange" :title="'选择业务分类'" :method="getDataCatogryList" :requestObj="requestObjTwo"
+          @change="onOrganizeChange" :title="'选择业务分类'" :method="getBusinessListCategoryAPI" :requestObj="requestObjTwo"
           :paramsObj="{}" />
       </el-form-item>
 
@@ -33,15 +33,9 @@
   </el-dialog>
 </template>
 
-<script>
+<script>  
 import {
-  deleteDataCatogryList,
-  editDataCatogryList,
-  addDataCatogryList,
-  getDataCatogryList
-} from "@/api/masterDataManagement/index";
-import {
-  getColumnList,editColumnList,addColumnList,checkAttributeexist,detailColumnList,batchAttributeSort,editAttributState
+  getColumnList,editColumnList,addColumnList,checkAttributeexist,detailColumnList,batchAttributeSort,editAttributState,getBusinessListCategoryAPI
 } from "@/api/masterDataManagement/index";
 export default {
   data() {
@@ -50,7 +44,7 @@ export default {
         pageSize: -1,
         name: ''
       },
-      getDataCatogryList,
+      getBusinessListCategoryAPI,
       visible: false,
       formLoading: false,
       btnLoading: false,

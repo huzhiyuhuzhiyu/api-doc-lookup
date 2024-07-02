@@ -106,7 +106,7 @@ $lighterBlue: #409EFF;
 }
 
 .left-scrollbar {
-  height: calc(100% - 190px);
+  // height: calc(100% - 190px);
   overflow: hidden;
 
   .el-scrollbar__wrap {
@@ -115,7 +115,7 @@ $lighterBlue: #409EFF;
 }
 
 .center-scrollbar {
- width: 400px;
+//  width: 400px;
   height: calc(100% - 42px);
   overflow: hidden;
   box-sizing: border-box;

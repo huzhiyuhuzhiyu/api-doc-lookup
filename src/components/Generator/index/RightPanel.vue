@@ -1116,7 +1116,7 @@ export default {
     height: 100%;
   }
 }
->>> .select-item,
+::v-deep .select-item,
 .select-item {
   display: flex;
   border: 1px dashed #fff;

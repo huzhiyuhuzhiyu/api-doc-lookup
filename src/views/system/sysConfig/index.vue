@@ -67,7 +67,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="PC端设置" name="second">
-          <el-form label-position="left">
+            
             <el-form-item label="登录图标:">
               <div class="img-list">
                 <div class="img_box">
@@ -113,12 +113,10 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()" style="margin-bottom: 20px;">保 存</el-button>
             </el-form-item>
-          </el-form>
         </el-tab-pane>
         <el-tab-pane label="移动端设置" name="third">
-          <el-form label-position="left">
             <el-form-item label="APP轮播图:">
               <div class="img-list">
                 <div class="img_box">
@@ -162,7 +160,6 @@
             <el-form-item>
               <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
             </el-form-item>
-          </el-form>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全设置" name="second">
           <el-alert title="注意：系统登录安全、黑名单IP限制" type="warning" :closable="false" show-icon />

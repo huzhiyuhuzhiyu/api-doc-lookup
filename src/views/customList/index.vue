@@ -1,14 +1,29 @@
 <template>
   <div class="JNPF-common-layout">
-    <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
-        <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
-          <div class="JNPF-common-layout"> -->
     <div class="JNPF-common-layout-left">
-
-
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2>业务分类</h2>
+        <span class="options">
+          <el-dropdown>
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+        </div>
+       <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block">
+      </el-input></div>
+      </div>
+     
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="code" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
 
@@ -53,37 +68,48 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData"  row-key="id">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id">
           <!-- <el-table-column prop="code" label="分类名称"> </el-table-column> -->
-          <el-table-column   width="60">
-            <template >
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动' />
+          <el-table-column width="60">
+            <template>
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
             </template>
           </el-table-column>
           <el-table-column prop="attributeName" label="属性名称" />
           <el-table-column prop="businessCode" label="业务代码" /><template>
-              
-            </template>
+
+          </template>
           <el-table-column prop="businessName" label="业务名称" />
           <el-table-column prop="defaultDisplayName" label="默认显示名称" />
-          <el-table-column prop="customDisplayName" label="自定义显示名称" />
+          <el-table-column prop="customDisplayName" label="自定义显示名称" width="160">
+            <template slot-scope="scope">
+              <div @dblclick="changeEnddate(scope.$index, 'customDisplayName', scope.row)"
+                style="height: 40px;line-height: 40px;">
+                <span v-show="!scope.row.editFlag">{{ scope.row.customDisplayName }}</span>
+                <el-input :ref='"enddateinput" + "customDisplayName" + "&" + scope.$index'
+                  @blur="switchShow(scope.$index, 'customDisplayName')" clearable
+                  @keyup.enter.native="$event.target.blur" v-show="scope.row.editFlag" size="mini"
+                  v-model="scope.row.customDisplayName"></el-input>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="sort" label="排序" />
           <el-table-column prop="displayState" label="显示状态">
             <template slot-scope="scope">
-              <div>{{ scope.row.displayState == 'show' ? '显示' : '隐藏' }}</div>
+              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949"
+                @change="changeState(scope.row)" style="margin-left: 10px">
+              </el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" />
+          <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="createByName" label="创建人" />
-          <el-table-column label="操作" width="180" >
+          <!-- <el-table-column label="操作" width="180" >
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" @edit="addOrUpdateHandle(scope.row.id, 'edit')">
-                <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" @change="changeState(scope.row)" style="margin-left: 10px">
-                </el-switch>
+              
               </tableOpts>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
           @pagination="initData" />
@@ -97,6 +123,9 @@
 import {
   getColumnList, editColumnList, addColumnList, checkAttributeexist, detailColumnList, batchAttributeSort, editAttributState
 } from "@/api/masterDataManagement/index";
+import {
+  checkBusinessListCategoryCode, detailBusinessListCategoryAPI, delBusinessListCategoryAPI, editBusinessListCategoryAPI, addBusinessListCategoryAPI, getBusinessListCategoryAPI
+} from "@/api/masterDataManagement/index.js";
 import Form from "./Form";
 import moment from "moment";
 import Sortable from 'sortablejs'
@@ -110,66 +139,21 @@ export default {
       background: true, //分页器背景颜色
       activeName: "supplierPage",
       visible: false,
-      treeData: [
-        {
-          name: '游隙',
-          code: 'pa001',
-        },
-        {
-          name: '油脂',
-          code: 'pa002',
-        },
-        {
-          name: '油脂量',
-          code: 'pa003',
-        },
-        {
-          name: '保持架',
-          code: 'pa004',
-        },
-        {
-          name: '振动等级',
-          code: 'pa005',
-        },
-        {
-          name: '精度等级',
-          code: 'pa006',
-        },
-        {
-          name: '打字内容',
-          code: 'pa007',
-        },
-        {
-          name: '规值',
-          code: 'pa008',
-        },
-        {
-          name: '孔径',
-          code: 'pa009',
-        },
-        {
-          name: '颜色',
-          code: 'pa010',
-        },
-        {
-          name: '品牌',
-          code: 'pa011',
-        },
-        {
-          name: '密封盖',
-          code: 'pa012',
-        },
-
-        {
-          name: '结构类型',
-          code: 'pa013',
-        },
-        {
-          name: '噪音',
-          code: 'pa014',
-        },
-
-      ],
+      treeData: [],
+      initListQuery: {
+        code: "",
+        name: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        pageNum: -1,
+        pageSize: -1,
+      },
+      listQuery: {},
       tableData: [],
       treeLoading: false,
       listLoading: false,
@@ -218,58 +202,163 @@ export default {
     },
   },
   created() {
-    this.$nextTick(() => {
-      this.$refs.treeBox.setCurrentKey(this.treeData[0].code) // 默认选中节点第一个
-      this.form.typeCode = this.treeData[0].code
-    })
-    this.initData()
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery));
+    if (localStorage.getItem("expandsFlag")) {
+      let expandsFlag = JSON.parse(localStorage.getItem('expandsFlag'))
+      this.expands = expandsFlag
+      console.log("expandsFlag", expandsFlag);
+      this.toggleExpand(expandsFlag)
+
+    }
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
+    this.getcategoryTree()
   },
-  mounted () {
+  mounted() {
     this.rowDrop(); //声明表格拖动排序方法
+
   },
   methods: {
-    rowDrop() {
-        const el = this.$refs.dataTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
-        this.sortable = Sortable.create(el, {
-          ghostClass: 'sortable-ghost',
-          setData: function(dataTransfer) {
-            dataTransfer.setData('Text', '')
-          },
-          onEnd: evt => {
-            const targetRow = this.tableData.splice(evt.oldIndex, 1)[0];
-            this.tableData.splice(evt.newIndex, 0, targetRow);
-            console.log(this.tableData);
-            let att=[]
-            this.tableData.forEach((item,index) => {
-              let obj={
-                id:item.id,
-                sort:index,
-                attributeName:item.attributeName
-              }
-              att.push(obj)
-            });
-            console.log(att);
-            batchAttributeSort(att).then(res=>{
-              this.$message.success("批量修改排序成功")
-              this.initData()
-              
-            })
-          }
-        });
-      },
-    // 修改显示状态
-    changeState(e){
-      console.log(e);
-      let obj={
-        attributeName:e.attributeName,
-        customDisplayName:e.customDisplayName,
-        displayState:e.state==true?'show':'hidden',
-        id:e.id,
-        listCategoryId:e.listCategoryId,
-        sort:e.sort,
+    // 设置默认展开
+    setexpand(expands) {
+      console.log("expands", expands);
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("expandsFlag", expands)
+
+      })
+    },
+    // 展开或折叠全部
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+      })
+    },
+    findLastId(arr) {
+      let currentItem = arr[0];
+
+      while (currentItem.childrenList.length > 0) {
+        currentItem = currentItem.childrenList[0];
       }
-      editAttributState(obj).then(res=>{
+
+      return currentItem.id;
+    },
+    getcategoryTree() {
+      this.listLoading = true
+      this.treeLoading = true
+      getBusinessListCategoryAPI(this.listQuery).then(res => {
+        console.log("res=>", res);
+        this.treeData = res.data.length ? res.data : []
+        this.$nextTick(() => {
+          let id = this.findLastId(this.treeData)
+          console.log("id", id);
+          this.$refs.treeBox.setCurrentKey(id) // 默认选中节点第一个
+          this.form.listCategoryId = id
+          this.treeLoading = false
+          this.initData()
+        })
+
+      }).catch(() => {
+        this.treeLoading = false
+        this.listLoading = false
+      })
+    },
+
+    // 切换input框的显示状态
+    switchShow(index, tag, tmp_this = this) {
+      // 因为涉及到调用不同名称的变量, 不清楚怎么写, 只能先用switch case解决
+      console.log(tag);
+      switch (tag) {
+        case "customDisplayName":
+          this.tableData[index].editFlag = false
+          // tmp_this.tableData[index].editFlag = !tmp_this.tableData[index].editFlag;
+          break;
+
+        // ...
+      }
+      tmp_this.tableData = [...tmp_this.tableData];//因为我table绑定的表格数据是后接过来赋值的，所以需要这步操作，如果没有1、2步骤这个可以不加。后面也一样
+      let obj = {
+        attributeName: this.tableData[index].attributeName,
+        customDisplayName: this.tableData[index].customDisplayName,
+        defaultDisplayName: this.tableData[index].defaultDisplayName,
+        displayState: this.tableData[index].displayState,
+        id: this.tableData[index].id,
+        listCategoryId: this.tableData[index].listCategoryId,
+        sort: this.tableData[index].sort,
+      }
+      editColumnList(obj).then(response => {
+        this.$message({
+          message: "修改成功",
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.visible = false
+            this.btnLoading = false
+            this.$emit('close', true)
+          }
+        })
+      }).catch(() => {
+        this.btnLoading = false
+      })
+    },
+
+    // 显示input框, 使光标焦点当前input框
+    changeEnddate(index, tag, rowdata) {
+      console.log(12342134, index, tag, rowdata);
+      this.tableData[index].editFlag = true
+      // this.switchShow(index, tag, this);
+      // console.log('enddateinput' + index, typeof 'enddateinput' + index);
+      // console.log(rowdata, typeof rowdata);
+      // setTimeout( ()=> {  //定时器是为了避免没有获取到dom的情况报错，所以象征性的给1毫秒让他缓冲
+      //   this.$refs['enddateinput' + tag + '&' + index].focus()
+      //   //el-input的autofocus失效，所以用这个方法。对应在template里的refs绑定值
+      // }, 1)
+    },
+
+    rowDrop() {
+      const el = this.$refs.dataTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.tableData.splice(evt.oldIndex, 1)[0];
+          this.tableData.splice(evt.newIndex, 0, targetRow);
+          console.log(this.tableData);
+          let att = []
+          this.tableData.forEach((item, index) => {
+            let obj = {
+              id: item.id,
+              sort: index,
+              attributeName: item.attributeName
+            }
+            att.push(obj)
+          });
+          console.log(att);
+          batchAttributeSort(att).then(res => {
+            this.$message.success("批量修改排序成功")
+            this.initData()
+
+          })
+        }
+      });
+    },
+    // 修改显示状态
+    changeState(e) {
+      console.log(e);
+      let obj = {
+        attributeName: e.attributeName,
+        customDisplayName: e.customDisplayName,
+        displayState: e.state == true ? 'show' : 'hidden',
+        id: e.id,
+        listCategoryId: e.listCategoryId,
+        sort: e.sort,
+      }
+      editAttributState(obj).then(res => {
         this.initData();
         this.$message.success("修改显示状态成功")
       })
@@ -286,6 +375,7 @@ export default {
     },
 
     filterNode(value, data) {
+      console.log(value,data);
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
     },
@@ -298,16 +388,18 @@ export default {
         .then((res) => {
           console.log("res++", res);
           res.data.records.forEach(item => {
-            if(item.displayState=="show"){
-              item.state=true
-            }else{
-              item.state=false
+            item.editFlag = false
+            if (item.displayState == "show") {
+              item.state = true
+            } else {
+              item.state = false
             }
           });
           this.tableData = res.data.records;
           this.total = res.data.total;
           this.listLoading = false;
           this.visible = false;
+          console.log(this.tableData);
         })
         .catch(() => {
           this.listLoading = false;
@@ -340,10 +432,11 @@ export default {
       };
 
       this.search()
+      this.getcategoryTree()
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
-      this.form.listCategoryId = node.data.listCategoryId
+      this.form.listCategoryId = node.data.id
       this.search();
     },
 
@@ -390,6 +483,21 @@ export default {
 };
 </script>
 <style scoped>
+.title_box{
+  width: 100%;
+    display: flex;
+    border-bottom: 1px solid #ebeef5;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 0 10px;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
 .JNPF-common-layout-left {
   /* margin-right: 0; */
   /* border-right: 1px solid #cacaca; */

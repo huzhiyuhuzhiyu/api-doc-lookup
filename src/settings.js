@@ -1,5 +1,5 @@
 module.exports = {
-    title:"怡盛智造",
+    title:"轴管通",
 
     /**
      * @type {boolean} true | false

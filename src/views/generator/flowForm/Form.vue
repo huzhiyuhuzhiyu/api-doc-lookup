@@ -183,3 +183,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+::v-deep .el-input-number--medium{
+  width: 165px;
+}
+</style>

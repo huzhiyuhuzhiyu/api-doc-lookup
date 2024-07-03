@@ -117,3 +117,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.JNPF-common-drawer ::v-deep .el-drawer__header{
+  font-size:18px
+}
+</style>

@@ -1,28 +1,28 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left" :style="leftFlag?'width:50px':''">
+    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:30px;background:#f5f7fa' : ''" style="position: relative;">
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">业务分类</h2>
-        <span class="options">
-          <el-dropdown>
-            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
-              <el-dropdown-item @click.native="changeLeft()">{{btnTitle}}</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
+          <span class="options" v-if="!leftFlag">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
         </div>
-       <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block">
-      </el-input></div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block">
+          </el-input></div>
       </div>
-     
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -32,6 +32,12 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button icon="iconfont icon-shouqi" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button icon="iconfont icon-zhankai" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
@@ -71,21 +77,20 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id">
           <!-- <el-table-column prop="code" label="分类名称"> </el-table-column> -->
-          <el-table-column width="60">
-            <template>
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
+
+          <el-table-column prop="attributeName" label="属性名称" width="130px">
+            <template slot-scope="scope">
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
+                title='点击拖动' />{{ scope.row.attributeName }}
             </template>
           </el-table-column>
-          <el-table-column prop="attributeName" label="属性名称" />
-          <el-table-column prop="businessCode" label="业务代码" /><template>
-
-          </template>
-          <el-table-column prop="businessName" label="业务名称" />
-          <el-table-column prop="defaultDisplayName" label="默认显示名称" />
+          <el-table-column prop="businessCode" label="业务代码" width="100px" /> 
+          <el-table-column prop="businessName" label="业务名称" width="100px" />
+          <el-table-column prop="defaultDisplayName" label="默认显示名称" width="120"/>
           <el-table-column prop="customDisplayName" label="自定义显示名称" width="160">
             <template slot-scope="scope">
               <div @dblclick="changeEnddate(scope.$index, 'customDisplayName', scope.row)"
-                style="height: 40px;line-height: 40px;">
+                >
                 <span v-show="!scope.row.editFlag">{{ scope.row.customDisplayName }}</span>
                 <el-input :ref='"enddateinput" + "customDisplayName" + "&" + scope.$index'
                   @blur="switchShow(scope.$index, 'customDisplayName')" clearable
@@ -95,7 +100,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="sort" label="排序" />
-          <el-table-column prop="displayState" label="显示状态">
+          <el-table-column prop="displayState" label="显示状态" width="100">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949"
                 @change="changeState(scope.row)" style="margin-left: 10px">
@@ -195,8 +200,8 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: "",
-      leftFlag:false,
-      btnTitle:"向左收起"
+      leftFlag: false,
+      btnTitle: "向左收起"
     };
   },
   watch: {
@@ -221,15 +226,9 @@ export default {
 
   },
   methods: {
-    changeLeft(){
-      this.leftFlag=!this.leftFlag
-      if(this.btnTitle=="向左收起"){
-        console.log(1);
-        this.btnTitle="向右展开"
-      }else{
-        console.log(2);
-        this.btnTitle="向左收起"
-      }
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
     },
     // 设置默认展开
     setexpand(expands) {
@@ -388,7 +387,7 @@ export default {
     },
 
     filterNode(value, data) {
-      console.log(value,data);
+      console.log(value, data);
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
     },
@@ -496,21 +495,22 @@ export default {
 };
 </script>
 <style scoped>
-.title_box{
+.title_box {
   width: 100%;
-    display: flex;
-    border-bottom: 1px solid #ebeef5;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    padding: 0 10px;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
+
 .JNPF-common-layout-left {
   /* margin-right: 0; */
   /* border-right: 1px solid #cacaca; */
@@ -559,4 +559,65 @@ export default {
 .el-tabs__nav-scroll {
   padding-left: 0;
 }
+.retract{
+  position: absolute;
+    right: -14px;
+    top: 8%;
+    /* font-size: 20px; */
+    z-index: 999;
+}
+.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text{
+  background:transparent;
+
+}
+.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .icon-shouqi{
+  font-size: 30px!important;
+  color: #999!important
+}
+.JNPF-common-layout-left .retract ::v-deep .el-button--text .icon-shouqi:hover {
+  font-size: 30px!important;
+
+  color:#3fb9f8!important;
+  border-color: #3fb9f8;
+  /* background:#3fb9f8!important; */
+  border-radius: 50%
+}
+
+.retract ::v-deep .el-button--text .icon-shouqi{
+  font-size: 30px!important;
+  color: transparent!important
+  /* color: #999!important */
+}
+
+
+.expand{
+  position: absolute;
+    left: 0px;
+    top: 8%;
+    /* font-size: 20px; */
+    z-index: 999;
+}
+.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text{
+  background:transparent;
+
+}
+.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text  .icon-zhankai{
+  font-size: 30px!important;
+  color: #999!important
+}
+.JNPF-common-layout-left .expand ::v-deep .el-button--text .icon-zhankai:hover {
+  font-size: 30px!important;
+
+  color:#3fb9f8!important;
+  border-color: #3fb9f8;
+  /* background:#3fb9f8!important; */
+  border-radius: 50%
+}
+
+.expand ::v-deep .el-button--text .icon-zhankai{
+  font-size: 30px!important;
+  /* color: transparent!important */
+  color: #999!important
+}
+/* .el-table .cell */
 </style>

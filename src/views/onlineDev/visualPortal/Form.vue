@@ -3,14 +3,21 @@
     :show-close="false" :modal="false">
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
-        <img src="@/assets/images/jnpf2.png" class="header-logo" />
+        <el-image class="header-logo imagesClass"  :src="define.comUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
+          <template slot="error">
+            <img class="header-logo" :class="headClass"  src="@/assets/images/jnpf.png"
+              alt="">
+          </template>
+        </el-image>
+        <img src="@/assets/images/jnpf.png" :class="headClass"  class="header-logo"
+          v-else />
         <p class="header-txt"> · 门户设计</p>
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps steps2">
         <el-step title="基础设置" @click.native="stepChick(0)"></el-step>
         <el-step title="门户设计" @click.native="stepChick(1)"></el-step>
       </el-steps>
-      <div class="options">
+      <div class="options" style="width:400px">
         <el-button @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
         <el-button @click="next" :disabled="activeStep>=1 || loading">{{$t('common.next')}}
         </el-button>
@@ -62,6 +69,7 @@
 <script>
 import { getPortalInfo, Update, Create } from '@/api/onlineDev/portal'
 import PortalDesigner from './components'
+import { mapState } from 'vuex'
 export default {
   components: { PortalDesigner },
   data() {
@@ -98,6 +106,19 @@ export default {
       formData: null,
       categoryList: []
     }
+  },
+  computed: {
+    ...mapState({
+      slideClass: state => state.settings.slideClass,
+      headClass: state => state.settings.headClass,
+      head: state => state.settings.head,
+    }),
+    sysConfig() {
+      return this.$store.state.settings.sysConfig
+    },
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
   },
   methods: {
     init(categoryList, id) {
@@ -159,3 +180,16 @@ export default {
   }
 }
 </script>
+<style scoped>
+::v-deep .el-form--label-left .el-form-item__label{
+  text-align: left;
+  padding-right:2px; 
+  padding-left: 10px
+}
+::v-deep .right-box .dataBoard-item .head{
+  margin-left: 10px
+}
+::v-deep .el-button--default{
+  margin-left:10px
+}
+</style> 

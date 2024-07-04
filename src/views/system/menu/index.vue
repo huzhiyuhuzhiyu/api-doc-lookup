@@ -144,7 +144,9 @@ import Form from './Form'
 import MenuManage from './menuManage'
 import { delSystem, getSystem, copy, info, update } from '@/api/system/system'
 import { Copy } from '@/api/onlineDev/visualDev'
-
+import {
+  getDictionaryDataList,
+} from '@/api/systemData/dictionary'
 export default {
   name: 'system-menu',
   components: {
@@ -165,13 +167,28 @@ export default {
       refreshTable: true,
       previewVisible: false,
       total: 0,
-      switchlist: true
+      switchlist: true,
+      form: {
+        keyword: '',
+        isTree: 0
+      },
     }
   },
   created() {
     this.initData()
+    this.getDictionaryDataList()
   },
   methods: {
+    // 获取应用类型(数据字典)
+    getDictionaryList(){
+      this.listLoading = true
+      getDictionaryDataList('578184163824249989', this.form).then(res => {
+        console.log("应用类型",res);
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
     closeForm(isRefresh) {
       this.previewVisible = false
       this.formVisible = false

@@ -616,8 +616,8 @@ export default {
 
 .expand ::v-deep .el-button--text .icon-zhankai{
   font-size: 30px!important;
-  /* color: transparent!important */
-  color: #999!important
+  color: transparent!important
+  /* color: #999!important */
 }
 /* .el-table .cell */
 </style>

@@ -51,23 +51,30 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column hasC  >
-            <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
-            <el-table-column prop="name" label="客户名称" sortable="custom" width="120" />
-            <el-table-column prop="taxId" label="税号" width="120"/>
-            <el-table-column prop="contacts" label="联系人" sortable="custom" width="100"/>
-            <el-table-column prop="phone" label="电话" sortable="custom" width="120"/>
-            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120"/>
-            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" width="120"/>
-            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" width="120"/>
-            <el-table-column prop="internalStaffIdText" label="内勤人员" width="120"/>
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180"/>
+            @sort-change="sortChange" custom-column hasC>
+            <el-table-column prop="code" label="客户编码" sortable="custom" width="120" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" width="120">
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
+                  scope.row.name
+                  }}</el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="taxId" label="税号" width="120" />
+            <el-table-column prop="contacts" label="联系人" sortable="custom" width="100" />
+            <el-table-column prop="phone" label="电话" sortable="custom" width="120" />
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120" />
+            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" width="120" />
+            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" width="120" />
+            <el-table-column prop="internalStaffIdText" label="内勤人员" width="120" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                  @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId,'edit')" >
-                <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
-                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.id,scope.row.partnerCategoryId,'look')">查看详情</el-button>
+                  @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')">
+                  <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
+                  <el-button size="mini" type="text"
+                    @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">查看详情</el-button>
 
                 </tableOpts>
               </template>
@@ -130,7 +137,7 @@
           <el-col :span="12">
             <el-form-item label="所属销售">
               <el-select v-model="dataForm.salespersonIdText" placeholder="请选择所属销售人员" clearable style="width: 100%;"
-                 filterable @change="selectsales">
+                filterable @change="selectsales">
                 <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
                   :value="item.id"></el-option>
               </el-select>
@@ -164,18 +171,18 @@
     </el-dialog>
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
-      <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-      <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
 
   </div>
 </template>
 
 <script>
-import { getPartnerList,  deletePartner,uploadPartner} from '@/api/customerManagement'
+import { getPartnerList, deletePartner, uploadPartner } from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import RecordForm from '../myCustomer/RecordForm.vue'
 import { UserListAll, } from '@/api/permission/user'
-import { excelExport,getCooperativeData } from '@/api/basicData/index'
+import { excelExport, getCooperativeData } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import { getOrganization } from '@/api/permission/user'
 import Form from './Form'
@@ -184,11 +191,11 @@ import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dicti
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'carrierProfile',
-  components: { Form, ExportForm,RecordForm  },
+  components: { Form, ExportForm, RecordForm },
   data() {
     return {
       exportFormVisible: false,
-      recordFormVisible:false,
+      recordFormVisible: false,
       organizeIdTrees: [],
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
@@ -196,7 +203,7 @@ export default {
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      salesList:[],
+      salesList: [],
 
 
       dataForm: {
@@ -212,7 +219,7 @@ export default {
         internalStaffId: "",
         startTime: "",
         endTime: "",
-        type:"customer",
+        type: "customer",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -292,9 +299,9 @@ export default {
         }).catch(() => { })
       }
     },
-    handleRecord(row){
+    handleRecord(row) {
       this.recordFormVisible = true
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.RecordForm.init(row.id)
       })
     },
@@ -348,8 +355,8 @@ export default {
       }
 
     },
-    
-     
+
+
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
@@ -359,7 +366,7 @@ export default {
     },
 
 
-    
+
     importFun() {
 
       this.$refs.UploadProduct.$el.querySelector('input').click()
@@ -510,16 +517,16 @@ export default {
     addSupplier(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id,'', btntype)
+        this.$refs.Form.init(id, '', btntype)
       })
     },
 
-    addOrUpdateHandle(id,partnerCategoryId,btntype) {
+    addOrUpdateHandle(id, partnerCategoryId, btntype) {
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id,partnerCategoryId, btntype)
+          this.$refs.Form.init(id, partnerCategoryId, btntype)
         })
         // }, 600);
       }
@@ -540,10 +547,10 @@ export default {
       }).catch(() => { })
 
     },
-    handleUserRelation(id,partnerCategoryId,btnType) {
+    handleUserRelation(id, partnerCategoryId, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id,partnerCategoryId, btnType)
+        this.$refs.Form.init(id, partnerCategoryId, btnType)
       })
     },
 

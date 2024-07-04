@@ -5,8 +5,8 @@
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack"
           :content="btnType=='look' ? '查看潜在客户' :btnType=='add'?  $t(`potentialCustomer.addCustomer`) : $t(`potentialCustomer.editCustomer`)" />
-        <div class="options" v-if="btnType!='look'">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+        <div class="options" >
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType!='look'">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>

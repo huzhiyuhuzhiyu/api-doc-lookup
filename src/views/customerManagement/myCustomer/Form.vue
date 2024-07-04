@@ -4,8 +4,8 @@
       <div :class="['JNPF-common-page-header']">
         <el-page-header @back="goBack"
           :content="btnType === 'look' ? '查看我的客户档案' : btnType === 'add'  ? $t(`customer.addCustomer`) : '转为正式客户'" />
-        <div class="options" v-if="btnType !== 'look'">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+        <div class="options" >
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType !== 'look'">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -1153,6 +1153,7 @@ export default {
 
 
     init(id, btnType) {
+      console.log(id,btnType);
       this.visible = true
       this.dataForm.id = id || ''
       // this.parentId = parentId || ''
@@ -1168,7 +1169,7 @@ export default {
           }
         }
         detailPartner(this.dataForm.id).then(res => {
-
+          console.log("res=>",res);
           this.dataForm = res.data.cooperativePartner
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {

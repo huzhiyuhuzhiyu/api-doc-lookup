@@ -3,7 +3,7 @@ import request from '@/utils/request'
 
 export function getbimProductAttributes(id) {
   return request({
-      url: '/api/system/DictionaryData//'+id,
+      url: '/api/system/DictionaryData/'+id,
       method: 'GET',
   })
 }

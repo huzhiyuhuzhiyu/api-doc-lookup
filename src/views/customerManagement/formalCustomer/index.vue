@@ -6,24 +6,24 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
 
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="dataForm.code" @keyup.enter.native="search()" clearable placeholder="请输入客户编码" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="dataForm.name" @keyup.enter.native="search()" clearable placeholder="请输入客户名称" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item prop="salespersonId" ref="euqPeople">
                 <user-select v-model="dataForm.salespersonId" placeholder="请选择所属销售" @change="changePerple" clearable
                   style="width: 100%;">
                 </user-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="5">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                   {{ $t('common.search') }}</el-button>
@@ -52,16 +52,16 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column hasC  >
-            <el-table-column prop="code" label="客户编码" sortable="custom" />
-            <el-table-column prop="name" label="客户名称" sortable="custom" />
-            <el-table-column prop="taxId" label="税号" />
-            <el-table-column prop="contacts" label="联系人" sortable="custom" />
-            <el-table-column prop="phone" label="电话" sortable="custom" />
-            <el-table-column prop="mobilePhone" label="手机" sortable="custom" />
-            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" />
-            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" />
-            <el-table-column prop="internalStaffIdText" label="内勤人员" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
+            <el-table-column prop="name" label="客户名称" sortable="custom" width="120" />
+            <el-table-column prop="taxId" label="税号" width="120"/>
+            <el-table-column prop="contacts" label="联系人" sortable="custom" width="100"/>
+            <el-table-column prop="phone" label="电话" sortable="custom" width="120"/>
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120"/>
+            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" width="120"/>
+            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" width="120"/>
+            <el-table-column prop="internalStaffIdText" label="内勤人员" width="120"/>
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180"/>
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"

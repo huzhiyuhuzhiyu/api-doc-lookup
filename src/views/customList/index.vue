@@ -18,7 +18,7 @@
           </span>
         </div>
         <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
-            style="width:200px;margin:10px auto;display:block">
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
       </div>
 
@@ -42,12 +42,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent :rules="rules">
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="form.businessCode" placeholder="请输入业务编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="form.businessName" placeholder="请输入业务名称" clearable />
             </el-form-item>
@@ -512,8 +512,8 @@ export default {
 }
 
 .JNPF-common-layout-left {
-  /* margin-right: 0; */
-  /* border-right: 1px solid #cacaca; */
+  margin-right: 5px;
+
 }
 
 ::v-deep .el-tabs__content {
@@ -562,7 +562,7 @@ export default {
 .retract{
   position: absolute;
     right: -14px;
-    top: 8%;
+    top: 95px;
     /* font-size: 20px; */
     z-index: 999;
 }
@@ -593,7 +593,7 @@ export default {
 .expand{
   position: absolute;
     left: 0px;
-    top: 8%;
+    top: 95px;
     /* font-size: 20px; */
     z-index: 999;
 }

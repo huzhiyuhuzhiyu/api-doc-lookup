@@ -40,16 +40,16 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable">
           <el-table-column prop="model" label="型号"  sortable="custom" />
-          <el-table-column prop="innerCircle" label="内圈"  />
-          <el-table-column prop="outerCircle" label="外圈"  />
-          <el-table-column prop="steelBall" label="钢球型号"  />
-          <el-table-column prop="steelBallNum" label="钢球用量"  />
-          <el-table-column prop="oilNum" label="油脂用量"  />
-          <el-table-column prop="holderNum" label="保持架用量"  />
-          <el-table-column prop="createTime" label="创建时间"  sortable="custom" />
-          <el-table-column prop="createByName" label="创建人"  />
+          <el-table-column prop="innerCircle" label="内圈"  sortable="custom" width="120"/>
+          <el-table-column prop="outerCircle" label="外圈"  sortable="custom"/>
+          <el-table-column prop="steelBall" label="钢球型号"  sortable="custom" width="120"/>
+          <el-table-column prop="steelBallNum" label="钢球用量"  sortable="custom" width="120"/>
+          <el-table-column prop="oilNum" label="油脂用量"  sortable="custom" width="120"/>
+          <el-table-column prop="holderNum" label="保持架用量"  sortable="custom" width="140"/>
+          <el-table-column prop="createTime" label="创建时间"  sortable="custom"  width="180"/>
+          <el-table-column prop="createByName" label="创建人"  sortable="custom" width="120"/>
 
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)"></tableOpts>
             </template>
@@ -111,7 +111,13 @@ export default {
   },
   methods: {
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
+      let newProp=""
+      if(prop=='steelBall'||prop=="outerCircle"||prop=="innerCircle"||prop=="createByName"){
+        newProp = prop
+      }else{
+        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
+
+      }
       this.listQuery.orderItems[0].asc = order === "ascending";
       this.listQuery.orderItems[0].column = order === null ? "" : newProp;
       this.initData();

@@ -7,23 +7,23 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerCode" placeholder="请输入客户编码" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入客户产品图号" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="6">
+                <el-col :span="5">
                   <el-form-item>
                     <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                       {{ $t('common.search') }}</el-button>
@@ -40,7 +40,8 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head">
-                  <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+                  <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+                    icon="el-icon-download" @click="exportForm">导出</el-button>
                   <div class="JNPF-common-head-right">
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -75,23 +76,23 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerCode" placeholder="请输入客户编码" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="5">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入客户产品图号" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="6">
+                <el-col :span="5">
                   <el-form-item>
                     <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                       {{ $t('common.search') }}</el-button>
@@ -108,7 +109,8 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head">
-                  <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+                  <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+                    icon="el-icon-download" @click="exportForm">导出</el-button>
                   <div class="JNPF-common-head-right">
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />

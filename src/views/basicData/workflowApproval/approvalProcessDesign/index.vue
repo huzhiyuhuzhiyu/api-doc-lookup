@@ -4,17 +4,17 @@
       <!-- 查询表单 -->
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.code" placeholder="请输入审批模版编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.name" placeholder="请输入审批模版名称" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <!-- <el-input v-model="listQuery.mobilePhone" placeholder="请输入手机" clearable /> -->
               <el-select v-model="listQuery.state" placeholder="请选择模版状态" clearable style="width: 100%;">

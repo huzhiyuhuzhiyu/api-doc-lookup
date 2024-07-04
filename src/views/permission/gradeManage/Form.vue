@@ -16,7 +16,7 @@
         <user-select v-model="dataForm.userId" placeholder="请选择管理员" @change="onChange" disabled />
       </el-form-item>
       <el-table v-loading="listLoading" :data="treeList" row-key="organizeId" default-expand-all
-        :tree-props="{children: 'children', hasChildren: ''}" style="height:400px;overflow: auto">
+        :tree-props="{children: 'children', hasChildren: ''}" >
         <el-table-column prop="fullName" label="组织架构">
           <template slot-scope="scope">
             <i :class=scope.row.icon></i>

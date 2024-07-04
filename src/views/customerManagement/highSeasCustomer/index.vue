@@ -6,12 +6,12 @@
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
 
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="dataForm.code" @keyup.enter.native="search()" clearable placeholder="请输入客户编码" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="dataForm.name" @keyup.enter.native="search()" clearable placeholder="请输入客户名称" />
               </el-form-item>
@@ -36,7 +36,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')">
-              <el-button type="primary" icon="iconfont icon-lingqu" @click="receiveFun()" :loading="btnLoading"
+              <el-button type="primary" size="mini" icon="iconfont icon-lingqu" @click="receiveFun()" :loading="btnLoading"
                 :disabled="btnLoading">领取</el-button>
               <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
               <el-button size="mini"  v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
@@ -51,14 +51,14 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column hasC @selection-change="selectCustomerFun">
-            <el-table-column prop="code" label="客户编码" sortable="custom" />
-            <el-table-column prop="name" label="客户名称" sortable="custom" />
-            <el-table-column prop="contacts" label="联系人" sortable="custom" />
-            <el-table-column prop="phone" label="电话" sortable="custom" />
-            <el-table-column prop="mobilePhone" label="手机" sortable="custom" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
+            <el-table-column prop="name" label="客户名称" sortable="custom" width="120"/>
+            <el-table-column prop="contacts" label="联系人" sortable="custom" width="120"/>
+            <el-table-column prop="phone" label="电话" sortable="custom" width="120"/>
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120"/>
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180"/>
             <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" width="220" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                   @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')" @del="handleDel(scope.row.id)">

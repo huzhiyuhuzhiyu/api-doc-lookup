@@ -3,17 +3,17 @@
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.code" placeholder="请输入业务编码" clearable maxlength="20"> </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.name" placeholder="请输入业务名称" clearable maxlength="20"> </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <!-- <el-input v-model="listQuery.mobilePhone" placeholder="请输入手机" clearable /> -->
               <el-select v-model="listQuery.state" placeholder="请选择业务状态" clearable style="width: 100%;">

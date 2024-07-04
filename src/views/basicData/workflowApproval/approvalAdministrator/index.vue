@@ -3,7 +3,7 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-                    <el-col :span="4">
+                    <el-col :span="6">
                         <el-form-item>
                             <el-input v-model="tableQuery.name" placeholder="请输入管理员名称" clearable />
                         </el-form-item>

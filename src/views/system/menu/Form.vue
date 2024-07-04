@@ -209,7 +209,9 @@ export default {
     border-color: #409eff;
   }
 }
-
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
+}
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;

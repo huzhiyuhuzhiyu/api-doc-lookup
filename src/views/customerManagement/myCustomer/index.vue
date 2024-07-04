@@ -47,7 +47,13 @@
           <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
-            <el-table-column prop="name" label="客户名称" sortable="custom" width="120"/>
+            <el-table-column prop="name" label="客户名称" sortable="custom" width="120" >
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id,'look')">{{
+                  scope.row.name
+                  }}</el-link>
+              </template>
+            </el-table-column>
             <el-table-column prop="lxr" label="联系人" sortable="custom" width="100"/>
             <el-table-column prop="tel" label="电话" sortable="custom" width="100"/>
             <el-table-column prop="phone" label="手机" sortable="custom" width="120"/>

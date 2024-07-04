@@ -33,7 +33,7 @@
         </el-tree>
       </el-scrollbar>
       <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="iconfont icon-shouqi" type="text" @click.native="changeLeft()"></el-button>  
+        <el-button icon="iconfont icon-xiangzuoshouqi" type="text" @click.native="changeLeft()"></el-button>  
       </div>
       <div v-if="leftFlag" class="expand" style="position: absolute" >
         <el-button icon="iconfont icon-zhankai" type="text" @click.native="changeLeft()"></el-button>  
@@ -570,11 +570,11 @@ export default {
   background:transparent;
 
 }
-.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .icon-shouqi{
+.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .icon-xiangzuoshouqi{
   font-size: 30px!important;
   color: #999!important
 }
-.JNPF-common-layout-left .retract ::v-deep .el-button--text .icon-shouqi:hover {
+.JNPF-common-layout-left .retract ::v-deep .el-button--text .icon-xiangzuoshouqi:hover {
   font-size: 30px!important;
 
   color:#3fb9f8!important;
@@ -583,7 +583,7 @@ export default {
   border-radius: 50%
 }
 
-.retract ::v-deep .el-button--text .icon-shouqi{
+.retract ::v-deep .el-button--text .icon-xiangzuoshouqi{
   font-size: 30px!important;
   color: transparent!important
   /* color: #999!important */

@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header']">
         <el-page-header @back="goBack"
           :content="btnType === 'look' ? '查看我的客户档案' : btnType === 'add'  ? $t(`customer.addCustomer`) : '转为正式客户'" />
         <div class="options" v-if="btnType !== 'look'">

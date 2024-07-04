@@ -3,12 +3,12 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent >
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.code" placeholder="请输入业务编码" clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.name" placeholder="请输入业务名称" clearable />
             </el-form-item>
@@ -59,9 +59,9 @@
           <el-table-column prop="code" label="分类编码" min-width="120" />
           <el-table-column prop="parentName" label="上级分类" min-width="120" />
           <el-table-column prop="createTime" label="创建时间" width="180" />
-          <el-table-column prop="remark" label="备注" min-width="200" />
+          <el-table-column prop="remark" label="备注" min-width="160" />
 
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="100" >
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"

@@ -32,17 +32,17 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item>
               <el-input v-model="listQuery.account" placeholder="请输入账户" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item>
               <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item>
               <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
                 <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
@@ -74,10 +74,10 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange"
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column  @sort-change="sortChange"
           ref="dataTable" custom-column>
-          <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom" />
+          <el-table-column prop="account" label="账户" width="100"  /> <!-- 这里的 width 会被转成 min-width -->
+          <el-table-column prop="realName" label="姓名" width="100"  sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
             <template slot-scope="scope">
@@ -141,7 +141,7 @@
     </div>
 
     <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
       <el-row :gutter="20">
 
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">

@@ -50,7 +50,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
    
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="120" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">

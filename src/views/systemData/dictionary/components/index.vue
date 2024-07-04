@@ -1,24 +1,42 @@
 <template>
-  <el-drawer title="字典分类管理" :visible.sync="drawer" :wrapperClosable="false" ref="drawer"
-    size="820px" :before-close="handleDrawerClose" class="JNPF-common-drawer">
+  <el-drawer title="字典分类管理" :visible.sync="drawer" :wrapperClosable="false" ref="drawer" size="820px"
+    :before-close="handleDrawerClose" class="JNPF-common-drawer">
     <div class="JNPF-flex-main">
       <div class="JNPF-common-head">
         <topOpts @refresh="getDictionaryTypeList()" @add="addOrUpdateHandle()">
-          <upload-btn url="/api/system/DictionaryData/Action/Import"
-            @on-success="getDictionaryTypeList" />
+          <upload-btn url="/api/system/DictionaryData/Action/Import" @on-success="getDictionaryTypeList" />
         </topOpts>
         <div class="JNPF-common-head-right">
+          <el-tooltip effect="dark" content="展开" placement="top">
+            <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
+              :underline="false" @click="toggleExpand()" />
+          </el-tooltip>
+          <el-tooltip effect="dark" content="折叠" placement="top">
+            <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
+              :underline="false" @click="toggleExpand()" />
+          </el-tooltip>
           <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
             <el-link icon="icon-ym icon-ym-Refresh
               JNPF-common-head-icon" :underline="false" @click="reset()" />
           </el-tooltip>
         </div>
       </div>
-      <JNPF-table v-loading="listLoading" :data="tableData" row-key="id" default-expand-all
-        :tree-props="{children: 'children', hasChildren: ''}">
+      <JNPF-table v-loading="listLoading" :data="tableData" row-key="id" :hasC="indexFlag" :default-expand-all="expands"
+        v-if="refreshTable" :tree-props="{ children: 'children', hasChildren: '' }">
+        <el-table-column type="index" width="50">
+        </el-table-column>
         <el-table-column prop="fullName" label="名称" />
         <el-table-column prop="enCode" label="编码" width="200" />
-        <el-table-column prop="sortCode" label="排序" width="70" align="center" />
+        <el-table-column prop="sortCode" label="排序" width="70" align="center">
+          <!-- <template slot-scope="scope">
+            <div @dblclick="changeEnddate(scope.$index, 'sortCode', scope.row)">
+              <span v-show="!searchData.editFlag">{{ scope.row.sortCode }}</span>
+              <el-input :ref='"enddateinput" + "sortCode" + "&" + scope.$index'
+                @blur="switchShow(scope.$index, 'sortCode')" clearable @keyup.enter.native="$event.target.blur"
+                v-show="searchData.editFlag" size="mini" v-model="scope.row.sortCode"></el-input>
+            </div>
+          </template> -->
+        </el-table-column>
         <el-table-column prop="isTree" label="是否树" width="80" align="center">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.isTree === 1" type="success" size="mini">是</el-tag>
@@ -42,7 +60,9 @@
 import {
   getDictionaryType,
   delDictionaryType,
-  exportData
+  exportData,
+  updateDictionaryType,
+  getChildrenList
 } from '@/api/systemData/dictionary'
 import TypeForm from './Form'
 
@@ -52,14 +72,88 @@ export default {
   },
   data() {
     return {
+      indexFlag: false,
       drawer: false,
       listLoading: false,
       btnLoading: false,
       typeFormVisible: false,
-      tableData: []
+      tableData: [],
+      expands: true,
+      refreshTable: true,
+      searchData: {},
+      currentId: "",
     }
   },
   methods: {
+    // 切换input框的显示状态
+    switchShow(id, tag, tmp_this = this) {
+      // 因为涉及到调用不同名称的变量, 不清楚怎么写, 只能先用switch case解决
+      console.log(tag);
+      switch (tag) {
+        case "sortCode":
+          this.searchData.editFlag = false
+          // tmp_this.tableData[index].editFlag = !tmp_this.tableData[index].editFlag;
+          break;
+
+        // ...
+      }
+      tmp_this.tableData = [...tmp_this.tableData];//因为我table绑定的表格数据是后接过来赋值的，所以需要这步操作，如果没有1、2步骤这个可以不加。后面也一样
+      let obj = {
+        enCode: this.searchData.attributeName,
+        sortCode: this.searchData.sortCode,
+        defaultDisplayName: this.searchData.defaultDisplayName,
+        displayState: this.searchData.displayState,
+        id: this.searchData.id,
+        parentId: this.searchData.parentId,
+        sort: this.searchData.sort,
+      }
+      updateDictionaryType(obj).then(response => {
+        this.$message({
+          message: "修改成功",
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.visible = false
+            this.btnLoading = false
+            this.$emit('close', true)
+          }
+        })
+      }).catch(() => {
+        this.btnLoading = false
+      })
+    },
+
+    // 显示input框, 使光标焦点当前input框
+    changeEnddate(index, tag, rowdata) {
+      console.log(12342134, index, tag, rowdata);
+      this.currentId = rowdata.id;
+
+      // 使用数组的 find 方法来查找包含指定 ID 的数据
+      this.searchData = this.tableData.find(item => item.id === this.currentId);
+      console.log("searchData",this.searchData);
+      if (this.searchData) {
+        console.log('找到对应的数据信息：', this.searchData);
+        this.searchData.editFlag = true
+        this.switchShow(this.currentId, tag, this);
+      } else {
+        console.log('未找到对应 ID 的数据信息');
+      }
+      // console.log('enddateinput' + index, typeof 'enddateinput' + index);
+      // console.log(rowdata, typeof rowdata);
+      // setTimeout( ()=> {  //定时器是为了避免没有获取到dom的情况报错，所以象征性的给1毫秒让他缓冲
+      //   this.$refs['enddateinput' + tag + '&' + index].focus()
+      //   //el-input的autofocus失效，所以用这个方法。对应在template里的refs绑定值
+      // }, 1)
+    },
+
+    toggleExpand() {
+      this.refreshTable = false;
+      this.expands = !this.expands;
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
+
+    },
     init() {
       this.drawer = true
       this.$nextTick(() => {
@@ -69,6 +163,9 @@ export default {
     getDictionaryTypeList() {
       this.listLoading = true
       getDictionaryType().then(res => {
+        res.data.list.forEach(item => {
+          item.editFlag = false
+        });
         this.tableData = res.data.list
         this.listLoading = false
       }).catch(() => {
@@ -118,7 +215,7 @@ export default {
 }
 </script>
 <style scoped>
-.JNPF-common-drawer ::v-deep .el-drawer__header{
-  font-size:18px
+.JNPF-common-drawer ::v-deep .el-drawer__header {
+  font-size: 18px
 }
 </style>

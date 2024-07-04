@@ -5,7 +5,7 @@
     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading"
       label-width="60px">
       <el-form-item label="上级" prop="parentId">
-        <JNPF-TreeSelect v-model="dataForm.parentId" :options="treeData" placeholder="选择项目上级" />
+        <JNPF-TreeSelect v-model="dataForm.parentId" :options="treeData" placeholder="选择项目上级" @change="handleNode"/>
       </el-form-item>
       <el-form-item label="名称" prop="fullName">
         <el-input v-model="dataForm.fullName" placeholder="输入名称" />
@@ -38,7 +38,8 @@ import {
   getDictionaryTypeSelector,
   getDictionaryTypeInfo,
   createDictionaryType,
-  updateDictionaryType
+  updateDictionaryType,
+  getChildrenList
 } from '@/api/systemData/dictionary'
 
 export default {
@@ -76,6 +77,14 @@ export default {
     }
   },
   methods: {
+    handleNode(e){
+      console.log(e);
+      getChildrenList(e).then(res=>{
+        console.log(res);
+        let data=res.data
+        this.dataForm.sortCode=data[data.length-1].sortCode*1+1
+      })
+    },
     init(id) {
       this.visible = true
       this.dataForm.id = id || ''

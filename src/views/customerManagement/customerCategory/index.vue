@@ -56,8 +56,8 @@
           </el-table-column>
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="createTime" label="创建时间" width="180" ></el-table-column>
-          <el-table-column prop="remark" label="备注" width="300" ></el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column prop="remark" label="备注" width="200" ></el-table-column>
+          <el-table-column label="操作" width="120">
             <template slot-scope="scope" >
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.parentId)" >编辑</el-button>
               <el-button type="text" @click="handleDel(scope.row.id,scope.row.parentId)" style=" color: #ff3a3a">删除</el-button> -->

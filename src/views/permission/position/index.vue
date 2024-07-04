@@ -33,7 +33,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item :label="$t('common.keyword')">
               <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
                 clearable @keyup.enter.native="search()" />
@@ -67,7 +67,7 @@
           <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormatDayTime" label="创建时间"
             width="180" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>

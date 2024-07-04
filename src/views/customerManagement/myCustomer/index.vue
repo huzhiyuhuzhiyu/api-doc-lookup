@@ -36,7 +36,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
-              <el-button type="primary" icon="el-icon-bangzhu" @click="releaseFun">释放</el-button>
+              <el-button type="primary" icon="el-icon-bangzhu" size="mini" @click="releaseFun">释放</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -46,16 +46,16 @@
           </div>
           <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" />
-            <el-table-column prop="name" label="客户名称" sortable="custom" />
-            <el-table-column prop="lxr" label="联系人" sortable="custom" />
-            <el-table-column prop="tel" label="电话" sortable="custom" />
-            <el-table-column prop="phone" label="手机" sortable="custom" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
+            <el-table-column prop="name" label="客户名称" sortable="custom" width="120"/>
+            <el-table-column prop="lxr" label="联系人" sortable="custom" width="100"/>
+            <el-table-column prop="tel" label="电话" sortable="custom" width="100"/>
+            <el-table-column prop="phone" label="手机" sortable="custom" width="120"/>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180"/>
-            <el-table-column prop="createByName" label="创建人" />
-            <el-table-column label="操作" min-width="180" fixed="right">
+            <el-table-column prop="createByName" label="创建人" width="120"/>
+            <el-table-column label="操作" min-width="200" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转为正式</el-button>
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button>
                 <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">

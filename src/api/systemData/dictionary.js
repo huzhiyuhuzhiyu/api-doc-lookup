@@ -133,3 +133,12 @@ export function exportData(id) {
     method: 'GET'
   })
 }
+
+// 获取子集节点数据
+
+export function getChildrenList(id) {
+  return request({
+    url: `/api/system/DictionaryType/child/${id}`,
+    method: 'GET'
+  })
+}

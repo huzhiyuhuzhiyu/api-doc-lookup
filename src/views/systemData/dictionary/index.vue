@@ -28,7 +28,7 @@
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
+          <el-col :span="8">
             <el-form-item label="关键词">
               <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
                 @keyup.enter.native="search()" />

@@ -67,25 +67,7 @@
               <el-table-column prop="requestDuration" label="耗时(毫秒)" width="100" />
             </JNPF-table>
           </el-tab-pane>
-          <el-tab-pane label="操作日志" name="3">
-            <JNPF-table v-loading="listLoading" :data="operationLogData" has-c
-              @selection-change="handleSelectionChange">
-              <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="操作时间"
-                width="160" />
-              <el-table-column prop="userName" label="操作用户" width="160" />
-              <el-table-column prop="ipaddress" label="操作IP" width="120" />
-              <el-table-column prop="moduleName" label="操作模块" width="160" />
-              <el-table-column prop="requestMethod" label="操作类型" width="100" align="center" />
-              <el-table-column prop="requestDuration" label="耗时(毫秒)" width="100" />
-              <el-table-column prop="json" label="操作记录" min-width="200">
-                <template slot-scope="scope">
-                  <el-link @click="goDetail(scope.row.json,'操作记录')" style="font-size:12px">
-                    <p class="line1">{{ scope.row.json }}</p>
-                  </el-link>
-                </template>
-              </el-table-column>
-            </JNPF-table>
-          </el-tab-pane>
+         
           <el-tab-pane label="异常日志" name="4">
             <JNPF-table v-loading="listLoading" :data="errorLogData" has-c
               @selection-change="handleSelectionChange">
@@ -176,7 +158,7 @@ export default {
       this.listLoading = true
       getLogList(activeId, this.listQuery).then(res => {
         if (activeId === '1') this.loginLogData = res.data.list
-        if (activeId === '3') this.operationLogData = res.data.list
+        // if (activeId === '3') this.operationLogData = res.data.list
         if (activeId === '4') this.errorLogData = res.data.list
         if (activeId === '5') this.requestLogData = res.data.list
         this.total = res.data.pagination.total

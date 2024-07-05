@@ -1,142 +1,140 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="initData()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="initData()">
-                {{ $t('common.search') }}
-              </el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle()" />
-          <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
-            <div style="display:flex;align-items:center;">
-              <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist">
-                <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
-                  <img src="@/assets/images/a2.png" alt="">
-                </div>
-              </el-tooltip>
-              <el-tooltip class="item" content="图文模式" placement="bottom" effect="light" v-else>
-                <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
-                  <img src="@/assets/images/a1.png" alt="">
-                </div>
-              </el-tooltip>
-            </div>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
-          </div>
-        </div>
-        <JNPF-table v-loading="listLoading" :data="list" v-if="!switchlist">
-          <el-table-column prop="fullName" label="应用名称" min-width="130" key="fullName" />
-          <el-table-column prop="enCode" label="应用编码" min-width="130" key="enCode" />
-          <!-- <el-table-column prop="description" label="应用说明" min-width="140" key="description" /> -->
-          <!-- <el-table-column prop="applicationType" label="应用类型" min-width="100" key="applicationType">
-            <template slot-scope="scope">
-              <div v-if="scope.row.applicationType == 'Web'">
-                <span>PC端应用</span>
-              </div>
-              <div v-else-if="scope.row.applicationType == 'App'">
-                <span>移动端应用</span>
-              </div>
-              <div v-else-if="scope.row.applicationType == 'Terminal'">
-                <span>工位终端应用</span>
-              </div>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="defaultSorting" label="默认选中顺序" width="120" key="defaultSorting" /> -->
-          <!-- <el-table-column prop="icon" label="图标" width="70" align="center" key="icon">
-            <template slot-scope="scope">
-              <i :class="scope.row.icon + ' table-icon'" />
-            </template>
-          </el-table-column> -->
-          <el-table-column prop="sortCode" label="排序" width="70" align="center" key="sortCode" />
-          <el-table-column prop="enabledMark" label="状态" width="80" align="center" key="enabledMark">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
-                {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" fixed="right" width="180" key="111">
-            <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">编辑
-              </el-button>
-              <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)"
-                :disabled="scope.row.isMain == 1 ? true : false">
-                删除
-              </el-button>
-              <el-dropdown>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
-                      class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="preview(scope.row)">
-                    菜单管理
-                  </el-dropdown-item>
-                  <el-dropdown-item @click.native="copy(scope.row.id)">
-                    复制应用
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <el-scrollbar class="column-list" v-else>
-          <div class="card-wrapper cardGrobal">
-            <el-card class="box-card" shadow="hover" v-for="item in list" :key="item.id">
-              <div class="card-item">
-                <div class="card-icon">
-                  <i :class="item.icon" />
-                </div>
-                <div class="card-body">
-                  <div style="color: #172b4d;font-size:16px;font-weight:600">{{ item.fullName }}</div>
-                  <div style="color: #505f79;font-size:14x;">{{ item.enCode }}</div>
-                </div>
-                <div class="card-enabledMark">
-                  <div>
-                    <el-tooltip :content="'状态: ' + item.enabledMark" placement="top">
-                      <el-switch v-model="item.enabledState" active-color="#13ce66" inactive-color="#ff4949"
-                        @change="changeState(item)">
-                      </el-switch>
+      <div class="addBox">
+        <topOpts @add="addOrUpdateHandle()" />
+
+      </div>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane :label="item.fullName" :name="item.enCode" v-for="(item, index) in applicationTypeList"
+          :key="index">
+
+          <div v-if="item.enCode == 'PC'" class="PC ">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item label="关键词">
+                    <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
+                      @keyup.enter.native="initData()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" icon="el-icon-search" @click="initData()">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
+                      }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
+
+                <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
+                  <div style="display:flex;align-items:center;">
+                    <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist">
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a2.png" alt="">
+                      </div>
+                    </el-tooltip>
+                    <el-tooltip class="item" content="图文模式" placement="bottom" effect="light" v-else>
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a1.png" alt="">
+                      </div>
                     </el-tooltip>
                   </div>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="initData()" />
+                  </el-tooltip>
+
                 </div>
               </div>
-              <div class="card-btn">
-                <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id)">编辑
-                </el-button>
-                <el-button size="mini" type="text" round @click="handleDel(item.id)"
-                  :disabled="item.isMain == 1 ? true : false">
-                  删除
-                </el-button>
-                <el-button size="mini" type="text" round @click.native="preview(item)">菜单管理
-                </el-button>
-                <el-button size="mini" type="text" round @click.native="copy(item.id)">复制应用
-                </el-button>
-              </div>
-            </el-card>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main ccc" >
+
+              <JNPF-table v-loading="listLoading" :data="list" v-if="!switchlist">
+                <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
+                <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
+
+               
+                <el-table-column prop="sortCode" label="排序" width="70" align="center" key="sortCode" />
+                <el-table-column prop="enabledMark" label="状态" width="80" align="center" key="enabledMark">
+                  <template slot-scope="scope">
+                    <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
+                      {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作"  min-width="120" key="111">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">编辑
+                    </el-button>
+                    <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)"
+                      :disabled="scope.row.isMain == 1 ? true : false">
+                      删除
+                    </el-button>
+                    <el-button size="mini" type="text"  @click.native="preview(scope.row)"
+                      >
+                      菜单管理
+                    </el-button>
+                    <el-button size="mini" type="text"  @click.native="copy(scope.row.id)"
+                      >
+                      复制应用
+                    </el-button>
+                 
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <el-scrollbar class="column-list" v-else>
+                <div class="card-wrapper cardGrobal">
+                  <el-card class="box-card" shadow="hover" v-for="item in list" :key="item.id">
+                    <div class="card-item">
+                      <div class="card-icon">
+                        <i :class="item.icon" />
+                      </div>
+                      <div class="card-body">
+                        <div style="color: #172b4d;font-size:16px;font-weight:600">{{
+                          item.fullName }}</div>
+                        <div style="color: #505f79;font-size:14x;">{{ item.enCode }}</div>
+                      </div>
+                      <div class="card-enabledMark">
+                        <div>
+                          <el-switch v-model="item.enabledState" :disabled="item.isMain == 1" active-color="#13ce66" inactive-color="#ff4949"
+                              @change="changeState(item)">
+                            </el-switch>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-btn">
+                      <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id)">编辑
+                      </el-button>
+                      <el-button size="mini" type="text" round @click="handleDel(item.id)"
+                        :disabled="item.isMain == 1? true : false">
+                        删除
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="preview(item)">菜单管理
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="copy(item.id)">复制应用
+                      </el-button>
+                    </div>
+                  </el-card>
+
+                </div>
+              </el-scrollbar>
+            </div>
           </div>
-        </el-scrollbar>
-      </div>
+
+        </el-tab-pane>
+      </el-tabs>
+
     </div>
+
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+
     <menuManage v-if="previewVisible" ref="menuManage" @close="closeForm" />
+
   </div>
 </template>
 <script>
@@ -155,6 +153,7 @@ export default {
   },
   data() {
     return {
+      activeName: "",
       options: [],
       listQuery: {
         keyword: ''
@@ -172,18 +171,25 @@ export default {
         keyword: '',
         isTree: 0
       },
+      applicationTypeList: [],
     }
   },
   created() {
     this.initData()
-    this.getDictionaryDataList()
+    this.getDictionaryList()
   },
   methods: {
+    handleClick() {
+
+    },
+
     // 获取应用类型(数据字典)
-    getDictionaryList(){
+    getDictionaryList() {
       this.listLoading = true
       getDictionaryDataList('578184163824249989', this.form).then(res => {
-        console.log("应用类型",res);
+        console.log("应用类型", res);
+        this.applicationTypeList = res.data.list
+        this.activeName = this.applicationTypeList[0].enCode
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -280,6 +286,7 @@ export default {
     font-size: 16px;
   }
 
+
   .JNPF-common-layout-main {
     padding: 0;
   }
@@ -319,17 +326,17 @@ export default {
 .card-wrapper {
   // grid 二维布局
   display: grid;
-  /*  行高度  */
+  /*  行高度 */
   // grid-template-rows: 300px;
-  /*  列宽度  */
+  /*  列宽度 */
   grid-template-columns: repeat(2, calc(50% - 12px));
-  /*  行间距和列间距  */
+  /*  行间距和列间距 */
   grid-gap: 10px;
   padding: 10px;
 
   .box-card {
     position: relative;
-    //   cursor: pointer;
+    //  cursor: pointer;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -390,5 +397,46 @@ export default {
 ::v-deep .is-round {
   padding-right: 0 !important;
   padding-left: 0 !important;
+}
+
+::v-deep .el-tabs__header {
+  margin-bottom: 0;
+  /* padding: 10px; */
+  background: #fff;
+}
+
+::v-deep .el-tabs__nav-scroll {
+  padding: 10px;
+  padding-bottom: 0;
+}
+
+.addBox {
+  position: absolute;
+  right: 0px;
+  z-index: 99;
+  top: 8px;
+  right: 20px;
+}
+
+::v-deep .tableContainer {
+  overflow: visible
+}
+
+.JNPF-common-layout {
+  // background-color: #fff
+}
+
+::v-deep .JNPF-common-search-box {
+  margin-bottom: 5px
+}
+::v-deep .el-tabs, ::v-deep .el-tabs__content, ::v-deep #pane-PC,::v-deep .PC{
+  height:100%
+}
+.ccc{
+  height: calc(100% - 105px);
+  overflow: auto;
+}
+::v-deep .el-tabs__item {
+  padding:0 10px;
 }
 </style>

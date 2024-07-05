@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:30px;background:#f5f7fa' : ''" style="position: relative;">
+    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:15px;background:#fff' : ''" style="position: relative;">
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">业务分类</h2>
@@ -33,10 +33,10 @@
         </el-tree>
       </el-scrollbar>
       <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="iconfont icon-shouqi" type="text" @click.native="changeLeft()"></el-button>  
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
       </div>
       <div v-if="leftFlag" class="expand" style="position: absolute" >
-        <el-button icon="iconfont icon-zhankai" type="text" @click.native="changeLeft()"></el-button>  
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -70,12 +70,17 @@
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
 
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
+         
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id"  custom-column>
           <!-- <el-table-column prop="code" label="分类名称"> </el-table-column> -->
 
           <el-table-column prop="attributeName" label="属性名称" width="130px">
@@ -89,9 +94,9 @@
           <el-table-column prop="defaultDisplayName" label="默认显示名称" width="120"/>
           <el-table-column prop="customDisplayName" label="自定义显示名称" width="160">
             <template slot-scope="scope">
-              <div @dblclick="changeEnddate(scope.$index, 'customDisplayName', scope.row)"
+              <div @click="changeEnddate(scope.$index, 'customDisplayName', scope.row)"
                 >
-                <span v-show="!scope.row.editFlag">{{ scope.row.customDisplayName }}</span>
+                <span v-show="!scope.row.editFlag">{{ scope.row.customDisplayName?scope.row.customDisplayName:'-' }}</span>
                 <el-input :ref='"enddateinput" + "customDisplayName" + "&" + scope.$index'
                   @blur="switchShow(scope.$index, 'customDisplayName')" clearable
                   @keyup.enter.native="$event.target.blur" v-show="scope.row.editFlag" size="mini"
@@ -226,6 +231,10 @@ export default {
 
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
      
@@ -319,6 +328,7 @@ export default {
 
     // 显示input框, 使光标焦点当前input框
     changeEnddate(index, tag, rowdata) {
+      console.log(1111);
       console.log(12342134, index, tag, rowdata);
       this.tableData[index].editFlag = true
       // this.switchShow(index, tag, this);
@@ -561,30 +571,48 @@ export default {
 }
 .retract{
   position: absolute;
-    right: -14px;
+    right: -7px;
     top: 95px;
     /* font-size: 20px; */
     z-index: 999;
+    width:20px;
+    height:20px
 }
+
 .JNPF-common-layout-left:hover .retract ::v-deep .el-button--text{
-  background:transparent;
+  color: #999!important;
+  border: 1px solid #999!important;
 
 }
-.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .icon-shouqi{
-  font-size: 30px!important;
-  color: #999!important
+.JNPF-common-layout-left .retract ::v-deep .el-button--text:hover{
+  border: 1px solid #3fb9f8!important;
+
 }
-.JNPF-common-layout-left .retract ::v-deep .el-button--text .icon-shouqi:hover {
-  font-size: 30px!important;
+.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .el-icon-arrow-left{
+  font-size: 15px!important;
+  color: #999!important;
+}
+.JNPF-common-layout-left .retract ::v-deep .el-button--text{
+  border-radius: 50%;
+    border: 1px solid transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 0;
+    padding-top: 2px;
+}
+.JNPF-common-layout-left .retract ::v-deep .el-button--text .el-icon-arrow-left:hover {
+  font-size: 15px!important;
 
   color:#3fb9f8!important;
-  border-color: #3fb9f8;
   /* background:#3fb9f8!important; */
   border-radius: 50%
 }
 
-.retract ::v-deep .el-button--text .icon-shouqi{
-  font-size: 30px!important;
+.retract ::v-deep .el-button--text .el-icon-arrow-left{
+  font-size: 15px!important;
   color: transparent!important
   /* color: #999!important */
 }
@@ -596,26 +624,43 @@ export default {
     top: 95px;
     /* font-size: 20px; */
     z-index: 999;
+    width:20px;
+    height:20px
 }
 .JNPF-common-layout-left:hover .expand ::v-deep .el-button--text{
-  background:transparent;
+  color: #999!important;
+  border: 1px solid #999!important;
 
 }
-.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text  .icon-zhankai{
-  font-size: 30px!important;
-  color: #999!important
+.JNPF-common-layout-left .expand ::v-deep .el-button--text:hover{
+  border: 1px solid #3fb9f8!important;
+
 }
-.JNPF-common-layout-left .expand ::v-deep .el-button--text .icon-zhankai:hover {
-  font-size: 30px!important;
+.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text  .el-icon-arrow-right{
+  font-size: 15px!important;
+  color: #999!important;
+}
+.JNPF-common-layout-left .expand ::v-deep .el-button--text{
+  border-radius: 50%;
+    border: 1px solid transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 0;
+    padding-top: 2px;
+}
+.JNPF-common-layout-left .expand ::v-deep .el-button--text .el-icon-arrow-right:hover {
+  font-size: 15px!important;
 
   color:#3fb9f8!important;
-  border-color: #3fb9f8;
   /* background:#3fb9f8!important; */
   border-radius: 50%
 }
 
-.expand ::v-deep .el-button--text .icon-zhankai{
-  font-size: 30px!important;
+.expand ::v-deep .el-button--text .el-icon-arrow-right{
+  font-size: 15px!important;
   color: transparent!important
   /* color: #999!important */
 }

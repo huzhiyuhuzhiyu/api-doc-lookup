@@ -60,16 +60,26 @@
                 icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false"
                 @click="toggleExpand()" />
             </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="getDictionaryList()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" row-key="id"
-          :default-expand-all="expands" v-if="refreshTable"
-          :tree-props="{children: 'children', hasChildren: ''}" custom-column>
-          <el-table-column prop="fullName" label="名称" />
+        <JNPF-table ref="tabForm"  v-loading="listLoading" :data="tableData" row-key="id"
+          :default-expand-all="expands" v-if="refreshTable" custom-column
+          :tree-props="{children: 'children', hasChildren: ''}" >
+          <el-table-column prop="fullName" label="名称" >
+          <template slot-scope="scope">
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
+                title='点击拖动'  v-if="typeId=='306427078100678661'" />{{ scope.row.fullName }}
+            </template>
+            
+            </el-table-column>
           <el-table-column prop="enCode" label="编码" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />
           <el-table-column prop="enabledMark" label="状态" width="80" align="center">
@@ -133,7 +143,45 @@ export default {
   created() {
     this.initData(true)
   },
+  mounted() {
+    this.rowDrop(); //声明表格拖动排序方法
+
+  },
   methods: {
+    columnSetFun(){
+      console.log("this.$refs.tabForm",this.$refs.tabForm);
+      this.$refs.tabForm.showDrawer()
+    },
+    rowDrop() {
+      if(this.type!=='306427078100678661') return
+      const el = this.$refs.dataTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.tableData.splice(evt.oldIndex, 1)[0];
+          this.tableData.splice(evt.newIndex, 0, targetRow);
+          console.log(this.tableData);
+          let att = []
+          this.tableData.forEach((item, index) => {
+            let obj = {
+              id: item.id,
+              sort: index,
+              attributeName: item.attributeName
+            }
+            att.push(obj)
+          });
+          console.log(att);
+          batchAttributeSort(att).then(res => {
+            this.$message.success("批量修改排序成功")
+            this.initData()
+
+          })
+        }
+      });
+    },
     search() {
       this.getDictionaryList()
     },

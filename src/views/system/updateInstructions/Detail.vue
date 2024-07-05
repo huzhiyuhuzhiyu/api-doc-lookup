@@ -3,7 +3,12 @@
     <div class="JNPF-preview-main flow-form-main">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" content="更新说明详情" />
-       
+        <div class="options">
+              
+                    <el-button @click="goBack()">{{
+                    $t("common.cancelButton")
+                }}</el-button>
+                </div>
       </div>
       <el-row class="main">
         <el-col :span="14" :offset="5">

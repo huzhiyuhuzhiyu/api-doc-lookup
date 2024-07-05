@@ -1,6 +1,6 @@
 <template>
   <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
-    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px">
+    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="600px">
     <el-row :gutter="15" class="" v-loading="loading">
       <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
         <template>

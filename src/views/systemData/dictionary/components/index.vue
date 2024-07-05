@@ -25,8 +25,8 @@
         v-if="refreshTable" :tree-props="{ children: 'children', hasChildren: '' }">
 
         <el-table-column prop="fullName" label="名称" />
-        <el-table-column prop="enCode" label="编码" width="100" />
-        <el-table-column prop="sortCode" label="排序" width="170" align="center">
+        <el-table-column prop="enCode" label="编码" width="160" />
+        <el-table-column prop="sortCode" label="排序" width="100" align="center">
           <template slot-scope="scope">
             <el-input @blur="switchShow(scope.row,'sortCode')" clearable 
               v-model="scope.row.sortCode"></el-input>

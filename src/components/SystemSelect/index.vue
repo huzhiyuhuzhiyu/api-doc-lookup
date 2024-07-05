@@ -116,6 +116,7 @@ export default {
     }
   },
   created() {
+    console.log(111,this.userInfo.systemIds);
     this.userInfo.systemIds.forEach(item => {
       if (item.currentSystem) { this.systemName = item.name }
     })

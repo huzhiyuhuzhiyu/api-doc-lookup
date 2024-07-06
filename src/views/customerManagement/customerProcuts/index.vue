@@ -43,6 +43,10 @@
                   <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                     icon="el-icon-download" @click="exportForm">导出</el-button>
                   <div class="JNPF-common-head-right">
+                    <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                     </el-tooltip>
@@ -112,6 +116,10 @@
                   <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                     icon="el-icon-download" @click="exportForm">导出</el-button>
                   <div class="JNPF-common-head-right">
+                    <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
                     <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                     </el-tooltip>
@@ -328,7 +336,11 @@ export default {
       this.reset()
     }
   },
-  methods: {
+  methods: {    
+    columnSetFun(){ 
+      console.log("this.$refs.tableForm",this.$refs.tableForm);
+      this.$refs.tableForm.showDrawer()
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true

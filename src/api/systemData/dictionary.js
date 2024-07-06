@@ -142,3 +142,13 @@ export function getChildrenList(id) {
     method: 'GET'
   })
 }
+
+// 批量排序
+
+export function batchUpdataSort(data) {
+  return request({
+    url: `/api/system/DictionaryData/update/sort/batch`,
+    method: 'PUT',
+    data
+  })
+}

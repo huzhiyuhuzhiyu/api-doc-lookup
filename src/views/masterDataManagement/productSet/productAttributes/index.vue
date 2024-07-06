@@ -48,6 +48,10 @@
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
 
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -148,6 +152,10 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     // 获取左侧属性分类
     getbimProductAttributesFun() {
       getbimProductAttributes('575966014227880773').then(res => {

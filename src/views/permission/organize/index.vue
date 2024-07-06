@@ -32,6 +32,20 @@
             </el-dropdown-menu>
           </el-dropdown>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="架构图" placement="top">
+              <el-link   type="text"
+                icon="icon-ym icon-ym-generator-section JNPF-common-head-icon"   :underline="false"
+                @click="showDiagram()" />
+            </el-tooltip>
+            <!-- <el-tooltip effect="dark" content="列表" placement="top">
+              <el-link   type="text"
+                icon="icon-ym icon-ym-generator-table JNPF-common-head-icon" v-show="!isTableFlag" :underline="false"
+                @click="changeMode()" />
+            </el-tooltip> -->
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text"
                 icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon" :underline="false"
@@ -42,13 +56,15 @@
                 icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false"
                 @click="toggleExpand()" />
             </el-tooltip>
+           
+            
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
+        <JNPF-table v-loading="listLoading"  ref="dataTable" :data="treeList" row-key="id" v-if="refreshTable&&isTableFlag"
           :default-expand-all="expands" :tree-props="{children: 'children', hasChildren: ''}" custom-column>
           <el-table-column prop="fullName" label="名称">
             <template slot-scope="scope">
@@ -91,6 +107,7 @@
       </div>
     </div>
 
+    <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <Form v-show="formVisible" ref="Form" @close="closeForm" />
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
     <CheckUser v-if="checkUserFormVisible" ref="checkUserForm"
@@ -103,17 +120,20 @@ import { getOrganizeList, delOrganize } from '@/api/permission/organize'
 import Form from './Form'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
+import Diagram from '@/views/permission/user/Diagram'
 export default {
   name: 'permission-organize',
-  components: { Form, DepForm, CheckUser },
+  components: { Form, DepForm, CheckUser,Diagram },
   data() {
     return {
+      diagramVisible:false,
       listQuery: {
         keyword: ''
       },
       treeList: [],
       expands: true,
       refreshTable: true,
+      isTableFlag:true,
       btnLoading: false,
       listLoading: true,
       formVisible: false,
@@ -125,6 +145,19 @@ export default {
     this.initData()
   },
   methods: {
+    showDiagram() {
+      this.diagramVisible = true
+      this.$nextTick(() => {
+        this.$refs.Diagram.init()
+      })
+    },
+    // changeMode(){
+    //   this.isTableFlag=!this.isTableFlag
+    // },
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     initData() {
       this.loading = true
       getOrganizeList(this.listQuery).then(res => {

@@ -32,6 +32,10 @@
         <div class="JNPF-common-head" style="padding: 10px">
           <topOpts @add="addOrUpdateHandle('','add')" :isJudgePer="true" :addPerCode="'btn_add'" />
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -110,6 +114,10 @@ export default {
     this.initData();
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     sortChange({ prop, order }) {
       let newProp=""
       if(prop=='steelBall'||prop=="outerCircle"||prop=="innerCircle"||prop=="createByName"){

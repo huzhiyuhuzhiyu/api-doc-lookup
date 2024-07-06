@@ -13,6 +13,10 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -105,6 +109,10 @@ export default {
     this.initData();
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     initData() {
       this.loading = true;
       getcategoryTree(this.listQuery)

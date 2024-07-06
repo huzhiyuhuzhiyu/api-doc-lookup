@@ -34,6 +34,18 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head" style="display:block">
+       
+            <div class="JNPF-common-head-right" style="float: right">
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="140"/>
@@ -160,6 +172,10 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     initData() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {

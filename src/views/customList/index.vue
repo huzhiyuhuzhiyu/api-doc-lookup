@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:15px;background:#fff' : ''" style="position: relative;">
+    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:15px;background:#fff' : ''" style="position: relative;" @cick="leftFlag?changeLeft:''">
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">业务分类</h2>
@@ -80,15 +80,21 @@
          
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id"  custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" row-key="id"  custom-column :hasNO="false">
           <!-- <el-table-column prop="code" label="分类名称"> </el-table-column> -->
-
-          <el-table-column prop="attributeName" label="属性名称" width="130px">
-            <template slot-scope="scope">
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动' />{{ scope.row.attributeName }}
+          <el-table-column align="center" label="拖动" width="60">
+            <template>
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
             </template>
           </el-table-column>
+          <el-table-column align="center" label="序号" width="60">
+            <template slot-scope="scope">
+              {{ scope.$index+1 }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="attributeName" label="属性名称" width="130px">
+          </el-table-column>
+          
           <el-table-column prop="businessCode" label="业务代码" width="100px" /> 
           <el-table-column prop="businessName" label="业务名称" width="100px" />
           <el-table-column prop="defaultDisplayName" label="默认显示名称" width="120"/>

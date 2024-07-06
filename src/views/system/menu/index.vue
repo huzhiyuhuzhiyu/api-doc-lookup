@@ -52,13 +52,13 @@
                 </div>
               </div>
             </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main ccc" >
+            <div class="JNPF-common-layout-main JNPF-flex-main ccc">
 
-              <JNPF-table v-loading="listLoading" :data="list" v-if="!switchlist">
+              <JNPF-table v-loading="listLoading" :data="pcList" v-if="!switchlist">
                 <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
                 <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
 
-               
+
                 <el-table-column prop="sortCode" label="排序" width="70" align="center" key="sortCode" />
                 <el-table-column prop="enabledMark" label="状态" width="80" align="center" key="enabledMark">
                   <template slot-scope="scope">
@@ -67,29 +67,27 @@
                     </el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作"  min-width="120" key="111">
+                <el-table-column label="操作" min-width="120" key="111">
                   <template slot-scope="scope">
-                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id)">编辑
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,scope.row)">编辑
                     </el-button>
                     <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)"
                       :disabled="scope.row.isMain == 1 ? true : false">
                       删除
                     </el-button>
-                    <el-button size="mini" type="text"  @click.native="preview(scope.row)"
-                      >
+                    <el-button size="mini" type="text" @click.native="preview(scope.row)">
                       菜单管理
                     </el-button>
-                    <el-button size="mini" type="text"  @click.native="copy(scope.row.id)"
-                      >
+                    <el-button size="mini" type="text" @click.native="copy(scope.row.id)">
                       复制应用
                     </el-button>
-                 
+
                   </template>
                 </el-table-column>
               </JNPF-table>
               <el-scrollbar class="column-list" v-else>
                 <div class="card-wrapper cardGrobal">
-                  <el-card class="box-card" shadow="hover" v-for="item in list" :key="item.id">
+                  <el-card class="box-card" shadow="hover" v-for="item in pcList" :key="item.id">
                     <div class="card-item">
                       <div class="card-icon">
                         <i :class="item.icon" />
@@ -101,17 +99,17 @@
                       </div>
                       <div class="card-enabledMark">
                         <div>
-                          <el-switch v-model="item.enabledState" :disabled="item.isMain == 1" active-color="#13ce66" inactive-color="#ff4949"
-                              @change="changeState(item)">
-                            </el-switch>
+                          <el-switch v-model="item.enabledState" :disabled="item.isMain == 1" active-color="#13ce66"
+                            inactive-color="#ff4949" @change="changeState(item)">
+                          </el-switch>
                         </div>
                       </div>
                     </div>
                     <div class="card-btn">
-                      <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id)">编辑
+                      <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id,item)">编辑
                       </el-button>
                       <el-button size="mini" type="text" round @click="handleDel(item.id)"
-                        :disabled="item.isMain == 1? true : false">
+                        :disabled="item.isMain == 1 ? true : false">
                         删除
                       </el-button>
                       <el-button size="mini" type="text" round @click.native="preview(item)">菜单管理
@@ -125,7 +123,234 @@
               </el-scrollbar>
             </div>
           </div>
+          <div v-if="item.enCode == 'YDD'" class="PC ">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item label="关键词">
+                    <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
+                      @keyup.enter.native="initData()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" icon="el-icon-search" @click="initData()">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
+                      }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
 
+                <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
+                  <div style="display:flex;align-items:center;">
+                    <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist">
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a2.png" alt="">
+                      </div>
+                    </el-tooltip>
+                    <el-tooltip class="item" content="图文模式" placement="bottom" effect="light" v-else>
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a1.png" alt="">
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="initData()" />
+                  </el-tooltip>
+
+                </div>
+              </div>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main ccc">
+
+              <JNPF-table v-loading="listLoading" :data="appList" v-if="!switchlist">
+                <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
+                <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
+
+
+                <el-table-column prop="sortCode" label="排序" width="70" align="center" key="sortCode" />
+                <el-table-column prop="enabledMark" label="状态" width="80" align="center" key="enabledMark">
+                  <template slot-scope="scope">
+                    <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
+                      {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" min-width="120" key="111">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,scope.row)">编辑
+                    </el-button>
+                    <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)"
+                      :disabled="scope.row.isMain == 1 ? true : false">
+                      删除
+                    </el-button>
+                    <el-button size="mini" type="text" @click.native="preview(scope.row)">
+                      菜单管理
+                    </el-button>
+                    <el-button size="mini" type="text" @click.native="copy(scope.row.id)">
+                      复制应用
+                    </el-button>
+
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <el-scrollbar class="column-list" v-else>
+                <div class="card-wrapper cardGrobal">
+                  <el-card class="box-card" shadow="hover" v-for="item in appList" :key="item.id">
+                    <div class="card-item">
+                      <div class="card-icon">
+                        <i :class="item.icon" />
+                      </div>
+                      <div class="card-body">
+                        <div style="color: #172b4d;font-size:16px;font-weight:600">{{
+                          item.fullName }}</div>
+                        <div style="color: #505f79;font-size:14x;">{{ item.enCode }}</div>
+                      </div>
+                      <div class="card-enabledMark">
+                        <div>
+                          <el-switch v-model="item.enabledState" :disabled="item.isMain == 1" active-color="#13ce66"
+                            inactive-color="#ff4949" @change="changeState(item)">
+                          </el-switch>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-btn">
+                      <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id,item)">编辑
+                      </el-button>
+                      <el-button size="mini" type="text" round @click="handleDel(item.id)"
+                        :disabled="item.isMain == 1 ? true : false">
+                        删除
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="preview(item)">菜单管理
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="copy(item.id)">复制应用
+                      </el-button>
+                    </div>
+                  </el-card>
+
+                </div>
+              </el-scrollbar>
+            </div>
+          </div>
+          <div v-if="item.enCode == 'GWZD'" class="PC ">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item label="关键词">
+                    <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
+                      @keyup.enter.native="initData()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" icon="el-icon-search" @click="initData()">
+                      {{ $t('common.search') }}
+                    </el-button>
+                    <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
+                      }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
+
+                <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
+                  <div style="display:flex;align-items:center;">
+                    <el-tooltip class="item" content="列表模式" placement="bottom" effect="light" v-if="!switchlist">
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a2.png" alt="">
+                      </div>
+                    </el-tooltip>
+                    <el-tooltip class="item" content="图文模式" placement="bottom" effect="light" v-else>
+                      <div class="getSwitchList-p" @click="switchlist = !switchlist" style="margin-bottom: 2px">
+                        <img src="@/assets/images/a1.png" alt="">
+                      </div>
+                    </el-tooltip>
+                  </div>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="initData()" />
+                  </el-tooltip>
+
+                </div>
+              </div>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main ccc">
+
+              <JNPF-table v-loading="listLoading" :data="gwzdList" v-if="!switchlist">
+                <el-table-column prop="fullName" label="应用名称" min-width="120" key="fullName" />
+                <el-table-column prop="enCode" label="应用编码" min-width="120" key="enCode" />
+
+
+                <el-table-column prop="sortCode" label="排序" width="70" align="center" key="sortCode" />
+                <el-table-column prop="enabledMark" label="状态" width="80" align="center" key="enabledMark">
+                  <template slot-scope="scope">
+                    <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
+                      {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" min-width="120" key="111">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,scope.row)">编辑
+                    </el-button>
+                    <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)"
+                      :disabled="scope.row.isMain == 1 ? true : false">
+                      删除
+                    </el-button>
+                    <el-button size="mini" type="text" @click.native="preview(scope.row)">
+                      菜单管理
+                    </el-button>
+                    <el-button size="mini" type="text" @click.native="copy(scope.row.id)">
+                      复制应用
+                    </el-button>
+
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <el-scrollbar class="column-list" v-else>
+                <div class="card-wrapper cardGrobal">
+                  <el-card class="box-card" shadow="hover" v-for="item in gwzdList" :key="item.id">
+                    <div class="card-item">
+                      <div class="card-icon">
+                        <i :class="item.icon" />
+                      </div>
+                      <div class="card-body">
+                        <div style="color: #172b4d;font-size:16px;font-weight:600">{{
+                          item.fullName }}</div>
+                        <div style="color: #505f79;font-size:14x;">{{ item.enCode }}</div>
+                      </div>
+                      <div class="card-enabledMark">
+                        <div>
+                          <el-switch v-model="item.enabledState" :disabled="item.isMain == 1" active-color="#13ce66"
+                            inactive-color="#ff4949" @change="changeState(item)">
+                          </el-switch>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-btn">
+                      <el-button size="mini" type="text" round @click="addOrUpdateHandle(item.id,item)">编辑
+                      </el-button>
+                      <el-button size="mini" type="text" round @click="handleDel(item.id)"
+                        :disabled="item.isMain == 1 ? true : false">
+                        删除
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="preview(item)">菜单管理
+                      </el-button>
+                      <el-button size="mini" type="text" round @click.native="copy(item.id)">复制应用
+                      </el-button>
+                    </div>
+                  </el-card>
+
+                </div>
+              </el-scrollbar>
+            </div>
+          </div>
         </el-tab-pane>
       </el-tabs>
 
@@ -172,6 +397,9 @@ export default {
         isTree: 0
       },
       applicationTypeList: [],
+      gwzdList: [],
+      pcList: [],
+      appList: [],
     }
   },
   created() {
@@ -179,8 +407,11 @@ export default {
     this.getDictionaryList()
   },
   methods: {
-    handleClick() {
 
+
+    
+    handleClick(e) {
+      console.log("e", e);
     },
 
     // 获取应用类型(数据字典)
@@ -213,6 +444,9 @@ export default {
             enabledState: item.enabledMark ? true : false,
           }
         })
+        this.pcList = this.list.filter(item => item.applicationType === "Web");
+        this.appList = this.list.filter(item => item.applicationType === "App");
+        this.gwzdList = this.list.filter(item => item.applicationType === "Terminal");
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -241,10 +475,18 @@ export default {
       }).catch(() => {
       })
     },
-    addOrUpdateHandle(id) {
+    addOrUpdateHandle(id,data) {
+      console.log(id,data,this.activeName);
+      let title=""
+      if(id){
+        title=data.fullName
+      }else{
+        title=this.activeName=='PC'?'PC端应用':this.activeName=='YDD'?'移动端应用':"工位终端应用"
+      }
+       
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id)
+        this.$refs.Form.init(id,title,this.activeName)
       })
     },
     handleDel(id) {
@@ -333,7 +575,7 @@ export default {
   /*  行间距和列间距 */
   grid-gap: 10px;
   padding: 10px;
-
+  padding-top:0px;
   .box-card {
     position: relative;
     //  cursor: pointer;
@@ -429,14 +671,33 @@ export default {
 ::v-deep .JNPF-common-search-box {
   margin-bottom: 5px
 }
-::v-deep .el-tabs, ::v-deep .el-tabs__content, ::v-deep #pane-PC,::v-deep .PC{
-  height:100%
+
+::v-deep .el-tabs,
+::v-deep .el-tabs__content,
+::v-deep #pane-PC,
+::v-deep #pane-GWZD,
+::v-deep #pane-YDD,
+::v-deep .PC {
+  height: 100%
 }
-.ccc{
+
+.ccc {
   height: calc(100% - 105px);
   overflow: auto;
 }
+
 ::v-deep .el-tabs__item {
-  padding:0 10px;
+  padding: 0 10px;
+}
+.JNPF-common-search-box{
+  margin-bottom: 0;
+  padding-top:10px
+}
+.el-button--small{
+  padding-top: 7px;
+  padding-bottom:7px;
+}
+.JNPF-common-search-box ::v-deep .el-form-item{
+  margin-bottom:0!important
 }
 </style>

@@ -70,18 +70,24 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm"  v-loading="listLoading" :data="tableData" row-key="id"
+        <JNPF-table ref="tabForm"  v-loading="listLoading" :data="tableData" row-key="id"  :hasNO="false"
           :default-expand-all="expands" v-if="refreshTable" custom-column
           :tree-props="{children: 'children', hasChildren: ''}" >
-          <el-table-column prop="fullName" label="名称" >
-          <template slot-scope="scope">
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动'  v-if="typeId=='306427078100678661'" />{{ scope.row.fullName }}
+          <el-table-column align="center" label="拖动" width="60">
+            <template>
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
             </template>
-            
+          </el-table-column>
+          <el-table-column align="center" label="序号" width="60">
+            <template slot-scope="scope">
+              {{ scope.$index+1 }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="fullName" label="名称" >
+          
             </el-table-column>
           <el-table-column prop="enCode" label="编码" />
-          <el-table-column prop="sortCode" label="排序" width="70" align="center" />
+          <!-- <el-table-column prop="sortCode" label="排序" width="70" align="center" /> -->
           <el-table-column prop="enabledMark" label="状态" width="80" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
@@ -106,10 +112,12 @@ import {
   getDictionaryType,
   getDictionaryDataList,
   delDictionaryData,
-  updateDictionaryState
+  updateDictionaryState,
+  batchUpdataSort
 } from '@/api/systemData/dictionary'
 import Form from './Form'
 import TypeList from './components/index'
+import Sortable from 'sortablejs'
 
 export default {
   name: 'systemData-dictionary',
@@ -152,9 +160,8 @@ export default {
       console.log("this.$refs.tabForm",this.$refs.tabForm);
       this.$refs.tabForm.showDrawer()
     },
-    rowDrop() {
-      if(this.type!=='306427078100678661') return
-      const el = this.$refs.dataTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+    rowDrop() { 
+      const el = this.$refs.tabForm.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
       this.sortable = Sortable.create(el, {
         ghostClass: 'sortable-ghost',
         setData: function (dataTransfer) {
@@ -168,15 +175,14 @@ export default {
           this.tableData.forEach((item, index) => {
             let obj = {
               id: item.id,
-              sort: index,
-              attributeName: item.attributeName
+              sortCode: index,
             }
             att.push(obj)
           });
           console.log(att);
-          batchAttributeSort(att).then(res => {
+          batchUpdataSort(att).then(res => {
             this.$message.success("批量修改排序成功")
-            this.initData()
+            this.getDictionaryList()
 
           })
         }
@@ -264,7 +270,7 @@ export default {
     addOrUpdateHandle(id) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, this.typeId, this.listQuery.isTree)
+        this.$refs.Form.init(id, this.typeId, this.listQuery.isTree,this.tableData)
       })
     },
     handleDel(id) {

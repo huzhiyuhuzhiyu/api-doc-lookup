@@ -19,9 +19,7 @@
         <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable />
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree">
+        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree">
           <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
             <i :class="data.icon" />
             <span class="text" :title="data.fullName">{{ node.label }}</span>
@@ -32,25 +30,24 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.account" placeholder="请输入账户" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="5">
+          <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
-                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
+                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-          </el-col> -->
-          <el-col :span="5">
+          </el-col>
+          <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
               }}</el-button>
@@ -58,36 +55,25 @@
             </el-form-item>
           </el-col>
 
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-            @click="moreQueries()">更多查询</el-button>
+          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search" @click="moreQueries()">更多查询</el-button>
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts @add="addOrUpdateHandle()">
+            <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">批量重置密码</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData"   @sort-change="sortChange"
-          ref="dataTable" custom-column>
-          <el-table-column prop="account" label="账户" width="100"  /> <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="realName" label="姓名" width="100"  sortable="custom"  >
-            <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
-                  scope.row.realName
-                  }}</el-link>
-              </template>
-            </el-table-column>
-
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" custom-column>
+          <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
+          <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom" />
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
             <template slot-scope="scope">
@@ -95,7 +81,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
-          <el-table-column prop="organizeName" label="所属组织" min-width="200" />
+          <el-table-column prop="organizeName" label="所属组织" min-width="280" />
           <el-table-column prop="employeeType" label="员工类型" width="120" sortable="custom" />
           <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
             <template slot-scope="{row}">
@@ -104,12 +90,9 @@
               <!-- <el-tag type="warning" disable-transitions v-else>未知</el-tag> -->
             </template>
           </el-table-column>
-          <el-table-column prop="entryDate" label="入职日期" :formatter="jnpf.tableDateFormatDay" width="140"
-            sortable="custom" />
-          <el-table-column prop="resignationDate" label="离职日期" :formatter="jnpf.tableDateFormatDay" width="140"
-            sortable="custom" />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180"
-            sortable="custom" />
+          <el-table-column prop="entryDate" label="入职日期" :formatter="jnpf.tableDateFormatDay" width="140" sortable="custom" />
+          <el-table-column prop="resignationDate" label="离职日期" :formatter="jnpf.tableDateFormatDay" width="140" sortable="custom" />
+          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180" sortable="custom" />
           <el-table-column prop="sortCode" label="排序" width="80" align="center" sortable="custom" />
           <el-table-column prop="enabledMark" label="状态" width="80" align="center" sortable="custom">
             <template slot-scope="scope">
@@ -137,21 +120,18 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看详情</el-dropdown-item>
                     <el-dropdown-item @click.native="handleResetPwd(scope.row.id)"> {{ $t('user.resetPassword') }}
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="unlockUser(scope.row.id)"
-                      v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
+                    <el-dropdown-item @click.native="unlockUser(scope.row.id)" v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
 
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
 
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
@@ -169,16 +149,14 @@
           <el-col :span="12">
             <el-form-item label="员工类型">
               <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
-                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
+                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="员工状态">
               <el-select v-model="listQuery.employeeStatus" placeholder="请选择员工状态" clearable>
-                <el-option v-for="item in employeeStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
+                <el-option v-for="item in employeeStatusList" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -277,7 +255,8 @@ export default {
         label: 'fullName'
       },
       expands: true,
-      filteredTree: []
+      filteredTree: [],
+      selectArr: []
     }
   },
   watch: {
@@ -296,11 +275,12 @@ export default {
     this.getOrganizeList()
   },
   methods: {
+    // 选中得数据
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
     moreQueries() {
       this.visible = true
-    },
-    columnSetFun() {
-      this.$refs.datatable.showDrawer()
     },
     showDiagram() {
       this.diagramVisible = true
@@ -499,10 +479,18 @@ export default {
         this.$refs.importForm.init()
       })
     },
+    plhandleResetPwd() {
+      if(!this.selectArr.length) return this.$message.error('请先选择数据')
+      this.resetFormVisible = true
+      let a = this.selectArr.map(item => item.id)
+      this.$nextTick(() => {
+        this.$refs.ResetPwdForm.init('', a, 'Multiple')
+      })
+    },
     handleResetPwd(id, account) {
       this.resetFormVisible = true
       this.$nextTick(() => {
-        this.$refs.ResetPwdForm.init(id, account)
+        this.$refs.ResetPwdForm.init(id, account, 'single')
       })
     },
     sortChange({ prop, order }) {

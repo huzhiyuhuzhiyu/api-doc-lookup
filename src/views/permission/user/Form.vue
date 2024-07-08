@@ -4,14 +4,15 @@
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!onlyRead"/> -->
         <el-page-header @back="goBack" :content="onlyRead ? '查看用户信息' : !this.dataForm.id ? '新建用户' : '编辑用户信息'" />
-        <div class="options">
-          <el-button type="primary"  v-if="!onlyRead" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton') }}</el-button>
+        <div class="options" v-if="!onlyRead">
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton') }}</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName">
           <el-tab-pane label="账户信息" name="account">
+            <el-alert title="注意：用户默认密码为123456" type="warning" :closable="false" show-icon />
             <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
@@ -32,8 +33,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="性别" prop="gender" style="width: 100%;" ref="gender">
                     <el-select v-model="dataForm.gender" placeholder="请选择性别" :disabled="onlyRead" style="width: 100%;">
-                      <el-option v-for="item in genderTreeData" :key="item.enCode" :label="item.fullName"
-                        :value="item.enCode" />
+                      <el-option v-for="item in genderTreeData" :key="item.enCode" :label="item.fullName" :value="item.enCode" />
                     </el-select>
                   </el-form-item>
                 </el-col>
@@ -51,20 +51,15 @@
 
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="所属组织" prop="organizeIdTree" ref="organizeIdTree">
-                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织"
-                        :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
+                      <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择所属组织" :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
                     </el-form-item>
                   </el-col>
 
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="岗位" prop="positionId" ref="positionId">
-                      <el-select v-model="positionId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id"
-                        style="width: 100%;" @change="onChange('positionId')" @visible-change="visibleChange" multiple
-                        filterable clearable>
-                        <el-option-group v-for="group in positionTreeData" :key="group.id"
-                          :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
-                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName"
-                            :value="item.id">
+                      <el-select v-model="positionId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id" style="width: 100%;" @change="onChange('positionId')" @visible-change="visibleChange" multiple filterable clearable>
+                        <el-option-group v-for="group in positionTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
+                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
                           </el-option>
                         </el-option-group>
                       </el-select>
@@ -73,12 +68,9 @@
 
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="角色" prop="roleId">
-                      <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')"
-                        style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
-                        <el-option-group v-for="group in roleTreeData" :key="group.id"
-                          :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
-                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName"
-                            :value="item.id">
+                      <el-select v-model="roleId" placeholder="请选择角色" :disabled="onlyRead" @change="onChange('roleId')" style="width: 100%;" @visible-change="visibleChange" multiple filterable clearable>
+                        <el-option-group v-for="group in roleTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
+                          <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
                           </el-option>
                         </el-option-group>
                       </el-select>
@@ -98,8 +90,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="状态" prop="enabledMark">
-                    <el-select v-model="dataForm.enabledMark" placeholder="请选择状态" :disabled="onlyRead"
-                      style="width: 100%;">
+                    <el-select v-model="dataForm.enabledMark" placeholder="请选择状态" :disabled="onlyRead" style="width: 100%;">
                       <el-option label="启用" :value="1" />
                       <el-option label="锁定" :value="2" />
                       <el-option label="禁用" :value="0" />
@@ -128,17 +119,14 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="员工类型" prop="emloyeeType">
-                    <el-select v-model="dataForm.employeeType" placeholder="请选择员工类型" clearable style="width: 100%;"
-                      :disabled="onlyRead">
-                      <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
-                        :value="item.value"></el-option>
+                    <el-select v-model="dataForm.employeeType" placeholder="请选择员工类型" clearable style="width: 100%;" :disabled="onlyRead">
+                      <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="员工状态" prop="employeeStatus" ref="employeeStatus">
-                    <el-select v-model="dataForm.employeeStatus" placeholder="请选择员工状态" style="width: 100%;"
-                      :disabled="onlyRead || !!this.dataForm.id">
+                    <el-select v-model="dataForm.employeeStatus" placeholder="请选择员工状态" style="width: 100%;" :disabled="onlyRead || !!this.dataForm.id">
                       <!-- :disabled="onlyRead ? true : !this.dataForm.id ? false : true" style="width: 100%;"> -->
                       <el-option label="在职" value="on_job" />
                       <el-option label="离职" value="off_job" />
@@ -147,15 +135,13 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="入职日期" prop="entryDate">
-                    <el-date-picker v-model="dataForm.entryDate" type="date" :disabled="onlyRead" placeholder="请选择入职日期"
-                      style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.entryDate" type="date" :disabled="onlyRead" placeholder="请选择入职日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="婚姻状况" prop="maritalStatus">
-                    <el-select v-model="dataForm.maritalStatus" placeholder="请选择婚姻状况" style="width: 100%;"
-                      :disabled="onlyRead">
+                    <el-select v-model="dataForm.maritalStatus" placeholder="请选择婚姻状况" style="width: 100%;" :disabled="onlyRead">
                       <el-option label="未婚" value="unmarried" />
                       <el-option label="已婚" value="married" />
                     </el-select>
@@ -163,38 +149,32 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="离职日期" prop="resignationDate">
-                    <el-date-picker v-model="dataForm.resignationDate" type="date"
-                      :disabled="onlyRead || dataForm.employeeStatus == 'on_job'" placeholder="请选择离职日期"
-                      style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.resignationDate" type="date" :disabled="onlyRead || dataForm.employeeStatus == 'on_job'" placeholder="请选择离职日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="合同开始日期" prop="contractStartDate">
-                    <el-date-picker v-model="dataForm.contractStartDate" type="date" :disabled="onlyRead"
-                      placeholder="请选择合同开始日期" style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.contractStartDate" type="date" :disabled="onlyRead" placeholder="请选择合同开始日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="合同结束日期" prop="contractEndDate">
-                    <el-date-picker v-model="dataForm.contractEndDate" type="date" :disabled="onlyRead"
-                      placeholder="请选择合同结束日期" style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.contractEndDate" type="date" :disabled="onlyRead" placeholder="请选择合同结束日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="社保起交日期" prop="socialSecurityStartDate">
-                    <el-date-picker v-model="dataForm.socialSecurityStartDate" type="date" :disabled="onlyRead"
-                      placeholder="请选择社保起交日期" style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.socialSecurityStartDate" type="date" :disabled="onlyRead" placeholder="请选择社保起交日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="社保断交日期" prop="socialSecurityEndDate">
-                    <el-date-picker v-model="dataForm.socialSecurityEndDate" type="date" :disabled="onlyRead"
-                      placeholder="请选择社保断交日期" style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.socialSecurityEndDate" type="date" :disabled="onlyRead" placeholder="请选择社保断交日期" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -210,14 +190,12 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="排序" prop="sortCode">
-                    <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode" controls-position="right"
-                      style="width: 100%;" placeholder="请输入排序" maxlength="20" :disabled="onlyRead" />
+                    <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode" controls-position="right" style="width: 100%;" placeholder="请输入排序" maxlength="20" :disabled="onlyRead" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="24">
                   <el-form-item label="备注" prop="description">
-                    <el-input v-model="dataForm.description" type="textarea" :rows="3" placeholder="请输入备注" maxlength="200"
-                      :disabled="onlyRead" />
+                    <el-input v-model="dataForm.description" type="textarea" :rows="3" placeholder="请输入备注" maxlength="200" :disabled="onlyRead" />
                   </el-form-item>
                 </el-col>
               </el-row>
@@ -229,9 +207,7 @@
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="头像" prop="headIcon">
-                    <el-upload class="avatar-uploader" :headers="uploadHeaders" :disabled="onlyRead" placeholder="上传头像"
-                      :action="define.comUploadUrl + '/userAvatar'" :show-file-list="false"
-                      :on-success="handleAvatarSuccess" accept="image/*">
+                    <el-upload class="avatar-uploader" :headers="uploadHeaders" :disabled="onlyRead" placeholder="上传头像" :action="define.comUploadUrl + '/userAvatar'" :show-file-list="false" :on-success="handleAvatarSuccess" accept="image/*">
                       <img v-if="dataForm.headIcon" :src="define.comUrl + dataForm.headIcon" class="avatar">
                       <i v-else class="el-icon-plus avatar-uploader-icon" />
                     </el-upload>
@@ -239,8 +215,7 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="民族" prop="nation">
-                    <el-select v-model="dataForm.nation" :disabled="onlyRead" placeholder="请选择民族" filterable
-                      style="width: 100%;">
+                    <el-select v-model="dataForm.nation" :disabled="onlyRead" placeholder="请选择民族" filterable style="width: 100%;">
                       <el-option v-for="item in nationTreeData" :key="item.id" :label="item.fullName" :value="item.id" />
                     </el-select>
                   </el-form-item>
@@ -252,32 +227,26 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="证件类型" prop="certificatesType">
-                    <el-select v-model="dataForm.certificatesType" :disabled="onlyRead" placeholder="请选择证件类型"
-                      style="width: 100%;" maxlength="20">
-                      <el-option v-for="item in certificatesTypeTreeData" :key="item.id" :label="item.fullName"
-                        :value="item.id" />
+                    <el-select v-model="dataForm.certificatesType" :disabled="onlyRead" placeholder="请选择证件类型" style="width: 100%;" maxlength="20">
+                      <el-option v-for="item in certificatesTypeTreeData" :key="item.id" :label="item.fullName" :value="item.id" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="证件号码" prop="certificatesNumber">
-                    <el-input v-model="dataForm.certificatesNumber" :disabled="onlyRead" placeholder="请输入证件号码"
-                      maxlength="20" />
+                    <el-input v-model="dataForm.certificatesNumber" :disabled="onlyRead" placeholder="请输入证件号码" maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="文化程度" prop="education">
-                    <el-select v-model="dataForm.education" :disabled="onlyRead" placeholder="请选择文化程度"
-                      style="width: 100%;">
-                      <el-option v-for="item in educationTreeData" :key="item.id" :label="item.fullName"
-                        :value="item.id" />
+                    <el-select v-model="dataForm.education" :disabled="onlyRead" placeholder="请选择文化程度" style="width: 100%;">
+                      <el-option v-for="item in educationTreeData" :key="item.id" :label="item.fullName" :value="item.id" />
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="出生年月" prop="birthday">
-                    <el-date-picker v-model="dataForm.birthday" type="date" :disabled="onlyRead" placeholder="请选择出生年月"
-                      style="width: 100%;" value-format="timestamp">
+                    <el-date-picker v-model="dataForm.birthday" type="date" :disabled="onlyRead" placeholder="请选择出生年月" style="width: 100%;" value-format="timestamp">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -303,14 +272,12 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="紧急联系人" prop="urgentContacts">
-                    <el-input v-model="dataForm.urgentContacts" :disabled="onlyRead" placeholder="请输入紧急联系人"
-                      maxlength="20" />
+                    <el-input v-model="dataForm.urgentContacts" :disabled="onlyRead" placeholder="请输入紧急联系人" maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="紧急电话" prop="urgentTelePhone">
-                    <el-input v-model="dataForm.urgentTelePhone" :disabled="onlyRead" placeholder="请输入紧急电话"
-                      maxlength="20" />
+                    <el-input v-model="dataForm.urgentTelePhone" :disabled="onlyRead" placeholder="请输入紧急电话" maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <!-- <el-col :span="24">
@@ -463,7 +430,12 @@ export default {
           { required: true, message: '请选择员工状态', trigger: 'blur' }
         ],
       },
-      rules2: {}
+      rules2: {
+        mobilePhone: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: this.formValidate('iphone'), trigger: 'blur' },
+        ],
+      }
     }
   },
   methods: {
@@ -569,28 +541,55 @@ export default {
       }
     },
     handleConfirm() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.btnLoading = true
-          const formMethod = this.dataForm.id ? updateUser : createUser
-          formMethod(this.dataForm).then(res => {
-            this.$message({
-              message: res.msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
-          }).catch(() => {
-            this.btnLoading = false
+      Promise.all([this.$refs['dataForm'].validate(), this.$refs['dataForm2'].validate()]).then(() => {
+        this.btnLoading = true
+        const formMethod = this.dataForm.id ? updateUser : createUser
+        formMethod(this.dataForm).then(res => {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.visible = false
+              this.btnLoading = false
+              this.$emit('close', true)
+            }
           })
-        } else {
-          this.checkAndFocus()
+        }).catch(() => {
+          this.btnLoading = false
+        })
+      }).catch((error) => {
+        for (let key in error) {
+          console.log(key, 'mobilePhone');
+          if (key !== 'mobilePhone') {
+            this.activeName = 'account'
+          } else {
+            this.activeName = 'self'
+          }
         }
       })
+      // this.$refs['dataForm'].validate((valid) => {
+      //   if (valid) {
+      //     this.btnLoading = true
+      //     const formMethod = this.dataForm.id ? updateUser : createUser
+      //     formMethod(this.dataForm).then(res => {
+      //       this.$message({
+      //         message: res.msg,
+      //         type: 'success',
+      //         duration: 1500,
+      //         onClose: () => {
+      //           this.visible = false
+      //           this.btnLoading = false
+      //           this.$emit('close', true)
+      //         }
+      //       })
+      //     }).catch(() => {
+      //       this.btnLoading = false
+      //     })
+      //   } else {
+      //     this.checkAndFocus()
+      //   }
+      // })
     },
     // 校验与聚焦
     checkAndFocus() {
@@ -625,7 +624,7 @@ export default {
               const formItem = this.$refs[refList[i]];
               if (formItem.validateState === 'error') {
                 this.activeName = 'account'
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                   focusFirstChild(formItem.$children[1].$el)
                 })
                 break
@@ -641,7 +640,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
->>>.avatar-uploader {
+>>> .avatar-uploader {
   .el-upload {
     border: 1px dashed #dcdfe6;
     border-radius: 6px;

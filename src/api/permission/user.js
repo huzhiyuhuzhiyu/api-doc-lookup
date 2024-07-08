@@ -68,7 +68,14 @@ export const resetUserPassword = (data) => {
     data
   })
 }
-
+// 批量修改用户密码
+export const plresetUserPassword = (data) => {
+  return request({
+    url: `/api/permission/Users/ResetPassword/batch`,
+    method: 'POST',
+    data
+  })
+}
 // 更新用户状态
 export const updateUserState = (id) => {
   return request({

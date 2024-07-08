@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout JNPF-flex-main">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item :label="$t('common.keyword')">
@@ -11,9 +11,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="initData()">
+              <el-button type="primary" icon="el-icon-search" @click="initData()"  class="commonBox">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" @click="reset()"  class="commonBox">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -25,13 +25,16 @@
             <el-button type="danger" size="small" @click="batchDel">强制下线</el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableDataList" has-c
+        <JNPF-table v-loading="listLoading" :data="tableDataList" has-c ref="tabForm"
           @selection-change="handleSelectionChange" custom-column>
           <el-table-column prop="userName" label="在线用户" width="120" />
           <el-table-column prop="loginIPAddress" label="登录IP" width="120" />
@@ -76,6 +79,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
     reset() {
       this.listQuery.keyword = ''
       this.initData()

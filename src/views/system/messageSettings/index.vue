@@ -75,11 +75,11 @@
             <el-tab-pane label="阿里短信">
               <el-row style="margin-top: 15px" v-if="thirdTab == '0'">
                 <el-col :span="12">
-                  <jnpf-form-tip-item label="AccessKey ID" prop="aliAccessKey" label-width="180px"
+                  <jnpf-form-tip-item label="AccessKey ID" prop="aliAccessKey" label-width="200px"
                     tip-label="授权ID，【AccessKey管理】中的 AccessKey ID">
                     <el-input v-model="baseForm.aliAccessKey" clearable placeholder="请输入AccessKey ID" />
                   </jnpf-form-tip-item>
-                  <jnpf-form-tip-item label="AccessKey Secret" prop="aliSecret" label-width="180px"
+                  <jnpf-form-tip-item label="AccessKey Secret" prop="aliSecret" label-width="200px"
                     tip-label="授权密钥,【AccessKey管理】中的 AccessKey Secret">
                     <el-input v-model="baseForm.aliSecret" show-password clearable placeholder="请输入AccessKey Secret" />
                   </jnpf-form-tip-item>

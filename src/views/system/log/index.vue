@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout systemLogs">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
@@ -18,9 +18,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" icon="el-icon-search" @click="search()"  class="commonBox">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" @click="reset()"  class="commonBox">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -44,7 +44,7 @@
             </div>
           </div>
           <el-tab-pane label="登录日志" name="1">
-            <JNPF-table v-loading="listLoading" :data="loginLogData" has-c
+            <JNPF-table v-loading="listLoading" :data="loginLogData" has-c 
               @selection-change="handleSelectionChange" custom-column>
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="登录时间"
                 width="160" />
@@ -54,7 +54,7 @@
             </JNPF-table>
           </el-tab-pane>
           <el-tab-pane label="请求日志" name="5">
-            <JNPF-table v-loading="listLoading" :data="requestLogData" has-c
+            <JNPF-table v-loading="listLoading" :data="requestLogData" has-c 
               @selection-change="handleSelectionChange" custom-column>
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="请求时间"
                 width="160" />
@@ -68,7 +68,7 @@
             </JNPF-table>
           </el-tab-pane>
           <el-tab-pane label="操作日志" name="3">
-            <JNPF-table v-loading="listLoading" :data="operationLogData" has-c
+            <JNPF-table v-loading="listLoading" :data="operationLogData" has-c 
               @selection-change="handleSelectionChange">
               <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormat" label="操作时间"
                 width="160" />
@@ -171,6 +171,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun(ref) {
+      this.$refs[ref].showDrawer()
+    },
     initData() {
       const activeId = this.activeName
       this.listLoading = true

@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent >
           <el-col :span="6">
             <el-form-item>

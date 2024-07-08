@@ -3,8 +3,8 @@
     <el-table :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
       :element-loading-text="$t('common.loadingText')" v-bind="$attrs" v-on="$listeners" :border="border"
       :header-cell-style="headerCellStyle">
-      <el-table-column prop="selection" type="selection" width="45"  key="selection" :fixed="fixedSelect" v-if="hasC" align="center"
-        :selectable="checkSelectable" />
+      <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
+        align="center" :selectable="checkSelectable" />
       <el-table-column prop="index" type="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO" align="center" />
       <jnpf-table-column :columns="columns" :columnList="columnList" v-if="customColumn" />
       <template v-else>
@@ -74,15 +74,15 @@ export default {
     },
     checkSelectable: {
       type: Function,
-      default: () => (row) => { 
+      default: () => (row) => {
         if (row.top) return false
         return true
       }
     },
-    partentOrChild:{
-      type:String,
-      default:'partent'
-    },
+    partentOrChild: {
+      type: String,
+      default: 'partent'
+    },
   },
   data() {
     return {
@@ -116,7 +116,7 @@ export default {
     this.getColumns()
   },
   beforeUpdate() {
-    this.getColumns()
+    // this.getColumns()
     this.setShowOverflowTooltip()
   },
   updated() {
@@ -156,10 +156,10 @@ export default {
       if (!this.customColumn) return
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
-      this.columns = this.$slots.default
+      this.columns = this.$slots.default // 代码传入的列
       let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
-      this.defaultColumns = defaultColumns.filter(o => o.prop)
-      let list = [...this.defaultColumns]
+      this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
+      let list = JSON.parse(JSON.stringify(this.defaultColumns))
       const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
       if (!cacheList) {
         this.columnList = list.map(item => {
@@ -176,7 +176,7 @@ export default {
           })
           return isShow ? item : null
         }).filter(item => item)
-        this.columnList = this.mergeArray(columnList, list)
+        this.columnList = this.mergeArray(columnList, list) // 实际展示的列
       }
     },
     mergeArray(arr1, arr2) {
@@ -201,6 +201,7 @@ export default {
       }, 50)
     },
     setColumn(list) {
+      console.log(list);
       // 如果list没有带有minWidth属性的项，则给所有的展示项的width都改为minWidth
       let showColumnList = list.filter(item => !!item.columnVisible)
       let hasMinWidthFlag = showColumnList.some(item => item.hasOwnProperty("minWidth"))
@@ -214,8 +215,7 @@ export default {
         })
       } else {
         // 逆向minWidth
-        const children = this.$slots.default;
-        children.forEach(item => {
+        this.$slots.default.forEach(item => {
           if (item.componentOptions.propsData.hasOwnProperty("initialWidth")) {
             item.componentOptions.propsData.width = item.componentOptions.propsData.initialWidth
             delete item.componentOptions.propsData.minWidth
@@ -223,6 +223,13 @@ export default {
           }
         })
       }
+      // 设置固定方向
+      list.forEach((item, index) => {
+        if (item.columnVisible && item.fixed === 'left' || item.fixed === '' || item.fixed === 'right') {
+          this.$set(this.$slots.default[index].componentOptions.propsData, 'fixed', item.fixed)
+        }
+      })
+      console.log(list);
       // this.loading = true
       this.jnpf.storageSet({ [this.menuId + this.partentOrChild]: list })
       this.columnList = list

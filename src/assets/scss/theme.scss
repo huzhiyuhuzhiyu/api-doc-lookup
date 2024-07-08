@@ -51,7 +51,20 @@ $cherryRedSub:#54133b;
 //     }
 //   }
 // }
+// 列表组件 左右固定 hover及选中跟随系统主题颜色
+$map: (purple: $purple, azure: $azure, blackblue: $blackblue, blue: $blue,ocean: $ocean,green: $green,yellow: $yellow,orange: $orange,red: $red,pick: $pick,);
 
+@mixin mixinCList($color){
+ .system-icon {
+    &.active {
+      color: $color !important;
+    }
+
+    &:hover {
+      color: $color !important;
+    }
+  }
+}
 @mixin mixinCommon($color, $subColor) {
   .com-hover:hover {
     color: $color;

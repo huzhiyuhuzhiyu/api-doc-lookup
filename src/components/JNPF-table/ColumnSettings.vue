@@ -1,24 +1,42 @@
 <template>
   <el-drawer title="列表显示设置" :visible.sync="drawerVisible" :wrapperClosable="false" size="320px" append-to-body
-    class="JNPF-common-drawer columnSettings-drawer">
-    <div class="JNPF-flex-main">
+    class="JNPF-common-drawer columnSettings-drawer" >
+    <div class="JNPF-flex-main" :class="classObj">
+      <!-- <div class="columnSetting-head">
+        <div></div>
+        <div></div>
+      </div> -->
       <el-scrollbar class="column-list" v-loading="loading">
         <template v-if="list.length">
           <draggable :list="list" :animation="340" handle=".column-item-icon">
             <div class="column-item" v-for="item in list" :key="item.prop"
               @click.self="item.columnVisible = !item.columnVisible">
-              <div class="column-item-label">
+              <div class="column-item-left">
                 <i class="icon-ym icon-ym-darg column-item-icon"></i>
-                <span>{{ item.label }}</span>
+                <el-checkbox class="check-box" v-model="item.columnVisible" />
+                <div class="column-item-label">
+                  <span>{{ item.label }}</span>
+                </div>
               </div>
-              <el-checkbox class="check-box" v-model="item.columnVisible">
-              </el-checkbox>
+              <div class="column-item-right">
+                <el-tooltip content="固定到左侧" placement="top"
+                  :class="['system-icon', item.fixed === '' || item.fixed === 'left' ? 'active' : '']"
+                  :enterable="false">
+                  <i class="ym-custom ym-custom-format-horizontal-align-left" @click="handleFixed(item, 'left')"></i>
+                </el-tooltip>
+                <span class="line"></span>
+                <el-tooltip content="固定到右侧" placement="top"
+                  :class="['system-icon', item.fixed === 'right' ? 'active' : '']" :enterable="false">
+                  <i class="ym-custom ym-custom-format-horizontal-align-right" @click="handleFixed(item, 'right')"></i>
+                </el-tooltip>
+              </div>
             </div>
           </draggable>
         </template>
         <el-empty description="暂无数据" :image-size="120" v-else style="font-size: 16px;"></el-empty>
       </el-scrollbar>
       <div class="footer">
+        <el-button type="primary" @click="reset">重 置</el-button>
         <el-button @click="drawerVisible = false">取 消</el-button>
         <el-button type="primary" @click="saveSettings">确 定</el-button>
       </div>
@@ -28,6 +46,7 @@
 
 <script>
 import draggable from 'vuedraggable'
+import { mapState } from "vuex";
 export default {
   name: 'ColumnSettings',
   components: { draggable },
@@ -51,18 +70,29 @@ export default {
   computed: {
     menuId() {
       return this.$route.meta.modelId || ''
+    },
+    ...mapState({
+      themeClass: state => state.settings.themeClass,
+    }),
+    classObj() {
+      return {
+        [this.themeClass]: true,
+      };
     }
   },
   methods: {
     init() {
       this.drawerVisible = true
-      this.list = [...this.columnList]
+      // this.list = [...this.columnList]
+      this.list = JSON.parse(JSON.stringify(this.columnList))
     },
     reset() {
-      this.list = this.defaultColumns.map(item => ({
-        ...item,
-        columnVisible: true
-      }))
+      this.list = this.defaultColumns.map(item => {
+        return {
+          ...item,
+          columnVisible: true
+        }
+      })
     },
     saveSettings() {
       let flag = this.list.some(item => !!item.columnVisible)
@@ -72,22 +102,35 @@ export default {
         this.$emit('setColumn', this.list)
         this.drawerVisible = false
       }
+    },
+    handleFixed(item, type) {
+      const cancelFixedFlag = ((item.fixed === '' || item.fixed === 'left') && type === 'left') || (item.fixed === 'right' && type === 'right')
+      if (cancelFixedFlag) {
+        this.$set(item, 'fixed', undefined)
+        this.$nextTick(() => {
+          delete item.fixed
+        })
+      } else {
+        this.$set(item, 'fixed', type)
+      }
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+$lighterBlue: #1890ff;
+
 .columnSettings-drawer {
   .JNPF-flex-main {
     overflow: hidden;
   }
 
   .columnSetting-head {
-    height: 46px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 24px;
+    padding: 10px 24px 0;
     font-size: 14px;
     color: #303133;
   }
@@ -109,6 +152,27 @@ export default {
 
       &:hover {
         background: rgba(25, 144, 250, 0.1);
+      }
+
+
+      .column-item-left,
+      .column-item-right {
+        display: flex;
+
+        &.active {
+          color: $lighterBlue;
+        }
+
+        .line {
+          position: relative;
+          top: -.06em;
+          display: inline-block;
+          height: 1.6em;
+          margin: 0 8px;
+          vertical-align: middle;
+          border-top: 0;
+          border-left: 1px solid rgba(0, 0, 0, .06);
+        }
       }
 
       .column-item-icon {
@@ -142,4 +206,16 @@ export default {
     display: flex;
     justify-content: flex-end;
   }
-}</style>
+
+  .system-icon {
+    &.active {
+      color: $lighterBlue;
+    }
+
+    &:hover {
+      color: $lighterBlue;
+    }
+  }
+
+}
+</style>

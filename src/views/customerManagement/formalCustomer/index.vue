@@ -46,9 +46,12 @@
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()" />
-            </el-tooltip>
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
@@ -56,21 +59,21 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column hasC>
-            <el-table-column prop="code" label="客户编码" sortable="custom" width="120" />
-            <el-table-column prop="name" label="客户名称" sortable="custom" width="120">
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="120" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="120">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
                   scope.row.name
                   }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="taxId" label="税号" width="120" />
-            <el-table-column prop="contacts" label="联系人" sortable="custom" width="100" />
-            <el-table-column prop="phone" label="电话" sortable="custom" width="120" />
-            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120" />
-            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" width="120" />
-            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" width="120" />
-            <el-table-column prop="internalStaffIdText" label="内勤人员" width="120" />
+            <el-table-column prop="taxId" label="税号" min-width="120" />
+            <el-table-column prop="contacts" label="联系人" sortable="custom" min-width="100" />
+            <el-table-column prop="phone" label="电话" sortable="custom" min-width="120" />
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" min-width="120" />
+            <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" min-width="120" />
+            <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" min-width="120" />
+            <el-table-column prop="internalStaffIdText" label="内勤人员" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
@@ -177,7 +180,9 @@
       :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
-
+     <!-- 高级查询 -->
+     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -193,9 +198,10 @@ import Form from './Form'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapGetters, mapState } from 'vuex'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'carrierProfile',
-  components: { Form, ExportForm, RecordForm },
+  name: 'formalCustomer',
+  components: { Form, ExportForm, RecordForm ,SuperQuery},
   data() {
     return {
       exportFormVisible: false,
@@ -233,6 +239,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery:{}
       },
 
 
@@ -242,6 +249,65 @@ export default {
       formVisible: false,
       filterText: '',
       selectArr: [],
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'taxId',
+          label: "税号",
+          type: 'input'
+        },
+        {
+          prop: 'contacts',
+          label: "联系人",
+          type: 'input'
+        },
+        {
+          prop: 'phone',
+          label: "电话",
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: "手机号",
+          type: 'input'
+        },
+        {
+          prop: 'email',
+          label: "邮箱",
+          type: 'input'
+        },
+        { // 自定义选择器
+          prop: 'salespersonId',
+          label: '所属销售人员',
+          type: 'custom',
+          component: 'user-select',
+        },
+        // { // 下拉选
+        //   prop: 'grade',
+        //   label: '等级',
+        //   type: 'select',
+        //   options: this.gradeList // 注意，此options从接口异步获取，改变值时注意内存地址
+        // },
+        // { // 日期选择器（区间）
+        //   prop: 'customerRecognitionTime',
+        //   label: '认定日期',
+        //   type: 'daterange',
+        //   valueFormat: "yyyy-MM-dd",
+        //   startPlaceholder: '开始日期',
+        //   endPlaceholder: '结束日期',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
+      ],
     }
   },
   watch: {
@@ -497,7 +563,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getCooperativeData(this.dataForm).then(res => {
+      getCooperativeData(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -561,7 +627,11 @@ export default {
         this.$refs.Form.init(id, partnerCategoryId, btnType)
       })
     },
-
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
   }
 }
 </script>

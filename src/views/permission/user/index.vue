@@ -42,14 +42,14 @@
               <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <!-- <el-col :span="5">
             <el-form-item>
               <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
                 <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="5">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')

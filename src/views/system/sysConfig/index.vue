@@ -168,7 +168,7 @@
                   <el-option label="风格二" :value="2" />
                 </el-select>
             </el-form-item>
-            <div style="width:100%;height:700px;padding:0 20px" v-show="baseForm.loginManner">
+            <div style="width:60%;height:700px;padding:0 20px;margin:0 auto" v-show="baseForm.loginManner">
               <img src="@/assets/images/manner1.jpg" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==1">
               <img src="@/assets/images/manner2.png" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==2">
             </div>

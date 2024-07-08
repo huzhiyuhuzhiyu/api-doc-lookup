@@ -9,7 +9,9 @@ export default {
     for (let i = 0; i < list2.length; i++) {
       inner: for (let j = 0; j < list.length; j++) {
         if (list[j].componentOptions && list[j].componentOptions.propsData && list2[i].prop === list[j].componentOptions.propsData.prop && list2[i].columnVisible) {
-          slots.push(list[j])
+          let column = list[j]
+          column.componentOptions.propsData.fixed = list2[i].fixed
+          slots.push(column)
           break inner
         }
       }

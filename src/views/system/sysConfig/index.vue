@@ -106,7 +106,7 @@
                 <div class="img_box">
                   <single-img v-model="baseForm.logoIcon" tip="7:2" />
                   <div class="img_box_text">
-                    该LOGO图标应用于系统LOGO
+                    该LOGO图标应用于系统LOGO、在线开发、代码生成、自定义打印模板
                     <i class="el-icon-question"></i>
                   </div>
                 </div>
@@ -160,6 +160,22 @@
             <el-form-item>
               <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
             </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane label="登录设置" name="manner">
+            <el-form-item label="登录风格:">
+              <el-select v-model="baseForm.loginManner" placeholder="请选择">
+                  <el-option label="风格一" :value="1" />
+                  <el-option label="风格二" :value="2" />
+                </el-select>
+            </el-form-item>
+            <div style="width:100%;height:700px;padding:0 20px" v-show="baseForm.loginManner">
+              <img src="@/assets/images/manner1.jpg" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==1">
+              <img src="@/assets/images/manner2.png" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==2">
+            </div>
+            <el-form-item style="margin-top:20px">
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+            </el-form-item>
+           
         </el-tab-pane>
         <!-- <el-tab-pane label="安全设置" name="second">
           <el-alert title="注意：系统登录安全、黑名单IP限制" type="warning" :closable="false" show-icon />
@@ -543,6 +559,7 @@ export default {
       names: '',
       row: '',
       baseForm: {
+        loginManner:'1',
         sysName: '',
         sysDescription: '',
         sysVersion: '',

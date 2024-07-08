@@ -314,8 +314,7 @@ export default {
       this.iconBoxVisible = true
     },
     dataFormSubmit() {
-      console.log("this.dataForm.applicationType",this.dataForm.applicationType);
-      return
+      
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const query = {
@@ -331,7 +330,7 @@ export default {
               onClose: () => {
                 this.visible = false
                 this.btnLoading = false
-                this.$emit('refreshDataList')
+                this.$emit('close',true)
               }
             })
           }).catch(() => {

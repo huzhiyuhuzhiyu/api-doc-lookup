@@ -366,6 +366,7 @@
 import Form from './Form'
 import MenuManage from './menuManage'
 import { delSystem, getSystem, copy, info, update } from '@/api/system/system'
+import { login, logout, getInfo, unlock } from '@/api/user'
 import { Copy } from '@/api/onlineDev/visualDev'
 import {
   getDictionaryDataList,
@@ -429,7 +430,11 @@ export default {
     closeForm(isRefresh) {
       this.previewVisible = false
       this.formVisible = false
-      if (isRefresh) this.initData()
+      if (isRefresh){
+        this.initData()
+        window.location.reload()
+
+      }
     },
     reset() {
       this.listQuery.keyword = ''
@@ -515,6 +520,8 @@ export default {
         if (res.msg === '更新成功') {
           this.$message.success(res.msg)
           this.initData()
+          window.location.reload()
+
         }
       }).catch(() => { })
     },

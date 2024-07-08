@@ -3,11 +3,12 @@
     <div class="JNPF-preview-main user-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" content="组织架构图" />
+        <el-button @click="exportToPDF">导出为PDF</el-button>
         <div class="options">
-          <el-button @click="goBack">{{$t('common.cancelButton')}} </el-button>
+          <el-button @click="goBack">{{ $t('common.cancelButton') }} </el-button>
         </div>
       </div>
-      <div class="main" v-loading="loading">
+      <div class="main" v-loading="loading" id="orgChartContainer">
         <organization-chart :datasource="ds"></organization-chart>
       </div>
     </div>
@@ -18,7 +19,8 @@
 import { getDepartmentSelector } from '@/api/permission/department'
 import OrganizationChart from 'vue-organization-chart'
 import 'vue-organization-chart/dist/orgchart.css'
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 export default {
   components: {
     OrganizationChart
@@ -30,6 +32,19 @@ export default {
     }
   },
   methods: {
+
+    exportToPDF() {
+      const element = document.getElementById('orgChartContainer');
+
+      html2canvas(element).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+
+        const link = document.createElement('a');
+        link.href = imgData;
+        link.download = 'organization-chart.png';
+        link.click();
+      })
+    },
     init() {
       this.loading = true
       getDepartmentSelector().then(res => {
@@ -67,36 +82,45 @@ export default {
   padding-bottom: 0;
   overflow: hidden;
 }
->>> .orgchart-container {
+
+>>>.orgchart-container {
   height: 100%;
   border: none !important;
   padding: 0;
   width: 100%;
+
   .orgchart {
     background: none !important;
     padding: 0;
+
     .node {
       &:hover {
         background-color: transparent !important;
       }
+
       .title {
         background-color: #1890ff;
       }
+
       .content {
         border: 1px solid #1890ff;
       }
     }
   }
+
   .orgchart .lines {
     .rightLine {
       border-right: 1px solid #1890ff;
     }
+
     .leftLine {
       border-left: 1px solid #1890ff;
     }
+
     .topLine {
       border-top: 2px solid #1890ff;
     }
+
     .downLine {
       background-color: #1890ff;
     }

@@ -106,7 +106,7 @@
                 {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column label="操作" width="180" style="border-right:none!important">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-button type="text" @click="copyFun(scope.row.id)"> 复制</el-button>

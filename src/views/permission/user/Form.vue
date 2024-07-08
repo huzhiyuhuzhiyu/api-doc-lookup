@@ -4,8 +4,8 @@
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!onlyRead"/> -->
         <el-page-header @back="goBack" :content="onlyRead ? '查看用户信息' : !this.dataForm.id ? '新建用户' : '编辑用户信息'" />
-        <div class="options" v-if="!onlyRead">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton') }}</el-button>
+        <div class="options">
+          <el-button type="primary"  v-if="!onlyRead" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton') }}</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left" :style="leftFlag ? 'width:15px;background:#fff' : ''" style="position: relative;" @cick="leftFlag?changeLeft:''">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">业务分类</h2>
@@ -56,7 +56,7 @@
 
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()" class="commonBox">
                 {{ $t("common.search") }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
               </el-button>
@@ -222,11 +222,11 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery));
-    if (localStorage.getItem("expandsFlag")) {
-      let expandsFlag = JSON.parse(localStorage.getItem('expandsFlag'))
-      this.expands = expandsFlag
-      console.log("expandsFlag", expandsFlag);
-      this.toggleExpand(expandsFlag)
+    if (localStorage.getItem("customExpandsFlag")) {
+      let customExpandsFlag = JSON.parse(localStorage.getItem('customExpandsFlag'))
+      this.expands = customExpandsFlag
+      console.log("customExpandsFlag", customExpandsFlag);
+      this.toggleExpand(customExpandsFlag)
 
     }
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -252,7 +252,7 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem("expandsFlag", expands)
+        localStorage.setItem("customExpandsFlag", expands)
 
       })
     },
@@ -585,20 +585,20 @@ export default {
     height:20px
 }
 
-.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text{
+.treeBox:hover .retract ::v-deep .el-button--text{
   color: #999!important;
   border: 1px solid #999!important;
 
 }
-.JNPF-common-layout-left .retract ::v-deep .el-button--text:hover{
+.treeBox .retract ::v-deep .el-button--text:hover{
   border: 1px solid #3fb9f8!important;
 
 }
-.JNPF-common-layout-left:hover .retract ::v-deep .el-button--text  .el-icon-arrow-left{
+.treeBox:hover .retract ::v-deep .el-button--text  .el-icon-arrow-left{
   font-size: 15px!important;
   color: #999!important;
 }
-.JNPF-common-layout-left .retract ::v-deep .el-button--text{
+.treeBox .retract ::v-deep .el-button--text{
   border-radius: 50%;
     border: 1px solid transparent;
     width: 100%;
@@ -609,7 +609,7 @@ export default {
     padding: 0;
     padding-top: 2px;
 }
-.JNPF-common-layout-left .retract ::v-deep .el-button--text .el-icon-arrow-left:hover {
+.treeBox .retract ::v-deep .el-button--text .el-icon-arrow-left:hover {
   font-size: 15px!important;
 
   color:#3fb9f8!important;
@@ -633,20 +633,20 @@ export default {
     width:20px;
     height:20px
 }
-.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text{
+.treeBox:hover .expand ::v-deep .el-button--text{
   color: #999!important;
   border: 1px solid #999!important;
 
 }
-.JNPF-common-layout-left .expand ::v-deep .el-button--text:hover{
+.treeBox .expand ::v-deep .el-button--text:hover{
   border: 1px solid #3fb9f8!important;
 
 }
-.JNPF-common-layout-left:hover .expand ::v-deep .el-button--text  .el-icon-arrow-right{
+.treeBox:hover .expand ::v-deep .el-button--text  .el-icon-arrow-right{
   font-size: 15px!important;
   color: #999!important;
 }
-.JNPF-common-layout-left .expand ::v-deep .el-button--text{
+.treeBox .expand ::v-deep .el-button--text{
   border-radius: 50%;
     border: 1px solid transparent;
     width: 100%;
@@ -657,7 +657,7 @@ export default {
     padding: 0;
     padding-top: 2px;
 }
-.JNPF-common-layout-left .expand ::v-deep .el-button--text .el-icon-arrow-right:hover {
+.treeBox .expand ::v-deep .el-button--text .el-icon-arrow-right:hover {
   font-size: 15px!important;
 
   color:#3fb9f8!important;

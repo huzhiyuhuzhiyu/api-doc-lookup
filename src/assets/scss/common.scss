@@ -36,6 +36,7 @@
   position: relative;
   background: #EBEEF5;
   overflow: auto;
+
   .JNPF-common-layout-left {
     width: 220px;
     background-color: #fff;
@@ -80,6 +81,125 @@
       //   color: #409eff;
       // }
     }
+  }
+
+  .treeBox {
+    margin-right: 5px;
+    position: relative;
+  }
+
+  .retract {
+    position: absolute;
+    right: -7px;
+    top: 95px;
+    /* font-size: 20px; */
+    z-index: 999;
+    width: 20px;
+    height: 20px
+  }
+
+  .treeBox:hover .retract  .el-button--text {
+    color: #999 !important;
+    border: 1px solid #999 !important;
+
+  }
+
+  .treeBox .retract  .el-button--text:hover {
+    border: 1px solid #3fb9f8 !important;
+
+  }
+
+  .treeBox:hover .retract  .el-button--text .el-icon-arrow-left {
+    font-size: 15px !important;
+    color: #999 !important;
+  }
+
+  .treeBox .retract  .el-button--text {
+    border-radius: 50%;
+    border: 1px solid transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 0;
+    padding-top: 2px;
+  }
+
+  .treeBox .retract  .el-button--text .el-icon-arrow-left:hover {
+    font-size: 15px !important;
+
+    color: #3fb9f8 !important;
+    /* background:#3fb9f8!important; */
+    border-radius: 50%
+  }
+
+  .retract  .el-button--text .el-icon-arrow-left {
+    font-size: 15px !important;
+    color: transparent !important
+      /* color: #999!important */
+  }
+
+
+  .expand {
+    position: absolute;
+    left: 0px;
+    top: 95px;
+    /* font-size: 20px; */
+    z-index: 999;
+    width: 20px;
+    height: 20px
+  }
+
+  .treeBox:hover .expand  .el-button--text {
+    color: #999 !important;
+    border: 1px solid #999 !important;
+
+  }
+
+  .treeBox .expand  .el-button--text:hover {
+    border: 1px solid #3fb9f8 !important;
+
+  }
+
+  .treeBox:hover .expand  .el-button--text .el-icon-arrow-right {
+    font-size: 15px !important;
+    color: #999 !important;
+  }
+
+  .treeBox .expand  .el-button--text {
+    border-radius: 50%;
+    border: 1px solid transparent;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 0;
+    padding-top: 2px;
+  }
+
+  .treeBox .expand  .el-button--text .el-icon-arrow-right:hover {
+    font-size: 15px !important;
+
+    color: #3fb9f8 !important;
+    /* background:#3fb9f8!important; */
+    border-radius: 50%
+  }
+
+  .expand  .el-button--text .el-icon-arrow-right {
+    font-size: 15px !important;
+    color: transparent !important
+      /* color: #999!important */
+  }
+
+  .treeBox_bot {
+    margin-bottom: 5px;
+  }
+
+  .commonBox {
+    padding-top: 7px;
+    padding-bottom: 7px;
   }
 }
 
@@ -774,7 +894,7 @@
 }
 
 .JNPF-common-page-header {
-  padding: 14px 10px;
+  padding: 5px 10px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -1169,6 +1289,7 @@
         }
       }
     }
+
     .submenu-title-noDropdown {
       &:hover {
         color: #fff !important;
@@ -2321,4 +2442,13 @@ textarea.el-textarea__inner {
 .jnpf-table__empty-text {
   padding: 30px;
   line-height: 30px;
+}
+.el-table td.el-table__cell{
+  border-left: none!important;
+}
+.el-table th.el-table__cell.is-leaf{
+  border-left: none!important;
+}
+.JNPF-common-table{
+  border: none!important;
 }

@@ -11,9 +11,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" icon="el-icon-search" @click="search()"  class="commonBox">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" @click="reset()"  class="commonBox">{{$t('common.reset')}} 
               </el-button>
             </el-form-item>
           </el-col>
@@ -96,6 +96,8 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="checkMembers(scope.row.id,scope.row.fullName)">
+                      复制</el-dropdown-item>
                     <el-dropdown-item @click.native="checkMembers(scope.row.id,scope.row.fullName)">
                       查看成员</el-dropdown-item>
                   </el-dropdown-menu>

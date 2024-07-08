@@ -5,12 +5,12 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main flow-form-main">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="$emit('close', true)" :content="!dataForm.id ? '新建应用'+'('+typeTitle+')' : '编辑应用'+'('+typeTitle+')'" />
+        <el-page-header @back="$emit('close')" :content="!dataForm.id ? '新建应用'+'('+typeTitle+')' : '编辑应用'+'('+typeTitle+')'" />
         <div class="options">
           <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
             {{ $t('common.confirmButton') }}
           </el-button>
-          <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
+          <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" v-loading="formLoading"

@@ -50,7 +50,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="5">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
               }}</el-button>
@@ -69,15 +69,25 @@
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column  @sort-change="sortChange"
+        <JNPF-table v-loading="listLoading" :data="tableData"   @sort-change="sortChange"
           ref="dataTable" custom-column>
           <el-table-column prop="account" label="账户" width="100"  /> <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="realName" label="姓名" width="100"  sortable="custom" />
+          <el-table-column prop="realName" label="姓名" width="100"  sortable="custom"  >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
+                  scope.row.realName
+                  }}</el-link>
+              </template>
+            </el-table-column>
+
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
             <template slot-scope="scope">
@@ -288,6 +298,9 @@ export default {
   methods: {
     moreQueries() {
       this.visible = true
+    },
+    columnSetFun() {
+      this.$refs.datatable.showDrawer()
     },
     showDiagram() {
       this.diagramVisible = true

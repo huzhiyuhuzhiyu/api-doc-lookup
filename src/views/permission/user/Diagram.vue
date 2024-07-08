@@ -3,13 +3,13 @@
     <div class="JNPF-preview-main user-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" content="组织架构图" />
-        <el-button @click="exportToPDF">导出为PDF</el-button>
+        <!-- <el-button @click="exportToPDF">导出为PDF</el-button> -->
         <div class="options">
           <el-button @click="goBack">{{ $t('common.cancelButton') }} </el-button>
         </div>
       </div>
-      <div class="main" v-loading="loading" id="orgChartContainer">
-        <organization-chart :datasource="ds"></organization-chart>
+      <div class="main .body" v-loading="loading" id="orgChartContainer">
+        <organization-chart :datasource="ds" ></organization-chart>
       </div>
     </div>
   </transition>
@@ -35,15 +35,20 @@ export default {
 
     exportToPDF() {
       const element = document.getElementById('orgChartContainer');
-
-      html2canvas(element).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-
-        const link = document.createElement('a');
-        link.href = imgData;
-        link.download = 'organization-chart.png';
-        link.click();
-      })
+      setTimeout(() => {
+    html2canvas(element, {
+  scrollX: 0,
+  scrollY: -window.scrollY,
+  windowWidth: document.documentElement.scrollWidth,
+  windowHeight: document.documentElement.scrollHeight
+}).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.href = imgData;
+      link.download = 'organization-chart.png';
+      link.click();
+    });
+  }, 1000);
     },
     init() {
       this.loading = true
@@ -82,7 +87,16 @@ export default {
   padding-bottom: 0;
   overflow: hidden;
 }
+@media screen and (max-width: 1200px) {
+  .body {
+    width: 1200px;
+    overflow-x: auto;
 
+    .vux-flexbox-item {
+      box-sizing: border-box;
+    }
+  }
+}
 >>>.orgchart-container {
   height: 100%;
   border: none !important;

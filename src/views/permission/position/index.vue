@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left treeBox">
       <div class="JNPF-common-title">
         <h2>{{$t('common.organization')}}</h2>
         <span class="options">
@@ -31,7 +31,7 @@
       </el-scrollbar>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="8">
             <el-form-item :label="$t('common.keyword')">
@@ -41,9 +41,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -53,13 +53,16 @@
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle()" />
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column>
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column>
           <el-table-column prop="fullName" label="岗位名称" width="200" />
           <el-table-column prop="enCode" label="岗位编码" width="150" />
           <el-table-column prop="type" label="岗位类型" width="100" />
@@ -67,7 +70,7 @@
           <el-table-column prop="creatorTime" :formatter="jnpf.tableDateFormatDayTime" label="创建时间"
             width="180" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right" :style="{borderRight: 'none'}">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
@@ -144,6 +147,9 @@ export default {
     this.getOrganizeList(true)
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
     showDiagram() {
       this.diagramVisible = true
       this.$nextTick(() => {

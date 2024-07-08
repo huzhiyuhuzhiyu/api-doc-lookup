@@ -60,7 +60,7 @@ export default {
         ],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-          { validator: this.formValidate('fullName', '名称不能含有特殊符号'), trigger: 'blur' },
+          // { validator: this.formValidate('fullName', '名称不能含有特殊符号'), trigger: 'blur' },
           { max: 50, message: '名称最多为50个字符！', trigger: 'blur' }
         ],
       }

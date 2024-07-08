@@ -354,7 +354,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
+      // this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getProductList(this.listQuery).then(res => {
         this.tableData = res.data.records

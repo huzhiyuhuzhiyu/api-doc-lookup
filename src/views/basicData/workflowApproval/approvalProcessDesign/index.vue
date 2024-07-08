@@ -37,6 +37,9 @@
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle('','add')" />
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -173,6 +176,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     changeState(val, id) {
       console.log(val);
       let data = {

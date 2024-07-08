@@ -1,10 +1,8 @@
 <template>
-  <el-dialog :title="$t(`user.resetPassword`)" :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
+  <el-dialog :title="$t(`user.resetPassword`)" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
 
     <el-row :gutter="20">
-      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-width="120px"
-        label-position="top">
+      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-width="120px" label-position="top">
 
         <!-- <el-col :span="24">
           <el-form-item label="账户" prop="account">
@@ -34,7 +32,7 @@
 
 <script>
 import {
-  resetUserPassword
+  resetUserPassword, plresetUserPassword
 } from '@/api/permission/user'
 import md5 from 'js-md5'
 
@@ -63,9 +61,13 @@ export default {
       }
     }
     return {
+      btntype: '',
       visible: false,
       formLoading: false,
       btnLoading: false,
+      dataForm2: {
+        idList: [],
+      },
       dataForm: {
         id: '',
         account: '',
@@ -83,13 +85,18 @@ export default {
     }
   },
   methods: {
-    init(id, account) {
+    init(id, account, val) {
       this.visible = true
       this.formLoading = true
+      this.btntype = val
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        this.dataForm.id = id
-        this.dataForm.account = account
+        if (val == 'single') {
+          this.dataForm.id = id
+          this.dataForm.account = account
+        } else {
+          this.dataForm2.idList = account
+        }
         this.formLoading = false
       })
     },
@@ -102,9 +109,16 @@ export default {
             userPassword: md5(this.dataForm.userPassword),
             validatePassword: md5(this.dataForm.validatePassword)
           }
-          resetUserPassword(formData).then(res => {
+          const plformData = {
+            id: '',
+            idList: this.dataForm2.idList,
+            userPassword: md5(this.dataForm.userPassword),
+            validatePassword: md5(this.dataForm.validatePassword)
+          }
+          let Requestingreset = this.btntype == 'single' ? resetUserPassword : plresetUserPassword
+          Requestingreset(this.btntype == 'single' ? formData : plformData).then(res => {
             this.$message({
-              message: res.msg,
+              message: '修改成功',
               type: 'success',
               duration: 1500,
               onClose: () => {

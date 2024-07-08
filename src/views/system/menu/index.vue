@@ -29,7 +29,7 @@
                   </el-form-item>
                 </el-col>
               </el-form>
-              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;padding:8px 10px;">
 
                 <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
                   <div style="display:flex;align-items:center;">
@@ -143,7 +143,7 @@
                   </el-form-item>
                 </el-col>
               </el-form>
-              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;padding:8px 10px;">
 
                 <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
                   <div style="display:flex;align-items:center;">
@@ -257,7 +257,7 @@
                   </el-form-item>
                 </el-col>
               </el-form>
-              <div class="JNPF-common-head" style="float: right;margin-right: 10px;">
+              <div class="JNPF-common-head" style="float: right;margin-right: 10px;padding:8px 10px;">
 
                 <div class="JNPF-common-head-right" style="display:flex;justify-content: center;">
                   <div style="display:flex;align-items:center;">

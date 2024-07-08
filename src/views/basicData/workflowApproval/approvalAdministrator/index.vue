@@ -29,13 +29,16 @@
                         新建
                     </el-button>
                     <div class="JNPF-common-head-right">
+                      <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                             <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                                 @click="initData()" />
                         </el-tooltip>
                     </div>
                 </div>
-                <JNPF-table v-loading="listLoading" :data="tableDataList" @sort-change="sortChange" custom-column>
+                <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" @sort-change="sortChange" custom-column>
                     <el-table-column prop="personName" label="管理员名称">
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" width="180" />
@@ -103,6 +106,9 @@ export default {
         // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
     },
     methods: {
+      columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
         sortChange({ prop, order }) {
             const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase())
             this.tableQuery.orderItems[0].asc = order !== 'descending'

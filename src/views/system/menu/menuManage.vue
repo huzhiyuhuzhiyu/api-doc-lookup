@@ -5,9 +5,9 @@
         <div class="JNPF-preview-main flow-form-main" style="background:none">
           <div class="JNPF-common-page-header" style="padding: 7px 10px;background-color:#fff;">
             <el-page-header @back="goBack" :content="title" />
-            <div class="options">
+            <!-- <div class="options">
               <el-button @click="goBack()">{{$t('common.cancelButton')}}</el-button>
-            </div>
+            </div> -->
           </div>
           <el-row class="JNPF-common-search-box" :gutter="16" style="height:48px;margin-bottom:5px;padding: 8px 10px 0;">
             <el-form @submit.native.prevent>
@@ -19,9 +19,9 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item>
-                  <el-button type="primary" icon="el-icon-search" @click="initData()">
+                  <el-button  size="mini" type="primary" icon="el-icon-search" @click="initData()">
                     {{ $t("common.search") }}</el-button>
-                  <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                  <el-button  size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
                   </el-button>
                 </el-form-item>
               </el-col>

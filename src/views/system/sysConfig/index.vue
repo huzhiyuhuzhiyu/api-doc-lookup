@@ -1075,4 +1075,7 @@ export default {
 ::v-deep .el-form {
   height: 100% !important;
 }
+::v-deep .el-tabs__item{
+  padding: 0 10px;
+}
 </style>

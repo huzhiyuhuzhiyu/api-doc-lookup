@@ -73,7 +73,13 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" custom-column>
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom" />
+          <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom" >
+            <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
+                  scope.row.realName
+                  }}</el-link>
+              </template>
+          </el-table-column>
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
             <template slot-scope="scope">
@@ -556,5 +562,8 @@ export default {
 
 .el-tabs__nav-scroll {
   padding-left: 0;
+}
+::v-deep .el-tabs__item{
+  padding: 0 10px;
 }
 </style>

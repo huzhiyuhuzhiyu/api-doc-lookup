@@ -5,9 +5,9 @@
         <el-page-header @back="goBack"
           :content="!dataForm.id ? $t(`Organize.addCompany`) : $t(`Organize.editCompany`)" />
         <div class="options">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+          <el-button  size="mini" type="primary" :loading="btnLoading" @click="handleConfirm()">
             {{$t('common.confirmButton')}}</el-button>
-          <el-button @click="goBack">{{$t('common.cancelButton')}}</el-button>
+          <el-button  size="mini" @click="goBack">{{$t('common.cancelButton')}}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">

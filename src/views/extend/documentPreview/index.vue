@@ -95,7 +95,7 @@ export default {
 .JNPF-common-layout-main {
   padding: 0;
   .tip {
-    padding: 10px;
+    padding:0 10px 15px;
   }
 }
 .documentPreview-tab {
@@ -113,4 +113,5 @@ export default {
     }
   }
 }
+
 </style>

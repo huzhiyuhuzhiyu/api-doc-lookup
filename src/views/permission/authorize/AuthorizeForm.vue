@@ -20,15 +20,15 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-          <el-button :disabled="active <= 0 || treeLoading" @click="handlePrevStep">
+          <el-button  size="mini" :disabled="active <= 0 || treeLoading" @click="handlePrevStep">
             {{$t('common.prev')}}
           </el-button>
-          <el-button :disabled="active >= 5 || treeLoading" @click="handleNextStep">
+          <el-button  size="mini" :disabled="active >= 5 || treeLoading" @click="handleNextStep">
             {{$t('common.next')}}
           </el-button>
-          <el-button type="primary" :loading="btnLoading" :disabled="active < 5"
+          <el-button  size="mini" type="primary" :loading="btnLoading" :disabled="active < 5"
             @click="handleConfirm()">{{$t('common.confirmButton')}}</el-button>
-          <el-button @click="goBack">{{$t('common.cancelButton')}}</el-button>
+          <el-button  size="mini" @click="goBack">{{$t('common.cancelButton')}}</el-button>
         </div>
       </div>
       <el-steps :active="active" finish-status="success" simple>

@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
@@ -20,9 +20,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" size="mini" @click="reset()">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -38,13 +38,16 @@
             </el-upload>
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm">
           <el-table-column prop="fullName" label="名称" min-width="200" />
           <el-table-column prop="enCode" label="编码" width="200" />
           <el-table-column prop="categoryId" label="分类" width="150">
@@ -134,6 +137,9 @@ export default {
     this.getDictionaryData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
     reset() {
       this.keyword = ''
       this.category = ''

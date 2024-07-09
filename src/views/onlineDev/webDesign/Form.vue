@@ -22,12 +22,12 @@
         <el-step title="流程设计" @click.native="stepChick(3)" v-if="maxStep>=3" />
       </el-steps>
       <div class="options" style="width:400px">
-        <el-button @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
-        <el-button @click="next" :disabled="activeStep>=maxStep || loading">{{$t('common.next')}}
+        <el-button  size="mini" @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
+        <el-button  size="mini" @click="next" :disabled="activeStep>=maxStep || loading">{{$t('common.next')}}
         </el-button>
-        <el-button type="primary" @click="dataFormSubmit()" :disabled="activeStep!=maxStep"
+        <el-button  size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep!=maxStep"
           :loading="btnLoading">{{$t('common.confirmButton')}}</el-button>
-        <el-button @click="closeDialog()">{{$t('common.cancelButton')}}</el-button>
+        <el-button  size="mini" @click="closeDialog()">{{$t('common.cancelButton')}}</el-button>
       </div>
     </div>
     <div class="main" v-loading="loading">

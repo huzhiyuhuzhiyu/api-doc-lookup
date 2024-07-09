@@ -9,15 +9,15 @@
         <el-step v-if="dataForm.dataType!=2" title="数据处理"></el-step>
       </el-steps>
       <div class="options">
-        <el-button :disabled="active <= 0" @click="handlePrevStep">{{$t('common.prev')}}
+        <el-button  size="mini" :disabled="active <= 0" @click="handlePrevStep">{{$t('common.prev')}}
         </el-button>
-        <el-button :disabled="dataForm.dataType!=2?active >= 2:active >= 1" @click="handleNextStep">
+        <el-button  size="mini" :disabled="dataForm.dataType!=2?active >= 2:active >= 1" @click="handleNextStep">
           {{$t('common.next')}}
         </el-button>
-        <el-button type="primary" :loading="btnLoading"
+        <el-button  size="mini" type="primary" :loading="btnLoading"
           :disabled="dataForm.dataType!=2?active < 2:active < 1" @click="dataFormSubmit()">
           {{$t('common.confirmButton')}}</el-button>
-        <el-button @click="goBack">{{$t('common.cancelButton')}}</el-button>
+        <el-button  size="mini" @click="goBack">{{$t('common.cancelButton')}}</el-button>
       </div>
     </div>
     <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading"

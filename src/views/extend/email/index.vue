@@ -23,13 +23,13 @@
       <div class="main JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="关键词">
                 <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="7">
               <el-form-item label="日期">
                 <el-date-picker v-model="pickerVal" type="daterange" start-placeholder="开始日期"
                   end-placeholder="结束日期" :picker-options="pickerOptions" value-format="timestamp"
@@ -37,17 +37,17 @@
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="5">
               <el-form-item>
-                <el-button type="primary" icon="el-icon-search" @click="search()">
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                   {{$t('common.search')}}</el-button>
-                <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
                 </el-button>
               </el-form-item>
             </el-col>
           </el-form>
           <div class="JNPF-common-search-box-right">
-            <el-button type="primary" icon="el-icon-download" @click="receiveEmail"
+            <el-button size="mini" type="primary" icon="el-icon-download" @click="receiveEmail"
               :loading="receiveing">收邮件</el-button>
           </div>
         </el-row>
@@ -408,5 +408,8 @@ export default {
       }
     }
   }
+}
+::v-deep .el-tabs__content{
+  height:100%
 }
 </style>

@@ -903,4 +903,7 @@ export default {
 ::v-deep .el-switch{
   top: 5px;
 }
+::v-deep .el-tabs__item{
+  padding:0 10px
+}
 </style>

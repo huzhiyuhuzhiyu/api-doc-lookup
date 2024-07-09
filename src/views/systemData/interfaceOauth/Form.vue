@@ -3,9 +3,9 @@
     <div class="JNPF-common-page-header">
       <el-page-header @back="goBack()" content="接口认证" />
       <div class="options">
-        <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+        <el-button  size="mini" type="primary" @click="dataFormSubmit()" :loading="btnLoading">
           {{$t('common.confirmButton')}}</el-button>
-        <el-button @click="goBack()">{{$t('common.cancelButton')}}</el-button>
+        <el-button  size="mini" @click="goBack()">{{$t('common.cancelButton')}}</el-button>
       </div>
     </div>
     <el-row class="main">

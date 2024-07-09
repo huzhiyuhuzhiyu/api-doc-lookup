@@ -1,26 +1,41 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
-      <div class="JNPF-common-title">
-        <h2>接口分类</h2>
+    <div class="JNPF-common-layout-left  treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title"  style="display: block;padding:0">
+        <div class="title_box">
+        <h2 v-if="!leftFlag">接口分类</h2>
+        <span  class="options" v-if="!leftFlag">
         <el-dropdown>
           <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item @click.native="initData()">刷新数据</el-dropdown-item>
             <el-dropdown-item @click.native="toggleTreeExpand(true)">展开全部</el-dropdown-item>
             <el-dropdown-item @click.native="toggleTreeExpand(false)">折叠全部</el-dropdown-item>
+            <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+            <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
           </el-dropdown-menu>
         </el-dropdown>
+      </span>
       </div>
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps"
+      <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div>
+      </div>
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading"  v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :filter-node-method="filterNode"
           :default-expand-all="expandsTree" highlight-current :expand-on-click-node="false"
           node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" />
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
     </div>
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
@@ -30,9 +45,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" size="mini" @click="reset()">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -44,13 +59,16 @@
             <upload-btn url="/api/system/DataInterface/Action/Import" @on-success="getList" />
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="getList()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column>
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column ref="tabForm">
           <el-table-column prop="fullName" label="名称" />
           <el-table-column prop="enCode" label="编码" />
           <el-table-column prop="dataType" label="类型" width="100">
@@ -113,10 +131,12 @@ export default {
   components: { Form, Preview, Log },
   data() {
     return {
+      filterText:'',
       defaultProps: {
         children: 'children',
         label: 'fullName'
       },
+      leftFlag: false,
       listQuery: {
         keyword: '',
         currentPage: 1,
@@ -137,10 +157,35 @@ export default {
       refreshTree: true,
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val);
+    },
+  },
   created() {
     this.initData(true)
+    if (localStorage.getItem("dataInterfaceFlag")) {
+      let dataInterfaceFlag = JSON.parse(localStorage.getItem('dataInterfaceFlag'))
+      this.expands = dataInterfaceFlag
+      console.log("dataInterfaceFlag", dataInterfaceFlag);
+      this.toggleTreeExpand(dataInterfaceFlag)
+
+    }
   },
+  
   methods: {
+    filterNode(value, data) {
+      console.log(value, data);
+      if (!value) return true;
+      return data.fullName.indexOf(value) !== -1;
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
+    },
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
     initData(isInit) {
       this.treeLoading = true
       getDataInterfaceTypeSelector().then(res => {
@@ -154,6 +199,17 @@ export default {
         })
       }).catch(() => {
         this.treeLoading = false
+      })
+    },
+     // 设置默认展开
+     setexpand(expands) {
+      console.log("expands", expands);
+      this.refreshTree = false
+      this.expandsTree = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("dataInterfaceFlag", expands)
+
       })
     },
     toggleTreeExpand(expands) {
@@ -273,3 +329,20 @@ export default {
   }
 }
 </script>
+<style scope>
+  .title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+</style>

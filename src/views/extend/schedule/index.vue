@@ -47,6 +47,9 @@ export default {
       ],
       startTime: '',
       endTime: '',
+      handleDatesRender: arg => {
+                this.initData()
+            },
     }
   },
   created() { },
@@ -59,9 +62,12 @@ export default {
       let view = calendar.view
       this.startTime = this.jnpf.toDate(view.activeStart, "yyyy-MM-dd HH:mm")
       this.endTime = this.jnpf.toDate(view.activeEnd, "yyyy-MM-dd HH:mm")
+      console.log(this.startTime);
+      console.log(this.endTime);
       this.initData()
     },
     handleDateClick(arg) {
+      console.log("arg",arg);
       let startTime = this.jnpf.toDate(arg.date, "yyyy-MM-dd HH:00"),
         clickTime = this.jnpf.toDate(arg.date, "yyyyMMdd"),
         currTime = this.jnpf.toDate(new Date(), "yyyyMMdd");
@@ -75,6 +81,7 @@ export default {
       this.addOrUpdateHandle('', new Date(startTime).getTime())
     },
     eventClick(data) {
+      console.log("data",data);
       if (this.jnpf.toDate(data.event.start, "yyyyMMddHHmm") > this.jnpf.toDate(new Date(), "yyyyMMddHHmm")) {
         this.addOrUpdateHandle(data.event.id)
       }
@@ -89,15 +96,17 @@ export default {
         endTime: this.endTime,
       }
       List(query).then(res => {
+        console.log(res);
         this.calendarEvents = res.data.list.map(o => ({
           id: o.id,
           title: o.content,
           start: o.startTime,
           end: o.endTime,
           color: o.colour,
-          editable: false,
-          allDay: false
+          editable: true,
+          allDay: true
         }))
+        console.log("calendarEvents",this.calendarEvents);
       })
     },
     // 新增 / 修改

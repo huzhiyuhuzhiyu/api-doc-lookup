@@ -4,7 +4,7 @@
       <div class="el-page-header__content">权限批量设置</div>
       <div class="btn-group">
         <el-dropdown style="margin-right: 8px">
-          <el-button plain>
+          <el-button  size="mini" plain>
             {{$t('authorize.operation')}}<i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
@@ -18,11 +18,11 @@
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <el-button :disabled="active <= 0 || treeLoading" @click="handlePrevStep">
+        <el-button  size="mini" :disabled="active <= 0 || treeLoading" @click="handlePrevStep">
           {{$t('common.prev')}}</el-button>
-        <el-button :disabled="active >= 6 || treeLoading" @click="handleNextStep">
+        <el-button  size="mini" :disabled="active >= 6 || treeLoading" @click="handleNextStep">
           {{$t('common.next')}}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="active < 6"
+        <el-button  size="mini" type="primary" :loading="btnLoading" :disabled="active < 6"
           @click="handleConfirm()">{{$t('common.confirmButton')}}</el-button>
       </div>
     </div>

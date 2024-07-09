@@ -18,12 +18,12 @@
         <el-step title="门户设计" @click.native="stepChick(1)"></el-step>
       </el-steps>
       <div class="options" style="width:400px">
-        <el-button @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
-        <el-button @click="next" :disabled="activeStep>=1 || loading">{{$t('common.next')}}
+        <el-button  size="mini" @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
+        <el-button  size="mini" @click="next" :disabled="activeStep>=1 || loading">{{$t('common.next')}}
         </el-button>
-        <el-button type="primary" @click="dataFormSubmit()" :disabled="activeStep!=1"
+        <el-button  size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep!=1"
           :loading="btnLoading">{{$t('common.confirmButton')}}</el-button>
-        <el-button @click="closeDialog()">{{$t('common.cancelButton')}}</el-button>
+        <el-button  size="mini" @click="closeDialog()">{{$t('common.cancelButton')}}</el-button>
       </div>
     </div>
     <div class="main" v-loading="loading">

@@ -1,19 +1,18 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
-              <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
-                {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
             </el-form-item>
           </el-col>
@@ -23,23 +22,23 @@
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle()"></topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" max-height="100%" custom-column>
+        <JNPF-table v-loading="listLoading" :data="list" max-height="100%" custom-column ref="tabForm">
           <el-table-column prop="title" label="标题" show-overflow-tooltip />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat"
-            width="160" />
-          <el-table-column prop="releaseUser" label="发布人员" width="120" />
-          <el-table-column prop="releaseTime" label="发布时间" :formatter="jnpf.tableDateFormat"
-            width="160" />
+          <el-table-column prop="creatorTime" label="创建时间"  width="180" />
+          <el-table-column prop="creatorUser" label="发布人员" width="120" />
+          <el-table-column prop="creatorTime" label="发布时间"  width="180" />
           <el-table-column prop="enabledMark" label="状态" width="100" align="center">
             <template slot-scope="scope">
-              <el-tag :type="scope.row.enabledMark==1?'success':'warning'" disable-transitions>
-                {{ scope.row.enabledMark==1?'已发送':'存草稿' }}
+              <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'warning'" disable-transitions>
+                {{ scope.row.enabledMark == 1 ? '已发送' : '存草稿' }}
               </el-tag>
             </template>
           </el-table-column>
@@ -49,13 +48,12 @@
                 :editDisabled="scope.row.enabledMark != 0">
                 <el-dropdown>
                   <el-button type="text" size="mini">
-                    {{$t('common.moreBtn')}}<i class="el-icon-arrow-down el-icon--right" />
+                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right" />
                   </el-button>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item @click.native="handleView(scope.row.id)">
                       详情</el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.enabledMark == 0"
-                      @click.native="handlePublish(scope.row.id)">发布
+                    <el-dropdown-item v-if="scope.row.enabledMark == 0" @click.native="handlePublish(scope.row.id)">发布
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
@@ -63,11 +61,11 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
-    <Form v-show="formVisible" ref="Form" @close="formVisible=false" @refreshDataList="initData" />
+    <Form v-show="formVisible" ref="Form" @close="formVisible = false" @refreshDataList="initData" />
     <ViewNotice v-if="viewVisible" ref="View" @refreshDataList="initData" />
   </div>
 </template>
@@ -99,9 +97,39 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
+    dateFun(timestamp) {
+      console.log(timestamp);
+      // 创建一个新的Date对象，传入时间戳作为参数
+      const date = new Date(timestamp);
+      console.log(date);
+      // 使用Date对象的方法获取特定的日期时间信息
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1; // 月份从0开始，所以要加1
+      const day = date.getDate();
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const seconds = date.getSeconds();
+      console.log(year,month,day,hours,minutes,seconds);
+      return year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+seconds
+    },
+    // 基于dayjs日期格式化, 精确到秒，表格专用
+  tableDateFormatDayTime(row, column, cellValue) {
+    let format = 'YYYY-MM-DD HH:mm:ss'
+    if (!cellValue) return ''
+    return dayjs(Number(cellValue)).format(format)
+  },
     initData() {
       this.listLoading = true
       getNoticeList(this.listQuery).then(res => {
+        if (res.data.list.length) {
+          res.data.list.forEach(item => {
+            item.creatorTime=this.jnpf.tableDateFormatDayTime('','',item.creatorTime )
+          });
+        }
+        console.log(res.data.list);
         this.list = res.data.list
         this.total = res.data.pagination.total
         this.listLoading = false

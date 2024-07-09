@@ -102,7 +102,6 @@ export default {
 .card-wrapper {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, calc(50% - 12px));
   /*  行间距和列间距  */
   grid-gap: 10px;
   padding: 10px;

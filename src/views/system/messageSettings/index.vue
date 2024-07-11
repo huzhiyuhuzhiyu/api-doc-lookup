@@ -901,4 +901,7 @@ export default {
 ::v-deep .el-form {
   height: 100% !important;
 }
+::v-deep.el-tabs--left{
+  overflow: auto
+}
 </style>

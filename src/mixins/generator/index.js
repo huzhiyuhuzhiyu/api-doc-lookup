@@ -9,7 +9,8 @@ export default {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-        sidx: ''
+        sidx: '',
+        keyword:"",
       },
       total: 0,
       listLoading: false,
@@ -22,7 +23,7 @@ export default {
   },
   created() {
     this.getDictionaryData()
-    this.initData()
+    // this.initData()
   },
   methods: {
     search() {
@@ -114,7 +115,7 @@ export default {
     addOrUpdateHandle(id, webType, isToggle) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.categoryList, id, this.query.type, webType, isToggle)
+        this.$refs.Form.init(this.categoryList, id, this.listQuery.type, webType, isToggle)
       })
     },
     closeForm(isRefresh) {

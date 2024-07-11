@@ -62,7 +62,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column>
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column  row-key="id"   :setColumnDisplayList="columnList">
           <el-table-column prop="fullName" label="岗位名称" width="200" />
           <el-table-column prop="enCode" label="岗位编码" width="150" />
           <el-table-column prop="type" label="岗位类型" width="100" />
@@ -113,6 +113,7 @@ export default {
   components: { Form, UserRelationList, Diagram },
   data() {
     return {
+      columnList:["creatorTime","sortCode",],
       treeData: [],
       tableData: [],
       treeLoading: false,

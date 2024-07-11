@@ -37,6 +37,10 @@ export default {
       type: Array,
       default: () => []
     },
+    setColumnDisplayList: {
+      type: Array,
+      default: () => []
+    },
     // 序号 默认有
     hasNO: {
       type: Boolean,
@@ -156,28 +160,43 @@ export default {
       if (!this.customColumn) return
       this.hasSlotContent = this.checkForSlotContent()
       if (!this.hasSlotContent) return
-      this.columns = this.$slots.default // 代码传入的列
-      let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
-      this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
-      let list = JSON.parse(JSON.stringify(this.defaultColumns))
-      const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
-      if (!cacheList) {
-        this.columnList = list.map(item => {
-          return {
-            ...item,
-            columnVisible: true
-          }
-        })
-      } else {
-        let columnList = cacheList.map(item => {
-          let isShow = false
-          list.forEach(item2 => {
-            if (item.prop === item2.prop) isShow = true
-          })
-          return isShow ? item : null
-        }).filter(item => item)
-        this.columnList = this.mergeArray(columnList, list) // 实际展示的列
-      }
+      this.$nextTick(() => {
+        this.columns = this.$slots.default // 代码传入的列
+        console.log(this.columns);
+        let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
+        this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
+        let list = JSON.parse(JSON.stringify(this.defaultColumns))
+        const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
+
+        if (!cacheList) {
+          console.log("setColumnDisplayList", this.setColumnDisplayList);
+            list.forEach(item => {
+            if (this.setColumnDisplayList.includes(item.prop)) {
+              item.columnVisible = false;
+            } else {
+              item.columnVisible = true;
+            }
+          });
+          console.log("list",list);
+          this.columnList=list
+          // this.columnList = list.map(item => {
+          //   return {
+          //     ...item,
+          //     columnVisible: true
+          //   }
+          // })
+        } else {
+          let columnList = cacheList.map(item => {
+            let isShow = false
+            list.forEach(item2 => {
+              if (item.prop === item2.prop) isShow = true
+            })
+            return isShow ? item : null
+          }).filter(item => item)
+          this.columnList = this.mergeArray(columnList, list) // 实际展示的列
+        }
+      })
+
     },
     mergeArray(arr1, arr2) {
       let arr = [...arr1]

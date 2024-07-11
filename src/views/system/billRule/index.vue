@@ -93,7 +93,7 @@
               {{ scope.$index+1 }}
             </template>
           </el-table-column>
-          <el-table-column prop="fullName" label="业务名称" min-width="200" />
+          <el-table-column prop="fullName" label="业务名称" width="200" />
           <el-table-column prop="enCode" label="业务编码" width="200" />
           <el-table-column prop="category" label="业务分类" width="150" />
           <el-table-column prop="startNumber" label="流水起始" width="120"  />
@@ -110,7 +110,7 @@
                 {{scope.row.enabledMark==1?'启用':'禁用'}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-dropdown>
@@ -134,6 +134,7 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
+    <TypeList v-if="drawer" ref="TypeList" @refreshDataList="initData" />
   </div>
 </template>
 
@@ -155,10 +156,12 @@ import {
   getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 import Sortable from 'sortablejs'
+import TypeList from './components/index'
 export default {
   name: 'system-billRule',
   components: {
-    Form
+    Form,
+    TypeList
   },
   data() {
     return {
@@ -189,6 +192,7 @@ export default {
         children: "childrenList",
         label: "fullName",
       },
+      drawer:false,
     }
   },
   watch: {
@@ -265,8 +269,7 @@ export default {
       })
     },
     columnSetFun(){ 
-      console.log("this.$refs.dataTable",this.$refs.dataTable);
-      this.$refs.dataTable.showDrawer()
+      this.$refs.tabForm.showDrawer()
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
@@ -344,10 +347,14 @@ export default {
       }).catch(() => { })
     },
     addOrUpdateHandle(id) {
-      this.formVisible = true
+      this.drawer = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, this.treeData,this.listQuery.categoryId,this.tableList)
+        this.$refs.TypeList.init(id, this.treeData,this.listQuery.categoryId,this.tableList)
       })
+      // this.formVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.Form.init(id, this.treeData,this.listQuery.categoryId,this.tableList)
+      // })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

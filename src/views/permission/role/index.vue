@@ -18,10 +18,11 @@
             </el-dropdown>
           </span>
         </div>
+        <div v-if="!leftFlag"  >
+          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
+        </div>
       </div>
-      <div class="JNPF-common-tree-search-box" v-if="!leftFlag" >
-        <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable />
-      </div>
+      
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag" >
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"

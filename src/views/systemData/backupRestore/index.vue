@@ -356,4 +356,7 @@ export default {
 ::v-deep .noLeftPad {
   padding: 10px 10px 10px 0 !important;
 }
+.JNPF-common-head{
+  padding: 8px 10px;
+}
 </style>

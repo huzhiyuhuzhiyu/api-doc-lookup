@@ -18,12 +18,12 @@
             </el-dropdown>
           </span>
         </div>
- 
+        <div v-if="!leftFlag"  >
+          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
+        </div>
       </div>
-      <div v-if="!leftFlag" class="JNPF-common-tree-search-box">
-        <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable />
-      </div>
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading"  v-if="!leftFlag">
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands"
           highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
           class="JNPF-common-el-tree" v-if="refreshTree">
@@ -33,11 +33,11 @@
           </span>
         </el-tree>
       </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
       </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute" >
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -320,7 +320,7 @@ export default {
   methods: {
     changeLeft() {
       this.leftFlag = !this.leftFlag
-     
+
     },
     // // 设置默认展开
     setexpand(expands) {
@@ -623,6 +623,7 @@ export default {
 ::v-deep .el-tabs__item {
   padding: 0 10px;
 }
+
 .title_box {
   width: 100%;
   display: flex;

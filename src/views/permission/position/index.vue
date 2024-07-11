@@ -18,10 +18,12 @@
             </el-dropdown>
           </span>
         </div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input>
+        </div>
       </div>
-      <div class="JNPF-common-tree-search-box" v-if="!leftFlag">
-        <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable />
-      </div>
+
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
@@ -143,7 +145,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      leftFlag: false, 
+      leftFlag: false,
     }
   },
   watch: {
@@ -297,7 +299,7 @@ export default {
 }
 </script>
 <style scoped>
-  .title_box {
+.title_box {
   width: 100%;
   display: flex;
   border-bottom: 1px solid #ebeef5;

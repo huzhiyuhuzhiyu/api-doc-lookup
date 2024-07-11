@@ -100,8 +100,8 @@ export default {
 }
 .documentPreview-tab {
   height: 100%;
-  >>> .el-tabs__content {
-    padding: 0;
+  ::v-deep .el-tabs__content {
+    padding: 15px ;
     height: calc(100% - 40px);
     .box {
       flex: 1;

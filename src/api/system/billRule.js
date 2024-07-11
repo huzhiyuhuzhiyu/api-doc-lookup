@@ -74,3 +74,11 @@ export function exportTpl(id) {
   })
 }
 
+// 批量排序
+export function updateSortBatch(data) {
+  return request({
+    url: `/api/system/BillRule/update/sort/batch`,
+    method: 'PUT',
+    data
+  })
+}

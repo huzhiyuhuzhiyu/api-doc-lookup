@@ -37,10 +37,10 @@
       <el-form-item label="流水范例" prop="example">
         <el-input v-model="dataForm.example" disabled />
       </el-form-item>
-      <el-form-item label="排序" prop="sortCode">
+      <!-- <el-form-item label="排序" prop="sortCode">
         <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode"
           controls-position="right" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="状态" prop="enabledMark">
         <el-switch v-model="dataForm.enabledMark" :active-value="1" :inactive-value="0" />
       </el-form-item>
@@ -121,8 +121,9 @@ export default {
     }
   },
   methods: {
-    init(id, categoryList) {
+    init(id, categoryList,categoryId,tableList) {
       this.dataForm.id = id || ''
+      this.dataForm.category = categoryId || ''
       this.categoryList = categoryList
       this.visible = true
       this.formLoading = true
@@ -132,6 +133,9 @@ export default {
           getBillRuleInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
           })
+        }else{
+            this.formLoading = false
+            this.dataForm.sortCode=tableList.length
         }
       })
       this.formLoading = false

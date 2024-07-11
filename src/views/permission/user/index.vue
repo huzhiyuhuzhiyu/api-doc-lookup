@@ -66,12 +66,16 @@
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" custom-column>
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable"  :setColumnDisplayList="columnList" >
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom" >
             <template slot-scope="scope">
@@ -217,6 +221,7 @@ export default {
   },
   data() {
     return {
+      columnList:["sortCode","creatorTime","resignationDate","entryDate","gender","employeeType","enabledMark"],
       tableData: [],
       treeLoading: false,
       listLoading: true,
@@ -281,6 +286,10 @@ export default {
     this.getOrganizeList()
   },
   methods: {
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     // 选中得数据
     handleSelectionChange(val) {
       this.selectArr = val

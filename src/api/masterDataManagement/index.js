@@ -274,6 +274,15 @@ export function getDataModelList(data) {
       data: data
   })
 }
+// 数据建模——批量设置分类
+export function batchSetCategory(data) {
+  return request({
+      url: '/api/zgtdata/category/related/add/batch',
+      method: 'POST',
+      data: data
+  })
+}
+
 
 
 // 业务列表分类——列表

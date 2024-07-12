@@ -49,27 +49,27 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="类型" prop="type" v-if="type=='PC'">
-        <el-select v-model="dataForm.type" placeholder="请选择类型" @change="changeMenuType">
+        <el-form-item label="首页设置(类型)" prop="type" v-if="type=='PC'">
+        <el-select v-model="dataForm.homeType" placeholder="请选择首页类型" @change="changeMenuType">
           <el-option v-for="item in typeData" :key="item.enCode" :label="item.fullName"
             :value="item.enCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="(dataForm.type == 2 || dataForm.type == 7)&&type=='PC'" label="地址" prop="urlAddress"   >
-        <el-input v-model="dataForm.urlAddress" placeholder="填写地址">
+      <el-form-item v-if="(dataForm.homeType == 2 || dataForm.homeType == 7)&&type=='PC'" label="地址" prop="homeUrl"   >
+        <el-input v-model="dataForm.homeUrl" placeholder="填写地址">
           <template slot="prepend"
-            v-if="(type ==='PC') && dataForm.type == 2">@/views/</template>
+            v-if="(type ==='PC') && dataForm.homeType == 2">@/views/</template>
           <el-select slot="append" v-model="dataForm.linkTarget" style="width: 90px;"
-            v-if="type ==='PC' && dataForm.type == 7">
+            v-if="type ==='PC' && dataForm.homeType == 7">
             <el-option label="_self" value="_self" />
             <el-option label="_blank" value="_blank" />
           </el-select>
         </el-input>
       </el-form-item>
-      <el-form-item v-if="[5,6,8].indexOf(dataForm.type)>-1&& type=='PC'" label="关联"
-        prop="propertyJson.moduleId">
-        <JNPF-TreeSelect v-model="dataForm.propertyJson.moduleId" :options="tempData"
+      <el-form-item v-if="['5','6','8'].indexOf(dataForm.homeType)>-1&& type=='PC'" label="关联"
+        prop="homeUrl">
+        <JNPF-TreeSelect v-model="dataForm.homeUrl" :options="tempData"
           placeholder="请选择" lastLevel @change="handleSelectModule" filterable />
       </el-form-item>
         <el-form-item label="默认选中顺序" prop="defaultSorting">
@@ -110,19 +110,19 @@ export default {
     return {
        typeData:[
   {
-    enCode: 2,
+    enCode: '2',
     fullName: "页面"
   }, {
-    enCode: 5,
+    enCode: '5',
     fullName: "报表"
   }, {
-    enCode: 6,
+    enCode: '6',
     fullName: "大屏"
   }, {
-    enCode: 8,
+    enCode: '8',
     fullName: "门户"
   }, {
-    enCode: 7,
+    enCode: '7',
     fullName: "外链"
   }],
       options: [
@@ -141,7 +141,7 @@ export default {
       portalData: [],
       tempData: [],
       dataForm: {
-        urlAddress: '',
+        homeUrl: '',
         category: 'Web',
         linkTarget: '_self',
         isButtonAuthorize: 0,
@@ -149,7 +149,7 @@ export default {
         isFormAuthorize: 0,
         isDataAuthorize: 0,
         enabledMark: 1,
-        type:"",
+        homeType:"",
         id: '',
         fullName: '',
         enCode: '',
@@ -189,7 +189,7 @@ export default {
         defaultSorting: [
           { required: true, message: '默认选中顺序不能为空', trigger: 'blur' },
         ],
-        'propertyJson.moduleId': [
+        homeUrl: [
           { required: true, message: '关联不能为空', trigger: 'blur' }
         ],
       },
@@ -199,23 +199,26 @@ export default {
       typeTitle:"",
     }
   },
+
   methods: {
     switchType(val) {
       switch (val) {
      
-        case 5:
+        case '5':
           this.fetchDataReportList()
           break
-        case 6:
+        case '6':
           this.fetchDataVList()
           break
-        case 8:
+        case '8':
           this.fetchPortalList()
           break
       }
     },
     handleSelectModule(val) {
-      if (this.dataForm.type == 4) {
+      console.log(val);
+      this.dataForm.homeUrl=val
+      if (this.dataForm.homeType == 4) {
         const item = this.treeToArray(this.dictionaryData).filter(o => o.id === val)
         this.dataForm.propertyJson.isTree = item[0].isTree
       }
@@ -269,7 +272,7 @@ export default {
       // 重置关联下拉框的值及链接处理
       this.dataForm.propertyJson.moduleId = ''
       const menuId = this.dataForm.id
-      if (menuId) this.dataForm.urlAddress = ''
+      if (menuId) this.dataForm.homeUrl = ''
       if ([2, 3, 4].includes(val)) {
         this.dataForm.isButtonAuthorize = 1
         this.dataForm.isColumnAuthorize = 1
@@ -286,7 +289,7 @@ export default {
       } else {
         this.dataForm.linkTarget = '_self'
       }
-      this.switchType(this.dataForm.type)
+      this.switchType(this.dataForm.homeType)
     },
     init(id,title,type) {
       this.dataForm.id = id || ''
@@ -299,6 +302,7 @@ export default {
           this.formLoading = true
           info(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            this.switchType(this.dataForm.homeType)
             const propertyJson = res.data.propertyJson ? JSON.parse(res.data.propertyJson) : null
             this.dataForm.propertyJson = propertyJson || { iconBackgroundColor: '' }
             this.$nextTick(() => { this.formLoading = false })
@@ -315,6 +319,7 @@ export default {
     },
     dataFormSubmit() {
       
+      console.log("dataForm",this.dataForm);
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const query = {
@@ -384,5 +389,9 @@ export default {
   width: 130px;
   height: 130px;
   display: block;
+}
+.flow-form-main ::v-deep .el-form{
+  padding-right: 20px;
+  padding-left: 20px;
 }
 </style>

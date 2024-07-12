@@ -12,7 +12,7 @@ module.exports = {
   dataV: process.env.NODE_ENV === 'development' ? 'http://localhost:8100/DataV' : process.env.VUE_APP_BASE_API + '/DataV/',
   // 数据报表接口-java boot
   reportServer: process.env.NODE_ENV === 'development' ? 'https://localhost:30007' : process.env.VUE_APP_BASE_API + '/ReportServer',
-  // reportServer:  'http://36.140.134.65:40008/ReportServer',
+  // reportServer:  'http://36.140.134.173:30004/ReportServer',
 
   // 数据报表接口-java cloud 
   // reportServer: process.env.NODE_ENV === 'development' ? 'http://localhost:30000' : process.env.VUE_APP_BASE_API,

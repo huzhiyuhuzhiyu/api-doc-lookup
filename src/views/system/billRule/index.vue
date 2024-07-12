@@ -242,7 +242,7 @@ export default {
     filterNode(value, data) {
       console.log(value, data);
       if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      return data.fullName.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);

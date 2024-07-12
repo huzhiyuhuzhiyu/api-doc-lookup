@@ -144,7 +144,7 @@ export default {
     scanTitle: '扫码登录',
     codeTitle: '手机验证登录',
     logIn: '登　录',
-    username: '请输入账号',
+    username: '请输入账号或手机号',
     busCode: '请输入企业代码',
     password: '请输入密码',
     rule: '子账户规则：手机号@账户 例：18577778888@101001',

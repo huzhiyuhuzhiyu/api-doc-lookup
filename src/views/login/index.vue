@@ -6,7 +6,7 @@
         <span> 跳转中…</span>
       </div>
     </div>
-    <div class="login-container" v-show="!isLogin" v-if="false">
+    <div class="login-container" v-show="!isLogin" v-if="sysConfig.pattern=='1'">
 
       <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
       <el-image class="login-bg" :src="define.comUrl + sysConfig.loginBg" @load="bgload" v-show="isbgload"></el-image>
@@ -126,31 +126,33 @@
           <div v-for="(value, key) in berning" :key="key" :style="value" class="ber" :class="222"></div>
         </div>
         <div class="body_box">
-          <div class="body_left">
-            <p>{{ loginLeftTopic }}</p>
-            <p>{{ loginLeftText }}</p>
+          <div class="body-title">
+            <img class="login-logo" src="@/assets/images/jnpf.png" alt=""><span class="title">{{aaa}}</span>
+          </div>
+          <!-- <div class="body_left">
+            <p>{{loginLeftTopic}}</p>
+            <p>{{loginLeftText}}</p>
             <div>
               <div v-for="item in filteredList" :key="item.id" style="text-align:center;margin-right: 16px;">
                 <el-image style="width: 90px;height: 90px;" :src="define.comUrl + item.value"></el-image>
                 <div>{{ item.name }}</div>
               </div>
             </div>
-          </div>
-          <div
-            style="width: 360px;height: 100%;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;">
+          </div> -->
+          <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;">
             <div class="body_right">
               <div style="display: flex;justify-content: center;height: 82px;align-items: center;">
-                <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'>
-                  <!-- <el-image class="login-logo" :src="define.comUrl+sysConfig.loginIcon" v-if="sysConfig && sysConfig.loginIcon"> -->
-                  <!-- <template slot="error"> -->
-                  <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt=""> -->
-                  <img class="login-logo" src="@/assets/images/jnpf.png" alt="">
-                  <!-- </template> -->
-                  <!-- </el-image> -->
-                  <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt="" v-else> -->
+                <!-- <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'> -->
+                <!-- <el-image class="login-logo" :src="define.comUrl+sysConfig.loginIcon" v-if="sysConfig && sysConfig.loginIcon"> -->
+                <!-- <template slot="error"> -->
+                <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt=""> -->
+                <!-- <img class="login-logo" src="@/assets/images/jnpf.png" alt=""> -->
+                <!-- </template> -->
+                <!-- </el-image> -->
+                <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt="" v-else> -->
 
-                  &nbsp;<span class="title">{{ aaa }}</span>
-                </div>
+                <!-- &nbsp;<span class="title">{{aaa}}</span> -->
+                <!-- </div> -->
                 <!-- <img class="login-logo" :src="define.comUrl+sysConfig.loginIcon"> -->
                 <!-- <div v-if="sysConfig && sysConfig.sysVersion" class="login-version">
           {{ sysConfig.sysVersion }}
@@ -207,8 +209,12 @@
                         </el-col>
                       </el-row>
                     </el-form-item>
-                    <el-button :loading="loading" type="primary" class="login-btn" size="large"
-                      @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
+                    <div class="sms-password">
+                      <el-switch v-model="value1" active-text="记住我">
+                      </el-switch>
+                      <a href="#">忘记密码?</a>
+                    </div>
+                    <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
                   </el-form>
 
@@ -218,23 +224,27 @@
                   </div>
                 </div>
               </div>
+              <div class="userxy">登录代表你已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
+              <el-popover placement="bottom" width="172" trigger="hover">
+                <img src="@/assets/images/qygzh.png" alt="">
+                <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
+              </el-popover>
             </div>
-
+            <div class="componey">
+              <div>
+                <i class="icon-ym icon-ym-lianxi" />
+                &nbsp;
+                {{ sysConfig.companyTelePhone ? sysConfig.companyTelePhone : "0574-89079512" }}
+                <!-- <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{"Copyright @ 2012 浙江聚果工业互联网科技有限公司版权所有"}}</a> -->
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                备案号：<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备12041571号-2</a>
+              </div>
+              <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{
+              sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
+            </div>
           </div>
         </div>
       </div>
-
-      <p class="componey">
-        <i class="icon-ym icon-ym-lianxi" />
-        &nbsp;&nbsp;
-        {{ sysConfig.companyTelePhone ? sysConfig.companyTelePhone : "0574-89079512" }}
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{
-          sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
-        <!-- <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{"Copyright @ 2012 浙江聚果工业互联网科技有限公司版权所有"}}</a> -->
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        备案号：<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备12041571号-2</a>
-      </p>
     </div>
   </div>
 </template>
@@ -248,6 +258,10 @@ export default {
   name: 'Login',
   data() {
     return {
+      value1: false,
+      loginLeftText: '',
+      loginLeftTopic: '',
+      filteredList: [],
       aaa: '',
       argSys: this.GetQueryString("sys"),
       localSys: localStorage.getItem("sys"),
@@ -358,6 +372,15 @@ export default {
 
 
     this.loginForm.sys = this.argSys ? this.argSys : this.localSys
+    getConfig(this.loginForm.busCode + "@" + 'admin').then(res => {
+      this.needCode = !!res.data.enableVerificationCode
+      if (this.needCode) {
+        this.codeLength = res.data.verificationCodeNumber || 4
+      }
+      this.sysConfig = res.data.baseSystemInfo
+      this.isbgload = false
+      this.isLogin = false
+    })
     // getConfig('isTenancy').then(res => {
 
 
@@ -372,7 +395,7 @@ export default {
 
     //         this.handleLogin()
     //     } else {
-    this.isLogin = false;
+    // this.isLogin = false;
     this.loginForm.account1 = this.loginForm.busCode + "@" + this.loginForm.account
     //         if (this.isTenancy) {
     //             this.showTenancy = (this.argSys == 'all' || location.host.indexOf("localhost") > -1 || '默认展示租户')
@@ -579,7 +602,8 @@ export default {
       margin: 0 auto;
       justify-content: center;
       align-items: center;
-
+      .body-title {
+      }
       .body_right {
         z-index: 100;
         // background: rgba(0,0,0,.1);
@@ -728,7 +752,7 @@ export default {
   .login-bg {
     position: absolute;
     z-index: 0;
-    width: 100vw;
+    width: calc(100vw - 500px);
     height: 100vh;
     // object-fit: cover;
   }
@@ -789,7 +813,17 @@ export default {
       margin: 0 auto;
       justify-content: center;
       align-items: center;
-
+      .body-title {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 99;
+        display: flex;
+        font-size: 24px;
+        font-weight: bold;
+        color: white;
+        align-items: center;
+      }
       .body_left {
         position: absolute;
         left: 50px;
@@ -815,12 +849,29 @@ export default {
           padding: 10px 0;
         }
       }
-
+      .componey {
+        padding: 0 20px;
+        color: #000;
+        text-align: center;
+        position: absolute;
+        bottom: 20px;
+        font-size: 14px !important;
+        width: 100%;
+      }
       .body_right {
+        .userxy {
+          padding: 30px 0;
+          text-align: center;
+          font-size: 14px;
+          a {
+            color: #1890ff;
+          }
+        }
+        padding: 0 33px;
         position: absolute;
         // right: 50px;
         left: 50%;
-        top: 50%;
+        top: 30%;
         transform: translate(-50%, -50%);
         z-index: 100;
         // background: rgba(0,0,0,.1);
@@ -829,10 +880,9 @@ export default {
         overflow: hidden;
         // border-left: 1px solid rgba(0, 0, 0, 0.6);
         // box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.6);
-        width: 360px;
-        min-width: 360px;
-        height: 480px;
-
+        width: 500px;
+        min-width: 500px;
+        height: 570px;
         .title {
           white-space: nowrap;
           font-size: 26px;
@@ -858,6 +908,17 @@ export default {
         }
 
         .login-form {
+          .sms-password {
+            margin-top: 28px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            a {
+              color: #1890ff;
+              font-size: 14px;
+            }
+          }
           padding: 0 30px;
           text-align: center;
 
@@ -930,18 +991,6 @@ export default {
         }
       }
     }
-  }
-
-  .componey {
-    color: white;
-    text-align: center;
-    position: fixed;
-    bottom: 10px;
-    font-size: 14px !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(100vw - 360px);
   }
 }
 </style>

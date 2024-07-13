@@ -17,7 +17,8 @@
         </div>
         <div class="body_box">
           <div class="body_right">
-            <div style="display: flex;justify-content: space-between;background:rgba(0, 0, 0, 0.6);height: 82px;align-items: center;">
+            <div
+              style="display: flex;justify-content: space-between;background:rgba(0, 0, 0, 0.6);height: 82px;align-items: center;">
               <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'>
                 <el-image class="login-logo" :src="define.comUrl+loginpattern.loginIcon" v-if="loginpattern && loginpattern.loginIcon">
                   <template slot="error">
@@ -42,11 +43,12 @@
               <div class="login-form">
                 <div class="login-tab" :class="'active' + active">
                   <a class="item" :class="{ 'active': active == 1 }" @click="active = 1">{{
-                                        $t('login.title') }}</a>
+                    $t('login.title') }}</a>
                   <a class="item" :class="{ 'active': active == 2 }" @click="active = 2">{{
-                                        $t('login.scanTitle') }}</a>
+                    $t('login.scanTitle') }}</a>
                 </div>
-                <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" label-position="left">
+                <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
+                  label-position="left">
                   <!-- <el-form-item>
                                         <el-select class="sel-item" v-model="loginForm.sys" @change="getConfig"
                                             size="medium" v-show="showTenancy">
@@ -55,33 +57,44 @@
                                         </el-select>
                                     </el-form-item> -->
                   <el-form-item prop="busCode">
-                    <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                    <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
+                      name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large"
+                      @change="getConfig">
                     </el-input>
                   </el-form-item>
                   <el-form-item prop="account">
-                    <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')" name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                    <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')"
+                      name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large"
+                      @change="getConfig">
                     </el-input>
                   </el-form-item>
                   <!-- <el-form-item class="rule-tip">{{$t('login.rule')}}</el-form-item> -->
                   <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
                     <el-form-item prop="password">
-                      <el-input ref="password" v-model="loginForm.password" show-password :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock" size="large"></el-input>
+                      <el-input ref="password" v-model="loginForm.password" show-password
+                        :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
+                        @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock"
+                        size="large"></el-input>
                     </el-form-item>
                   </el-tooltip>
                   <el-form-item prop="code" v-if="needCode">
                     <el-row type="flex" justify="space-between">
                       <el-col class="sms-input">
-                        <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code" autocomplete="on" prefix-icon="el-icon-key" size="large">
+                        <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code"
+                          autocomplete="on" prefix-icon="el-icon-key" size="large">
                         </el-input>
                       </el-col>
                       <el-col class="sms-right code-right">
                         <el-tooltip :content="$t('login.changeCode')" placement="bottom">
-                          <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl" @click="changeImg">
+                          <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl"
+                            @click="changeImg">
                         </el-tooltip>
                       </el-col>
                     </el-row>
                   </el-form-item>
-                  <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
+                  <el-button :loading="loading" type="primary" class="login-btn" size="large"
+                    @click.native.prevent="handleLogin">{{
+                      $t('login.logIn') }}</el-button>
 
                 </el-form>
 
@@ -101,7 +114,7 @@
         {{ sysConfig.companyTelePhone ? sysConfig.companyTelePhone : "0574-89079512" }}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{
-                    sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
+          sysConfig.copyright ? sysConfig.copyright : "Copyright @ 2012 宁波聚轩信息科技有限公司版权所有" }}</a>
         <!-- <a :href="(sysConfig.companyUrl ? sysConfig.companyUrl : 'http://www.nbjuxuan.com')" target="_blank">{{"Copyright @ 2012 浙江聚果工业互联网科技有限公司版权所有"}}</a> -->
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         备案号：<a href="https://beian.miit.gov.cn" target="_blank">浙ICP备12041571号-2</a>
@@ -131,7 +144,7 @@
             <div>
               <div v-for="item in filteredList" :key="item.id" style="text-align:center;margin-right: 16px;">
                 <el-image style="width: 90px;height: 90px;" :src="define.comUrl + item.value"></el-image>
-                <div>{{item.name}}</div>
+                <div>{{ item.name }}</div>
               </div>
             </div>
           </div> -->
@@ -158,39 +171,49 @@
                 <div class="login-form">
                   <div class="login-tab" :class="'active' + active">
                     <a class="item" :class="{ 'active': active == 1 }" @click="active = 1">{{
-                                  $t('login.title') }}</a>
+                      $t('login.title') }}</a>
                     <a class="item" :class="{ 'active': active == 2 }" @click="active = 2">{{
-                                  $t('login.scanTitle') }}</a>
+                      $t('login.scanTitle') }}</a>
                   </div>
-                  <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on" label-position="left">
+                  <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
+                    label-position="left">
                     <!-- <el-form-item>
                       <el-select class="sel-item" v-model="loginForm.sys" @change="getConfig" size="medium" v-show="showTenancy">
                         <el-option v-for="(value, key) in tanants" :key="key" :value="value.enCode" :label="value.companyName"></el-option>
                       </el-select>
                     </el-form-item> -->
                     <el-form-item prop="busCode">
-                      <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')" name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                      <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
+                        name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
+                        size="large" @change="getConfig">
                       </el-input>
                     </el-form-item>
                     <el-form-item prop="account">
-                      <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')" name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user" size="large" @change="getConfig">
+                      <el-input ref="account" v-model="loginForm.account" :placeholder="$t('login.username')"
+                        name="account" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
+                        size="large" @change="getConfig">
                       </el-input>
                     </el-form-item>
                     <!-- <el-form-item class="rule-tip">{{$t('login.rule')}}</el-form-item> -->
                     <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
                       <el-form-item prop="password">
-                        <el-input ref="password" v-model="loginForm.password" show-password :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on" @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock" size="large"></el-input>
+                        <el-input ref="password" v-model="loginForm.password" show-password
+                          :placeholder="$t('login.password')" name="password" tabindex="2" autocomplete="on"
+                          @keyup.native="checkCapslock" @blur="capsTooltip = false" prefix-icon="el-icon-lock"
+                          size="large"></el-input>
                       </el-form-item>
                     </el-tooltip>
                     <el-form-item prop="code" v-if="needCode">
                       <el-row type="flex" justify="space-between">
                         <el-col class="sms-input">
-                          <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code" autocomplete="on" prefix-icon="el-icon-key" size="large">
+                          <el-input v-model="loginForm.code" :placeholder="$t('login.codeTip')" name="code"
+                            autocomplete="on" prefix-icon="el-icon-key" size="large">
                           </el-input>
                         </el-col>
                         <el-col class="sms-right code-right">
                           <el-tooltip :content="$t('login.changeCode')" placement="bottom">
-                            <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl" @click="changeImg">
+                            <img id="imgcode" :alt="$t('login.changeCode')" :src="define.comUrl + imgUrl"
+                              @click="changeImg">
                           </el-tooltip>
                         </el-col>
                       </el-row>
@@ -239,6 +262,7 @@
 import {
   getConfig, getpattern
 } from '@/api/user'
+import { login, logout, getInfo, unlock } from '@/api/user'
 export default {
   name: 'Login',
   data() {
@@ -313,6 +337,7 @@ export default {
     },
     $route: {
       handler: function (route) {
+        console.log("router", route);
         let aaa = ''
         if (location.host.substring(0, 3) === 'jlw') {
           this.aaa = '机联网'
@@ -324,6 +349,7 @@ export default {
         localStorage.setItem('aaa', aaa)
         const query = route.query
         if (query) {
+          console.log("query", query);
           this.redirect = query.redirect
           this.otherQuery = this.getOtherQuery(query)
           delete this.otherQuery.sys;
@@ -479,7 +505,7 @@ export default {
             localStorage.setItem("sys", this.loginForm.busCode)
             location.reload()
             this.$router.push({
-              path: this.redirect || '/home',
+              path: this.redirect ,
               query: this.otherQuery
             })
 
@@ -690,6 +716,7 @@ export default {
       }
     }
   }
+
   .componey {
     color: white;
     text-align: center;
@@ -812,17 +839,20 @@ export default {
         height: 400px;
         z-index: 99;
         overflow: hidden;
+
         p:nth-child(1) {
           color: orange;
           font-size: 44px;
           font-weight: bold;
         }
+
         p {
           font-size: 40px;
           line-height: 52px;
           color: #fff;
         }
-        & > div:nth-child(3) {
+
+        &>div:nth-child(3) {
           display: flex;
           padding: 10px 0;
         }
@@ -866,6 +896,7 @@ export default {
           font-size: 26px;
           color: #000;
         }
+
         .login-version {
           width: 117px;
           height: 30px;

@@ -80,9 +80,20 @@ import {
 import {
   setMajor, getSystem
 } from '@/api/permission/userSetting'
+import {
+  getMenuList,
+  updateMenuState,
+  delMenu,
+  exportMenu,
+  copyMenuDeep
+} from "@/api/system/menu";
+import {info} from "@/api/system/system"
 export default {
   computed: {
-    ...mapGetters(['device', 'userInfo']),
+    systemVO() {
+      return this.$store.state.settings.systemVO
+    },
+    ...mapGetters(['device', 'userInfo', 'menuList']),
     language() {
       return this.$store.getters.language
     },
@@ -91,6 +102,7 @@ export default {
       head: state => state.settings.head,
     }),
   },
+
   data() {
     return {
       systemName: '',
@@ -116,7 +128,7 @@ export default {
     }
   },
   created() {
-    console.log(111,this.userInfo.systemIds);
+    console.log(111, this.userInfo.systemIds);
     this.userInfo.systemIds.forEach(item => {
       if (item.currentSystem) { this.systemName = item.name }
     })
@@ -131,7 +143,7 @@ export default {
   },
   methods: {
     changeMajor(majorId, majorType, name) { //切换系统
-      localStorage.setItem("qhxt",true)
+      localStorage.setItem("qhxt", true)
       if (name === this.systemName) return
       let query = {
         majorId,
@@ -144,16 +156,24 @@ export default {
           type: 'success',
           duration: 1500,
           onClose: () => {
-            console.log(name);
+            console.log(name, this.menuList);
             this.$store.commit('user/SET_TOAST', false)
             if (name == "ERP（企业资源计划管理）") {
               location.href = location.origin + "/portal/ERPsystem"
             } else if (name == "MES（生产制造执行系统）") {
               location.href = location.origin + "/portal/MESsystem"
-            } else if (name == "轴管通4.0") {
-
-              location.href = location.origin + "/commonPage"
-            } else if (name == "后台管理系统" || name == "开发管理系统") {
+            } 
+            else if (name == "轴管通4.0") {
+              // console.log("systemVO",this.systemVO);
+              // info(majorId).then(response=>{
+              //   console.log(response,location.origin + '/' + response.data.homeUrl);
+              //   location.href = location.origin + '/' + response.data.homeUrl
+              // })
+       
+            location.href = location.origin +"/commonPage"
+              
+            }
+             else if (name == "后台管理系统" || name == "开发管理系统") {
               location.href = location.origin + "/homepage"
             } else {
               location.href = location.origin
@@ -343,7 +363,8 @@ export default {
         text-align: center;
         border-radius: 2px;
         transition: all .3s;
-        top:10px;
+        top: 10px;
+
         .ant-input-search-button {
           background: none;
           border: none;
@@ -389,6 +410,7 @@ export default {
       font-size: 16px;
       align-items: center;
       color: #666;
+
       .anticon-check-circle {
         color: #bdbdbd;
         font-size: 22px;
@@ -423,7 +445,8 @@ export default {
 .yc {
   color: #fff;
 }
-.syst{
+
+.syst {
   background-image: linear-gradient(to right, #1890ff, #3FB9F8);
 }
 }

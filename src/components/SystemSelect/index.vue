@@ -88,6 +88,7 @@ import {
   copyMenuDeep
 } from "@/api/system/menu";
 import {info} from "@/api/system/system"
+import { login, logout, getInfo, unlock } from '@/api/user'
 export default {
   computed: {
     systemVO() {
@@ -164,10 +165,10 @@ export default {
               location.href = location.origin + "/portal/MESsystem"
             } 
             else if (name == "轴管通4.0") {
-              console.log("systemVO",this.systemVO);
-              info(majorId).then(response=>{
-                console.log(response,location.origin + '/' + response.data.homeUrl);
-                location.href = location.origin + '/' + response.data.homeUrl
+              getInfo("").then(response=>{
+                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+            
+                location.href = location.origin + '/' + response.data.systemVO.homeUrl
               })
        
             // location.href = location.origin +"/commonPage"

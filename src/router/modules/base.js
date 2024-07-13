@@ -1,13 +1,13 @@
 // 基础路由
 const baseRouter = [
     {
-	path: '/home',
+	path: '/',
 	component: (resolve) => require(['@/views/basic/dashboard'], resolve),
 	name: 'home',
 	meta: {
 		title: 'home',
 		icon: 'icon-ym icon-ym-nav-home',
-		affix: true,
+		affix: false,
 		zhTitle: '首页'
 	}
 },

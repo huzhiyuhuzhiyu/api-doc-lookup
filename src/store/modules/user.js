@@ -120,6 +120,7 @@ const actions = {
         let routerList = []
 
         function setData(list) {
+          console.log("list11111",list);
           for (let i = 0; i < list.length; i++) {
             const e = list[i]
             let name = e.enCode.replace(/\./g, '-')
@@ -142,7 +143,8 @@ const actions = {
                   title: name,
                   icon: e.icon,
                   zhTitle: e.fullName,
-                  modelId: e.id
+                  modelId: e.id,
+                  affix:data.systemVO.homeUrl&&path==data.systemVO.homeUrl?true:false
                 }
               }
               routerList.push(newObj)

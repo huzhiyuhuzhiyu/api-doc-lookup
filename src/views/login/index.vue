@@ -500,14 +500,19 @@ export default {
               localStorage.setItem('aaa', 'jz')
 
             }
-            localStorage.setItem('qhxt', false)
+            getInfo("").then(response=>{
+                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                localStorage.setItem('qhxt', false)
             this.$store.commit('jx/SET_LOGO')
             localStorage.setItem("sys", this.loginForm.busCode)
-            location.reload()
-            this.$router.push({
-              path: this.redirect ,
-              query: this.otherQuery
-            })
+                location.href = location.origin + '/' + response.data.systemVO.homeUrl
+              })
+            
+            // location.reload()
+            // this.$router.push({
+            //   path: this.redirect ,
+            //   query: this.otherQuery
+            // })
 
           }).catch(() => {
             this.$store.commit('user/SET_LOGIN_LOADING', false)

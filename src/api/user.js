@@ -45,3 +45,10 @@ export function getConfig(account) {
     method: 'get'
   })
 }
+// 获取登录信息
+export function getpattern() {
+  return request({
+    url: `/api/system/SysConfig/get/pattern`,
+    method: 'get',
+  })
+}

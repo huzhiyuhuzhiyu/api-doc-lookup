@@ -66,61 +66,55 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="登录设置" name="manner">
-          <el-form-item label="登录风格:">
-            <el-radio-group v-model="baseForm.pattern">
-              <div class="manner-container">
-                <div class="manner-container-img">
-                  <el-image :src="require('@/assets/images/manner1.png')" fit="fill"></el-image>
-                  <div><el-radio :label="1">登录样式1</el-radio></div>
+          <el-row :gutter="20" style="margin: 0 20px;">
+            <el-col :span="24" style="font-weight:bold;color: #606266;font-size:16px">登录风格:</el-col>
+            <el-col :span="24"><el-radio-group v-model="baseForm.pattern">
+                <div class="manner-container">
+                  <div class="manner-container-img">
+                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill"></el-image>
+                    <div><el-radio label="1">登录样式1</el-radio></div>
+                  </div>
+                  <div class="manner-container-img">
+                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill"></el-image>
+                    <div><el-radio label="2">登录样式2</el-radio></div>
+                  </div>
                 </div>
-                <div class="manner-container-img">
-                  <el-image :src="require('@/assets/images/manner2.png')" fit="fill"></el-image>
-                  <div><el-radio :label="2">登录样式2</el-radio></div>
-                </div>
-              </div>
-            </el-radio-group>
-          </el-form-item>
-          <el-row :gutter="20" v-if="baseForm.pattern=='2'">
+              </el-radio-group></el-col>
+          </el-row>
+          <el-row :gutter="20">
             <el-col :span="24">
-              <el-form-item label="样式2左标题" prop="loginLeftTopic">
-                <el-input v-model="baseForm.loginLeftTopic" clearable placeholder="请输入样式2左标题" />
+              <el-form-item label="登录图标:">
+                <div class="img-list">
+                  <div class="img_box">
+                    <single-img v-model="baseForm.loginIcon" tip="11:1" />
+                    <div class="img_box_text">该登录图标应用于登录界面
+                      <i class="el-icon-question"></i>
+                    </div>
+                  </div>
+                </div>
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="样式2左内容" prop="loginLeftText">
-                <el-input v-model="baseForm.loginLeftText" type="textarea" clearable placeholder="请输入样式2左内容" />
+              <el-form-item label="登录背景:">
+                <div class="img-list">
+                  <div class="img_box">
+                    <single-img v-model="baseForm.loginBg" tip="11:1" />
+                    <div class="img_box_text">
+                      该登录背景应用于登录界面
+                      <i class="el-icon-question"></i>
+                    </div>
+                    <!-- <div class="img_box_text">11:1</div> -->
+                  </div>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
           <el-form-item style="margin-top:20px">
-            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitFormlogin()">保 存</el-button>
           </el-form-item>
 
         </el-tab-pane>
         <el-tab-pane label="PC端设置" name="second">
-
-          <el-form-item label="登录图标:">
-            <div class="img-list">
-              <div class="img_box">
-                <single-img v-model="baseForm.loginIcon" tip="11:1" />
-                <div class="img_box_text">该登录图标应用于登录界面
-                  <i class="el-icon-question"></i>
-                </div>
-              </div>
-            </div>
-          </el-form-item>
-          <el-form-item label="登录背景:">
-            <div class="img-list">
-              <div class="img_box">
-                <single-img v-model="baseForm.loginBg" tip="11:1" />
-                <div class="img_box_text">
-                  该登录背景应用于登录界面
-                  <i class="el-icon-question"></i>
-                </div>
-                <!-- <div class="img_box_text">11:1</div> -->
-              </div>
-            </div>
-          </el-form-item>
           <el-form-item label="导航图标:">
             <div class="img-list">
               <div class="img_box">
@@ -546,7 +540,8 @@ import {
   synAllOrganizeSysToQy,
   synAllUserSysToQy,
   getAdminList,
-  setAdminList
+  setAdminList,
+  setpattern
 } from '@/api/system/sysConfig'
 import singleImg from '@/components/Upload/SingleImg'
 
@@ -878,6 +873,17 @@ export default {
         }).catch(() => { type == 0 ? this.wechatLoading = false : this.dingLoading = false })
       })
     },
+    submitFormlogin() {
+      this.btnLoading = true
+      let a = {
+        pattern: this.baseForm.pattern,
+        loginIcon: this.baseForm.loginIcon,
+        loginBg: this.baseForm.loginBg
+      }
+      setpattern(a).then(res => {
+        this.submitForm()
+      })
+    },
     submitSmsForm() {
       this.$refs['baseForm'].validate((valid) => {
         if (!valid) return
@@ -943,12 +949,15 @@ export default {
   display: flex;
   justify-content: space-around;
   align-content: center;
+  .manner-container-img + .manner-container-img {
+    padding-left: 10px;
+  }
   .manner-container-img {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    padding: 5px;
+    padding: 5px 0;
     div {
       text-align: center;
       margin-top: 10px;
@@ -1106,7 +1115,7 @@ export default {
 ::v-deep .el-form {
   height: 100% !important;
 }
-::v-deep .el-tabs__item{
+::v-deep .el-tabs__item {
   padding: 0 10px;
 }
 </style>

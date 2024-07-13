@@ -58,8 +58,8 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
-          <el-table-column prop="code" label="编码"> </el-table-column>
           <el-table-column prop="name" label="名称" />
+          <el-table-column prop="code" label="编码"> </el-table-column>
           <el-table-column prop="remark" label="备注" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">

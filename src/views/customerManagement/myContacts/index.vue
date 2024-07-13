@@ -48,8 +48,8 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
             custom-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="140"/>
             <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="140"/>
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="140"/>
             <el-table-column prop="name" label="姓名" min-width="140" />
             <el-table-column prop="sex" label="性别" min-width="80"/>
             <el-table-column prop="phone" label="电话" sortable="custom" min-width="140"/>

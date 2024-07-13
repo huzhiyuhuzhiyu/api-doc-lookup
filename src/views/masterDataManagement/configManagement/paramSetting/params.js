@@ -59,5 +59,21 @@ export default () => [
         ]
       },
     ]
+  },
+  {
+    tabCode: "attachmentswitch",
+    tabName: "附件开关",
+    tabContent: [
+      {
+        row: [
+          { prop: "fj_zskh", clearable: false, label: "正式客户", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_wdkh", clearable: false, label: "我的客户", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_qzkh", clearable: false, label: "潜在客户", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_ghkh", clearable: false, label: "公海客户", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_cggysgl", clearable: false, label: "采购供应商管理", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_wxgysgl", clearable: false, label: "外协供应商管理", value: '0', sm: 6, type: 'select', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+        ]
+      },
+    ]
   }
 ]

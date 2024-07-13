@@ -510,7 +510,7 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btnType=='look'" :detailed="btnType=='look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -532,6 +532,7 @@ import {
 export default {
   data() {
     return {
+      isattachmentswitch:'',
       loadingareafoundation:false,
       foundationloadingcity:false,
       loadingarea:false,
@@ -752,10 +753,16 @@ export default {
     }
   },
   created() {
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
+    getAttachmentswitch(){
+      getBimBusinessInfo('460918390082716393').then(res=>{
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     changePerple(internalStaffId, data) {
       // console.log(data);
       if (!data) return

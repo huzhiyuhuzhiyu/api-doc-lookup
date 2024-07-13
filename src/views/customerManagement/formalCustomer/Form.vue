@@ -509,7 +509,7 @@
             <el-table-column prop="createBy" label="创建人" min-width="120" />
           </JNPF-table>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btnType=='look'" :detailed="btnType=='look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -729,13 +729,20 @@ export default {
       organizeIdTrees: [],
       salesFlag: false,
       businessType:"",
+      isattachmentswitch:''
     }
   },
   created() {
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
+    getAttachmentswitch(){
+      getBimBusinessInfo('460918390082716391').then(res=>{
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     changePerple(internalStaffId, data) {
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')

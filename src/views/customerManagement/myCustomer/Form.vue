@@ -533,7 +533,7 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -778,16 +778,22 @@ export default {
       organizeIdTrees: [],
       salesFlag: false,
       businessType:'',
+      isattachmentswitch:''
     }
   },
   created() {
-    console.log(this.userInfo);
     this.dataForm.salespersonId = this.userInfo.userId
     this.dataForm.departmentId = this.userInfo.departmentId,
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
+    getAttachmentswitch(){
+      getBimBusinessInfo('460918390082716392').then(res=>{
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     changePerple(internalStaffId, data) { 
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')

@@ -559,7 +559,7 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="!!btnType" :detailed="!!btnType"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -573,7 +573,7 @@ import { createOrganize, updateOrganize, getOrganizeInfo } from '@/api/permissio
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
   editPartner, addPartner
-  , getCooperativeInfo, getCounryData, checkCode
+  , getCooperativeInfo, getCounryData, checkCode,getBimBusinessInfo
 } from '@/api/basicData/index'
 import formValidate from "@/utils/formValidate";
 import {
@@ -776,15 +776,22 @@ export default {
         paymentCycle: [
           { required: true, message: '请选择付款周期', trigger: 'change' },
         ]
-      }
+      },
+      isattachmentswitch:''
     }
   },
   created() {
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
     // this.getCounryDatas()
   },
   methods: {
+    getAttachmentswitch(){
+      getBimBusinessInfo('460918390082716396').then(res=>{
+        this.isattachmentswitch = res.data.configValue1
+      })
+    },
     //基础信息点击选择区
     foundationfocusactionarea(val){
       this.loadingareafoundation = true

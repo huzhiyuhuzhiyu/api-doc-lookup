@@ -92,3 +92,11 @@ export function setAdminList(adminIds) {
     data: { adminIds }
   })
 }
+// 登录样式设置
+export function setpattern(data) {
+  return request({
+    url: '/api/system/SysConfig/set/pattern',
+    method: 'POST',
+    data
+  })
+}

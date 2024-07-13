@@ -67,7 +67,7 @@
         </el-tab-pane>
         <el-tab-pane label="登录设置" name="manner">
           <el-row :gutter="20" style="margin: 0 20px;">
-            <el-col :span="24" style="font-weight:bold;color: #606266;">登录风格:</el-col>
+            <el-col :span="24" style="font-weight:bold;color: #606266;font-size:16px">登录风格:</el-col>
             <el-col :span="24"><el-radio-group v-model="baseForm.pattern">
                 <div class="manner-container">
                   <div class="manner-container-img">
@@ -81,35 +81,7 @@
                 </div>
               </el-radio-group></el-col>
           </el-row>
-          <el-row :gutter="20" v-if="baseForm.pattern=='1'">
-            <el-col :span="24">
-              <el-form-item label="登录图标:">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginIcon" tip="11:1" />
-                    <div class="img_box_text">该登录图标应用于登录界面
-                      <i class="el-icon-question"></i>
-                    </div>
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="登录背景:">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginBg" tip="11:1" />
-                    <div class="img_box_text">
-                      该登录背景应用于登录界面
-                      <i class="el-icon-question"></i>
-                    </div>
-                    <!-- <div class="img_box_text">11:1</div> -->
-                  </div>
-                </div>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20" v-if="baseForm.pattern=='2'">
+          <el-row :gutter="20">
             <el-col :span="24">
               <el-form-item label="登录图标:">
                 <div class="img-list">
@@ -138,7 +110,7 @@
             </el-col>
           </el-row>
           <el-form-item style="margin-top:20px">
-            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitFormlogin()">保 存</el-button>
           </el-form-item>
 
         </el-tab-pane>
@@ -568,7 +540,8 @@ import {
   synAllOrganizeSysToQy,
   synAllUserSysToQy,
   getAdminList,
-  setAdminList
+  setAdminList,
+  setpattern
 } from '@/api/system/sysConfig'
 import singleImg from '@/components/Upload/SingleImg'
 
@@ -898,6 +871,17 @@ export default {
             duration: 1500,
           })
         }).catch(() => { type == 0 ? this.wechatLoading = false : this.dingLoading = false })
+      })
+    },
+    submitFormlogin() {
+      this.btnLoading = true
+      let a = {
+        pattern: this.baseForm.pattern,
+        loginIcon: this.baseForm.loginIcon,
+        loginBg: this.baseForm.loginBg
+      }
+      setpattern(a).then(res => {
+        this.submitForm()
       })
     },
     submitSmsForm() {

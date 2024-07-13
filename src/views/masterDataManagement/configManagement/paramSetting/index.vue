@@ -35,6 +35,7 @@ export default {
       formLoading: false,
       listQuery: {
         codeFlag: 1,    // 1是编码 0是财务
+        annexFlag: 0
       },
       codeSetData: [],
     }
@@ -58,10 +59,16 @@ export default {
     initData() {
       if (this.activeName === 'codeSet') {
         this.listQuery.codeFlag = 1
+        this.listQuery.annexFlag = 0
         this.getData(0)
       } else if (this.activeName === 'financialSet') {
         this.listQuery.codeFlag = 0
+        this.listQuery.annexFlag = 0
         this.getData(1)
+      } else if (this.activeName === 'attachmentswitch') {
+        this.listQuery.codeFlag = 0
+        this.listQuery.annexFlag = 1
+        this.getData(2)
       }
     },
     getData(index){

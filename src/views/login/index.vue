@@ -6,10 +6,10 @@
         <span> 跳转中…</span>
       </div>
     </div>
-    <div class="login-container" v-show="!isLogin" v-if="sysConfig.pattern=='1'">
+    <div class="login-container" v-show="!isLogin" v-if="loginpattern.pattern=='1'">
 
       <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
-      <el-image class="login-bg" :src="define.comUrl + sysConfig.loginBg" @load="bgload" v-show="isbgload"></el-image>
+      <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
       <img class="login-bg" src="@/assets/images/login_bg.png" alt="" v-show="!isbgload" />
       <div class="body">
         <div style="opacity: .8;">
@@ -19,10 +19,14 @@
           <div class="body_right">
             <div style="display: flex;justify-content: space-between;background:rgba(0, 0, 0, 0.6);height: 82px;align-items: center;">
               <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'>
-                <!-- <el-image class="login-logo" :src="define.comUrl+sysConfig.loginIcon" v-if="sysConfig && sysConfig.loginIcon"> -->
+                <el-image class="login-logo" :src="define.comUrl+loginpattern.loginIcon" v-if="loginpattern && loginpattern.loginIcon">
+                  <template slot="error">
+                    <img class="login-logo" src="@/assets/images/jnpf.png" alt="">
+                  </template>
+                </el-image>
                 <!-- <template slot="error"> -->
                 <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt=""> -->
-                <img class="login-logo" src="@/assets/images/jnpf.png" alt="">
+                <img class="login-logo" src="@/assets/images/jnpf.png" alt="" v-else>
                 <!-- </template> -->
                 <!-- </el-image> -->
                 <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt="" v-else> -->
@@ -106,7 +110,7 @@
     <div class="login-container2" v-show="!isLogin" v-else>
 
       <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
-      <el-image class="login-bg" :src="define.comUrl + sysConfig.loginBg" @load="bgload" v-show="isbgload"></el-image>
+      <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
       <img class="login-bg" src="@/assets/images/sybj.jpg" alt="" v-show="!isbgload" />
       <div class="body">
         <div style="opacity: .8;">
@@ -114,7 +118,12 @@
         </div>
         <div class="body_box">
           <div class="body-title">
-            <img class="login-logo" src="@/assets/images/jnpf.png" alt=""><span class="title">{{aaa}}</span>
+            <el-image class="login-logo" :src="define.comUrl+loginpattern.loginIcon" v-if="loginpattern && loginpattern.loginIcon">
+              <template slot="error">
+                <img class="login-logo" src="@/assets/images/jnpf.png" alt="">
+              </template>
+            </el-image>
+            <img class="login-logo" src="@/assets/images/jnpf.png" alt="" v-else><span class="title">{{aaa}}</span>
           </div>
           <!-- <div class="body_left">
             <p>{{loginLeftTopic}}</p>
@@ -228,7 +237,7 @@
 
 <script>
 import {
-  getConfig
+  getConfig, getpattern
 } from '@/api/user'
 export default {
   name: 'Login',
@@ -288,8 +297,8 @@ export default {
       tanants: [],
       berning: [],
       isbgload: false,
-      isLogin: true
-
+      isLogin: true,
+      loginpattern: {}
     }
   },
   computed: {
@@ -322,7 +331,7 @@ export default {
           delete this.otherQuery.uname;
         }
       },
-      immediate: true
+      immediate: true,
     }
   },
   created() {
@@ -346,12 +355,11 @@ export default {
 
 
     this.loginForm.sys = this.argSys ? this.argSys : this.localSys
-    getConfig(this.loginForm.busCode + "@" + 'admin').then(res => {
-      this.needCode = !!res.data.enableVerificationCode
-      if (this.needCode) {
-        this.codeLength = res.data.verificationCodeNumber || 4
+    getpattern().then(res => {
+      for (let key in res.data) {
+        res.data[key] = res.data[key].replace(new RegExp('\"', 'g'), '')
       }
-      this.sysConfig = res.data.baseSystemInfo
+      this.loginpattern = res.data
       this.isbgload = false
       this.isLogin = false
     })

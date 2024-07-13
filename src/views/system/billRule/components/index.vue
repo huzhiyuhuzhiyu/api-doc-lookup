@@ -210,5 +210,6 @@ export default {
 }
 .dialog-footer{
   padding-left: 20px;
+  text-align: right
 }
 </style>

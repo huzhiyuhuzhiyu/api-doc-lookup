@@ -164,13 +164,13 @@ export default {
               location.href = location.origin + "/portal/MESsystem"
             } 
             else if (name == "轴管通4.0") {
-              // console.log("systemVO",this.systemVO);
-              // info(majorId).then(response=>{
-              //   console.log(response,location.origin + '/' + response.data.homeUrl);
-              //   location.href = location.origin + '/' + response.data.homeUrl
-              // })
+              console.log("systemVO",this.systemVO);
+              info(majorId).then(response=>{
+                console.log(response,location.origin + '/' + response.data.homeUrl);
+                location.href = location.origin + '/' + response.data.homeUrl
+              })
        
-            location.href = location.origin +"/commonPage"
+            // location.href = location.origin +"/commonPage"
               
             }
              else if (name == "后台管理系统" || name == "开发管理系统") {

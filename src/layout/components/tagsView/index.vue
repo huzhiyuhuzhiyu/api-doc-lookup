@@ -200,10 +200,10 @@ export default {
           this.$router.replace({ path: '/redirect' + view.fullPath })
         } else {
           getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
             
-          this.$router.push('/' + response.data.systemVO.homeUrl)
-          // location.href = location.origin + '/' + response.data.systemVO.homeUrl
+          // this.$router.push('/' + response.data.systemVO.homeAdress)
+          location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
         }
       }

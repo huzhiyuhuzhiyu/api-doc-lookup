@@ -233,7 +233,7 @@
                   </div>
                 </div>
               </div>
-              <div class="userxy">登录代表你已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
+              <div class="userxy">登录代表您已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
               <el-popover placement="bottom" width="172" trigger="hover">
                 <img src="@/assets/images/qygzh.png" alt="">
                 <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
@@ -501,11 +501,11 @@ export default {
 
             }
             getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
                 localStorage.setItem('qhxt', false)
             this.$store.commit('jx/SET_LOGO')
             localStorage.setItem("sys", this.loginForm.busCode)
-                location.href = location.origin + '/' + response.data.systemVO.homeUrl
+                location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
             
             // location.reload()
@@ -884,7 +884,7 @@ export default {
         position: absolute;
         // right: 50px;
         left: 50%;
-        top: 30%;
+        top: 308px;
         transform: translate(-50%, -50%);
         z-index: 100;
         // background: rgba(0,0,0,.1);

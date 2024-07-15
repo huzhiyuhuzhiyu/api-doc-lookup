@@ -1,7 +1,7 @@
 <template>
   <el-dialog title="查看公告" :close-on-press-escape="false" :close-on-click-modal="false"
     :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center JNPF-dialog-notice" lock-scroll
-    width="90%">
+    width="600px">
     <div class="notice-wrapper" v-loading="loading">
       <h1 class="title">{{dataForm.title}}</h1>
       <div class="info">

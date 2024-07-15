@@ -4,9 +4,9 @@
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.table ? '新建表名' : '编辑表名'" />
         <div class="options">
-          <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+          <el-button  size="mini" type="primary" @click="dataFormSubmit()" :loading="btnLoading">
             {{ $t('common.confirmButton') }}</el-button>
-          <el-button @click="goBack()">{{ $t('common.cancelButton') }}</el-button>
+          <el-button  size="mini" @click="goBack()">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main">
@@ -16,6 +16,13 @@
           </el-form-item>
           <el-form-item label="表说明" prop="tableName">
             <el-input v-model="dataForm.tableName" placeholder="表说明"></el-input>
+          </el-form-item>
+          <el-form-item label="所属分类" prop="tableName">
+            <el-select v-model="dataForm.categoryId" placeholder="请选择所属分类" clearable>
+                <el-option v-for="item in categoryList" :key="item.id" :label="item.fullName"
+                  :value="item.id">
+                </el-option>
+              </el-select>
           </el-form-item>
         </el-form>
         <div class="JNPF-common-title" style="padding:0 10px;">
@@ -98,14 +105,20 @@
 import Sortable from 'sortablejs'
 import { DataModelInfo, DataModelUpdate, DataModelCreate } from '@/api/systemData/dataModel'
 import { getList } from '@/api/systemData/commonFields'
+import {
+ 
+  getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   data() {
     return {
       dataForm: {
         table: '',
         tableName: '',
-        newTable: ''
+        newTable: '',
+        categoryId:""
       },
+      categoryList:[],
       dataRule: {
         newTable: [
           { required: true, message: '表名称不能为空', trigger: 'blur' },
@@ -134,6 +147,14 @@ export default {
     }
   },
   methods: {
+    getcategoryTree() {
+      getbimProductAttributes('306427078100678661').then(res => {
+        this.categoryList = res.data.list.length?res.data.list:[]
+        
+      }).catch(() => {
+       
+      })
+    },
     goBack() {
       this.$emit('close')
     },
@@ -146,6 +167,7 @@ export default {
       this.dataForm.table = table || ''
       this.dataBase = dataBase
       this.listLoading = true
+      this.getcategoryTree()
       this.getFieldList()
       this.$nextTick(() => {
         if (this.dataForm.table) {

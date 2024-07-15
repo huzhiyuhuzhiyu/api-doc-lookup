@@ -23,14 +23,14 @@
             <el-step title="流程信息"></el-step>
           </el-steps>
           <div class="options">
-            <el-button @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
-            <el-button @click="next" :disabled="activeStep >= 1 || loading">{{ $t('common.next') }}
+            <el-button size="mini" @click="prev" :disabled="activeStep <= 0">{{ $t('common.prev') }}</el-button>
+            <el-button size="mini" @click="next" :disabled="activeStep >= 1 || loading">{{ $t('common.next') }}
             </el-button>
-            <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-show="btnType != 'look'">
+            <el-button type="success" size="mini" :loading="btnLoading" @click="handleConfirm('draft')" v-show="btnType != 'look'">
               保存草稿</el-button>
-            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')" v-show="btnType != 'look'">
+            <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')" v-show="btnType != 'look'">
               保存并提交</el-button>
-            <el-button @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
+            <el-button size="mini" @click="$emit('close', true)">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <!-- </div> -->

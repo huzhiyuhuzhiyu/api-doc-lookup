@@ -1,6 +1,6 @@
 <template>
   <div class="app-container JNPF-flex-main systemConfig">
-    <el-form ref="baseForm" :model="baseForm" :rules="rules" label-width="100px">
+    <el-form ref="baseForm" :model="baseForm" :rules="rules" label-width="110px">
       <el-tabs v-model="activeName" type="border-card" class="JNPF-el_tabs">
         <el-tab-pane label="企业设置" name="first">
           <el-row :gutter="20">
@@ -56,8 +56,7 @@
             </el-col>
             <el-col>
               <el-form-item label="系统描述" prop="sysDescription">
-                <el-input v-model="baseForm.sysDescription" type="textarea" :autosize="{ minRows: 5, maxRows: 10 }"
-                  placeholder="系统描述" />
+                <el-input v-model="baseForm.sysDescription" type="textarea" :autosize="{ minRows: 5, maxRows: 10 }" placeholder="系统描述" />
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保
@@ -66,88 +65,114 @@
             </el-col>
           </el-row>
         </el-tab-pane>
+        <el-tab-pane label="登录设置" name="manner">
+          <el-row :gutter="20" style="margin: 0 20px;">
+            <el-col :span="24" style="font-weight:bold;color: #606266;font-size:16px">登录风格:</el-col>
+            <el-col :span="24"><el-radio-group v-model="baseForm.pattern">
+                <div class="manner-container">
+                  <div class="manner-container-img">
+                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill"></el-image>
+                    <div><el-radio label="1">登录样式1</el-radio></div>
+                  </div>
+                  <div class="manner-container-img">
+                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill"></el-image>
+                    <div><el-radio label="2">登录样式2</el-radio></div>
+                  </div>
+                </div>
+              </el-radio-group></el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="24">
+              <el-form-item label="登录图标:">
+                <div class="img-list">
+                  <div class="img_box">
+                    <single-img v-model="baseForm.loginIcon" tip="11:1" />
+                    <div class="img_box_text">该登录图标应用于登录界面
+                      <i class="el-icon-question"></i>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="登录背景:">
+                <div class="img-list">
+                  <div class="img_box">
+                    <single-img v-model="baseForm.loginBg" tip="11:1" />
+                    <div class="img_box_text">
+                      该登录背景应用于登录界面
+                      <i class="el-icon-question"></i>
+                    </div>
+                    <!-- <div class="img_box_text">11:1</div> -->
+                  </div>
+                </div>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-form-item style="margin-top:20px">
+            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitFormlogin()">保 存</el-button>
+          </el-form-item>
+
+        </el-tab-pane>
         <el-tab-pane label="PC端设置" name="second">
-            
-            <el-form-item label="登录图标:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.loginIcon" tip="11:1" />
-                  <div class="img_box_text">该登录图标应用于登录界面 
-                    <i class="el-icon-question"></i>
-                  </div>
+          <el-form-item label="导航图标:">
+            <div class="img-list">
+              <div class="img_box">
+                <single-img v-model="baseForm.navigationIcon" tip="7:2" />
+                <div class="img_box_text">
+                  该导航图标应用于导航栏
+                  <i class="el-icon-question"></i>
                 </div>
               </div>
-            </el-form-item>
-            <el-form-item label="登录背景:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.loginBg" tip="11:1" />
-                  <div class="img_box_text">
-                    该登录背景应用于登录界面
-                    <i class="el-icon-question"></i>
-                  </div>
-                  <!-- <div class="img_box_text">11:1</div> -->
+            </div>
+          </el-form-item>
+          <el-form-item label="LOGO图:">
+            <div class="img-list">
+              <div class="img_box">
+                <single-img v-model="baseForm.logoIcon" tip="7:2" />
+                <div class="img_box_text">
+                  该LOGO图标应用于系统LOGO、在线开发、代码生成、自定义打印模板
+                  <i class="el-icon-question"></i>
                 </div>
               </div>
-            </el-form-item>
-            <el-form-item label="导航图标:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.navigationIcon" tip="7:2" />
-                  <div class="img_box_text">
-                    该导航图标应用于导航栏
-                    <i class="el-icon-question"></i>
-                  </div>
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item label="LOGO图:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.logoIcon" tip="7:2" />
-                  <div class="img_box_text">
-                    该LOGO图标应用于系统LOGO、在线开发、代码生成、自定义打印模板
-                    <i class="el-icon-question"></i>
-                  </div>
-                </div>
-              </div>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()" style="margin-bottom: 20px;">保 存</el-button>
-            </el-form-item>
+            </div>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()" style="margin-bottom: 20px;">保 存</el-button>
+          </el-form-item>
         </el-tab-pane>
         <el-tab-pane label="移动端设置" name="third">
-            <el-form-item label="APP轮播图:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.home1Url" tip="16:9" />
-                  <div class="img_box_text">手机轮播图1</div>
-                </div>
-                <div class="img_box">
-                  <single-img v-model="baseForm.home2Url" tip="16:9" />
-                  <div class="img_box_text">手机轮播图2</div>
-                </div>
-                <div class="img_box">
-                  <single-img v-model="baseForm.home3Url" tip="16:9" />
-                  <div class="img_box_text">手机轮播图3</div>
-                </div>
-                <div class="img_box">
-                  <single-img v-model="baseForm.home4Url" tip="16:9" />
-                  <div class="img_box_text">手机轮播图4</div>
-                </div>
+          <el-form-item label="APP轮播图:">
+            <div class="img-list">
+              <div class="img_box">
+                <single-img v-model="baseForm.home1Url" tip="16:9" />
+                <div class="img_box_text">手机轮播图1</div>
               </div>
-            </el-form-item>
-            <el-form-item label="二维码图标:">
-              <div class="img-list">
-                <div class="img_box">
-                  <single-img v-model="baseForm.androidURL" tip="1:1" />
-                  <div class="img_box_text">安卓APP</div>
-                </div>
-                <div class="img_box">
-                  <single-img v-model="baseForm.iosURL" tip='1:1' />
-                  <div class="img_box_text">IOS APP</div>
-                </div>
-                <!-- <div class="img_box">
+              <div class="img_box">
+                <single-img v-model="baseForm.home2Url" tip="16:9" />
+                <div class="img_box_text">手机轮播图2</div>
+              </div>
+              <div class="img_box">
+                <single-img v-model="baseForm.home3Url" tip="16:9" />
+                <div class="img_box_text">手机轮播图3</div>
+              </div>
+              <div class="img_box">
+                <single-img v-model="baseForm.home4Url" tip="16:9" />
+                <div class="img_box_text">手机轮播图4</div>
+              </div>
+            </div>
+          </el-form-item>
+          <el-form-item label="二维码图标:">
+            <div class="img-list">
+              <div class="img_box">
+                <single-img v-model="baseForm.androidURL" tip="1:1" />
+                <div class="img_box_text">安卓APP</div>
+              </div>
+              <div class="img_box">
+                <single-img v-model="baseForm.iosURL" tip='1:1' />
+                <div class="img_box_text">IOS APP</div>
+              </div>
+              <!-- <div class="img_box">
                   <single-img v-model="baseForm.xsxURL" tip='1:1' />
                   <div class="img_box_text">小程序</div>
                 </div>
@@ -155,27 +180,11 @@
                   <single-img v-model="baseForm.h5URL" tip='1:1' />
                   <div class="img_box_text">H5页面</div>
                 </div> -->
-              </div>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
-            </el-form-item>
-        </el-tab-pane>
-        <el-tab-pane label="登录设置" name="manner">
-            <el-form-item label="登录风格:">
-              <el-select v-model="baseForm.loginManner" placeholder="请选择">
-                  <el-option label="风格一" :value="1" />
-                  <el-option label="风格二" :value="2" />
-                </el-select>
-            </el-form-item>
-            <div style="width:60%;height:700px;padding:0 20px;margin:0 auto" v-show="baseForm.loginManner">
-              <img src="@/assets/images/manner1.jpg" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==1">
-              <img src="@/assets/images/manner2.png" alt="" style="width:100%;height:100%" v-show="baseForm.loginManner==2">
             </div>
-            <el-form-item style="margin-top:20px">
-              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
-            </el-form-item>
-           
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitForm()">保 存</el-button>
+          </el-form-item>
         </el-tab-pane>
         <!-- <el-tab-pane label="安全设置" name="second">
           <el-alert title="注意：系统登录安全、黑名单IP限制" type="warning" :closable="false" show-icon />
@@ -487,8 +496,7 @@
         </el-tab-pane> -->
       </el-tabs>
     </el-form>
-    <el-dialog title="数据同步" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll
-      width="450px">
+    <el-dialog title="数据同步" :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center sync-dialog" lock-scroll width="450px">
       <div class="add-main">
         <div class="add-item add-item-sys">
           <i class="add-icon icon-ym icon-ym-upload"></i>
@@ -497,8 +505,7 @@
             <p class="add-desc">{{ names }}</p>
           </div>
           <div class="add-button">
-            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(0) : syncDing(0)"
-              :loading="wechatLoading" :disabled="dingLoading">
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(0) : syncDing(0)" :loading="wechatLoading" :disabled="dingLoading">
               同步</el-button>
           </div>
         </div>
@@ -511,8 +518,7 @@
             <p class="add-desc">{{ synchronization }}</p>
           </div>
           <div class="add-button">
-            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(1) : syncDing(1)"
-              :loading="dingLoading" :disabled="wechatLoading">
+            <el-button type="primary" size="small" @click="name === '同步到企业微信' ? syncQy(1) : syncDing(1)" :loading="dingLoading" :disabled="wechatLoading">
               同步</el-button>
           </div>
         </div>
@@ -534,7 +540,8 @@ import {
   synAllOrganizeSysToQy,
   synAllUserSysToQy,
   getAdminList,
-  setAdminList
+  setAdminList,
+  setpattern
 } from '@/api/system/sysConfig'
 import singleImg from '@/components/Upload/SingleImg'
 
@@ -559,7 +566,10 @@ export default {
       names: '',
       row: '',
       baseForm: {
-        loginManner:'1',
+        loginLeftText: '',
+        loginLeftTopic: '',
+        pattern: 1,
+        loginManner: '1',
         sysName: '',
         sysDescription: '',
         sysVersion: '',
@@ -863,6 +873,17 @@ export default {
         }).catch(() => { type == 0 ? this.wechatLoading = false : this.dingLoading = false })
       })
     },
+    submitFormlogin() {
+      this.btnLoading = true
+      let a = {
+        pattern: this.baseForm.pattern,
+        loginIcon: this.baseForm.loginIcon,
+        loginBg: this.baseForm.loginBg
+      }
+      setpattern(a).then(res => {
+        this.submitForm()
+      })
+    },
     submitSmsForm() {
       this.$refs['baseForm'].validate((valid) => {
         if (!valid) return
@@ -924,27 +945,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.manner-container {
+  display: flex;
+  justify-content: space-around;
+  align-content: center;
+  .manner-container-img + .manner-container-img {
+    padding-left: 10px;
+  }
+  .manner-container-img {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    padding: 5px 0;
+    div {
+      text-align: center;
+      margin-top: 10px;
+    }
+  }
+}
 .el-form-item__content p {
   border-width: 0px;
 }
 
 .el-form-item__content p::before {
-  content: "";
+  content: '';
 }
 
 .systemConfig {
   padding: 0;
 
-  >>>.el-card__header {
+  >>> .el-card__header {
     padding: 6px 20px;
   }
 
-  >>>.el-tabs--border-card {
+  >>> .el-tabs--border-card {
     box-shadow: none;
     height: calc(100vh - 120px);
   }
 
-  >>>.el-tabs--border-card>.el-tabs__content {
+  >>> .el-tabs--border-card > .el-tabs__content {
     padding: 30px 36px 10px 36px;
   }
 
@@ -952,11 +992,11 @@ export default {
     width: 100px;
   }
 
-  .el-table>>>th {
+  .el-table >>> th {
     line-height: 23px;
   }
 
-  .thirdTab>>>.el-tabs__content {
+  .thirdTab >>> .el-tabs__content {
     height: 100%;
 
     .el-tab-pane {
@@ -982,7 +1022,7 @@ export default {
     .img_box_text {
       text-align: center;
       margin-right: 20px;
-      i{
+      i {
         cursor: pointer;
         font-size: 16px;
       }
@@ -1068,11 +1108,14 @@ export default {
   }
 }
 
->>>.sync-dialog .el-dialog__body {
+>>> .sync-dialog .el-dialog__body {
   padding: 20px 50px !important;
 }
 
 ::v-deep .el-form {
   height: 100% !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px;
 }
 </style>

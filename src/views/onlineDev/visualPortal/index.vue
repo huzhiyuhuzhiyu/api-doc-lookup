@@ -1,15 +1,54 @@
 <template>
   <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2 v-if="!leftFlag">业务分类</h2>
+          <span class="options" v-if="!leftFlag">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div>
+      </div>
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+
+            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+    </div>
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
-              <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
+              <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item label="所属分类">
               <el-select v-model="category" placeholder="请选择所属分类" clearable>
                 <el-option v-for="item in categoryList" :key="item.id" :label="item.fullName"
@@ -17,12 +56,12 @@
                 </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" size="mini" @click="reset()">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -35,13 +74,16 @@
               @on-success="initData" />
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                 @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
+        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm"  :setColumnDisplayList="columnList">
           <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
           <el-table-column prop="enCode" label="编码" width="200" />
           <el-table-column prop="category" label="分类" width="150" />
@@ -110,6 +152,14 @@
 </template>
 
 <script>
+import {
+  getBimProductAttributesInfo,
+  updataBimProductAttributes,
+  delBimProductAttributes,
+  addBimProductAttributes,
+  getbimProductAttributesList,
+  getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 import { getPortalList, Delete, Copy, exportTemplate } from '@/api/onlineDev/portal'
 import Form from './Form'
 import Form1 from './Form1'
@@ -120,14 +170,18 @@ export default {
   components: { Form, Form1, Preview, Transfer },
   data() {
     return {
-      list: [],
+      list: [],      
+      columnList: ["sortCode", "lastModifyTime", "creatorTime", "creatorUser", "webType", "category"],
+
       keyword: '',
       category: '',
       listQuery: {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-        sidx: ''
+        sidx: '',
+        category:"",
+        keyword:"",
       },
       total: 0,
       activeId: '',
@@ -138,17 +192,67 @@ export default {
       listLoading: false,
       formVisible: false,
       form1Visible: false,
-      categoryList: []
+      categoryList: [],
+      leftFlag: false,
+      treeLoading:false,
+      expands: true,
+      refreshTree: true,
+      treeData: [],
+      displayFlag:false,
+      defaultProps: {
+        children: "childrenList",
+        label: "fullName",
+      },
+      filterText:"",
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val);
+    },
+  },
   created() {
-    this.getDictionaryData()
-    this.initData()
+    this.getcategoryTree()
   },
   methods: {
-    reset() {
-      this.keyword = ''
-      this.category = ''
+    filterNode(value, data) {
+      console.log(value, data);
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    handleNodeClick(data, node) {
+      console.log("请选择节点", node);
+      this.listQuery.category = node.data.id
+      this.search();
+    },
+    getcategoryTree() {
+      this.treeLoading = true
+      this.listLoading = true
+      getbimProductAttributes('02ad722fd1914c338d51597236ad2339').then(res => {
+        this.treeData = res.data.list.length?res.data.list:[]
+        this.listLoading = false
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+          this.listQuery.category = this.treeData[0].id
+          this.treeLoading = false
+          this.listLoading = false
+          this.initData()
+        })
+      }).catch(() => {
+        this.listLoading = false
+        this.treeLoading = false
+      })
+    },
+
+   
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
+    },
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
+    reset() { 
       this.search()
     },
     search() {
@@ -156,8 +260,10 @@ export default {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-        sidx: ''
-      }
+        sidx: '',
+        category:this.listQuery.category,
+        keyword:"",
+      },
       this.initData()
     },
     getDictionaryData() {
@@ -167,12 +273,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-      let query = {
-        ...this.listQuery,
-        keyword: this.keyword,
-        category: this.category
-      }
-      getPortalList(query).then(res => {
+     
+      getPortalList(this.listQuery).then(res => {
         this.list = res.data.list
         this.total = res.data.pagination.total
         this.listLoading = false
@@ -305,5 +407,22 @@ export default {
       }
     }
   }
+}
+</style>
+<style scoped>
+  .title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 </style>

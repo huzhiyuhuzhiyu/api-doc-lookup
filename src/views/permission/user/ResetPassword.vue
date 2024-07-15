@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="$t(`user.resetPassword`)" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
+  <el-dialog :title="$t(`user.resetPassword`)" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
 
     <el-row :gutter="20">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-width="120px" label-position="top">
@@ -9,12 +9,12 @@
             <el-input v-model="dataForm.account" placeholder="账户" disabled />
           </el-form-item>
         </el-col> -->
-        <el-col :sm="12" :xs="24">
+        <el-col :sm="24" :xs="24">
           <el-form-item label="新密码" prop="userPassword">
             <el-input v-model="dataForm.userPassword" type="password" autocomplete="off" placeholder="请输入新密码" />
           </el-form-item>
         </el-col>
-        <el-col :sm="12" :xs="24">
+        <el-col :sm="24" :xs="24">
           <el-form-item label="确认新密码" prop="validatePassword">
             <el-input v-model="dataForm.validatePassword" type="password" autocomplete="off" placeholder="确认新密码" />
           </el-form-item>

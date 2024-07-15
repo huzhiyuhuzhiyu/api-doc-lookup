@@ -88,8 +88,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 .jnpf-editor-quill {
-  >>> .ql-editor {
-    min-height: 400px;
+  ::v-deep .ql-editor {
+    min-height: 240px;
     white-space: normal !important;
   }
   >>> .ql-toolbar.ql-snow {

@@ -377,4 +377,7 @@ export default {
   -ms-flex-align: center;
   align-items: center;
 }
+.JNPF-common-head{
+  padding: 8px 10px;
+}
 </style>

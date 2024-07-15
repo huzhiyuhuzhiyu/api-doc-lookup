@@ -95,13 +95,13 @@ export default {
 .JNPF-common-layout-main {
   padding: 0;
   .tip {
-    padding: 10px;
+    padding:0 10px 15px;
   }
 }
 .documentPreview-tab {
   height: 100%;
-  >>> .el-tabs__content {
-    padding: 0;
+  ::v-deep .el-tabs__content {
+    padding: 15px ;
     height: calc(100% - 40px);
     .box {
       flex: 1;
@@ -113,4 +113,5 @@ export default {
     }
   }
 }
+
 </style>

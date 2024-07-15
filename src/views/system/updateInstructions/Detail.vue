@@ -5,7 +5,7 @@
         <el-page-header @back="goBack" content="更新说明详情" />
         <div class="options">
               
-                    <el-button @click="goBack()">{{
+                    <el-button @click="goBack()"  size="mini">{{
                     $t("common.cancelButton")
                 }}</el-button>
                 </div>

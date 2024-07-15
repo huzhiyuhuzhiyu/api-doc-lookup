@@ -289,4 +289,10 @@ export default {
     }
   }
 }
+::v-deep .el-tabs--top.el-tabs--border-card>.el-tabs__header .el-tabs__item:nth-child(2),
+::v-deep .el-tabs__item,
+::v-deep .el-tabs--top.el-tabs--border-card>.el-tabs__header .el-tabs__item:last-child{
+  padding:0 10px
+}
+
 </style>

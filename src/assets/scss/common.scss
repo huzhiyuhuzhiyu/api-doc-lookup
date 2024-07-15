@@ -8,7 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 10px;
+  padding: 6px 10px;
   flex-shrink: 0;
 
   .JNPF-common-head-right {
@@ -226,14 +226,14 @@
 .JNPF-common-search-box {
   background: #fff;
   flex-shrink: 0;
-  margin-bottom: 10px;
-  padding: 15px 10px 0;
+  margin-bottom: 8px;
+  padding: 8px 10px 0;
   position: relative;
 
   .el-form-item {
     width: 100%;
     display: flex;
-    margin-bottom: 14px !important;
+    margin-bottom: 8px !important;
 
 
     .el-form-item__label {
@@ -1658,7 +1658,7 @@
     border-bottom: 1px solid #dcdfe6;
     padding: 0 20px;
     margin-bottom: 0;
-
+    font-size: 18px;
     &>span {
       line-height: 60px;
     }

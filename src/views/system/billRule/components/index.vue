@@ -1,7 +1,8 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建单据' : '编辑单据'" :close-on-click-modal="false"
-    :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="600px">
-    <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading"
+  <el-drawer :title="!dataForm.id ? '新建单据' : '编辑单据'" :visible.sync="drawer" :wrapperClosable="false" ref="drawer" size="420px"
+    :before-close="handleDrawerClose" class="JNPF-common-drawer">
+    <div class="JNPF-flex-main">
+      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading"
       label-width="100px">
       <el-form-item label="业务名称" prop="fullName">
         <el-input v-model="dataForm.fullName" placeholder="输入名称" />
@@ -49,13 +50,13 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">{{$t('common.cancelButton')}}</el-button>
+      <el-button @click="drawer = false">{{$t('common.cancelButton')}}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         {{$t('common.confirmButton')}}</el-button>
     </span>
-  </el-dialog>
+    </div>
+  </el-drawer>
 </template>
-
 <script>
 import {
   getBillRuleInfo,
@@ -65,6 +66,7 @@ import {
 import dayjs from 'dayjs'
 
 export default {
+  
   data() {
     var validateZero = (rule, value, callback) => {
       let str = value.replace(/0/g, '')
@@ -72,6 +74,9 @@ export default {
       callback()
     };
     return {
+     
+      drawer: false,
+
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -118,10 +123,15 @@ export default {
           { validator: validateZero }
         ]
       }
+
+
     }
   },
   methods: {
+   
+    // , this.treeData,this.listQuery.categoryId,this.tableList
     init(id, categoryList,categoryId,tableList) {
+      this.drawer = true
       this.dataForm.id = id || ''
       this.dataForm.category = categoryId || ''
       this.categoryList = categoryList
@@ -190,3 +200,16 @@ export default {
   }
 }
 </script>
+<style scoped>
+.JNPF-common-drawer ::v-deep .el-drawer__header {
+  font-size: 18px
+}
+.JNPF-flex-main{
+  padding-right: 20px;
+  padding-top: 20px;
+}
+.dialog-footer{
+  padding-left: 20px;
+  text-align: right
+}
+</style>

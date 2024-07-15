@@ -4,9 +4,9 @@
             <div class="JNPF-common-page-header">
                 <el-page-header @back="goBack" :content="!dataForm.id ? '新建更新说明' : '编辑更新说明'" />
                 <div class="options">
-                    <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+                    <el-button  size="mini" type="primary" @click="dataFormSubmit()" :loading="btnLoading">
                         {{ $t("common.confirmButton") }}</el-button>
-                    <el-button @click="goBack()">{{
+                    <el-button  size="mini" @click="goBack()">{{
                     $t("common.cancelButton")
                 }}</el-button>
                 </div>

@@ -3,13 +3,13 @@
     <div class="JNPF-preview-main user-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" content="组织架构图" />
-        <!-- <el-button @click="exportToPDF">导出为PDF</el-button> -->
+        <el-button @click="exportToPDF">导出为PDF</el-button>
         <div class="options">
           <el-button @click="goBack">{{ $t('common.cancelButton') }} </el-button>
         </div>
       </div>
-      <div class="main .body" v-loading="loading" id="orgChartContainer">
-        <organization-chart :datasource="ds" ></organization-chart>
+      <div class="main body " v-loading="loading" ref="imageDom" >
+        <organization-chart :datasource="ds"  id="orgChartContainer"></organization-chart>
       </div>
     </div>
   </transition>
@@ -35,20 +35,19 @@ export default {
 
     exportToPDF() {
       const element = document.getElementById('orgChartContainer');
-      setTimeout(() => {
-    html2canvas(element, {
-  scrollX: 0,
-  scrollY: -window.scrollY,
-  windowWidth: document.documentElement.scrollWidth,
-  windowHeight: document.documentElement.scrollHeight
-}).then(canvas => {
+    html2canvas(element,{
+      useCORS: true, //支持图片跨域
+          scale: 1, //设置放大的倍数
+          width:3100,
+          windowWidth:100,
+    }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
+      console.log("imgData",imgData);
       const link = document.createElement('a');
       link.href = imgData;
       link.download = 'organization-chart.png';
       link.click();
     });
-  }, 1000);
     },
     init() {
       this.loading = true

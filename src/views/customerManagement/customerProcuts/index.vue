@@ -53,8 +53,8 @@
                   </div>
                 </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
-                <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
+                <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户物料号" min-width="180" />
                 <el-table-column prop="customerProductDrawingNo" label="客户产品图号" sortable="custom" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />

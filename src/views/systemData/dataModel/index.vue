@@ -1,7 +1,46 @@
 <template>
   <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2 v-if="!leftFlag">业务分类</h2>
+          <span class="options" v-if="!leftFlag">  
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div>
+      </div>
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+
+            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button size="mini" icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button size="mini" icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+    </div>
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box   treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
@@ -22,9 +61,9 @@
           </el-col> -->
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -33,6 +72,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle()" addText="新建表名">
+              <el-button type="primary" size="mini" icon="iconfont  icon-piliang" @click="batchSetCategory()">批量设置分类</el-button>
             <upload-btn :url="'/api/system/DataModel/'+dataBase+'/Action/Import'"
               @on-success="getTableData" />
             <el-button type="text" icon="el-icon-menu" @click="handleFieldsManage()">常用字段
@@ -45,7 +85,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange"
+        <JNPF-table v-loading="listLoading" :data="list" @expand-change="expandChange" hasC @selection-change="handleSelectionChange"
            custom-column>
           <!-- <el-table-column type="expand" width="40">
             <template slot-scope="props">
@@ -90,30 +130,42 @@
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="dataForm.pageNum" :limit.sync="dataForm.pageSize"
-            @pagination="initData">
+            @pagination="getTableData">
           </pagination>
       </div>
     </div>
     <Form v-show="formVisible" ref="Form" @close="closeForm" />
     <Preview v-show="showData" ref="preview" @close="closeData" />
     <FieldsList v-if="drawer" ref="fieldsList" />
+    <SelectCategory v-if="SelectCategoryFormVisible" ref="SelectCategoryForm" @refreshDataList="getTableData" />
   </div>
 </template>
 
 <script>
 import { getDataSourceListAll } from '@/api/systemData/dataSource'
 import { getDataModelList } from '@/api/masterDataManagement/index.js'
-
+import {
+  getBimProductAttributesInfo,
+  updataBimProductAttributes,
+  delBimProductAttributes,
+  addBimProductAttributes,
+  getbimProductAttributesList,
+  getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 import { DataModelList, DataModelDelete, DataModelFieldList, exportTpl } from '@/api/systemData/dataModel'
+import SelectCategory from './selectCategory' // 重设密码
 import Form from './Form'
 import Preview from './Preview'
 import FieldsList from './fields/index'
 export default {
   name: 'systemData-dataModel',
-  components: { Form, Preview, FieldsList },
+  components: { Form, Preview, FieldsList,SelectCategory },
   data() {
     return {
-     
+      defaultProps: {
+        children: "childrenList",
+        label: "fullName",
+      },
       list: [],
       formVisible: false,
       dataBase: '0',
@@ -126,31 +178,84 @@ export default {
         keyword: '',
         pageNum: 1,
         pageSize: 20,
+        categoryId:"",
       },
+      filterText:"",
+      leftFlag: false,
+      treeLoading:false,
+      expands: true,
+      refreshTree: true,
+      treeData: [],
       total:0,
+      selectList:[],
+      SelectCategoryFormVisible:false
     }
   },
   created() {
-    this.initData()
+    this.getcategoryTree()
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val);
+    },
   },
   methods: {
+    batchSetCategory(){
+      if(!this.selectList.length) return this.$message.error("请先选择数据！")
+      this.SelectCategoryFormVisible=true
+      this.$nextTick(() => {
+        this.$refs.SelectCategoryForm.init(this.selectList)
+      })
+    },
+    handleSelectionChange(val){
+      console.log(val);
+      this.selectList=val
+    },
+    filterNode(value, data) {
+      console.log(value, data);
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    handleNodeClick(data, node) {
+      console.log("请选择节点", node);
+      this.dataForm.categoryId = node.data.id
+      this.search();
+    },
+
+    getcategoryTree() {
+      this.treeLoading = true
+      this.listLoading = true
+      getbimProductAttributes('306427078100678661').then(res => {
+        this.treeData = res.data.list.length?res.data.list:[]
+        this.listLoading = false
+        this.$nextTick(() => {
+          this.treeLoading = false
+          this.listLoading = false
+          this.getTableData()
+        })
+      }).catch(() => {
+        this.listLoading = false
+        this.treeLoading = false
+      })
+    },
+    columnSetFun(){ 
+      console.log("this.$refs.dataTable",this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
+    },
     search() {
       this.getTableData()
     },
     reset() {
       this.keyword = ''
-      THIS.dataForm.pageNum=1
-      THIS.dataForm.pageSize=20
+      this.dataForm.pageNum=1
+      this.dataForm.pageSize=20
       this.getTableData()
     },
-    initData() {
-      this.listLoading = true
-      getDataSourceListAll().then(res => {
-        const list = res.data.list || []
-        this.dbOptions = list.filter(o => o.children && o.children.length)
-        this.getTableData()
-      })
-    },
+ 
     getTableData() {
       this.listLoading = true
       getDataModelList(this.dataForm).then(res => {
@@ -233,3 +338,23 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+::v-deep .icon-piliang {
+  margin-right: 8px
+}
+</style>

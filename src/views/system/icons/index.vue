@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout icons-container">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="图标名称">
@@ -10,9 +10,9 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+              <el-button icon="el-icon-refresh-right" size="mini" @click="reset()">{{$t('common.reset')}}
               </el-button>
             </el-form-item>
           </el-col>
@@ -164,4 +164,10 @@ export default {
     margin-right: 14px;
   }
 }
+::v-deep .el-tabs--top.el-tabs--border-card>.el-tabs__header .el-tabs__item:nth-child(2),
+::v-deep .el-tabs__item,
+::v-deep .el-tabs--top.el-tabs--border-card>.el-tabs__header .el-tabs__item:last-child{
+  padding:0 10px
+}
+
 </style>

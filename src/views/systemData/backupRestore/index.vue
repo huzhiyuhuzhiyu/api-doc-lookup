@@ -7,11 +7,14 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle()" addText="创建备份">
-              <el-button type="success" icon="el-icon-timer" @click="handleSetTime()">定时备份</el-button>
-              <el-button type="danger" icon="el-icon-delete" @click="handleDelData()">删除指定数据</el-button>
-              <el-button type="primary" icon="el-icon-document" @click="handleRecord()">数据操作记录</el-button>
+              <el-button  size="mini" type="success" icon="el-icon-timer" @click="handleSetTime()">定时备份</el-button>
+              <el-button  size="mini" type="danger" icon="el-icon-delete" @click="handleDelData()">删除指定数据</el-button>
+              <el-button  size="mini" type="primary" icon="el-icon-document" @click="handleRecord()">数据操作记录</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
@@ -27,7 +30,7 @@
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column prop="createByName" label="创建人" />
 
-            <el-table-column label="操作" min-width="120" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts editText="还原" @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                   <el-button type="text" size="mini" @click="handleDownload(scope.row.id)">下载</el-button>
@@ -169,6 +172,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productDrawingNo') {
@@ -349,5 +355,8 @@ export default {
 
 ::v-deep .noLeftPad {
   padding: 10px 10px 10px 0 !important;
+}
+.JNPF-common-head{
+  padding: 8px 10px;
 }
 </style>

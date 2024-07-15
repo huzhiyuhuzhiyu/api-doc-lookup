@@ -69,9 +69,12 @@ export default {
             this.maxStep = parseInt(this.dataForm.webType)
             this.formData = this.dataForm.formData && JSON.parse(this.dataForm.formData)
             this.columnData = this.dataForm.columnData && JSON.parse(this.dataForm.columnData)
+            console.log(this.columnData,'组件数据');
             this.appColumnData = this.dataForm.appColumnData && JSON.parse(this.dataForm.appColumnData)
+            console.log(this.appColumnData,'组件数据');
             this.flowTemplateJson = this.dataForm.flowTemplateJson && JSON.parse(this.dataForm.flowTemplateJson)
             this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
+            console.log(this.tables,'数据表');
             this.defaultTable = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
             this.updateFields()
           }).catch(() => { this.loading = false })

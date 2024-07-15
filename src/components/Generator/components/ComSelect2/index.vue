@@ -13,8 +13,8 @@
           </el-tag>
         </span>
         <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
-          <el-tag v-for="(item, i) in tagsList" :key="item" :size="collapseTagSize" :closable="!selectDisabled" type="info"
-            @close="deleteTag($event, i)" disable-transitions>
+          <el-tag v-for="(item, i) in tagsList" :key="item" :size="collapseTagSize" :closable="!selectDisabled"
+            type="info" @close="deleteTag($event, i)" disable-transitions>
             <span class="el-select__tags-text">{{ item }}</span>
           </el-tag>
         </transition-group>
@@ -57,9 +57,9 @@
           </div>
           <div class="transfer-pane__body shadow right-pane">
             <template>
-              <div v-for="(item, index) in rSelectData" :key="index" class="selected-item">
-                <span :title="item">{{ item.name }}</span>
-                <i class="el-icon-delete" @click="removeData(index)"></i>
+              <div v-for="(item, index) in selectedData" :key="index" class="selected-item">
+                <span :title="item">{{ item }}</span>
+                <i class="el-icon-delete" v-if="item" @click="removeData(index)"></i>
               </div>
             </template>
           </div>
@@ -75,8 +75,6 @@
 
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
-import { getDepartmentSelectorByAuth } from "@/api/permission/department";
-import { getOrganizeSelectorByAuth } from '@/api/permission/organize'
 import { getcategoryTree } from '@/api/basicData/index'
 
 export default {
@@ -128,7 +126,7 @@ export default {
     parentId: {
       default: ''
     },
-    type: {
+    selectClassifyType: {
       default: ''
     },
     isdisabled: {
@@ -245,21 +243,16 @@ export default {
         organize: '顶级节点',
         organizeIds: ['-1']
       }
-      this.allList = [...this.$store.getters.departmentList, topItem]
-      if (this.auth) {
-        if (this.isOnlyOrg && this.parentId === '-1') {
-          this.treeData = [topItem]
-          return
-        }
-        console.log(this.type);
+      if (this.selectClassifyType){
         const method = getcategoryTree
         let obj = {
-          type: this.type,
+          type: this.selectClassifyType,
           keyword: "",
           id: ""
         }
         method(obj).then(res => {
           this.treeData = res.data
+          this.allList = this.treeData
         })
       }
     },
@@ -299,35 +292,18 @@ export default {
       return fullPath
     },
     handleNodeClick(data) {
-      console.log("ra", data);
       if (data.disabled) return
       let currId = data.id
       let currData = data.name
       if (this.multiple) {
-        console.log(666);
         const boo = this.selectedIds.some(o => o === currId)
         if (boo) return
         this.selectedIds.push(currId)
         this.selectedData.push(currData)
       } else {
-        console.log(777);
         this.selectedIds = [currId]
         this.selectedData = [currData]
       }
-      let selectedData = []
-      for (let i = 0; i < this.selectedIds.length; i++) {
-        let item = []
-        let selectedNames = this.selectedData[i]
-        for (let j = 0; j < this.selectedIds.length; j++) {
-          item.push({
-            id: this.selectedIds[i],
-            name: selectedNames,
-          })
-        }
-        selectedData.push(item)
-      }
-      this.rSelectData = selectedData[0]
-      console.log("选中", this.selectedIds, this.selectedData, selectedData);
     },
     removeAll() {
       this.selectedData = []
@@ -341,7 +317,6 @@ export default {
     },
     confirm() {
       let selectedData = []
-      console.log("this.selectedIds",this.selectedIds);
       for (let i = 0; i < this.selectedIds.length; i++) {
         let item = []
         let selectedNames = this.selectedData[i]
@@ -353,15 +328,12 @@ export default {
         }
         selectedData.push(item)
       }
-      
-      console.log("selectedData[0], ",selectedData[0], );
       if (this.multiple) {
         this.innerValue = ''
         this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
         this.$emit('input', this.selectedIds)
         this.$emit('change', this.selectedIds, selectedData)
       } else {
-        console.log("selectedData", selectedData[0], this.selectedIds[0]);
         this.innerValue = this.selectedData
         this.$emit('input', this.selectedIds[0])
         this.$emit('change', this.selectedIds[0], selectedData[0])
@@ -374,20 +346,27 @@ export default {
         this.selectedIds = []
         this.selectedData = []
         this.rSelectData = []
-
         this.tagsList = []
-        return
       }
-      if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
-        this.selectedIds = this.currOrgId?[this.currOrgId]:[]
-        this.selectedData = [this.value]
-        this.rSelectData = [{ name: this.value }]
-      }
-      console.log("this",this.rSelectData,this.selectedData);
-      this.innerValue = this.value
-      return
-      // let selectedIds = this.multiple ? this.value : [this.value]
-      // this.selectedIds = JSON.parse(JSON.stringify(selectedIds)) 
+      // else if (this.multiple) {
+      //   if (!this.rSelectData.length || JSON.parse(JSON.stringify(this.selectedData)) !== JSON.parse(JSON.stringify(this.tagsList))) {
+      //     this.selectedIds = typeof this.ids === 'function' ? this.ids() : [...this.ids]
+      //     this.selectedData = [...this.value]
+      //     this.rSelectData = this.value.map((item, index) => { return { id: this.selectedIds[index], name: this.selectedData[index], all: undefined } })
+      //     // this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+      //   }
+      //   this.innerValue = ''
+      // } else {
+      //   if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
+      //     this.selectedIds = []
+      //     this.selectedData = [this.value]
+      //     this.rSelectData = [{ name: this.value }]
+      //   }
+      //   this.innerValue = this.value
+      // }
+      // return 
+      let selectedIds = this.multiple ? this.value : [[this.value]]
+      this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
       let textList = []
       for (let i = 0; i < selectedIds.length; i++) {
         const item = selectedIds[i];
@@ -395,14 +374,14 @@ export default {
         for (let j = 0; j < item.length; j++) {
           inner: for (let ii = 0; ii < this.allList.length; ii++) {
             if (item[j] === this.allList[ii].id) {
-              textItem[j] = this.allList[ii].fullName
+              textItem[j] = this.allList[ii].name
               break inner
             }
           }
         }
         textList.push(textItem)
       }
-      this.selectedData = textList.map(o => o)
+      this.selectedData = textList.map(o => o.join(','))
       if (this.multiple) {
         this.innerValue = ''
         this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
@@ -420,7 +399,6 @@ export default {
       event.stopPropagation();
     },
     handleClearClick(event) {
-      console.log("1111111111111111111111");
       this.selectedData = []
       this.selectedIds = []
       this.rSelectData = []

@@ -185,7 +185,7 @@ export default {
         if (!rule.message && !rule.validator) { rule.message = this.Placeholder }
         R.push(rule);
       });
-
+      console.log(R)
       return R;
     },
     readOnly() {

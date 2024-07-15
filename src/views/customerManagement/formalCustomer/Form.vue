@@ -18,8 +18,8 @@
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                    <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
+                  <el-form-item label="所属分类" prop="partnerCategoryId">
+                    <ComSelect2 v-model="dataForm.partnerCategoryId" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :type="dataForm.type" />
                   </el-form-item>
@@ -652,7 +652,7 @@ export default {
         }
       },
       dataRule: {
-        partnerCategoryIdText: [
+        partnerCategoryId: [
           { required: true, message: '所属分类不能为空', trigger: 'change' }
         ],
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
@@ -1250,7 +1250,7 @@ export default {
     onOrganizeChange(val, data) {
       console.log("123", val, data);
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerCategoryIdText')
+        this.$refs['dataForm'].validateField('partnerCategoryId')
       })
       console.log(this.$refs['dataForm']);
       this.dataForm.partnerCategoryId = data ? data[0].id : ''

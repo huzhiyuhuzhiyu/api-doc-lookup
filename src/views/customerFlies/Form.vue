@@ -1,12 +1,12 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div class="JNPF-common-page-header">
+      <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack"
-          :content="btnType=='look' ? '查看正式客户' :btnType=='add'? '新增正式客户' :'编辑正式客户'" />
-        <div class="options" >
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType!='look'">
+          :content="btnType === 'add' ? $t(`customer.addCustomer`) : btnType === 'edit' ? $t(`customer.editCustomer`) : '查看客户档案'" />
+        <div class="options" v-if="btnType !== 'look'">
+          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -14,51 +14,60 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+          <!-- 普通属性 -->
+          <el-tab-pane :label="basicData[0].title" :name="basicData[0].title" :key="basicData[0].title">
+            <JNPF-Col v-model="dataForm" :tabContent="basicData[0].__config__.children" ref="dataForm" :openMode="openMode" />
+          </el-tab-pane>
+          <el-tab-pane :label="basicData[1].title" :name="basicData[1].title" :key="basicData[1].title">
+            <JNPF-col-table v-model="sleeveList" ref="sleeveForm" :tableItems="basicData[1].__config__.children" :openMode="openMode"
+              @addth="addSleeveList" @deleteth="deleteth" />
+          </el-tab-pane>
+
+          <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
+          <!-- <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属分类" prop="partnerCategoryId">
-                    <ComSelect2 v-model="dataForm.partnerCategoryId" :isdisabled="isdisabled" placeholder="请选择所属分类"
+                  <el-form-item label="所属分类" prop="partnerCategoryIdText">
+                    <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :type="dataForm.type" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户编码" prop="code" v-if="businessType">
+                  <el-form-item label="客户编码" prop="code">
                     <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
-                      :disabled="btnType=='look' ? true : false" />
+                      :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="客户名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入客户名称" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.name" placeholder="请输入客户名称" :disabled="btnType ? true : false"
                       maxlength="100" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="税号" prop="taxId">
-                    <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType ? true : false"
                       maxlength="25" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="英文名称" prop="nameEn">
-                    <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType ? true : false"
                       maxlength="200" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="联系人" prop="contacts">
-                    <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType ? true : false"
                       maxlength="50" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="负责人" prop="personResponsible">
                     <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20"
-                      :disabled="btnType=='look' ? true : false" />
+                      :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -84,19 +93,17 @@
                     </user-select>
                   </el-form-item>
                 </el-col>
-          
-
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="认定日期" prop="customerRecognitionTime">
 
                     <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd"
                       style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions" placeholder="请选择认定日期"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                     </el-date-picker>
                   </el-form-item></el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="等级" prop="grade">
-                    <el-select v-model="dataForm.grade" placeholder="请选择等级" :disabled="btnType=='look' ? true : false"
+                    <el-select v-model="dataForm.grade" placeholder="请选择等级" :disabled="btnType ? true : false"
                       style="width: 100%;">
                       <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
                         :value="item.enCode"></el-option>
@@ -107,7 +114,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="地区" prop="regionCode">
                     <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;"
-                      @change="handleChange" :disabled="btnType=='look' ? true : false">
+                      @change="handleChange" :disabled="btnType ? true : false">
                       <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName"
                         :value="item.enCode"></el-option>
                     </el-select>
@@ -115,9 +122,8 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="国家" prop="country">
-                    
                     <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
                         :value="item.code"></el-option>
                     </el-select>
@@ -126,7 +132,7 @@
                 <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="省" prop="province">
                     <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName"
                         :value="item.id" @click.native="changeProvince(item)">
                       </el-option>
@@ -136,7 +142,7 @@
                 <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="市" prop="city">
                     <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;" @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
-                      :disabled="btnType=='look' ? true : false||!dataForm.province">
+                      :disabled="btnType ? true : false||!dataForm.province">
                       <el-option v-for="item in cities" size="small" :key="item.id" :label="item.fullName"
                         :value="item.id" @click.native="changeCity(item)">{{ item.fullName }}
                       </el-option>
@@ -146,7 +152,7 @@
                 <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="区" prop="area">
                     <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;" @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
-                      :disabled="btnType=='look' ? true : false||!dataForm.city">
+                      :disabled="btnType ? true : false||!dataForm.city">
                       <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName" :value="item.id">
                       </el-option>
                     </el-select>
@@ -157,50 +163,49 @@
 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="地址" prop="address">
-                    <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType ? true : false"
                       maxlength="300" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="电话" prop="phone">
-                    <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType ? true : false"
                       maxlength="20" />
                   </el-form-item>
                 </el-col><el-col :sm="8" :xs="24">
                   <el-form-item label="手机号" prop="mobilePhone">
-                    <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType ? true : false"
                       maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="传真" prop="fax">
-                    <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType ? true : false"
                       maxlength="50" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="邮政编码" prop="zipCode">
-                    <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType ? true : false"
                       maxlength="10" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType=='look'=='look' ? true : false"
+                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType ? true : false"
                       maxlength="100" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="网址" prop="website">
-                    <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType ? true : false"
                       maxlength="512" />
                   </el-form-item>
                 </el-col>
-                
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="付款方式" prop="paymentMethod">
                     <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName"
                         :value="item.enCode">
                       </el-option>
@@ -210,7 +215,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="付款周期" prop="paymentCycle">
                     <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode" :label="item.fullName"
                         :value="item.enCode">
                       </el-option>
@@ -221,7 +226,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="开票类型" prop="billingTypeText">
                     <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="item in billingTypeList" size="small" :key="item.enCode" :label="item.fullName"
                         :value="item.enCode">
                       </el-option>
@@ -231,19 +236,19 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="税率%" prop="taxRate">
                     <el-input v-model="dataForm.taxRate" maxlength="2" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入税率" :disabled="btnType=='look' ? true : false" />
+                      placeholder="请输入税率" :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
 
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="开户银行" prop="bank">
-                    <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType ? true : false"
                       maxlength="100" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="银行账号" prop="bankInfo">
-                    <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType=='look' ? true : false"
+                    <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType ? true : false"
                       maxlength="100" />
                   </el-form-item>
                 </el-col>
@@ -251,17 +256,16 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="渠道类型" prop="channel">
                     <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName"
                         :value="item.enCode"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
-                
-                <el-col :sm="8" :xs="24" v-if="btnType=='look'">
+                <el-col :sm="8" :xs="24" v-if="btnType">
                   <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
                     <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text"
                         :value="item.value"></el-option>
                     </el-select>
@@ -270,7 +274,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="运输方式" prop="modeTransport">
                     <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" style="width: 100%;"
-                      :disabled="btnType=='look' ? true : false">
+                      :disabled="btnType ? true : false">
                       <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName"
                         :value="item.enCode"></el-option>
                     </el-select>
@@ -279,19 +283,20 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="运输时间(天)" prop="transportationTime">
                     <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入运输时间(天)" :disabled="btnType=='look' ? true : false" maxlength="4" />
+                      placeholder="请输入运输时间(天)" :disabled="btnType ? true : false" maxlength="4" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="备注" prop="remark">
                     <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
-                      :disabled="btnType=='look' ? true : false" />
+                      :disabled="btnType ? true : false" />
                   </el-form-item>
                 </el-col>
               </el-row>
-            </el-form>
-          </el-tab-pane>
-          <el-tab-pane label="联系人信息" name="lxr">
+            </el-form> -->
+
+          <!-- </el-tab-pane> -->
+          <!-- <el-tab-pane label="联系人信息" name="lxr">
             <el-table :data="contactsList" style="width: 100%">
               <el-table-column prop="name" label="姓名" width="180">
                 <template slot="header">
@@ -299,7 +304,7 @@
                 </template>
                 <template slot-scope="scope">
 
-                  <el-input v-model="scope.row.name" :disabled="btnType=='look' ? true : false" maxlength="20"
+                  <el-input v-model="scope.row.name" :disabled="btnType ? true : false" maxlength="20"
                     placeholder="请输入姓名">{{ scope.row.name
                     }}
                   </el-input>
@@ -307,7 +312,7 @@
               </el-table-column>
               <el-table-column prop="sex" label="性别" width="100">
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.sex" placeholder="请选择性别" :disabled="btnType=='look' ? true : false">
+                  <el-select v-model="scope.row.sex" placeholder="请选择性别" :disabled="btnType ? true : false">
                     <el-option v-for="(item, index) in sexList" :key="index" :label="item.label"
                       :value="item.value"></el-option>
                   </el-select>
@@ -318,7 +323,7 @@
                   <span class="required">*</span>电话
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.phone" :disabled="btnType=='look' ? true : false" maxlength="50"
+                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="50"
                     placeholder="请输入电话">{{ scope.row.phone
                     }}
                   </el-input>
@@ -326,7 +331,7 @@
               </el-table-column>
               <el-table-column prop="email" label="邮箱" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.email" :disabled="btnType=='look' ? true : false" maxlength="200"
+                  <el-input v-model="scope.row.email" :disabled="btnType ? true : false" maxlength="200"
                     placeholder="请输入邮箱">{{
                       scope.row.email }}
                   </el-input>
@@ -335,7 +340,7 @@
 
               <el-table-column prop="address" label="地址" width="220">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType=='look' ? true : false" maxlength="250"
+                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="250"
                     placeholder="请输入地址">{{
                       scope.row.address }}
                   </el-input>
@@ -343,7 +348,7 @@
               </el-table-column>
               <el-table-column prop="displayName" label="职务" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.displayName" :disabled="btnType=='look' ? true : false" maxlength="20"
+                  <el-input v-model="scope.row.displayName" :disabled="btnType ? true : false" maxlength="20"
                     placeholder="请输入职务">{{
                       scope.row.displayName }}
                   </el-input>
@@ -351,7 +356,7 @@
               </el-table-column>
               <el-table-column prop="departmentName" label="部门" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.departmentName" :disabled="btnType=='look' ? true : false" maxlength="20"
+                  <el-input v-model="scope.row.departmentName" :disabled="btnType ? true : false" maxlength="20"
                     placeholder="请输入部门">{{
                       scope.row.departmentName
                     }}
@@ -360,7 +365,7 @@
               </el-table-column>
               <el-table-column prop="hobby" label="爱好" width="180">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.hobby" :disabled="btnType=='look' ? true : false" maxlength="200"
+                  <el-input v-model="scope.row.hobby" :disabled="btnType ? true : false" maxlength="200"
                     placeholder="请输入爱好">{{
                       scope.row.hobby }}
                   </el-input>
@@ -368,7 +373,7 @@
               </el-table-column>
               <el-table-column prop="remark" label="备注">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType=='look' ? true : false" maxlength="200"
+                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200"
                     placeholder="请输入备注">{{
                       scope.row.remark }}
                   </el-input>
@@ -376,16 +381,15 @@
               </el-table-column>
               <el-table-column label="操作" width="140">
                 <template slot-scope="scope">
-                  <!-- <el-button @click="addtable(scope.row)" type="text" >添加</el-button> -->
-                  <el-button @click="deltable(scope)" v-if="!btnType=='look'" type="text"
+                  <el-button @click="deltable(scope)" v-if="!btnType" type="text"
                     style="color:rgb(245,108,108)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="addtable()" v-if="!btnType=='look'">
+            <div class="table-actions" @click="addtable()" v-if="!btnType">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane label="收货信息" name="second">
             <el-table :data="deliveryAddressList" style="width: 100%">
               <el-table-column prop="recipient" label="收件人" width="180">
@@ -394,7 +398,7 @@
                 </template>
                 <template slot-scope="scope">
 
-                  <el-input v-model="scope.row.recipient" :disabled="btnType=='look' ? true : false" maxlength="20"
+                  <el-input v-model="scope.row.recipient" :disabled="btnType ? true : false" maxlength="20"
                     placeholder="请输入收件人">{{
                       scope.row.recipient }}
                   </el-input>
@@ -406,7 +410,7 @@
                 </template>
                 <template slot-scope="scope">
 
-                  <el-input v-model="scope.row.phone" :disabled="btnType=='look' ? true : false" maxlength="20"
+                  <el-input v-model="scope.row.phone" :disabled="btnType ? true : false" maxlength="20"
                     placeholder="请输入收件人电话">{{ scope.row.phone
                     }}
                   </el-input>
@@ -419,7 +423,7 @@
                 <template slot-scope="scope">
 
                   <el-select clearable v-model="scope.row.country" placeholder="请选择国家" filterable style="width: 100%;"
-                    :disabled="btnType=='look' ? true : false">
+                    :disabled="btnType ? true : false">
                     <el-option v-for="(item, index) in countryList1" :key="index" :label="item.name"
                       @click.native="changeCountry(item, scope.$index)" :value="item.code">{{ item.name }}</el-option>
                   </el-select>
@@ -431,7 +435,7 @@
                 </template>
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.province" placeholder="请选择省份"
-                    :disabled="scope.row.country !== 'CN' ? true : btnType=='look' ? true : false">
+                    :disabled="scope.row.country !== 'CN' ? true : btnType ? true : false">
                     <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id"
                       @click.native="changeProvince1(item, scope.row)"></el-option>
                   </el-select>
@@ -442,8 +446,8 @@
                   <span class="required">*</span>市
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity"
-                    :disabled="!scope.row.province ? true : btnType=='look' ? true : false">
+                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)"
+                    :loading="loadingcity" :disabled="!scope.row.province ? true : btnType ? true : false">
                     <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id"
                       @click.native="changeCity1(item, scope.row)"></el-option>
                   </el-select>
@@ -454,8 +458,8 @@
                   <span class="required">*</span>区
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea"
-                    :disabled="!scope.row.city ? true : btnType=='look' ? true : false">
+                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)"
+                    :loading="loadingarea" :disabled="!scope.row.city ? true : btnType ? true : false">
                     <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                   </el-select>
                 </template>
@@ -465,7 +469,7 @@
                   <span class="required">*</span>地址
                 </template>
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType=='look' ? true : false" maxlength="300"
+                  <el-input v-model="scope.row.address" :disabled="btnType ? true : false" maxlength="300"
                     placeholder="请输入地址">{{
                       scope.row.address }}
                   </el-input>
@@ -473,7 +477,7 @@
               </el-table-column>
               <el-table-column prop="defaultFlag" label="是否默认" width="140">
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType=='look' ? true : false"
+                  <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType ? true : false"
                     @change="handleAddress(scope)">
                     <el-option v-for="item in defaultFlagList" :key="item.value" :label="item.text"
                       :value="item.value"></el-option>
@@ -482,7 +486,7 @@
               </el-table-column>
               <el-table-column prop="remark" label="备注">
                 <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType=='look' ? true : false" maxlength="200"
+                  <el-input v-model="scope.row.remark" :disabled="btnType ? true : false" maxlength="200"
                     placeholder="请输入备注">{{
                       scope.row.remark }}
                   </el-input>
@@ -491,7 +495,7 @@
               <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
                   <el-button @click="deleteth(scope)" type="text" style="color:rgb(245,108,108)"
-                    v-if="!btnType=='look'">删除</el-button>
+                    v-if="!btnType">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -499,18 +503,8 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
-            <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  
-            custom-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
-            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-            <el-table-column prop="createBy" label="创建人" min-width="120" />
-          </JNPF-table>
-          </el-tab-pane>
-          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
-            <UploadWj v-model="datafilelist" :disabled="btnType=='look'" :detailed="btnType=='look'"></UploadWj>
+          <el-tab-pane label="附件" name="annex">
+            <UploadWj v-model="datafilelist" :disabled="!!btnType" :detailed="!!btnType"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -519,23 +513,30 @@
 </template>
 
 <script>
-import { checkPartner,addPartner,updatePartner,detailPartner} from '@/api/customerManagement'
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import {getBimBusinessInfo,getCooperativeInfo, getCounryData, checkCode} from '@/api/basicData/index'
-
+import {
+  editPartner, addPartner
+  , getCooperativeInfo, getCounryData, checkCode
+} from '@/api/basicData/index'
 import {
   getProvinceList,
 } from '@/api/system/province'
 export default {
+  props: {
+    basicData:{
+      type:Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      tableData:[],
-      loadingareafoundation:false,
-      foundationloadingcity:false,
-      loadingarea:false,
-      loadingcity:false,
+      title: '',
+      loadingareafoundation: false,
+      foundationloadingcity: false,
+      loadingarea: false,
+      loadingcity: false,
       isdisabled: false,
       datafilelist: [],
       btnType: undefined,
@@ -558,7 +559,7 @@ export default {
       listQuery: {
         keyword: ''
       },
-      activeName: "jcInfo",
+      activeName: "基本信息",
       nodeId: -1,
       defaultFlagList: [
         {
@@ -641,8 +642,7 @@ export default {
         transportationTime: "",
         remark: "",
         departmentId: "",
-        departmentIdText: "",
-        customerStatus:"formal"
+        departmentIdText: ""
       },
       organizeIdTree: [],
       parentId: '',
@@ -652,24 +652,27 @@ export default {
         }
       },
       dataRule: {
-        partnerCategoryId: [
+        internalStaffId: [
+          { required: true, message: '请选择人员', trigger: 'blur' },
+        ],
+        // 编码、税号、名称、地区、国家、省、市、区、地址、联系人、电话和手机选填一项、付款方式、含税计价精度（默认2）、不含简况计价精度
+        partnerCategoryIdText: [
           { required: true, message: '所属分类不能为空', trigger: 'change' }
         ],
-        mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
-        // phone: [{ validator: this.validateField2, trigger: 'blur' }],
+        departmentId: [
+          { required: true, message: '所属部门不能为空', trigger: 'change' }
+        ],
+        salespersonId: [
+          { required: true, message: '所属销售不能为空', trigger: 'change' }
+        ],
+
+        mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' }],
         code: [
           { required: true, message: '请输入编码', trigger: 'blur' },
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              console.log(this.dataForm.id);
-              let obj={
-                id:this.dataForm.id,
-                code:value,
-                type:this.dataForm.type
-              }
-              checkPartner(obj).then(res => {
-                console.log('res===>', res);
+              checkCode(value, this.dataForm.id, this.dataForm.type).then(res => {
                 if (res.data) {
                   callback(new Error("编码重复"));
                 } else {
@@ -680,9 +683,13 @@ export default {
             }, trigger: 'blur'
           },
         ],
+        // taxId: [
+        //   { required: true, message: '请输入税号', trigger: 'blur' }
+        // ],
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-         
+          // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
+          // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
         regionCode: [
           { required: true, message: '地区不能为空', trigger: 'change' }
@@ -708,54 +715,83 @@ export default {
           { required: true, message: '请输入地址', trigger: 'blur' },
 
         ],
+        contacts: [
+          { required: true, message: '请输入联系人', trigger: 'blur' },
+
+        ],
         taxRate: [
           { required: true, message: '请输入税率', trigger: 'blur' },
+        ],
+        includingTaxPrecision: [
+          { required: true, message: '请输入含税计价精度', trigger: 'blur' },
+
+        ],
+        excludingTaxPrecision: [
+          { required: true, message: '请输入不含税计价精度', trigger: 'blur' },
         ],
         paymentMethod: [
           { required: true, message: '请选择付款方式', trigger: 'change' },
         ],
         paymentCycle: [
           { required: true, message: '请选择付款周期', trigger: 'change' },
-        ],
-        reconciliationStartDate: [
-          { required: true, message: '请选择对账开始日期', trigger: 'change' },
-        ],
-        reconciliationEndDate: [
-          { required: true, message: '请选择对账结束日期', trigger: 'change' },
-        ],
- 
+        ]
+
       },
       salesList: [],
       organizeIdTrees: [],
       salesFlag: false,
-      businessType:"",
-      isattachmentswitch:''
+      personItems: [
+        { prop: "name", label: "姓名", value: "", type: 'input', maxlength: 100, },
+        { prop: "sex", label: "性别", value: "", type: "select", options: [{ label: "男", value: "男" }, { label: "女", value: "女" }] },
+        { prop: "phone", label: "电话", value: "", type: 'input', maxlength: 100, },
+      ],
+      sleeveList: [],
     }
   },
   created() {
-    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
+  computed: {
+    openMode() {
+      return this.title === '新建客户档案' ? '新建' : this.title === '编辑客户档案' ? '编辑' : '只读'
+    }
+  },
   methods: {
-    getAttachmentswitch(){
-      getBimBusinessInfo('460918390082716391').then(res=>{
-        this.isattachmentswitch = res.data.configValue1
+    // 处理组件数据和参数
+    handleCompData(){
+      
+    },
+    // 对应套筒新增行
+    addSleeveList() {
+      let index = this.sleeveList.length
+      this.sleeveList.push({
+        index,
+        sleeveId: "",
+        sleeveName: "",
+        withhold: "",
+        externalAdhesive: "",
+        drawLineLength: "",
+        innerRubberLength: "",
+        serialNumber: "",
+        remark: "",
       })
+    },
+    // 对应套筒删除当前行
+    deleteth(row, index) {
+      this.sleeveList.splice(row.$index, 1)
     },
     changePerple(internalStaffId, data) {
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')
       if (data) {
-
       } else {
         this.$refs['dataForm'].fields[0].resetField()
         this.dataForm.internalStaffId = data.internalStaffId
       }
-
     },
     //基础信息点击选择区
-    foundationfocusactionarea(val){
+    foundationfocusactionarea(val) {
       this.loadingareafoundation = true
       getProvinceList(val).then(res => {
         this.area = res.data.list
@@ -763,7 +799,7 @@ export default {
       })
     },
     //基础信息选择市
-    focusfoundation(val){
+    focusfoundation(val) {
       this.foundationloadingcity = true
       getProvinceList(val).then(res => {
         this.cities = res.data.list
@@ -771,7 +807,7 @@ export default {
       })
     },
     //点击选择市
-    focusaction(val){
+    focusaction(val) {
       this.loadingcity = true
       getProvinceList(val.province).then(res => {
         this.cities1 = res.data.list
@@ -779,7 +815,7 @@ export default {
       })
     },
     //点击选择区
-    focusactionarea(val){
+    focusactionarea(val) {
       this.loadingarea = true
       getProvinceList(val.city).then(res => {
         this.area1 = res.data.list
@@ -795,10 +831,8 @@ export default {
       }
     },
     changeCountry(e, index) {
-      console.log(e);
       this.dataForm.country = e.code
       if (this.dataForm.country != 'CN') {
-        console.log(this.deliveryAddressList, '收货地址');
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -808,12 +842,10 @@ export default {
       }
     },
     hangleSelectSales(e, r) {
-      console.log("销售人员", e, r);
       this.dataForm.departmentId = r.parentId
       this.dataForm.departmentIdText = r.organize
     },
     handleAddress(e) {
-      console.log(123, e);
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -824,14 +856,11 @@ export default {
       }
     },
     selectsales(val) {
-      console.log(val);
       this.dataForm.salespersonId = val
-      // this.dataForm.salespersonIdText = val
 
     },
     onOrganizeChangeHandle(val) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
-      console.log("val,val", val);
       this.dataForm.salespersonIdText = ""
       this.dataForm.salespersonId = ""
       this.$forceUpdate()
@@ -840,19 +869,16 @@ export default {
       this.salesFlag = false
 
       getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
-        console.log("用户", res);
         if (res.data.length > 0) {
           res.data.forEach(item => {
             item.name = item.fullName.split('/')[0]
           });
         }
-        console.log(this.salesList);
         this.salesList = res.data
 
       })
     },
     handleChange($event) {
-      console.log(123, $event);
       if ($event == 'domestic') {
         // 国内
         this.countryList = [{
@@ -882,7 +908,6 @@ export default {
           "pageSize": -1
         }
         getCounryData(obj).then(res => {
-          console.log("国家数据", res);
           this.countryList = res.data.records.filter((item) => {
             return item.name !== '中国'
           })
@@ -892,8 +917,7 @@ export default {
     },
     // 切换table
     handleClick(tab, event) {
-      console.log(tab.label, event);
-      if(tab.label=='收货信息'){
+      if (tab.label == '收货信息') {
         // 国内
         this.countryList1 = [{
           code: "CN",
@@ -963,12 +987,10 @@ export default {
     },
     // 联系人信息删除当前行
     deltable(row, index) {
-      console.log("row", row, index);
       this.contactsList.splice(row.$index, 1)
     },
     // 根据选择的省份获取相应的城市数据
     changeProvince(item, row) {
-      console.log("item", item);
 
       if (row) {
         row.area = ''
@@ -982,7 +1004,6 @@ export default {
       this.area = []
 
       getProvinceList(item.id).then(res => {
-        console.log(res);
         this.cities = res.data.list
       })
     },
@@ -999,7 +1020,6 @@ export default {
     },
     // 根据选择的城市获取各区的数据
     changeCity(item, row) {
-      console.log("item", item);
       if (row) {
         row.area = ''
 
@@ -1008,7 +1028,6 @@ export default {
 
       }
       getProvinceList(item.id).then(res => {
-        console.log(res);
         this.area = res.data.list
       })
     },
@@ -1023,10 +1042,10 @@ export default {
     // 获取省份数据
     getProvinceList() {
       getProvinceList(this.nodeId, this.listQuery).then(res => {
-        console.log("省份数据", res);
         this.provinces = res.data.list
-        this.init(id, parentId)
+        this.init(id, this.btnType)
       }).catch(() => {
+        this.listLoading = false
         this.btnLoading = false
         this.refreshTable = true
       })
@@ -1123,17 +1142,11 @@ export default {
 
 
 
-    init(id, parentId, btnType) {
-      console.log("btntype",btnType);
+    async init(id, btnType) {
       this.visible = true
       this.dataForm.id = id || ''
-      this.parentId = parentId || ''
       this.btnType = btnType
-      getBimBusinessInfo('460918012862529542').then(res=>{
-        console.log("编码配置");
-        this.businessType = res.data.configValue1
-      })
-      if (this.btnType=='look') {
+      if (this.btnType) {
         this.salesFlag = true
         this.isdisabled = true
       } else {
@@ -1141,13 +1154,12 @@ export default {
 
       }
       if (this.dataForm.id) {
-        detailPartner(this.dataForm.id).then(res => {
+        this.title = btnType === 'look' ? '查看客户档案' : '编辑客户档案'
+        getCooperativeInfo(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
-          this.tableData=res.data.recordsList
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
               this.organizeIdTrees = sss.data.organizeIdTree || []
-              console.log("this.dataForm.departmentId", this.dataForm.departmentId);
               this.organizeIdTrees.push(this.dataForm.departmentId)
             })
             getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
@@ -1156,7 +1168,6 @@ export default {
                   item.name = item.fullName.split('/')[0]
                 });
               }
-              console.log(this.salesList);
               this.salesList = res.data
             })
           }
@@ -1195,7 +1206,6 @@ export default {
               id: res.data.cooperativePartner.province
             }
             getProvinceList(res.data.cooperativePartner.province).then(res => {
-              console.log(res);
               this.cities = res.data.list
             })
 
@@ -1206,7 +1216,6 @@ export default {
             }
             // this.changeCity(ooo)
             getProvinceList(res.data.cooperativePartner.city).then(res => {
-              console.log(res);
               this.area = res.data.list
             })
           }
@@ -1242,25 +1251,22 @@ export default {
             })
           }
         })
+      } else {
+        this.title = '新建客户档案'
+        this.formLoading = false
       }
     },
     goBack() {
       this.$emit('close')
     },
     onOrganizeChange(val, data) {
-      console.log("123", val, data);
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerCategoryId')
+        this.$refs['dataForm'].validateField('partnerCategoryIdText')
       })
-      console.log(this.$refs['dataForm']);
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-      console.log("表单", this.dataForm);
-      console.log("联系人", this.contactsList);
-      console.log("收货地址", this.deliveryAddressList);
-      console.log("附件", this.datafilelist);
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1406,10 +1412,10 @@ export default {
           }
           if (flag === false) return
           this.btnLoading = true
-          const formMethod = this.dataForm.id ? updatePartner : addPartner
+          const formMethod = this.dataForm.id ? editPartner : addPartner
           formMethod(obj).then(res => {
             let msg = "";
-            if (formMethod == updatePartner) {
+            if (formMethod == editPartner) {
               msg = "修改成功"
             } else {
               msg = "新建成功"
@@ -1444,7 +1450,6 @@ export default {
 ::v-deep .el-tabs__header {
   padding: 0 !important;
 }
-
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -1460,5 +1465,8 @@ export default {
 .required {
   color: red;
   margin-right: 4px;
+}
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 11px 10px;
 }
 </style>

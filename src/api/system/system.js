@@ -62,3 +62,19 @@ export const copy = (id) => {
     data
   })
 }
+
+// 检查功能菜单编码重复
+ export const checkCode = (code,id) => {
+  return request({
+    url: `/api/visualdev/Base/check/code/exist?code=${code}&id=${id}`,
+    method: 'get',
+  })
+}
+
+// 获取功能信息
+export function detailVisualDevInfo(code) {
+  return request({
+    url: `/api/visualdev/Base/detailByCode?code=${code}`,
+    method: 'get'
+  })
+}

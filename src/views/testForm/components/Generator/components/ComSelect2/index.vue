@@ -75,6 +75,8 @@
 
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
+import { getDepartmentSelectorByAuth } from "@/api/permission/department";
+import { getOrganizeSelectorByAuth } from '@/api/permission/organize'
 import { getcategoryTree } from '@/api/basicData/index'
 
 export default {
@@ -234,7 +236,6 @@ export default {
   },
   methods: {
     async getData() {
-
       const topItem = {
         fullName: "顶级节点",
         hasChildren: true,
@@ -243,6 +244,14 @@ export default {
         organize: '顶级节点',
         organizeIds: ['-1']
       }
+
+      // if (this.auth) {
+      //   if (this.isOnlyOrg && this.parentId === '-1') {
+      //     this.treeData = [topItem]
+      //     return
+      //   }
+      //   console.log(this.type);
+      // }
       if (this.selectClassifyType){
         const method = getcategoryTree
         let obj = {
@@ -304,6 +313,20 @@ export default {
         this.selectedIds = [currId]
         this.selectedData = [currData]
       }
+      // let selectedData = []
+      // for (let i = 0; i < this.selectedIds.length; i++) {
+      //   let item = []
+      //   let selectedNames = this.selectedData[i]
+      //   for (let j = 0; j < this.selectedIds.length; j++) {
+      //     item.push({
+      //       id: this.selectedIds[i],
+      //       name: selectedNames,
+      //     })
+      //   }
+      //   selectedData.push(item)
+      // }
+      // this.rSelectData = selectedData[0]
+      // console.log("选中", this.selectedIds, this.selectedData, selectedData);
     },
     removeAll() {
       this.selectedData = []

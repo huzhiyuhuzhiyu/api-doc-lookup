@@ -501,11 +501,11 @@ export default {
 
             }
             getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
                 localStorage.setItem('qhxt', false)
             this.$store.commit('jx/SET_LOGO')
             localStorage.setItem("sys", this.loginForm.busCode)
-                location.href = location.origin + '/' + response.data.systemVO.homeUrl
+                location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
             
             // location.reload()

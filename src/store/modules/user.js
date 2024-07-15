@@ -144,7 +144,7 @@ const actions = {
                   icon: e.icon,
                   zhTitle: e.fullName,
                   modelId: e.id,
-                  affix:data.systemVO.homeUrl&&path==data.systemVO.homeUrl?true:false
+                  affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
                 }
               }
               routerList.push(newObj)
@@ -153,6 +153,7 @@ const actions = {
             if ([3, 4, 5, 8].indexOf(e.type) > -1) {
               let propertyJson = e.propertyJson ? JSON.parse(e.propertyJson) : null,
                 relationId = '',
+                path = e.urlAddress,
                 isTree = 0,
                 componentUrl = ''
               if (propertyJson) {
@@ -179,6 +180,7 @@ const actions = {
                   zhTitle: e.fullName,
                   modelId: e.id,
                   relationId,
+                  affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false,
                   isTree
                 }
               }

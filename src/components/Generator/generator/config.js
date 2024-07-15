@@ -730,6 +730,35 @@ export const selectComponents = [
   },
   {
     __config__: {
+      jnpfKey: "comSelect2",
+      label: "选择分类",
+      labelWidth: undefined,
+      showLabel: true,
+      tag: "com-select2",
+      tagIcon: "icon-ym icon-ym-generator-company",
+      defaultValue: null,
+      required: false,
+      layout: "colFormItem",
+      span: 24,
+      dragDisabled: false,
+      visibility: ["pc", "app"],
+      tableName: "",
+      regList: [],
+      trigger: "change"
+    },
+    on: {
+      change:
+        "({ value , formValidate  }) => {\n    // 在此编写代码\n    \n}"
+    },
+    placeholder: "请选择",
+    multiple: false,
+    clearable: true,
+    filterable: false,
+    disabled: false,
+    selectClassifyType: 'customer',
+  },
+  {
+    __config__: {
       jnpfKey: "depSelect",
       label: "部门选择",
       labelWidth: undefined,

@@ -736,7 +736,7 @@ export const selectComponents = [
       showLabel: true,
       tag: "com-select2",
       tagIcon: "icon-ym icon-ym-generator-company",
-      defaultValue: null,
+      defaultValue: [],
       required: false,
       layout: "colFormItem",
       span: 24,
@@ -748,7 +748,7 @@ export const selectComponents = [
     },
     on: {
       change:
-        "({ value , formValidate  }) => {\n    // 在此编写代码\n    \n}"
+        "({ data, formData, setFormData, setShowOrHide, setRequired, setDisabled, request, getFieldOptions, setFieldOptions }) => {\n    // 在此编写代码\n    \n}"
     },
     placeholder: "请选择",
     multiple: false,
@@ -1192,6 +1192,29 @@ export const selectComponents = [
     readonly: true,
     placeholder: "系统自动生成"
   },
+  // {
+  //   __config__: {
+  //     jnpfKey: "colTable",
+  //     label: "表格表单",
+  //     labelWidth: undefined,
+  //     showLabel: true,
+  //     tag: "colTable",
+  //     tagIcon: "icon-ym icon-ym-generator-role",
+  //     defaultValue: null,
+  //     layout: "rowFormItem",
+  //     dragDisabled: false,
+  //     visibility: ["pc", "app"],
+  //     tableName: "",
+  //   },
+  //   on: {
+  //     change:
+  //       "({ data, formData, setFormData, setShowOrHide, setRequired, setDisabled, request, getFieldOptions, setFieldOptions }) => {\n    // 在此编写代码\n    \n}"
+  //   },
+  //   placeholder: "请选择",
+  //   multiple: false,
+  //   clearable: true,
+  //   disabled: false
+  // },
 ];
 
 // 系统控件 【左面板】

@@ -28,14 +28,14 @@
         </template>
       </el-input>
     </div>
-    <el-dialog title="选择分类" :close-on-click-modal="false" :visible.sync="visible"
+    <el-dialog title="选择所属分类" :close-on-click-modal="false" :visible.sync="visible"
       class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body width="800px"
       :modal-append-to-body="false" @close="onClose">
       <div class="transfer__body">
         <div class="transfer-pane">
           <div class="transfer-pane__tools">
-            <el-input placeholder="请输入关键词查询" v-model="keyword" @keyup.enter.native="search" clearable
-              class="search-input">
+            <el-input placeholder="请输入关键词查询" v-model="keyword" @keyup.enter.native="search" clearable class="search-input"
+              maxlength="20">
               <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
             </el-input>
           </div>
@@ -59,7 +59,7 @@
             <template>
               <div v-for="(item, index) in selectedData" :key="index" class="selected-item">
                 <span :title="item">{{ item }}</span>
-                <i class="el-icon-delete" v-if="item" @click="removeData(index)"></i>
+                <i class="el-icon-delete" @click="removeData(index)"></i>
               </div>
             </template>
           </div>
@@ -75,10 +75,10 @@
 
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
-import { getcategoryTree } from '@/api/basicData/index'
+import { getcategoryTree } from '@/api/basicData/materialSettings'
 
 export default {
-  name: 'comSelect2',
+  name: 'comSelect3',
   inject: {
     elForm: {
       default: ''
@@ -126,7 +126,10 @@ export default {
     parentId: {
       default: ''
     },
-    selectClassifyType: {
+    type: {
+      default: ''
+    },
+    classAttribute: {
       default: ''
     },
     isdisabled: {
@@ -139,7 +142,7 @@ export default {
       treeData: [],
       allList: [],
       keyword: '',
-      innerValue: '',
+      innerValue: this.value,
       visible: false,
       loading: false,
       props: {
@@ -218,6 +221,7 @@ export default {
   },
   watch: {
     value(val) {
+      this.innerValue = val
       this.setDefault()
     },
     selectDisabled() {
@@ -243,16 +247,21 @@ export default {
         organize: '顶级节点',
         organizeIds: ['-1']
       }
-      if (this.selectClassifyType){
-        const method = getcategoryTree
-        let obj = {
-          type: this.selectClassifyType,
-          keyword: "",
-          id: ""
+      this.allList = [...this.$store.getters.departmentList, topItem]
+      if (this.auth) {
+        if (this.isOnlyOrg && this.parentId === '-1') {
+          this.treeData = [topItem]
+          return
         }
+        if (!this.classAttribute) {
+          this.treeData = []
+          return
+        }
+        const method = getcategoryTree
+        let obj = { classAttribute: this.classAttribute }
         method(obj).then(res => {
           this.treeData = res.data
-          this.allList = this.treeData
+          this.allList = [...this.treeData]
         })
       }
     },
@@ -304,6 +313,20 @@ export default {
         this.selectedIds = [currId]
         this.selectedData = [currData]
       }
+      let selectedData = []
+      for (let i = 0; i < this.selectedIds.length; i++) {
+        let item = []
+        let selectedNames = this.selectedData[i]
+        for (let j = 0; j < this.selectedIds.length; j++) {
+          item.push({
+            id: this.selectedIds[i],
+            name: selectedNames,
+          })
+        }
+        selectedData.push(item)
+      }
+      this.rSelectData = selectedData
+      // console.log("选中",this.selectedIds,this.selectedData,selectedData);
     },
     removeAll() {
       this.selectedData = []
@@ -334,63 +357,72 @@ export default {
         this.$emit('input', this.selectedIds)
         this.$emit('change', this.selectedIds, selectedData)
       } else {
-        this.innerValue = this.selectedData
+        this.innerValue = this.selectedData[0]
         this.$emit('input', this.selectedIds[0])
         this.$emit('change', this.selectedIds[0], selectedData[0])
       }
       this.visible = false
     },
+    findIdByName(data, name) {
+      // 遍历数据数组
+      for (let item of data) {
+        // 如果当前项的name匹配目标name，则返回当前项的id
+        if (item.name === name) {
+          return item.id;
+        }
+        // 如果当前项有子项，则递归查找子项中的name
+        if (item.childrenList && item.childrenList.length > 0) {
+          let result = this.findIdByName(item.childrenList, name);
+          // 如果找到了对应的id，则返回该结果
+          if (result) {
+            return result;
+          }
+        }
+      }
+      // 如果没有找到对应的id，则返回null或其他特定的值
+      return null;
+    },
     setDefault() {
-      if (!this.value || !this.value.length) {
+      if (!this.innerValue || !this.innerValue.length) {
         this.innerValue = ''
         this.selectedIds = []
         this.selectedData = []
         this.rSelectData = []
+
         this.tagsList = []
+        return
       }
-      // else if (this.multiple) {
-      //   if (!this.rSelectData.length || JSON.parse(JSON.stringify(this.selectedData)) !== JSON.parse(JSON.stringify(this.tagsList))) {
-      //     this.selectedIds = typeof this.ids === 'function' ? this.ids() : [...this.ids]
-      //     this.selectedData = [...this.value]
-      //     this.rSelectData = this.value.map((item, index) => { return { id: this.selectedIds[index], name: this.selectedData[index], all: undefined } })
-      //     // this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+      let selectedIds = this.multiple ? this.innerValue : [this.innerValue]
+      this.selectedData = JSON.parse(JSON.stringify(selectedIds))
+      selectedIds[0] =  this.findIdByName(this.allList,selectedIds[0])
+      if (selectedIds[0]!= null){
+        this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
+        let textList = []
+        textList = JSON.parse(JSON.stringify(this.rSelectData))
+      }
+      // for (let i = 0; i < selectedIds.length; i++) {
+      //   const item = selectedIds[i];
+      //   let textItem = JSON.parse(JSON.stringify(item))
+      //   for (let j = 0; j < item.length; j++) {
+      //     inner: for (let ii = 0; ii < this.allList.length; ii++) {
+      //       if (item[j] === this.allList[ii].id) {
+      //         textItem[j] = this.allList[ii].fullName
+      //         break inner
+      //       }
+      //     }
       //   }
-      //   this.innerValue = ''
-      // } else {
-      //   if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
-      //     this.selectedIds = []
-      //     this.selectedData = [this.value]
-      //     this.rSelectData = [{ name: this.value }]
-      //   }
-      //   this.innerValue = this.value
+      //   textList.push(textItem)
       // }
-      // return 
-      let selectedIds = this.multiple ? this.value : [[this.value]]
-      this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
-      let textList = []
-      for (let i = 0; i < selectedIds.length; i++) {
-        const item = selectedIds[i];
-        let textItem = JSON.parse(JSON.stringify(item))
-        for (let j = 0; j < item.length; j++) {
-          inner: for (let ii = 0; ii < this.allList.length; ii++) {
-            if (item[j] === this.allList[ii].id) {
-              textItem[j] = this.allList[ii].name
-              break inner
-            }
-          }
-        }
-        textList.push(textItem)
-      }
-      this.selectedData = textList.map(o => o.join(','))
-      if (this.multiple) {
-        this.innerValue = ''
-        this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
-        this.$nextTick(() => {
-          this.resetInputHeight();
-        })
-      } else {
-        this.innerValue = this.selectedData.join(',')
-      }
+      // this.selectedData = textList.map(o => o)
+      // if (this.multiple) {
+      //   this.innerValue = ''
+      //   this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+      //   this.$nextTick(() => {
+      //     this.resetInputHeight();
+      //   })
+      // } else {
+      //   this.innerValue = this.selectedData.join(',')
+      // }
     },
     deleteTag(event, index) {
       this.selectedData.splice(index, 1)

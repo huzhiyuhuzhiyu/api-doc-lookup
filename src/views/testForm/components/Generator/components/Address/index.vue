@@ -2,10 +2,10 @@
   <div class="popupSelect-container">
     <div class="el-select" @click.stop="openDialog">
       <div class="el-select__tags" v-if="multiple" ref="tags"
-        :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%', cursor: 'pointer' }">
+        :style="{ 'max-width': inputWidth - 32 + 'px', width: '100%',cursor:'pointer' }">
         <span v-if="collapseTags && tagsList.length">
-          <el-tag :closable="!selectDisabled" :size="collapseTagSize" type="info" @close="deleteTag($event, 0)"
-            disable-transitions>
+          <el-tag :closable="!selectDisabled" :size="collapseTagSize" type="info"
+            @close="deleteTag($event, 0)" disable-transitions>
             <span class="el-select__tags-text">{{ tagsList[0] }}</span>
           </el-tag>
           <el-tag v-if="tagsList.length > 1" :closable="false" type="info" disable-transitions>
@@ -13,39 +13,40 @@
           </el-tag>
         </span>
         <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
-          <el-tag v-for="(item, i) in tagsList" :key="item" :size="collapseTagSize" :closable="!selectDisabled"
-            type="info" @close="deleteTag($event, i)" disable-transitions>
+          <el-tag v-for="(item,i) in tagsList" :key="item" :size="collapseTagSize"
+            :closable="!selectDisabled" type="info" @close="deleteTag($event, i)"
+            disable-transitions>
             <span class="el-select__tags-text">{{ item }}</span>
           </el-tag>
         </transition-group>
       </div>
-      <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder" :disabled="isdisabled"
-        readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null" @mouseenter.native="inputHovering = true"
+      <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder"
+        :disabled="selectDisabled" readonly :validate-event="false"
+        :tabindex="(multiple) ? '-1' : null" @mouseenter.native="inputHovering = true"
         @mouseleave.native="inputHovering = false">
         <template slot="suffix">
-          <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
+          <i v-show="!showClose"
+            :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
+          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close"
+            @click="handleClearClick"></i>
         </template>
       </el-input>
     </div>
-    <el-dialog title="选择分类" :close-on-click-modal="false" :visible.sync="visible"
-      class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body width="800px"
-      :modal-append-to-body="false" @close="onClose">
+    <el-dialog title="省市区" :close-on-click-modal="false" :visible.sync="visible"
+      class="JNPF-dialog JNPF-dialog_center transfer-dialog" lock-scroll append-to-body
+      width="800px" :modal-append-to-body="false" @close="onClose">
       <div class="transfer__body">
         <div class="transfer-pane">
           <div class="transfer-pane__tools">
-            <el-input placeholder="请输入关键词查询" v-model="keyword" @keyup.enter.native="search" clearable
-              class="search-input">
-              <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
-            </el-input>
+            <span>全部数据</span>
           </div>
           <div class="transfer-pane__body">
-            <el-tree :data="treeData" :props="props" check-on-click-node :expand-on-click-node="false" default-expand-all
-              @node-click="handleNodeClick" class="JNPF-common-el-tree" node-key="id" v-loading="loading" ref="tree"
-              :filter-node-method="filterNode">
+            <el-tree :data="treeData" :props="props" check-on-click-node
+              @node-click="handleNodeClick" class="JNPF-common-el-tree" node-key="id"
+              v-loading="loading" lazy :load="loadNode">
               <span class="custom-tree-node" slot-scope="{ node, data }">
                 <i :class="data.icon"></i>
-                <span class="text">{{ node.label }}</span>
+                <span class="text">{{node.label}}</span>
               </span>
             </el-tree>
           </div>
@@ -58,27 +59,26 @@
           <div class="transfer-pane__body shadow right-pane">
             <template>
               <div v-for="(item, index) in selectedData" :key="index" class="selected-item">
-                <span :title="item">{{ item }}</span>
-                <i class="el-icon-delete" v-if="item" @click="removeData(index)"></i>
+                <span>{{item}}</span>
+                <i class="el-icon-delete" @click="removeData(index)"></i>
               </div>
             </template>
           </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="confirm">{{ $t('common.confirmButton') }}</el-button>
+        <el-button @click="visible=false">{{$t('common.cancelButton')}}</el-button>
+        <el-button type="primary" @click="confirm">{{$t('common.confirmButton')}}</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getProvinceSelector, GetAreaByIds } from '@/api/system/province'
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
-import { getcategoryTree } from '@/api/basicData/index'
-
 export default {
-  name: 'comSelect2',
+  name: 'JNPF-Address',
   inject: {
     elForm: {
       default: ''
@@ -90,6 +90,10 @@ export default {
   props: {
     value: {
       default: () => []
+    },
+    level: {
+      type: Number,
+      default: 2
     },
     placeholder: {
       type: String,
@@ -111,40 +115,18 @@ export default {
       type: Boolean,
       default: false
     },
-    auth: {
-      type: Boolean,
-      default: false
-    },
-    isOnlyOrg: {
-      type: Boolean,
-      default: false
-    },
     size: String,
-    currOrgId: {
-      default: '0'
-    },
-    parentId: {
-      default: ''
-    },
-    selectClassifyType: {
-      default: ''
-    },
-    isdisabled: {
-      type: Boolean,
-      default: false
-    }
   },
   data() {
     return {
       treeData: [],
-      allList: [],
-      keyword: '',
-      innerValue: '',
       visible: false,
       loading: false,
+      nodeId: '',
+      innerValue: '',
       props: {
-        children: 'childrenList',
-        label: 'name',
+        children: 'children',
+        label: 'fullName',
         isLeaf: 'isLeaf'
       },
       selectedData: [],
@@ -153,7 +135,6 @@ export default {
       inputHovering: false,
       inputWidth: 0,
       initialInputHeight: 0,
-      rSelectData: []
     }
   },
   computed: {
@@ -188,7 +169,8 @@ export default {
     },
   },
   created() {
-    this.getData()
+    this.nodeId = '-1'
+    this.initData()
   },
   mounted() {
     addResizeListener(this.$el, this.handleResize);
@@ -225,62 +207,47 @@ export default {
         this.resetInputHeight();
       });
     },
-    allList: {
-      handler: function (val) {
-        this.setDefault()
-      },
-      deep: true
-    }
   },
   methods: {
-    async getData() {
-
-      const topItem = {
-        fullName: "顶级节点",
-        hasChildren: true,
-        id: "-1",
-        icon: "icon-ym icon-ym-tree-organization3",
-        organize: '顶级节点',
-        organizeIds: ['-1']
-      }
-      if (this.selectClassifyType){
-        const method = getcategoryTree
-        let obj = {
-          type: this.selectClassifyType,
-          keyword: "",
-          id: ""
-        }
-        method(obj).then(res => {
-          this.treeData = res.data
-          this.allList = this.treeData
-        })
-      }
-    },
     onClose() { },
     clear() {
       if (this.selectDisabled) return
       this.innerValue = ''
       this.selectedData = []
       this.selectedIds = []
-      this.rSelectData = []
       this.tagsList = []
       this.$emit('input', [])
       this.$emit('change', [], [])
     },
     openDialog() {
-      if (this.isdisabled) return
-      this.keyword = ''
-      this.treeData = []
-      this.getData()
-      this.setDefault()
+      if (this.selectDisabled) return
       this.visible = true
+      this.nodeId = '-1'
+      this.setDefault()
     },
-    search() {
-      this.$refs.tree && this.$refs.tree.filter(this.keyword)
+    loadNode(node, resolve) {
+      if (node.level === 0) {
+        this.nodeId = '-1'
+        return resolve(this.treeData)
+      }
+      this.nodeId = node.data.id
+      getProvinceSelector(this.nodeId).then(res => {
+        const list = res.data.list.map(value => ({
+          ...value,
+          isLeaf: node.level >= this.level ? true : value.isLeaf
+        }));
+        resolve(list);
+      })
     },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data[this.props.label].indexOf(value) !== -1;
+    initData() {
+      this.loading = true
+      getProvinceSelector(this.nodeId).then(res => {
+        this.treeData = res.data.list.map(value => ({
+          ...value,
+          isLeaf: 0 >= this.level ? true : value.isLeaf
+        }));
+        this.loading = false
+      })
     },
     getNodePath(node) {
       let fullPath = []
@@ -291,12 +258,13 @@ export default {
       loop(node)
       return fullPath
     },
-    handleNodeClick(data) {
-      if (data.disabled) return
-      let currId = data.id
-      let currData = data.name
+    handleNodeClick(data, node) {
+      if (!node.isLeaf) return
+      const nodePath = this.getNodePath(node)
+      let currId = nodePath.map(o => o.id)
+      let currData = nodePath.map(o => o.fullName).join('/')
       if (this.multiple) {
-        const boo = this.selectedIds.some(o => o === currId)
+        const boo = this.selectedIds.some(o => o.join('/') === currId.join('/'))
         if (boo) return
         this.selectedIds.push(currId)
         this.selectedData.push(currData)
@@ -308,22 +276,20 @@ export default {
     removeAll() {
       this.selectedData = []
       this.selectedIds = []
-      this.rSelectData = []
     },
     removeData(index) {
       this.selectedData.splice(index, 1)
       this.selectedIds.splice(index, 1)
-      this.rSelectData.splice(index, 1)
     },
     confirm() {
       let selectedData = []
       for (let i = 0; i < this.selectedIds.length; i++) {
         let item = []
-        let selectedNames = this.selectedData[i]
-        for (let j = 0; j < this.selectedIds.length; j++) {
+        let selectedNames = this.selectedData[i].split('/')
+        for (let j = 0; j < this.selectedIds[i].length; j++) {
           item.push({
-            id: this.selectedIds[i],
-            name: selectedNames,
+            id: this.selectedIds[i][j],
+            fullName: selectedNames[j],
           })
         }
         selectedData.push(item)
@@ -334,7 +300,7 @@ export default {
         this.$emit('input', this.selectedIds)
         this.$emit('change', this.selectedIds, selectedData)
       } else {
-        this.innerValue = this.selectedData
+        this.innerValue = this.selectedData.join(',')
         this.$emit('input', this.selectedIds[0])
         this.$emit('change', this.selectedIds[0], selectedData[0])
       }
@@ -345,52 +311,25 @@ export default {
         this.innerValue = ''
         this.selectedIds = []
         this.selectedData = []
-        this.rSelectData = []
         this.tagsList = []
+        return
       }
-      // else if (this.multiple) {
-      //   if (!this.rSelectData.length || JSON.parse(JSON.stringify(this.selectedData)) !== JSON.parse(JSON.stringify(this.tagsList))) {
-      //     this.selectedIds = typeof this.ids === 'function' ? this.ids() : [...this.ids]
-      //     this.selectedData = [...this.value]
-      //     this.rSelectData = this.value.map((item, index) => { return { id: this.selectedIds[index], name: this.selectedData[index], all: undefined } })
-      //     // this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
-      //   }
-      //   this.innerValue = ''
-      // } else {
-      //   if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
-      //     this.selectedIds = []
-      //     this.selectedData = [this.value]
-      //     this.rSelectData = [{ name: this.value }]
-      //   }
-      //   this.innerValue = this.value
-      // }
-      // return 
-      let selectedIds = this.multiple ? this.value : [[this.value]]
-      this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
-      let textList = []
-      for (let i = 0; i < selectedIds.length; i++) {
-        const item = selectedIds[i];
-        let textItem = JSON.parse(JSON.stringify(item))
-        for (let j = 0; j < item.length; j++) {
-          inner: for (let ii = 0; ii < this.allList.length; ii++) {
-            if (item[j] === this.allList[ii].id) {
-              textItem[j] = this.allList[ii].name
-              break inner
-            }
-          }
+      let selectedIds = this.multiple ? this.value : [this.value]
+      GetAreaByIds(selectedIds).then(res => {
+        this.selectedIds = JSON.parse(JSON.stringify(selectedIds))
+        this.selectedData = res.data.map(o => o.join('/'))
+        if (this.multiple) {
+          this.innerValue = ''
+          this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
+        } else {
+          this.innerValue = this.selectedData.join(',')
         }
-        textList.push(textItem)
-      }
-      this.selectedData = textList.map(o => o.join(','))
-      if (this.multiple) {
-        this.innerValue = ''
-        this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
         this.$nextTick(() => {
-          this.resetInputHeight();
-        })
-      } else {
-        this.innerValue = this.selectedData.join(',')
-      }
+          if (this.multiple) {
+            this.resetInputHeight();
+          }
+        });
+      })
     },
     deleteTag(event, index) {
       this.selectedData.splice(index, 1)
@@ -401,8 +340,6 @@ export default {
     handleClearClick(event) {
       this.selectedData = []
       this.selectedIds = []
-      this.rSelectData = []
-
       this.confirm()
       event.stopPropagation();
     },

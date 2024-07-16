@@ -148,7 +148,7 @@
               </div>
             </div>
           </div> -->
-          <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;">
+          <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;overflow: hidden;">
             <div class="body_right">
               <div style="display: flex;justify-content: center;height: 82px;align-items: center;">
                 <!-- <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'> -->
@@ -728,7 +728,7 @@ export default {
     position: fixed;
     bottom: 10px;
     width: 100%;
-    font-size: 14px !important;
+    font-size: 13px !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -868,7 +868,7 @@ export default {
         text-align: center;
         position: absolute;
         bottom: 20px;
-        font-size: 14px !important;
+        font-size: 13px !important;
         width: 100%;
       }
       .body_right {
@@ -895,7 +895,7 @@ export default {
         // box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.6);
         width: 500px;
         min-width: 500px;
-        height: 570px;
+        // height: 570px;
         .title {
           white-space: nowrap;
           font-size: 26px;

@@ -29,6 +29,6 @@ export default {
   font-size: 18px;
   border-bottom: 1px solid #dcdfe6;
   background: #fafafa;
-  padding-left: 5px;
+  padding-left: 5px !important;
 }
 </style>

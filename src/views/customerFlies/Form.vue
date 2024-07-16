@@ -15,12 +15,16 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <!-- 普通属性 -->
-          <el-tab-pane v-if="basicData.length" :label="basicData[0].title" :name="basicData[0].title" :key="basicData[0].title">
-            <JNPF-Col v-if="basicData.length" v-model="dataForm" :tabContent="basicData[0].__config__.children" ref="dataForm" :openMode="openMode" />
+          <el-tab-pane v-if="basicData.length" :label="basicData[0].title" :name="basicData[0].title"
+            :key="basicData[0].title">
+            <JNPF-Col v-if="basicData.length" v-model="dataForm" :tabContent="basicData[0].__config__.children"
+              ref="dataForm" :openMode="openMode" />
           </el-tab-pane>
-          <el-tab-pane v-if="basicData.length" :label="basicData[1].title" :name="basicData[1].title" :key="basicData[1].title">
-            <JNPF-col-table v-if="basicData.length" v-model="sleeveList" ref="sleeveForm" :tableItems="basicData[1].__config__.children" :openMode="openMode"
-              @addth="addSleeveList" @deleteth="deleteth" />
+          <el-tab-pane v-if="basicData.length" :label="basicData[1].title" :name="basicData[1].title"
+            :key="basicData[1].title">
+            <JNPF-col-table v-if="basicData.length" v-model="sleeveList" ref="sleeveForm"
+              :tableItems="basicData[1].__config__.children" :openMode="openMode" @addth="addSleeveList"
+              @deleteth="deleteth" />
           </el-tab-pane>
 
           <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
@@ -752,8 +756,8 @@ export default {
         { prop: "phone", label: "电话", value: "", type: 'input', maxlength: 100, },
       ],
       sleeveList: [],
-      configProp:[],
-      basicData:[]
+      configProp: [],
+      basicData: []
     }
   },
   created() {
@@ -777,11 +781,8 @@ export default {
       }
       let queryString = getQueryString()
       detailVisualDevInfo(queryString).then(res => {
-        console.log(res);
         let formData = JSON.parse(res.data.formData)
-        console.log(formData);
         let fields = formData.fields[0].__config__.children
-        console.log(fields);
         let that = this
 
         /**传入的方法花括号内容从this中解构，并返回 */
@@ -800,7 +801,6 @@ export default {
           const newStr = '\nvar ' + match + ' = that;\n';
 
           const result = insertString(copyparams, newStr, index1);
-          console.log('result', result)
           return result
         }
 
@@ -811,13 +811,22 @@ export default {
               return children.map(child => {
                 const { jnpfKey, label, showLabel, tag, tagIcon, required, layout, span, dragDisabled, visibility, tableName, noShow, unique, regList, trigger, formId, renderKey } = child.__config__;
                 const { __vModel__ } = child;
+                let itemSlot = child.__slot__ || ''
+                if (itemSlot) {
+                  if (itemSlot.prepend) {
+                    itemSlot.position = 'prepend';
+                    itemSlot.content = itemSlot['prepend']
+                  } else if (itemSlot.append) {
+                    itemSlot.position = 'append';
+                    itemSlot.content = itemSlot['append']
+                  }
+                }
                 const clearable = child.clearable || false;
                 const readonly = child.readonly || false;
                 const disabled = child.disabled || false;
                 let itemRules = []
                 let message = child.placeholder + label
                 let content = child.content
-                console.log(regList);
                 if (required) {
                   itemRules.push(
                     { required: true, message: message, trigger: 'blur' }
@@ -840,15 +849,11 @@ export default {
                         var parameter = item.validate.substring(item.validate.indexOf('(') + 1, item.validate.lastIndexOf(')'));
                         const isEnclosedInBraces = /^\{.*\}$/.test(parameter);
                         if (isEnclosedInBraces) {
-                          console.log(parameter, 'parameter')
                           const createObjectFromStr = new Function(`return ${parameter}`);
                           const obj = createObjectFromStr.bind(that)();
-                          console.log(obj);
-                          // item.validate = that[functionName](obj)
                           item.validate = that.formValidate(obj)
-                        }else{
+                        } else {
                           if (typeof that[functionName] === 'function') {
-                            console.log(functionName);
                             item.validate = that[functionName](parameter)
                           } else {
                             console.log(functionName + ' is not defined in Vue instance');
@@ -857,8 +862,6 @@ export default {
                       } else { // 传入的方法花括号内容从this中解构，并返回
                         item.validate = vEvalTransfer(item.validate)
                       }
-                      console.log(item.validate)
-
                       itemRules.push(
                         { validator: that.valType ? item.validate : eval(item.validate), trigger: 'blur' }
                       )
@@ -888,7 +891,7 @@ export default {
                   trigger,
                   formId,
                   renderKey,
-                  itemSlot: child.__slot__ || {},
+                  itemSlot,
                   clearable,
                   readonly,
                   disabled,
@@ -924,7 +927,7 @@ export default {
         let devData = transformData(fields)
         that.basicData = devData
         console.log(that.basicData);
-        that.configProp = that.basicData[1].__config__.children.map(item=>item.prop)
+        that.configProp = that.basicData[1].__config__.children.map(item => item.prop)
       })
 
     },
@@ -932,14 +935,14 @@ export default {
       return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
     },
     // 处理组件数据和参数
-    handleCompData(){
-      
+    handleCompData() {
+
     },
     // 对应套筒新增行
     addSleeveList() {
       let index = this.sleeveList.length
       this.sleeveList.push(
-        this.configProp.reduce((acc, key) => ({ ...acc, [key]: '',index,id:'' }), {})
+        this.configProp.reduce((acc, key) => ({ ...acc, [key]: '', index, id: '' }), {})
       );
       // this.sleeveList.push({
       //   index,
@@ -1642,6 +1645,7 @@ export default {
   color: red;
   margin-right: 4px;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }

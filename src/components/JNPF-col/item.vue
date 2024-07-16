@@ -1,6 +1,6 @@
 <template>
   <el-col :sm="item.sm ? item.sm : item.type === 'textarea' || item.jnpfKey === 'groupTitle' ? 24 : 8" :xs="24"
-    v-if="item.hasOwnProperty('render') ? item.render : true">
+    v-if="item.hasOwnProperty('render') ? item.render : true" :style="{paddingLeft:item.jnpfKey === 'groupTitle' ? '0px' : '15px'}">
     <el-form-item :rules="Rules" :label="item.jnpfKey === 'groupTitle' ? '' : item.label" :prop="item.prop">
 
       <!-- 输入框 -->
@@ -185,7 +185,6 @@ export default {
         if (!rule.message && !rule.validator) { rule.message = this.Placeholder }
         R.push(rule);
       });
-      console.log(R)
       return R;
     },
     readOnly() {

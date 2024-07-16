@@ -4,6 +4,7 @@ const defaultSettings = require('./src/settings.js')
 const define = require('./src/utils/define.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -77,6 +78,13 @@ module.exports = {
           }
         },
         sourceMap: false
+      }),
+      new CompressionPlugin({
+        algorithm: 'gzip',
+        test: /\.(js|css)$/, // 匹配文件名
+        threshold: 10240, // 对超过10k的数据压缩
+        deleteOriginalAssets: false, // 不删除源文件
+        minRatio: 0.8 // 压缩比
       })
     ]
   },

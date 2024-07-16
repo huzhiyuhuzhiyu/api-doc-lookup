@@ -71,11 +71,11 @@
             <el-col :span="24"><el-radio-group v-model="baseForm.pattern">
                 <div class="manner-container">
                   <div class="manner-container-img">
-                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill"></el-image>
+                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill" :preview-src-list="srcList1"></el-image>
                     <div><el-radio label="1">登录样式1</el-radio></div>
                   </div>
                   <div class="manner-container-img">
-                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill"></el-image>
+                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill" :preview-src-list="srcList2"></el-image>
                     <div><el-radio label="2">登录样式2</el-radio></div>
                   </div>
                 </div>
@@ -551,6 +551,8 @@ export default {
   components: { singleImg },
   data() {
     return {
+      srcList1:[require('@/assets/images/manner1.png')],
+      srcList2:[require('@/assets/images/manner2.png')],
       activeName: 'first',
       listLoading: false,
       btnLoading: false,

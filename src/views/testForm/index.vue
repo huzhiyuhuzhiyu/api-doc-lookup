@@ -30,7 +30,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="handleAdd('',1)">
+          <topOpts @add="handleAdd('',2)">
             <!-- <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData"
               @on-success="initData" /> -->
           </topOpts>

@@ -72,7 +72,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <topOpts @add="addOrUpdateHandle()" addText="新建表名">
-              <el-button type="primary" size="mini" icon="iconfont  icon-piliang" @click="batchSetCategory()">批量设置分类</el-button>
+              <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" @click="batchSetCategory()">批量设置分类</el-button>
             <upload-btn :url="'/api/system/DataModel/'+dataBase+'/Action/Import'"
               @on-success="getTableData" />
             <el-button type="text" icon="el-icon-menu" @click="handleFieldsManage()">常用字段
@@ -354,7 +354,7 @@ export default {
   -ms-flex-align: center;
   align-items: center;
 }
-::v-deep .icon-piliang {
+::v-deep .icon-piliang-copy {
   margin-right: 8px
 }
 </style>

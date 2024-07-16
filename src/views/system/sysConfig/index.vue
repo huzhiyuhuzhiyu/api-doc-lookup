@@ -71,48 +71,49 @@
             <el-col :span="24"><el-radio-group v-model="baseForm.pattern">
                 <div class="manner-container">
                   <div class="manner-container-img">
-                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill"></el-image>
+                    <el-image :src="require('@/assets/images/manner1.png')" fit="fill" :preview-src-list="srcList1"></el-image>
                     <div><el-radio label="1">登录样式1</el-radio></div>
                   </div>
                   <div class="manner-container-img">
-                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill"></el-image>
+                    <el-image :src="require('@/assets/images/manner2.png')" fit="fill" :preview-src-list="srcList2"></el-image>
                     <div><el-radio label="2">登录样式2</el-radio></div>
                   </div>
                 </div>
               </el-radio-group></el-col>
           </el-row>
-          <el-row :gutter="20">
-            <el-col :span="24">
-              <el-form-item label="登录图标:">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginIcon" tip="11:1" />
-                    <div class="img_box_text">该登录图标应用于登录界面
-                      <i class="el-icon-question"></i>
-                    </div>
+          <el-row :gutter="20" style="margin: 15px 20px;">
+            <el-col :span="12" style="font-weight:bold;color: #606266;font-size:16px">登录图标:</el-col>
+            <el-col :span="12" style="font-weight:bold;color: #606266;font-size:16px">登录背景:</el-col>
+          </el-row>
+          <el-row :gutter="20" style="margin: 0 20px;">
+            <el-col :span="12">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.loginIcon" tip="11:1" />
+                  <div class="img_box_text">该登录图标应用于登录界面
+                    <i class="el-icon-question"></i>
                   </div>
                 </div>
-              </el-form-item>
+              </div>
             </el-col>
-            <el-col :span="24">
-              <el-form-item label="登录背景:">
-                <div class="img-list">
-                  <div class="img_box">
-                    <single-img v-model="baseForm.loginBg" tip="11:1" />
-                    <div class="img_box_text">
-                      该登录背景应用于登录界面
-                      <i class="el-icon-question"></i>
-                    </div>
-                    <!-- <div class="img_box_text">11:1</div> -->
+            <el-col :span="12">
+              <div class="img-list">
+                <div class="img_box">
+                  <single-img v-model="baseForm.loginBg" tip="11:1" />
+                  <div class="img_box_text">
+                    该登录背景应用于登录界面
+                    <i class="el-icon-question"></i>
                   </div>
+                  <!-- <div class="img_box_text">11:1</div> -->
                 </div>
-              </el-form-item>
+              </div>
             </el-col>
           </el-row>
-          <el-form-item style="margin-top:20px">
-            <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitFormlogin()">保 存</el-button>
-          </el-form-item>
-
+          <el-row>
+            <div style="margin:20px 30px;">
+              <el-button type="primary" size="small" :loading="btnLoading" class="saveBtn" @click="submitFormlogin()">保 存</el-button>
+            </div>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane label="PC端设置" name="second">
           <el-form-item label="导航图标:">
@@ -550,6 +551,8 @@ export default {
   components: { singleImg },
   data() {
     return {
+      srcList1:[require('@/assets/images/manner1.png')],
+      srcList2:[require('@/assets/images/manner2.png')],
       activeName: 'first',
       listLoading: false,
       btnLoading: false,
@@ -1022,6 +1025,8 @@ export default {
     .img_box_text {
       text-align: center;
       margin-right: 20px;
+      line-height: 32px;
+      font-size: 14px;
       i {
         cursor: pointer;
         font-size: 16px;

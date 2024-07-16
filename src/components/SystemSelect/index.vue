@@ -166,9 +166,9 @@ export default {
             } 
             else if (name == "轴管通4.0") {
               getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
             
-                location.href = location.origin + '/' + response.data.systemVO.homeUrl
+                location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
        
             // location.href = location.origin +"/commonPage"

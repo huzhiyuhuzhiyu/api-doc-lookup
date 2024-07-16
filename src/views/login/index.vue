@@ -148,7 +148,7 @@
               </div>
             </div>
           </div> -->
-          <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;">
+          <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;overflow: hidden;">
             <div class="body_right">
               <div style="display: flex;justify-content: center;height: 82px;align-items: center;">
                 <!-- <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'> -->
@@ -233,7 +233,7 @@
                   </div>
                 </div>
               </div>
-              <div class="userxy">登录代表你已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
+              <div class="userxy">登录代表您已阅读并同意<a href='https://www.nbjuxuan.com/user_agreement.html' target="_blank">《用户协议》</a>和<a href='https://www.nbjuxuan.com/privacy_policy.html' target="_blank">《隐私政策》</a></div>
               <el-popover placement="bottom" width="172" trigger="hover">
                 <img src="@/assets/images/qygzh.png" alt="">
                 <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
@@ -501,11 +501,11 @@ export default {
 
             }
             getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeUrl);
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
                 localStorage.setItem('qhxt', false)
             this.$store.commit('jx/SET_LOGO')
             localStorage.setItem("sys", this.loginForm.busCode)
-                location.href = location.origin + '/' + response.data.systemVO.homeUrl
+                location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
             
             // location.reload()
@@ -728,7 +728,7 @@ export default {
     position: fixed;
     bottom: 10px;
     width: 100%;
-    font-size: 14px !important;
+    font-size: 13px !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -868,7 +868,7 @@ export default {
         text-align: center;
         position: absolute;
         bottom: 20px;
-        font-size: 14px !important;
+        font-size: 13px !important;
         width: 100%;
       }
       .body_right {
@@ -884,7 +884,7 @@ export default {
         position: absolute;
         // right: 50px;
         left: 50%;
-        top: 30%;
+        top: 308px;
         transform: translate(-50%, -50%);
         z-index: 100;
         // background: rgba(0,0,0,.1);
@@ -895,7 +895,7 @@ export default {
         // box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.6);
         width: 500px;
         min-width: 500px;
-        height: 570px;
+        // height: 570px;
         .title {
           white-space: nowrap;
           font-size: 26px;

@@ -3,10 +3,29 @@
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
         <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
           <div class="JNPF-common-layout"> -->
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2 v-if="!leftFlag">产品属性分类</h2>
+          <span class="options" v-if="!leftFlag">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getbimProductAttributesFun()">刷新数据</el-dropdown-item>
+                <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div>
+      </div>
 
-
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="enCode" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -16,6 +35,12 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
@@ -100,6 +125,7 @@ export default {
       treeData: [
 
       ],
+      leftFlag: false,
       tableData: [],
       treeLoading: false,
       listLoading: false,
@@ -152,6 +178,10 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
+    },
     columnSetFun(){ 
       console.log("this.$refs.dataTable",this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
@@ -324,5 +354,22 @@ export default {
 
 .el-tabs__nav-scroll {
   padding-left: 0;
+}
+</style>
+<style scoped>
+  .title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 </style>

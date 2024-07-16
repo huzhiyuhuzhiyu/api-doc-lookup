@@ -3,8 +3,15 @@
     :show-close="false" :modal="false" append-to-body>
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
-        <img src="@/assets/images/jnpf2.png" class="header-logo" />
-        <p class="header-txt"> · 流程设计</p>
+        <el-image class="header-logo imagesClass"  :src="define.comUrl + systemVO.iconUrl" v-if="systemVO && systemVO.iconUrl">
+          <template slot="error">
+            <img class="header-logo" :class="headClass"  src="@/assets/images/jnpf.png"
+              alt="">
+          </template>
+        </el-image>
+        <img src="@/assets/images/jnpf.png" :class="headClass"  class="header-logo"
+          v-else />
+        <p class="header-txt"> · 代码生成</p>
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps">
         <el-step title="基础信息" @click.native="stepChick(0)" />

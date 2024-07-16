@@ -1,7 +1,7 @@
 <template>
-  <el-col :sm="item.sm ? item.sm : item.type === 'textarea' ? 24 : 8" :xs="24"
+  <el-col :sm="item.sm ? item.sm : item.type === 'textarea' || item.jnpfKey === 'groupTitle' ? 24 : 8" :xs="24"
     v-if="item.hasOwnProperty('render') ? item.render : true">
-    <el-form-item :rules="Rules" :label="item.label" :prop="item.prop">
+    <el-form-item :rules="Rules" :label="item.jnpfKey === 'groupTitle' ? '' : item.label" :prop="item.prop">
 
       <!-- 输入框 -->
       <template v-if="item.type === 'input'">
@@ -228,4 +228,12 @@ export default {
 
     }
   }
-}</style>
+}
+// .subtitle {
+//   line-height: 33px;
+//   font-size: 18px;
+//   border-bottom: 1px solid #dcdfe6;
+//   background: #fafafa;
+//   padding-left: 5px;
+// }
+</style>

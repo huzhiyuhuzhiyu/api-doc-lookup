@@ -1168,10 +1168,12 @@ export default {
         this.businessType = res.data.configValue1
       })
       if (this.dataForm.id) {
-        for (let item in this.dataRule){
-          if (item === 'mobilePhone'){
-          }else{
-            this.dataRule[item][0].required = true
+        if (this.btnType === 'edit'){
+          for (let item in this.dataRule){
+            if (item === 'mobilePhone'){
+            }else{
+              this.dataRule[item][0].required = true
+            }
           }
         }
         detailPartner(this.dataForm.id).then(res => {
@@ -1270,8 +1272,8 @@ export default {
               )
             })
           }
-          // this.$nextTick(()=>this.$refs['dataForm'].clearValidate())
-          this.$nextTick(()=>this.$refs['dataForm'].resetFields())
+          this.$nextTick(()=>this.$refs['dataForm'].clearValidate())
+          // this.$nextTick(()=>this.$refs['dataForm'].resetFields())
         })
       }
     },

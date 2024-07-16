@@ -15,11 +15,11 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <!-- 普通属性 -->
-          <el-tab-pane :label="basicData[0].title" :name="basicData[0].title" :key="basicData[0].title">
-            <JNPF-Col v-model="dataForm" :tabContent="basicData[0].__config__.children" ref="dataForm" :openMode="openMode" />
+          <el-tab-pane v-if="basicData.length" :label="basicData[0].title" :name="basicData[0].title" :key="basicData[0].title">
+            <JNPF-Col v-if="basicData.length" v-model="dataForm" :tabContent="basicData[0].__config__.children" ref="dataForm" :openMode="openMode" />
           </el-tab-pane>
-          <el-tab-pane :label="basicData[1].title" :name="basicData[1].title" :key="basicData[1].title">
-            <JNPF-col-table v-model="sleeveList" ref="sleeveForm" :tableItems="basicData[1].__config__.children" :openMode="openMode"
+          <el-tab-pane v-if="basicData.length" :label="basicData[1].title" :name="basicData[1].title" :key="basicData[1].title">
+            <JNPF-col-table v-if="basicData.length" v-model="sleeveList" ref="sleeveForm" :tableItems="basicData[1].__config__.children" :openMode="openMode"
               @addth="addSleeveList" @deleteth="deleteth" />
           </el-tab-pane>
 
@@ -523,15 +523,21 @@ import {
 import {
   getProvinceList,
 } from '@/api/system/province'
+import { detailVisualDevInfo } from '@/api/system/system'
+import formValidate from "@/utils/formValidate";
+import request from "@/utils/request";
 export default {
-  props: {
-    basicData:{
-      type:Array,
-      default: () => []
-    }
-  },
+  // props: {
+  //   basicData:{
+  //     type:Array,
+  //     default: () => []
+  //   }
+  // },
   data() {
     return {
+      request,
+      formValidate,
+      valType: false,
       title: '',
       loadingareafoundation: false,
       foundationloadingcity: false,
@@ -746,9 +752,15 @@ export default {
         { prop: "phone", label: "电话", value: "", type: 'input', maxlength: 100, },
       ],
       sleeveList: [],
+      configProp:[],
+      basicData:[]
     }
   },
   created() {
+    // console.log(this.basicData[1].__config__.children);
+    // this.configProp = this.basicData[1].__config__.children.map(item=>item.prop)
+    // console.log(this.configProp);
+    this.getDevDetail()
     this.getProvinceList()
     this.getDictionaryType()
   },
@@ -758,6 +770,167 @@ export default {
     }
   },
   methods: {
+    getDevDetail() {
+      function getQueryString() {
+        const url_string = location.href;
+        return url_string.split('?')[1] || void ('');
+      }
+      let queryString = getQueryString()
+      detailVisualDevInfo(queryString).then(res => {
+        console.log(res);
+        let formData = JSON.parse(res.data.formData)
+        console.log(formData);
+        let fields = formData.fields[0].__config__.children
+        console.log(fields);
+        let that = this
+
+        /**传入的方法花括号内容从this中解构，并返回 */
+        function vEvalTransfer(params) {
+          let copyparams = params
+          let match = copyparams.substring(copyparams.indexOf('{'), copyparams.indexOf('}') + 1)
+          // copyparams = copyparams.replace(match, match + ' = that')
+          copyparams = copyparams.replace(match, '')
+          function insertString(originalStr, newStr, index) {
+            // 在索引位置插入新字符串
+            return `${originalStr.slice(0, index)}${newStr}${originalStr.slice(index)}`;
+          }
+
+          var index1 = copyparams.indexOf('{') + 1;
+          // 示例使用
+          const newStr = '\nvar ' + match + ' = that;\n';
+
+          const result = insertString(copyparams, newStr, index1);
+          console.log('result', result)
+          return result
+        }
+
+        function transformData(data) {
+          return data.map(section => {
+            // 处理每个 section 下的 children
+            const processChildren = (children) => {
+              return children.map(child => {
+                const { jnpfKey, label, showLabel, tag, tagIcon, required, layout, span, dragDisabled, visibility, tableName, noShow, unique, regList, trigger, formId, renderKey } = child.__config__;
+                const { __vModel__ } = child;
+                const clearable = child.clearable || false;
+                const readonly = child.readonly || false;
+                const disabled = child.disabled || false;
+                let itemRules = []
+                let message = child.placeholder + label
+                let content = child.content
+                console.log(regList);
+                if (required) {
+                  itemRules.push(
+                    { required: true, message: message, trigger: 'blur' }
+                  )
+                }
+                if (regList && Array.isArray(regList)) {
+                  regList.forEach(item => {
+                    if (item.pattern) {
+                      itemRules.push(
+                        { pattern: `${eval(item.pattern)}`, message: item.message, trigger: 'blur' },
+                      )
+                    }
+                    if (item.validate) {
+                      that.valType = false
+                      // 如果是formValidate开头的自定义校验，把formValidate添加that标记
+                      if (item.validate.trim().startsWith('formValidate')) {
+                        // item.validate = item.validate.replace('formValidate', 'that.formValidate')
+                        that.valType = true
+                        var functionName = item.validate.substring(0, item.validate.indexOf('('));
+                        var parameter = item.validate.substring(item.validate.indexOf('(') + 1, item.validate.lastIndexOf(')'));
+                        const isEnclosedInBraces = /^\{.*\}$/.test(parameter);
+                        if (isEnclosedInBraces) {
+                          console.log(parameter, 'parameter')
+                          const createObjectFromStr = new Function(`return ${parameter}`);
+                          const obj = createObjectFromStr.bind(that)();
+                          console.log(obj);
+                          // item.validate = that[functionName](obj)
+                          item.validate = that.formValidate(obj)
+                        }else{
+                          if (typeof that[functionName] === 'function') {
+                            console.log(functionName);
+                            item.validate = that[functionName](parameter)
+                          } else {
+                            console.log(functionName + ' is not defined in Vue instance');
+                          }
+                        }
+                      } else { // 传入的方法花括号内容从this中解构，并返回
+                        item.validate = vEvalTransfer(item.validate)
+                      }
+                      console.log(item.validate)
+
+                      itemRules.push(
+                        { validator: that.valType ? item.validate : eval(item.validate), trigger: 'blur' }
+                      )
+                    }
+                  })
+                }
+
+                return {
+                  jnpfKey,
+                  type: jnpfKey === 'comInput' ? 'input' : jnpfKey === 'select' ? 'select' : 'custom',
+                  customComponent: jnpfKey,
+                  selectClassifyType: child.selectClassifyType || '',
+                  itemRules,
+                  label,
+                  showLabel,
+                  tag,
+                  tagIcon,
+                  required,
+                  layout,
+                  span,
+                  dragDisabled,
+                  visibility,
+                  tableName,
+                  noShow,
+                  unique,
+                  regList,
+                  trigger,
+                  formId,
+                  renderKey,
+                  itemSlot: child.__slot__ || {},
+                  clearable,
+                  readonly,
+                  disabled,
+                  prop: __vModel__ ? that.getToLowerCase(__vModel__) : label,
+                  content
+                };
+              });
+            };
+
+            let children = section.__config__.children;
+
+            // 如果是联系人信息，且包含 table 类型的子项，需要特殊处理
+            if (section.title === "联系人信息") {
+              children = section.__config__.children.flatMap(child => {
+                if (child.__config__.jnpfKey === "table") {
+                  return processChildren(child.__config__.children);
+                } else {
+                  return processChildren([child]);
+                }
+              });
+            } else {
+              children = processChildren(children);
+            }
+
+            return {
+              title: section.title,
+              __config__: {
+                children
+              }
+            };
+          });
+        }
+        let devData = transformData(fields)
+        that.basicData = devData
+        console.log(that.basicData);
+        that.configProp = that.basicData[1].__config__.children.map(item=>item.prop)
+      })
+
+    },
+    getToLowerCase(val) {
+      return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
+    },
     // 处理组件数据和参数
     handleCompData(){
       
@@ -765,17 +938,20 @@ export default {
     // 对应套筒新增行
     addSleeveList() {
       let index = this.sleeveList.length
-      this.sleeveList.push({
-        index,
-        sleeveId: "",
-        sleeveName: "",
-        withhold: "",
-        externalAdhesive: "",
-        drawLineLength: "",
-        innerRubberLength: "",
-        serialNumber: "",
-        remark: "",
-      })
+      this.sleeveList.push(
+        this.configProp.reduce((acc, key) => ({ ...acc, [key]: '',index,id:'' }), {})
+      );
+      // this.sleeveList.push({
+      //   index,
+      //   sleeveId: "",
+      //   sleeveName: "",
+      //   withhold: "",
+      //   externalAdhesive: "",
+      //   drawLineLength: "",
+      //   innerRubberLength: "",
+      //   serialNumber: "",
+      //   remark: "",
+      // })
     },
     // 对应套筒删除当前行
     deleteth(row, index) {

@@ -205,7 +205,7 @@ export default {
    
   },
   mounted() {
-    // this.rowDrop(); //声明表格拖动排序方法
+    this.rowDrop(); //声明表格拖动排序方法
 
   },
   

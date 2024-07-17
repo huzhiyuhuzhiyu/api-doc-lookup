@@ -186,6 +186,7 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
+        this.dataForm.documentStatus="submit"
         const formMethod = this.dataForm.id ? updateProductData : addProduct
         formMethod(this.dataForm).then(res => {
           let msg = res.msg

@@ -121,8 +121,6 @@
       </p>
     </div>
     <div class="login-container2" v-show="!isLogin" v-else>
-
-      <!-- <el-image class="login-bg" :src="" @load="bgload"></el-image> -->
       <el-image class="login-bg" :src="define.comUrl + loginpattern.loginBg" @load="bgload" v-show="isbgload"></el-image>
       <img class="login-bg" src="@/assets/images/sybj.jpg" alt="" v-show="!isbgload" />
       <div class="body">
@@ -138,35 +136,8 @@
             </el-image>
             <img class="login-logo" src="@/assets/images/jnpf.png" alt="" v-else><span class="title">{{aaa}}</span>
           </div>
-          <!-- <div class="body_left">
-            <p>{{loginLeftTopic}}</p>
-            <p>{{loginLeftText}}</p>
-            <div>
-              <div v-for="item in filteredList" :key="item.id" style="text-align:center;margin-right: 16px;">
-                <el-image style="width: 90px;height: 90px;" :src="define.comUrl + item.value"></el-image>
-                <div>{{ item.name }}</div>
-              </div>
-            </div>
-          </div> -->
           <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;overflow: hidden;">
             <div class="body_right">
-              <div style="display: flex;justify-content: center;height: 82px;align-items: center;">
-                <!-- <div style='display:flex;font-size:34px;font-weight:bold;color:white;align-items: center;'> -->
-                <!-- <el-image class="login-logo" :src="define.comUrl+sysConfig.loginIcon" v-if="sysConfig && sysConfig.loginIcon"> -->
-                <!-- <template slot="error"> -->
-                <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt=""> -->
-                <!-- <img class="login-logo" src="@/assets/images/jnpf.png" alt=""> -->
-                <!-- </template> -->
-                <!-- </el-image> -->
-                <!-- <img class="login-logo" src="@/assets/images/1-11.png" alt="" v-else> -->
-
-                <!-- &nbsp;<span class="title">{{aaa}}</span> -->
-                <!-- </div> -->
-                <!-- <img class="login-logo" :src="define.comUrl+sysConfig.loginIcon"> -->
-                <!-- <div v-if="sysConfig && sysConfig.sysVersion" class="login-version">
-          {{ sysConfig.sysVersion }}
-        </div> -->
-              </div>
               <div class="login-content">
                 <div class="login-form">
                   <div class="login-tab" :class="'active' + active">
@@ -175,13 +146,9 @@
                     <a class="item" :class="{ 'active': active == 2 }" @click="active = 2">{{
                       $t('login.scanTitle') }}</a>
                   </div>
-                  <el-form v-show="active == 1" ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
+                  <div v-show="active == 1">
+                    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" autocomplete="on"
                     label-position="left">
-                    <!-- <el-form-item>
-                      <el-select class="sel-item" v-model="loginForm.sys" @change="getConfig" size="medium" v-show="showTenancy">
-                        <el-option v-for="(value, key) in tanants" :key="key" :value="value.enCode" :label="value.companyName"></el-option>
-                      </el-select>
-                    </el-form-item> -->
                     <el-form-item prop="busCode">
                       <el-input ref="account" v-model="loginForm.busCode" :placeholder="$t('login.busCode')"
                         name="busCode" type="text" tabindex="1" autocomplete="on" prefix-icon="el-icon-user"
@@ -194,7 +161,6 @@
                         size="large" @change="getConfig">
                       </el-input>
                     </el-form-item>
-                    <!-- <el-form-item class="rule-tip">{{$t('login.rule')}}</el-form-item> -->
                     <el-tooltip v-model="capsTooltip" :content="$t('login.upper')" placement="right" manual>
                       <el-form-item prop="password">
                         <el-input ref="password" v-model="loginForm.password" show-password
@@ -226,7 +192,7 @@
                     <el-button :loading="loading" type="primary" class="login-btn" size="large" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
                   </el-form>
-
+                  </div>
                   <div v-show="active == 2" class="login-form-QRCode">
                     <img class="qrcode-img" src="@/assets/images/login_qr.png">
                     <p class="qrcode-tip"><br>正在测试,敬请期待</p>
@@ -238,6 +204,7 @@
                 <img src="@/assets/images/qygzh.png" alt="">
                 <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
               </el-popover>
+              <div v-show="active == 2" style="width: 100%;height: 70px;"></div>
             </div>
             <div class="componey">
               <div>
@@ -884,7 +851,7 @@ export default {
         position: absolute;
         // right: 50px;
         left: 50%;
-        top: 308px;
+        top: 336px;
         transform: translate(-50%, -50%);
         z-index: 100;
         // background: rgba(0,0,0,.1);
@@ -922,8 +889,7 @@ export default {
 
         .login-form {
           .sms-password {
-            margin-top: 28px;
-            margin-bottom: 28px;
+            padding: 28px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;

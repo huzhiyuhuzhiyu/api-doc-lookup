@@ -7,8 +7,8 @@
     <div class="head-tabs">
       <el-button icon="icon-ym icon-ym-pc" :class="{'unActive-btn':currentTab!=='pc'}" type="text"
         @click="currentTab='pc'" size="medium">桌面端</el-button>
-      <el-button icon="icon-ym icon-ym-mobile" :class="{'unActive-btn':currentTab!=='app'}"
-        type="text" @click="currentTab='app'" size="medium">移动端</el-button>
+      <!-- <el-button icon="icon-ym icon-ym-mobile" :class="{'unActive-btn':currentTab!=='app'}"
+        type="text" @click="currentTab='app'" size="medium">移动端</el-button> -->
     </div>
   </div>
 </template>

@@ -30,16 +30,17 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px;display: -webkit-box">
           <!-- <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'"> -->
-          <el-dropdown>
-            <el-button type="primary" icon="el-icon-plus" size="mini">
-              新建<i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
+          <!-- <el-dropdown>
+           
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="addOrUpdateHandle('', 'add')">单个新建
               </el-dropdown-item>
               <el-dropdown-item @click.native="batchAdd()">批量新建</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
+              批量新建<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
           <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" style="margin-left: 10px"
             @click="batchEditFun">批量修改</el-button>
           <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>

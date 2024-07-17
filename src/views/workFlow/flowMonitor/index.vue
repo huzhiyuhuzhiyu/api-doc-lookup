@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
@@ -65,13 +65,13 @@
           </template>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
                 {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="refresh()">{{$t('common.reset')}}
+              <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{$t('common.reset')}}
               </el-button>
-              <el-button type="text" icon="el-icon-arrow-down" @click="showAll=true"
+              <el-button size="mini" type="text" icon="el-icon-arrow-down" @click="showAll=true"
                 v-if="!showAll">展开</el-button>
-              <el-button type="text" icon="el-icon-arrow-up" @click="showAll=false" v-else>
+              <el-button size="mini" type="text" icon="el-icon-arrow-up" @click="showAll=false" v-else>
                 收起</el-button>
             </el-form-item>
           </el-col>

@@ -52,6 +52,8 @@
               <el-table-column prop="ipaddress" label="登录IP" width="120" />
               <el-table-column prop="platForm" label="登录设备" show-overflow-tooltip />
             </JNPF-table>
+            <pagination :total="total" :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize" @pagination="initData" />
           </el-tab-pane>
           <el-tab-pane label="请求日志" name="5">
             <JNPF-table v-loading="listLoading" :data="requestLogData" has-c 
@@ -66,6 +68,8 @@
               <el-table-column prop="requestMethod" label="请求类型" width="100" align="center" />
               <el-table-column prop="requestDuration" label="耗时(毫秒)" width="100" />
             </JNPF-table>
+            <pagination :total="total" :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize" @pagination="initData" />
           </el-tab-pane>
           <el-tab-pane label="操作日志" name="3">
             <JNPF-table v-loading="listLoading" :data="operationLogData" has-c 
@@ -85,6 +89,8 @@
                 </template>
               </el-table-column>
             </JNPF-table>
+            <pagination :total="total" :page.sync="listQuery.currentPage"
+            :limit.sync="listQuery.pageSize" @pagination="initData" />
           </el-tab-pane>
           <el-tab-pane label="异常日志" name="4">
             <JNPF-table v-loading="listLoading" :data="errorLogData" has-c
@@ -102,9 +108,10 @@
                 </template>
               </el-table-column>
             </JNPF-table>
-          </el-tab-pane>
-          <pagination :total="total" :page.sync="listQuery.currentPage"
+            <pagination :total="total" :page.sync="listQuery.currentPage"
             :limit.sync="listQuery.pageSize" @pagination="initData" />
+          </el-tab-pane>
+        
         </el-tabs>
       </div>
     </div>
@@ -284,8 +291,8 @@ export default {
     height: calc(100% - 40px);
     padding: 0;
     .el-tab-pane {
-      height: calc(100% - 110px);
-      overflow: hidden;
+      height: calc(100% - 95px);
+      // overflow: hidden;
     }
   }
 }
@@ -294,5 +301,7 @@ export default {
 ::v-deep .el-tabs--top.el-tabs--border-card>.el-tabs__header .el-tabs__item:last-child{
   padding:0 10px
 }
-
+::v-deep .pagination-container{
+ margin-top:5px;
+}
 </style>

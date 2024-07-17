@@ -38,7 +38,7 @@
           <div class="JNPF-common-head">
             <topOpts  :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="iconfont  icon-fenpei" @click="distributionFun()">分配</el-button>
-              <el-button size="mini" type="primary" con="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
               <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">导出</el-button>

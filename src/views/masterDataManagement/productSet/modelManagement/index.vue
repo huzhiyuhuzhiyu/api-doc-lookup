@@ -28,16 +28,26 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 10px">
-          <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'">
-            <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy"
-              @click="batchEditFun">批量修改</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-            <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus"
-              @click="importFun">导入</el-button>
-            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">导出</el-button>
-          </topOpts>
+        <div class="JNPF-common-head" style="padding: 10px;display: -webkit-box">
+          <!-- <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'"> -->
+          <el-dropdown>
+            <el-button type="primary" icon="el-icon-plus" size="mini">
+              新建<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="addOrUpdateHandle('', 'add')">单个新建
+              </el-dropdown-item>
+              <el-dropdown-item @click.native="batchAdd()">批量新建</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" style="margin-left: 10px"
+            @click="batchEditFun">批量修改</el-button>
+          <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+          <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus"
+            @click="importFun">导入</el-button>
+          <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+            icon="el-icon-download" @click="exportForm">导出</el-button>
+          <!-- </topOpts> -->
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -47,8 +57,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange"
-          ref="dataTable">
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+          hasC @selection-change="handleSelectionChange" ref="dataTable">
           <el-table-column prop="model" label="型号" sortable="custom" />
           <el-table-column prop="innerCircle" label="内圈" sortable="custom" width="120" />
           <el-table-column prop="outerCircle" label="外圈" sortable="custom" />
@@ -74,7 +84,7 @@
       :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
-    <Table-Form  v-if="tableFormVisible"  ref="TableForm" @refresh="refresh"></Table-Form>
+    <Table-Form v-if="tableFormVisible" ref="TableForm" @refresh="refresh"></Table-Form>
     <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
   </div>
 </template>
@@ -86,7 +96,8 @@ import {
   updataBimProductsModel,
   delBimProductsModel,
   getbimProductsModelList,
-  addBimProductsModel
+  addBimProductsModel,
+  uploadDimProductsModel
 } from "@/api/masterDataManagement/index";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -94,10 +105,10 @@ import JNPFForm from "./Form";
 import TableForm from "./tabForm";
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { JNPFForm, ExportForm, TableForm},
+  components: { JNPFForm, ExportForm, TableForm },
   data() {
     return {
-      tableFormVisible:false,
+      tableFormVisible: false,
       exportFormVisible: false,
       createTimeArr: [],
       title: "更多查询",
@@ -124,7 +135,7 @@ export default {
 
       total: 0,
       formVisible: false,
-      selectList:[],
+      selectList: [],
     };
   },
   computed: {
@@ -135,11 +146,18 @@ export default {
     this.initData();
   },
   methods: {
-    handleSelectionChange(val){
-      this.selectList=val
+    // 批量新建
+    batchAdd() {
+      this.tableFormVisible = true;
+      this.$nextTick(() => {
+        this.$refs.TableForm.init(this.selectList, 'add');
+      });
     },
-    batchEditFun(){
-      if(!this.selectList.length) return this.$message.error("请先选择您要修改的数据!")
+    handleSelectionChange(val) {
+      this.selectList = val
+    },
+    batchEditFun() {
+      if (!this.selectList.length) return this.$message.error("请先选择您要修改的数据!")
       this.tableFormVisible = true;
       this.$nextTick(() => {
         this.$refs.TableForm.init(this.selectList, 'edit');
@@ -177,8 +195,8 @@ export default {
         let query = this.dataForm
         let _data = {
           ...query,
-          exportType: '1201',
-          exportName: '潜在客户',
+          exportType: '1202',
+          exportName: '型号管理',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
         }
@@ -198,7 +216,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/公海客户导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/型号导入模板.xlsx')
       a.click()
     },
     importFun() {
@@ -211,9 +229,8 @@ export default {
       this.formLoading = true
       var formData = new FormData()
       formData.append("file", data.file)
-      formData.append("customerSea", "high_seas")
       //调用上传文件接口
-      uploadProduct(formData).then(res => {
+      uploadDimProductsModel(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.initData()
@@ -412,6 +429,7 @@ export default {
 .JNPF-common-el-tree {
   margin: 5px 0;
 }
+
 ::v-deep .icon-piliang-copy {
   margin-right: 8px
 }

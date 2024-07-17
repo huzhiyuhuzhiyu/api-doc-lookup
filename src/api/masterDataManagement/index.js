@@ -95,7 +95,15 @@ export function updataBimProductsModelCheck(data) {
       method: 'get',
   })
 }
+// 型号管理——导入
 
+export function uploadDimProductsModel(data) {
+  return request({
+      url: '/api/erp/bimProductsModel/upload/data',
+      method: 'post',
+      data: data
+  })
+}
 
 
 // 产品列表——所有

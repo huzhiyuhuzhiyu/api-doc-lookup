@@ -175,7 +175,11 @@ export default {
               
             }
              else if (name == "后台管理系统" || name == "开发管理系统") {
-              location.href = location.origin + "/homepage"
+              getInfo("").then(response=>{
+                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
+            
+                location.href = location.origin + '/' + response.data.systemVO.homeAdress
+              })
             } else {
               location.href = location.origin
             }

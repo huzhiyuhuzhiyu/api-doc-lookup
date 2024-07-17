@@ -127,7 +127,7 @@
         <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :basicData="basicData" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"  />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
@@ -222,16 +222,12 @@ import UserRelationList from './userRelation'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import tabs from './params'
 import { detailVisualDevInfo } from '@/api/system/system'
-import formValidate from "@/utils/formValidate";
-import request from "@/utils/request";
 export default {
   name: 'customerFlies',
   components: { Form, UserRelationList, ExportForm },
   data() {
     return {
-      tabs: tabs(),
       exportFormVisible: false,
       title: "更多查询",
       visible: false,
@@ -312,9 +308,6 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      basicData: [],
-      formValidate,
-      request,
     }
   },
   watch: {
@@ -323,154 +316,12 @@ export default {
     }
   },
   created() {
-    this.getDevDetail()
     this.getcategoryTree(true)
     this.getDictionaryType()
     this.getUserList()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    getDevDetail() {
-      function getQueryString() {
-        const url_string = location.href;
-        return url_string.split('?')[1] || void ('');
-      }
-      let queryString = getQueryString()
-      detailVisualDevInfo(queryString).then(res => {
-        console.log(res);
-        let formData = JSON.parse(res.data.formData)
-        let fields = formData.fields[0].__config__.children
-        console.log(fields);
-        let that = this
-
-        /**传入的方法花括号内容从this中解构，并返回 */
-        function vEvalTransfer(params) {
-          let copyparams = params
-          let match = copyparams.substring(copyparams.indexOf('{'), copyparams.indexOf('}') + 1)
-          // copyparams = copyparams.replace(match, match + ' = that')
-          copyparams = copyparams.replace(match, '')
-          function insertString(originalStr, newStr, index) {
-            // 在索引位置插入新字符串
-            return `${originalStr.slice(0, index)}${newStr}${originalStr.slice(index)}`;
-          }
-
-          var index1 = copyparams.indexOf('{') + 1;
-          // 示例使用
-          const newStr = '\nvar ' + match + ' = that;\n';
-
-          const result = insertString(copyparams, newStr, index1);
-          console.log('result', result)
-          return result
-        }
-
-        function transformData(data) {
-          return data.map(section => {
-            // 处理每个 section 下的 children
-            const processChildren = (children) => {
-              return children.map(child => {
-                const { jnpfKey, label, showLabel, tag, tagIcon, required, layout, span, dragDisabled, visibility, tableName, noShow, unique, regList, trigger, formId, renderKey } = child.__config__;
-                const { prepend = "", append = "" } = child.__slot__ || {};
-                const { __vModel__ } = child;
-                const clearable = child.clearable || false;
-                const readonly = child.readonly || false;
-                const disabled = child.disabled || false;
-                let itemRules = []
-                let message = child.placeholder
-                // eval(validate)
-                // eval('console.log(\'=====================================\')')
-                // eval('console.log(that)')
-                console.log(regList);
-                if (required) {
-                  itemRules.push(
-                    { required: true, message: message, trigger: 'blur' }
-                  )
-                }
-                if (regList && Array.isArray(regList)) {
-                  regList.forEach(item => {
-                    if (item.pattern) {
-                      itemRules.push(
-                        // { pattern: `${eval(item.pattern)}`, message: item.message, trigger: 'blur' },
-                      )
-                    }
-                    if (item.validate) {
-                      // 如果是formValidate开头的自定义校验，把formValidate添加that标记
-                      if (item.validate.trim().startsWith('formValidate')) {
-                        item.validate = item.validate.replace('formValidate', 'that.formValidate')
-                      } else { // 传入的方法花括号内容从this中解构，并返回
-                        item.validate = vEvalTransfer(item.validate)
-                      }
-                      console.log(item.validate)
-                      itemRules.push(
-                        { validator: eval(item.validate), trigger: 'blur' }
-                      )
-                    }
-                  })
-                }
-
-                return {
-                  jnpfKey,
-                  type: jnpfKey === 'comInput' ? 'input' : jnpfKey === 'select' ? 'select' : 'custom',
-                  customComponent: jnpfKey,
-                  selectClassifyType: child.selectClassifyType || '',
-                  itemRules,
-                  label,
-                  showLabel,
-                  tag,
-                  tagIcon,
-                  required,
-                  layout,
-                  span,
-                  dragDisabled,
-                  visibility,
-                  tableName,
-                  noShow,
-                  unique,
-                  regList,
-                  trigger,
-                  formId,
-                  renderKey,
-                  __slot__: { prepend, append },
-                  clearable,
-                  readonly,
-                  disabled,
-                  prop: that.getToLowerCase(__vModel__)
-                };
-              });
-            };
-
-            let children = section.__config__.children;
-
-            // 如果是联系人信息，且包含 table 类型的子项，需要特殊处理
-            if (section.title === "联系人信息") {
-              children = section.__config__.children.flatMap(child => {
-                if (child.__config__.jnpfKey === "table") {
-                  return processChildren(child.__config__.children);
-                } else {
-                  return processChildren([child]);
-                }
-              });
-            } else {
-              children = processChildren(children);
-            }
-
-            return {
-              title: section.title,
-              __config__: {
-                children
-              }
-            };
-          });
-        }
-        let devData = transformData(fields)
-        console.log(devData);
-        that.basicData = devData
-        console.log(that.basicData);
-      })
-
-    },
-    getToLowerCase(val) {
-      return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
-    },
     // 导出
     exportForm() {
       this.exportFormVisible = true

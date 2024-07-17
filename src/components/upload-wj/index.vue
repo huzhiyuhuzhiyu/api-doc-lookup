@@ -26,8 +26,7 @@
         </div>
       </div>
     </template>
-    <template>
-    </template>
+
     <template>
       <ul class="el-upload-list el-upload-list el-upload-list--text" v-if="!uploadlist" v-loading="loading">
         <li class="el-upload-list__item is-success" v-for="(file, index) in fileList" :key="file.fileId" :class="{ 'el-upload-list__item_detail': detailed }">

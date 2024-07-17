@@ -2,8 +2,8 @@
 
   <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
     class="JNPF-dialog JNPF-dialog_center" lock-scroll width="800px" height="600">
-    <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" height="600"
-       />
+    <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" height="600" v-if="btnType=='edit'"/>
+    <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" height="600" v-else @deleteth="deleteFun" @addth="addFun"/>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false"> 取 消</el-button>
       <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading"> 提 交</el-button>
@@ -16,9 +16,18 @@ import {
   getcategoryTree,
 } from "@/api/basicData/materialSettings";
 import { getProductList } from '@/api/masterDataManagement/productManage' // 产品列表
+import {
+  updataBimProductsModelCheck,
+  getbimProductsModelInfo,
+  updataBimProductsModel,
+  delBimProductsModel,
+  getbimProductsModelList,
+  addBimProductsModel,
+  addBimProducts
+} from "@/api/masterDataManagement/index";
 import JNPFColTable from './JNPFColTable/index.vue'
 export default {
-  components:{
+  components: {
     JNPFColTable
   },
   data() {
@@ -28,13 +37,25 @@ export default {
       dialogTitle: "批量修改产品型号",
       sleeveList: [],
       sleeveItems: [
-        { prop: "model", label: "型号", value: "", type: 'input', width: "180",  itemRules: [{ required: true,message: '型号不能为空', trigger: "blur" },] },
-        { prop: "innerCircle", label: "内圈", value: "",type: 'custom', customComponent: "ComSelect-page",   width: "180", itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "model", label: "型号", value: "", type: 'input', width: "180", itemRules: [{ required: true, message: '型号不能为空', trigger: "blur" },{
+          validator: (rule, value, callback) => {
+            // 没有value不进行此校验
+            if (!value) { callback() }
+            else {
+              updataBimProductsModelCheck(value).then((res) => {
+                if (!res.data) { callback() }
+                else { callback(new Error('当前型号已存在')) }
+              }).catch((err) => { callback(new Error(" ")) })
+            }
+          },
+          trigger: 'blur'
+        }] },
+        { prop: "innerCircle", label: "内圈", value: "", type: 'custom', customComponent: "ComSelect-page", width: "180", itemRules: [{ required: true, trigger: "blur" }] },
         { prop: "outerCircle", label: "外圈", value: "", type: 'custom', customComponent: "ComSelect-page", width: "180", itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "steelBall", label: "钢球型号", value: "", type: 'custom', customComponent: "ComSelect-page", width: "160", itemRules: [{ required: true, trigger: "blur" }] }, 
-        { prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', width: "120",itemRules: [{ required: true,message: '钢球用量不能为空',  trigger: "blur" }, ] },
-        { prop: "oilNum", label: "油脂用量", value: "", type: 'input', width: "180",itemRules: [{ required: true,message: '油脂用量不能为空',  trigger: "blur" },]},
-        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input', width: "180",  itemRules: [{ required: true,message: '保持架用量不能为空',  trigger: "blur" },] },
+        { prop: "steelBall", label: "钢球型号", value: "", type: 'custom', customComponent: "ComSelect-page", width: "160", itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', width: "120", itemRules: [{ required: true, message: '钢球用量不能为空', trigger: "blur" },] },
+        { prop: "oilNum", label: "油脂用量", value: "", type: 'input', width: "180", itemRules: [{ required: true, message: '油脂用量不能为空', trigger: "blur" },] },
+        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input', width: "180", itemRules: [{ required: true, message: '保持架用量不能为空', trigger: "blur" },] },
 
 
       ],
@@ -86,12 +107,28 @@ export default {
     dataFormSubmit() {
 
     },
+    deleteFun(){
+      this.sleeveList.splice(row.$index, 1)
+
+    },
+    addFun(){
+      let index = this.sleeveList.length
+      this.sleeveList.push({
+        index,
+        holderNum: "",
+        oilNum: "",
+        steelBallNum: "",
+        steelBall: "",
+        outerCircle: "",
+        innerCircle: "",
+      })
+    },
     async dataFormSubmit() {
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
 
-     
- 
+
+
 
       // 校验表格表单（套筒属性）
       let sleeveForm = this.$refs['sleeveForm'].$refs.main
@@ -103,22 +140,22 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        const formMethod = this.dataForm.id ? updateProductData : addProductData
-  
+        const formMethod = this.dataForm.id ? updataBimProductsModel : addBimProductsModel
 
-       
-        
 
-       
+
+
+
+
         let dataObj = {
- 
+
           sleeveList: this.sleeveList
         }
 
-        
+
         // formMethod(dataObj).then(res => {
         //   let msg = res.msg
-        //   if (res.msg === 'Success') { msg = formMethod == addProductData ? "新建成功" : "修改成功" }
+        //   if (res.msg === 'Success') { msg = formMethod == addBimProductsModel ? "新建成功" : "修改成功" }
         //   this.$message({
         //     message: msg,
         //     type: 'success',
@@ -126,7 +163,7 @@ export default {
         //     onClose: () => {
         //       this.visible = false
         //       this.btnLoading = false
-        //       this.$emit('close', true)
+        //       this.goBack()
         //     }
         //   })
         // }).catch(() => {
@@ -153,7 +190,7 @@ export default {
 
 
 
- 
+
     sleeveNameChange1(val, data, paramsObj) {
       let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
       this.$nextTick(() => { this.$refs['sleeveForm'].$children[0].validateField(prop) })
@@ -161,7 +198,7 @@ export default {
       let index = paramsObj.scope.$index
       this.sleeveList[index].innerCircleId = data[0].id
       this.sleeveList[index].innerCircle = data[0].name
-    }, 
+    },
     sleeveNameChange2(val, data, paramsObj) {
       let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
       this.$nextTick(() => { this.$refs['sleeveForm'].$children[0].validateField(prop) })
@@ -169,7 +206,7 @@ export default {
       let index = paramsObj.scope.$index
       this.sleeveList[index].outerCircleId = data[0].id
       this.sleeveList[index].outerCircle = data[0].name
-    }, 
+    },
     sleeveNameChange3(val, data, paramsObj) {
       let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
       this.$nextTick(() => { this.$refs['sleeveForm'].$children[0].validateField(prop) })
@@ -183,46 +220,46 @@ export default {
       this.visible = true
       this.sleeveList = data || []
       if (this.sleeveList.length > 0) {
-        this.openMode="编辑"
+        this.openMode = "编辑"
         this.sleeveList.forEach((item, index) => { item.index = index; });
-      }else{
-        this.openMode="新建"
+      } else {
+        this.openMode = "新建"
       }
       this.sleeveItems.forEach(tc => {
         // 添加自定义表单元素方法和参数
-          // 若干需要选择的产品
-          if (tc.prop === 'innerCircle') {
-            tc.dialogTitle = '选择产品'
-            tc.treeTitle = '产品分类'
-            tc.methodArr = this.ProductMethodArr
-            tc.listMethod = getProductList
-            tc.listRequestObj = this.ProductListRequestObj
-            tc.tableItems = this.ProductTableItems
-            tc.searchList = this.ProductTableSearchList
-            tc.change = this.sleeveNameChange1
-            // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
-          }else if (tc.prop === 'outerCircle') {
-            tc.dialogTitle = '选择产品'
-            tc.treeTitle = '产品分类'
-            tc.methodArr = this.ProductMethodArr
-            tc.listMethod = getProductList
-            tc.listRequestObj = this.ProductListRequestObj
-            tc.tableItems = this.ProductTableItems
-            tc.searchList = this.ProductTableSearchList
-            tc.change = this.sleeveNameChange2
-            // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
-          }else if (tc.prop === 'steelBall') {
-            tc.dialogTitle = '选择产品'
-            tc.treeTitle = '产品分类'
-            tc.methodArr = this.ProductMethodArr
-            tc.listMethod = getProductList
-            tc.listRequestObj = this.ProductListRequestObj
-            tc.tableItems = this.ProductTableItems
-            tc.searchList = this.ProductTableSearchList
-            tc.change = this.sleeveNameChange3
-            // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
-          }
-          else { console.warn(tc.prop + "不在判断条件内") }
+        // 若干需要选择的产品
+        if (tc.prop === 'innerCircle') {
+          tc.dialogTitle = '选择产品'
+          tc.treeTitle = '产品分类'
+          tc.methodArr = this.ProductMethodArr
+          tc.listMethod = getProductList
+          tc.listRequestObj = this.ProductListRequestObj
+          tc.tableItems = this.ProductTableItems
+          tc.searchList = this.ProductTableSearchList
+          tc.change = this.sleeveNameChange1
+          // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
+        } else if (tc.prop === 'outerCircle') {
+          tc.dialogTitle = '选择产品'
+          tc.treeTitle = '产品分类'
+          tc.methodArr = this.ProductMethodArr
+          tc.listMethod = getProductList
+          tc.listRequestObj = this.ProductListRequestObj
+          tc.tableItems = this.ProductTableItems
+          tc.searchList = this.ProductTableSearchList
+          tc.change = this.sleeveNameChange2
+          // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
+        } else if (tc.prop === 'steelBall') {
+          tc.dialogTitle = '选择产品'
+          tc.treeTitle = '产品分类'
+          tc.methodArr = this.ProductMethodArr
+          tc.listMethod = getProductList
+          tc.listRequestObj = this.ProductListRequestObj
+          tc.tableItems = this.ProductTableItems
+          tc.searchList = this.ProductTableSearchList
+          tc.change = this.sleeveNameChange3
+          // tc.paramsObj = { row: scope.row, oldVal: { code: scope.row.code || '', name: scope.row.name || '' } }
+        }
+        else { console.warn(tc.prop + "不在判断条件内") }
       })
     },
 

@@ -71,7 +71,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
-
+         
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"

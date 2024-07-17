@@ -6,6 +6,7 @@ import JNPFTable from '@/components/JNPF-table'
 import JNPFCol from '@/components/JNPF-col'
 import SuperCol from '@/components/Super-col'
 import JNPFColTable from '@/components/JNPF-col-table'
+import JNPFTableFormProduct from '@/components/JNPF-tableFormProduct'
 import jnpfFormTipItem from '@/components/jnpf-form-tip-item'
 import jnpfOpenData from '@/components/jnpf-open-data'
 import UserBox from '@/components/JNPF-userBox'
@@ -59,6 +60,7 @@ export default {
     Vue.component('JNPFCol', JNPFCol)
     Vue.component('SuperCol', SuperCol)
     Vue.component('JNPFColTable', JNPFColTable)
+    Vue.component('JNPFTableFormProduct', JNPFTableFormProduct)
     Vue.component('jnpfFormTipItem', jnpfFormTipItem)
     Vue.component('jnpfOpenData', jnpfOpenData)
     Vue.component('uploadBtn', uploadBtn)

@@ -143,4 +143,14 @@ export function getDataInterfaceSelectorList(data) {
 }
 
 
+// sql查询字段
+export function getSqlData(data) {
+  return request({
+    url: `/api/zgt/data/column/custom/source/data`,
+    method: 'post',
+    data
+  })
+}
+
+
 

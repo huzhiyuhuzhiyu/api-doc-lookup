@@ -162,14 +162,12 @@ export default {
       if (!this.hasSlotContent) return
       this.$nextTick(() => {
         this.columns = this.$slots.default // 代码传入的列
-        console.log(this.columns);
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
 
         if (!cacheList) {
-          console.log("setColumnDisplayList", this.setColumnDisplayList);
             list.forEach(item => {
             if (this.setColumnDisplayList.includes(item.prop)) {
               item.columnVisible = false;
@@ -177,7 +175,6 @@ export default {
               item.columnVisible = true;
             }
           });
-          console.log("list",list);
           this.columnList=list
           // this.columnList = list.map(item => {
           //   return {
@@ -220,7 +217,6 @@ export default {
       }, 50)
     },
     setColumn(list) {
-      console.log(list);
       // 如果list没有带有minWidth属性的项，则给所有的展示项的width都改为minWidth
       let showColumnList = list.filter(item => !!item.columnVisible)
       let hasMinWidthFlag = showColumnList.some(item => item.hasOwnProperty("minWidth"))
@@ -248,7 +244,6 @@ export default {
           this.$set(this.$slots.default[index].componentOptions.propsData, 'fixed', item.fixed)
         }
       })
-      console.log(list);
       // this.loading = true
       this.jnpf.storageSet({ [this.menuId + this.partentOrChild]: list })
       this.columnList = list

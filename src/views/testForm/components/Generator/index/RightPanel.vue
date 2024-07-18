@@ -932,6 +932,7 @@ export default {
       this.setDefaultOptions()
     },
     setDefaultOptions() {
+      console.log(this.formItemList,'this.formItemList');
       if (!this.$store.getters.hasTable) return
       if (this.activeData.__vModel__ === undefined || this.activeData.__config__.jnpfKey === 'table') return
       if (!this.activeData.__config__.tableName || this.activeData.__config__.tableName === this.mainTable) {

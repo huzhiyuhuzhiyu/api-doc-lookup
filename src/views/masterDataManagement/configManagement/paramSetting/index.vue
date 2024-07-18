@@ -28,7 +28,7 @@ export default {
   name: 'ParamSetting',
   data() {
     return {
-      activeName: 'codeSet',
+      activeName: 'warehouseSet',
       tabs: tabs(),
       dataForm: {},
       productForm: {},
@@ -57,18 +57,20 @@ export default {
   },
   methods: {
     initData() {
-      if (this.activeName === 'codeSet') {
+      if (this.activeName === 'warehouseSet') {
         this.listQuery.codeFlag = 1
         this.listQuery.annexFlag = 0
         this.getData(0)
-      } else if (this.activeName === 'financialSet') {
-        this.listQuery.codeFlag = 0
-        this.listQuery.annexFlag = 0
-        this.getData(1)
-      } else if (this.activeName === 'attachmentswitch') {
+      } 
+      // else if (this.activeName === 'financialSet') {
+      //   this.listQuery.codeFlag = 0
+      //   this.listQuery.annexFlag = 0
+      //   this.getData(1)
+      // }
+       else if (this.activeName === 'attachmentswitch') {
         this.listQuery.codeFlag = 0
         this.listQuery.annexFlag = 1
-        this.getData(2)
+        this.getData(1)
       }
     },
     getData(index){

@@ -120,7 +120,6 @@ const actions = {
         let routerList = []
 
         function setData(list) {
-          console.log("list11111",list);
           for (let i = 0; i < list.length; i++) {
             const e = list[i]
             let name = e.enCode.replace(/\./g, '-')
@@ -210,6 +209,7 @@ const actions = {
                     urlAddress: path
                   }
                 }
+               
                 routerList.push(newObj)
               } else {
                 e.path = path

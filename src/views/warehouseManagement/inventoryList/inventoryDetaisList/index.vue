@@ -11,8 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.sourceType" placeholder="业务类型" :disabled="btnType === 'look' ? true : false"
-                style="width: 100%;">
+              <el-select v-model="listQuery.sourceType" placeholder="业务类型" style="width: 100%;">
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -37,7 +36,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :addIcon="'el-icon-download'" @add="exportForm( )" :addText="'导出'"></topOpts>
+          <topOpts :addIcon="'el-icon-download'" @add="exportForm()" :addText="'导出'"></topOpts>
 
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -48,8 +47,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" border
-          :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
+          border :setColumnDisplayList="columnList" show-summary :summary-method="getSummaries" :fixedNO="true"
+          @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" width="120">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
@@ -59,9 +59,10 @@
           </el-table-column>
           <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
             <template slot-scope="scope">
-              <div v-if="scope.sourceType == 'send_return'">发退货单</div>
-              <div v-if="scope.sourceType == 'picking_return'">领退料单</div>
-              <div v-if="scope.sourceType == 'delivery_return'">收退货单</div>
+              <div v-if="scope.row.sourceType == 'send_return'">发退货单</div>
+              <div v-if="scope.row.sourceType == 'picking_return'">领退料单</div>
+              <div v-if="scope.row.sourceType == 'purchase_delivery_return'">采购收退货单</div>
+              <div v-if="scope.row.sourceType == 'outside_delivery_return'">外协收退货单</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="合作伙伴名称" sortable="custom" min-width="160" />
@@ -69,15 +70,15 @@
           <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="180" />
           <el-table-column prop="drawingNo" label="规格型号" sortable="custom" min-width="120" />
           <el-table-column prop="processName" label="工序名称" sortable="custom" min-width="180" />
-          <el-table-column prop="mainUnit" label="单位（主）"  min-width="140" />
+          <el-table-column prop="mainUnit" label="单位（主）" min-width="140" />
           <el-table-column prop="num" label="数量（主）" sortable="custom" min-width="140" />
-          <el-table-column prop="deputyUnit" label="单位（副）"  min-width="140" />
+          <el-table-column prop="deputyUnit" label="单位（副）" min-width="140" />
           <el-table-column prop="deputyNum" label="数量（副）" sortable="custom" min-width="140" />
           <el-table-column prop="costPrice" label="单价（含税）" sortable="custom" min-width="160" />
           <el-table-column prop="taxRate" label="税率（%）" sortable="custom" min-width="140" />
           <el-table-column prop="excludingTaxCostPrice" label="单价（不含税）" sortable="custom" min-width="180" />
-          <!-- <el-table-column prop="createTime" label="税额" sortable="custom" min-width="180" /> -->
-          <!-- <el-table-column prop="createTime" label="总金额（含税）" sortable="custom" min-width="180" /> -->
+          <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
+          <el-table-column prop="totalAmount" label="总金额（含税）" sortable="custom" min-width="180" />
           <el-table-column prop="documentStatus" label="单据状态" min-width="120" fixed="right">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -107,15 +108,15 @@
 </template>
 
 <script>
-import { getInventoryDetailList } from '@/api/warehouseManagement/inventory'
+import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from './Form'
 export default {
   name: 'myCustomer',
-  components: { Form ,ExportForm},
+  components: { Form, ExportForm },
   data() {
     return {
-      columnList:["productName","taxRate","excludingTaxCostPrice","documentStatus","taxmount","createByName",],
+      columnList: ["partnerName", "productName", "taxRate", "excludingTaxCostPrice", "documentStatus", "createByName", "taxAmount"],
       exportFormVisible: false,
       recordFormVisible: false,
       title: "更多查询",
@@ -125,7 +126,8 @@ export default {
       list: [
         { label: "发退货单", value: "send_return" },
         { label: "领退料单", value: "picking_return" },
-        { label: "收退货单", value: "delivery_return" },
+        { label: "采购收退货单", value: "purchase_delivery_return" },
+        { label: "外协收退货单", value: "outside_delivery_return" },
       ],
 
       initListQuery: {
@@ -139,21 +141,69 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "createTime"
         }],
       },
       listQuery: {},
       total: 0,
       formVisible: false,
       selectData: [],
+      totalList: [],
     }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
+
+    this.getInventorySummaryDataFun()
   },
   methods: {
+    // 合计处理
+    getSummaries(param) {
+      const { columns, data } = param;
+      const sums = [];
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计';
+          return;
+        }
+        const values = this.totalList.map(item => item[column.property] ? Number(item[column.property]) : '');
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr);
+            if (!isNaN(value)) {
+              return prev + curr;
+            } else {
+              return prev;
+            }
+          });
+          // sums[index] += '';
+        } else {
+          sums[index] = null;
+        }
+      });
+      return sums;
 
+    },
+    getInventorySummaryDataFun() {
+      this.listLoading = true
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.totalList = []
+      this.listQuery.pageNum = 1
+      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
+      getInventorySummaryData(this.listQuery).then(res => {
+
+        this.tableData = res.data.page ? res.data.page.list : []
+        res.data.total ? this.totalList.push(res.data.total) : ''
+        this.total = res.data.page ? res.data.page.total : 0
+        this.listLoading = false
+        this.visible = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
     exportType(data, ref) {
       if (data.length) {
         this.exportFormVisible = true
@@ -183,13 +233,13 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        let query = this.dataForm
+        let query = this.initListQuery
         let _data = {
           ...query,
           exportType: '1201',
-          exportName: '潜在客户',
+          exportName: '出入库明细',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.initListQuery.pageSize : -1,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
@@ -206,21 +256,7 @@ export default {
       this.selectData = val
     },
     initData() {
-      this.listLoading = true
-      Object.keys(this.listQuery).forEach(key => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getInventoryDetailList(this.listQuery).then(res => {
-        this.tableData = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-        this.visible = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      this.getInventorySummaryDataFun()
     },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

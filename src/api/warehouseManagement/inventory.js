@@ -46,3 +46,40 @@ export function occupyRestore(data) {
     data
   })
 }
+
+
+
+// 出入库明细——列表
+
+export function getInventoryDetailList(data) {
+  return request({
+    url: `/api/wms/stock/move/line/list`,
+    method: 'POST',
+    data
+  })
+}
+// 出入库明细——列表汇总
+export function getInventorySummaryData(data) {
+  return request({
+    url: `/api/wms/stock/move/line/report`,
+    method: 'POST',
+    data
+  })
+}
+// 出入库——新增
+export function addInboundOutbound(data) {
+  return request({
+    url: `/api/wms/stock/move/addInboundOutbound`,
+    method: 'POST',
+    data
+  })
+}
+// 出入库——修改
+
+export function updateInboundOutbound(data) {
+  return request({
+    url: `/api/wms/stock/move/modifyInboundOutbound`,
+    method: 'put',
+    data
+  })
+}

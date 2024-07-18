@@ -89,9 +89,9 @@ export function getbimProductsModelInfo(id) {
 }
 // 型号管理——唯一性
 
-export function updataBimProductsModelCheck(data) {
+export function updataBimProductsModelCheck(data,id) {
   return request({
-      url: '/api/erp/bimProductsModel/check/model/exist?model='+data,
+      url: '/api/erp/bimProductsModel/check/model/exist?model='+data+"&id="+id,
       method: 'get',
   })
 }

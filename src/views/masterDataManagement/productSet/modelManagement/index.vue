@@ -39,7 +39,7 @@
             </el-dropdown-menu>
           </el-dropdown> -->
           <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
-              批量新建<i class="el-icon-arrow-down el-icon--right"></i>
+              批量新建
             </el-button>
           <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" style="margin-left: 10px"
             @click="batchEditFun">批量修改</el-button>
@@ -193,13 +193,13 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        let query = this.dataForm
+        let query = this.listQuery
         let _data = {
           ...query,
           exportType: '1202',
           exportName: '型号管理',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
@@ -335,6 +335,7 @@ export default {
     },
     refresh(isrRefresh) {
       this.formVisible = false;
+      this.tableFormVisible=false
       if (isrRefresh) this.reset();
     },
     reset() {

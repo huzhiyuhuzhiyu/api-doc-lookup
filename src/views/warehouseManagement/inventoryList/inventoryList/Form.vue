@@ -1,1496 +1,595 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header']">
-        <el-page-header @back="goBack"
-          :content="btnType === 'look' ? '查看我的客户档案' : btnType === 'add'  ? $t(`customer.addCustomer`) : '转为正式客户'" />
-        <div class="options" >
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType !== 'look'">
-            提交</el-button>
+
+      <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
+        <el-page-header @back="goBack" :content="title" />
+        <div class="options">
+          <el-button v-if="!btnType" type="success" :loading="btnLoading"
+            @click="handleConfirm('draft')">保存草稿</el-button>
+          <el-button v-if="!btnType" type="primary" :loading="btnLoading"
+            @click="handleConfirm('submit')">保存并提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
-      <div class="main" v-loading="formLoading">
-
-        <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                    <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="btnType === 'look'" placeholder="请选择所属分类"
-                      auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
-                      :type="dataForm.type" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24" v-if="businessType">
-                  <el-form-item label="客户编码" prop="code">
-                    <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
-                      :disabled="btnType === 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入客户名称" :disabled="btnType === 'look' ? true : false"
-                      maxlength="100" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="税号" prop="taxId">
-                    <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType === 'look' ? true : false"
-                      maxlength="25" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="英文名称" prop="nameEn">
-                    <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType === 'look' ? true : false"
-                      maxlength="200" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="联系人" prop="contacts">
-                    <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType === 'look' ? true : false"
-                      maxlength="50" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="负责人" prop="personResponsible">
-                    <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20"
-                      :disabled="btnType === 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-
-                
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="内勤人员" prop="internalStaffId"  ref="euqPeople">
-                    <user-select v-model="dataForm.internalStaffId" :disabled="btnType === 'look'"  placeholder="请选择内勤人员" @change="changePerple" clearable style="width: 100%;">
-                    </user-select>
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属销售人员" prop="salesperssalesFlagonId">
-                    <user-select v-model="dataForm.salespersonId" placeholder="请选择所属销售人员" style="width: 100%;"
-                      :disabled="btnType ? true : false" @change="hangleSelectSales">
-                    </user-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="所属部门" prop="departmentIdText">
-                    <el-input v-model="dataForm.departmentIdText" readonly placeholder="请输入所属部门"
-                      :disabled="btnType ? true : false" />
-                  </el-form-item>
-                </el-col> -->
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="认定日期" prop="customerRecognitionTime">
-
-                    <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd"
-                      style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions" placeholder="请选择认定日期"
-                      :disabled="btnType === 'look' ? true : false">
-                    </el-date-picker>
-                  </el-form-item></el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="等级" prop="grade">
-                    <el-select v-model="dataForm.grade" placeholder="请选择等级" :disabled="btnType === 'look' ? true : false"
-                      style="width: 100%;">
-                      <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                        :value="item.enCode"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="地区" prop="regionCode">
-                    <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;"
-                      @change="handleChange" :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="(item, index) in areaList" :key="index" :label="item.fullName"
-                        :value="item.enCode"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="国家" prop="country">
-                    <!-- <el-select v-model="dataForm.country" placeholder="请选择国家"  style="width: 100%;"
-                      v-if="dataForm.regionCode == 'foreign'" :disabled="btnType ? true : false" filterable>
-                      <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
-                        :disabled="item.code == 'CN'" :value="item.code"></el-option>
-                    </el-select> -->
-                    <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="(item, index) in countryList" :key="index" :label="item.name"
-                        :value="item.code"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                  <el-form-item label="省" prop="province">
-                    <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="item in provinces" size="small" :key="item.id" :label="item.fullName"
-                        :value="item.id" @click.native="changeProvince(item)">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                  <el-form-item label="市" prop="city">
-                    <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;" @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
-                      :disabled="btnType === 'look' ? true : false||!dataForm.province">
-                      <el-option v-for="item in cities" size="small" :key="item.id" :label="item.fullName"
-                        :value="item.id" @click.native="changeCity(item)">{{ item.fullName }}
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
-                  <el-form-item label="区" prop="area">
-                    <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;" @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
-                      :disabled="btnType === 'look' ? true : false||!dataForm.city">
-                      <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName" :value="item.id">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="地址" prop="address">
-                    <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType === 'look' ? true : false"
-                      maxlength="300" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="电话" prop="phone">
-                    <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType === 'look' ? true : false"
-                      maxlength="20" />
-                  </el-form-item>
-                </el-col><el-col :sm="8" :xs="24">
-                  <el-form-item label="手机号" prop="mobilePhone">
-                    <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType === 'look' ? true : false"
-                      maxlength="20" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="传真" prop="fax">
-                    <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType === 'look' ? true : false"
-                      maxlength="50" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="邮政编码" prop="zipCode">
-                    <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType === 'look' ? true : false"
-                      maxlength="10" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType === 'look' ? true : false"
-                      maxlength="100" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="网址" prop="website">
-                    <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType === 'look' ? true : false"
-                      maxlength="512" />
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="8" :xs="24">
-                  <el-form-item label="含税计价精度" prop="includingTaxPrecision">
-                    <el-input v-model="dataForm.includingTaxPrecision" placeholder="请输入含税计价精度"
-                      :disabled="btnType ? true : false" maxlength="4" oninput="value = value.replace(/[^0-9]/g,'')" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="不含税计价精度" prop="excludingTaxPrecision">
-                    <el-input v-model="dataForm.excludingTaxPrecision" placeholder="请输入不含税计价精度"
-                      :disabled="btnType ? true : false" maxlength="4" oninput="value = value.replace(/[^0-9]/g,'')" />
-                  </el-form-item>
-                </el-col> -->
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="付款方式" prop="paymentMethod">
-                    <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName"
-                        :value="item.enCode">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="付款周期" prop="paymentCycle">
-                    <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode" :label="item.fullName"
-                        :value="item.enCode">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="对账开始日期" prop="reconciliationStartDate">
-                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
-                        </el-date-picker>
-                      </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="对账结束日期" prop="reconciliationEndDate">
-                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd"
-                          style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
-                        </el-date-picker>
-                      </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="开票类型" prop="billingTypeText">
-                    <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="item in billingTypeList" size="small" :key="item.enCode" :label="item.fullName"
-                        :value="item.enCode">
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="税率%" prop="taxRate">
-                    <el-input v-model="dataForm.taxRate" maxlength="2" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入税率" :disabled="btnType === 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="开户银行" prop="bank">
-                    <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType === 'look' ? true : false"
-                      maxlength="100" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="银行账号" prop="bankInfo">
-                    <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType === 'look' ? true : false"
-                      maxlength="100" />
-                  </el-form-item>
-                </el-col>
-
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="渠道类型" prop="channel">
-                    <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName"
-                        :value="item.enCode"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="8" :xs="24">
-                  <el-form-item label="是否禁止下发新订单" prop="orderFreezeFlag">
-                    <el-select v-model="dataForm.orderFreezeFlag" placeholder="请选择是否禁止下发新订单" style="width: 100%;"
-                      :disabled="btnType ? true : false">
-                      <el-option v-for="(item, index) in orderFreezeFlagList" :key="index" :label="item.text"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col> -->
-                <el-col :sm="8" :xs="24" v-if="btnType">
-                  <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
-                    <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="运输方式" prop="modeTransport">
-                    <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" style="width: 100%;"
-                      :disabled="btnType === 'look' ? true : false">
-                      <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName"
-                        :value="item.enCode"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="运输时间(天)" prop="transportationTime">
-                    <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入运输时间(天)" :disabled="btnType === 'look' ? true : false" maxlength="4" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
-                      :disabled="btnType === 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-          </el-tab-pane>
-          <el-tab-pane label="联系人信息" name="lxr">
-            <el-table :data="contactsList" style="width: 100%">
-              <el-table-column prop="name" label="姓名" width="180">
-                <template slot="header">
-                  <span class="required">*</span>姓名
-                </template>
-                <template slot-scope="scope">
-
-                  <el-input v-model="scope.row.name" :disabled="btnType === 'look' ? true : false" maxlength="20"
-                    placeholder="请输入姓名">{{ scope.row.name
-                    }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="sex" label="性别" width="100">
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.sex" placeholder="请选择性别" :disabled="btnType === 'look' ? true : false">
-                    <el-option v-for="(item, index) in sexList" :key="index" :label="item.label"
-                      :value="item.value"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="phone" label="电话" width="180">
-                <template slot="header">
-                  <span class="required">*</span>电话
-                </template>
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.phone" :disabled="btnType === 'look' ? true : false" maxlength="50"
-                    placeholder="请输入电话">{{ scope.row.phone
-                    }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="email" label="邮箱" width="180">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.email" :disabled="btnType === 'look' ? true : false" maxlength="200"
-                    placeholder="请输入邮箱">{{
-                      scope.row.email }}
-                  </el-input>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="address" label="地址" width="220">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType === 'look' ? true : false" maxlength="250"
-                    placeholder="请输入地址">{{
-                      scope.row.address }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="displayName" label="职务" width="180">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.displayName" :disabled="btnType === 'look' ? true : false" maxlength="20"
-                    placeholder="请输入职务">{{
-                      scope.row.displayName }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="departmentName" label="部门" width="180">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.departmentName" :disabled="btnType === 'look' ? true : false" maxlength="20"
-                    placeholder="请输入部门">{{
-                      scope.row.departmentName
-                    }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="hobby" label="爱好" width="180">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.hobby" :disabled="btnType === 'look' ? true : false" maxlength="200"
-                    placeholder="请输入爱好">{{
-                      scope.row.hobby }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="remark" label="备注">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType === 'look' ? true : false" maxlength="200"
-                    placeholder="请输入备注">{{
-                      scope.row.remark }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="140">
-                <template slot-scope="scope">
-                  <!-- <el-button @click="addtable(scope.row)" type="text" >添加</el-button> -->
-                  <el-button @click="deltable(scope)" v-if="btnType !== 'look'" type="text"
-                    style="color:rgb(245,108,108)">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="table-actions" @click="addtable()" v-if="btnType !== 'look'">
-              <el-button type="text" icon="el-icon-plus">添加</el-button>
+      <div class="contain">
+        <div class="JNPF-common-layout">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
+              :element-loading-text="loadingText">
+              <div class="subtitle">
+                <h5>基本信息</h5>
+              </div>
+              <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :openMode="openMode" />
+              <div class="subtitle">
+                <h5>产品信息</h5>
+              </div>
+              <TableForm-product :value="linesList" @input="linesChange" ref="linesForm" class="TableForm"
+                :tableItems="linesListItems" :openMode="openMode" @addth="addOrDelLinesItem"
+                :sourceTypeInfo="dataForm.sourceType" @deleteth="addOrDelLinesItem" @openSide="openSide"
+                :warehouseId="dataForm.warehouseId" customStyle @changeLoading="onChangeLoading"
+                :customerInfo="customerInfo" />
             </div>
-          </el-tab-pane>
-          <el-tab-pane label="收货信息" name="second">
-            <el-table :data="deliveryAddressList" style="width: 100%">
-              <el-table-column prop="recipient" label="收件人" width="180">
-                <template slot="header">
-                  <span class="required">*</span>收件人
-                </template>
-                <template slot-scope="scope">
-
-                  <el-input v-model="scope.row.recipient" :disabled="btnType === 'look' ? true : false" maxlength="20"
-                    placeholder="请输入收件人">{{
-                      scope.row.recipient }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="phone" label="收件人电话" width="180">
-                <template slot="header">
-                  <span class="required">*</span>收件人电话
-                </template>
-                <template slot-scope="scope">
-
-                  <el-input v-model="scope.row.phone" :disabled="btnType === 'look' ? true : false" maxlength="20"
-                    placeholder="请输入收件人电话">{{ scope.row.phone
-                    }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="country" label="国家" width="180" maxlength="50">
-                <template slot="header">
-                  <span class="required">*</span>国家
-                </template>
-                <template slot-scope="scope">
-
-                  <el-select clearable v-model="scope.row.country" placeholder="请选择国家" filterable style="width: 100%;"
-                    :disabled="btnType === 'look' ? true : false">
-                    <el-option v-for="(item, index) in countryList1" :key="index" :label="item.name"
-                      @click.native="changeCountry(item, scope.$index)" :value="item.code">{{ item.name }}</el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="province" label="省" width="180">
-                <template slot="header">
-                  <span class="required">*</span>省
-                </template>
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.province" placeholder="请选择省份"
-                    :disabled="scope.row.country !== 'CN' ? true : btnType === 'look' ? true : false">
-                    <el-option v-for="item in provinces" :key="item.id" :label="item.fullName" :value="item.id"
-                      @click.native="changeProvince1(item, scope.row)"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="city" label="市" width="180">
-                <template slot="header">
-                  <span class="required">*</span>市
-                </template>
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity"
-                    :disabled="!scope.row.province ? true : btnType === 'look' ? true : false">
-                    <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id"
-                      @click.native="changeCity1(item, scope.row)"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="area" label="区" width="180">
-                <template slot="header">
-                  <span class="required">*</span>区
-                </template>
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea"
-                    :disabled="!scope.row.city ? true : btnType === 'look' ? true : false">
-                    <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="address" label="地址" width="220">
-                <template slot="header">
-                  <span class="required">*</span>地址
-                </template>
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.address" :disabled="btnType === 'look' ? true : false" maxlength="300"
-                    placeholder="请输入地址">{{
-                      scope.row.address }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column prop="defaultFlag" label="是否默认" width="140">
-                <template slot-scope="scope">
-                  <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType === 'look' ? true : false"
-                    @change="handleAddress(scope)">
-                    <el-option v-for="item in defaultFlagList" :key="item.value" :label="item.text"
-                      :value="item.value"></el-option>
-                  </el-select>
-                </template>
-              </el-table-column>
-              <el-table-column prop="remark" label="备注">
-                <template slot-scope="scope">
-                  <el-input v-model="scope.row.remark" :disabled="btnType === 'look' ? true : false" maxlength="200"
-                    placeholder="请输入备注">{{
-                      scope.row.remark }}
-                  </el-input>
-                </template>
-              </el-table-column>
-              <el-table-column label="操作" width="120">
-                <template slot-scope="scope">
-                  <el-button @click="deleteth(scope)" type="text" style="color:rgb(245,108,108)"
-                    v-if="btnType !== 'look'">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="table-actions" @click="adddeliveryAddressList()" v-if="btnType !== 'look'">
-              <el-button type="text" icon="el-icon-plus">添加</el-button>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
-            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
-          </el-tab-pane>
-        </el-tabs>
+          </div>
+        </div>
       </div>
+     
+      <WareSide v-if="wareVisibled" ref="wareSide" @confirm="sideConfirm" :openMode="openMode"
+        :warehouseId="dataForm.warehouseId" />
     </div>
   </transition>
 </template>
 
 <script>
-import { getOrganization } from '@/api/permission/user'
-import { getOrganizeInfo } from '@/api/permission/organize'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import {
-  getCounryData , getBimBusinessInfo
-} from '@/api/basicData/index'
-import {  updatePartner, addPartner , detailPartner, checkPartner } from "@/api/customerManagement/index";
-import {
-  getProvinceList,
-} from '@/api/system/province'
-import { mapGetters, mapState } from 'vuex'
+import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
+import { getWarehouseList, getStockGoodsShelves, getStockGoodsShelvesList, getProductionLotList } from '@/api/basicData/index'
+import { getcategoryTree, getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
+import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
+import { addInboundOutbound, updateInboundOutbound } from "@/api/warehouseManagement/inventory.js"
+import TableFormProduct from "./TableForm-product.vue"
+import WareSide from './WareSide.vue'
 export default {
+  components: { TableFormProduct, WareSide },
+
   data() {
     return {
-      loadingareafoundation:false,
-      foundationloadingcity:false,
-      loadingarea:false,
-      loadingcity:false,
-      isdisabled: false,
-      datafilelist: [],
-      btnType: undefined,
-      areaList: [],
-      provinces: [],
-      cities: [],
-      area: [],
-      cities1: [],
-      area1: [],
-      billingTypeList: [],
-      paymentMethodList: [],
-      modeTransportList: [],
-      channelList: [],
-      contactsList: [],
-      paymentCycleList: [],
-      deliveryAddressList: [],
-      gradeList: [],
-      countryList: [],
-      countryList1: [],
-      listQuery: {
-        keyword: ''
-      },
-      activeName: "jcInfo",
-      nodeId: -1,
-      defaultFlagList: [
-        {
-          value: true,
-          text: "是"
-        }, {
-          value: false,
-          text: "否"
-        }
-      ],
-      sexList: [
-        {
-          value: "男",
-          label: "男"
-        },
-        {
-          value: "女",
-          label: "女"
-        }, {
-          value: "-",
-          label: "-"
-        },
-      ],
-      orderFreezeFlagList: [
-        {
-          text: "否",
-          value: false
-        }, {
-          text: "是",
-          value: true
-        },
-      ],
-      shipmentFreezeFlagList: [
-        {
-          text: "否",
-          value: false
-        }, {
-          text: "是",
-          value: true
-        },
-      ],
-      visible: false,
+      title: "",
+      visible: true,
+      btnType: false,
+      wareVisibled: false,
       btnLoading: false,
-      formLoading: false,
+      formLoading: true,
       dataForm: {
-        // 合作伙伴
-        code: '',
-        taxId: '',
-        name: '',
-        nameEn: "",
-        regionCode: '',
-        country: '',
-        province: '',
-        city: '',
-        area: '',
-        address: '',
-        contacts: '',
-        phone: '',
-        mobilePhone: '',
-        includingTaxPrecision: '2',
-        excludingTaxPrecision: '2',
-        grade: "",
-        parentName: "",
-        partnerCategoryId: "",
-        partnerCategoryIdText: "",
-        paymentMethod: "",
-        type: "customer",
-        fax: "",
-        zipCode: "",
-        personResponsible: '',
-        email: "",
-        taxRate: "",
-        paymentCycle: "",
-        salespersonId: '',
-        salespersonIdText: "",
-        website: "",
-        orderFreezeFlag: false,
-        shipmentFreezeFlag: false,
-        modeTransport: "",
-        transportationTime: "",
-        remark: "",
-        departmentId:'',
-        departmentIdText: "",
-        customerStatus:'private_sea',  // 私海
-        reconciliationStartDate:'',
-        reconciliationEndDate:'',
+        sourceType: "",
       },
-      organizeIdTree: [],
-      parentId: '',
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
+      dataFormItems: [/* 通过 this.refeshDataFormItems() 动态更改 */],
+      selectcustomerObj: {
+        type: ""
       },
-      dataRule: {
-        internalStaffId: [
-          { required: false, message: '请选择人员', trigger: 'blur' },
-        ],
-        // 编码、税号、名称、地区、国家、省、市、区、地址、联系人、电话和手机选填一项、付款方式、含税计价精度（默认2）、不含简况计价精度
-        partnerCategoryIdText: [
-          { required: false, message: '所属分类不能为空', trigger: 'change' }
-        ],
-        departmentId: [
-          { required: false, message: '所属部门不能为空', trigger: 'change' }
-        ],
-        salespersonId: [
-          { required: false, message: '所属销售不能为空', trigger: 'change' }
-        ],
-
-        mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' },{ validator: this.validateField2, trigger: 'blur' }],
-        code: [
-          { required: true, message: '请输入编码', trigger: 'blur' },
-          { validator: this.formValidate('enCode'), trigger: 'blur' },
-          {
-            validator: (rule, value, callback) => { 
-              let data = {
-                code: value,
-                type: this.dataForm.type,
-                id: this.dataForm.id
-              }
-              checkPartner(data).then(res => { 
-                if (res.data) {
-                  callback(new Error("编码重复"));
-                } else {
-                  callback();
-                }
-              }).catch(error => {
-              })
-            }, trigger: 'blur'
-          },
-        ],
-        // taxId: [
-        //   { required: true, message: '请输入税号', trigger: 'blur' }
-        // ],
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
-          // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
-          // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
-        ],
-        regionCode: [
-          { required: false, message: '地区不能为空', trigger: 'change' }
-
-        ],
-        country: [
-          { required: false, message: '国家不能为空', trigger: 'change' },
-
-        ],
-        province: [
-          { required: false, message: '省份不能为空', trigger: 'change' }
-
-        ],
-        city: [
-          { required: false, message: '城市不能为空', trigger: 'change' }
-
-        ],
-        area: [
-          { required: false, message: '区不能为空', trigger: 'change' }
-
-        ],
-        address: [
-          { required: false, message: '请输入地址', trigger: 'blur' },
-
-        ],
-        contacts: [
-          { required: false, message: '请输入联系人', trigger: 'blur' },
-
-        ],
-        taxRate: [
-          { required: false, message: '请输入税率', trigger: 'blur' },
-        ],
-        includingTaxPrecision: [
-          { required: false, message: '请输入含税计价精度', trigger: 'blur' },
-
-        ],
-        excludingTaxPrecision: [
-          { required: false, message: '请输入不含税计价精度', trigger: 'blur' },
-        ],
-        paymentMethod: [
-          { required: false, message: '请选择付款方式', trigger: 'change' },
-        ],
-        paymentCycle: [
-          { required: false, message: '请选择付款周期', trigger: 'change' },
-        ],
-        reconciliationStartDate: [
-          { required: false, message: '请选择对账开始日期', trigger: 'change' },
-        ],
-        reconciliationEndDate: [
-          { required: false, message: '请选择对账结束日期', trigger: 'change' },
-        ],
-      },
-      salesList: [],
-      organizeIdTrees: [],
-      salesFlag: false,
-      businessType:'',
-      isattachmentswitch:''
+      linesList: [],
+      linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
+      spaceLines: [],
+      productionLotList: [],
+      loadingText: '',
+      customerInfo: {},
+      copyLinesData: [],
+      originTypeList: [
+        { label: "发退货单", value: "send_return" },
+        { label: "领退料单", value: "picking_return" },
+        { label: "采购收退货单", value: "purchase_delivery_return" },
+        { label: "外协收退货单", value: "outside_delivery_return" },
+      ]
     }
   },
-  created() {
-    this.dataForm.salespersonId = this.userInfo.userId
-    this.dataForm.departmentId = this.userInfo.departmentId,
-    this.getAttachmentswitch()
-    this.getProvinceList()
-    this.getDictionaryType()
+  created() { },
+  watch: {
+    "dataForm.warehouseId": {
+      handler: function (newVal, oldVal) {
+        if (oldVal) this.spaceLines = []
+      },
+    }
   },
   methods: {
-    getAttachmentswitch(){
-      getBimBusinessInfo('460918390082716392').then(res=>{
-        this.isattachmentswitch = res.data.configValue1
-      })
+    refeshDataFormItems() {
+      let partnerName = this.dataForm.sourceType === "purchase_delivery_return" || this.dataForm.sourceType === "outside_delivery_return" ? '供应商' : '客户'
+      console.log("this.dataForm.sourceType", this.dataForm.sourceType);
+      this.dataForm.sourceType = this.dataForm.sourceType ? this.dataForm.sourceType : ''
+      let sm = this.dataForm.sourceType !== "io_other" ? 8 : 12
+      this.dataFormItems = [
+        { prop: "sourceType", label: "业务类型", value: "", type: "select", change: this.selectSourceType, options: this.originTypeList, itemRules: [{ required: true, trigger: "change" }], sm },
+        {
+          prop: "warehouseName", label: "出入库仓库", value: "", type: "custom", customComponent: "ComSelect-list", method: getWarehouseList,
+          change: this.wareChange, requestObj: { chooseUserFlag: true, type: 'normal', "category": "warehouse" },
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["出入库仓库不能为空", (errMsg) => { this.$message.error(`出入库仓库${errMsg}`) }] }), trigger: 'no' },
+            { required: true, trigger: "no" }
+          ], dialogTitle: "选择仓库", sm
+        },
+        {
+          prop: "partnerName", label: partnerName, value: "", type: "custom", customComponent: "ComSelect-list",
+          requestObj: this.selectcustomerObj, method: getCooperativeData, change: this.selectCustomerFun,
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg) => { this.$message.error(`${partnerName}${errMsg}`) }] }), trigger: 'no' },
+            { required: true, trigger: "no" }
+          ], dialogTitle: "选择" + partnerName,
+          render: ['send_return', 'purchase_delivery_return', 'outside_delivery_return',].includes(this.dataForm.sourceType), sm
+        },
+        { prop: "remark", label: "备注", value: "", type: "textarea" }
+      ]
     },
-    changePerple(internalStaffId, data) { 
-      if (!data) return
-      this.$refs['dataForm'].validateField('internalStaffId')
-      if (data) {
-
-      } else {
-        this.$refs['dataForm'].fields[0].resetField()
-        this.dataForm.internalStaffId = data.internalStaffId
-      }
-
-    },
-    //基础信息点击选择区
-    foundationfocusactionarea(val){
-      this.loadingareafoundation = true
-      getProvinceList(val).then(res => {
-        this.area = res.data.list
-        this.loadingareafoundation = false
-      })
-    },
-    //基础信息选择市
-    focusfoundation(val){
-      this.foundationloadingcity = true
-      getProvinceList(val).then(res => {
-        this.cities = res.data.list
-        this.foundationloadingcity = false
-      })
-    },
-    //点击选择市
-    focusaction(val){
-      this.loadingcity = true
-      getProvinceList(val.province).then(res => {
-        this.cities1 = res.data.list
-        this.loadingcity = false
-      })
-    },
-    //点击选择区
-    focusactionarea(val){
-      this.loadingarea = true
-      getProvinceList(val.city).then(res => {
-        this.area1 = res.data.list
-        this.loadingarea = false
-      })
-    },
-    // 电话 手机 二填一
-    validateField2(rule, value, callback) {
-      if (!this.dataForm.phone && !value) {
-        callback(new Error('电话和手机号至少填一个'));
-      } else {
-        callback();
-      }
-    },
-    changeCountry(e, index) { 
-      this.dataForm.country = e.code
-      if (this.dataForm.country != 'CN') { 
-        this.deliveryAddressList[index].province = ''
-        this.deliveryAddressList[index].city = ''
-        this.deliveryAddressList[index].area = ''
-        this.dataForm.province = ''
-        this.dataForm.city = ''
-        this.dataForm.area = ''
-      }
-    },
-    hangleSelectSales(e, r) { 
-      this.dataForm.departmentId = r.parentId
-      this.dataForm.departmentIdText = r.organize
-    },
-    handleAddress(e) { 
-      if (e.row.defaultFlag) {
-        this.deliveryAddressList.forEach((item, index) => {
-          if (index != e.$index) {
-            item.defaultFlag = false
-          } else {
-          }
-        })
-      }
-    },
-    selectsales(val) { 
-      this.dataForm.salespersonId = val
-      // this.dataForm.salespersonIdText = val
-
-    },
-    onOrganizeChangeHandle(val) {
-      this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') }) 
-      this.dataForm.salespersonIdText = ""
-      this.dataForm.salespersonId = ""
-      this.$forceUpdate()
-      if (!val || !val.length) return this.dataForm.departmentId = ''
-      this.dataForm.departmentId = val[val.length - 1]
-      this.salesFlag = false
-
-      getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => { 
-        if (res.data.length > 0) {
-          res.data.forEach(item => {
-            item.name = item.fullName.split('/')[0]
-          });
-        } 
-        this.salesList = res.data
-
-      })
-    },
-    handleChange($event) { 
-      if ($event == 'domestic') {
-        // 国内
-        this.countryList = [{
-          code: "CN",
-          id: "1663107232693223475",
-          name: "中国",
-          nameEn: "China",
-        }]
-        this.dataForm.country = "CN"
-        this.dataForm.province = ""
-        this.dataForm.city = ""
-        this.dataForm.area = ""
-        this.area = []
-        this.cities = []
-      } else {
-        this.dataForm.country = ''
-        this.countryList = []
-        let obj = {
-          "keyword": "",
-          "orderItems": [
-            {
-              "asc": true,
-              "column": ""
+    refeshLinesListItems() {
+      this.linesListItems = [
+        { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
+        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 140 },
+        { prop: "drawingNo", label: "规格型号", value: "", type: 'view', minWidth: 300 },
+        { prop: "processName", label: "工序名称", value: "", type: 'view', minWidth: 140 },
+        { prop: "mainUnit", label: "单位(主)", value: "", type: "view", minWidth: 100 },
+        {
+          prop: "num", label: "数量(主)", value: "", type: "input",
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量(主)：' + errMsg) }] }), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(主)：${errMsg}`) }), trigger: 'blur' }
+          ], minWidth: 180, input:
+            (val, scope) => {
+              if (scope.row.calculationDirection === 'multiplication') { scope.row.deputyNum = this.jnpf.numberFormat(val * scope.row.ratio, 4) }
+              else { scope.row.deputyNum = this.jnpf.numberFormat(val / scope.row.ratio, 4) }
+              if (scope.row.costPrice) {
+                scope.row.totalAmount = this.jnpf.numberFormat(val * scope.row.costPrice, 4)
+              }
             }
-          ],
-          "pageNum": 1,
-          "pageSize": -1
-        }
-        getCounryData(obj).then(res => { 
-          this.countryList = res.data.records.filter((item) => {
-            return item.name !== '中国'
-          })
-
-        })
-      }
-    },
-    // 切换table
-    handleClick(tab, event) { 
-      if(tab.label=='收货信息'){
-        // 国内
-        this.countryList1 = [{
-          code: "CN",
-          id: "1663107232693223475",
-          name: "中国",
-          nameEn: "China",
-        }]
-      }
-    },
-    // 联系人信息新增行
-    addtable() {
-      this.contactsList.push({
-        name: '',
-        email: '',
-        sex: "男",
-        phone: "",
-        address: "",
-        displayName: "",
-        departmentName: "",
-        hobby: "",
-        remark: ""
-      })
-
-    },
-    // 收货新增行
-    adddeliveryAddressList() {
-      if (this.deliveryAddressList.length > 0) {
-        let flag = null;
-        this.deliveryAddressList.forEach(item => {
-          if (item.defaultFlag) {
-            flag = true
+        },
+        { prop: "deputyUnit", label: "单位(副)", value: "", type: "view", minWidth: 100 },
+        {
+          prop: "deputyNum", label: "数量(副)", value: "", type: "input",
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量(副)：' + errMsg) }] }), trigger: 'blur' },
+            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(副)：${errMsg}`) }), trigger: 'blur' }
+          ], minWidth: 180, input:
+            (val, scope) => {
+              if (scope.row.calculationDirection === 'division') { scope.row.num = this.jnpf.numberFormat(val * scope.row.ratio, 4) }
+              else { scope.row.num = this.jnpf.numberFormat(val / scope.row.ratio, 4) }
+            }
+        },
+        {
+          prop: "costPrice", label: "单价(含税)", value: "", type: "input", minWidth: 140,
+          input: (val, scope) => {
+            if (scope.row.num) {
+              scope.row.totalAmount = this.jnpf.numberFormat(val * scope.row.num, 4)
+            }
+            if (scope.row.taxRate) {
+              scope.row.excludingTaxCostPrice = this.jnpf.numberFormat(val / (1 + (scope.row.taxRate * 1 / 100)), 4)
+            }
           }
-        })
-        if (flag) {
-          this.deliveryAddressList.push({
-            country: "",
-            province: "",
-            city: "",
-            area: "",
-            address: "",
-            defaultFlag: false,
-            remark: "",
-            recipient: "",
-            phone: ""
-          })
-        }
-      } else {
-        this.deliveryAddressList.push({
-          country: "",
-          province: "",
-          city: "",
-          area: "",
-          address: "",
-          defaultFlag: true,
-          remark: "",
-          recipient: "",
-          phone: ""
-        })
-      }
+        },
+        {
+          prop: "taxRate", label: "税率(%)", value: "", type: "input", minWidth: 100,
+          input: (val, scope) => {
 
-
-    },
-    // 收获信息删除当前行
-    deleteth(row, index) {
-      this.deliveryAddressList.splice(row.$index, 1)
-
-    },
-    // 联系人信息删除当前行
-    deltable(row, index) { 
-      this.contactsList.splice(row.$index, 1)
-    },
-    // 根据选择的省份获取相应的城市数据
-    changeProvince(item, row) { 
-
-      if (row) {
-        row.area = ''
-        row.city = ''
-
-      } else {
-        this.dataForm.city = ""
-        this.dataForm.area = ""
-      }
-      this.cities = []
-      this.area = []
-
-      getProvinceList(item.id).then(res => { 
-        this.cities = res.data.list
-      })
-    },
-    changeProvince1(item, row) {
-      if (row) {
-        row.area = ''
-        row.city = ''
-      }
-      this.cities1 = []
-      this.area1 = []
-      getProvinceList(item.id).then(res => {
-        this.cities1 = res.data.list
-      })
-    },
-    // 根据选择的城市获取各区的数据
-    changeCity(item, row) { 
-      if (row) {
-        row.area = ''
-
-      } else {
-        this.dataForm.area = ""
-
-      }
-      getProvinceList(item.id).then(res => { 
-        this.area = res.data.list
-      })
-    },
-    changeCity1(item, row) {
-      if (row) {
-        row.area = ''
-      }
-      getProvinceList(item.id).then(res => {
-        this.area1 = res.data.list
-      })
-    },
-    // 获取省份数据
-    getProvinceList() {
-      getProvinceList(this.nodeId, this.listQuery).then(res => { 
-        this.provinces = res.data.list
-        this.init(id, this.btnType)
-      }).catch(() => {
-        this.listLoading = false
-        this.btnLoading = false
-        this.refreshTable = true
-      })
-    },
-
-
-    // 获取等级、付款方式数据
-    getDictionaryType() {
-      getDictionaryType().then(res => {
-        let data = res.data.list
-        data.forEach(item => {
-          if (item.enCode == "partnerArchives") {
-            let children = item.children
-            children.forEach(resp => {
-              if (resp.enCode == "grade") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.gradeList = response.data.list
-                })
-              }
-              if (resp.enCode == "regionCode") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.areaList = response.data.list
-                })
-              }
-              if (resp.enCode == "paymentMethod") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.paymentMethodList = response.data.list
-                })
-              }
-              if (resp.enCode == "billingType") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.billingTypeList = response.data.list
-                })
-              }
-              if (resp.enCode == "paymentCycle") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.paymentCycleList = response.data.list
-                })
-              }
-              if (resp.enCode == "channel") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.channelList = response.data.list
-                })
-              }
-              if (resp.enCode == "modeTransport") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.modeTransportList = response.data.list
-                })
-              }
-
-            });
-
+            if (scope.row.taxRate) {
+              scope.row.excludingTaxCostPrice = this.jnpf.numberFormat(costPrice / (1 + (val * 1 / 100)), 4)
+            }
           }
+        },
+        { prop: "excludingTaxCostPrice", label: "单价(不含税)", value: "", type: "view", minWidth: 140 },
+        { prop: "totalAmount", label: "总金额", value: "", type: "view", minWidth: 140 },
 
-        });
-      })
+        { prop: "originalBatchNumber", label: "产品原批号", value: "", type: "input", maxlength: 50, minWidth: 220 },
+        { prop: "batchNumber", label: "批次号", value: "", type: "select", options: this.productionLotList, filterable: true, remote: true, remoteMethod: this.remoteMethod, maxlength: 50, minWidth: 220, blur: this.elementBlur },
+        { prop: "remark", label: "备注", value: "", type: 'input', maxlength: 200, minWidth: 160 },
+      ]
+      this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() })
     },
+    processSelectRequestObj(rowIndex) {
+      let productsId = this.linesList[rowIndex].productsId
+      return { productsId }
+    },
+    selectSourceType(val) {
+      console.log("val", val);
+      this.dataForm.sourceType = val
+      this.sourceType = val
+      if (val == "send_return") {
+        this.selectcustomerObj.type = 'customer'
+      } else if (val == "purchase_delivery_return" || val == "outside_delivery_return") {
+        this.selectcustomerObj.type = 'supplier'
 
-
-
-
+      } else {
+        this.customerInfo = {}
+      }
+      this.refeshDataFormItems()
+    },
     init(id, btnType) {
-      console.log(id,btnType);
       this.visible = true
-      this.dataForm.id = id || ''
-      // this.parentId = parentId || ''
+      this.formLoading = true
       this.btnType = btnType
-      getBimBusinessInfo('460918012862529542').then(res=>{
-        this.businessType = res.data.configValue1
-      })
-      if (this.dataForm.id) {
-        for (let item in this.dataRule){
-          if (item === 'mobilePhone'){
-          }else{
-            this.dataRule[item][0].required = true
+      this.refeshDataFormItems()
+      if (id) {
+        this.title = btnType ? '查看入库单' : '编辑入库单'
+        // 获取详情
+        detailWarehouseData(id).then(res => {
+          this.dataForm = res.data.stockMove
+          if (res.data.stockMove.sourceType == "send_return") {
+            this.selectcustomerObj.type = 'customer'
+          } else if (res.data.stockMove.sourceType == "purchase_delivery_return" || res.data.stockMove.sourceType == "outside_delivery_return") {
+            this.selectcustomerObj.type = 'supplier'
+
+          } else {
+            this.customerInfo = {}
+          }
+          this.linesList = res.data.lines
+          this.spaceLines = res.data.spaceLines
+          this.spaceLines.forEach(item => {
+            item.boxList = item.boxVoList
+            delete item.boxVoList
+            item.barCodeIds = item.boxList.map(box => box.id)
+            item.barCodeList = item.boxList.map(box => box.barCode)
+            item.boxList.forEach(box => {
+              box.name = box.barCode
+            })
+          });
+          this.refeshDataFormItems()
+          this.formLoading = false
+        }).catch(() => { this.formLoading = false })
+      } else {
+        this.title = '新建入库单'
+        this.formLoading = false
+      }
+    },
+    async handleConfirm(submitModel) {
+      this.btnLoading = true
+      let submitFlag = true // 自动聚焦是否可用
+
+      // 校验表单
+      let form_1 = this.$refs['dataForm'].$refs.main
+      let valid_1 = await form_1.validate().catch(() => false)
+      if (!valid_1 && submitFlag) {
+        // 校验失败，聚焦第一失败项，继续校验后续项
+        if (submitFlag) {
+          // 聚焦第一个失败的表单元素
+          let formItems = form_1.$children[0].$children
+          for (let j = 0; j < formItems.length; j++) {
+            let formItem = formItems[j].$children[0].$children[0]
+            if (formItem.validateState === 'error') {
+              submitFlag = false
+              this.jnpf.focusItem(formItem.$children[1].$el)
+              this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+              break
+            }
           }
         }
-        detailPartner(this.dataForm.id).then(res => {
-          console.log("res=>",res);
-          this.dataForm = res.data.cooperativePartner
-          if (this.dataForm.departmentId) {
-            getOrganizeInfo(this.dataForm.departmentId).then(sss => {
-              this.organizeIdTrees = sss.data.organizeIdTree || [] 
-              this.organizeIdTrees.push(this.dataForm.departmentId)
-            })
-            getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
-              if (res.data.length > 0) {
-                res.data.forEach(item => {
-                  item.name = item.fullName.split('/')[0]
-                });
-              } 
-              this.salesList = res.data
-            })
+      }
+
+      // 校验表单表格（子数据列表）
+      let form_2 = this.$refs['linesForm'].$refs.main
+      let valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        let formItems = form_2.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            submitFlag = false
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
           }
-          if (res.data.cooperativePartner.regionCode == 'domestic') {
-            // 国内
-            this.countryList = [{
-              code: "CN",
-              id: "1663107232693223475",
-              name: "中国",
-              nameEn: "China",
-            }]
-          } else {
+        });
+      }
 
-            this.countryList = []
-            let obj = {
-              "keyword": "",
-              "orderItems": [
-                {
-                  "asc": true,
-                  "column": ""
-                }
-              ],
-              "pageNum": 1,
-              "pageSize": -1
+      // 判断子表是否有效
+      if (!this.linesList.length && submitFlag) {
+        submitFlag = false
+        this.$message.error('请至少选择一个产品')
+      }
+      if (this.linesList.length && submitFlag) {
+        this.linesList.some((item, index) => {
+          let num = 0
+          let tempList = this.spaceLines.filter(line => line.productsId === item.productsId && line.routingLineId == item.routingLineId)
+          tempList.forEach(line => {
+            num += line.num ? Number(line.num) : 0
+          })
+          if (submitModel == 'submit') {
+            if (item.num != num) {
+              submitFlag = false
+              this.$message.error(`产品信息第${index + 1}行：请先完善入库产品货位设置`)
+              return true
             }
-            getCounryData(obj).then(res => {
-              this.countryList = res.data.records.filter((item) => {
-                return item.name !== '中国'
-              })
-
-            })
           }
-
-          if (res.data.cooperativePartner.province) {
-            let obj = {
-              id: res.data.cooperativePartner.province
-            }
-            getProvinceList(res.data.cooperativePartner.province).then(res => { 
-              this.cities = res.data.list
-            })
-
-          }
-          if (res.data.cooperativePartner.city) {
-            let ooo = {
-              id: res.data.cooperativePartner.city
-            }
-            // this.changeCity(ooo)
-            getProvinceList(res.data.cooperativePartner.city).then(res => { 
-              this.area = res.data.list
-            })
-          }
-
-          this.contactsList = res.data.contactsList
-          this.deliveryAddressList = res.data.deliveryAddressList
-          this.deliveryAddressList.forEach(is => {
-            if (is.province) {
-              let ccc = {
-                id: is.province
-              }
-              this.changeProvince1(ccc)
-            }
-            if (is.city) {
-              let fff = {
-                id: is.city
-              }
-              this.changeCity1(fff)
-
-            }
-          });
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
-            })
-          }
-          // this.$nextTick(()=>this.$refs['dataForm'].clearValidate())
-          this.$nextTick(()=>this.$refs['dataForm'].resetFields())
+          return false
         })
+      }
+
+      // // 同一条码箱是否在同一货位上
+      // if (submitFlag) {
+      //   let allBoxList = this.spaceLines.map(line => [...line.boxList]).flat()
+      //   let result = []
+      //   for (let i = 0; i < allBoxList.length; i++) {
+      //     let barCode = allBoxList[i].barCode;
+      //     let shelfSpaceId = allBoxList[i].shelfSpaceId;
+      //     let isDifferent = false; // 标记是否存在不相同的项
+      //     for (let j = 0; j < allBoxList.length; j++) {
+      //       if (allBoxList[j].barCode === barCode && allBoxList[j].shelfSpaceId !== shelfSpaceId) {
+      //         isDifferent = true;
+      //         break;
+      //       }
+      //     }
+      //     if (isDifferent) {
+      //       result.push(barCode);
+      //     }
+      //   }
+      //   result = [...new Set(result)]
+      //   if (result.length) {
+      //     submitFlag = false
+      //     this.$message.error(`${result.join('、')}条码箱，不允许存放在多个库位上`)
+      //   }
+      // }
+
+      // // 条码箱物品是否全部配置入库完成
+      // if (submitFlag) {
+      //   let allBarCode = [...new Set(this.spaceLines.map(line => [...line.boxList]).flat().map(line => line.barCode))]
+      //   let res = allBarCode.length ? await detailByBarCodes({ barCodes: allBarCode }).catch(err => false) : { data: [] }
+      //   if (!res) return this.btnLoading = false
+
+      //   let allBoxList = this.spaceLines.map(line => [...line.boxList]).flat()
+      //   res.data.some(item => {
+      //     return item.barcodeLineVOs.some(o => { // 依次对比barcodeLineVOs中是否每个产品都已经配置货位
+      //       let hasBox = allBoxList.find(o1 => o1.productsId === o.productsId && o1.routingLineId == o.routingLineId && o1.barCode === item.barCode)
+      //       if (!hasBox) {
+      //         this.$message.error(`条码箱产品未全部设置货位 —— 条码箱：${o.barCode} ${item.standardBoxName} - 产品名称：${o.productsName} - 数量：${o.realityTotalNum}`)
+      //         submitFlag = false
+      //         return true
+      //       }
+      //       return false
+      //     })
+      //   })
+      // }
+
+      // 自动聚焦未使用则提交
+      if (submitFlag) {
+        this.dataForm.documentStatus = submitModel
+        this.dataForm.originNo = this.dataForm.sourceType
+        this.dataForm.documentType = "inbound_outbound"
+        this.linesList.forEach(item => item.id = "")
+        const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
+        // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
+        this.spaceLines.forEach(item => {
+          let linesOption = this.linesList.find(line => line.productsId === item.productsId && line.routingLineId == item.routingLineId)
+          item.batchNumber = linesOption ? linesOption.batchNumber : ''
+        })
+        let dataObj = {
+          stockMove: this.dataForm,
+          lines: this.linesList,
+          spaceLines: submitModel == 'submit' ? this.spaceLines : this.copyLinesData
+        }
+
+        // 提交确认
+        if (submitModel === 'submit') {
+          let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
+          if (!flag) {
+            console.log(dataObj)
+            return this.btnLoading = false
+          }
+        }
+
+        if (location.hostname === 'localhost' || location.href.indexOf('mode=dev') !== -1) { // 调试
+          let flag = confirm('确定提交吗？')
+          if (!flag) {
+            console.log(dataObj)
+            return this.btnLoading = false
+          }
+        }
+
+        formMethod(dataObj).then(res => {
+          let msg = res.msg
+          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+          this.$emit('close', true)
+          this.$message({
+            message: msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.visible = false
+              this.btnLoading = false
+            }
+          })
+        }).catch(() => {
+          this.btnLoading = false
+        })
+      } else {
+        this.btnLoading = false
+      }
+
+    },
+    // 对应子数据新增或删除行
+    addOrDelLinesItem(data, type) {
+      let paramType = Array.isArray(data) ? 'Array' : 'Object'
+      if (paramType === 'Object') {
+        this.linesList.splice(data.$index, 1)
+        this.spaceLines = this.spaceLines.filter(item => item.productsId === data.row.productsId ? item.routingLineId !== data.row.routingLineId : true)
+      } else {
+        let tempList = JSON.parse(JSON.stringify(this.linesList))
+        // 新数据替代旧数据
+        if (type === 'cover') {
+          data = data[0]
+          tempList = data.lines
+          this.spaceLines = data.spaceLines.map(spaceLine => {
+            spaceLine.boxList = spaceLine.boxVoList.map(box => ({
+              ...box,
+              name: box.barCode
+            }))
+            delete spaceLine.boxVoList
+            return spaceLine
+          })
+          this.dataForm['warehouseId'] = data.stockMove.warehouseId
+          this.$set(this.dataForm, 'warehouseName', data.stockMove.warehouseName)
+          this.wareChange(null, [{}])
+        }
+        let hasItemList = []
+        for (let i = 0; i < data.length; i++) {
+          let item = data[i];
+          item.remark = ""
+          item.productCode = item.code
+          item.productsId = item.id
+          const hasFlag = this.linesList.find(i => item.productId === i.productsId)
+          if (hasFlag) { hasItemList.push(item.productName) }
+          else { tempList.push(item) }
+          if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
+        }
+        this.linesList = tempList.map(item => { return { ...item, warehouseId: this.dataForm.warehouseId } })
+        console.log("this.lin", this.linesList);
+        this.linesList.forEach(item => {
+          if (this.customerInfo.taxRate && !item.taxRate) {
+            item.taxRate = this.customerInfo.taxRate
+          }
+        });
+        this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() });
       }
     },
     goBack() {
       this.$emit('close')
     },
-    onOrganizeChange(val, data) { 
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerCategoryIdText')
-      }) 
-      this.dataForm.partnerCategoryId = data ? data[0].id : ''
-      this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
+    linesChange(dataOrIndex, prop, value) {
+      if (Array.isArray(dataOrIndex)) {
+        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
+      } else if (prop) {
+        this.linesList[dataOrIndex][prop] = value
+      }
     },
-    handleConfirm() {
-      let flag = null;
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-
-          this.contactsList.forEach((item, index) => {
-            item.id = ""
-            if (!item.name) {
-              flag = false
-              this.activeName = "lxr"
-              return this.$message({
-                message: "请填写联系人姓名",
-                type: 'error',
-                duration: 1500,
-              })
-            } else if (!item.phone) {
-              this.activeName = "lxr"
-              flag = false
-              return this.$message({
-                message: "请填写联系人电话",
-                type: 'error',
-                duration: 1500,
-              })
-            }
-          });
-          this.deliveryAddressList.forEach((item, index) => {
-            item.id = ""
-            if (item.country === 'CN') {
-              if (!item.recipient) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: "请填写收货信息的收件人",
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.phone) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: "请填写收货信息的收件人电话",
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.country) {
-                this.activeName = "second"
-
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的国家`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.province) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的省份`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.city) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的城市`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.area) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的区`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.address) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的地址`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              }
-            } else {
-              if (!item.recipient) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: "请填写收货信息的收件人",
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.phone) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: "请填写收货信息的收件人电话",
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.country) {
-                this.activeName = "second"
-
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的国家`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              } else if (!item.address) {
-                this.activeName = "second"
-                flag = false
-                return this.$message({
-                  message: `请填写第${index + 1}行收货信息的地址`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              }
-            }
-          });
-          if (this.dataForm.regionCode == "foreign") {
-            this.dataForm.province = ""
-            this.dataForm.city = ""
-            this.dataForm.area = ""
-          }
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: 'customer',
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-          let obj = {
-            attachmentList: this.datafilelist,
-            cooperativePartner: this.dataForm,
-            deliveryAddressList: this.deliveryAddressList,
-            contactsList: this.contactsList
-          }
-          if (flag === false) return
-          this.btnLoading = true
-          const formMethod = this.dataForm.id ? updatePartner : addPartner
-          formMethod(obj).then(res => {
-            let msg = "";
-            if (formMethod == updatePartner) {
-              msg = "转为正式客户成功"
-            } else {
-              msg = "新建成功"
-            }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
-          }).catch(() => {
-            this.btnLoading = false
-          })
-
-        } else {
-
-          this.activeName = "jcInfo"
-        }
+    // 打开抽屉
+    openSide(scope) {
+      this.wareVisibled = true
+      this.$nextTick(() => {
+        let rowDetailList = JSON.parse(JSON.stringify(this.spaceLines.filter(line => line.productsId === scope.row.productsId && line.routingLineId == scope.row.routingLineId)))
+        this.copyLinesData = rowDetailList
+        this.$refs['wareSide'].init(scope, rowDetailList, this.btnType)
       })
+    },
+    // 抽屉提交
+    sideConfirm(data, scope) {
+      let tempList = this.spaceLines.filter(line => line.productsId === scope.row.productsId ? line.routingLineId != scope.row.routingLineId : true)
+      tempList.push(...data)
+      this.spaceLines = tempList
+      this.$refs['wareSide'].drawerVisible = false
+      this.$refs['wareSide'].btnLoading = false
+      this.$message.success("配置成功")
+    },
+    // 批次号失焦清空批次号列表选项
+    elementBlur(e) {
+      setTimeout(() => {
+        let option = this.linesListItems.find(o => o.prop === 'batchNumber')
+        option.options = []
+      }, 100)
+    },
+    wareChange(val, data) {
+      this.$nextTick(() => { this.$refs['dataForm'].$children[0].validateField('warehouseName') })
+      if (!val && data.length) return
+      if (!data || !data.length) {
+        this.dataForm['warehouseId'] = ""
+        this.dataForm['warehouseName'] = ""
+      } else {
+        this.dataForm['warehouseId'] = data[0].id
+        this.dataForm['warehouseName'] = data[0].name
+      }
+      console.log(val, data);
+    },
+    selectCustomerFun(val, data) {
+      console.log(val, data);
+      this.$nextTick(() => { this.$refs['dataForm'].$children[0].validateField('partnerName') })
+      if (!val && data.length) return
+      if (!data || !data.length) {
+        this.dataForm['cooperativePartnerId'] = ""
+        this.dataForm['partnerName'] = ""
+      } else {
+        this.dataForm['cooperativePartnerId'] = data[0].id
+        this.dataForm['partnerName'] = data[0].name
+        this.customerInfo = data[0].all
+      }
+      console.log("tax", this.customerInfo.taxRate);
+      if (!this.linesList.length) return
+      this.linesList.forEach(item => {
+        if (this.customerInfo.taxRate && !item.taxRate) {
+          item.taxRate = this.customerInfo.taxRate
+        }
+      });
+      console.log("this.lin", this.linesList);
+
+    },
+
+    processChange(val, data, paramsObj) {
+      let tempList = this.spaceLines.filter(line => line.productsId === paramsObj.scope.row.productsId ? line.routingLineId !== paramsObj.scope.row.routingLineId : true) // 找出非操作line的scapeLines
+      let template2 = this.spaceLines.filter(line => line.productsId === paramsObj.scope.row.productsId && line.routingLineId === paramsObj.scope.row.routingLineId) // 找出操作line的scapeLines
+      if (!data || !data.length) {
+        this.linesList[paramsObj.scope.$index].routingName = ""
+        this.linesList[paramsObj.scope.$index].routingLineId = ""
+        this.linesList[paramsObj.scope.$index].processName = ""
+      } else {
+        this.linesList[paramsObj.scope.$index].routingName = data[0].all.routingName
+        this.linesList[paramsObj.scope.$index].routingLineId = data[0].all.routingLineId
+        this.linesList[paramsObj.scope.$index].processName = data[0].all.processName
+      }
+      // template2.forEach(line => { line.routingLineId = this.linesList[paramsObj.scope.$index].routingLineId })
+      // tempList.push(...template2)
+      this.spaceLines = tempList
+    },
+    remoteMethod(query) {
+      getProductionLotList({
+        keyword: query,
+        pageNum: 1,
+        pageSize: 20,
+      }).then(res => {
+        this.productionLotList = res.data.records.map(item => { return { label: item.batchNumber, value: item.batchNumber } })
+        // this.$nextTick(() => { this.refeshLinesListItems() });
+        let option = this.linesListItems.find(o => o.prop === 'batchNumber')
+        option.options = this.productionLotList
+      })
+    },
+    onChangeLoading(val) {
+      this.loadingText = val ? '正在导入数据' : ''
+      this.formLoading = val
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
-    ...mapState('user', ['token']),
+    openMode() {
+      this.$nextTick(() => { this.refeshLinesListItems() });
+      return this.title === '新建入库单' ? '新建' : this.title === '编辑入库单' ? '编辑' : '只读'
+    }
   },
 }
 </script>
 <style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
-::v-deep .el-tabs__header {
-  padding: 0 !important;
+.contain {
+  position: relative;
+  height: calc(100% - 47px);
+  overflow-y: auto;
 }
 
-</style>
-<style scoped>
-::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0 20px;
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  padding: 10px 30px;
+}
+
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  overflow: auto;
 }
 
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
-</style>
-<style scoped>
+
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 11px 10px;
+}
+
 .required {
   color: red;
   margin-right: 4px;
 }
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+
+.subtitle {
+  line-height: 33px;
+  font-size: 18px;
+  border-bottom: 1px solid #dcdfe6;
+  background: #fafafa;
+  padding-left: 5px;
 }
 </style>

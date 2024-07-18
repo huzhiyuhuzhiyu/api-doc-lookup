@@ -1,14 +1,24 @@
 <template>
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main org-form">
+      <div :class="['JNPF-common-page-header']">
+        <el-page-header @back="goBack"
+          :content="btnType === 'edit' ? '批量修改型号' :   '批量新建型号'" />
+        <div class="options">
+          <el-button size="mini" type="primary" :loading="btnLoading" @click="dataFormSubmit()" v-if="btnType !== 'look'">
+            提交</el-button>
+          <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div class="main" v-loading="formLoading">
 
-  <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
-    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="800px" height="600">
-    <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" height="600" v-if="btnType=='edit'"/>
-    <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" height="600" v-else @deleteth="deleteFun" @addth="addFun"/>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false"> 取 消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading"> 提 交</el-button>
-    </span>
-  </el-dialog>
+        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" 
+          v-if="btnType == 'edit'" />
+        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" 
+          v-else @deleteth="deleteFun" @addth="addFun" />
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -34,28 +44,38 @@ export default {
     return {
       getProductList,
       openMode: "只读",
-      dialogTitle: "批量修改产品型号",
+      dialogTitle: "",
       sleeveList: [],
       sleeveItems: [
-        { prop: "model", label: "型号", value: "", type: 'input', width: "180", itemRules: [{ required: true, message: '型号不能为空', trigger: "blur" },{
-          validator: (rule, value, callback) => {
-            // 没有value不进行此校验
-            if (!value) { callback() }
-            else {
-              updataBimProductsModelCheck(value).then((res) => {
-                if (!res.data) { callback() }
-                else { callback(new Error('当前型号已存在')) }
-              }).catch((err) => { callback(new Error(" ")) })
-            }
-          },
-          trigger: 'blur'
-        }] },
-        { prop: "innerCircle", label: "内圈", value: "", type: 'custom', customComponent: "ComSelect-page", width: "180", itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "outerCircle", label: "外圈", value: "", type: 'custom', customComponent: "ComSelect-page", width: "180", itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "steelBall", label: "钢球型号", value: "", type: 'custom', customComponent: "ComSelect-page", width: "160", itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', width: "120", itemRules: [{ required: true, message: '钢球用量不能为空', trigger: "blur" },] },
-        { prop: "oilNum", label: "油脂用量", value: "", type: 'input', width: "180", itemRules: [{ required: true, message: '油脂用量不能为空', trigger: "blur" },] },
-        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input', width: "180", itemRules: [{ required: true, message: '保持架用量不能为空', trigger: "blur" },] },
+        {
+          prop: "model", label: "型号", value: "", type: 'input',  readOnly: true, itemRules: [{ required: true, message: '型号不能为空', trigger: "blur" }, {
+            validator: (rule, value, callback) => {
+              // 没有value不进行此校验
+              if (!value) { callback() }
+              else {
+                let id = ""
+                let result = this.sleeveList.find(item => item.model === value);
+                if (result) {
+                  id = result.id
+                } else {
+                  console.log("未找到匹配的对象");
+                }
+                console.log("rule,", rule, value, this.sleeveList);
+                updataBimProductsModelCheck(value, id).then((res) => {
+                  if (!res.data) { callback() }
+                  else { callback(new Error('当前型号已存在')) }
+                }).catch((err) => { callback(new Error(" ")) })
+              }
+            },
+            trigger: 'blur'
+          }]
+        },
+        { prop: "innerCircle", label: "内圈", value: "", type: 'custom', customComponent: "ComSelect-page",  itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "outerCircle", label: "外圈", value: "", type: 'custom', customComponent: "ComSelect-page",  itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "steelBall", label: "钢球型号", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', itemRules: [{ required: true, message: '钢球用量不能为空', trigger: "blur" },] },
+        { prop: "oilNum", label: "油脂用量", value: "", type: 'input',  itemRules: [{ required: true, message: '油脂用量不能为空', trigger: "blur" },] },
+        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input',  itemRules: [{ required: true, message: '保持架用量不能为空', trigger: "blur" },] },
 
 
       ],
@@ -107,11 +127,11 @@ export default {
     dataFormSubmit() {
 
     },
-    deleteFun(){
+    deleteFun(row) {
       this.sleeveList.splice(row.$index, 1)
 
     },
-    addFun(){
+    addFun() {
       let index = this.sleeveList.length
       this.sleeveList.push({
         index,
@@ -140,35 +160,32 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        const formMethod = this.dataForm.id ? updataBimProductsModel : addBimProductsModel
+        const formMethod = this.btnType == 'edit' ? updataBimProductsModel : addBimProductsModel
 
 
 
 
 
 
-        let dataObj = {
-
-          sleeveList: this.sleeveList
-        }
 
 
-        // formMethod(dataObj).then(res => {
-        //   let msg = res.msg
-        //   if (res.msg === 'Success') { msg = formMethod == addBimProductsModel ? "新建成功" : "修改成功" }
-        //   this.$message({
-        //     message: msg,
-        //     type: 'success',
-        //     duration: 1500,
-        //     onClose: () => {
-        //       this.visible = false
-        //       this.btnLoading = false
-        //       this.goBack()
-        //     }
-        //   })
-        // }).catch(() => {
-        //   this.btnLoading = false
-        // })
+
+        formMethod(this.sleeveList).then(res => {
+          let msg = res.msg
+          if (res.msg === 'Success') { msg = formMethod == addBimProductsModel ? "新建成功" : "修改成功" }
+          this.$message({
+            message: msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.visible = false
+              this.btnLoading = false
+              this.goBack()
+            }
+          })
+        }).catch(() => {
+          this.btnLoading = false
+        })
       } else {
         this.btnLoading = false
       }
@@ -218,13 +235,16 @@ export default {
     init(data, type) {
       this.btnType = type
       this.visible = true
+      this.sleeveList=[]
+      this.dialogTitle = type == 'edit' ? '批量修改产品型号' : "批量新建产品型号"
       this.sleeveList = data || []
       if (this.sleeveList.length > 0) {
         this.openMode = "编辑"
         this.sleeveList.forEach((item, index) => { item.index = index; });
       } else {
         this.openMode = "新建"
-      }
+      this.sleeveList=[]
+    }
       this.sleeveItems.forEach(tc => {
         // 添加自定义表单元素方法和参数
         // 若干需要选择的产品

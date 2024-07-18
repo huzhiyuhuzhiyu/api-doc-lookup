@@ -59,6 +59,10 @@
       .searchList,
       .columnList {
         height: 100%;
+        ::v-deep .el-tabs__content{
+          height: 100%;
+          overflow: auto;
+        }
       }
     }
 

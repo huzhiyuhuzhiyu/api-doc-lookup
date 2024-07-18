@@ -134,7 +134,6 @@ export default {
       return false
     },
     moveToCurrentTag() {
-      console.log(1);
       const tags = this.$refs.tag
       this.$nextTick(() => {
         for (const tag of tags) {
@@ -165,9 +164,7 @@ export default {
       })
     },
     closeSelectedTag(view) {
-      console.log(2,view);
       this.$store.dispatch('tagsView/delView', view).then(({ visitedViews }) => {
-      console.log("visi",visitedViews);
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view)
         }
@@ -188,7 +185,6 @@ export default {
       })
     },
     toLastView(visitedViews, view) {
-      console.log(3);
       const latestView = visitedViews.slice(-1)[0]
       if (latestView) {
         this.$router.push(latestView.fullPath)
@@ -200,7 +196,6 @@ export default {
           this.$router.replace({ path: '/redirect' + view.fullPath })
         } else {
           getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
             
           // this.$router.push('/' + response.data.systemVO.homeAdress)
           location.href = location.origin + '/' + response.data.systemVO.homeAdress

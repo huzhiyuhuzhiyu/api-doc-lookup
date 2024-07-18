@@ -129,7 +129,6 @@ export default {
     }
   },
   created() {
-    console.log(111, this.userInfo.systemIds);
     this.userInfo.systemIds.forEach(item => {
       if (item.currentSystem) { this.systemName = item.name }
     })
@@ -157,7 +156,6 @@ export default {
           type: 'success',
           duration: 1500,
           onClose: () => {
-            console.log(name, this.menuList);
             this.$store.commit('user/SET_TOAST', false)
             if (name == "ERP（企业资源计划管理）") {
               location.href = location.origin + "/portal/ERPsystem"
@@ -166,7 +164,6 @@ export default {
             } 
             else if (name == "轴管通4.0") {
               getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
             
                 location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })
@@ -176,7 +173,6 @@ export default {
             }
              else if (name == "后台管理系统" || name == "开发管理系统") {
               getInfo("").then(response=>{
-                console.log(response,location.origin + '/' + response.data.systemVO.homeAdress);
             
                 location.href = location.origin + '/' + response.data.systemVO.homeAdress
               })

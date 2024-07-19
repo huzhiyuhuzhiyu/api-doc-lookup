@@ -48,6 +48,7 @@ import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 import { addInboundOutbound, updateInboundOutbound } from "@/api/warehouseManagement/inventory.js"
 import TableFormProduct from "./TableForm-product.vue"
 import WareSide from './WareSide.vue'
+import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
 export default {
   components: { TableFormProduct, WareSide },
 
@@ -59,6 +60,7 @@ export default {
       wareVisibled: false,
       btnLoading: false,
       formLoading: true,
+      allocationFlag:false,
       dataForm: {
         sourceType: "",
       },
@@ -81,7 +83,9 @@ export default {
       ]
     }
   },
-  created() { },
+  created() { 
+    this.getWarehouseConfig()
+  },
   watch: {
     "dataForm.warehouseId": {
       handler: function (newVal, oldVal) {
@@ -90,6 +94,14 @@ export default {
     }
   },
   methods: {
+    // 获取仓库设置 是否开启库位管理时
+    getWarehouseConfig(){
+
+      let obj={"pageSize":-1,"businessCode":"warehouse"}
+      getBimBusinessSwitchConfigList(obj).then(res=>{
+        this.allocationFlag=res.data.warehouse[0].configValue1=='1'?true:false
+      })
+    },
     refeshDataFormItems() {
       let partnerName = this.dataForm.sourceType === "purchase_delivery_return" || this.dataForm.sourceType === "outside_delivery_return" ? '供应商' : '客户'
       console.log("this.dataForm.sourceType", this.dataForm.sourceType);
@@ -129,8 +141,8 @@ export default {
           itemRules: [
             { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`) }] }), trigger: 'blur' },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量(主)：' + errMsg) }] }), trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(主)：${errMsg}`) }), trigger: 'blur' }
+            { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "", (errMsg) => { this.$message.error('数量(主)：' + errMsg) }] }), trigger: 'blur' },
+            // { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(主)：${errMsg}`) }), trigger: 'blur' }
           ], minWidth: 180, input:
             (val, scope) => {
               if (scope.row.calculationDirection === 'multiplication') { scope.row.deputyNum = this.jnpf.numberFormat(val * scope.row.ratio, 4) }
@@ -146,8 +158,8 @@ export default {
           itemRules: [
             { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`) }] }), trigger: 'blur' },
             { required: true, trigger: 'blur' },
-            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量(副)：' + errMsg) }] }), trigger: 'blur' },
-            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(副)：${errMsg}`) }), trigger: 'blur' }
+            { validator: this.formValidate({ type: 'decimal2', params: [20, 4, "", (errMsg) => { this.$message.error('数量(副)：' + errMsg) }] }), trigger: 'blur' },
+            // { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(副)：${errMsg}`) }), trigger: 'blur' }
           ], minWidth: 180, input:
             (val, scope) => {
               if (scope.row.calculationDirection === 'division') { scope.row.num = this.jnpf.numberFormat(val * scope.row.ratio, 4) }
@@ -170,7 +182,7 @@ export default {
           input: (val, scope) => {
 
             if (scope.row.taxRate) {
-              scope.row.excludingTaxCostPrice = this.jnpf.numberFormat(costPrice / (1 + (val * 1 / 100)), 4)
+              scope.row.excludingTaxCostPrice = this.jnpf.numberFormat(scope.row.costPrice / (1 + (val * 1 / 100)), 4)
             }
           }
         },
@@ -289,7 +301,7 @@ export default {
           tempList.forEach(line => {
             num += line.num ? Number(line.num) : 0
           })
-          if (submitModel == 'submit') {
+          if (submitModel == 'submit'&&this.allocationFlag===true) {
             if (item.num != num) {
               submitFlag = false
               this.$message.error(`产品信息第${index + 1}行：请先完善入库产品货位设置`)
@@ -357,10 +369,14 @@ export default {
           let linesOption = this.linesList.find(line => line.productsId === item.productsId && line.routingLineId == item.routingLineId)
           item.batchNumber = linesOption ? linesOption.batchNumber : ''
         })
+        this.copyLinesData=JSON.parse(JSON.stringify(this.linesList))
+        this.copyLinesData.forEach(element => {
+          element.warehouseType=this.dataForm.warehouseType
+        });
         let dataObj = {
           stockMove: this.dataForm,
           lines: this.linesList,
-          spaceLines: submitModel == 'submit' ? this.spaceLines : this.copyLinesData
+          spaceLines: submitModel == 'submit'&&this.allocationFlag===true ? this.spaceLines : this.copyLinesData
         }
 
         // 提交确认
@@ -404,11 +420,13 @@ export default {
     // 对应子数据新增或删除行
     addOrDelLinesItem(data, type) {
       let paramType = Array.isArray(data) ? 'Array' : 'Object'
+      console.log("paramType",paramType);
       if (paramType === 'Object') {
         this.linesList.splice(data.$index, 1)
         this.spaceLines = this.spaceLines.filter(item => item.productsId === data.row.productsId ? item.routingLineId !== data.row.routingLineId : true)
       } else {
         let tempList = JSON.parse(JSON.stringify(this.linesList))
+        console.log("tempList",tempList);
         // 新数据替代旧数据
         if (type === 'cover') {
           data = data[0]
@@ -429,14 +447,23 @@ export default {
         for (let i = 0; i < data.length; i++) {
           let item = data[i];
           item.remark = ""
-          item.productCode = item.code
-          item.productsId = item.id
-          const hasFlag = this.linesList.find(i => item.productId === i.productsId)
+          item.productCode = item.productsCode
+          item.costPrice=item.price
+          if (item.calculationDirection === 'multiplication') { 
+            item.deputyNum = this.jnpf.numberFormat(item.num * item.ratio, 4) 
+          }else { 
+            item.deputyNum = this.jnpf.numberFormat(item.num / item.ratio, 4) 
+          }
+          item.totalAmount = this.jnpf.numberFormat(item.costPrice * item.num, 4)
+          item.excludingTaxCostPrice = this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1 / 100)), 4)
+          item.warehouseId=this.dataForm.warehouseId
+          item.warehouseType=this.dataForm.warehouseType
+          const hasFlag = this.linesList.find(i => item.productsId === i.productsId)
           if (hasFlag) { hasItemList.push(item.productName) }
           else { tempList.push(item) }
           if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
         }
-        this.linesList = tempList.map(item => { return { ...item, warehouseId: this.dataForm.warehouseId } })
+        this.linesList = tempList 
         console.log("this.lin", this.linesList);
         this.linesList.forEach(item => {
           if (this.customerInfo.taxRate && !item.taxRate) {
@@ -490,8 +517,9 @@ export default {
       } else {
         this.dataForm['warehouseId'] = data[0].id
         this.dataForm['warehouseName'] = data[0].name
+        this.dataForm['warehouseType'] = data[0].all.type
       }
-      console.log(val, data);
+      console.log(val, data, this.dataForm);
     },
     selectCustomerFun(val, data) {
       console.log(val, data);

@@ -59,12 +59,8 @@
         </div>
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
           :fixedNO="true" @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="单号" sortable="custom" width="120">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                scope.row.name
-              }}</el-link>
-            </template>
+          <el-table-column prop="orderNo" label="出入库单号" sortable="custom" width="100">
+          
           </el-table-column>
           <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
             <template slot-scope="scope">
@@ -93,7 +89,7 @@
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
-                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"  @edit="editFun(scope.row.id,'edit')"
+                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" :delDisabled="scope.row.documentStatus=='submit'"  :editDisabled="scope.row.documentStatus=='submit'" @edit="editFun(scope.row.id,'edit')"
                 @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -129,6 +125,7 @@
 <script>
 import { getInventoryDetailList,getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
+import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
@@ -278,13 +275,13 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        let query = this.dataForm
+        let query = this.initListQuery
         let _data = {
           ...query,
-          exportType: '1201',
-          exportName: '出入库',
+          exportType: '1012',
+          exportName: '出入库列表',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.initListQuery.pageSize : -1,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

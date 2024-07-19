@@ -67,34 +67,34 @@ export default {
         // { prop: "warehouseName", label: "仓库名称", value: "", type: 'view', minWidth: 120, fixed: "" },
         // { prop: "goodsShelvesName", label: "货架名称", value: "", type: 'view', minWidth: 120, fixed: "" },
         { prop: "shelfSpaceName", label: "货位名称", value: "", type: 'view', minWidth: 120, fixed: "" },
-        { prop: "residualVolume", label: "货位剩余容量(m³)", value: "", type: "view", minWidth: 170 },
-        {
-          prop: "barCodeList", label: "装箱条码", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }], minWidth: 230,
-          multiple: true, tagMultipleLine: true, ids: this.getBarCodeIds, collapseTags: false, renderTree: false, dialogTitle: '选择装箱条码', searchList: [{ prop: 'barCode', label: '条码', type: "input" }],
-          tableItems: [
-            { prop: 'barCode', label: '装箱条码', minWidth: 200 },
-            { prop: 'standardBoxName', label: '标准箱' },
-            { prop: 'realityTotalNum', label: '包含产品数量', minWidth: 120 },
-            { prop: 'standardBoxVolume', label: '单位体积(m³)', minWidth: 150 },
-            { prop: 'createByName', label: '创建人' },
-            { prop: 'createTime', label: '创建时间', width: 180 },
-          ],
-          listRequestObj: this.barCodeListRequestObj,
-          change: this.barCodeListChange,
-          listDataFormatting: (res) => {
-            // 判断是否初始搜索条件请求的数据
-            let query_1 = JSON.parse(JSON.stringify(res.listQuery));
-            let query_2 = JSON.parse(JSON.stringify(this.barCodeListRequestObj));
-            delete query_1.pageSize
-            delete query_2.pageSize
-            const diffFlag = JSON.stringify(query_1) === JSON.stringify(query_2)
-            if (!res.data.records.length && diffFlag) this.$message.warning('此产品还未装箱')
-            return res.data.records.map(item => {
-              return { ...item, name: item.barCode }
-            })
-          },
-          listMethod: lineStockBoxBarcode, render: this.$parent.sourceType !== 'inbound_scrap'
-        },
+        // { prop: "residualVolume", label: "货位剩余容量(m³)", value: "", type: "view", minWidth: 170 },
+        // {
+        //   prop: "barCodeList", label: "装箱条码", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }], minWidth: 230,
+        //   multiple: true, tagMultipleLine: true, ids: this.getBarCodeIds, collapseTags: false, renderTree: false, dialogTitle: '选择装箱条码', searchList: [{ prop: 'barCode', label: '条码', type: "input" }],
+        //   tableItems: [
+        //     { prop: 'barCode', label: '装箱条码', minWidth: 200 },
+        //     { prop: 'standardBoxName', label: '标准箱' },
+        //     { prop: 'realityTotalNum', label: '包含产品数量', minWidth: 120 },
+        //     { prop: 'standardBoxVolume', label: '单位体积(m³)', minWidth: 150 },
+        //     { prop: 'createByName', label: '创建人' },
+        //     { prop: 'createTime', label: '创建时间', width: 180 },
+        //   ],
+        //   listRequestObj: this.barCodeListRequestObj,
+        //   change: this.barCodeListChange,
+        //   listDataFormatting: (res) => {
+        //     // 判断是否初始搜索条件请求的数据
+        //     let query_1 = JSON.parse(JSON.stringify(res.listQuery));
+        //     let query_2 = JSON.parse(JSON.stringify(this.barCodeListRequestObj));
+        //     delete query_1.pageSize
+        //     delete query_2.pageSize
+        //     const diffFlag = JSON.stringify(query_1) === JSON.stringify(query_2)
+        //     if (!res.data.records.length && diffFlag) this.$message.warning('此产品还未装箱')
+        //     return res.data.records.map(item => {
+        //       return { ...item, name: item.barCode }
+        //     })
+        //   },
+        //   listMethod: lineStockBoxBarcode, render: this.$parent.sourceType !== 'inbound_scrap'
+        // },
         { prop: "num", label: "数量", value: "0", type: "view", minWidth: 160, render: this.$parent.sourceType !== 'inbound_scrap' },
         { prop: "num", label: "数量", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }], minWidth: 160, render: this.$parent.sourceType === 'inbound_scrap' }
       ],
@@ -115,93 +115,93 @@ export default {
     getBarCodeIds(paramsObj) {
       return paramsObj.scope.row.barCodeIds || []
     },
-    barCodeListChange(val, data, paramsObj) {
-      const index = paramsObj.scope.$index
-      if (!data || !data.length) {
-        this.linesList[index].barCodeIds = []
-        this.linesList[index].barCodeList = []
-        this.linesList[index].num = 0
-      } else {
-        // 过滤已存在的条码箱
-        let repeatBarCode = []
-        let tempData = data.reduce((acc, item) => {
-          const existingItem = acc.find(i => { return i.name === item.name }); // 对比条码是否相同
-          if (!existingItem) {
-            acc.push(item);
-          } else {
-            repeatBarCode.push(item.name)
-          }
-          return acc;
-        }, []);
+    // barCodeListChange(val, data, paramsObj) {
+    //   const index = paramsObj.scope.$index
+    //   if (!data || !data.length) {
+    //     this.linesList[index].barCodeIds = []
+    //     this.linesList[index].barCodeList = []
+    //     this.linesList[index].num = 0
+    //   } else {
+    //     // 过滤已存在的条码箱
+    //     let repeatBarCode = []
+    //     let tempData = data.reduce((acc, item) => {
+    //       const existingItem = acc.find(i => { return i.name === item.name }); // 对比条码是否相同
+    //       if (!existingItem) {
+    //         acc.push(item);
+    //       } else {
+    //         repeatBarCode.push(item.name)
+    //       }
+    //       return acc;
+    //     }, []);
 
-        // arr1 接收到的数据
-        // arr2 操作行外的其他行包含的条码箱
-        // arr3 arr1与arr2重复的条码箱
-        let arr1 = tempData
-        let arr2 = []
-        this.linesList.forEach((line, i) => {
-          line.boxList.forEach(box => {
-            if (i !== index) arr2.push(box)
-          })
-        })
-        let arr3 = arr1.filter(item => arr2.find(o => o.name === item.name));
-        arr3.forEach(item => { repeatBarCode.push(item.name) })
-        tempData = tempData.filter(item => !(arr3.find(o => o.name === item.name)))
+    //     // arr1 接收到的数据
+    //     // arr2 操作行外的其他行包含的条码箱
+    //     // arr3 arr1与arr2重复的条码箱
+    //     let arr1 = tempData
+    //     let arr2 = []
+    //     this.linesList.forEach((line, i) => {
+    //       line.boxList.forEach(box => {
+    //         if (i !== index) arr2.push(box)
+    //       })
+    //     })
+    //     let arr3 = arr1.filter(item => arr2.find(o => o.name === item.name));
+    //     arr3.forEach(item => { repeatBarCode.push(item.name) })
+    //     tempData = tempData.filter(item => !(arr3.find(o => o.name === item.name)))
 
-        // 条码箱重复提示
-        if (repeatBarCode.length) this.$message.error(`已存在的条码箱：${repeatBarCode.join('、')}`)
+    //     // 条码箱重复提示
+    //     if (repeatBarCode.length) this.$message.error(`已存在的条码箱：${repeatBarCode.join('、')}`)
 
-        // 数据处理
-        tempData.forEach(o => {
-          if (o.all) {
-            o.all.num = o.all.realityTotalNum
-            o.all.unitVolume = o.all.standardBoxVolume
-            o.all.shelfSpaceId = this.linesList[index].shelfSpaceId || this.linesList[index].id
-          }
-        })
+    //     // 数据处理
+    //     tempData.forEach(o => {
+    //       if (o.all) {
+    //         o.all.num = o.all.realityTotalNum
+    //         o.all.unitVolume = o.all.standardBoxVolume
+    //         o.all.shelfSpaceId = this.linesList[index].shelfSpaceId || this.linesList[index].id
+    //       }
+    //     })
 
-        // 计算数量
-        let totalNum = 0
-        tempData.forEach(o => {
-          if (o.all) {
-            totalNum = this.jnpf.math('add', [totalNum, o.all.realityTotalNum || 0])
-          } else {
-            let temp = this.linesList[index].boxList.find(item => item.name === o.name || item.barCode === o.name)
-            totalNum = this.jnpf.math('add', [totalNum, temp.num || temp.realityTotalNum || 0])
-          }
-        })
-        this.linesList[index].num = totalNum
+    //     // 计算数量
+    //     let totalNum = 0
+    //     tempData.forEach(o => {
+    //       if (o.all) {
+    //         totalNum = this.jnpf.math('add', [totalNum, o.all.realityTotalNum || 0])
+    //       } else {
+    //         let temp = this.linesList[index].boxList.find(item => item.name === o.name || item.barCode === o.name)
+    //         totalNum = this.jnpf.math('add', [totalNum, temp.num || temp.realityTotalNum || 0])
+    //       }
+    //     })
+    //     this.linesList[index].num = totalNum
 
-        // 组件依赖数据
-        this.linesList[index].barCodeIds = tempData.map(o => o.name)
-        this.linesList[index].barCodeList = tempData.map(o => o.name)
+    //     // 组件依赖数据
+    //     this.linesList[index].barCodeIds = tempData.map(o => o.name)
+    //     this.linesList[index].barCodeList = tempData.map(o => o.name)
 
-        // 处理新选择的条码箱
-        let temp2 = tempData.map(o => o.all)
-        temp2 = temp2.filter(o => o)
+    //     // 处理新选择的条码箱
+    //     let temp2 = tempData.map(o => o.all)
+    //     temp2 = temp2.filter(o => o)
 
-        // 合并新旧条码箱
-        let tempNames = tempData.map(o => o.name)
-        if (!this.linesList[index].boxList) this.linesList[index].boxList = []
-        this.linesList[index].boxList = [...this.linesList[index].boxList, ...temp2].reduce((accumulator, currentItem) => {
-          if (!accumulator.find(item => item.barCode === currentItem.barCode)) {
-            accumulator.push(currentItem);
-          }
-          return accumulator;
-        }, []);
-        this.linesList[index].boxList = this.linesList[index].boxList.filter(o => tempNames.includes(o.name))
-        this.refreshStyle()
-      }
-    },
+    //     // 合并新旧条码箱
+    //     let tempNames = tempData.map(o => o.name)
+    //     if (!this.linesList[index].boxList) this.linesList[index].boxList = []
+    //     this.linesList[index].boxList = [...this.linesList[index].boxList, ...temp2].reduce((accumulator, currentItem) => {
+    //       if (!accumulator.find(item => item.barCode === currentItem.barCode)) {
+    //         accumulator.push(currentItem);
+    //       }
+    //       return accumulator;
+    //     }, []);
+    //     this.linesList[index].boxList = this.linesList[index].boxList.filter(o => tempNames.includes(o.name))
+    //     this.refreshStyle()
+    //   }
+    // },
     init(scope, spaceLines, btnType) {
       this.drawerVisible = true
       this.scope = scope
-      this.barCodeListRequestObj.productId = scope.row.productsId;
-      this.barCodeListRequestObj.routingLineId = scope.row.routingLineId || -1;
+      // this.barCodeListRequestObj.productId = scope.row.productsId;
+      // this.barCodeListRequestObj.routingLineId = scope.row.routingLineId || -1;
       this.linesList = spaceLines
       this.linesList.forEach(line => {
         line.barCodeIds = line.boxList ? line.boxList.map(box => box.name) : []
-        line.barCodeList = line.boxList ? line.boxList.map(box => box.name) : []
+        // line.barCodeList = line.boxList ? line.boxList.map(box => box.name) : []
       })
       this.refreshStyle()
     },

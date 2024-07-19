@@ -231,6 +231,10 @@ const jnpf = {
       return false
     }
   },
+  getQueryString() {
+    const url_string = location.href;
+    return url_string.split('?')[1] || void ('');
+  },
   interfaceDataHandler(data) {
     if (!data.dataProcessing) return data.data
     const dataHandler = this.getScriptFunc(data.dataProcessing)

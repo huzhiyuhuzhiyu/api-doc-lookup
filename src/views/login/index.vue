@@ -473,6 +473,9 @@ export default {
             this.$store.commit('jx/SET_LOGO')
             localStorage.setItem("sys", this.loginForm.busCode)
                 location.href = location.origin + '/' + response.data.systemVO.homeAdress
+              }).catch(error=>{
+          this.$store.commit('user/SET_LOGIN_LOADING', false)
+
               })
             
             // location.reload()

@@ -48,6 +48,10 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -116,7 +120,9 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-
+ <!-- 高级查询 -->
+ <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -124,10 +130,11 @@
 import { getInventoryDetailList,getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 export default {
   name: 'myCustomer',
-  components: { Form ,ExportForm},
+  components: { Form ,ExportForm,SuperQuery},
   data() {
     return {   
       columnList:["partnerCode","createByName",],
@@ -142,6 +149,7 @@ export default {
         { label: "采购收退货单", value: "purchase_delivery_return" },
         { label: "外协收退货单", value: "outside_delivery_return" },
       ],
+      superQueryVisible: false,
 
       initListQuery: { 
         sourceType: "",
@@ -162,6 +170,35 @@ export default {
       formVisible: false,
       selectData: [],
       totalList:[],
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: "单号",
+          type: 'input'
+        },
+        {
+          prop: 'sourceType',
+          label: "业务类型",
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: "合作伙伴名称",
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: "合作伙伴编码",
+          type: 'input'
+        },
+        {
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'input'
+        },
+       
+       
+      ],
     }
   },
   created() {
@@ -170,6 +207,11 @@ export default {
     this.getInventorySummaryDataFun()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     viewFun(id,type){
       this.formVisible=true
       this.$nextTick(() => {
@@ -189,32 +231,7 @@ export default {
       })
     },
      // 合计处理
-     getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        const values = this.totalList.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-        } else {
-          sums[index] = null;
-        }
-      });
-      return sums;
-
-    },
+   
     getInventorySummaryDataFun(){
       this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {

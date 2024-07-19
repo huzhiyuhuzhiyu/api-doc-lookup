@@ -18,8 +18,9 @@
           </el-col>
           <el-col :span="5">
             <el-form-item>
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="请选择发/退货开始日期" end-placeholder="请选择发/退货结束日期">
+              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
+                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
+                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -41,7 +42,12 @@
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成销售对账</el-button>
+          <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+            icon="el-icon-download" @click="exportForm">导出</el-button>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -52,34 +58,28 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable">
 
-          <el-table-column prop="ordersNo" label="销售订单号" min-width="240"  />
-          <el-table-column prop="orderNo" label="通知单号" min-width="240"  />
+          <el-table-column prop="orderNo" label="出入库单号" min-width="240"  />
           <el-table-column prop="partnerName" label="客户名称" min-width="180"  />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180"  />
           <el-table-column prop="productCode" label="产品编码" min-width="180"  />
           <el-table-column prop="productName" label="产品名称" min-width="180"  />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="180"  />
-          <el-table-column prop="productSpec" label="规格型号" min-width="180"  />
+          <el-table-column prop="productDrawingNo" label="规格型号" min-width="180"  />
           <el-table-column prop="returnDeliveryType" label="发/退货类型" min-width="180" >
             <template slot-scope="scope">
               <div v-if="scope.row.returnDeliveryType == 'delivery'">发货</div>
               <div v-else-if="scope.row.returnDeliveryType == 'back'">退货</div>
             </template>
           </el-table-column>
-
-          <el-table-column prop="num" label="销售数量" min-width="180" />
-          <el-table-column prop="planQuantity" label="计划发/退数量" min-width="180" />
-          <el-table-column prop="actualQuantity" label="实际发/退数量" min-width="180" />
-          <el-table-column prop="price" label="单价" min-width="140" />
-          <el-table-column prop="taxRate" label="税率%" min-width="140" />
+          <el-table-column prop="mainUnit" label="单位" min-width="180" />
+          <el-table-column prop="num" label="出入库数量" min-width="180" />
+          <el-table-column prop="price" label="单价(含税)" min-width="140" />
+          <el-table-column prop="taxRate" label="税率(%)" min-width="140" />
           <el-table-column prop="excludingTaxAmount" label="金额" min-width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.returnDeliveryType == 'delivery'" style="color: #67C23A">+{{ scope.row.excludingTaxAmount }}</div>
               <div v-else-if="scope.row.returnDeliveryType == 'back'" style="color:red">-{{ scope.row.excludingTaxAmount }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="deliverDate" label="发/退货日期" min-width="180" />
-          <el-table-column prop="mainUnit" label="单位" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" min-width="180"  />
           <el-table-column prop="createByName" label="创建人" min-width="180"  />
 
@@ -188,20 +188,23 @@
     </el-dialog>
 
 
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
   
 <script>
-import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index'
+import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index' 
 
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 export default {
   name: 'salefinAccount',
-  components: { JNPFForm },
+  components: { JNPFForm,ExportForm },
   data() {
     return {
       title: "更多查询",
+      exportFormVisible: false,
       background: true,//分页器背景颜色
       visible: false,
       tableDataList: [
@@ -253,6 +256,53 @@ export default {
     this.initData()
   },
   methods: {
+    exportType(data, ref) {
+      if (data.length) {
+        this.exportFormVisible = true
+        let domRef = this.$refs[`${ref}`]
+        console.log(domRef);
+        let columnList = domRef.columnList.filter(item => !!item.label && !!item.prop)
+        columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+        this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      } else {
+        this.$message({
+          message: "暂无数据导出",
+          type: "error",
+          duration: 1500,
+        })
+      }
+    },
+    // 导出
+    exportForm() {
+      this.exportType(this.tableDataList, 'tableForm')
+
+
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let query = this.listQuery
+        let _data = {
+          ...query,
+          exportType: '1201',
+          exportName: '销售订单对账',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
+    columnSetFun() {
+      this.$refs.tableForm.showDrawer()
+    },
     checkSelectable(row) {
       return !row.disabled
     },

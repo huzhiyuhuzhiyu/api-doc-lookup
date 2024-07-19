@@ -13,7 +13,7 @@
         <el-tabs v-model="activeName" tab-position="left" type="border-card">
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <Super-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" v-loading="formLoading"/>
+            <Super-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" v-loading="formLoading" />
           </el-tab-pane>
         </el-tabs>
       </el-scrollbar>
@@ -28,14 +28,14 @@ export default {
   name: 'ParamSetting',
   data() {
     return {
-      activeName: 'warehouseSet',
+      activeName: 'warehouse',
       tabs: tabs(),
       dataForm: {},
       productForm: {},
       formLoading: false,
       listQuery: {
-        codeFlag: 1,    // 1是编码 0是财务
-        annexFlag: 0
+        pageSize: 1,    // 1是编码 0是财务
+        businessCode: "",//attachment——附件   warehouse——仓库   
       },
       codeSetData: [],
     }
@@ -57,68 +57,71 @@ export default {
   },
   methods: {
     initData() {
-      if (this.activeName === 'warehouseSet') {
-        this.listQuery.codeFlag = 1
-        this.listQuery.annexFlag = 0
+      if (this.activeName === 'warehouse') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'warehouse'
         this.getData(0)
-      } 
+      }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
       //   this.listQuery.annexFlag = 0
       //   this.getData(1)
       // }
-       else if (this.activeName === 'attachmentswitch') {
-        this.listQuery.codeFlag = 0
-        this.listQuery.annexFlag = 1
+      else if (this.activeName === 'attachment') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'attachment'
         this.getData(1)
       }
     },
-    getData(index){
+    getData(index) {
       this.formLoading = true
       getBimBusinessSwitchConfigList(this.listQuery).then(res => {
-          this.formLoading = false
-          let data = Object.keys(res.data).map((key) => {
-            return { row: res.data[key] }
-          });
-          // 将接口中的value值赋值给tab
-          this.tabs[index].tabContent = this.tabs[index].tabContent.map(tab => {
-            tab.row.forEach(item => {
-              data.forEach(row => {
-                row.row.forEach(dataItem => {
-                  if (item.prop === dataItem.businessCode) {
-                    item.value = dataItem.configValue1;
-                    item.id = dataItem.id
-                    item.change = this.switchChange
-                  }
-                })
+        this.formLoading = false
+        let data = Object.keys(res.data).map((key) => {
+          return { row: res.data[key] }
+        });
+        // 将接口中的value值赋值给tab
+        this.tabs[index].tabContent = this.tabs[index].tabContent.map(tab => {
+          tab.row.forEach(item => {
+            data.forEach(row => {
+              row.row.forEach(dataItem => {
+                  if (item.prop === dataItem.configKey) {
+                  item.value = dataItem.configValue1;
+                  item.businessCode = dataItem.businessCode;
+                  item.id = dataItem.id
+                  item.change = this.switchChange
+                }
               })
             })
-            return tab;
-          });
-          this.tabs[index].tabContent.forEach(tc => {
-            tc.row.forEach((row, index) => {
-              this.dataForm[row.prop] = row.value || ""; // 设置默认value
-            })
           })
-        }).catch(()=>this.formLoading = false);
+          return tab
+        });
+        this.tabs[index].tabContent.forEach(tc => {
+          tc.row.forEach((row, index) => {
+            this.dataForm[row.prop] = row.value || ""; // 设置默认value
+          })
+        })
+      }).catch(() => this.formLoading = false);
     },
-    switchChange(e,item) {
+    switchChange(e, item) {
+
+      // return
       let _data = []
       let query = {
         ...item,
-        configValue1:e,
-        businessCode:item.prop
+        configKey:item.prop,
+        configValue1: e, 
       }
       _data.push(query)
       this.formLoading = true
-      editBimBusinessData(_data).then(res=>{
-        if (res.msg === 'success'){
+      editBimBusinessData(_data).then(res => {
+        if (res.msg === 'success') {
           this.formLoading = false
           this.initData()
-        }else{
+        } else {
           this.formLoading = false
         }
-      }).catch(()=> this.formLoading = false)
+      }).catch(() => this.formLoading = false)
     },
   },
 

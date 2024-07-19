@@ -226,6 +226,7 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
+      console.log("data",data);
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()

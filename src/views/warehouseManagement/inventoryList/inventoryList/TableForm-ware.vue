@@ -2,7 +2,7 @@
   <div>
 
     <div v-if="openMode !== '只读'">
-      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceWareDialog">选择库位</el-button>|
+      <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceWareDialog">选择货位</el-button>|
       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
       <span class="topInfo">总数量：{{ num }}</span>|
       <span class="topInfo">未分配数量：{{ nowNum }}</span>|
@@ -46,8 +46,8 @@
       </el-table>
     </el-form>
 
-    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="WareTableItems" title="选择库位" treeTitle="仓库"
-      :methodArr="WareMethodArr" :listMethod="getStockGoodsShelvesList" :listRequestObj="WareListRequestObj"
+    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="WareTableItems" title="选择货位" treeTitle="仓库"
+      :methodArr="WareMethodArr" :listMethod="getLocationList" :listRequestObj="WareListRequestObj"
       :searchList="WareTableSearchList" :elementShow="false" :dataFormatting="ComSelectTreeFormattind" multiple
       :renderTree="false" />
   </div>
@@ -56,6 +56,8 @@
 <script>
 import FormItem from "@/components/JNPF-col-table/item"
 import { getWarehouseList, getStockGoodsShelves, getStockGoodsShelvesList } from '@/api/basicData/index' // 库位分类和列表
+import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
+
 export default {
   components: { FormItem },
   name: 'TableForm-ware',
@@ -65,13 +67,12 @@ export default {
       JNPFColTableData: {
         data: this.value
       },
-      getStockGoodsShelvesList, // 货位选择弹出框树状列表请求api
+      getLocationList, // 货位选择弹出框树状列表请求api
       getStockGoodsShelves,
       WareMethodArr: { method: getWarehouseList, requestObj: { chooseUserFlag: true } }, // 货位选择弹出框树状列表
       WareListRequestObj: {
         code: "",
-        locationType: "goods_allocation",
-        name: "",
+        catrgory: "location", 
         orderItems: [{
           "asc": false,
           "column": ""
@@ -94,7 +95,7 @@ export default {
       ], // 货位选择弹出框表单展示字段
       WareTableSearchList: [
         { prop: "code", label: "货位编码", type: 'input' },
-        { prop: "name", label: "货位名称", type: 'input' }
+        
       ], // 货位选择弹出框搜索条件
     }
   },

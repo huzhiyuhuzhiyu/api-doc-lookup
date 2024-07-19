@@ -61,18 +61,18 @@ export default () => [
   //   ]
   // },
   {
-    tabCode: "warehouseSet",
+    tabCode: "warehouse",
     tabName: "仓库设置",
     tabContent: [
       {
         row: [
-          { prop: "warehouse", clearable: false, label: "库存是否管到库位", value: '0', sm: 6, type: 'select', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          { prop: "allocation", clearable: false, label: "库存是否管到库位", value: '0', sm: 6, type: 'select',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
         ]
       },
     ]
   },
   {
-    tabCode: "attachmentswitch",
+    tabCode: "attachment",
     tabName: "附件开关",
     tabContent: [
       {

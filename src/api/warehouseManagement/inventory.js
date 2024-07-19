@@ -83,3 +83,20 @@ export function updateInboundOutbound(data) {
     data
   })
 }
+// 出入库导入明细
+
+export function warehouseUploadLine(data) {
+  return request({
+    url: `/api/wms/stock/move/upload/line`,
+    method: 'POST',
+    data
+  })
+}
+
+export function getLocationList(data) {
+  return request({
+    url: `/api/wms/stockGoodsShelves/list`,
+    method: 'POST',
+    data
+  })
+}

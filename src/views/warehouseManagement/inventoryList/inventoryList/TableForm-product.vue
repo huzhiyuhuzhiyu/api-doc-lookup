@@ -63,23 +63,23 @@
 
 
     <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
+    <!-- <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+      :http-request="UploadProduct" /> -->
 
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="uploadVisib" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" lock-scroll
+      :visible.sync="uploadVisib"   lock-scroll
       class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove" :file-list="fileList">
+        :on-preview="handlePreview" drag :on-remove="handleRemove"  :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
-        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件，且不超过500kb <el-button type="text" class="topButton"
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
             icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
       </el-upload>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="customerVisi = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="submit()">
           提交</el-button>
       </span>
@@ -92,7 +92,7 @@ import FormItem from "@/components/JNPF-col-table/item"
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { mapState } from 'vuex'
-import { ioBoundUpload } from '@/api/warehouseManagement/inboundAndOutbound'
+import { warehouseUploadLine } from '@/api/warehouseManagement/inventory'
 export default {
   components: { FormItem },
   name: 'TableForm-product',
@@ -142,7 +142,7 @@ export default {
         { prop: "name", label: "产品名称", type: 'input' },
         { prop: "drawingNo", label: "产品图号", type: 'input' }
       ], // 产品选择弹出框搜索条件
-      fileList:[],
+      file:{},
     }
   },
   props: {
@@ -205,6 +205,14 @@ export default {
     window.onresize = null
   },
   methods: {
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file=file.raw
+    },
+    submit(){
+      console.log(this.fileList);
+      this.UploadProduct(this.file)
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -366,34 +374,94 @@ export default {
         })
       });
     },
+    cancelFun(){
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
     // 导入产品
     async importProduct() {
-      this.uploadVisib = true
-      // let flag = true
-      // if (this.JNPFColTableData.data.length) {
-      //   flag = await this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).catch(err => false)
-      // }
-      // if (flag) {
-      //   this.$refs.UploadProduct.$el.querySelector('input').click()
-      // }
+      let flag = true
+      this.file={}
+      if (this.JNPFColTableData.data.length) {
+        flag = await this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).catch(err => false)
+      }
+      if (flag) {
+        this.uploadVisib = true
+
+      }
     },
     // 上传产品
     UploadProduct(data) {
       // this.loadingText = '正在导入数据'
+      console.log("data",data);
       this.formLoading = true
       var formData = new FormData()
-      formData.append("file", data.file)
+      formData.append("file", data )
       // 调用上传文件接口
-      ioBoundUpload(formData, 'inbound').then(res => {
-        this.$message.success(`数据更新成功`)
+      warehouseUploadLine(formData).then(res => {
+        console.log(res);
+        if (!res.data.url) {
+          this.$message.success(`导入成功`)
+          this.formLoading = false
+          this.loadingText = ''
+        this.$emit('addth', [res.data.list], 'cover')
+      } else {
+        if(res.data.list){
+        this.$emit('addth', [res.data.list], 'cover')
+        }
+          this.handleMessage(res.data)
+        this.uploadVisib = false
+        this.$refs['uploadRef'].clearFiles();
+        } 
 
-        this.$emit('addth', [res.data], 'cover')
 
         this.formLoading = false
       }).catch(err => {
-        this.$message.error(`导入数据超过最大限制：500`)
+        this.$message.error(`文件上传失败`)
         this.formLoading = false
+        this.loadingText = ''
       })
+    },
+       // 提示
+       handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，导入的产品信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+     // 导入产品  下载导入错误数据
+     downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
     },
     // 下载产品导入模板
     downLoadTemplate() {

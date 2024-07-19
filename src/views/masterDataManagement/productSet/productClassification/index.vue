@@ -24,7 +24,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="treeList" :row-key="'id'" v-if="refreshTable" fixedNO
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable"
-          custom-column>
+          custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="分类名称" min-width="200">
             <template slot-scope="scope">
               <i :class="[
@@ -37,6 +37,7 @@
           </el-table-column>
           <el-table-column prop="code" label="分类编码" min-width="120" />
           <el-table-column prop="parentName" label="上级分类" min-width="120" />
+          <el-table-column prop="integger" label="分类编码" min-width="120" />
           <el-table-column prop="classAttribute" label="类别属性" min-width="120" >
             <template slot-scope="scope">
               <div v-if="scope.row.classAttribute=='raw_material'">原材料</div>
@@ -103,6 +104,7 @@ export default {
       btnLoading: false,
       listLoading: true,
       depFormVisible: false,
+      columnList:["classAttribute","classType","remark"],
     };
   },
   created() {

@@ -295,8 +295,10 @@ export default {
         if (valid) {
           this.btnLoading = true
           console.log(this.dataForm);
+          let arr=[]
+          arr[0]=this.dataForm
           let formMethod = this.dataForm.id ? updataBimProductsModel : addBimProductsModel
-          formMethod(this.dataForm).then(res=>{
+          formMethod(arr).then(res=>{
             let msg = formMethod === updataBimProductsModel ? '编辑成功' : '新增成功'
             this.$message.success(msg)
             this.visible = false

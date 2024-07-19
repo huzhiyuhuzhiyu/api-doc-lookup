@@ -83,7 +83,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
+                  <!-- <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                         <div class="viewData">
@@ -91,11 +91,11 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
 
 
-                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="productDrawingNo" label="规格型号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
                         <div class="viewData">
@@ -114,19 +114,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
-                  <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="200">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
-
-                        <div class="viewData">
-                          <span>{{ scope.row.reconciliationUnitPrice }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="mainUnit" label="单位(主)" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                         <!-- <el-input v-model="scope.row.mainUnit" readonly maxlength="20" placeholder="请输入主单位">{{
@@ -138,22 +126,32 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
-
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="200">
                     <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                        <!-- <el-input v-model="scope.row.deputyUnit" readonly maxlength="20" placeholder="请输入副单位">{{
-                              scope.row.deputyUnit }}
-                            </el-input> -->
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
+
                         <div class="viewData">
-                          <span>{{ scope.row.deputyUnit }}</span>
+                          <span>{{ scope.row.reconciliationUnitPrice }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="price" label="单价" min-width="180">
+                  
+
+<!-- 
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+              
+                        <div class="viewData">
+                          <span>{{ scope.row.deputyUnit }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column> -->
+
+                  <!-- <el-table-column prop="price" label="单价" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
 
@@ -162,9 +160,9 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
-                  <el-table-column prop="taxRate" label="税率%" min-width="160">
+                  <!-- <el-table-column prop="taxRate" label="税率%" min-width="160">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
 
@@ -173,13 +171,13 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
 
 
 
 
-                  <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="160">
+                  <!-- <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="160">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
                         <div class="viewData">
@@ -187,7 +185,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
                   <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140" fixed="right">
                     <template slot-scope="scope">

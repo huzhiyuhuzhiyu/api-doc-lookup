@@ -403,6 +403,7 @@ export default {
       default: (data, node, listQuery) => {
         if (listQuery.productCategoryId === data.id) return listQuery
         listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
+        listQuery.productCategoryCode = data.hasOwnProperty('code') ? data.code : ""
         listQuery.classAttribute = data.classAttribute
         return listQuery
       }

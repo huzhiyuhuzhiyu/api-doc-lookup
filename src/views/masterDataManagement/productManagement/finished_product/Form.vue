@@ -122,6 +122,7 @@ export default {
                 }
               })
               tc.change = (val, data) => {
+                console.log("data",data);
                 // dom更新后重新校验此元素
                 this.$nextTick(() => { this.$refs['dataForm'][0].$children[0].validateField('productCategoryName') })
                 if (!val && data.length) return

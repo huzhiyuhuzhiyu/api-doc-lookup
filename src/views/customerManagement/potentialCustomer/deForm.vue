@@ -20,7 +20,7 @@
                   <el-form-item label="所属分类" prop="partnerCategoryIdText">
                     <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
-                      :type="dataForm.type" />
+                      :selectClassifyType="dataForm.type" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">

@@ -96,32 +96,24 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <CheckUser v-if="checkUserFormVisible" ref="checkUserForm" @close="checkUserFormVisible = false" />
+
   </div>
 </template>
 
 <script>
 import { getWarehouseList, deleteWarehouse } from '@/api/basicData/index'
-import CheckUser from './checkUser.vue'
+
 import Form from './Form'
 export default {
   name: 'warehouseArchives',
-  components: { Form, CheckUser },
+  components: { Form },
   data() {
     return {
       listQuery: {
         keyword: '',
         type: ""
       },
-      typeList: [
-        {
-          label: "正常仓库",
-          value: "normal",
-        }, {
-          label: "报废仓库",
-          value: "scrap",
-        },
-      ],
+      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" }],
       treeList: [],
       expands: true,
       refreshTable: true,
@@ -129,11 +121,12 @@ export default {
       listLoading: true,
       formVisible: false,
       depFormVisible: false,
-      checkUserFormVisible: false,
+ 
       form: {
         code: "",
         name: "",
         type: "",
+        category:"warehouse",
         orderItems: [{
           asc: false,
           column: ""
@@ -212,15 +205,6 @@ export default {
       if (isRefresh) {
         this.initData()
       }
-    },
-    checkMembers(id, name) {
-      this.checkUserFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.checkUserForm.init(id, name)
-      })
-    },
-    checkUser() {
-
     },
     toggleExpand() {
       this.refreshTable = false;

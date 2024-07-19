@@ -3,20 +3,18 @@
     <div class="main-board">
       <div class="search-box">
         <h4 class="cap">查询字段</h4>
-        <el-table :data="columnData.searchList" class="JNPF-common-table" ref="dragTableSearch"
-          :row-key="row=>row.__vModel__">
+        <el-table :data="columnData.searchList" class="JNPF-common-table" ref="dragTableSearch" :row-key="row => row.prop"
+          border>
           <el-table-column align="center" label="拖动" width="60">
             <template>
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动' />
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
             </template>
           </el-table-column>
-          <el-table-column prop="__config__.label" label="列名" />
-          <el-table-column prop="__vModel__" label="字段" />
+          <el-table-column prop="label" label="列名" />
+          <el-table-column prop="prop" label="字段" />
           <el-table-column prop="searchType" label="类型">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.searchType" placeholder="请选择"
-                :disabled="scope.row.jnpfKey!=='comInput'&&scope.row.jnpfKey!=='textarea'">
+              <el-select v-model="scope.row.searchType" placeholder="请选择">
                 <el-option label="等于查询" :value="1"></el-option>
                 <el-option label="模糊查询" :value="2"></el-option>
                 <el-option label="范围查询" :value="3"></el-option>
@@ -28,12 +26,42 @@
       <el-divider></el-divider>
       <div class="column-box">
         <h4 class="cap">列表字段</h4>
-        <el-table :data="columnData.columnList" class="JNPF-common-table" ref="dragTable"
-          :row-key="row=>row.prop">
+        <el-table :data="columnData.columnList" class="JNPF-common-table" ref="dragTable" :row-key="row => row.prop"
+          @current-change="handleCurrentChange" highlight-current-row>
           <el-table-column align="center" label="拖动" width="60">
             <template>
-              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px"
-                title='点击拖动' />
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
+            </template>
+          </el-table-column>
+          <el-table-column prop="label" label="列名" />
+          <el-table-column prop="prop" label="字段" />
+          <el-table-column prop="sortable" label="排序" width="60" align="center">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.sortable" />
+            </template>
+          </el-table-column>
+          <el-table-column prop="align" label="对齐">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.align" placeholder="请选择">
+                <el-option v-for="item in alignOptions" :key="item" :label="item" :value="item">
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+          <el-table-column prop="width" label="宽度">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.width" placeholder="宽度" :min="0" :precision="0"
+                controls-position="right" style="width:100%" />
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-divider></el-divider>
+        <h4 class="cap" v-if="columnData.type == 5 || columnData.type == 6">子表字段</h4>
+        <el-table :data="columnData.columnLineList" class="JNPF-common-table" ref="dragTable" :row-key="row => row.prop"
+          @current-change="handleCurrentChange" highlight-current-row v-if="columnData.type == 5 || columnData.type == 6">
+          <el-table-column align="center" label="拖动" width="60">
+            <template>
+              <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
             </template>
           </el-table-column>
           <el-table-column prop="label" label="列名" />
@@ -62,55 +90,102 @@
     </div>
     <div class="right-board">
       <el-tabs v-model="currentTab" class="top-tabs">
-        <el-tab-pane label="查询字段" name="search" />
-        <el-tab-pane label="列表字段" name="field" />
         <el-tab-pane label="列表属性" name="column" />
+        <el-tab-pane label="列表字段" name="field" />
+        <el-tab-pane label="列属性" name="culumnSet" />
+        <el-tab-pane label="查询字段" name="search" />
       </el-tabs>
       <div class="field-box">
-        <div class="searchList" v-show="currentTab==='search'">
+        <div class="searchList" v-show="currentTab === 'search'">
           <el-table :data="searchOptions" class="JNPF-common-table" height="100%"
-            @selection-change="searchSelectionChange" ref="searchTable">
-            <el-table-column prop="__config__.label" label="查询字段" />
+            @selection-change="searchSelectionChange" ref="searchTable" border>
+            <el-table-column prop="prop" label="查询字段" />
             <el-table-column type="selection" width="55" align="center" />
           </el-table>
         </div>
-        <div class="columnList" v-show="currentTab==='field'">
-          <el-table :data="columnOptions" class="JNPF-common-table" height="100%"
-            @selection-change="columnSelectionChange" ref="columnTable">
-            <el-table-column prop="label" label="列表字段" />
-            <el-table-column type="selection" width="55" align="center" />
-          </el-table>
+        <div class="columnList" v-show="currentTab === 'field'">
+          <el-tabs tab-position="bottom" type="border-card" v-model="currentFieldTab" style="height: calc(100% - 63px);">
+            <el-tab-pane label="主表字段" name="indexField">
+              <el-divider v-if="currentFieldTab === 'indexField'">主表字段</el-divider>
+              <el-table v-if="currentFieldTab === 'indexField'" :data="columnOptions" class="JNPF-common-table"
+                @selection-change="columnSelectionChange" ref="columnTable" height="100%">
+                <el-table-column prop="prop" label="列表字段" />
+                <el-table-column type="selection" width="55" align="center" />
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="子表字段" name="lineField" v-if="columnData.type == 5 || columnData.type == 6">
+              <el-divider v-if="currentFieldTab === 'lineField'">子表字段</el-divider>
+              <el-table v-if="currentFieldTab === 'lineField'" :data="columnLineOptions" class="JNPF-common-table"
+                @selection-change="columnLIneSelectionChange" ref="columnTable">
+                <el-table-column prop="prop" label="列表字段" />
+                <el-table-column type="selection" width="55" align="center" />
+              </el-table>
+            </el-tab-pane>
+          </el-tabs>
+
+
         </div>
-        <el-scrollbar class="right-scrollbar" v-show="currentTab==='column'">
+        <el-scrollbar class="right-scrollbar" v-show="currentTab === 'culumnSet'">
+          <div class="setting-box">
+            <template v-if="currentRow">
+              <el-form :model="currentRow" label-width="80px" label-position="left">
+                <el-form-item label="字段">
+                  <el-input v-model="currentRow.prop" disabled />
+                </el-form-item>
+                <el-form-item label="列名">
+                  <el-input v-model.trim="currentRow.label" placeholder="请输入列名" />
+                </el-form-item>
+                <el-form-item label="列表宽度">
+                  <el-input-number v-model="currentRow.width" placeholder="请输入列表宽度" :min="0" :precision="0"
+                    controls-position="right" style="width:100%" />
+                </el-form-item>
+                <el-form-item label="排序">
+                  <el-switch v-model="currentRow.sortable" />
+                </el-form-item>
+                <el-form-item label="对齐方式">
+                  <el-select v-model="currentRow.align" placeholder="请选择对齐方式">
+                    <el-option v-for="item in alignOptions" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-divider>脚本事件</el-divider>
+                <el-form-item label="格式化">
+                  <el-button style="width: 100%;" @click="addFunc(currentRow)">脚本编写
+                  </el-button>
+                </el-form-item>
+              </el-form>
+            </template>
+          </div>
+        </el-scrollbar>
+
+        <el-scrollbar class="right-scrollbar" v-show="currentTab === 'column'">
           <div class="setting-box">
             <el-form :model="columnData" label-width="80px" label-position="left">
               <div class="typeList">
-                <div class="item" v-for="(item, index) in typeList" :key="index"
-                  @click="columnData.type=item.value">
-                  <div class="item-img" :class="{'checked':columnData.type==item.value}">
+                <div class="item" v-for="(item, index) in typeList" :key="index" @click="columnData.type = item.value">
+                  <div class="item-img" :class="{ 'checked': columnData.type == item.value }">
                     <img :src="item.url" alt="">
-                    <div class="icon-checked" v-if="columnData.type==item.value">
+                    <div class="icon-checked" v-if="columnData.type == item.value">
                       <i class="el-icon-check"></i>
                     </div>
                   </div>
-                  <p class="item-name">{{item.name}}</p>
+                  <p class="item-name">{{ item.name }}</p>
                 </div>
               </div>
-              <template v-if="columnData.type==2">
+              <template v-if="columnData.type == 2">
                 <el-divider>左侧配置</el-divider>
                 <el-form-item label="左侧标题">
                   <el-input v-model="columnData.treeTitle" placeholder="树形标题"></el-input>
                 </el-form-item>
                 <el-form-item label="数据来源">
-                  <el-select v-model="columnData.treeDataSource" placeholder="请选择数据来源"
-                    @change="dataTypeChange">
+                  <el-select v-model="columnData.treeDataSource" placeholder="请选择数据来源" @change="dataTypeChange">
                     <el-option label="数据字典" value="dictionary"></el-option>
                     <el-option label="远端数据" value="api"></el-option>
                     <el-option label="组织数据" value="organize"></el-option>
                     <el-option label="部门数据" value="department"></el-option>
                   </el-select>
                 </el-form-item>
-                <template v-if="columnData.treeDataSource==='dictionary'">
+                <template v-if="columnData.treeDataSource === 'dictionary'">
                   <el-form-item label="数据字典">
                     <DicSelect v-model="columnData.treeDictionary" placeholder="请选择数据字典" />
                   </el-form-item>
@@ -121,11 +196,10 @@
                     </el-select>
                   </el-form-item>
                 </template>
-                <template v-if="columnData.treeDataSource==='api'">
+                <template v-if="columnData.treeDataSource === 'api'">
                   <el-form-item label="数据接口">
-                    <JNPF-TreeSelect :options="dataInterfaceSelector"
-                      v-model="columnData.treePropsUrl" placeholder="请选择数据接口" lastLevel
-                      lastLevelKey='categoryId' lastLevelValue='1' clearable />
+                    <JNPF-TreeSelect :options="dataInterfaceSelector" v-model="columnData.treePropsUrl"
+                      placeholder="请选择数据接口" lastLevel lastLevelKey='categoryId' lastLevelValue='1' clearable />
                   </el-form-item>
                   <el-form-item label="主键字段">
                     <el-input v-model="columnData.treePropsValue" placeholder="主键字段" />
@@ -139,13 +213,13 @@
                 </template>
                 <el-form-item label="关联字段">
                   <el-select v-model="columnData.treeRelation" placeholder="请选择关联字段">
-                    <el-option :label="item.__config__.label" :value="item.__vModel__"
-                      v-for="(item, index) in list" :key="index"></el-option>
+                    <el-option :label="item.__config__.label" :value="item.__vModel__" v-for="(item, index) in list"
+                      :key="index"></el-option>
                   </el-select>
                 </el-form-item>
               </template>
               <el-divider>表格配置</el-divider>
-              <template v-if="columnData.type==3">
+              <template v-if="columnData.type == 3">
                 <el-form-item label="分组字段">
                   <el-select v-model="columnData.groupField" placeholder="请选择分组字段">
                     <el-option :label="item.__config__.label" :value="item.__vModel__"
@@ -155,6 +229,20 @@
               </template>
               <el-form-item label="高级查询">
                 <el-switch v-model="columnData.hasSuperQuery"></el-switch>
+              </el-form-item>
+              <el-form-item label="主表SQL">
+                <el-input v-model="columnData.sqlStr">
+                  <template slot="append">
+                    <el-button type="primary" plain @click="getSql">执行</el-button>
+                  </template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="子表SQL" v-if="columnData.type == 5 || columnData.type == 6">
+                <el-input v-model="columnData.sqllineStr">
+                  <template slot="append">
+                    <el-button type="primary" plain @click="getLineSql">执行</el-button>
+                  </template>
+                </el-input>
               </el-form-item>
               <el-form-item label="排序类型">
                 <el-select v-model="columnData.sort" placeholder="请选择排序类型">
@@ -168,12 +256,12 @@
                     v-for="(item, i) in groupFieldOptions" :key="i"></el-option>
                 </el-select>
               </el-form-item>
-              <template v-if="columnData.type !==3">
+              <template v-if="columnData.type !== 3">
                 <el-form-item label="分页设置">
                   <el-switch v-model="columnData.hasPage"></el-switch>
                 </el-form-item>
                 <el-form-item label="分页条数" v-if="columnData.hasPage">
-                  <el-radio-group v-model="columnData.pageSize">
+                  <el-radio-group v-model="columnData.pageSize" size="mini" style="display:flex">
                     <el-radio-button :label="20">20条</el-radio-button>
                     <el-radio-button :label="50">50条</el-radio-button>
                     <el-radio-button :label="100">100条</el-radio-button>
@@ -181,7 +269,7 @@
                   </el-radio-group>
                 </el-form-item>
               </template>
-              <el-divider>按钮配置</el-divider>
+              <!-- <el-divider>按钮配置</el-divider>
               <el-checkbox-group v-model="btnsList" class="btnsList">
                 <el-checkbox :label="item.value" v-for="item in btnsOption" :key="item.value">
                   <span class="btn-label">{{ item.value | btnText }}</span>
@@ -244,13 +332,13 @@
                     @click="addFunc(columnData.funcs.afterOnload,'afterOnload',true)">脚本编写
                   </el-button>
                 </el-form-item>
-              </template>
+              </template> -->
             </el-form>
           </div>
         </el-scrollbar>
       </div>
     </div>
-    <form-script :visible.sync="formScriptVisible" :value="activeItem.func" :type="activeItem.type"
+    <form-script :visible.sync="formScriptVisible" :value="currentRow.formatter" :type="currentRow.type"
       @updateScript="updateScript" />
   </div>
 </template>
@@ -260,7 +348,7 @@ import draggable from 'vuedraggable'
 import FormScript from './FormScript'
 import { getDrawingList } from '@/components/Generator/utils/db'
 import { noColumnShowList, noSearchList, useInputList, useDateList } from '@/components/Generator/generator/comConfig'
-import { getDataInterfaceSelector } from '@/api/systemData/dataInterface'
+import { getDataInterfaceSelector, getSqlData } from '@/api/systemData/dataInterface'
 
 const getSearchType = item => {
   const jnpfKey = item.__config__.jnpfKey
@@ -274,12 +362,16 @@ const getSearchType = item => {
 
 const defaultFunc = '({ data, index, request, toast, refresh }) => {\r\n   \r\n}'
 const defaultFuncs = '({ data, attributes, events, methods, tableRef, request }) => {\r\n   \r\n}'
-
+const defaultFormatter = '(row, column, cellValue, index)=>{\r\n   \r\n}'
 const defaultColumnData = {
   searchList: [], // 查询字段
   hasSuperQuery: true, // 高级查询
+  sqlStr: '', // 主表sql
+  sqllineStr: '', // 子表sql
   columnList: [], // 字段列表
+  columnLineList: [], // 明细 字段列表
   columnOptions: [], // 字段列表
+  columnLineOptions: [], // 子表sql字段列表
   defaultColumnList: [], // 所有可选择字段列表
   type: 1, //列表类型
   defaultSidx: '', // 默认排序字段
@@ -312,7 +404,7 @@ const defaultColumnData = {
       func: "",
       name: "脚本事件"
     }
-  }
+  },
 }
 export default {
   name: 'columnDesign',
@@ -328,10 +420,12 @@ export default {
   data() {
     return {
       currentTab: 'column',
+      currentFieldTab: 'indexField',
       alignOptions: ['left', 'center', 'right'],
       list: [],
       searchList: [],
       columnList: [],
+      columnLineList: [],
       columnData: JSON.parse(JSON.stringify(defaultColumnData)),
       btnsOption: [
         { value: 'add', icon: 'el-icon-plus', label: '新增' },
@@ -345,18 +439,22 @@ export default {
       ],
       columnOptions: [],
       searchOptions: [],
+      columnLineOptions: [],
       groupFieldOptions: [],
       btnsList: [],
       columnBtnsList: [],
       typeList: [
         { url: require('@/assets/images/generator/columnType1.png'), value: 1, name: '普通表格' },
         { url: require('@/assets/images/generator/columnType2.png'), value: 2, name: '左侧树形+普通表格' },
-        { url: require('@/assets/images/generator/columnType3.png'), value: 3, name: '分组表格' },
-        { url: require('@/assets/images/generator/columnType4.png'), value: 4, name: '编辑表格' },
+        // { url: require('@/assets/images/generator/columnType3.png'), value: 3, name: '分组表格' },
+        // { url: require('@/assets/images/generator/columnType4.png'), value: 4, name: '编辑表格' },
+        { url: require('@/assets/images/generator/columnType2.png'), value: 5, name: '左右表格' },
+        { url: require('@/assets/images/generator/columnType5.png'), value: 6, name: '上下表格' },
       ],
       dataInterfaceSelector: [],
       formScriptVisible: false,
-      activeItem: {}
+      activeItem: {},
+      currentRow: {}
     }
   },
   filters: {
@@ -444,6 +542,7 @@ export default {
       jnpfKey: o.__config__.jnpfKey,
       sortable: false,
       width: null,
+      formatter: '',
       ...o
     }));
     this.searchOptions = searchOptions.map(o => ({
@@ -457,6 +556,10 @@ export default {
     if (typeof this.conf === 'object' && this.conf !== null) {
       this.columnData = Object.assign({}, defaultColumnData, this.conf)
     }
+    if (!this.columnData.sqlStr) {
+      this.searchOptions = []
+      this.columnOptions = []
+    }
     this.columnData.columnOptions = columnOptions
     if (!this.columnOptions.length) this.columnData.columnList = []
     if (!this.searchOptions.length) this.columnData.searchList = []
@@ -469,10 +572,77 @@ export default {
     this.setSort()
     this.$nextTick(() => {
       this.setListValue(this.columnData.columnList, this.columnOptions, 'column')
+      this.setListValue(this.columnData.columnLineList, this.columnLineOptions, 'column')
       this.setListValue(this.columnData.searchList, this.searchOptions, "search")
     })
   },
   methods: {
+    // 主表 获取sql请求数据
+    getSql() {
+      let data = {
+        dataSource: 's_sql',
+        sourceConfig: this.columnData.sqlStr,
+        enableTenant: 0
+      }
+      getSqlData(data).then(res => {
+        console.log(res);
+        if (res.data) {
+          this.searchOptions = res.data.map(o => {
+            return {
+              label: o.COLUMN_COMMENT,
+              prop: o.COLUMN_NAME,
+              jnpfKey: '',
+              value: '',
+              searchType: 1,
+              ...o
+            }
+          })
+          this.columnOptions = res.data.map(item => {
+            return {
+              ...item,
+              label: item.COLUMN_COMMENT,
+              prop: item.COLUMN_NAME,
+              align: 'left',
+              jnpfKey: '',
+              sortable: false,
+              width: null,
+              formatter: '',
+            }
+          })
+        }
+      }).catch(() => { })
+    },
+    // 子表获取sql数据
+    getLineSql() {
+      let data = {
+        dataSource: 's_sql',
+        sourceConfig: this.columnData.sqllineStr,
+        enableTenant: 0
+      }
+      getSqlData(data).then(res => {
+        console.log(res);
+        if (res.data) {
+          this.columnLineOptions = res.data.map(item => {
+            return {
+              ...item,
+              label: item.COLUMN_COMMENT,
+              prop: item.COLUMN_NAME,
+              align: 'left',
+              jnpfKey: '',
+              sortable: false,
+              width: null,
+              formatter: '',
+            }
+          })
+        }
+      }).catch(() => { })
+    },
+    // 内容选择事件
+    handleCurrentChange(val) {
+      if (!val) return
+      this.currentRow = val
+      this.$refs['dragTable'].toggleRowSelection(val, true)
+    },
     setBtnValue(replacedData, data, key) {
       key = key ? key : 'value'
       outer: for (let i = 0; i < replacedData.length; i++) {
@@ -562,6 +732,9 @@ export default {
     columnSelectionChange(val) {
       this.$set(this.columnData, 'columnList', val)
     },
+    columnLIneSelectionChange(val) {
+      this.$set(this.columnData, 'columnLineList', val)
+    },
     getDataInterfaceSelector() {
       getDataInterfaceSelector().then(res => {
         this.dataInterfaceSelector = res.data
@@ -581,21 +754,19 @@ export default {
       })
     },
     editFunc(item, type) {
-      if (!item.func) item.func = defaultFunc
-      this.activeItem = item
-      this.activeItem.type = type
+      if (!item.formatter) item.formatter = defaultFormatter
+      this.currentRow = item
       this.$nextTick(() => {
         this.formScriptVisible = true
       })
     },
     updateScript(func) {
-      this.activeItem.func = func
+      this.currentRow.formatter = func
     },
 
     addFunc(item, type) {
-      if (!item.func) item.func = defaultFuncs
-      this.activeItem = item
-      this.activeItem.type = type
+      if (!item.formatter) item.formatter = defaultFormatter
+      this.currentRow = item
       this.$nextTick(() => {
         this.formScriptVisible = true
       })

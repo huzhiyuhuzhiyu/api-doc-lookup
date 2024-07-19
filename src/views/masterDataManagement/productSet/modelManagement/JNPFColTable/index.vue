@@ -31,7 +31,10 @@
 <!-- deleteth 删除行 -->
 <template>
   <el-form :model="JNPFColTableData" ref="main">
-    <el-table :data="JNPFColTableData.data" :key="JNPFColTableData.data.length" border @selection-change="handeleProductInfoData" height="500">
+    <div class="table-actions" @click="addth" v-if="realOpenMode != '只读' && addMethod">
+      <el-button size="mini" type="primary" icon="el-icon-plus">添加</el-button>
+    </div>
+    <el-table :data="JNPFColTableData.data" :key="JNPFColTableData.data.length" border @selection-change="handeleProductInfoData" >
       <el-table-column type="selection" width="60" :fixed="fixedSelect" v-if="hasC" align="center"
         :selectable="checkSelectable" />
       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -63,9 +66,7 @@
       </el-table-column>
 
     </el-table>
-    <div class="table-actions" @click="addth" v-if="realOpenMode != '只读' && addMethod">
-      <el-button type="text" icon="el-icon-plus">添加</el-button>
-    </div>
+   
   </el-form>
 </template>
 
@@ -182,5 +183,11 @@ export default {
 .required {
   color: red;
   margin-right: 4px;
+}
+.table-actions{
+    border: #ebeef5 1px dashed;
+    text-align: left;
+    margin-bottom: 10px;
+    margin-top:0;
 }
 </style>

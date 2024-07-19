@@ -21,8 +21,7 @@
         </div>
         <div class="tips" v-else>
           <p>支持JavaScript的脚本，参考编写脚本API</p>
-          <p>data--列表行数据，attributes--列表属性，events--列表事件</p>
-          <p>methods--列表方法，tableRef--表格DOM元素，request--异步请求(url,methods,data)</p>
+          <p>row--当前行数据，column--当前列，cellValue--当前单元格的值，index--当前行的索引</p>
         </div>
       </div>
     </div>

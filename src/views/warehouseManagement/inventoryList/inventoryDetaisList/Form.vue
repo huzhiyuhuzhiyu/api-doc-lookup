@@ -20,7 +20,7 @@
                   <el-form-item label="所属分类" prop="partnerCategoryIdText">
                     <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="btnType === 'look'" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
-                      :selectClassifyType="dataForm.type" />
+                      :type="dataForm.type" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24" v-if="businessType">
@@ -1168,12 +1168,10 @@ export default {
         this.businessType = res.data.configValue1
       })
       if (this.dataForm.id) {
-        if (this.btnType === 'edit'){
-          for (let item in this.dataRule){
-            if (item === 'mobilePhone'){
-            }else{
-              this.dataRule[item][0].required = true
-            }
+        for (let item in this.dataRule){
+          if (item === 'mobilePhone'){
+          }else{
+            this.dataRule[item][0].required = true
           }
         }
         detailPartner(this.dataForm.id).then(res => {
@@ -1272,8 +1270,8 @@ export default {
               )
             })
           }
-          this.$nextTick(()=>this.$refs['dataForm'].clearValidate())
-          // this.$nextTick(()=>this.$refs['dataForm'].resetFields())
+          // this.$nextTick(()=>this.$refs['dataForm'].clearValidate())
+          this.$nextTick(()=>this.$refs['dataForm'].resetFields())
         })
       }
     },

@@ -1097,7 +1097,7 @@ export function checkBimInspectionTypeCode (code, id) {
 // 列表
 export function getBimBusinessSwitchConfigList (data) {
   return request({
-    url: `/api/erp/bimBusinessSwitchConfig/list/condition`,
+    url: `/api/erp/bimBusinessSwitchConfig/configMap`,
     method: 'post',
     data
   })

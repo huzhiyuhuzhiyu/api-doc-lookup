@@ -30,16 +30,17 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px;display: -webkit-box">
           <!-- <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'"> -->
-          <el-dropdown>
-            <el-button type="primary" icon="el-icon-plus" size="mini">
-              新建<i class="el-icon-arrow-down el-icon--right"></i>
-            </el-button>
+          <!-- <el-dropdown>
+           
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="addOrUpdateHandle('', 'add')">单个新建
               </el-dropdown-item>
               <el-dropdown-item @click.native="batchAdd()">批量新建</el-dropdown-item>
             </el-dropdown-menu>
-          </el-dropdown>
+          </el-dropdown> -->
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
+              批量新建
+            </el-button>
           <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" style="margin-left: 10px"
             @click="batchEditFun">批量修改</el-button>
           <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
@@ -192,13 +193,13 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        let query = this.dataForm
+        let query = this.listQuery
         let _data = {
           ...query,
           exportType: '1202',
           exportName: '型号管理',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
@@ -225,6 +226,7 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
+      console.log("data",data);
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -334,6 +336,7 @@ export default {
     },
     refresh(isrRefresh) {
       this.formVisible = false;
+      this.tableFormVisible=false
       if (isrRefresh) this.reset();
     },
     reset() {

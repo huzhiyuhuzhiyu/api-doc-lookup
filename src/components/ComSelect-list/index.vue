@@ -354,6 +354,7 @@ export default {
       }
     },
     handleNodeClick(data) {
+      console.log("data",data);
       if (data.disabled) return
       let currId = data.id
       let currData = data.name

@@ -71,7 +71,7 @@ export default {
             console.log(this.formData,'formData');
             this.columnData = this.dataForm.columnData && JSON.parse(this.dataForm.columnData)
             this.appColumnData = this.dataForm.appColumnData && JSON.parse(this.dataForm.appColumnData)
-            console.log(this.appColumnData,'组件数据');
+            console.log(this.columnData,'组件数据');
             this.flowTemplateJson = this.dataForm.flowTemplateJson && JSON.parse(this.dataForm.flowTemplateJson)
             this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
             console.log(this.tables,'数据表');

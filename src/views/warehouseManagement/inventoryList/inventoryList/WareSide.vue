@@ -99,6 +99,7 @@ export default {
         { prop: "num", label: "数量", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }], minWidth: 160, render: this.$parent.sourceType === 'inbound_scrap' }
       ],
       linesList: [],
+      copySpaceLines:[],
     }
   },
   computed: {
@@ -198,7 +199,10 @@ export default {
       this.scope = scope
       // this.barCodeListRequestObj.productId = scope.row.productsId;
       // this.barCodeListRequestObj.routingLineId = scope.row.routingLineId || -1;
+      console.log("spaceLines",spaceLines);
+      
       this.linesList = spaceLines
+      this.copySpaceLines=JSON.parse(JSON.stringify(spaceLines))
       this.linesList.forEach(line => {
         line.barCodeIds = line.boxList ? line.boxList.map(box => box.name) : []
         // line.barCodeList = line.boxList ? line.boxList.map(box => box.name) : []
@@ -251,6 +255,7 @@ export default {
     },
     // 对应子数据新增或删除行
     addOrDelLinesItem(data) {
+      console.log("data",data);
       let type = Array.isArray(data) ? 'Array' : 'Object'
       if (type === 'Object') { this.linesList.splice(data.$index, 1) }
       else {

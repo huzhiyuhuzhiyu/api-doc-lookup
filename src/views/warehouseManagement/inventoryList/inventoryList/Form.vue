@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-     
+
       <WareSide v-if="wareVisibled" ref="wareSide" @confirm="sideConfirm" :openMode="openMode"
         :warehouseId="dataForm.warehouseId" />
     </div>
@@ -60,7 +60,7 @@ export default {
       wareVisibled: false,
       btnLoading: false,
       formLoading: true,
-      allocationFlag:false,
+      allocationFlag: false,
       dataForm: {
         sourceType: "",
       },
@@ -83,7 +83,7 @@ export default {
       ]
     }
   },
-  created() { 
+  created() {
     this.getWarehouseConfig()
   },
   watch: {
@@ -95,11 +95,11 @@ export default {
   },
   methods: {
     // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig(){
+    getWarehouseConfig() {
 
-      let obj={"pageSize":-1,"businessCode":"warehouse"}
-      getBimBusinessSwitchConfigList(obj).then(res=>{
-        this.allocationFlag=res.data.warehouse[0].configValue1=='1'?true:false
+      let obj = { "pageSize": -1, "businessCode": "warehouse" }
+      getBimBusinessSwitchConfigList(obj).then(res => {
+        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
       })
     },
     refeshDataFormItems() {
@@ -168,6 +168,12 @@ export default {
         },
         {
           prop: "costPrice", label: "单价(含税)", value: "", type: "input", minWidth: 140,
+          itemRules: [
+            { validator: this.formValidate({ type: 'noEmtry', params: ["不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：单价(含税)${errMsg}`) }] }), trigger: 'blur' },
+            { required: true, trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('单价(含税)：' + errMsg) }] }), trigger: 'blur' },
+            // { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`数量(副)：${errMsg}`) }), trigger: 'blur' }
+          ],
           input: (val, scope) => {
             if (scope.row.num) {
               scope.row.totalAmount = this.jnpf.numberFormat(val * scope.row.num, 4)
@@ -219,7 +225,7 @@ export default {
       this.btnType = btnType
       this.refeshDataFormItems()
       if (id) {
-        this.title = btnType ? '查看入库单' : '编辑入库单'
+        this.title = btnType ? '查看出入库单' : '编辑出入库单'
         // 获取详情
         detailWarehouseData(id).then(res => {
           this.dataForm = res.data.stockMove
@@ -246,7 +252,7 @@ export default {
           this.formLoading = false
         }).catch(() => { this.formLoading = false })
       } else {
-        this.title = '新建入库单'
+        this.title = '新建出入库单'
         this.formLoading = false
       }
     },
@@ -301,7 +307,7 @@ export default {
           tempList.forEach(line => {
             num += line.num ? Number(line.num) : 0
           })
-          if (submitModel == 'submit'&&this.allocationFlag===true) {
+          if (submitModel == 'submit' && this.allocationFlag === true) {
             if (item.num != num) {
               submitFlag = false
               this.$message.error(`产品信息第${index + 1}行：请先完善入库产品货位设置`)
@@ -369,14 +375,14 @@ export default {
           let linesOption = this.linesList.find(line => line.productsId === item.productsId && line.routingLineId == item.routingLineId)
           item.batchNumber = linesOption ? linesOption.batchNumber : ''
         })
-        this.copyLinesData=JSON.parse(JSON.stringify(this.linesList))
+        this.copyLinesData = JSON.parse(JSON.stringify(this.linesList))
         this.copyLinesData.forEach(element => {
-          element.warehouseType=this.dataForm.warehouseType
+          element.warehouseType = this.dataForm.warehouseType
         });
         let dataObj = {
           stockMove: this.dataForm,
           lines: this.linesList,
-          spaceLines: submitModel == 'submit'&&this.allocationFlag===true ? this.spaceLines : this.copyLinesData
+          spaceLines: submitModel == 'submit' && this.allocationFlag === true ? this.spaceLines : this.copyLinesData
         }
 
         // 提交确认
@@ -420,13 +426,14 @@ export default {
     // 对应子数据新增或删除行
     addOrDelLinesItem(data, type) {
       let paramType = Array.isArray(data) ? 'Array' : 'Object'
-      console.log("paramType",paramType);
+      console.log("data",data);
+      console.log("paramType", paramType);
       if (paramType === 'Object') {
         this.linesList.splice(data.$index, 1)
         this.spaceLines = this.spaceLines.filter(item => item.productsId === data.row.productsId ? item.routingLineId !== data.row.routingLineId : true)
       } else {
         let tempList = JSON.parse(JSON.stringify(this.linesList))
-        console.log("tempList",tempList);
+        console.log("tempList", tempList);
         // 新数据替代旧数据
         if (type === 'cover') {
           data = data[0]
@@ -447,23 +454,30 @@ export default {
         for (let i = 0; i < data.length; i++) {
           let item = data[i];
           item.remark = ""
-          item.productCode = item.productsCode
-          item.costPrice=item.price
-          if (item.calculationDirection === 'multiplication') { 
-            item.deputyNum = this.jnpf.numberFormat(item.num * item.ratio, 4) 
-          }else { 
-            item.deputyNum = this.jnpf.numberFormat(item.num / item.ratio, 4) 
+            item.costPrice=item.price
+          if (item.calculationDirection === 'multiplication') {
+            item.deputyNum = this.jnpf.numberFormat(item.num * item.ratio, 4)
+          } else {
+            item.deputyNum = this.jnpf.numberFormat(item.num / item.ratio, 4)
+          }
+          if (type == 'import') {
+            item.productsId = item.productId
+            item.productCode = item.productsCode
+          } else {
+            item.productCode = item.code
+
+            item.productsId = item.id
           }
           item.totalAmount = this.jnpf.numberFormat(item.costPrice * item.num, 4)
           item.excludingTaxCostPrice = this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1 / 100)), 4)
-          item.warehouseId=this.dataForm.warehouseId
-          item.warehouseType=this.dataForm.warehouseType
+          item.warehouseId = this.dataForm.warehouseId
+          item.warehouseType = this.dataForm.warehouseType
           const hasFlag = this.linesList.find(i => item.productsId === i.productsId)
           if (hasFlag) { hasItemList.push(item.productName) }
           else { tempList.push(item) }
           if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
         }
-        this.linesList = tempList 
+        this.linesList = tempList
         console.log("this.lin", this.linesList);
         this.linesList.forEach(item => {
           if (this.customerInfo.taxRate && !item.taxRate) {
@@ -485,9 +499,10 @@ export default {
     },
     // 打开抽屉
     openSide(scope) {
+      console.log("scope",scope);
       this.wareVisibled = true
       this.$nextTick(() => {
-        let rowDetailList = JSON.parse(JSON.stringify(this.spaceLines.filter(line => line.productsId === scope.row.productsId && line.routingLineId == scope.row.routingLineId)))
+        let rowDetailList = [JSON.parse(JSON.stringify(this.linesList[scope.$index]))]
         this.copyLinesData = rowDetailList
         this.$refs['wareSide'].init(scope, rowDetailList, this.btnType)
       })
@@ -580,7 +595,7 @@ export default {
   computed: {
     openMode() {
       this.$nextTick(() => { this.refeshLinesListItems() });
-      return this.title === '新建入库单' ? '新建' : this.title === '编辑入库单' ? '编辑' : '只读'
+      return this.title === '新建出入库单' ? '新建' : this.title === '编辑出入库单' ? '编辑' : '只读'
     }
   },
 }

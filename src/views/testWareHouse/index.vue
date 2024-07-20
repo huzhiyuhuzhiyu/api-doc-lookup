@@ -78,7 +78,7 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" ref="dataTable"
           :setColumnDisplayList="tableItems">
           <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-            :formatter="item.formatter" :sortable="item.sortable ? 'custom' : false"
+            :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false" :align="item.align || 'left'"
             v-bind="{ width: item.width ? item.width : 120, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }">
 
           </el-table-column>
@@ -323,38 +323,25 @@ export default {
         this.columnData = JSON.parse(res.data.columnData)
         console.log(this.columnData);
         this.tableItems = this.columnData.columnList.map(item => {
-
-          const formatterFunction = new Function('return ' + item.formatter)
+          let formatterFunction = null
+          if (item.formatter){
+            formatterFunction = new Function('return ' + item.formatter)
+            let fnc = formatterFunction()
+            console.log(fnc);
+          }
+          
           return {
             ...item,
             prop: this.getToLowerCase(item.prop),
             minWidth: item.width ? item.width : 120,
-            formatter:item.formatter ? formatterFunction : ''
+            formatter:item.formatter ? formatterFunction.bind(this)() : ''
           }
         })
         console.log(this.tableItems);
       }).catch(() => { })
     },
-    dynamicFormatter(row, column, cellValue, index) {
-      let formatterString = ''
-      let flag = false
-      this.tableItems.forEach(item=>{
-        if (item.prop === column.property){
-          flag = true
-          // column.formatter = item.formatter
-          formatterString = item.formatter;
-        }
-      })
-      if (!formatterString) return cellValue;
-      console.log(formatterString);
-      // 动态创建函数
-      const formatterFunction = new Function('return ' + formatterString)
-      console.log(typeof formatterFunction);
-      
-      console.log(formatterFunction());
-      
-      // 执行动态创建的函数
-      return flag ? formatterFunction() : ''
+    toFormatter(row, column, cellValue, index) {
+      return cellValue
     },
     initData() {
       this.listLoading = true

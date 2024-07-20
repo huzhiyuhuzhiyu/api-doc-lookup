@@ -407,10 +407,10 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         this.uploadVisib = false
-        this.$emit('addth', res.data.list, )
+        this.$emit('addth', res.data.list, 'import')
       } else {
         if(res.data.list){
-        this.$emit('addth', [res.data.list], 'cover')
+        this.$emit('addth', [res.data.list], 'import')
         }
           this.handleMessage(res.data)
         this.uploadVisib = false

@@ -177,6 +177,12 @@
                 <el-form-item label="左侧标题">
                   <el-input v-model="columnData.treeTitle" placeholder="树形标题"></el-input>
                 </el-form-item>
+                <el-form-item label="分类类型">
+                  <el-select v-model="columnData.selectClassifyType" placeholder="请选择分类类型">
+                    <el-option v-for="item in columnData.selectTypeClassifyOptions" :key="item.value" :label="item.label"
+                      :value="item.value" />
+                  </el-select>
+                </el-form-item>
                 <el-form-item label="数据来源">
                   <el-select v-model="columnData.treeDataSource" placeholder="请选择数据来源" @change="dataTypeChange">
                     <el-option label="数据字典" value="dictionary"></el-option>
@@ -269,70 +275,6 @@
                   </el-radio-group>
                 </el-form-item>
               </template>
-              <!-- <el-divider>按钮配置</el-divider>
-              <el-checkbox-group v-model="btnsList" class="btnsList">
-                <el-checkbox :label="item.value" v-for="item in btnsOption" :key="item.value">
-                  <span class="btn-label">{{ item.value | btnText }}</span>
-                  <el-input v-model="item.label" />
-                </el-checkbox>
-              </el-checkbox-group>
-              <el-checkbox-group v-model="columnBtnsList" class="btnsList columnBtnList">
-                <el-checkbox :label="item.value" v-for="item in columnBtnsOption" :key="item.value">
-                  <span class="btn-label">{{ item.value | btnText }}</span>
-                  <el-input v-model="item.label" />
-                </el-checkbox>
-              </el-checkbox-group>
-              <template v-if="modelType==1">
-                <p class="btn-cap mt-10 mb-10">自定义按钮区
-                </p>
-                <div class="custom-btns-list">
-                  <draggable :list="columnData.customBtnsList" :animation="340" group="customItem"
-                    handle=".option-drag">
-                    <div v-for="(item, index) in columnData.customBtnsList" :key="index"
-                      class="custom-item">
-                      <div class="custom-line-icon option-drag">
-                        <i class="icon-ym icon-ym-darg" />
-                      </div>
-                      <p class="custom-line-value">{{item.value}}</p>
-                      <el-input v-model="item.label" placeholder="按钮名称" size="small">
-                        <template slot="append">
-                          <el-button type="primary" @click="editFunc(item,'btn')"
-                            class="custom-btn">事件
-                          </el-button>
-                        </template>
-                      </el-input>
-                      <div class="close-btn custom-line-icon"
-                        @click="columnData.customBtnsList.splice(index, 1)">
-                        <i class="el-icon-remove-outline" />
-                      </div>
-                    </div>
-                  </draggable>
-                </div>
-                <div>
-                  <el-button type="text" icon="el-icon-plus" @click="addCustomBtn">添加按钮</el-button>
-                </div>
-              </template>
-              <el-divider>权限设置</el-divider>
-              <el-form-item label="按钮权限">
-                <el-switch v-model="columnData.useBtnPermission"></el-switch>
-              </el-form-item>
-              <el-form-item label="列表权限">
-                <el-switch v-model="columnData.useColumnPermission"></el-switch>
-              </el-form-item>
-              <el-form-item label="数据权限">
-                <el-switch v-model="columnData.useDataPermission"></el-switch>
-              </el-form-item>
-              <el-form-item label="表单权限">
-                <el-switch v-model="columnData.useFormPermission"></el-switch>
-              </el-form-item>
-              <template v-if="modelType==1">
-                <el-divider>脚本事件</el-divider>
-                <el-form-item label="表格事件">
-                  <el-button style="width: 100%;"
-                    @click="addFunc(columnData.funcs.afterOnload,'afterOnload',true)">脚本编写
-                  </el-button>
-                </el-form-item>
-              </template> -->
             </el-form>
           </div>
         </el-scrollbar>
@@ -386,6 +328,21 @@ const defaultColumnData = {
   treePropsValue: 'id',  // 主键字段
   treePropsChildren: 'children',  // 子级字段
   treePropsLabel: 'fullName',  // 显示字段
+  selectClassifyType:'',      // 分类类型
+  selectTypeClassifyOptions:[
+        {
+          value: 'customer',
+          label: '客户分类'
+        },
+        {
+          value: 'supplier',
+          label: '供应商分类'
+        },
+        {
+          value: 'product',
+          label: '产品分类'
+        },
+      ],
   groupField: '',  // 分组字段
   useColumnPermission: false,
   useFormPermission: false,

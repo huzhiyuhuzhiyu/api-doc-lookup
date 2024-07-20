@@ -1584,3 +1584,50 @@ export function deletebimProgram (id) {
     method: 'delete',
   })
 }
+//线索管理
+// 新增
+export function addCluemanagement (data) {
+  return request({
+    url: `/api/zgt/bimClue/add`,
+    method: 'post',
+    data
+  })
+}
+// 列表
+export function getCluemanagementlist (data) {
+  return request({
+    url: `/api/zgt/bimClue/list`,
+    method: 'post',
+    data
+  })
+}
+//详情
+export function getCluemanagementDetail (id) {
+  return request({
+    url: `/api/zgt/bimClue/detail/${id}`,
+    method: 'get',
+  })
+}
+// 修改
+export function updateCluemanagement (data) {
+  return request({
+    url: `/api/zgt/bimClue/update`,
+    method: 'put',
+    data
+  })
+}
+// 删除
+export function deleteCluemanagement (id) {
+  return request({
+    url: `/api/zgt/bimClue/del/${id}`,
+    method: 'delete',
+  })
+}
+// 转入线索池
+export function updateCluemanagementpool (data) {
+  return request({
+    url: `/api/zgt/bimClue/turn/pool`,
+    method: 'put',
+    data
+  })
+}

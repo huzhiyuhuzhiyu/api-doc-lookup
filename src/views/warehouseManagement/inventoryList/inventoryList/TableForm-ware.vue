@@ -88,9 +88,9 @@ export default {
         { prop: 'name', label: '货位名称', fixed: 'left' },
         { prop: 'code', label: '货位编码', fixed: 'left' },
         { prop: 'warehouseName', label: '仓库名称' },
-        { prop: "unitVolume", label: "货位容量(m³)", minWidth: 140 },
-        { prop: "usedVolume", label: "已用容量(m³)", minWidth: 140 },
-        { prop: "residualVolume", label: "剩余容量(m³)", minWidth: 140 },
+        // { prop: "unitVolume", label: "货位容量(m³)", minWidth: 140 },
+        // { prop: "usedVolume", label: "已用容量(m³)", minWidth: 140 },
+        // { prop: "residualVolume", label: "剩余容量(m³)", minWidth: 140 },
         { prop: 'remark', label: '备注' }
       ], // 货位选择弹出框表单展示字段
       WareTableSearchList: [

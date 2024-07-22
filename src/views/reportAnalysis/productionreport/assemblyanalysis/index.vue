@@ -26,9 +26,9 @@
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                 {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+              <el-button size="mini"  icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
-              <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+              <el-button type="text" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
             </el-form-item>
           </el-col>
           <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>

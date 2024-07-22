@@ -96,6 +96,7 @@
           <el-table-column prop="fullName" label="业务名称" width="200" />
           <el-table-column prop="enCode" label="业务编码" width="200" />
           <el-table-column prop="category" label="业务分类" width="150" />
+          <el-table-column prop="category" label="编码生成方式" width="150" />
           <el-table-column prop="startNumber" label="流水起始" width="120"  />
           <el-table-column prop="outputNumber" label="当前流水号" width="240"   />
           <el-table-column prop="creatorUser" label="创建人" width="160"   />
@@ -314,6 +315,7 @@ export default {
     // },
    
     initData() {
+      this.drawer=false
       this.listLoading = true
       let query = {
         ...this.listQuery,

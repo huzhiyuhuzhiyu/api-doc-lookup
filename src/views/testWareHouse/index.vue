@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout" :element-loading-text="loadingText">
-    <div class="JNPF-common-layout-left treeBox">
+    <div class="JNPF-common-layout-left">
       <div class="JNPF-common-title">
         <h2>产品分类</h2>
         <span class="options">
@@ -70,59 +70,19 @@
               @click="exportForm">导出</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable">
-          <el-table-column prop="code" label="产品编码" min-width="140" fixed="left" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                {{ scope.row.code }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" ref="dataTable"
+          :setColumnDisplayList="tableItems">
+          <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+            :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false" :align="item.align || 'left'"
+            v-bind="{ width: item.width ? item.width : 120, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }">
 
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-          <el-table-column prop="mainUnit" label="主单位" width="120" />
-          <el-table-column prop="productSource" label="产品来源" width="120">
-            <template slot-scope="{row}">
-              <template v-if="row.productSource == 'produce'">自制</template>
-              <template v-else-if="row.productSource == 'purchase'">采购</template>
-              <template v-else-if="row.productSource == 'out'">外协</template>
-            </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" fixed="right" align="center">
-            <template slot-scope="{row}">
-              <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
-              <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="model" label="型号" width="120" />
-          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
-          <el-table-column prop="structureType" label="结构类型" width="120" />
-          <el-table-column prop="clearance" label="游隙" width="120" />
-          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-          <el-table-column prop="oil" label="油脂" width="120" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-          <el-table-column prop="noise" label="噪音" width="120" />
-          <el-table-column prop="holder" label="保持架" width="120" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" />
-          <el-table-column prop="colour" label="颜色" width="120" />
-          <el-table-column prop="aperture" label="孔径" width="120" />
-          <el-table-column prop="remark" label="备注" width="120" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" />
+          <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
@@ -147,8 +107,7 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm"  @close="closeForm" />
+
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
@@ -211,13 +170,14 @@
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct , uploadCpProductData } from '@/api/masterDataManagement/productManage'
+import { getProductList, deleteProduct, uploadCpProductData } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import Form from './Form'
-import aiForm from './aiForm'
+
 import { mapState } from 'vuex'
+import { detailVisualDevInfo } from '@/api/system/system'
+import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
 export default {
-  components: { Form, ExportForm ,aiForm},
+  components: { ExportForm },
   name: 'finished_product',
   data() {
     return {
@@ -232,8 +192,11 @@ export default {
       listLoading: false,
       loadingText: false,
       initListQuery: {
-        code: "",
-        name: "",
+        sourceType: "",
+        orderNo: "",
+        pageNum: 1,
+        partnerName: "",
+        pageSize: 20,
         orderItems: [{
           asc: false,
           column: ""
@@ -241,16 +204,6 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        pageNum: 1,
-        pageSize: 20,
-        drawingNo: "", // 图号
-        productSource: "", // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: "", // 类型id
-        productStatus: "", // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: "finish_product"
       },
       listQuery: {},
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
@@ -263,20 +216,22 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
+      columnData: [],
+      formatterFunction: null,
+      tableItems: []
     }
   },
   created() {
+    this.getDevData()
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
+
   },
   computed: {
     ...mapState('user', ['token']),
   },
   methods: {
-    columnSetFun(){ 
-      this.$refs.dataTable.showDrawer()
-    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -329,7 +284,7 @@ export default {
         this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false
-          this.initData()
+          // this.initData()
         })
       }).catch(() => {
         this.treeLoading = false
@@ -359,7 +314,35 @@ export default {
         this.initData()
       }
     },
-
+    getToLowerCase(val) {
+      return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
+    },
+    getDevData() {
+      let queryString = this.jnpf.getQueryString()
+      detailVisualDevInfo(queryString).then(res => {
+        this.columnData = JSON.parse(res.data.columnData)
+        console.log(this.columnData);
+        this.tableItems = this.columnData.columnList.map(item => {
+          let formatterFunction = null
+          if (item.formatter){
+            formatterFunction = new Function('return ' + item.formatter)
+            let fnc = formatterFunction()
+            console.log(fnc);
+          }
+          
+          return {
+            ...item,
+            prop: this.getToLowerCase(item.prop),
+            minWidth: item.width ? item.width : 120,
+            formatter:item.formatter ? formatterFunction.bind(this)() : ''
+          }
+        })
+        console.log(this.tableItems);
+      }).catch(() => { })
+    },
+    toFormatter(row, column, cellValue, index) {
+      return cellValue
+    },
     initData() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {
@@ -368,7 +351,7 @@ export default {
       })
       // this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getProductList(this.listQuery).then(res => {
+      getWarehouseList(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -408,9 +391,9 @@ export default {
     },
     // 导入
     importForm() {
-      if (!this.listQuery.productCategoryId){
+      if (!this.listQuery.productCategoryId) {
         this.$message.warning('请先选择产品分类')
-      }else{
+      } else {
         this.$refs.UploadProduct.$el.querySelector('input').click()
       }
     },
@@ -431,9 +414,9 @@ export default {
       formData.append("classAttribute", this.listQuery.classAttribute)
       //调用上传文件接口
       uploadCpProductData(formData).then(res => {
-        if (!res.data){
+        if (!res.data) {
           this.$message.success(`导入成功`)
-        }else{
+        } else {
           this.handleMessage(res.data)
         }
 
@@ -445,51 +428,51 @@ export default {
         this.loadingText = ''
       })
     },
-     // 导入产品  下载导入错误数据
-     downNoProduct(res){
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
     },
     // 提示
-    handleMessage(data){
+    handleMessage(data) {
       const h = this.$createElement
-          this.$message({
-            type:"error",
-            duration:0,
-            showClose: true,
-            customClass: 'my-message', // 自定义类名，用于设置样式
-            message: h('div',
-              {
-                style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
               },
-            [
-                h('p',{style:'font-size:14px;'},'导入成功，存在成品产品档案错误！'),
-                h('el-button',{
-                  props:{
-                    type:'text',
-                    size:"mini",
-                    icon:'el-icon-download'
-                  },
-                  on:{
-                    click:()=>{
-                      this.downNoProduct(data)
-                    }
-                  },
-                style :{
-                  border:"none",
-                  textAlign:"center",
-                  // width:"20%",
-                  margin:"0 5px 0 5px ",
-                },
-                },'下载导入错误数据')
-              ]
-            ),
-          })
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
       return
     },
     // 智能新建
-    aiAdd(){
+    aiAdd() {
       this.aiformVisible = true
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.aiForm.init()
       })
     },

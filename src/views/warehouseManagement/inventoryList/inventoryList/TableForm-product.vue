@@ -7,8 +7,8 @@
       <el-button type="text" class="topButton" icon="el-icon-plus" @click="importProduct">导入产品</el-button>
       <span>|</span>
 
-      <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button>
-      <span>|</span>
+      <!-- <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button>
+      <span>|</span> -->
 
       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
       <span>|</span>
@@ -70,7 +70,7 @@
       :visible.sync="uploadVisib"   lock-scroll
       class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" drag :on-remove="handleRemove"  :on-change="handleFileChange" ref="uploadRef">
+        :on-preview="handlePreview" :drag="dragFlag" :on-remove="handleRemove"  :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
@@ -92,6 +92,7 @@ import FormItem from "@/components/JNPF-col-table/item"
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { mapState } from 'vuex'
+import { getBimBusinessSwitchConfigList, editBimBusinessData } from '@/api/basicData/index'
 import { warehouseUploadLine } from '@/api/warehouseManagement/inventory'
 export default {
   components: { FormItem },
@@ -103,17 +104,18 @@ export default {
       JNPFColTableData: {
         data: this.value
       },
+      dragFlag:true,
       customStyleData: {},
       tableVisible: true,
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
-        { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+        { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "" } },
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttribute: "",
-        classAttributeList: ["raw_material", "accessories", "semi_finished", "finish_product", "other",],
+        classAttributeList: [],
         productCategoryId: "",
+        productCategoryCode:"",
         code: "",
         name: "",
         orderItems: [{
@@ -400,14 +402,15 @@ export default {
       // 调用上传文件接口
       warehouseUploadLine(formData).then(res => {
         console.log(res);
-        if (!res.data.url) {
+        if (!res.data.url&&res.data.list.length) {
           this.$message.success(`导入成功`)
           this.formLoading = false
           this.loadingText = ''
-        this.$emit('addth', [res.data.list], 'cover')
+        this.uploadVisib = false
+        this.$emit('addth', res.data.list, 'import')
       } else {
         if(res.data.list){
-        this.$emit('addth', [res.data.list], 'cover')
+        this.$emit('addth', [res.data.list], 'import')
         }
           this.handleMessage(res.data)
         this.uploadVisib = false

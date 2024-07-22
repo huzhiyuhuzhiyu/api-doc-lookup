@@ -45,9 +45,14 @@
           <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
             icon="el-icon-download" @click="exportForm">导出</el-button>
           <div class="JNPF-common-head-right">
+            
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -55,16 +60,15 @@
         </div>
 
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
-          :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
+          :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList"
           :checkSelectable="checkSelectable">
-
-          <el-table-column prop="orderNo" label="出入库单号" min-width="240"  />
-          <el-table-column prop="partnerName" label="客户名称" min-width="180"  />
-          <el-table-column prop="partnerCode" label="客户编码" min-width="180"  />
-          <el-table-column prop="productCode" label="产品编码" min-width="180"  />
-          <el-table-column prop="productName" label="产品名称" min-width="180"  />
-          <el-table-column prop="productDrawingNo" label="规格型号" min-width="180"  />
-          <el-table-column prop="returnDeliveryType" label="发/退货类型" min-width="180" >
+          <el-table-column prop="orderNo" label="出入库单号" min-width="240"  sortable="custom"/>
+          <el-table-column prop="partnerName" label="客户名称" min-width="180"  sortable="custom"/>
+          <el-table-column prop="partnerCode" label="客户编码" min-width="180"  sortable="custom"/>
+          <el-table-column prop="productCode" label="产品编码" min-width="180"  sortable="custom"/>
+          <el-table-column prop="productName" label="产品名称" min-width="180"  sortable="custom"/>
+          <el-table-column prop="productDrawingNo" label="规格型号" min-width="180"  sortable="custom"/>
+          <el-table-column prop="returnDeliveryType" label="发/退货类型" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.returnDeliveryType == 'delivery'">发货</div>
               <div v-else-if="scope.row.returnDeliveryType == 'back'">退货</div>
@@ -80,8 +84,8 @@
               <div v-else-if="scope.row.returnDeliveryType == 'back'" style="color:red">-{{ scope.row.excludingTaxAmount }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180"  />
-          <el-table-column prop="createByName" label="创建人" min-width="180"  />
+          <el-table-column prop="createTime" label="创建时间" min-width="180"  sortable="custom"/>
+          <el-table-column prop="createByName" label="创建人" min-width="180"  sortable="custom"/>
 
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
@@ -187,22 +191,28 @@
       </span>
     </el-dialog>
 
-
+ <!-- 高级查询 -->
+ <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
   
 <script>
 import { getsalefinAccountList } from '@/api/ReconciliaRePayments/index' 
+import SuperQuery from '@/components/SuperQuery/index.vue'
 
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 export default {
   name: 'salefinAccount',
-  components: { JNPFForm,ExportForm },
+  components: { JNPFForm,ExportForm,SuperQuery },
   data() {
     return {
+      columnList:["partnerCode","productCode","productName","createByName"],
+          
+      superQueryVisible: false,
       title: "更多查询",
       exportFormVisible: false,
       background: true,//分页器背景颜色
@@ -250,12 +260,86 @@ export default {
       selectData: [],                    // 选中的数据 带到form页
       total: 0,
       formVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: "出入库单号",
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'productName',
+          label: "产品名称",
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: "规格型号",
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: "单位",
+          type: 'input'
+        },
+        {
+          prop: 'num',
+          label: "出入库数量",
+          type: 'input'
+        },
+        {
+          prop: 'price',
+          label: "单价(含税)",
+          type: 'input'
+        },
+        {
+          prop: 'taxRate',
+          label: "税率(%)",
+          type: 'input'
+        },
+        {
+          prop: 'excludingTaxAmount',
+          label: "金额",
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: "创建时间",
+          type: 'input'
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        }
+       
+       
+      ],
     }
   },
   created() {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     exportType(data, ref) {
       if (data.length) {
         this.exportFormVisible = true

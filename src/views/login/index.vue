@@ -204,7 +204,7 @@
                 <img src="@/assets/images/qygzh.png" alt="">
                 <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
               </el-popover>
-              <div v-show="active == 2" style="width: 100%;height: 72px;"></div>
+              <div v-show="active == 2" :style="{width: '100%',height: needCode?'139px':'72px',}"></div>
             </div>
             <div class="componey">
               <div>

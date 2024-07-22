@@ -2,7 +2,7 @@
   <el-drawer :title="!dataForm.id ? '新建单据' : '编辑单据'" :visible.sync="drawer" :wrapperClosable="false" ref="drawer"
     size="420px" class="JNPF-common-drawer">
     <div class="JNPF-flex-main">
-      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading" label-width="100px" style="height:calc(100% - 56px)">
+      <el-form ref="dataForm" :model="dataForm" :rules="dataRule" v-loading="formLoading" label-width="100px" >
         <el-form-item label="业务名称" prop="fullName">
           <el-input v-model="dataForm.fullName" placeholder="输入名称" />
         </el-form-item>
@@ -15,10 +15,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="生成方式" prop="codeWay">
-          <el-select v-model="dataForm.codeWay" placeholder="请选择" clearable>
+          <el-select v-model="dataForm.codeWay" placeholder="请选择" >
             <el-option label="自动生成" value="auto" />
             <el-option label="手动输入" value="input" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="允许修改" prop="modifyFlag" v-if="dataForm.codeWay == 'auto'">
+          <el-switch v-model="dataForm.modifyFlag" :active-value="true" :inactive-value="false" />
         </el-form-item>
         <el-form-item label="流水前辍" prop="prefix" v-if="dataForm.codeWay == 'auto'">
           <el-input v-model="dataForm.prefix" placeholder="输入前缀" @keyup.native="handleChange" />
@@ -94,7 +97,8 @@ export default {
         enabledMark: 1,
         description: '',
         category: '',
-        codeWay: "auto"
+        codeWay: "auto",
+        modifyFlag:true
       },
       categoryList: [],
       dataRule: {
@@ -108,6 +112,12 @@ export default {
         ],
         category: [
           { required: true, message: '请选择业务分类', trigger: 'change' },
+        ],
+        codeWay:[
+        { required: true, message: '请选择生成方式', trigger: 'change' },
+        ],
+        modifyFlag:[
+        { required: true, message: '请选择是否允许修改', trigger: 'change' },
         ],
         prefix: [
           { required: true, message: '请输入流水前缀', trigger: 'blur' }
@@ -145,6 +155,7 @@ export default {
         if (this.dataForm.id) {
           getBillRuleInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            
           })
         } else {
           this.dataForm = {
@@ -160,8 +171,9 @@ export default {
             id:id||'',
             description: '',
             category: categoryId||'',
-            codeWay: "auto"
-          },
+            codeWay: "auto",
+            modifyFlag:false
+      },
             this.formLoading = false
           this.dataForm.sortCode = tableList.length
         }
@@ -198,6 +210,9 @@ export default {
         if (valid) {
           this.btnLoading = true
           const formMethod = this.dataForm.id ? updateBillRule : createBillRule
+          if(this.codeWaySwitch==1){
+            this.codeWay='auto_modify'
+          }
           formMethod(this.dataForm).then(res => {
             this.$message({
               message: res.msg,
@@ -226,10 +241,16 @@ export default {
 .JNPF-flex-main {
   padding-right: 20px;
   padding-top: 20px;
+  padding-bottom: 20px;
 }
-
+.JNPF-common-drawer .JNPF-flex-main{
+  height: auto;
+}
 .dialog-footer {
   padding-left: 20px;
   text-align: right
+}
+.JNPF-common-drawer ::v-deep .el-drawer__body{
+  overflow: auto!important;
 }
 </style>

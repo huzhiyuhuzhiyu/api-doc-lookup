@@ -81,7 +81,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column :hasNO="false" row-key="id">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" :hasC="categoryId=='clue'" custom-column :hasNO="false" row-key="id">
           <!-- <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />

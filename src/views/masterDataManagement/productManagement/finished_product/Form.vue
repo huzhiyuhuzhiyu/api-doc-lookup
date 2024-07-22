@@ -113,8 +113,7 @@ export default {
           if (tc.prop === 'productCategoryName') {
             tc.method = getcategoryTree
             tc.requestObj = {
-              classAttribute: 'material',
-              code: 'finishedProduct'
+              classAttribute: 'finish_product'
             }
             getcategoryTree(tc.requestObj).then((res) => {
               if (res.data && !res.data[0].childrenList.length) {
@@ -311,17 +310,31 @@ export default {
         this.dataForm[paramsObj.prop] = ''
       }
     },
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (data && data.codeWay == 'auto') {
+          const orderNo = await this.jnpf.getCodeWayFun(code)
+          this.dataForm.code = orderNo
+          let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+          target.disable = true
+          
+        }
+      } catch (error) {}
+    },
     init(id, btnType = false) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
-      getByCode('bm_cp_cp').then((res) => {
-        this.businessType = res.data.codeWay
-        if (this.businessType !== 'input') {
-          let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.render = false
-        }
-      })
+   
+      // getByCode('bm_cp_cp').then((res) => {
+      //   this.businessType = res.data.codeWay
+      //   if (this.businessType !== 'input') {
+      //     let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+      //     target.render = false
+      //   }
+      // })
       if (!!id) {
         this.dataForm.id = id
         this.title = btnType ? '查看成品档案' : '编辑成品档案'
@@ -341,13 +354,13 @@ export default {
             if (
               [
                 'model',
-                'sealingCoverStructure',
-                'structureType',
-                'clearance',
+                'sealingCoverStructureName',
+                'structureTypeName',
+                'clearanceName',
                 'steelBallManufacturer',
-                'oil',
-                'noise',
-                'holder'
+                'oilName',
+                'noiseName',
+                'holderName'
               ].includes(tc.prop)
             ) {
               tc.itemDisabled = true
@@ -358,6 +371,7 @@ export default {
       } else {
         this.title = '新建成品档案'
         this.formLoading = false
+        this.fetchData('bm_cp_cp')
       }
     },
     async handleConfirm() {

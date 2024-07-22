@@ -139,18 +139,24 @@ export default {
     }
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (data && data.codeWay == 'auto') {
+          const orderNo = await this.jnpf.getCodeWayFun(code)
+          this.dataForm.code = orderNo
+          let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+          target.disable = true
+          
+        }
+      } catch (error) {}
+    },
     init(id, btnType = false) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
-      getByCode(this.busSetId).then(res=>{
-        this.businessType = res.data.configValue1
-        if (this.businessType !== 'input'){
-          let target = this.tabs[0].tabContent.find(tc => tc.prop === 'code')
-          target.render = false
-        }
-      })
       if (!!id) {
         this.title = btnType ? `查看${this.productName}档案` : `编辑${this.productName}档案`
         // 获取详情
@@ -165,6 +171,7 @@ export default {
         })
       } else {
         this.title = `新建${this.productName}档案`
+        this.fetchData(this.busSetId)
       }
       this.formLoading = false
     },

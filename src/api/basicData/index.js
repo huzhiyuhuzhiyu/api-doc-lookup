@@ -1119,7 +1119,7 @@ export function getBimBusinessInfo (id) {
 // 详情
 export function getByCode (code) {
   return request({
-    url: '/api/system/BillRule/getByCode/?code=' + code ,
+    url: '/api/system/BillRule/getByCode?code=' + code ,
     method: 'get',
   })
 }

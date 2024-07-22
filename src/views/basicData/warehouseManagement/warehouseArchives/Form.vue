@@ -15,9 +15,19 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
+            <div
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
+            >
+              <h5>基本信息</h5>
+            </div>
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
           </el-tab-pane>
           <el-tab-pane label="权限信息" name="sleeve" id="sleeve">
+            <div
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
+            >
+              <h5>权限信息</h5>
+            </div>
             <JNPF-col-table
               v-model="stockLimitsAuthorities"
               ref="sleeveForm"
@@ -108,21 +118,17 @@ export default {
   created() {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
-        console.log(tc, 'tc')
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
           // 产品分类
           if (tc.prop === 'partnerCategoryIdText') {
-            console.log(tc, 'tc333')
             // if(tc.prop == 'type') this.type = tc.value
-            // console.log()
+
             tc.method = getWarehouseList
 
             tc.requestObj = this.requestObj2
             tc.change = (val, data) => {
-              console.log(data, 'uuuu')
-
               // dom更新后重新校验此元素
               getWarehouseList(this.requestObj2).then((res) => {
                 if (!val && !data.length) {
@@ -135,7 +141,6 @@ export default {
                 this.dataForm.type = data ? data[0].all.type : ''
                 if (this.dataForm.type == 'scrap') {
                   this.tabs[0].tabContent.forEach((tc) => {
-                    console.log(tc, 'tc')
                     if (tc.prop == 'type') {
                       tc.options = [{ label: '报废', value: 'scrap' }]
                     }
@@ -227,7 +232,6 @@ export default {
   },
   methods: {
     init(id, parentId, btnType) {
-      console.log(parentId, 'oooo')
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -243,7 +247,6 @@ export default {
         // this.title = btnType ? '查看仓库档案' : '编辑仓库档案'
         // 获取详情
         getWarehouseInfo(id).then((res) => {
-          console.log(res, 'res')
           // 记录编码和图号，用于校验唯一性
           this.dataForm.code = res.data.code
           this.dataForm.id = res.data.id
@@ -261,14 +264,12 @@ export default {
 
           if (this.dataForm.type == 'scrap') {
             this.tabs[0].tabContent.forEach((tc) => {
-              console.log(tc, 'tc')
               if (tc.prop == 'type') {
                 tc.options = [{ label: '报废', value: 'scrap' }]
               }
             })
           } else {
             this.tabs[0].tabContent.forEach((tc) => {
-              console.log(tc, 'tc')
               if (tc.prop == 'type') {
                 tc.options = [
                   { label: '正常仓库', value: 'normal' },
@@ -278,25 +279,7 @@ export default {
               }
             })
           }
-          console.log(this.dataForm, 'jjjkkk')
-          // 编辑时，如果已经规格型号那些，不允许修改
-          // this.tabs[0].tabContent.forEach((tc) => {
-          //   console.log(tc,'tc')
-          //   if (
-          //     [
-          //       'model',
-          //       'sealingCoverStructure',
-          //       'structureType',
-          //       'clearance',
-          //       'steelBallManufacturer',
-          //       'oil',
-          //       'noise',
-          //       'holder'
-          //     ].includes(tc.prop)
-          //   ) {
-          //     tc.itemDisabled = true
-          //   }
-          // })
+
           this.formLoading = false
         })
       }
@@ -330,9 +313,9 @@ export default {
       for (let i = 0; i < this.$refs['dataForm'].length; i++) {
         const item = this.$refs['dataForm'][i]
         const form = item.$refs.main
-        console.log(form, 'form')
+
         const valid_1 = await form.validate().catch(() => false)
-        console.log(valid_1, '1111')
+
         if (!valid_1 && submitFlag) {
           submitFlag = false
           this.activeName = this.tabs[i].tabCode
@@ -398,7 +381,6 @@ export default {
     },
     //批量选择人员
     hangleSelectSales(val, data) {
-      console.log(data, 'data')
       if (!data.length) return
       data.map((item) => {
         item.fullName = item.fullName.split('/')[0]
@@ -415,7 +397,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
-  padding: 0px 30px 10px;
+  // padding: 0px 30px 10px;
 }
 
 ::v-deep .el-tabs__header {
@@ -432,6 +414,7 @@ export default {
 
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
+  padding: 0px 20px;
 }
 
 ::v-deep .JNPF-common-page-header {

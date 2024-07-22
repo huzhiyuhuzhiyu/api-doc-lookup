@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
@@ -48,12 +48,15 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :fixedNO="true"
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :fixedNO="true"
           custom-column :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }">
           <el-table-column prop="name" label="仓库名称" fixed="left" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
@@ -63,11 +66,21 @@
               }}</el-link>
             </template>
           </el-table-column>
-
+          <el-table-column prop="image" label="藏品封面" align="center" width="150">
+            <template slot-scope="scope">
+              <el-popover placement="top-start" trigger="click">
+                <!--trigger属性值：hover、click、focus 和 manual-->
+                <a :href="scope.row.image" target="_blank" title="查看最大化图片">
+                  <img :src="scope.row.image" style="width: 500px;height: 500px" />
+                </a>
+                <img slot="reference" :src="scope.row.image" style="width: 100px;height: 100px; cursor:pointer" />
+              </el-popover>
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="typeName" label="类型" width="120"></el-table-column> -->
           <el-table-column prop="position" label="位置" min-width="120"></el-table-column>
-          <el-table-column prop="goodsShelvesNum" label="货架数" width="100" />
-          <el-table-column prop="goodsAllocationNum" label="库位数" width="100" />
+          <!-- <el-table-column prop="goodsShelvesNum" label="货架数" width="100" />
+          <el-table-column prop="goodsAllocationNum" label="库位数" width="100" /> -->
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"> </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
@@ -101,7 +114,7 @@
 </template>
 
 <script>
-import { getWarehouseList, deleteWarehouse } from '@/api/basicData/index'
+import { getWarehouseList, deleteWarehouse,BuildQRCode } from '@/api/basicData/index'
 
 import Form from './Form'
 export default {
@@ -139,12 +152,21 @@ export default {
   },
   created() {
     this.initData()
+    // this.buildQRCode()
   },
   methods: {
+    buildQRCode(){
+      BuildQRCode().then(res=>{
+        console.log(res,'res')
+      })
+    },
+    columnSetFun(){ 
+      this.$refs.tabForm.showDrawer()
+    },
     initData() {
       this.loading = true
       getWarehouseList(this.form).then(res => {
-        console.log("树形", res);
+   
         this.treeList = res.data
         if (this.treeList.length > 0) this.setTableIndex(this.treeList);
         this.listLoading = false
@@ -156,12 +178,14 @@ export default {
     },
     search() {
       this.initData()
+      this.buildQRCode()
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log("arr", arr, index);
+    
       arr.forEach((item, key) => {
         item.index = key + 1;
+        item.image = require('../../../../assets/images/zgt.png')
         if (index) {
           item.index = index + 1;
         }
@@ -178,7 +202,7 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(id, parentId, type) {
-      console.log("121342134", id, parentId);
+    
       this.formVisible = true
       if (id) {
         // setTimeout(() => {

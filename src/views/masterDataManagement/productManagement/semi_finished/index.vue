@@ -7,7 +7,7 @@
  * @Description: 半成品页面
 -->
 <template>
-  <ProductIndex :initListQuery="initListQuery" productName="半成品" :busSetId="'371948346044055558'" />
+  <ProductIndex :initListQuery="initListQuery" productName="半成品" :busSetId="'bm_cp_bcp'" />
  </template>
  
  <script>

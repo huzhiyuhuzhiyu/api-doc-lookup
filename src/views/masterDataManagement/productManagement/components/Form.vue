@@ -27,7 +27,7 @@
 
 <script>
 import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
-import { getBimBusinessInfo } from '@/api/basicData/index'
+import { getByCode} from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 
 import tabs from './params'
@@ -144,9 +144,9 @@ export default {
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
-      getBimBusinessInfo(this.busSetId).then(res=>{
+      getByCode(this.busSetId).then(res=>{
         this.businessType = res.data.configValue1
-        if (this.businessType === '1'){
+        if (this.businessType !== 'input'){
           let target = this.tabs[0].tabContent.find(tc => tc.prop === 'code')
           target.render = false
         }

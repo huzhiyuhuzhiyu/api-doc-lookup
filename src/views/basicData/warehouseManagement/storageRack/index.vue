@@ -1,18 +1,29 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title">
-        <h2>仓库</h2>
-        <span class="options">
+        <h2 v-if="!leftFlag">仓库</h2>
+        <span class="options" v-if="!leftFlag">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getWarehouseList()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input
+          placeholder="输入关键字进行过滤"
+          v-model="filterText"
+          style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search"
+          clearable
+        ></el-input>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
@@ -40,9 +51,15 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box" :gutter="16">
+      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
@@ -87,6 +104,9 @@
                                 icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false"
                                 @click="toggleExpandTable()" />
                         </el-tooltip> -->
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -100,6 +120,8 @@
           :fixedNO="true"
           @sort-change="sortChange"
           custom-column
+          :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }"
         >
           <el-table-column prop="name" label="货架/货位名称" fixed="left" min-width="180">
             <!-- <template slot-scope="scope">
@@ -109,17 +131,17 @@
             </template> -->
           </el-table-column>
           <el-table-column prop="code" label="货架/货位编码" width="180" sortable="custom">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
                 {{ scope.row.code }}
               </el-link>
-            </template>
+            </template> -->
           </el-table-column>
-          <el-table-column prop="unitVolume" label="体积" width="150" />
+          <!-- <el-table-column prop="unitVolume" label="体积" width="150" />
           <el-table-column prop="usedVolume" label="已使用体积" width="150" />
           <el-table-column prop="residualVolume" label="剩余体积" width="150" />
-          <el-table-column prop="warehouseName" label="仓库名称" width="160" />
-          <el-table-column prop="locationTypeName" label="货位类型" width="100" />
+          <el-table-column prop="warehouseName" label="仓库名称" width="160" /> -->
+          <el-table-column prop="category" label="货位类型" width="100" />
           <!-- <el-table-column prop="goodsFrameRow" label="货架行" width="80" />
                     <el-table-column prop="goodsFrameCol" label="货架列" width="80" /> -->
           <el-table-column prop="remark" label="备注" width="160" />
@@ -129,7 +151,7 @@
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.warehouseId, scope.row.category)"
                 @del="handleDel(scope.row.id, scope.row.parentId)"
               >
-                <el-dropdown hide-on-click>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}
@@ -141,7 +163,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
 
               <!-- <el-button type="text"
@@ -164,13 +186,13 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination
+        <!-- <pagination
           :total="total"
           :page.sync="tableQuery.pageNum"
           :background="background"
           :limit.sync="tableQuery.pageSize"
           @pagination="initData"
-        />
+        /> -->
       </div>
     </div>
 
@@ -179,7 +201,7 @@
 </template>
 
 <script>
-import { deleteStockGoodsShelves, getStockGoodsShelves, getList } from '@/api/basicData/stockGoodsShelves'
+import { deleteStockGoodsShelves, getStockGoodsShelves, getListTree } from '@/api/basicData/stockGoodsShelves'
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import moment from 'moment'
@@ -234,7 +256,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-
+      leftFlag: false,
       total: 0,
       diagramVisible: false,
       formVisible: false,
@@ -256,6 +278,12 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.tableQuery.orderItems[0].asc = order === 'ascending'
@@ -287,6 +315,23 @@ export default {
         })
       })
     },
+    // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem('customExpandsFlag', expands)
+      })
+    },
+    // 展开或折叠全部
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+      })
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
@@ -295,7 +340,6 @@ export default {
       this.treeLoading = true
       getWarehouseList(this.treeQuery)
         .then((res) => {
-          console.log('树形结构', res)
           this.treeData = res.data
           this.$nextTick(() => {
             this.treeLoading = false
@@ -314,11 +358,23 @@ export default {
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
 
-      getList(this.tableQuery)
+      getListTree(this.tableQuery)
         .then((res) => {
           //
-          console.log('货位表格', res)
-          this.tableDataList = res.data.records
+
+          this.tableDataList = res.data
+          this.tableDataList.forEach((item) => {
+            // if (item.category == 'area') {
+            //   item.category = '库区'
+            // } else if (item.category == 'shelves') {
+            //   item.category = '货架'
+            // } else if (item.category == 'location') {
+            //   item.category = '货位'
+            // }
+          })
+
+          if (this.tableDataList.length > 0) this.setTableIndex(this.tableDataList)
+
           this.total = res.data.total
           this.listLoading = false
         })
@@ -328,8 +384,14 @@ export default {
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log('arr', arr, index)
       arr.forEach((item, key) => {
+        if (item.category == 'area') {
+          item.category = '库区'
+        } else if (item.category == 'shelves') {
+          item.category = '货架'
+        } else if (item.category == 'location') {
+          item.category = '货位'
+        }
         item.index = key + 1
         if (index) {
           item.index = index + 1
@@ -373,7 +435,6 @@ export default {
       // this.search()
     },
     handleNodeClick(data, node) {
-      console.log('请选择节点', node, data)
       if (this.tableQuery.warehouseId === data.id) return
       this.tableQuery.warehouseId = data.id
       this.warehouseName = data.name
@@ -398,19 +459,17 @@ export default {
       })
     },
     addOrUpdateHandle(id, warehouseId, btntype) {
-      console.log('121342134', id, warehouseId, btntype)
       this.depFormVisible = true
       let newBtnType = ''
 
-      if (!btntype) {
-        newBtnType = 'edit'
-      } else if (btntype == 'area') {
+      if (btntype == '库区') {
         newBtnType = 'areaEdit'
-      } else if (btntype == 'shelves') {
+      } else if (btntype == '货架') {
         newBtnType = 'shelvesEdit'
-      } else if (btntype == 'location') {
+      } else if (btntype == '货位') {
         newBtnType = 'locationEdit'
       }
+
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
@@ -452,8 +511,17 @@ export default {
     },
     handleUserRelation(id, parentId, btnType) {
       this.depFormVisible = true
+      let newBtnType = ''
+
+      if (btntype == '库区') {
+        newBtnType = 'areaEdit'
+      } else if (btntype == '货架') {
+        newBtnType = 'shelvesEdit'
+      } else if (btntype == '货位') {
+        newBtnType = 'locationEdit'
+      }
       this.$nextTick(() => {
-        this.$refs.depForm.init(id, parentId, btnType)
+        this.$refs.depForm.init(id, parentId, newBtnType)
       })
     }
   }

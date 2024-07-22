@@ -113,8 +113,7 @@ export default {
           if (tc.prop === 'productCategoryName') {
             tc.method = getcategoryTree
             tc.requestObj = {
-              classAttribute: 'material',
-              code: 'finishedProduct'
+              classAttribute: 'finish_product'
             }
             getcategoryTree(tc.requestObj).then((res) => {
               if (res.data && !res.data[0].childrenList.length) {

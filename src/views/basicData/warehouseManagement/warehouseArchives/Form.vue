@@ -178,17 +178,31 @@ export default {
                 } else if (this.dataForm.code === this.autoCode) {
                   callback()
                 } else {
-                  checkCodeExist({ id: this.dataForm.id || '', code: this.dataForm.code })
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此仓库编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
+                  if (this.dataForm.id) {
+                    checWarehouseCode(value, this.dataForm.id)
+                      .then((res) => {
+                        if (!res.data) {
+                          callback()
+                        } else {
+                          callback(new Error('此仓库编码已存在'))
+                        }
+                      })
+                      .catch((err) => {
+                        callback(new Error(' '))
+                      })
+                  } else {
+                    checWarehouseCode(value, '')
+                      .then((res) => {
+                        if (!res.data) {
+                          callback()
+                        } else {
+                          callback(new Error('此仓库编码已存在'))
+                        }
+                      })
+                      .catch((err) => {
+                        callback(new Error(' '))
+                      })
+                  }
                 }
               },
               trigger: 'blur'
@@ -248,6 +262,7 @@ export default {
         // 获取详情
         getWarehouseInfo(id).then((res) => {
           // 记录编码和图号，用于校验唯一性
+          this.autoCode = res.data.code
           this.dataForm.code = res.data.code
           this.dataForm.id = res.data.id
           this.dataForm.name = res.data.name

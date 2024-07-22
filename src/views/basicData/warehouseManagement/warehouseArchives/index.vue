@@ -66,7 +66,7 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="image" label="藏品封面" align="center" width="150">
+          <el-table-column prop="image" label="二维码" align="center" width="150">
             <template slot-scope="scope">
               <el-popover placement="top-start" trigger="click">
                 <!--trigger属性值：hover、click、focus 和 manual-->

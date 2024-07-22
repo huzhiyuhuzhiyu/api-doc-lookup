@@ -55,7 +55,7 @@ import {
   detailProductionResourceData,
   editStockGoodsShelves
 } from '@/api/basicData/stockGoodsShelves'
-
+import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import tabs from './params'
 export default {
@@ -85,18 +85,37 @@ export default {
           label: '库区编码',
           type: 'input',
           itemRules: [
+            { required: true, message: '请输入仓库编码', trigger: 'blur' },
             {
-              validator: this.formValidate({
-                type: 'decimal',
-                params: [
-                  10,
-                  2,
-                  false,
-                  (errMsg) => {
-                    this.$message.error(`画线长：${errMsg}`)
+              validator: (rule, value, callback) => {
+                if (this.autoCode == value) {
+                  callback()
+                } else {
+                  if (this.dataForm.id) {
+                    checWarehouseCode(value, this.dataForm.id)
+                      .then((res) => {
+                        if (res.data) {
+                          callback(new Error('编码重复'))
+                          this.$message.error(`编码重复`)
+                        } else {
+                          callback()
+                        }
+                      })
+                      .catch((error) => {})
+                  } else {
+                    checWarehouseCode(value, '')
+                      .then((res) => {
+                        if (res.data) {
+                          callback(new Error('编码重复'))
+                          this.$message.error(`编码重复`)
+                        } else {
+                          callback()
+                        }
+                      })
+                      .catch((error) => {})
                   }
-                ]
-              }),
+                }
+              },
               trigger: 'blur'
             }
           ]
@@ -133,8 +152,6 @@ export default {
         pageSize: 20,
         model: ''
       },
-
-  
 
       rowColShow: false,
       tableFlag: true,
@@ -187,6 +204,7 @@ export default {
         detailProductionResourceData(id).then((res) => {
           // 记录编码和图号，用于校验唯一性
           this.dataForm = res.data
+          this.autoCode = res.data.code
           this.dataForm.warehouseId = res.data.warehouseId
           this.requestObj5.warehouseId = this.dataForm.warehouseId
 
@@ -210,6 +228,7 @@ export default {
           detailProductionResourceData(id).then((res) => {
             // 记录编码和图号，用于校验唯一性
             this.dataForm = res.data
+            this.autoCode = res.data.code
             this.dataForm.warehouseNameNew = res.data.warehouseName
 
             this.stockLimitsAuthorities = [
@@ -230,6 +249,7 @@ export default {
           detailProductionResourceData(id).then((res) => {
             // 记录编码和图号，用于校验唯一性
             this.dataForm = res.data
+            this.autoCode = res.data.code
             this.dataForm.warehouseNameNew = res.data.warehouseName
 
             this.stockLimitsAuthorities = [
@@ -250,6 +270,7 @@ export default {
           detailProductionResourceData(id).then((res) => {
             // 记录编码和图号，用于校验唯一性
             this.dataForm = res.data
+            this.autoCode = res.data.code
             this.dataForm.warehouseNameNew = res.data.warehouseName
             this.dataForm.areaNameNew = this.dataForm.areaName
 
@@ -282,6 +303,7 @@ export default {
           detailProductionResourceData(id).then((res) => {
             // 记录编码和图号，用于校验唯一性
             this.dataForm = res.data
+            this.autoCode = res.data.code
             this.dataForm.warehouseNameNew = res.data.warehouseName
             this.dataForm.areaNameNew = this.dataForm.areaName
             this.dataForm.goodsShelvesIdNew = res.data.goodsShelvesName
@@ -341,7 +363,46 @@ export default {
             }
             this.sleeveItems = [
               { prop: 'name', label: '货架名称', type: 'input' },
-              { prop: 'code', label: '货架编码', type: 'input' },
+              {
+                prop: 'code',
+                label: '货架编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货架编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.autoCode == value) {
+                        callback()
+                      } else {
+                        if (this.dataForm.id) {
+                          checWarehouseCode(value, this.dataForm.id)
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        } else {
+                          checWarehouseCode(value, '')
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        }
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
               { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           } else if (this.title == '编辑货架') {
@@ -351,7 +412,46 @@ export default {
 
             this.sleeveItems = [
               { prop: 'name', label: '货架名称', type: 'input' },
-              { prop: 'code', label: '货架编码', type: 'input' },
+              {
+                prop: 'code',
+                label: '货架编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货架编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.autoCode == value) {
+                        callback()
+                      } else {
+                        if (this.dataForm.id) {
+                          checWarehouseCode(value, this.dataForm.id)
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        } else {
+                          checWarehouseCode(value, '')
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        }
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
               { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           } else if (this.title == '新建货位') {
@@ -360,7 +460,42 @@ export default {
             }
             this.sleeveItems = [
               { prop: 'name', label: '货位名称', type: 'input' },
-              { prop: 'code', label: '货位编码', type: 'input' },
+              {
+                prop: 'code',
+                label: '货位编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货位编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.dataForm.id) {
+                        checWarehouseCode(value, this.dataForm.id)
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      } else {
+                        checWarehouseCode(value, '')
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
               { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           } else if (this.title == '编辑货位') {
@@ -369,7 +504,42 @@ export default {
             }
             this.sleeveItems = [
               { prop: 'name', label: '货位名称', type: 'input' },
-              { prop: 'code', label: '货位编码', type: 'input' },
+              {
+                prop: 'code',
+                label: '货位编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货位编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.dataForm.id) {
+                        checWarehouseCode(value, this.dataForm.id)
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      } else {
+                        checWarehouseCode(value, '')
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
               { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           }

@@ -2288,9 +2288,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (data && data.codeWay == 'auto' && (this.btnType == 'add' || this.btnType == 'copy')) {
+        if (data && data.codeWay == 'auto'  ) {
           const orderNo = await this.jnpf.getCodeWayFun(code)
-          console.log("orderNo", orderNo);
           this.dataForm.orderNo = orderNo
         }
       } catch (error) {

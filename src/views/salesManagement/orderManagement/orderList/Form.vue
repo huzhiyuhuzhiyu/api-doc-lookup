@@ -24,9 +24,11 @@
               </div>
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="6" :xs="24"  >
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="订单编号" prop="orderNo">
-                      <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号" :disabled="btnType == 'look'?true:codeConfig.codeWay=='auto'&&codeConfig.modifyFlag==true?false:true" maxlength="300" />
+                      <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
+                        :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                        maxlength="300" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="6" :xs="24">
@@ -38,7 +40,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                 
+
                   <el-col :sm="6" :xs="24">
                     <el-form-item label="所属客户" prop="cooperativePartnerId">
                       <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择所属客户" readonly
@@ -1129,8 +1131,8 @@ export default {
         departmentName: "",
         cooperativePartnerCode: "",
       },
-        codeConfig:{},//单据规则配置
-        defaultAddress: "",
+      codeConfig: {},//单据规则配置
+      defaultAddress: "",
       parentId: '',
       pickerOptions: {
         disabledDate(time) {
@@ -1229,7 +1231,6 @@ export default {
     })
   },
   beforeDestroy() {
-    54
     // window.removeEventListener('resize', this.switchStyle)
   },
   methods: {
@@ -2286,11 +2287,11 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig=data
-        if (data && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code )
+        this.codeConfig = data
+        if (data && data.codeWay == 'auto' && (this.btnType == 'add' || this.btnType == 'copy')) {
+          const orderNo = await this.jnpf.getCodeWayFun(code)
           console.log("orderNo", orderNo);
-          this.dataForm.orderNo=orderNo
+          this.dataForm.orderNo = orderNo
         }
       } catch (error) {
       }
@@ -2299,17 +2300,11 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       if (this.btnType == 'add' || this.btnType == 'copy') {
-        console.log("11324234");
         setTimeout(() => {
           this.getWorkOrderNoFun()
 
         }, 500);
-        //  this.fetchData('SHDD')
         this.fetchData("SHDD")
-        //     BillNumber('SHDD').then(res=>{
-        //   console.log("订单号",res);
-        // })
-
       }
 
       if (btnType == 'add') {

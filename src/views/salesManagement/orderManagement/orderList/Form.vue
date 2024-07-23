@@ -3,13 +3,14 @@
     <div>
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-          <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售订单' : btnType == 'edit' ? '编辑销售订单' : btnType == 'look' ? '查看销售订单' : '新建销售订单'" />
-          <div class="options" v-if="btnType != 'look'">
-            <el-button type="success" size="mini" :loading="btnLoading" @click="handleConfirm('draft')">
+          <div class="options">
+            <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('draft')">
               保存草稿</el-button>
-            <el-button type="primary" size="mini" :loading="btnLoading" @click="handleConfirm('submit')">
+            <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('submit')">
               保存并提交</el-button>
             <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
@@ -20,10 +21,6 @@
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <!-- <div
-                    style="line-height:33px;font-size:18px;border-top:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-                    <h5>基本信息</h5>
-                  </div> -->
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
@@ -186,12 +183,10 @@
 
                   </el-form>
                 </el-collapse-item>
+
+
+
                 <el-collapse-item title="产品信息" name="productInfo">
-                  <!-- <div
-                    style="line-height:33px;font-size:18px;border-top:1px solid #dcdfe6;background: #fafafa;padding-left:5px;"
-                    ref="box">
-                    <h5>产品信息</h5>
-                  </div> -->
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -287,10 +282,7 @@
                               :disabled="btnType == 'look' ? true : false" maxlength="3000" />
                           </template>
                         </el-table-column>
-
-                        <!-- 列表中显示的自定义属性 -->
-                        <el-table-column v-for="item in customList" :key="item.prop" :prop="item.prop"
-                          :label="item.label" min-width="180" :formatter="filterateLabel" />
+ 
                         <el-table-column prop="remark" label="备注1" width="200" :key="1">
                           <template slot-scope="scope">
                             <el-input v-model="scope.row.remark" placeholder="请输入备注1"
@@ -396,11 +388,7 @@
                         <el-input v-model="scope.row.ask" placeholder="请输入要求"
                           :disabled="btnType == 'look' ? true : false" maxlength="3000" />
                       </template>
-                    </el-table-column>
-
-                    <!-- 列表中显示的自定义属性 -->
-                    <el-table-column v-for="item in customList" :key="item.prop" :prop="item.prop" :label="item.label"
-                      min-width="180" :formatter="filterateLabel" />
+                    </el-table-column> 
                     <el-table-column prop="remark" label="备注1" width="200" :key="1">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注1"
@@ -432,13 +420,7 @@
 
 
 
-              <!-- <div class="table-actions" @click="addProduct()" v-if="btnType !== 'look'">
-              <el-button type="text" icon="el-icon-plus">添加</el-button>
-            </div> -->
-              <!-- <el-tabs v-model="activeNameDetail">
-              <el-tab-pane label="产品信息" name="productInfo">
-              </el-tab-pane>
-            </el-tabs> -->
+
 
             </el-tab-pane>
             <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
@@ -805,8 +787,7 @@
           :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
 
         <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
-        <!-- <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-          :http-request="UploadProduct" /> -->
+
         <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
           <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false"
@@ -827,16 +808,17 @@
         </el-dialog>
         <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
-          <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span  class="import_t"> 导入成功啦！</span><span  class="import_b">您还可以进行如下操作：</span></div>
-           
-          <div>
+          <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+              {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+
+          <!-- <div>
             <el-button type="text" @click="continueImport">继续导入</el-button>
-              
-          </div>
+
+          </div> -->
           <span slot="footer" class="dialog-footer">
-            <el-button @click="tipsvisible = false">{{ $t('common.cancelButton') }}</el-button>
-            <el-button type="primary" @click="tipsvisible = false">
-              关闭弹框</el-button>
+            <el-button @click="goBack">返回列表</el-button>
+            <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+            <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
           </span>
         </el-dialog>
       </div>
@@ -870,18 +852,14 @@ import { BillNumber } from '@/api/system/billRule'
 import { log } from 'mathjs'
 
 export default {
-  props: {
-    customList: {
-      require: true,
-      type: Array
-    }
-  },
+  
   components: {
     changeAddress, VueDraggableResizable, ExportForm
   },
   data() {
     return {
-      tipsvisible:false,
+      btnText: "",
+      tipsvisible: false,
       uploadVisib: false,
       activeNames: ["productInfo", "basicInfo"],
       bomLoading: false,
@@ -910,6 +888,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
+      submitmethodsTitle: "",
       getProductList,
       getcooperativeProduct,
       // 选择产品 弹框列表展示字段
@@ -1418,15 +1397,16 @@ export default {
       this.UploadProduct(this.file)
     },
     // 继续导入
-    continueImport(){
-      this.tipsvisible=false
+    continueImport() {
+      this.tipsvisible = false
       this.$refs['uploadRef'].clearFiles();
-      this.uploadVisib=true
+      this.uploadVisib = true
     },
     handleFileChange(file) {
       console.log("所选文件:", file);
       this.file = file.raw
     },
+
     // 上传产品
     UploadProduct(data) {
       this.loadingText = '正在导入数据'
@@ -1436,25 +1416,72 @@ export default {
       formData.append("partnerId", this.dataForm.cooperativePartnerId)
       //调用上传文件接口
       uploadProduct(formData).then(res => {
-        this.tipsvisible=true
-        this.uploadVisib = false
-        if (res.data.length > 0) {
-          res.data.forEach(item => {
-            item.totalAmount = item.amounts
-            item.excludingTaxAmount = item.excludingTaxAmounts
-            if (this.dataForm.deliveryDate) {
-              item.deliveryDate = this.dataForm.deliveryDate
-            }
-          });
+        if (!res.data.url) {
+          this.$message.success(`导入成功`)
+          if (res.data.list.length > 0) {
+            res.data.list.forEach(item => {
+              item.totalAmount = item.amounts
+              item.excludingTaxAmount = item.excludingTaxAmounts
+              if (this.dataForm.deliveryDate) {
+                item.deliveryDate = this.dataForm.deliveryDate
+              }
+            });
+          }
+          this.productData = res.data.list
+          this.formLoading = false
           this.loadingText = ''
+          this.uploadVisib = false
+        } else {
+          this.handleMessage(res.data)
         }
-        this.productData = res.data
-        this.formLoading = false
+        // this.tipsvisible=true
+
       }).catch(err => {
         this.$message.error(`文件上传失败`)
         this.formLoading = false
         this.loadingText = ''
       })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在型号相关信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
     },
     // 下载模板
     downLoadTemplate() {
@@ -1592,9 +1619,7 @@ export default {
       })
     },
 
-    goBack() {
-      this.$emit('close')
-    },
+
     // 主数量输入失去焦点 检验不能为  0
     checkNum(row, index) {
       if (!row.num) {
@@ -2341,38 +2366,21 @@ export default {
       } catch (error) {
       }
     },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+
+      this.tipsvisible = false
+    },
     init(id, btnType) {
       this.dataForm.id = id || ''
+      this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.btnType = btnType
-      if (this.btnType == 'add' || this.btnType == 'copy') {
-        setTimeout(() => {
-          this.getWorkOrderNoFun()
-
-        }, 500);
-        this.fetchData("SHDD")
-      }
-
-      if (btnType == 'add') {
-        // 获取当前日期
-        const currentDate = new Date();
-
-        // 获取年份
-        const year = currentDate.getFullYear();
-
-        // 获取月份（注意月份从0开始，所以要加1）
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-        // 获取日期
-        const date = String(currentDate.getDate()).padStart(2, '0');
-
-        // 拼接为YYYY-MM-DD格式
-        const formattedDate = `${year}-${month}-${date}`;
-        this.dataForm.orderDate = formattedDate;
-
-      }
-
-
-
+      this.oldType = JSON.parse(JSON.stringify(btnType))
       if (this.dataForm.id) {
         if (btnType == "edit" || btnType == "look") {
           getOrderDetail(this.dataForm.id).then(res => {
@@ -2504,47 +2512,85 @@ export default {
 
       } else {
         this.salesFlag = true
+    
+        this.dataForm = {
+          orderNo: "",
+          orderType: "normal",
+          orderCategory: "assembly",
+          cooperativePartnerId: "",
+          contractNo: "",
+          contractId: "",
+          workOrderNo: "",
+          sourceOrderNo: "",
+          orderDate: "",
+          deliveryDate: "",
+          shipmentStatus: "",
+          deliveryCompletionDate: "",
+          shippingControl: "",
+          delivery: "",
+          deliveryNoteNumber: "",
+          recipient: "",
+          phone: "",
+          country: "",
+          province: "",
+          city: "",
+          area: "",
+          address: "",
+          orderState: "",
+          paymentMethod: "",
+          paymentCycle: "",
+          // vehicleTypeCorrespondingId: "",
+          // vehicleTypeCorrespondingName: "",
+          changesCount: "",
+          remark: "",
+          id: "",
+          cooperativePartnerName: "",
+          departmentName: "",
+          cooperativePartnerCode: "",
+        },
+        this.dataForm.departmentId = this.userInfo.departmentId
+    this.dataForm.salesName = this.userInfo.userName
+    this.dataForm.salesId = this.userInfo.userId
+        this.productData=[]
+      }
+      if (this.btnType == 'add' || this.btnType == 'copy') {
+        setTimeout(() => {
+          this.getWorkOrderNoFun()
+
+        }, 500);
+        this.fetchData("SHDD")
+      }
+
+      if (btnType == 'add') {
+        // 获取当前日期
+        const currentDate = new Date();
+
+        // 获取年份
+        const year = currentDate.getFullYear();
+
+        // 获取月份（注意月份从0开始，所以要加1）
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+        // 获取日期
+        const date = String(currentDate.getDate()).padStart(2, '0');
+
+        // 拼接为YYYY-MM-DD格式
+        const formattedDate = `${year}-${month}-${date}`;
+        this.dataForm.orderDate = formattedDate;
 
       }
 
 
 
+
+
+
+
     },
-    // 获取车型
-    // getBimVehicleTypeData() {
-    //   let objData = {
-    //     "code": "",
-    //     "createByName": "",
-    //     "customerDrawingNo": "",
-    //     "drawingNo": "",
-    //     "endTime": "",
-    //     "keyword": "",
-    //     "name": "",
-    //     "ncode": "",
-    //     "nname": "",
-    //     "orderItems": [
-    //       {
-    //         "asc": true,
-    //         "column": ""
-    //       }
-    //     ],
-    //     "pageNum": 1,
-    //     "pageSize": -1,
-    //     "startTime": "",
-    //     "station": "",
-    //     "vehicleModel": ""
-    //   }
-    //   getBimVehicleTypeData(objData).then(res => {
-    //     this.bimVehicle = res.data.records
-    //     this.bimVehicle.forEach(item => {
-    //       if (item.id == this.dataForm.vehicleTypeCorrespondingId) {
-    //         this.dataForm.vehicleTypeCorrespondingName = item.name
-    //       }
-    //     });
-    //   })
-    // },
+
     goBack() {
-      this.$emit('close')
+      this.$emit('close',true)
+      this.tipsvisible = false
     },
     onOrganizeChange(val, data) {
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
@@ -2568,9 +2614,7 @@ export default {
 
           let f = {};
 
-          this.customList.forEach(item => {
-            f[item.prop] = ""
-          })
+        
           this.dataForm.documentStatus = value
           this.dataForm.excludingTaxTotalAmount = this.excludingTaxAmount
           this.dataForm.totalAmount = this.totalAmount
@@ -2684,26 +2728,30 @@ export default {
           let formMethod = null;
           if (this.btnType == 'edit') {
             formMethod = editOrders
+            this.btnText = "继续修改"
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
             formMethod = addOrders
+            this.btnText = "继续新增"
           }
           formMethod(obj).then(res => {
             let msg = "";
             if (value == "draft") {
-              msg = "保存成功"
+              this.submitmethodsTitle = "保存成功"
             } else {
-              msg = "提交成功"
+              this.submitmethodsTitle = "提交成功"
+
             }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
           }).catch(() => {
             this.btnLoading = false
           })
@@ -2711,14 +2759,7 @@ export default {
         }
       })
     },
-    filterateLabel(row, column, cellValue) {
-      if (!cellValue) return ""
-      if (cellValue.includes(":")) {
-        return cellValue.replace(/:(.*?)(,|$)/g, "$2");
-      } else {
-        return cellValue;
-      }
-    },
+     
   }
 }
 </script>
@@ -2744,7 +2785,7 @@ export default {
 <style scoped>
 ::v-deep .el-tabs__content {
   height: auto !important;
-  padding: 0 ;
+  padding: 0;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
@@ -2816,30 +2857,33 @@ export default {
   border-top: none;
   margin-bottom: 0;
   padding: 0 5px 0px;
-  border-top:none!important;
+  border-top: none !important;
 
 }
-::v-deep .el-collapse-item__content{
+
+::v-deep .el-collapse-item__content {
   padding-bottom: 5px
 }
 
 
-.import_t{
+.import_t {
   font-size: 22px;
-    color: rgb(103, 194, 58);
-    vertical-align: top;
-    margin-top: 40px;
-    display: inline-block;
-    margin-left: 20px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
 }
-.import_b{
+
+.import_b {
   font-size: 18px;
-    /* color: #67c23a; */
-    vertical-align: top;
-    margin-top: 43px;
-    display: inline-block;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
-.orderInfo ::v-deep  .el-collapse-item__wrap{
-  border-bottom: none!important
+
+.orderInfo ::v-deep .el-collapse-item__wrap {
+  border-bottom: none !important
 }
 </style>

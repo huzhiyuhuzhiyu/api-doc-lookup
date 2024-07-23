@@ -48,7 +48,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
             @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
@@ -106,7 +106,7 @@
             <el-table-column prop="num" label="数量" width="160" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="160" sortable="custom" />
-            <el-table-column prop="documentStatus" fixed="right" label="单据状态" width="120" sortable="custom"
+            <el-table-column prop="documentStatus"  label="单据状态" width="120" sortable="custom"
               :showOverflowTooltip="false" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>

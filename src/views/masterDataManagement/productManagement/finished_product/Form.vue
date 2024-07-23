@@ -24,7 +24,6 @@
                 <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
             </el-collapse>
-            
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -169,30 +168,6 @@ export default {
             tc.clearable = true
             tc.change = this.modelChange
             tc.paramsObj = { prop: tc.prop, tabInd }
-          }
-          // 若干需要选择的产品
-          else if (
-            tc.prop === 'brandName' || // 品牌
-            tc.prop === 'sealingCoverStructureName' ||
-            tc.prop === 'sealingCoverTypingName' ||
-            tc.prop === 'structureTypeName' || // 结构型
-            tc.prop === 'clearanceName' ||
-            // || tc.prop === "steelBallManufacturer" // 钢球家
-            tc.prop === 'oilName' || //
-            tc.prop === 'oilQuantityName' || // 油脂量
-            tc.prop === 'noiseName' || // 噪音
-            tc.prop === 'holderName' || // 保持架
-            tc.prop === 'vibrationLevelName' || // 振动等级
-            tc.prop === 'accuracyLevelName' || // 精度等级
-            tc.prop === 'colourName' || // 颜色
-            tc.prop === 'apertureName' // 孔径
-          ) {
-            tc.dialogTitle = '选择' + tc.label
-            tc.method = getbimProductAttributesList
-            tc.requestObj = { typeCode: tc.typeCode }
-            tc.clearable = true
-            tc.change = this.ProductChange
-            tc.paramsObj = { prop: tc.prop, tabInd }
           } else if (tc.prop === 'steelBallManufacturer') {
             tc.dialogTitle = '选择' + tc.label
             tc.treeTitle = '钢球厂家分类'
@@ -209,7 +184,38 @@ export default {
             console.warn(tc.prop + '不在判断条件内')
           }
         }
+        // 若干需要选择的产品
+        if (
+          tc.prop === 'brand' || // 品牌
+          tc.prop === 'sealingCoverStructure' ||
+          tc.prop === 'sealingCoverTyping' ||
+          tc.prop === 'structureType' || // 结构型
+          tc.prop === 'clearance' ||
+          // || tc.prop === "steelBallManufacturer" // 钢球家
+          tc.prop === 'oil' || //
+          tc.prop === 'oilQuantity' || // 油脂量
+          tc.prop === 'noise' || // 噪音
+          tc.prop === 'holder' || // 保持架
+          tc.prop === 'vibrationLevel' || // 振动等级
+          tc.prop === 'accuracyLevel' || // 精度等级
+          tc.prop === 'colour' || // 颜色
+          tc.prop === 'aperture' // 孔径
+        ) {
+          // tc.dialogTitle = '选择' + tc.label
+          // tc.method = getbimProductAttributesList
+          // tc.requestObj = { typeCode: tc.typeCode }
+          let data = []
+          getbimProductAttributesList({ typeCode: tc.typeCode }).then((res) => {
+            data = res.data.records.map((item) => {
+              return { label: item.name, value: item.name }
+            })
+            tc.options = data
+          })
 
+          tc.clearable = true
+          // tc.change = this.ProductChange
+          // tc.paramsObj = { prop: tc.prop, tabInd }
+        }
         // 添加校验编码和图号唯一性的规则
         if (tc.prop === 'code') {
           if (this.businessType === '1') {
@@ -300,7 +306,6 @@ export default {
         // 数据有效，进行更新
         console.log(data, 'lkkk')
         this.dataForm[paramsObj.prop] = data[0].all.name
-        this.dataForm[paramsObj.prop.slice(0, -4)] = data[0].all.code
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm[paramsObj.prop] = ''
@@ -363,13 +368,13 @@ export default {
             if (
               [
                 'model',
-                'sealingCoverStructureName',
-                'structureTypeName',
-                'clearanceName',
+                'sealingCoverStructure',
+                'structureType',
+                'clearance',
                 'steelBallManufacturer',
-                'oilName',
-                'noiseName',
-                'holderName'
+                'oil',
+                'noise',
+                'holder'
               ].includes(tc.prop)
             ) {
               tc.itemDisabled = true
@@ -379,6 +384,7 @@ export default {
         })
       } else {
         this.title = '新建成品档案'
+
         this.formLoading = false
         this.fetchData('bm_cp_cp')
       }
@@ -480,11 +486,10 @@ export default {
   border-top: none;
   margin-bottom: 0;
   padding: 0 5px 0px;
-  border-top:none!important;
-
+  border-top: none !important;
 }
-::v-deep .el-collapse-item__content{
-  padding-bottom: 5px
+::v-deep .el-collapse-item__content {
+  padding-bottom: 5px;
 }
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
@@ -502,8 +507,8 @@ export default {
   color: red;
   margin-right: 4px;
 }
-.orderInfo ::v-deep  .el-collapse-item__wrap{
-  margin-bottom:10px;
+.orderInfo ::v-deep .el-collapse-item__wrap {
+  margin-bottom: 10px;
   // border-bottom: none!important
 }
 </style>

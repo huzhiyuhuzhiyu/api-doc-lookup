@@ -116,11 +116,11 @@ export default {
           code: '',
           drawingNo: '',
           name: '',
-          mainUnit: '',
-          deputyUnit: '',
-          ratio: '',
-          calculationDirection: '',
-          productSource: '',
+          mainUnit: '套',
+          deputyUnit: '套',
+          ratio: 1,
+          calculationDirection: 'multiplication',
+          productSource: 'assemble',
           productStatus: 'enable',
           brand: '',
           model: '',
@@ -268,6 +268,7 @@ export default {
           value: '',
           type: 'select',
           options: [
+            { label: '组装', value: 'assemble' },
             { label: '自制', value: 'produce' },
             { label: '采购', value: 'purchase' },
             { label: '外协', value: 'out' }
@@ -282,7 +283,8 @@ export default {
           type: 'select',
           options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }],
           itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 180
+          minWidth: 180,
+          render:true
         },
 
         //  一下全部都是 custom，组件选择

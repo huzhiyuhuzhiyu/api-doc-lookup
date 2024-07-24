@@ -12,20 +12,22 @@
       </div>
       <div class="main" v-loading="formLoading">
         <!-- 使用对象结合自定义组件渲染内容 -->
-        <el-tabs v-model="activeName">
-          <!-- 普通属性 -->
-          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <!-- <div
-                    style="line-height:33px;font-size:18px;border-top:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-                    <h5>基本信息</h5>
-                  </div> -->
-                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
-        </el-tabs>
+        <!-- <el-tabs v-model="activeName"> -->
+        <!-- 普通属性 -->
+        <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
+        <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
+          <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
+            <JNPF-col-table v-model="modelArr" ref="sleeveForm" :tableItems="modelItems" :openMode="openMode" />
+          </el-collapse-item>
+          <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
+            <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+          </el-collapse-item>
+          <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
+            <JNPF-col v-model="otherForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+          </el-collapse-item>
+        </el-collapse>
+        <!-- </el-tab-pane>
+        </el-tabs> -->
       </div>
     </div>
   </transition>
@@ -49,7 +51,7 @@ export default {
     return {
       datafilelist: [],
       activeName: 'basicInfo',
-      activeNames: ['basicInfo'],
+      activeNames: ['modelInfo', 'basicInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -109,7 +111,88 @@ export default {
         { prop: 'code', label: '钢球厂家编码', type: 'input' },
         { prop: 'name', label: '钢球厂家名称', type: 'input' }
       ],
-      businessType: '' //  参数设置  自动  还是 手输
+      businessType: '', //  参数设置  自动  还是 手输
+      modelArr: [
+        {
+          model: '',
+          innerCircle: '',
+          outerCircle: '',
+          steelBall: '',
+          steelBallNum: '',
+          oilNum: '',
+          holderNum: '',
+          createTime: '',
+          createByName: ''
+        }
+      ],
+      modelItems: [
+        {
+          prop: 'model',
+          label: '型号',
+          value: '',
+          type: 'custom',
+          customComponent: 'ComSelect-list',
+          options: [],
+          filterable: true,
+          remote: true,
+          maxlength: 50,
+
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '不能为空',
+                  (errMsg, index) => {
+                    this.$message.error(`基础信息第${index + 1}行：型号${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, trigger: 'blur' }
+          ],
+          itemDisabled: false
+        },
+        { prop: 'innerCircle', label: '内圈', type: 'view' },
+        { prop: 'outerCircle', label: '外圈', type: 'view' },
+        { prop: 'steelBall', label: '钢球型号', type: 'view' },
+        { prop: 'steelBallNum', label: '钢球用量', type: 'view' },
+        { prop: 'oilNum', label: '油脂用量', type: 'view' },
+        { prop: 'holderNum', label: '保持架用量', type: 'view' },
+        { prop: 'createTime', label: '创建时间', type: 'view' },
+        { prop: 'createByName', label: '创建人', type: 'view' }
+      ],
+      otherForm: {},
+      otherItems: [
+        {
+          prop: 'saleFlag',
+          label: '是否可销售',
+          value: true,
+          type: 'select',
+          options: [{ label: '是', value: true }, { label: '否', value: false }],
+          clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }]
+        },
+        {
+          prop: 'tradeFlag',
+          label: '是否贸易件',
+          value: false,
+          type: 'select',
+          options: [{ label: '是', value: true }, { label: '否', value: false }],
+          clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }]
+        },
+        {
+          prop: 'bomFlag',
+          label: '是否生成BOM',
+          value: false,
+          type: 'select',
+          options: [{ label: '是', value: true }, { label: '否', value: false }],
+          clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }]
+        }
+      ]
     }
   },
   created() {
@@ -138,7 +221,6 @@ export default {
               }
             })
             tc.change = (val, data) => {
-              console.log('data', data)
               // dom更新后重新校验此元素
               this.$nextTick(() => {
                 this.$refs['dataForm'][0].$children[0].validateField('productCategoryName')
@@ -247,35 +329,120 @@ export default {
               trigger: 'blur'
             })
           }
-        } else if (tc.prop === 'model') {
-          if (!tc.itemRules) {
-            tc.itemRules = []
+        }
+        if (tc.prop === 'productSource') {
+          tc.change = (val) => {
+            if (val == 'assemble') {
+              this.otherForm.bomFlag = true
+            } else {
+              this.otherForm.bomFlag = false
+            }
           }
-          tc.itemRules.push({
-            validator: (rule, value, callback) => {
-              if (!value) {
-                callback()
-              } else if (this.dataForm.drawingNo === this.autoDrawingNo) {
-                callback()
-              } else {
-                // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-                checkModelExist({ id: this.dataForm.id || '', model: this.dataForm.model })
-                  .then((res) => {
-                    if (!res.data) {
-                      callback()
-                    } else {
-                      callback(new Error('此型号已存在'))
-                    }
-                  })
-                  .catch((err) => {
-                    callback(new Error(' '))
-                  })
-              }
-            },
-            trigger: 'blur'
-          })
         }
       })
+    })
+    this.modelItems.forEach((tc) => {
+      if (tc.prop == 'model') {
+        tc.dialogTitle = '选择' + tc.label
+        // 选择型号的api
+        tc.method = getbimProductsModelList
+        tc.requestObj = this.modelQuery
+        tc.dataFormatting = (res) => {
+          let data = res.data.records.map((item) => {
+            return {
+              ...item,
+              name: item.model
+            }
+          })
+          return data
+        }
+        tc.clearable = true
+        tc.change = (val, data, paramsObj) => {
+          this.modelArr[0].model = data[0].all.model
+          const obj = {
+            startTime: '',
+            endTime: '',
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ],
+            pageNum: 1,
+            pageSize: 20,
+            model: this.modelArr[0].model
+          }
+          getbimProductsModelList(obj).then((res) => {
+            this.modelArr = res.data.records
+          })
+        }
+      }
+    })
+    this.otherItems.forEach((tc) => {
+      if (tc.prop == 'tradeFlag') {
+        tc.change = (val, data) => {
+          if (!val) {
+            this.tabs[0].tabContent.forEach((ele) => {
+              if (
+                [
+                  'sealingCoverStructure',
+                  // 'sealingCoverTyping',
+                  'structureType',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  // 'oilQuantity',
+                  'noise',
+                  'holder'
+                  // 'vibrationLevel',
+                  // 'accuracyLevel',
+                  // 'colour',
+                  // 'aperture'
+                ].includes(ele.prop)
+              ) {
+                ele.itemRules[0].required = true
+              }
+              if (ele.prop == 'productSource') {
+                ele.options = [
+                  { label: '组装', value: 'assemble' },
+                  { label: '自制', value: 'produce' },
+                  { label: '采购', value: 'purchase' },
+                  { label: '外协', value: 'out' }
+                ]
+              }
+            })
+          } else {
+            this.tabs[0].tabContent.forEach((ele) => {
+              if (
+                [
+                  'sealingCoverStructure',
+                  // 'sealingCoverTyping',
+                  'structureType',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  // 'oilQuantity',
+                  'noise',
+                  'holder'
+                  // 'vibrationLevel',
+                  // 'accuracyLevel',
+                  // 'colour',
+                  // 'aperture'
+                ].includes(ele.prop)
+              ) {
+                ele.itemRules[0].required = false
+              }
+              if (ele.prop == 'productSource') {
+                ele.options = [{ label: '采购', value: 'purchase' }]
+              }
+            })
+          }
+        }
+      }
     })
   },
   computed: {
@@ -298,19 +465,17 @@ export default {
       }
     },
     ProductChange(val, data, paramsObj) {
-      console.log(paramsObj, 'oooo')
       this.$nextTick(() => {
         this.$refs['dataForm'][paramsObj.tabInd].$children[0].validateField(paramsObj.prop)
       })
       if (data && data.length) {
         // 数据有效，进行更新
-        console.log(data, 'lkkk')
+
         this.dataForm[paramsObj.prop] = data[0].all.name
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm[paramsObj.prop] = ''
       }
-      console.log(this.dataForm, 'form')
     },
     // 钢球厂家
     steelBallChange(val, data, paramsObj) {
@@ -379,14 +544,19 @@ export default {
             ) {
               tc.itemDisabled = true
             }
+            this.jnpf.getBillRuleConfigFun('bm_cp_cp').then((res) => {
+              if (!res.modifyFlag) {
+                if (tc.prop === 'code') tc.itemDisabled = true
+              }
+            })
           })
           this.formLoading = false
         })
       } else {
         this.title = '新建成品档案'
 
-        this.formLoading = false
         this.fetchData('bm_cp_cp')
+        this.formLoading = false
       }
     },
     async handleConfirm() {

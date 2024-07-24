@@ -21,7 +21,7 @@ export default () => [
       { prop: "deputyUnit", label: "副单位", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }] },
       { prop: "ratio", label: "转换系数", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate({ type: 'decimal', params: [10, 6] }), trigger: 'blur' }, { validator: formValidate('positiveNumber'), trigger: "blur" }] },
       { prop: "calculationDirection", label: "计算方向", value: "", type: "select", options: [{ label: "乘", value: "multiplication" }, { label: "除", value: "division" }], itemRules: [{ required: true, trigger: "change" }] },
-      { prop: "productSource", label: "产品来源", value: "", type: "select", options: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], itemRules: [{ required: true, trigger: "change" }], },
+      { prop: "productSource", label: "产品来源", value: "", type: "select", options: [{ label: "组装", value: "assemble" }, { label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], itemRules: [{ required: true, trigger: "change" }], },
       { prop: "productStatus", label: "产品状态", value: "enable", type: "select", options: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], itemRules: [{ required: true, trigger: "change" }] },
 
       //  一下全部都是 custom，组件选择
@@ -41,8 +41,7 @@ export default () => [
       { prop: "accuracyLevel", label: "精度等级", value: "", type: "select", typeCode:'pa006',options:[]},
       { prop: "colour", label: "颜色", value: "",type: "select",typeCode:'pa010',options:[] },
       { prop: "aperture", label: "孔径", value: "", type: "select",typeCode:'pa009',options:[] },
-      { prop: "saleFlag", label: "是否可销售", value: 1, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,itemRules: [{ required: true, trigger: "change" }]},
-      { prop: "tradeFlag", label: "是否贸易件", value: 0, type: "select",options: [{ label: "是", value: 1 }, { label: "否", value: 0 }],clearable:false,itemRules: [{ required: true, trigger: "change" }]},
+    
 
       { prop: "remark", label: "备注", value: "", type: "textarea", sm: 24 },
     ],

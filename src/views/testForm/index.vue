@@ -1,5 +1,40 @@
 <template>
   <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" style="display: block;padding:0">
+        <div class="title_box">
+          <h2 v-if="!leftFlag">业务分类</h2>
+          <span class="options" v-if="!leftFlag">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div>
+      </div>
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+
+            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+    </div>
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
@@ -9,7 +44,7 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item label="所属分类">
               <el-select v-model="category" placeholder="请选择所属分类" clearable>
                 <el-option v-for="item in categoryList" :key="item.id" :label="item.fullName"
@@ -17,7 +52,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search()">
@@ -30,7 +65,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="handleAdd('',2)">
+          <topOpts @add="handleAdd('',3)">
             <!-- <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData"
               @on-success="initData" /> -->
           </topOpts>
@@ -67,23 +102,27 @@
           <el-table-column label="操作" fixed="right" width="180">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <!-- <el-dropdown>
+                <el-dropdown>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i
                         class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="toggleWebType(scope.row)">更改模式
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','form')">编辑表单
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','table')">编辑列表
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','flow')">编辑流程
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="openReleaseDialog(scope.row)">同步菜单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="preview(scope.row.id)">预览模板</el-dropdown-item>
+                    <!-- <el-dropdown-item @click.native="preview(scope.row.id)">预览模板</el-dropdown-item>
                     <el-dropdown-item @click.native="copy(scope.row.id)">复制模板</el-dropdown-item>
                     <el-dropdown-item @click.native="exportModel(scope.row.id)">导出模板
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                   </el-dropdown-menu>
-                </el-dropdown> -->
+                </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
@@ -96,7 +135,7 @@
     <!-- <AddBox :visible.sync="addVisible" :webType="currWebType" @add="handleAdd" /> -->
     <el-dialog title="同步菜单" :visible.sync="releaseDialogVisible"
       class="JNPF-dialog JNPF-dialog_center release-dialog" lock-scroll width="600px">
-      <el-alert title="将该功能的按钮、列表、表单及数据权限同步至系统菜单" type="warning" :closable="false" show-icon />
+      <el-alert title="将该功能的表单、列表、流程同步至系统菜单" type="warning" :closable="false" show-icon />
       <div class="dialog-main">
         <div class="item" :class="{'active':releaseQuery.pc===1}" @click="selectToggle('pc')">
           <i class="item-icon icon-ym icon-ym-pc"></i>
@@ -105,30 +144,30 @@
             <i class="el-icon-check"></i>
           </div>
         </div>
-        <div class="item" :class="{'active':releaseQuery.app===1}" @click="selectToggle('app')">
+        <!-- <div class="item" :class="{'active':releaseQuery.app===1}" @click="selectToggle('app')">
           <i class="item-icon icon-ym icon-ym-mobile"></i>
           <p class="item-title">同步APP端菜单</p>
           <div class="icon-checked">
             <i class="el-icon-check"></i>
           </div>
-        </div>
+        </div> -->
       </div>
       <el-form class="dialog-form-main" :model="releaseQuery" :rules="releaseQueryRule"
         label-position="right" label-width="60px" ref="releaseForm">
         <template v-if="!currRow.pcIsRelease">
           <el-form-item label="上级" prop="pcModuleParentId" v-if="releaseQuery.pc">
-            <JNPF-TreeSelect v-model="releaseQuery.pcModuleParentId" :options="treeData"
+            <JNPF-TreeSelect v-model="releaseQuery.pcModuleParentId" :options="menuData"
               placeholder="选择上级菜单" />
           </el-form-item>
         </template>
-        <template v-if="!currRow.appIsRelease">
+        <!-- <template v-if="!currRow.appIsRelease">
           <el-form-item label="" v-if="(!releaseQuery.pc||currRow.pcIsRelease) && releaseQuery.app">
           </el-form-item>
           <el-form-item label="上级" prop="appModuleParentId" v-if="releaseQuery.app">
             <JNPF-TreeSelect v-model="releaseQuery.appModuleParentId" :options="appTreeData"
               placeholder="选择上级菜单" />
           </el-form-item>
-        </template>
+        </template> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="releaseDialogVisible = false">{{$t('common.cancelButton')}}</el-button>
@@ -145,7 +184,7 @@ import Form from './Form'
 // import AddBox from '@/views/generator/AddBox'
 import mixin from './mixins/generator/index'
 import previewDialog from '@/components/PreviewDialog'
-import { Release } from '@/api/onlineDev/visualDev'
+import { Release,ReleaseNew } from '@/api/onlineDev/visualDev'
 import { getMenuSelector } from '@/api/system/menu'
 export default {
   name: 'onlineDev-webDesign',
@@ -153,15 +192,30 @@ export default {
   components: { Form , previewDialog },
   data() {
     return {
-      query: { keyword: '', type: 1 },
+      query: { keyword: '', type: 6 },
+      defaultProps: {
+        children: "childrenList",
+        label: "fullName",
+      },
+      columnList: ["sortCode", "lastModifyTime", "creatorTime", "creatorUser", "webType", "category"],
+      listQuery: {
+        currentPage: 1,
+        pageSize: 20,
+        sort: 'desc',
+        sidx: '',
+        keyword:"",
+        category:"",
+      },
+      total: 0,
       sort: 'webDesign',
       previewDialogVisible: false,
       releaseDialogVisible: false,
       releaseBtnLoading: false,
       currRow: {},
+      filterText: "",
       releaseQuery: {
         pc: 1,
-        app: 1,
+        app: 0,
         pcModuleParentId: '',
         appModuleParentId: '',
       },
@@ -174,7 +228,12 @@ export default {
         ],
       },
       treeData: [],
-      appTreeData: []
+      menuData: [],
+      appTreeData: [],
+      refreshTree: true,
+      leftFlag: false,
+      expands: true,
+      treeLoading:false,
     }
   },
   methods: {
@@ -189,7 +248,7 @@ export default {
       this.releaseDialogVisible = true
       this.releaseQuery = {
         pc: 1,
-        app: 1,
+        app: 0,
         pcModuleParentId: '',
         appModuleParentId: '',
       }
@@ -208,7 +267,7 @@ export default {
         if (!valid) return
         if (!this.releaseQuery.pc && !this.releaseQuery.app) return this.$message.error('请至少选择一种菜单同步方式')
         this.releaseBtnLoading = true
-        Release(this.currRow.id, this.releaseQuery).then(res => {
+        ReleaseNew(this.currRow.id, this.releaseQuery).then(res => {
           this.releaseBtnLoading = false
           this.releaseDialogVisible = false
           this.initData()
@@ -228,7 +287,7 @@ export default {
           id: "-1",
           children: res.data.list
         }
-        this.treeData = [topItem]
+        this.menuData = [topItem]
       })
     },
     getAPPMenuSelector() {
@@ -316,5 +375,22 @@ export default {
       }
     }
   }
+}
+</style>
+<style scoped>
+.title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 </style>

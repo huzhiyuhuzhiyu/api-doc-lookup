@@ -28,7 +28,7 @@
         <el-input v-model="dataForm.handleOpinion" placeholder="请输入审批意见（选填）" type="textarea"
           :rows="4" />
       </el-form-item>
-      <el-form-item label="审批签名" required v-if="properties&&properties.hasSign">
+      <!-- <el-form-item label="审批签名" required v-if="properties&&properties.hasSign">
         <div class="sign-main">
           <div class="sign-head">
             <div class="sign-tip">请在这里输入你的签名</div>
@@ -43,7 +43,7 @@
             <img :src="signImg" alt="" v-if="signImg" class="sign-img">
           </div>
         </div>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="抄送人员" prop="copyIds" v-if="properties&&properties.isCustomCopy">
         <user-select v-model="copyIds" placeholder="请选择" multiple />
       </el-form-item>

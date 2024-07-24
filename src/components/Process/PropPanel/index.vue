@@ -477,14 +477,14 @@
             </el-form>
             <el-form class="pd-10-20" style="margin-top:-20px" label-width="90px"
               label-position="left">
-              <el-form-item>
+              <!-- <el-form-item>
                 <div slot="label" class="form-item-label">手写签名
                   <el-tooltip content="发起人在进行流程撤回操作时需手写签名" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
                 <el-switch v-model="startForm.hasSign" />
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item>
                 <div slot="label" class="form-item-label">意见填写
                   <el-tooltip content="发起人在进行流程撤回操作需填写意见" placement="top">
@@ -1257,8 +1257,8 @@
                 <div class="form-item-content">
                   <el-radio v-model="approverForm.counterSign" :label="0">
                     或签（一名审批人同意或拒绝即可）</el-radio>
-                  <el-radio v-model="approverForm.counterSign" :label="1">
-                    会签（无序会签，当审批达到会签比例时，则该审批通过）</el-radio>
+                  <!-- <el-radio v-model="approverForm.counterSign" :label="1">
+                    会签（无序会签，当审批达到会签比例时，则该审批通过）</el-radio> -->
                   <el-radio v-model="approverForm.counterSign" :label="2">
                     依次审批（按顺序依次审批）</el-radio>
                 </div>
@@ -1377,14 +1377,14 @@
             </el-form>
             <el-form class="pd-10-20" style="margin-top:-20px" label-width="90px"
               label-position="left">
-              <el-form-item>
+              <!-- <el-form-item>
                 <div slot="label" class="form-item-label">手写签名
                   <el-tooltip content="审批人在进行审批操作时需手写签名" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
                 <el-switch v-model="approverForm.hasSign" />
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item>
                 <div slot="label" class="form-item-label">意见填写
                   <el-tooltip content="审批人在进行审批操作需填写审批意见" placement="top">
@@ -1393,14 +1393,14 @@
                 </div>
                 <el-switch v-model="approverForm.hasOpinion" />
               </el-form-item>
-              <el-form-item>
+              <!-- <el-form-item>
                 <div slot="label" class="form-item-label">允许加签
                   <el-tooltip content="允许在审批单中增加临时审批人" placement="top">
                     <a class="el-icon-warning-outline"></a>
                   </el-tooltip>
                 </div>
                 <el-switch v-model="approverForm.hasFreeApprover" />
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item label="说明">
                 <div slot="label" class="form-item-label">说明</div>
                 <el-input v-model="approverForm.description" type="textarea" :rows="3"></el-input>
@@ -1408,7 +1408,7 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane>
-        <el-tab-pane label="表单权限" name="formAuth">
+        <!-- <el-tab-pane label="表单权限" name="formAuth">
           <div class="form-auth-table">
             <el-table :data="getFormOperates()" class="JNPF-common-table" size="mini" height="100%">
               <el-table-column prop="name" label="表单字段" align="left"></el-table-column>
@@ -1422,8 +1422,8 @@
               </el-table-column>
             </el-table>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="节点事件">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="节点事件">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="left">
               <el-alert title="开启后可配置触发事件同时进行参数赋值" type="warning" :closable="false" show-icon />
@@ -1654,8 +1654,8 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="节点通知">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="节点通知">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="top">
               <el-alert title="该通知设置配置外部第三方消息提醒，站内信系统默认发送" type="warning" :closable="false"
@@ -1880,8 +1880,8 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
-        <el-tab-pane label="超时提醒">
+        </el-tab-pane> -->
+        <!-- <el-tab-pane label="超时提醒">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="top">
               <el-form-item label="限时设置">
@@ -2031,7 +2031,7 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </section>
     <div class="actions">
@@ -2275,18 +2275,19 @@ const typeOptions = [
     label: '部门主管',
     value: 2
   },
-  {
-    label: '表单变量',
-    value: 4
-  },
-  {
-    label: '流程环节',
-    value: 5
-  },
-  {
-    label: '接口服务',
-    value: 9
-  }]
+  // {
+  //   label: '表单变量',
+  //   value: 4
+  // },
+  // {
+  //   label: '流程环节',
+  //   value: 5
+  // },
+  // {
+  //   label: '接口服务',
+  //   value: 9
+  // }
+]
 const assigneeTypeOptions = [...typeOptions, {
   label: '候选人员',
   value: 7
@@ -3305,6 +3306,7 @@ export default {
 .approver-pane {
   height: 100%;
   overflow: hidden;
+  padding: 10px;
   >>> .el-tabs__content {
     height: calc(100% - 40px);
     .el-tab-pane {

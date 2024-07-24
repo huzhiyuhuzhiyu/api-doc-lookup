@@ -76,12 +76,14 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" ref="dataTable"
-          :setColumnDisplayList="tableItems">
-          <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-            :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false" :align="item.align || 'left'"
-            v-bind="{ width: item.width ? item.width : 120, minWidth: item.hasOwnProperty('minWidth') ? item.minWidth : 120 }">
+           custom-column v-if="tableItems.length">
+           <template v-if="tableItems"> 
+              <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+                :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false" :align="item.align || 'left'"
+                v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+              </el-table-column>
+           </template>
 
-          </el-table-column>
           <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">

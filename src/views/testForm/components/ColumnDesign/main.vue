@@ -99,7 +99,7 @@
         <div class="searchList" v-show="currentTab === 'search'">
           <el-table :data="searchOptions" class="JNPF-common-table" height="100%"
             @selection-change="searchSelectionChange" ref="searchTable" border>
-            <el-table-column prop="prop" label="查询字段" />
+            <el-table-column prop="label" label="查询字段" />
             <el-table-column type="selection" width="55" align="center" />
           </el-table>
         </div>
@@ -109,7 +109,7 @@
               <el-divider v-if="currentFieldTab === 'indexField'">主表字段</el-divider>
               <el-table v-if="currentFieldTab === 'indexField'" :data="columnOptions" class="JNPF-common-table"
                 @selection-change="columnSelectionChange" ref="columnTable" height="100%">
-                <el-table-column prop="prop" label="列表字段" />
+                <el-table-column prop="label" label="列表字段" />
                 <el-table-column type="selection" width="55" align="center" />
               </el-table>
             </el-tab-pane>
@@ -117,7 +117,7 @@
               <el-divider v-if="currentFieldTab === 'lineField'">子表字段</el-divider>
               <el-table v-if="currentFieldTab === 'lineField'" :data="columnLineOptions" class="JNPF-common-table"
                 @selection-change="columnLIneSelectionChange" ref="columnTable">
-                <el-table-column prop="prop" label="列表字段" />
+                <el-table-column prop="label" label="列表字段" />
                 <el-table-column type="selection" width="55" align="center" />
               </el-table>
             </el-tab-pane>
@@ -256,12 +256,12 @@
                   <el-option label="降序" value="desc"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="排序字段">
+              <!-- <el-form-item label="排序字段">
                 <el-select v-model="columnData.defaultSidx" placeholder="请选择排序字段" clearable>
                   <el-option :label="item.__config__.label" :value="item.__vModel__"
                     v-for="(item, i) in groupFieldOptions" :key="i"></el-option>
                 </el-select>
-              </el-form-item>
+              </el-form-item> -->
               <template v-if="columnData.type !== 3">
                 <el-form-item label="分页设置">
                   <el-switch v-model="columnData.hasPage"></el-switch>
@@ -489,27 +489,30 @@ export default {
     }
     loop(getDrawingList())
     this.list = list
+    console.log(this.list);
+    
     let columnOptions = list.filter(o => noColumnShowList.indexOf(o.__config__.jnpfKey) < 0)
     let searchOptions = list.filter(o => noSearchList.indexOf(o.__config__.jnpfKey) < 0)
     this.groupFieldOptions = list.filter(o => o.__vModel__.indexOf('-') < 0)
-    this.columnOptions = columnOptions.map(o => ({
-      label: o.__config__.label,
-      prop: o.__vModel__,
-      align: 'left',
-      jnpfKey: o.__config__.jnpfKey,
-      sortable: false,
-      width: null,
-      formatter: '',
-      ...o
-    }));
-    this.searchOptions = searchOptions.map(o => ({
-      label: o.__config__.label,
-      prop: o.__vModel__,
-      jnpfKey: o.__config__.jnpfKey,
-      value: '',
-      searchType: getSearchType(o),
-      ...o
-    }));
+    // this.columnOptions = columnOptions.map(o => ({
+    //   label: o.__config__.label,
+    //   prop: o.__vModel__,
+    //   align: 'left',
+    //   jnpfKey: o.__config__.jnpfKey,
+    //   sortable: false,
+    //   width: null,
+    //   formatter: '',
+    //   ...o
+    // }));
+
+    // this.searchOptions = searchOptions.map(o => ({
+    //   label: o.__config__.label,
+    //   prop: o.__vModel__,
+    //   jnpfKey: o.__config__.jnpfKey,
+    //   value: '',
+    //   searchType: getSearchType(o),
+    //   ...o
+    // }));
     if (typeof this.conf === 'object' && this.conf !== null) {
       this.columnData = Object.assign({}, defaultColumnData, this.conf)
     }
@@ -517,6 +520,9 @@ export default {
       this.searchOptions = []
       this.columnOptions = []
     }
+    // 列字段和查询字段 不从表单数据取 
+    this.columnOptions = this.columnData.columnList
+    this.searchOptions = this.columnData.searchList
     this.columnData.columnOptions = columnOptions
     if (!this.columnOptions.length) this.columnData.columnList = []
     if (!this.searchOptions.length) this.columnData.searchList = []
@@ -598,6 +604,7 @@ export default {
     handleCurrentChange(val) {
       if (!val) return
       this.currentRow = val
+      this.currentTab = 'culumnSet'
       this.$refs['dragTable'].toggleRowSelection(val, true)
     },
     setBtnValue(replacedData, data, key) {

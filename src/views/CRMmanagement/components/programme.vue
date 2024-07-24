@@ -12,7 +12,7 @@
 ================================================================
  -->
  <template>
-  <div>
+  <div v-show="false">
     <div class="superQuery-main" v-loading="loading">
       <template v-if="conditionList.length">
         <!-- <div class="matchLogic">
@@ -181,9 +181,8 @@ export default {
       type: Boolean,
       default: true
     },
-    //展示的方案标题
-    programmetitle:{
-      type:String
+    programmefrom: {
+      type: Object
     }
   },
   data() {
@@ -260,6 +259,11 @@ export default {
   },
   mounted() {
     this.init()
+  },
+  watch: {
+    programmefrom(newtitle) {
+      if (newtitle) this.selectPlan(newtitle)
+    }
   },
   methods: {
     async init() {
@@ -342,7 +346,7 @@ export default {
       let res = await getAdvancedQueryList(this.currMenuId).catch(err => false)
       if (res) {
         this.planList = res.data.list
-        this.selectPlan(this.planList.filter(item=>item.fullName==this.programmetitle)[0])
+        // this.selectPlan(this.planList.filter(item => item.fullName == this.programmetitle)[0])
         this.loading = false
       }
     },
@@ -401,6 +405,7 @@ export default {
       })
       // 这里需要有解析方法名称的解决方案
       this.conditionList = tempConditionList
+      this.query()
     },
     addPlan() {
       if (!this.exist()) return

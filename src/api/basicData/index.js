@@ -1112,7 +1112,7 @@ export function editSwitch (id) {
 // 详情
 export function getBimBusinessInfo (id) {
   return request({
-    url: `/api/erp/bimBusinessSwitchConfig/detail/${id}`,
+    url: `/api/erp/bimBusinessSwitchConfig/detailByKey?configKey=${id}`,
     method: 'get',
   })
 }

@@ -55,8 +55,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.name"
-                placeholder="请输入产品名称"
+                v-model="listQuery.drawingNo"
+                placeholder="请输入规格型号"
                 clearable
                 @keyup.enter.native="search()"
               />
@@ -125,6 +125,10 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -137,8 +141,9 @@
           @sort-change="sortChange"
           custom-column
           ref="dataTable"
+          :setColumnDisplayList="columnList"
         >
-          <el-table-column prop="code" label="产品编码" min-width="140" fixed="left" sortable="custom">
+          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
@@ -146,7 +151,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
+          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
@@ -163,7 +168,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" fixed="right" align="center">
+          <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
             <template slot-scope="{ row }">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
@@ -304,6 +309,9 @@
       ref="UploadProduct"
       :http-request="UploadProduct"
     />
+      <!-- 高级查询 -->
+      <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -315,8 +323,9 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 import aiForm from './aiForm'
 import { mapState } from 'vuex'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  components: { Form, ExportForm, aiForm },
+  components: { Form, ExportForm, aiForm,SuperQuery },
   name: 'finished_product',
   data() {
     return {
@@ -368,7 +377,178 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      }
+      },
+      columnList: [
+        'name',
+        'mainUnit',
+        'brand',
+        'model',
+        'sealingCoverStructure',
+        'sealingCoverTyping',
+        'structureType',
+        'clearance',
+        'steelBallManufacturer',
+        'oil',
+        'oilQuantity',
+        'noise',
+        'holder',
+        'vibrationLevel',
+        'accuracyLevel',
+        'colour',
+        'aperture',
+        'remark',
+        'createByName'
+      ],
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'drawingNo',
+          label: "规格型号",
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'productCategoryName',
+          label: "产品分类",
+          type: 'custom',
+          component: 'ComSelect-list',
+        },
+        {
+          prop: 'mainUnit',
+          label: "主单位",
+          type: 'input'
+        },
+        {
+          prop: 'productSource',
+          label: "产品来源",
+          type: 'input'
+        },
+        {
+          prop: 'productStatus',
+          label: "产品状态",
+          type: 'input'
+        },
+        {
+          prop: 'brand',
+          label: "品牌",
+          type: 'input'
+        },
+        {
+          prop: 'model',
+          label: "型号",
+          type: 'input'
+        },
+        {
+          prop: 'sealingCoverStructure',
+          label: "密封盖-结构",
+          type: 'input'
+        },
+        {
+          prop: 'sealingCoverTyping',
+          label: "密封盖-打字",
+          type: 'input'
+        },
+        {
+          prop: 'structureType',
+          label: "结构类型",
+          type: 'input'
+        },
+        {
+          prop: 'clearance',
+          label: "游隙",
+          type: 'input'
+        },
+        {
+          prop: 'steelBallManufacturer',
+          label: "钢球厂家",
+          type: 'input'
+        },
+        {
+          prop: 'oil',
+          label: "油脂",
+          type: 'input'
+        },
+        {
+          prop: 'oilQuantity',
+          label: "油脂量",
+          type: 'input'
+        },
+        {
+          prop: 'noise',
+          label: "噪音",
+          type: 'input'
+        },
+        {
+          prop: 'holder',
+          label: "保持架",
+          type: 'input'
+        },
+        {
+          prop: 'vibrationLevel',
+          label: "振动等级",
+          type: 'input'
+        },
+        {
+          prop: 'accuracyLevel',
+          label: "精度等级",
+          type: 'input'
+        },
+        {
+          prop: 'colour',
+          label: "颜色",
+          type: 'input'
+        },
+        {
+          prop: 'aperture',
+          label: "孔径",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: "创建时间",
+          type: 'input'
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        },
+        // { // 自定义选择器
+        //   prop: 'salespersonId',
+        //   label: '所属销售人员',
+        //   type: 'custom',
+        //   component: 'user-select',
+        // },
+        // { // 下拉选
+        //   prop: 'grade',
+        //   label: '等级',
+        //   type: 'select',
+        //   options: this.gradeList // 注意，此options从接口异步获取，改变值时注意内存地址
+        // },
+        // { // 日期选择器（区间）
+        //   prop: 'customerRecognitionTime',
+        //   label: '认定日期',
+        //   type: 'daterange',
+        //   valueFormat: "yyyy-MM-dd",
+        //   startPlaceholder: '开始日期',
+        //   endPlaceholder: '结束日期',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
+      ],
     }
   },
   created() {
@@ -617,7 +797,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.aiForm.init()
       })
-    }
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
   }
 }
 </script>

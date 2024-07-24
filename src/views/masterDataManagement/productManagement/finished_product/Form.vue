@@ -329,11 +329,11 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
+        if (!data.modifyFlag && data.codeWay == 'auto') {
           const orderNo = await this.jnpf.getCodeWayFun(code)
           this.dataForm.code = orderNo
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.disable = true
+          target.itemDisabled = true
         }
       } catch (error) {}
     },

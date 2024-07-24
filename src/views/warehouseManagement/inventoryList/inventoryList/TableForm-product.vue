@@ -70,7 +70,7 @@
       :visible.sync="uploadVisib"   lock-scroll
       class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
-        :on-preview="handlePreview" :drag="dragFlag" :on-remove="handleRemove"  :on-change="handleFileChange" ref="uploadRef">
+        :on-preview="handlePreview" drag :on-remove="handleRemove"  :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton"
@@ -104,7 +104,6 @@ export default {
       JNPFColTableData: {
         data: this.value
       },
-      dragFlag:true,
       customStyleData: {},
       tableVisible: true,
       getProductList, // 产品选择弹出框树状列表请求api
@@ -407,10 +406,10 @@ export default {
           this.formLoading = false
           this.loadingText = ''
         this.uploadVisib = false
-        this.$emit('addth', res.data.list, )
+        this.$emit('addth', res.data.list, 'import')
       } else {
         if(res.data.list){
-        this.$emit('addth', [res.data.list], 'cover')
+        this.$emit('addth', [res.data.list], 'import')
         }
           this.handleMessage(res.data)
         this.uploadVisib = false

@@ -49,15 +49,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="首页设置(类型)" prop="type" v-if="type=='PC'">
+        <el-form-item label="首页类型" prop="type" v-if="type=='PC'">
         <el-select v-model="dataForm.homeType" placeholder="请选择首页类型" @change="changeMenuType">
           <el-option v-for="item in typeData" :key="item.enCode" :label="item.fullName"
             :value="item.enCode">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item v-if="(dataForm.homeType == 2 || dataForm.homeType == 7)&&type=='PC'" label="地址" prop="homeUrl"   >
-        <el-input v-model="dataForm.homeUrl" placeholder="填写地址">
+      <el-form-item v-if="(dataForm.homeType == 2 || dataForm.homeType == 7)&&type=='PC'" label="首页地址" prop="homeUrl"   >
+        <el-input v-model="dataForm.homeUrl" placeholder="填写首页地址">
           <template slot="prepend"
             v-if="(type ==='PC') && dataForm.homeType == 2">@/views/</template>
           <el-select slot="append" v-model="dataForm.linkTarget" style="width: 90px;"

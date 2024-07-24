@@ -50,12 +50,8 @@
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
           border :setColumnDisplayList="columnList" show-summary :summary-method="getSummaries" :fixedNO="true"
           @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="单号" sortable="custom" width="120">
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                scope.row.name
-              }}</el-link>
-            </template>
+          <el-table-column prop="orderNo" label="出入库单号" sortable="custom" min-width="160">
+           
           </el-table-column>
           <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
             <template slot-scope="scope">
@@ -65,7 +61,13 @@
               <div v-if="scope.row.sourceType == 'outside_delivery_return'">外协收退货单</div>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="合作伙伴名称" sortable="custom" min-width="160" />
+          <el-table-column prop="partnerName" label="合作伙伴名称" sortable="custom" min-width="160" >
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.moveId, 'look')">{{
+                scope.row.partnerName
+              }}</el-link>
+            </template>
+          </el-table-column>
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="180" />
           <el-table-column prop="drawingNo" label="规格型号" sortable="custom" min-width="120" />
@@ -90,7 +92,7 @@
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">查看详情</el-button>
+              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.moveId, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -110,7 +112,7 @@
 <script>
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import Form from './Form'
+import Form from '../inventoryList/Form.vue'
 export default {
   name: 'myCustomer',
   components: { Form, ExportForm },
@@ -191,13 +193,13 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.listQuery.pageNum = 1
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
+      this.listQuery.pageNum = 1 
       getInventorySummaryData(this.listQuery).then(res => {
 
-        this.tableData = res.data.page ? res.data.page.list : []
-        res.data.total ? this.totalList.push(res.data.total) : ''
-        this.total = res.data.page ? res.data.page.total : 0
+        this.tableData =res.data.page.records
+        console.log("tableData",this.tableData);
+        // res.data.total ? this.totalList.push(res.data.total) : ''
+        // this.total = res.data.page ? res.data.page.total : 0
         this.listLoading = false
         this.visible = false
       }).catch(() => {
@@ -284,11 +286,12 @@ export default {
     },
 
     addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
+      this.formVisible=true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id, true)
       })
     },
+   
     // 写记录
     handleRecord(row) {
       this.recordFormVisible = true

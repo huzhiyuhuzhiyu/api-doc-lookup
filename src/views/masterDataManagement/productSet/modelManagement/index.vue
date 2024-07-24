@@ -41,7 +41,7 @@
           <el-button type="primary" icon="el-icon-plus" size="mini" @click.native="batchAdd()">
               批量新建
             </el-button>
-          <el-button type="primary" size="mini" icon="iconfont  icon-piliang-copy" style="margin-left: 10px"
+          <el-button type="primary" size="mini" icon="el-icon-edit-outline" style="margin-left: 10px"
             @click="batchEditFun">批量修改</el-button>
           <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
           <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus"

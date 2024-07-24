@@ -582,13 +582,10 @@ export default {
   padding-left: 10px;
 }
 
-.JNPF-common-head {
-  padding: 10px;
-}
 
 .JNPF-common-search-box {
-  padding-top: 5px;
-  padding-bottom: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   margin-bottom: 5px;
 }
 

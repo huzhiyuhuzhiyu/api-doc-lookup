@@ -432,7 +432,7 @@ export default {
     }
   },
   created() {
-    this.getBusinessType()
+    // this.getBusinessType()
   },
   methods: {
     // 单个删除

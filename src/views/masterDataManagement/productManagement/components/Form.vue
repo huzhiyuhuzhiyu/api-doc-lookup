@@ -16,7 +16,15 @@
           <!-- 普通属性 -->
           <template v-for="item in tabs">
             <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode">
-              <JNPF-Col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <!-- <div
+                      style="line-height:33px;font-size:18px;border-top:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
+                      <h5>基本信息</h5>
+                    </div> -->
+                  <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+                </el-collapse-item>
+              </el-collapse>
             </el-tab-pane>
           </template>
         </el-tabs>
@@ -27,7 +35,7 @@
 
 <script>
 import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
-import { getBimBusinessInfo } from '@/api/basicData/index'
+import { getByCode} from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 
 import tabs from './params'
@@ -50,6 +58,7 @@ export default {
     return {
       datafilelist: [],
       activeName: "basicInfo",
+      activeNames: ['basicInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -139,18 +148,24 @@ export default {
     }
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (data && data.codeWay == 'auto') {
+          const orderNo = await this.jnpf.getCodeWayFun(code)
+          this.dataForm.code = orderNo
+          let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+          target.disable = true
+          
+        }
+      } catch (error) {}
+    },
     init(id, btnType = false) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
       this.dataForm.id = id || ''
-      getBimBusinessInfo(this.busSetId).then(res=>{
-        this.businessType = res.data.configValue1
-        if (this.businessType === '1'){
-          let target = this.tabs[0].tabContent.find(tc => tc.prop === 'code')
-          target.render = false
-        }
-      })
       if (!!id) {
         this.title = btnType ? `查看${this.productName}档案` : `编辑${this.productName}档案`
         // 获取详情
@@ -165,6 +180,7 @@ export default {
         })
       } else {
         this.title = `新建${this.productName}档案`
+        this.fetchData(this.busSetId)
       }
       this.formLoading = false
     },
@@ -216,9 +232,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.main {
-  padding: 0px 30px 10px;
-}
+// .main {
+//   padding: 0px 30px 10px;
+// }
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
@@ -234,6 +250,30 @@ export default {
 
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 5px 0px;
+  border-top:none!important;
+
+}
+::v-deep .el-collapse-item__content{
+  padding-bottom: 5px
 }
 
 ::v-deep .JNPF-common-page-header {
@@ -251,5 +291,9 @@ export default {
 .required {
   color: red;
   margin-right: 4px;
+}
+.orderInfo ::v-deep  .el-collapse-item__wrap{
+  margin-bottom:10px;
+  // border-bottom: none!important
 }
 </style>

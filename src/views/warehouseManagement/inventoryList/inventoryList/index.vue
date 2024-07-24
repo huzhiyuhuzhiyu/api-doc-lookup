@@ -59,7 +59,7 @@
         </div>
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
           :fixedNO="true" @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="出入库单号" sortable="custom" width="100">
+          <el-table-column prop="orderNo" label="出入库单号" sortable="custom" min-width="160">
           
           </el-table-column>
           <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">

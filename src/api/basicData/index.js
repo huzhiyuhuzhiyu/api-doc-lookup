@@ -1116,6 +1116,13 @@ export function getBimBusinessInfo (id) {
     method: 'get',
   })
 }
+// 详情
+export function getByCode (code) {
+  return request({
+    url: '/api/system/BillRule/getByCode?code=' + code ,
+    method: 'get',
+  })
+}
 // 修改
 
 export function editBimBusinessData (data) {
@@ -1582,6 +1589,14 @@ export function deletebimProgram (id) {
   return request({
     url: `/api/mes/bimProgram/remove/${id}`,
     method: 'delete',
+  })
+}
+
+// 生成二维码
+export function BuildQRCode () {
+  return request({
+    url: `/api/extend/BarCode/BuildQRCode`,
+    method: 'get',
   })
 }
 //线索管理

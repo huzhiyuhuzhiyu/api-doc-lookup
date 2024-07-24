@@ -137,7 +137,7 @@
             <img class="login-logo" src="@/assets/images/jnpf.png" alt="" v-else><span class="title">{{aaa}}</span>
           </div>
           <div style="width:500px;height: 100vh;position: absolute;right: 0;top: 0;background-color: #fff;z-index: 100;overflow: hidden;">
-            <div class="body_right">
+            <div class="body_right" :style="{top:needCode?'370px':'336px'}">
               <div class="login-content">
                 <div class="login-form">
                   <div class="login-tab" :class="'active' + active">
@@ -204,7 +204,7 @@
                 <img src="@/assets/images/qygzh.png" alt="">
                 <div slot="reference" style="text-align:center;font-size:16px;cursor: pointer"><i class="el-icon-info"></i>公众号</div>
               </el-popover>
-              <div v-show="active == 2" :style="{width: '100%',height: needCode?'139px':'72px',}"></div>
+              <div v-show="active == 2" :style="{width: '100%',height: needCode?'141px':'72px',}"></div>
             </div>
             <div class="componey">
               <div>
@@ -854,7 +854,7 @@ export default {
         position: absolute;
         // right: 50px;
         left: 50%;
-        top: 336px;
+        // top: 336px;
         transform: translate(-50%, -50%);
         z-index: 100;
         // background: rgba(0,0,0,.1);

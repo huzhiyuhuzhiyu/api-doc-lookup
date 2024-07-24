@@ -76,7 +76,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:6px 10px">
           <topOpts @add="addOrUpdateHandle()">
-            <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">批量重置密码</el-button>
+            <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
           </topOpts>

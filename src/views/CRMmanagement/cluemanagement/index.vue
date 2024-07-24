@@ -33,44 +33,41 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="10">
-        <el-form @submit.native.prevent>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.clueName" placeholder="请输入线索名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col style="width: 180px;">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
-                {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
-              </el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6" v-if="programmelist.length">
+      <div class="treeBox_bot gjsearch" ref="fangan">
+        <div style="width: 200px;">
+          <el-input v-model="listQuery.clueName" placeholder="请输入线索名称" clearable @keyup.enter.native="search()" />
+        </div>
+        <div style="width: 180px;margin-left: 10px;">
+          <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+            {{$t('common.search')}}</el-button>
+          <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
+          </el-button>
+        </div>
+        <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
+          <div v-if="programmelist.length">
             <span class="text">方案：</span>
-            <el-button :class="[programmetitle==item.fullName?'is-reverse':'']" size="mini" v-for="item in programmelist" :key="item.id" @click="()=>{programmetitle=item.fullName,isopen=false}">{{item.fullName}}</el-button>
+            <el-button :class="[programmetitle==item.fullName?'is-reverse':'']" size="mini" v-for="item in programmelist" :key="item.id" @click="actionreverse(item)">{{item.fullName}}</el-button>
             <el-popover placement="bottom-end" trigger="click" v-if="programmelist1.length" style="margin-left: 10px;">
               <el-button slot="reference" icon="el-icon-arrow-down" size="mini"></el-button>
-              <div class="plan-list-item" v-for="(o, i) in programmelist1" :key="i">
-                <el-link :class="['plan-list-name',programmetitle==o.fullName?'is-reverse':'']" :underline="false" class="" @click="()=>{programmetitle=o.fullName,isopen=false}">{{ o.fullName }}
+              <div :class="['plan-list-item',programmetitle==o.fullName?'is-reverse':'']" v-for="(o, i) in programmelist1" :key="i" @click="actionreverse(o)">
+                <el-link class="plan-list-name" :underline="false">{{ o.fullName }}
                 </el-link>
               </div>
             </el-popover>
-          </el-col>
-          <el-button style="float: right;margin-right: 20px;border:none" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          <el-button v-if="!!programmetitle&&programmelist.length" :class="['search-button',isopen?'is-reverse':'']" size="mini" @click="isopen=!isopen">{{isopen?'收起筛选':'展开筛选'}} <i class="el-icon-arrow-up" v-if="isopen"></i><i class="el-icon-arrow-down" v-else></i></el-button>
-        </el-form>
-      </el-row>
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" v-if="isopen">
-        <programme :columnOptions="superQueryJson" :programmetitle="programmetitle" @close="isopen = false" @superQuery="superQuerySearch"></programme>
-      </el-row>
+          </div>
+        </div>
+        <div style="width: 82px;">
+          <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
+        </div>
+      </div>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="display: block;">
+        <div class="JNPF-common-head" style="display: block;line-height:34px">
           <topOpts @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
-            <el-button size="mini" type="success" @click="DemandPoolaction">放入需求池</el-button>
+            <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+          </topOpts>
+          <topOpts v-if="categoryId=='pool'">
+            <el-button size="mini" type="success" @click="Demandaction">分配线索</el-button>
           </topOpts>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -81,17 +78,17 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" :hasC="categoryId=='clue'" custom-column :hasNO="false" row-key="id">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column fixedNO row-key="id" :setColumnDisplayList="columnList">
           <!-- <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
             </template>
           </el-table-column> -->
-          <el-table-column align="center" label="序号" width="60">
+          <!-- <el-table-column align="center" label="序号" width="60">
             <template slot-scope="scope">
               {{ scope.$index+1 }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="clueName" label="线索名称" width="160" />
           <el-table-column prop="nextTime" label="下次联系时间" width="180" />
           <el-table-column prop="source" label="线索来源" width="150">
@@ -102,10 +99,10 @@
           <el-table-column prop="mobile" label="手机" width="140" />
           <el-table-column prop="telephone" label="电话" width="120" />
           <el-table-column prop="email" label="邮箱" width="160" />
-          <el-table-column prop="provinceText" label="省" width="120" />
+          <!-- <el-table-column prop="provinceText" label="省" width="120" />
           <el-table-column prop="cityText" label="市" width="140" />
-          <el-table-column prop="areaText" label="区" width="140" />
-          <el-table-column prop="address" label="地址" width="200" />
+          <el-table-column prop="areaText" label="区" width="140" /> -->
+          <el-table-column prop="address" label="详细地址" width="200" />
           <el-table-column prop="industry" label="客户行业" width="140">
             <template slot-scope="scope">
               {{industryfunction(scope.row.industry)}}
@@ -142,6 +139,7 @@
       </div>
     </div>
     <!-- 高级查询 -->
+    <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @close="isopen = false" @superQuery="superQuerySearch" v-show="false"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
     <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" />
@@ -150,47 +148,48 @@
 </template>
 
 <script>
+import {
+  getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 import { getCluemanagementlist, deleteCluemanagement } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import programme from "./programme.vue";
+import programme from "../components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  exportTpl,
-  updateSortBatch
-} from '@/api/system/billRule'
 import Form from './Form'
 import depForm from './depForm'
 import Sortable from 'sortablejs'
-// import TypeList from './components/index'
 export default {
   name: 'cluemanagement',
   components: {
     Form,
     depForm,
     ExportForm,
-    // TypeList
     SuperQuery,
     programme
   },
   data() {
     return {
-      exportFormVisible:false,
+      columnList:["createByName","createTime"],
+      exportFormVisible: false,
       data: [{ fullName: '线索', id: 'clue' }, { fullName: '线索池', id: 'pool' }],
       clueVisible: false,
       programmetitle: '',
+      programmefrom: {},
       superQueryJson: [
         {
           prop: 'clueName',
           label: "线索名称",
           type: 'input'
         },
-        { // 日期选择器
+        { // 日期时间选择器（区间）
           prop: 'nextTime',
           label: '下次联系时间',
-          type: 'datetime',
+          type: 'datetimerange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
           pickerOptions: {}
         },
         { // 下拉选
@@ -198,9 +197,9 @@ export default {
           label: '客户级别',
           type: 'select',
           options: [
-            { label: 'A（重点客户）', value: '1' },
-            { label: 'B（普通客户）', value: '2' },
-            { label: 'C（非优先客户）', value: '3' }
+            { label: 'A(重点客户)', value: '1' },
+            { label: 'B(普通客户)', value: '2' },
+            { label: 'C(非优先客户)', value: '3' }
           ] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         { // 下拉选
@@ -237,7 +236,7 @@ export default {
         },
         {
           prop: 'address',
-          label: "地址",
+          label: "详细地址",
           type: 'input'
         },
         { // 下拉选
@@ -261,25 +260,24 @@ export default {
           type: 'input'
         },
         {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
           prop: 'remark',
           label: "备注",
           type: 'input'
-        },
-        // { // 下拉选
-        //   prop: 'grade',
-        //   label: '等级',
-        //   type: 'select',
-        //   options: this.gradeList // 注意，此options从接口异步获取，改变值时注意内存地址
-        // },
-        // { // 日期选择器（区间）
-        //   prop: 'customerRecognitionTime',
-        //   label: '认定日期',
-        //   type: 'daterange',
-        //   valueFormat: "yyyy-MM-dd",
-        //   startPlaceholder: '开始日期',
-        //   endPlaceholder: '结束日期',
-        //   pickerOptions: this.global.timePickerOptions
-        // },
+        }
       ],
       programmelist1: [],
       programmelist: [],
@@ -319,34 +317,12 @@ export default {
         children: "childrenList",
         label: "fullName",
       },
-      sourcelist: [
-        { label: '促销', value: '1' },
-        { label: '搜索引擎', value: '2' },
-        { label: '广告', value: '3' },
-        { label: '转介绍', value: '4' },
-        { label: '线上注册', value: '5' },
-        { label: '线上询价', value: '6' },
-        { label: '预约上门', value: '7' },
-        { label: '陌拜', value: '8' },
-        { label: '电话咨询', value: '9' },
-        { label: '邮件咨询', value: '10' }
-      ],
-      industrylist: [
-        { label: 'IT', value: '1' },
-        { label: '金融业', value: '2' },
-        { label: '房地产', value: '3' },
-        { label: '商业服务', value: '4' },
-        { label: '运输/物流', value: '5' },
-        { label: '生产', value: '6' },
-        { label: '政府', value: '7' },
-        { label: '文化传媒', value: '8' }
-      ],
-      levellist: [
-        { label: 'A（重点客户）', value: '1' },
-        { label: 'B（普通客户）', value: '2' },
-        { label: 'C（非优先客户）', value: '3' }
-      ],
-      selectArr: []
+      sourcelist: [],
+      industrylist: [],
+      levellist: [],
+      selectArr: [],
+      fanganheight: 0,
+      datalist: []
     }
   },
   computed: {
@@ -357,18 +333,56 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val);
-    },
+    }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
+    getbimProductAttributes('585429807173478149').then(res => {
+      this.sourcelist = res.data.list.length ? res.data.list : []
+    })
+    getbimProductAttributes('585430224678692613').then(res => {
+      this.levellist = res.data.list.length ? res.data.list : []
+    })
+    getbimProductAttributes('585430056520656645').then(res => {
+      this.industrylist = res.data.list.length ? res.data.list : []
+    })
     this.getcategoryTree()
-
   },
   mounted() {
     // this.rowDrop(); //声明表格拖动排序方法
   },
-
+  beforeDestroy() {
+    window.onresize = null
+  },
   methods: {
+    async switchStyle() {
+      await this.$nextTick();
+      const programmes = this.$refs.programmes.offsetWidth
+      if (programmes <= 100) {
+        this.programmelist = []
+        this.programmelist1 = this.datalist.slice(0)
+        Math.floor(programmes / 100)
+      } else {
+        let num = Math.floor(programmes / 100)
+        if (num - 1 > this.datalist.length) {
+          num = this.datalist.length + 1
+        }
+        this.programmelist = this.datalist.slice(0, num - 1)
+        this.programmelist1 = this.datalist.slice(num - 1)
+      }
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyle()
+        }, 100);
+      };
+    },
+    actionreverse(item) {
+      this.programmefrom = item
+      this.programmetitle = item.fullName
+      this.isopen = false
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -398,6 +412,9 @@ export default {
         }).catch(() => { })
       }
     },
+    Demandaction(){
+      if (!this.selectArr.length) return this.$message.error('请选择数据')
+    },
     DemandPoolaction() {
       if (!this.selectArr.length) return this.$message.error('请选择数据')
       let idlist = this.selectArr.map(item => item.id)
@@ -407,16 +424,16 @@ export default {
       })
     },
     sourcefunction(val) {
-      let _data = this.sourcelist.filter(item => item.value == val)[0]
-      return _data ? _data.label : val
+      let _data = this.sourcelist.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
     },
     industryfunction(val) {
-      let _data = this.industrylist.filter(item => item.value == val)[0]
-      return _data ? _data.label : val
+      let _data = this.industrylist.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
     },
     levelfunction(val) {
-      let _data = this.levellist.filter(item => item.value == val)[0]
-      return _data ? _data.label : val
+      let _data = this.levellist.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
     },
     refreshDataList(val) {
       this.formVisible = false
@@ -434,33 +451,33 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-    rowDrop() {
-      const el = this.$refs.tabForm.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
-      this.sortable = Sortable.create(el, {
-        ghostClass: 'sortable-ghost',
-        setData: function (dataTransfer) {
-          dataTransfer.setData('Text', '')
-        },
-        onEnd: evt => {
-          const targetRow = this.tableList.splice(evt.oldIndex, 1)[0];
-          this.tableList.splice(evt.newIndex, 0, targetRow);
-          console.log(this.tableList);
-          let att = []
-          this.tableList.forEach((item, index) => {
-            let obj = {
-              id: item.id,
-              sortCode: index,
-            }
-            att.push(obj)
-          });
-          console.log(att);
-          updateSortBatch(att).then(res => {
-            this.$message.success("批量修改排序成功")
-            this.initData()
-          })
-        }
-      });
-    },
+    // rowDrop() {
+    //   const el = this.$refs.tabForm.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+    //   this.sortable = Sortable.create(el, {
+    //     ghostClass: 'sortable-ghost',
+    //     setData: function (dataTransfer) {
+    //       dataTransfer.setData('Text', '')
+    //     },
+    //     onEnd: evt => {
+    //       const targetRow = this.tableList.splice(evt.oldIndex, 1)[0];
+    //       this.tableList.splice(evt.newIndex, 0, targetRow);
+    //       console.log(this.tableList);
+    //       let att = []
+    //       this.tableList.forEach((item, index) => {
+    //         let obj = {
+    //           id: item.id,
+    //           sortCode: index,
+    //         }
+    //         att.push(obj)
+    //       });
+    //       console.log(att);
+    //       updateSortBatch(att).then(res => {
+    //         this.$message.success("批量修改排序成功")
+    //         this.initData()
+    //       })
+    //     }
+    //   });
+    // },
     filterNode(value, data) {
       if (!value) return true;
       return data.fullName.indexOf(value) !== -1;
@@ -485,33 +502,15 @@ export default {
       this.leftFlag = !this.leftFlag
 
     },
-    // // 设置默认展开
-    // setexpand(expands) {
-    //   console.log("expands", expands);
-    //   this.refreshTree = false
-    //   this.expands = expands
-    //   this.$nextTick(() => {
-    //     this.refreshTree = true
-    //     localStorage.setItem("customExpandsFlag", expands)
-
-    //   })
-    // },
-    // // 展开或折叠全部
-    // toggleExpand(expands) {
-    //   this.refreshTree = false
-    //   this.expands = expands
-    //   this.$nextTick(() => {
-    //     this.refreshTree = true
-    //   })
-    // },
-
     initData() {
       this.listLoading = true
+      Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      // this.jnpf.searchTimeFormat(this.listQuery, 'createTimerange', 'startTime', 'endTime')
       let query = {
         ...this.listQuery,
-      }
-      if (this.categoryId == 'pool') {
-
       }
       getCluemanagementlist(query).then(res => {
         this.tableList = res.data.records
@@ -523,8 +522,8 @@ export default {
         this.btnLoading = false
       })
       getAdvancedQueryList(this.currMenuId).then(row => {
-        this.programmelist = row.data.list.splice(0, 1)
-        this.programmelist1 = row.data.list
+        this.datalist = row.data.list
+        this.switchStyle()
       })
     },
     addOrUpdateHandle(id, type) {
@@ -549,21 +548,13 @@ export default {
         })
       }).catch(() => { })
     },
-    exportTpl(id) {
-      this.$confirm('您确定要导出该单据, 是否继续?', '提示', {
-        type: 'warning'
-      }).then(() => {
-        exportTpl(id).then(res => {
-          this.jnpf.downloadFile(res.data.url)
-        })
-      }).catch(() => { });
-    },
     search() {
       this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
       this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.programmetitle = ''
       this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
       this.listQuery.status = this.categoryId
       this.search()
@@ -572,25 +563,42 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+.is-reverse {
+  color: #fff !important;
+  background-color: #3fb9f8;
+}
 .plan-list-item {
+  & + & {
+    margin-top: 5px;
+  }
   height: 34px;
   align-items: center;
   line-height: 34px;
   color: #606266;
   font-size: 14px;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
   &:hover {
-    background-color: #f5f7fa;
+    background-color: #3fb9f8;
   }
   .plan-list-name {
+    &:hover{
+      color: #606266;
+    }
     .el-link--inner {
-      width: 160px;
+      // width: 140px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
   }
+}
+.gjsearch {
+  display: flex;
+  background-color: #fff;
+  padding: 8px 10px;
+  justify-content: space-between;
+  align-items: center;
 }
 .treeBox_bot {
   .search-button {

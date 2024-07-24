@@ -4,11 +4,38 @@ import context from '@/main'
 import define from '@/utils/define'
 import { message } from '@/utils/message';
 import { create, all } from "mathjs"
+import { BillNumber,getBillRuleConfig } from '@/api/system/billRule'
 const STORAGEPREFIX = 'jnpf_'
 const STORAGETYPE = window.localStorage
 const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 const jnpf = {
+  getBillRuleConfigFun(code){
+    let obj={
+      code:code
+    }
+    return new Promise((resolve, reject) => {
+      getBillRuleConfig(obj).then(res=>{ 
+        resolve(res.data)
+      }).catch(error => {
+        reject(error)
+      })
+      
+     })
+    
+  },
+  getCodeWayFun(code) {
+     return new Promise((resolve, reject) => {
+      BillNumber(code).then(res=>{
+        res.data
+        resolve(res.data)
+      }).catch(error => {
+        reject(error)
+      })
+      
+     })
+    
+  },
   toDateText(dateTimeStamp) {
     if (!dateTimeStamp) return ''
     let result = ''
@@ -234,6 +261,9 @@ const jnpf = {
   getQueryString() {
     const url_string = location.href;
     return url_string.split('?')[1] || void ('');
+  },
+  getToLowerCase(val) {
+    return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
   },
   interfaceDataHandler(data) {
     if (!data.dataProcessing) return data.data
@@ -492,7 +522,7 @@ const jnpf = {
     return a == b
   },
   //2022-10-19T21:21:38转为正常时间格式
-  dateTimeString(val){
+  dateTimeString(val) {
     const dateTime = new Date(val);
     const year = dateTime.getFullYear();
     const month = ('0' + (dateTime.getMonth() + 1)).slice(-2);

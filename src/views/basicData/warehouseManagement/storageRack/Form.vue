@@ -13,6 +13,11 @@
       <div class="main" v-loading="formLoading">
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
+          <div
+            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
+          >
+            <h5>基本信息</h5>
+          </div>
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
@@ -27,6 +32,13 @@
             @addth="addSleeveList"
             @deleteth="deleteth"
           />
+          <JNPF-col-table
+            v-else
+            v-model="stockLimitsAuthorities"
+            ref="sleeveForm"
+            :tableItems="sleeveItems"
+            :openMode="openMode"
+          />
         </el-tabs>
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
@@ -36,21 +48,13 @@
 
 <script>
 import {
-  detailProduct,
-  cpAddProduct,
-  updateProductData,
-  checkCodeExist,
-  checkModelExist
-} from '@/api/masterDataManagement/productManage'
-import { getCooperativeData, getcategoryTree as getcategoryCoop, getBimBusinessInfo } from '@/api/basicData/index'
-import {
   addStockGoodsShelves,
+  getListTree,
   getList,
   deleteStockGoodsShelves,
-  detailProductionResourceData
+  detailProductionResourceData,
+  editStockGoodsShelves
 } from '@/api/basicData/stockGoodsShelves'
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import tabs from './params'
@@ -76,8 +80,47 @@ export default {
       },
       sleeveItems: [
         { prop: 'name', label: '库区名称', type: 'input' },
-        { prop: 'code', label: '库区编码', type: 'input' }
-        // { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
+        {
+          prop: 'code',
+          label: '库区编码',
+          type: 'input',
+          itemRules: [
+            { required: true, message: '请输入仓库编码', trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                if (this.autoCode == value) {
+                  callback()
+                } else {
+                  if (this.dataForm.id) {
+                    checWarehouseCode(value, this.dataForm.id)
+                      .then((res) => {
+                        if (res.data) {
+                          callback(new Error('编码重复'))
+                          this.$message.error(`编码重复`)
+                        } else {
+                          callback()
+                        }
+                      })
+                      .catch((error) => {})
+                  } else {
+                    checWarehouseCode(value, '')
+                      .then((res) => {
+                        if (res.data) {
+                          callback(new Error('编码重复'))
+                          this.$message.error(`编码重复`)
+                        } else {
+                          callback()
+                        }
+                      })
+                      .catch((error) => {})
+                  }
+                }
+              },
+              trigger: 'blur'
+            }
+          ]
+        },
+        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
       ],
       stockLimitsAuthorities: [],
       requestObj2: {
@@ -86,6 +129,11 @@ export default {
         noId: '',
         type: '',
         category: 'warehouse'
+      },
+      requestObj5: {
+        category: 'area',
+        pageSize: -1,
+        warehouseId: ''
       },
       modelQuery: {
         startTime: '',
@@ -104,13 +152,13 @@ export default {
         pageSize: 20,
         model: ''
       },
-      getbimProductAttributesList, // 产品类别属性列表请求api
-      getbimProductsModelList, // 型号管理属性列表
-      getCooperativeData, // 供应商列表
-      getcategoryCoop, // 供应商分类
+
       rowColShow: false,
       tableFlag: true,
-      tableQuery: {},
+      tableQuery: {
+        warehouseId: ''
+      },
+      areaOptions: [],
       businessType: '' //  参数设置  自动  还是 手输
     }
   },
@@ -122,54 +170,15 @@ export default {
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
           // 产品分类
-          if (tc.prop === 'partnerCategoryIdText') {
-            // if(tc.prop == 'type') this.type = tc.value
-
+          if (tc.prop === 'warehouseName') {
             tc.method = getWarehouseList
 
             tc.requestObj = this.requestObj2
-            tc.change = this.partnerCategoryIdTextChange
-            console.log(tc, 'tc999')
+            tc.change = this.warehouseNameChange
+
             tc.dialogTitle = '选择上级仓库'
           }
         }
-
-        // 添加校验编码和图号唯一性的规则
-        if (tc.prop === 'code') {
-          if (this.businessType === '1') {
-            tc.render = false
-          } else {
-            if (!tc.itemRules) {
-              tc.itemRules = []
-            }
-            tc.itemRules.push({
-              validator: (rule, value, callback) => {
-                if (!value) {
-                  callback()
-                } else if (this.dataForm.code === this.autoCode) {
-                  callback()
-                } else {
-                  checkCodeExist({ id: this.dataForm.id || '', code: this.dataForm.code })
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        callback(new Error('此产品编码已存在'))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                }
-              },
-              trigger: 'blur'
-            })
-          }
-        }
-        // if (tc.prop == 'goodsShelvesId') {
-        //   console.log(tc, 'tc123')
-        //   tc.change = this.goodsShelvesIdChange
-        // }
       })
     })
   },
@@ -187,92 +196,141 @@ export default {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
-      // getBimBusinessInfo('460907390338859014').then((res) => {
-      //   this.businessType = res.data.configValue1
-      //   if (this.businessType === '1') {
-      //     let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-      //     target.render = false
-      //   }
-      // })
+
       if (!!id) {
         this.dataForm.id = id
         // this.title = btnType ? '查看货架/货位' : '编辑货架/货位'
         // 获取详情
         detailProductionResourceData(id).then((res) => {
           // 记录编码和图号，用于校验唯一性
-          this.dataForm.code = res.data.code
-          this.dataForm.id = res.data.id
-          this.dataForm.name = res.data.name
-          this.dataForm.parentId = res.data.parentId == '-1' ? '' : res.data.parentId
-          this.dataForm.position = res.data.position
-          this.dataForm.remark = res.data.remark
-          this.dataForm.sort = res.data.sort
-          this.dataForm.type = res.data.type
+          this.dataForm = res.data
+          this.autoCode = res.data.code
+          this.dataForm.warehouseId = res.data.warehouseId
+          this.requestObj5.warehouseId = this.dataForm.warehouseId
 
-          this.stockLimitsAuthorities = res.data.stockLimitsAuthorities
-          this.dataForm.partnerCategoryIdText = res.data.parentName
+          this.stockLimitsAuthorities = [
+            { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+          ]
 
-          // 处理普通属性
-
-          if (this.dataForm.type == 'scrap') {
-            this.tabs[0].tabContent.forEach((tc) => {
-              if (tc.prop == 'type') {
-                tc.options = [{ label: '报废', value: 'scrap' }]
-              }
-            })
-          } else {
-            this.tabs[0].tabContent.forEach((tc) => {
-              if (tc.prop == 'type') {
-                tc.options = [
-                  { label: '正常仓库', value: 'normal' },
-                  { label: '中转仓库', value: 'temp' },
-                  { label: '不良品仓库', value: 'unqualified' }
-                ]
-              }
-            })
-          }
-
-          // 编辑时，如果已经规格型号那些，不允许修改
-          // this.tabs[0].tabContent.forEach((tc) => {
-
-          //   if (
-          //     [
-          //       'model',
-          //       'sealingCoverStructure',
-          //       'structureType',
-          //       'clearance',
-          //       'steelBallManufacturer',
-          //       'oil',
-          //       'noise',
-          //       'holder'
-          //     ].includes(tc.prop)
-          //   ) {
-          //     tc.itemDisabled = true
-          //   }
-          // })
           this.formLoading = false
         })
       }
-      //  else {
-      //   this.title = '新建货架/货位'
-      //   this.formLoading = false
-      // }
-      if (btnType == 'look') {
-        this.isdisabled = true
+
+      if (btnType == 'areaLook') {
         this.editFlag = true
-        this.title = '查看货架/货位'
-      } else if (btnType == 'edit') {
+        this.isdisabled = false
+        this.title = '查看库区'
+        this.tableFlag = false
+        if (!!id) {
+          this.dataForm.id = id
+
+          // 获取详情
+          detailProductionResourceData(id).then((res) => {
+            // 记录编码和图号，用于校验唯一性
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.dataForm.warehouseNameNew = res.data.warehouseName
+
+            this.stockLimitsAuthorities = [
+              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+            ]
+            this.formLoading = false
+          })
+        }
+      } else if (btnType == 'areaEdit') {
         this.editFlag = true
         this.isdisabled = false
         this.title = '编辑库区'
         this.tableFlag = false
+        if (!!id) {
+          this.dataForm.id = id
+
+          // 获取详情
+          detailProductionResourceData(id).then((res) => {
+            // 记录编码和图号，用于校验唯一性
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.dataForm.warehouseNameNew = res.data.warehouseName
+
+            this.stockLimitsAuthorities = [
+              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+            ]
+            this.formLoading = false
+          })
+        }
+      } else if (btnType == 'shelvesEdit') {
+        this.editFlag = true
+        this.isdisabled = false
+        this.title = '编辑货架'
+        this.tableFlag = false
+        if (!!id) {
+          this.dataForm.id = id
+
+          // 获取详情
+          detailProductionResourceData(id).then((res) => {
+            // 记录编码和图号，用于校验唯一性
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.dataForm.warehouseNameNew = res.data.warehouseName
+            this.dataForm.areaNameNew = this.dataForm.areaName
+
+            this.stockLimitsAuthorities = [
+              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+            ]
+            this.formLoading = false
+          })
+        }
+        const tc = this.tabs[0].tabContent.find((item) => item.prop === 'areaName')
+
+        tc.method = getListTree
+
+        // this.tableQuery.category = 'area'
+
+        // this.tableQuery.pageSize = -1
+        tc.requestObj = this.requestObj5
+        tc.change = this.areaIdChange
+
+        tc.dialogTitle = '选择上级库区'
+      } else if (btnType == 'locationEdit') {
+        this.editFlag = true
+        this.isdisabled = false
+        this.title = '编辑货位'
+        this.tableFlag = false
+        if (!!id) {
+          this.dataForm.id = id
+          // this.title = btnType ? '查看货架/货位' : '编辑货架/货位'
+          // 获取详情
+          detailProductionResourceData(id).then((res) => {
+            // 记录编码和图号，用于校验唯一性
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.dataForm.warehouseNameNew = res.data.warehouseName
+            this.dataForm.areaNameNew = this.dataForm.areaName
+            this.dataForm.goodsShelvesIdNew = res.data.goodsShelvesName
+
+            this.stockLimitsAuthorities = [
+              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+            ]
+
+            this.formLoading = false
+          })
+        }
+        const tc = this.tabs[0].tabContent.find((item) => item.prop === 'areaName')
+
+        tc.method = getListTree
+        tc.requestObj = this.requestObj5
+        tc.change = this.areaIdChange
+
+        tc.dialogTitle = '选择上级库区'
+
+        this.tableQuery.category = 'shelves'
       } else if (btnType == 'addReservoirArea') {
         this.title = '新建库区'
         this.isdisabled = false
         this.editFlag = false
         this.dataForm.type = 'normal'
         this.formLoading = false
-        // this.requestObj2.type = 'normal'
+
         // this.$forceUpdate()
       } else if (btnType == 'addShelves') {
         this.title = '新建货架'
@@ -281,7 +339,6 @@ export default {
         this.dataForm.type = 'normal'
         this.formLoading = false
 
-        // this.requestObj2.type = 'normal'
         // this.$forceUpdate()
       } else {
         this.title = '新建货位'
@@ -292,44 +349,198 @@ export default {
       }
       this.tabs.forEach((tab, tabInd) => {
         tab.tabContent.forEach((tc) => {
-          console.log(tc, 'tc9999')
-
-          if (this.title == '新建库区' || this.title == '编辑库区') {
-            console.log(this.title, 'ooooo')
-            if (
-              tc.prop == 'areaId' ||
-              tc.prop == 'goodsShelvesId'
-              // tc.prop == 'remark'
-            ) {
-              tc.render = false
+          if (this.title == '新建库区') {
+            if (tc.prop == 'warehouseName' || tc.prop == 'areaName') {
+              tc.render = true
             }
-          } else if (this.title == '新建货架' || this.title == '编辑货架') {
-            if (
-              // tc.prop == 'locationType' ||
-              // tc.prop == 'category' ||
-              tc.prop == 'code' ||
-              tc.prop == 'name' ||
-              tc.prop == 'remark'
-            ) {
-              tc.render = false
+          } else if (this.title == '编辑库区') {
+            if (tc.prop == 'warehouseNameNew') {
+              tc.render = true
+            }
+          } else if (this.title == '新建货架') {
+            if (tc.prop == 'warehouseName' || tc.prop == 'areaName') {
+              tc.render = true
             }
             this.sleeveItems = [
               { prop: 'name', label: '货架名称', type: 'input' },
-              { prop: 'code', label: '货架编码', type: 'input' }
+              {
+                prop: 'code',
+                label: '货架编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货架编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.autoCode == value) {
+                        callback()
+                      } else {
+                        if (this.dataForm.id) {
+                          checWarehouseCode(value, this.dataForm.id)
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        } else {
+                          checWarehouseCode(value, '')
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        }
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
+              { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
+            ]
+          } else if (this.title == '编辑货架') {
+            if (tc.prop == 'warehouseNameNew' || tc.prop == 'areaNameNew') {
+              tc.render = true
+            }
+
+            this.sleeveItems = [
+              { prop: 'name', label: '货架名称', type: 'input' },
+              {
+                prop: 'code',
+                label: '货架编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货架编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.autoCode == value) {
+                        callback()
+                      } else {
+                        if (this.dataForm.id) {
+                          checWarehouseCode(value, this.dataForm.id)
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        } else {
+                          checWarehouseCode(value, '')
+                            .then((res) => {
+                              if (res.data) {
+                                callback(new Error('编码重复'))
+                                this.$message.error(`编码重复`)
+                              } else {
+                                callback()
+                              }
+                            })
+                            .catch((error) => {})
+                        }
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
+              { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           } else if (this.title == '新建货位') {
-            if (
-              // tc.prop == 'locationType' ||
-              // tc.prop == 'category' ||
-              tc.prop == 'code' ||
-              tc.prop == 'name' ||
-              tc.prop == 'remark'
-            ) {
-              tc.render = false
+            if (tc.prop == 'warehouseName' || tc.prop == 'areaName' || tc.prop == 'goodsShelvesId') {
+              tc.render = true
             }
             this.sleeveItems = [
               { prop: 'name', label: '货位名称', type: 'input' },
-              { prop: 'code', label: '货位编码', type: 'input' }
+              {
+                prop: 'code',
+                label: '货位编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货位编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.dataForm.id) {
+                        checWarehouseCode(value, this.dataForm.id)
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      } else {
+                        checWarehouseCode(value, '')
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
+              { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
+            ]
+          } else if (this.title == '编辑货位') {
+            if (tc.prop == 'warehouseNameNew' || tc.prop == 'areaNameNew' || tc.prop == 'goodsShelvesIdNew') {
+              tc.render = true
+            }
+            this.sleeveItems = [
+              { prop: 'name', label: '货位名称', type: 'input' },
+              {
+                prop: 'code',
+                label: '货位编码',
+                type: 'input',
+                itemRules: [
+                  { required: true, message: '请输入货位编码', trigger: 'blur' },
+                  {
+                    validator: (rule, value, callback) => {
+                      if (this.dataForm.id) {
+                        checWarehouseCode(value, this.dataForm.id)
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      } else {
+                        checWarehouseCode(value, '')
+                          .then((res) => {
+                            if (res.data) {
+                              callback(new Error('编码重复'))
+                              this.$message.error(`编码重复`)
+                            } else {
+                              callback()
+                            }
+                          })
+                          .catch((error) => {})
+                      }
+                    },
+                    trigger: 'blur'
+                  }
+                ]
+              },
+              { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200 }
             ]
           }
         })
@@ -357,19 +568,23 @@ export default {
       if (submitFlag) {
         if (this.title == '新建库区') {
           for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
-            this.stockLimitsAuthorities[i].warehouseId = this.tableQuery.warehouseId
+            this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
             this.stockLimitsAuthorities[i].category = 'area'
-            this.stockLimitsAuthorities[i].parentId = this.tableQuery.warehouseId
+            if (this.dataForm.areaId) {
+              this.stockLimitsAuthorities[i].areaId = this.dataForm.areaId
+              this.stockLimitsAuthorities[i].parentId = this.dataForm.areaId
+            } else {
+              this.stockLimitsAuthorities[i].parentId = this.dataForm.warehouseId
+            }
           }
         } else if (this.title == '新建货架') {
           for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
-            this.stockLimitsAuthorities[i].warehouseId = this.tableQuery.warehouseId
+            this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
             this.stockLimitsAuthorities[i].category = 'shelves'
-            if (this.tableQuery.areaId) {
-              this.stockLimitsAuthorities[i].areaId = this.tableQuery.areaId
-              this.stockLimitsAuthorities[i].parentId = this.tableQuery.areaId
+            if (this.dataForm.areaId) {
+              this.stockLimitsAuthorities[i].areaId = this.dataForm.areaId
+              this.stockLimitsAuthorities[i].parentId = this.dataForm.areaId
             } else {
-              this.stockLimitsAuthorities[i].warehouseId = this.tableQuery.warehouseId
               this.stockLimitsAuthorities[i].parentId = this.dataForm.warehouseId
             }
           }
@@ -377,41 +592,71 @@ export default {
           for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
             this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
             this.stockLimitsAuthorities[i].category = 'location'
+
             if (this.dataForm.goodsShelvesId) {
               this.stockLimitsAuthorities[i].goodsShelvesId = this.dataForm.goodsShelvesId
+              this.stockLimitsAuthorities[i].areaId = this.dataForm.areaId
               this.stockLimitsAuthorities[i].parentId = this.dataForm.goodsShelvesId
             } else if (this.dataForm.areaId) {
               this.stockLimitsAuthorities[i].areaId = this.dataForm.areaId
               this.stockLimitsAuthorities[i].parentId = this.dataForm.areaId
             } else {
-              this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
-              this.stockLimitsAuthorities[i].parentId = this.dataForm.warehouseId
+              this.stockLimitsAuthorities[i].parentId = this.tableQuery.warehouseId
             }
           }
         }
 
         let obj = this.stockLimitsAuthorities
-        const formMethod = this.dataForm.id ? editWarehouse : addStockGoodsShelves
-        formMethod(obj)
-          .then((res) => {
-            let msg = res.msg
-            if (res.msg === 'Success') {
-              msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
-            }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
+        for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
+          this.dataForm.name = this.stockLimitsAuthorities[i].name
+          this.dataForm.code = this.stockLimitsAuthorities[i].code
+          this.dataForm.remark = this.stockLimitsAuthorities[i].remark
+        }
+
+        const formMethod = this.dataForm.id ? editStockGoodsShelves : addStockGoodsShelves
+        if (this.dataForm.id) {
+          editStockGoodsShelves(this.dataForm)
+            .then((res) => {
+              let msg = res.msg
+              if (res.msg === 'Success') {
+                msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
               }
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                  this.btnLoading = false
+                  this.$emit('close', true)
+                }
+              })
             })
-          })
-          .catch(() => {
-            this.btnLoading = false
-          })
+            .catch(() => {
+              this.btnLoading = false
+            })
+        } else {
+          addStockGoodsShelves(obj)
+            .then((res) => {
+              let msg = res.msg
+              if (res.msg === 'Success') {
+                msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
+              }
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                  this.btnLoading = false
+                  this.$emit('close', true)
+                }
+              })
+            })
+            .catch(() => {
+              this.btnLoading = false
+            })
+        }
       } else {
         this.btnLoading = false
       }
@@ -419,70 +664,54 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    partnerCategoryIdTextChange(val, data) {
-      console.log(data, 'data666') // dom更新后重新校验此元素
+    warehouseNameChange(val, data) {
+      this.dataForm.parentId = data ? data[0].id : '-1'
 
-      getWarehouseList(this.requestObj2).then((res) => {
-        if (!val && !data.length) {
-          this.dataForm.parentId = '-1'
+      this.parentId = data ? data[0].id : ''
 
-          return (this.dataForm.partnerCategoryIdText = '')
-        }
+      this.dataForm.warehouseName = data ? data[0].name : ''
+      this.dataForm.warehouseId = data ? data[0].id : ''
+      this.dataForm.type = data ? data[0].all.type : ''
+      this.requestObj5.warehouseId = data[0].id
 
-        this.dataForm.parentId = data ? data[0].id : '-1'
+      this.tabs.forEach((tab, tabInd) => {
+        tab.tabContent.forEach((tc) => {
+          if (tc.prop == 'areaName') {
+            tc.method = getListTree
 
-        this.parentId = data ? data[0].id : ''
+            tc.requestObj = this.requestObj5
+            tc.change = this.areaIdChange
 
-        this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
-
-        this.dataForm.type = data ? data[0].all.type : ''
-      })
-
-      console.log(this.title, 'title')
-
-      this.tableQuery.warehouseId = data[0].id
-
-      this.tableQuery.category = 'area'
-
-      this.tableQuery.pageSize = -1
-
-      getList(this.tableQuery).then((res) => {
-        console.log(res, 'rees')
-
-        this.tabs[0].tabContent.forEach((tc) => {
-          if (this.tableQuery.category == 'area') {
-            if (tc.prop == 'areaId') {
-              tc.options = res.data.records.map((item) => {
-                console.log(item, 'poooo')
-                return { label: item.name, value: item.id }
-              })
-              tc.change = this.areaIdChange
-              console.log(tc, 'lkk')
-            }
+            tc.dialogTitle = '选择上级库区'
           }
         })
       })
     },
     // 库区选择
     areaIdChange(val, data) {
-      console.log(val, 'val')
-      console.log(data, 'data')
       this.tableQuery.category = 'shelves'
-      this.tableQuery.areaId = val
+      // this.tableQuery.areaId = data ? data[0].id : ''
+      this.tableQuery.warehouseId = this.dataForm.warehouseId
+      // this.tableQuery.parentId = this.tableQuery.areaId
 
-      this.tableQuery.parentId = val
+      this.dataForm.areaName = data ? data[0].name : ''
+      this.dataForm.areaId = data ? data[0].id : ''
 
-      getList(this.tableQuery).then((res) => {
-        console.log(res, 'rees')
+      getListTree(this.tableQuery).then((res) => {
+        let childrenList = []
+        res.data.forEach((ele) => {
+          if (ele.id == this.dataForm.areaId) {
+            childrenList = ele.childrenList
+          }
+        })
 
         this.tabs[0].tabContent.forEach((tc) => {
           if (this.tableQuery.category == 'shelves') {
             if (tc.prop == 'goodsShelvesId') {
-              tc.options = res.data.records.map((item) => {
+              tc.options = childrenList.map((item) => {
                 return { label: item.name, value: item.id }
               })
-              // tc.change = this.goodsShelvesIdChange
-              console.log(tc, 'lkk')
+              tc.change = this.goodsShelvesIdChange
             }
           }
         })
@@ -490,12 +719,9 @@ export default {
     },
     // 货架选择
     goodsShelvesIdChange(val, data) {
-      console.log(val, 'val')
-      console.log(data, 'data')
-      this.tableQuery.category = 'location'
-      this.tableQuery.areaId = val
-
-      this.tableQuery.parentId = val
+      this.dataForm.category = 'location'
+      this.dataForm.goodsShelvesId = val
+      this.dataForm.parentId = val
     },
     // 对应套筒新增行
     addSleeveList() {
@@ -535,7 +761,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .main {
-  padding: 0px 30px 10px;
+  // padding: 0px 30px 10px;
 }
 
 ::v-deep .el-tabs__header {
@@ -552,6 +778,7 @@ export default {
 
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
+  padding: 0px 20px;
 }
 
 ::v-deep .JNPF-common-page-header {

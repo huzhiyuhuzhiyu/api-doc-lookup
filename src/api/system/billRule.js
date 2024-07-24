@@ -51,7 +51,15 @@ export function delBillRule(id) {
     method: 'DELETE'
   })
 }
+// 获取单据规则配置信息
 
+export function getBillRuleConfig(data) {
+  return request({
+    url: `/api/system/BillRule/getByCode`,
+    method: 'get',
+    data
+  })
+}
 // 更新单据规则状态
 export function updateBillRuleState(id) {
   return request({

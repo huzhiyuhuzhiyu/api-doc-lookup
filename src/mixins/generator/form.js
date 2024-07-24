@@ -96,7 +96,7 @@ export default {
         } else {
           this.columnData = res.columnData
           this.appColumnData = res.appColumnData
-        }
+        } 
         this.dataForm.tables = JSON.stringify(this.tables)
         this.dataForm.formData = this.formData ? JSON.stringify(this.formData) : null
         this.dataForm.columnData = this.columnData ? JSON.stringify(this.columnData) : null

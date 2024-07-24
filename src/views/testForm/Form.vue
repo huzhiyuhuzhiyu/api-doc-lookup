@@ -16,14 +16,21 @@
       </div>
       <el-steps :active="activeStep" finish-status="success" simple
         :class="'steps steps'+(maxStep+1)" v-if="!loading">
-        <el-step title="基础设置" @click.native="stepChick(0)" />
-        <el-step title="表单设计" @click.native="stepChick(1)" />
-        <el-step title="列表设计" @click.native="stepChick(2)" v-if="maxStep>=2" />
-        <el-step title="流程设计" @click.native="stepChick(3)" v-if="maxStep>=3" />
+        <template v-if="!editType">
+          <el-step title="基础设置" @click.native="stepChick(0)" />
+          <el-step title="表单设计" @click.native="stepChick(1)" />
+          <el-step title="列表设计" @click.native="stepChick(2)" v-if="maxStep>=2" />
+          <el-step title="流程设计" @click.native="stepChick(3)" v-if="maxStep>=3" />
+        </template>
+        <template v-else>
+          <el-step title="表单设计" @click.native="stepChick(1)" v-if="editType === 'form'" />
+          <el-step title="列表设计" @click.native="stepChick(2)" v-if="editType === 'table'" />
+          <el-step title="流程设计" @click.native="stepChick(3)" v-if="editType === 'flow'" />
+        </template>
       </el-steps>
       <div class="options" style="width:400px">
-        <el-button @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
-        <el-button @click="next" :disabled="activeStep>=maxStep || loading">{{$t('common.next')}}
+        <el-button v-if="!editType" @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
+        <el-button v-if="!editType" @click="next" :disabled="activeStep>=maxStep || loading">{{$t('common.next')}}
         </el-button>
         <el-button type="primary" @click="dataFormSubmit()" :disabled="activeStep!=maxStep"
           :loading="btnLoading">{{$t('common.confirmButton')}}</el-button>
@@ -121,15 +128,20 @@
         </el-col>
       </el-row>
       <template v-if="activeStep==1">
-        <Generator ref="generator" :conf="formData" :modelType="dataForm.type"
+        <Generator v-if="!editType" ref="generator" :conf="formData" :modelType="dataForm.type"
+          :webType="dataForm.webType" :dbType="dbType" />
+        <Generator v-if="editType && formData" ref="generator" :conf="formData" :modelType="dataForm.type"
           :webType="dataForm.webType" :dbType="dbType" />
       </template>
       <template v-if="activeStep==2">
-        <columnDesign ref="columnDesign" :columnData="columnData" :appColumnData="appColumnData"
+        <columnDesign v-if="!editType" ref="columnDesign" :columnData="columnData" :appColumnData="appColumnData"
+          :modelType="dataForm.type" :webType="dataForm.webType" />
+        <columnDesign v-if="editType && columnData" ref="columnDesign" :columnData="columnData" :appColumnData="appColumnData"
           :modelType="dataForm.type" :webType="dataForm.webType" />
       </template>
       <template v-if="activeStep==3">
-        <Process ref="process" :conf="flowTemplateJson" :flowType="1" />
+        <Process v-if="!editType" ref="process" :conf="flowTemplateJson" :flowType="1" />
+        <Process v-if="editType && flowTemplateJson" ref="process" :conf="flowTemplateJson" :flowType="1" />
       </template>
     </div>
     <TableForm :visible.sync="formVisible" ref="tableForm" @closeForm="closeForm"

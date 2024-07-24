@@ -29,9 +29,9 @@ export function deleteStockGoodsShelves(data) {
 
 // 修改
 
-export function editProductionResource(data) {
+export function editStockGoodsShelves(data) {
   return request({
-    url: `/api/mes/production/resource/update`,
+    url: `/api/wms/stockGoodsShelves/modify`,
     method: 'put',
     data
   })
@@ -40,6 +40,13 @@ export function editProductionResource(data) {
 export function getList(data) {
   return request({
     url: `/api/wms/stockGoodsShelves/list`,
+    method: 'post',
+    data
+  })
+}
+export function getListTree(data) {
+  return request({
+    url: `/api/wms/stockGoodsShelves/tree`,
     method: 'post',
     data
   })

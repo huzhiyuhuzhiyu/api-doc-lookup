@@ -1,5 +1,5 @@
 import { getVisualDevList, Delete, Copy, exportData } from '@/api/onlineDev/visualDev'
-
+import { getbimProductAttributes } from "@/api/masterDataManagement/index";
 export default {
   data() {
     return {
@@ -24,13 +24,22 @@ export default {
     this.getDictionaryData()
     this.initData()
   },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val);
+    },
+  },
+  mounted() {
+    this.getcategoryTree()
+  },
   methods: {
     search() {
       this.listQuery = {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-        sidx: ''
+        sidx: '',
+        category:this.category
       }
       this.initData()
     },
@@ -111,10 +120,10 @@ export default {
     handleAdd(id,webType, isToggle) {
       this.addOrUpdateHandle(id, webType, isToggle)
     },
-    addOrUpdateHandle(id, webType, isToggle) {
+    addOrUpdateHandle(id, webType, isToggle,editType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.categoryList, id, this.query.type, webType, isToggle)
+        this.$refs.Form.init(this.categoryList, id, this.query.type, webType, isToggle,editType)
       })
     },
     closeForm(isRefresh) {
@@ -122,6 +131,39 @@ export default {
       if (isRefresh) {
         this.initData()
       }
-    }
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.fullName.indexOf(value) !== -1;
+    },
+    handleNodeClick(data, node) {
+      this.category = node.data.id
+      this.search();
+    },
+    getcategoryTree() {
+      this.treeLoading = true
+      this.listLoading = true
+      getbimProductAttributes('765929a127f44a5b80e773d65d58f96c').then(res => {
+        this.treeData = res.data.list.length ? res.data.list : []
+        this.listLoading = false
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+          this.category = this.treeData[0].id
+          this.treeLoading = false
+          this.listLoading = false
+          this.initData()
+        })
+      }).catch(() => {
+        this.listLoading = false
+        this.treeLoading = false
+      })
+    },
+
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
+    columnSetFun() {
+      this.$refs.tabForm.showDrawer()
+    },
   }
 }

@@ -11,6 +11,7 @@ export default {
         sort: 'desc',
         sidx: '',
         keyword:"",
+        type:1
       },
       total: 0,
       listLoading: false,

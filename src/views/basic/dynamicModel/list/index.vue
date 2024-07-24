@@ -915,11 +915,13 @@
                 this.list.unshift(item)
             },
             addOrUpdateHandle(id) {
+                console.log(this.config,'config');
+                
                 if (this.config.webType == 3) {
                     let data = {
                         id: id || '',
                         enCode: this.config.flowEnCode,
-                        flowId: this.config.flowId,
+                        flowId: this.config.flowId || this.modelId,
                         formType: 2,
                         type: 1,
                         opType: '-1',

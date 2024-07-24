@@ -397,6 +397,8 @@ export default {
       }
     },
     getEngineInfo(data) {
+      
+      console.log(data,'预览流程');
       FlowEngineInfo(data.flowId).then(res => {
         data.type = res.data.type
         data.fullName = res.data.fullName
@@ -449,6 +451,8 @@ export default {
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
         this.flowTemplateJson = this.flowTaskInfo.flowTemplateJson ? JSON.parse(this.flowTaskInfo.flowTemplateJson) : null
+        console.log( this.flowTemplateJson,'流程数据')
+        console.log( this.flowTaskNodeList,'flowTaskNodeList')
         this.isComment = this.flowTemplateJson.properties.isComment
         this.isSummary = this.flowTemplateJson.properties.isSummary
         this.summaryType = this.flowTemplateJson.properties.summaryType

@@ -55,6 +55,14 @@ export function Release(id, data) {
     data
   })
 }
+// 发布菜单  -自定义字段专用
+export function ReleaseNew(id, data) {
+  return request({
+    url: `/api/visualdev/Base/${id}/Actions/Release/New`,
+    method: 'POST',
+    data
+  })
+}
 // 获取模块命名
 export function getAreasName() {
   return request({

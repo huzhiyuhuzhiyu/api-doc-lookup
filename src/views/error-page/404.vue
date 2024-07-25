@@ -1,13 +1,14 @@
 <template>
   <div class="app-container http404-container">
     <div class="http404">
-      <img src="@/assets/images/404.png" alt="404" class="pic-404">
+      <img src="@/assets/images/404-1.png" alt="" >
+      <!-- <img src="@/assets/images/404.png" alt="404" class="pic-404">
       <div class="bullshit">
         <el-link type="primary" class="bullshit__oops" :underline="false">OOPS!</el-link>
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">请检查您输入的URL是否正确，或单击按钮返回首页。</div>
         <el-button type="primary" size="large" @click="$router.push('/home')">返回首页</el-button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

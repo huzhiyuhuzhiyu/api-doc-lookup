@@ -137,12 +137,13 @@
         <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
-    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" />
-    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" />
+    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" @goto="gotopool" />
+    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" @gotoclue="gotoclue"/>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -358,6 +359,25 @@ export default {
     window.onresize = null
   },
   methods: {
+    //去线索池
+    gotopool() {
+      this.clueVisible = false
+      this.$nextTick(() => {
+        this.$refs.treeBox.setCurrentKey('pool')
+        this.categoryId = 'pool'
+        this.listQuery.status = 'pool'
+        this.search();
+      })
+    },
+    gotoclue(){
+      this.clueVisiblefp = false
+      this.$nextTick(() => {
+        this.$refs.treeBox.setCurrentKey('clue')
+        this.categoryId = 'clue'
+        this.listQuery.status = 'clue'
+        this.search();
+      })
+    },
     async switchStyle() {
       await this.$nextTick();
       const programmes = this.$refs.programmes.offsetWidth

@@ -160,8 +160,6 @@ export default {
         { prop: 'steelBallNum', label: '钢球用量', type: 'view' },
         { prop: 'oilNum', label: '油脂用量', type: 'view' },
         { prop: 'holderNum', label: '保持架用量', type: 'view' },
-        { prop: 'createTime', label: '创建时间', type: 'view' },
-        { prop: 'createByName', label: '创建人', type: 'view' }
       ],
       otherForm: {},
       otherItems: [
@@ -550,6 +548,29 @@ export default {
               }
             })
           })
+          this.modelArr[0].model = this.dataForm.model
+          const obj = {
+            startTime: '',
+            endTime: '',
+            orderItems: [
+              {
+                asc: false,
+                column: ''
+              },
+              {
+                asc: false,
+                column: 'create_time'
+              }
+            ],
+            pageNum: 1,
+            pageSize: 20,
+            model: this.modelArr[0].model
+          }
+          getbimProductsModelList(obj).then((res) => {
+            this.modelArr = res.data.records
+          })
+          let target = this.modelItems.find((tc) => tc.prop === 'model')
+          target.itemDisabled = true
           this.formLoading = false
         })
       } else {

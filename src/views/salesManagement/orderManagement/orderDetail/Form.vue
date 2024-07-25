@@ -205,8 +205,7 @@
 
                   </div>
                   <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
-                    <vue-draggable-resizable :w="width || 1" :h="height" @resizing="handleResize" class-name="dragging1"
-                      axis="y" :parent="true" :handles="['mr']">
+               
                       <el-table ref="product" :data="productData" :fixedNO="true"
                         @selection-change="handeleProductInfoData" border height="100%" @row-click="rowclick" :key="1"
                         style="width: 100%;height:100%">
@@ -310,22 +309,7 @@
                           </template>
                         </el-table-column>
                       </el-table>
-                    </vue-draggable-resizable>
-                    <vue-draggable-resizable :w="width1 || 1" :h="height" class-name="dragging2" :x="10"
-                      :draggable="false" :parent="true" :resizable="false">
-                      <el-table v-bind="dataFormTwo.data" :data="dataFormTwo.data" size='mini' border id="table"
-                        style="width: 100%" height="100%" v-loading="bomLoading">
-                        <el-table-column type="index" width="60" label="序号" align="center" />
-                        <el-table-column prop="productsCode" label="产品编码" min-width="120" show-overflow-tooltip />
-                        <el-table-column prop="productsName" label="产品名称" min-width="120" show-overflow-tooltip />
-                        <el-table-column prop="productsDrawingNo" label="产品图号" min-width="120" show-overflow-tooltip />
-                        <el-table-column prop="shoulderLength" label="夹肩长" min-width="120" show-overflow-tooltip />
-                        <el-table-column prop="bomsleeve" label="对应套筒" min-width="180" show-overflow-tooltip />
-                        <el-table-column prop="bomsheath" label="对应护套" min-width="180" show-overflow-tooltip />
-                        <el-table-column prop="qty" label="数量" min-width="120" show-overflow-tooltip />
-                        <el-table-column prop="stockQty" label="库存数量" min-width="120" show-overflow-tooltip />
-                      </el-table>
-                    </vue-draggable-resizable>
+                
                   </div>
                   <el-table ref="product" v-else :data="productData" :fixedNO="true"
                     @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" :key="1"
@@ -1226,8 +1210,6 @@ export default {
     this.getDictionaryType()
   },
   mounted() {
-    // window.addEventListener('resize', this.switchStyle)
-    this.switchStyle()
     console.log("this.userInfo", this.userInfo);
     this.dataForm.departmentId = this.userInfo.departmentId
     this.dataForm.salesName = this.userInfo.userName
@@ -1242,7 +1224,6 @@ export default {
     })
   },
   beforeDestroy() {
-    // window.removeEventListener('resize', this.switchStyle)
   },
   methods: {
     handleRemove(file, fileList) {
@@ -1339,18 +1320,7 @@ export default {
       this.scheduleForm.pageNum = 1
       this.searchDetail()
     },
-    switchStyle() {
-      if (this.btnType !== 'look') return
-      this.boxwidth = this.$refs.box.offsetWidth
-      this.$refs.boxresiz.style.width = this.boxwidth + 'px'
-      this.width1 = this.boxwidth - this.width - 10 > 0 ? this.boxwidth - this.width - 10 : 0
-      window.onresize = () => {
-        clearTimeout(this.width1out)
-        this.width1out = setTimeout(() => {
-          this.switchStyle()
-        }, 100);
-      };
-    },
+ 
     handleResize(left, top, width, height) {
       this.width = width
       this.width1 = this.boxwidth - width - 10 > 0 ? this.boxwidth - width - 10 : 0
@@ -2249,9 +2219,7 @@ export default {
     handleClick(tab, event) {
       console.log("tab", tab);
       if (tab.index == 0) {
-        this.$nextTick(() => {
-          this.switchStyle()
-        })
+       
       } else if (tab.name == "schedule") {
         this.switchStyleheight()
         this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
@@ -2408,7 +2376,6 @@ export default {
 
               }
               if (this.btnType == 'look') {
-                this.switchStyle()
                 this.contractFlag = true
                 this.isdisabled = true
                 this.salesFlag = true

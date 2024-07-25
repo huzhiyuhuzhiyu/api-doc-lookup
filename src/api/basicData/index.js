@@ -1646,3 +1646,11 @@ export function updateCluemanagementpool (data) {
     data
   })
 }
+// 分配线索
+export function Assignclues (data) {
+  return request({
+    url: `/api/zgt/bimClue/turn/clue`,
+    method: 'put',
+    data
+  })
+}

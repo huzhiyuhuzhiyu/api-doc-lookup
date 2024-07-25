@@ -66,9 +66,7 @@
             <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
           </topOpts>
-          <topOpts v-if="categoryId=='pool'">
-            <el-button size="mini" type="success" @click="Demandaction">分配线索</el-button>
-          </topOpts>
+          <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -102,6 +100,7 @@
           <!-- <el-table-column prop="provinceText" label="省" width="120" />
           <el-table-column prop="cityText" label="市" width="140" />
           <el-table-column prop="areaText" label="区" width="140" /> -->
+          <el-table-column prop="areaText" label="地址" width="160" />
           <el-table-column prop="address" label="详细地址" width="200" />
           <el-table-column prop="industry" label="客户行业" width="140">
             <template slot-scope="scope">
@@ -113,7 +112,7 @@
               {{levelfunction(scope.row.level)}}
             </template>
           </el-table-column>
-          <el-table-column prop="ownerUser" label="负责人" width="120" />
+          <el-table-column prop="ownerUser" label="负责人" width="120" key="123" />
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="remark" label="备注" min-width="180" />
@@ -139,10 +138,11 @@
       </div>
     </div>
     <!-- 高级查询 -->
-    <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @close="isopen = false" @superQuery="superQuerySearch" v-show="false"></programme>
+    <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
     <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" />
+    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -159,22 +159,25 @@ import programme from "../components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import depForm from './depForm'
+import fpForm from './fpForm'
 import Sortable from 'sortablejs'
 export default {
   name: 'cluemanagement',
   components: {
     Form,
     depForm,
+    fpForm,
     ExportForm,
     SuperQuery,
     programme
   },
   data() {
     return {
-      columnList:["createByName","createTime"],
+      columnList: ["createByName", "createTime"],
       exportFormVisible: false,
       data: [{ fullName: '线索', id: 'clue' }, { fullName: '线索池', id: 'pool' }],
       clueVisible: false,
+      clueVisiblefp: false,
       programmetitle: '',
       programmefrom: {},
       superQueryJson: [
@@ -412,8 +415,13 @@ export default {
         }).catch(() => { })
       }
     },
-    Demandaction(){
+    Demandaction() {
       if (!this.selectArr.length) return this.$message.error('请选择数据')
+      let idlist = this.selectArr.map(item => item.id)
+      this.clueVisiblefp = true
+      this.$nextTick(() => {
+        this.$refs.fpForm.init(idlist)
+      })
     },
     DemandPoolaction() {
       if (!this.selectArr.length) return this.$message.error('请选择数据')
@@ -441,6 +449,7 @@ export default {
     },
     cluerefreshDataList(val) {
       this.clueVisible = false
+      this.clueVisiblefp = false
       if (val) this.initData()
     },
     superQuerySearch(query) {
@@ -582,7 +591,7 @@ export default {
     background-color: #3fb9f8;
   }
   .plan-list-name {
-    &:hover{
+    &:hover {
       color: #606266;
     }
     .el-link--inner {

@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     @closed="cancelFun"
-    :title="!dataForm.code ? '新建产品属性' : '编辑产品属性'"
+    :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="visible"
@@ -55,7 +55,7 @@ export default {
       dataForm: {
         name: '',
         remark: '',
-        code: '',
+        // code: '',
         typeCode: ''
       },
       isdisabled: false,
@@ -116,12 +116,13 @@ export default {
         this.dataForm = {
           name: '',
           remark: '',
-          code: '',
-          typeCode: code
+          // code: '',
+          typeCode: code,
+          id:''
         }
       } else {
         getBimProductAttributesInfo(code).then((res) => {
-          this.dataForm.code = res.data.code
+          // this.dataForm.code = res.data.code
           this.autoName = res.data.name
           this.dataForm.typeCode = res.data.typeCode
           this.dataForm.name = res.data.name

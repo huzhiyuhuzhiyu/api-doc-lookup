@@ -13,30 +13,30 @@
             </el-col>
             <el-col :span="4">
 
-              <el-form-item >
+              <el-form-item>
                 <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                   style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
-                  :picker-options="global.timePickerOptionsArr" clearable>
+                    clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="1.5">
               <el-form-item>
-                <el-button size="mini"  @click="btnsearch1()">已延期</el-button>
+                <el-button size="mini" @click="btnsearch1()">已延期</el-button>
               </el-form-item>
             </el-col>
             <el-col :span="1.5">
               <el-form-item>
-                <el-button size="mini"  @click="btnsearch2()">近三天</el-button>
+                <el-button size="mini" @click="btnsearch2()">近三天</el-button>
               </el-form-item>
             </el-col>
             <el-col :span="1.5">
               <el-form-item>
-                <el-button size="mini"  @click="btnsearch3()">近7天</el-button>
+                <el-button size="mini" @click="btnsearch3()">近7天</el-button>
               </el-form-item>
             </el-col>
             <el-col :span="1.5">
-              <el-button size="mini"  @click="btnsearch4()">近30天</el-button>
+              <el-button size="mini" @click="btnsearch4()">近30天</el-button>
             </el-col>
             <el-col :span="6">
               <el-form-item>
@@ -153,7 +153,6 @@ export default {
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      salespersonList: [],
       detailFlag: false,
 
       orderForm: {
@@ -161,8 +160,8 @@ export default {
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        deliveryEndTime:"",
-        deliveryStartTime:"",
+        deliveryEndTime: "",
+        deliveryStartTime: "",
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
@@ -170,40 +169,24 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
+        } ],
 
         superQuery: {},
       },
 
       detailTotal: 0,
-      salespersonList: [],
-      pickerOptions: {
-        disabledDate(time) {
-          // 获取当前日期
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          // 获取6个月前的日期
-          const sixMonthsAgo = new Date();
-          sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-          sixMonthsAgo.setHours(0, 0, 0, 0);
-          // 如果选择的日期范围超过6个月，或者结束日期不是当前日期，则禁用
-          return time.getTime() < sixMonthsAgo || time.getTime() > today;
-        }
-      },
+     
       gradeList: [],
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      },  
+      },
       total: 0,
       diagramVisible: false,
       formVisible: false,
       filterText: '',
       totalDataForm: {},
-     
+      dateRange: [null, new Date()], //
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -369,17 +352,16 @@ export default {
   },
 
   mounted() {
- 
+
   },
   created() {
-    this.getUserList()
-    this.getAttributeline()
-   // 默认设置为近3天  
-   const end = new Date();
+    // 默认设置为近3天  
+    const end = new Date();
     const start = new Date();
-
     end.setDate(end.getDate() + 3);
     this.deliveryDateArr = [start, end];
+    this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+    this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -398,49 +380,49 @@ export default {
       return formattedDate
     },
     btnsearch1() {
-      const end = "";
-    const start = new Date();
-
-    this.deliveryDateArr = [start, end];
-    this.dataFormSubmit()
-      this.deliveryDateArr = []
-
-      this.search()
+      let end = new Date();
+      let start =  new Date();
+      start.setDate(start.getDate() -90);
+      this.deliveryDateArr = [start, end];
+      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+      console.log(this.deliveryDateArr);
+      this.dataFormSubmit()
     },
     // 为近3天  
     btnsearch2() {
-  
-      let end = new Date();
-      let start = new Date();
 
+      const end = new Date();
+      const start = new Date();;
       end.setDate(end.getDate() + 3);
-      this.dateFun(end)
-      this.dateFun(start)
       this.deliveryDateArr = [start, end];
+      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近7天  
     btnsearch3() {
 
-      let end = new Date();
-      let start = new Date();
+      let end = new Date()
+      let start = new Date()
 
-      end.setDate(end.getDate() + 7);
-      this.dateFun(end)
-      this.dateFun(start)
+      end.setDate(end.getDate() + 7); 
+
       this.deliveryDateArr = [start, end];
+      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近30天  
     btnsearch4() {
-     
-      let end = new Date();
-      let start = new Date();
 
+      let end = new Date()
+      let start = new Date()
       end.setDate(end.getDate() + 30);
-      this.dateFun(end)
-      this.dateFun(start)
+
       this.deliveryDateArr = [start, end];
+      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     superQuerySearch(query) {
@@ -453,17 +435,7 @@ export default {
     },
 
 
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then(res => {
-        this.customList = []
-        res.data.forEach(column => {
-          // 列表中显示
-          let propExists = this.customList.some(item2 => item2.prop === column.attributeColumn);
-          if (!propExists) { this.customList.push({ prop: column.attributeColumn, label: column.name }) }
-        })
-      })
-    },
+    // 
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -513,16 +485,7 @@ export default {
 
     },
 
-    // 获取销售人员
-    getUserList() {
-      let obj = {
-        currentPage: 1,
-        pageSize: -1
-      }
-      UserListAll(obj).then(res => {
-        this.salespersonList = res.data.list
-      })
-    },
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -558,12 +521,12 @@ export default {
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = [start, end];
       this.orderForm = {
-        
+
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        deliveryEndTime:"",
-        deliveryStartTime:"",
+        deliveryEndTime: "",
+        deliveryStartTime: "",
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,

@@ -2598,6 +2598,8 @@ export default {
     // 继续修改
     continueEdit() {
       this.init(this.oldId, this.oldType)
+      this.tipsvisible = false
+      this.btnLoading = false
     },
     // 继续新增
     continueAdd() {

@@ -1,5 +1,6 @@
 import { getVisualDevList, Delete, Copy, exportData } from '@/api/onlineDev/visualDev'
 import { getbimProductAttributes } from "@/api/masterDataManagement/index";
+import { debounce } from "@/utils";
 export default {
   data() {
     return {
@@ -24,22 +25,26 @@ export default {
     this.getDictionaryData()
     this.initData()
   },
-  watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val);
-    },
-  },
+  // watch: {
+  //   filterText(val) {
+  //     this.$refs.treeBox.filter(val);
+  //   },
+  // },
   mounted() {
     this.getcategoryTree()
   },
   methods: {
+    // 注意：此处不能使用箭头函数，否则this指向会有问题
+    handleInput: debounce(function () {
+      this.$refs.treeBox.filter(this.filterText);
+    }, 500),
     search() {
       this.listQuery = {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
         sidx: '',
-        category:this.category
+        category: this.category
       }
       this.initData()
     },
@@ -80,7 +85,7 @@ export default {
             }
           });
         })
-      }).catch(() => {});
+      }).catch(() => { });
     },
     copy(id) {
       this.$confirm('您确定要复制该功能模板, 是否继续?', '提示', {
@@ -96,7 +101,7 @@ export default {
             }
           });
         })
-      }).catch(() => {});
+      }).catch(() => { });
     },
     exportModel(id) {
       this.$confirm('您确定要导出该功能模板, 是否继续?', '提示', {
@@ -105,7 +110,7 @@ export default {
         exportData(id).then(res => {
           this.jnpf.downloadFile(res.data.url)
         })
-      }).catch(() => {});
+      }).catch(() => { });
     },
     toggleWebType(row) {
       const { id, webType } = row
@@ -117,13 +122,13 @@ export default {
     //   this.currId = id || ''
     //   this.currWebType = webType || ''
     // },
-    handleAdd(id,webType, isToggle) {
+    handleAdd(id, webType, isToggle) {
       this.addOrUpdateHandle(id, webType, isToggle)
     },
-    addOrUpdateHandle(id, webType, isToggle,editType) {
+    addOrUpdateHandle(id, webType, isToggle, editType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.categoryList, id, this.query.type, webType, isToggle,editType)
+        this.$refs.Form.init(this.categoryList, id, this.query.type, webType, isToggle, editType)
       })
     },
     closeForm(isRefresh) {

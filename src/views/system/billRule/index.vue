@@ -82,8 +82,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" custom-column :hasNO="false" row-key="id" :setColumnDisplayList="columnList">
-          <el-table-column align="center" label="拖动" width="60">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" custom-column  row-key="id" :setColumnDisplayList="columnList" hasMove @changeMove="changeMove" :fixedNO="true">
+          <!-- <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
             </template>
@@ -92,7 +92,7 @@
             <template slot-scope="scope">
               {{ scope.$index+1 }}
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="fullName" label="业务名称" width="200" />
           <el-table-column prop="enCode" label="业务编码" width="200" />
           <el-table-column prop="category" label="业务分类" width="150" />
@@ -205,10 +205,10 @@ export default {
     this.getcategoryTree()
    
   },
-  mounted() {
-    this.rowDrop(); //声明表格拖动排序方法
+  // mounted() {
+  //   this.rowDrop(); //声明表格拖动排序方法
 
-  },
+  // },
   
   methods: {
     
@@ -393,7 +393,13 @@ export default {
       this.listQuery.keyword = ''
       this.categoryId = ''
       this.search()
-    }
+    },
+    changeMove(data){
+      updateSortBatch(data).then(res => {
+            this.$message.success("批量修改排序成功")
+            this.initData()
+          })
+    },
   }
 }
 </script>

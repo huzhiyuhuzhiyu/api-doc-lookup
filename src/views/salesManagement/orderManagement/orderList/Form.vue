@@ -825,7 +825,7 @@
               提交</el-button>
           </span>
         </el-dialog>
-        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
           :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
           <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
               {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>

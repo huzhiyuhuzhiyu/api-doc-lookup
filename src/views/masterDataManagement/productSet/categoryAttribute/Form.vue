@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     @closed="cancelFun"
-    :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'"
+    :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="visible"
@@ -17,11 +17,11 @@
       label-position="top"
       label-width="120px"
     >
-      <!-- <el-form-item label="编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" />
-      </el-form-item> -->
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
+      <el-form-item label="类别编码" prop="code">
+        <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
+      </el-form-item>
+      <el-form-item label="类别名称" prop="name">
+        <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
@@ -38,12 +38,12 @@
 
 <script>
 import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
+  getClassAttributeInfo,
+  updataClassAttribute,
   delBimProductAttributes,
-  addBimProductAttributes,
+  addClassAttributes,
   getbimProductAttributesList,
-  checkAbnoramlTypeCode
+  checkClassAttributeCode
 } from '@/api/masterDataManagement/index'
 
 export default {
@@ -55,26 +55,24 @@ export default {
       dataForm: {
         name: '',
         remark: '',
-        // code: '',
-        typeCode: ''
+        code: ''
       },
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
-      autoName: '',
+      autoCode: '',
       dataRule: {
-        code: [{ required: true, message: '请输入编码', trigger: 'blur' }],
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' },
+        code: [
+          { required: true, message: '请输入类别编码', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
                 callback()
-              } else if (this.dataForm.name === this.autoName) {
+              } else if (this.dataForm.code === this.autoCode) {
                 callback()
               } else {
                 if (this.dataForm.id) {
-                  checkAbnoramlTypeCode(this.dataForm.typeCode, value, this.dataForm.id)
+                  checkClassAttributeCode(value, this.dataForm.id)
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -86,7 +84,7 @@ export default {
                       callback(new Error(' '))
                     })
                 } else {
-                  checkAbnoramlTypeCode(this.dataForm.typeCode, value, '')
+                  checkClassAttributeCode(value, '')
                     .then((res) => {
                       if (!res.data) {
                         callback()
@@ -101,8 +99,10 @@ export default {
               }
             },
             trigger: 'blur'
-          },
-
+          }
+        ],
+        name: [
+          { required: true, message: '请输入类别名称', trigger: 'blur' },
           // { validator: this.formValidate('fullName', '名称不能含有特殊符号'), trigger: 'blur' },
           { max: 50, message: '名称最多为50个字符！', trigger: 'blur' }
         ]
@@ -110,21 +110,19 @@ export default {
     }
   },
   methods: {
-    init(code, btntype) {
+    init(id, btntype) {
       this.visible = true
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
           remark: '',
-          // code: '',
-          typeCode: code,
-          id:''
+          code: ''
         }
       } else {
-        getBimProductAttributesInfo(code).then((res) => {
-          // this.dataForm.code = res.data.code
-          this.autoName = res.data.name
-          this.dataForm.typeCode = res.data.typeCode
+        getClassAttributeInfo(id).then((res) => {
+          this.dataForm.code = res.data.code
+          this.autoCode = res.data.code
+
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
@@ -134,7 +132,7 @@ export default {
     },
     cancelFun() {
       this.visible = false
-      console.log("this.$refs['dataForm']")
+
       this.$refs['dataForm'].resetFields()
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
@@ -144,11 +142,10 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          console.log(this.btntype,'btntype')
-          console.log(this.dataForm,'fprm')
-          let formMethod = this.btntype == 'add' ? addBimProductAttributes : updataBimProductAttributes
-          console.log('formMethod', formMethod)
-          if (formMethod == updataBimProductAttributes) {
+
+          let formMethod = this.btntype == 'add' ? addClassAttributes : updataClassAttribute
+
+          if (formMethod == updataClassAttribute) {
             formMethod(this.dataForm)
               .then((response) => {
                 this.$message({

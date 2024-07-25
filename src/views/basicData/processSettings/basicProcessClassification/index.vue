@@ -1,48 +1,111 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center  JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="6">
+            <el-form-item :label="$t('common.keyword')">
+              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
+                clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="分类编码">
+              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
+                clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" icon="el-icon-search" @click="search()"  class="commonBox">
+                {{$t('common.search')}}</el-button>
+              <el-button icon="el-icon-refresh-right" @click="reset()"  class="commonBox">{{$t('common.reset')}} 
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle()" />
+          <topOpts @add="addOrUpdateHandle()" >
+            <el-button
+              :disabled="treeList.length > 0 ? false : true"
+              size="mini"
+              type="primary"
+              icon="el-icon-download"
+              @click="exportForm"
+            >
+              导出
+            </el-button>
+          </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
-              <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
+              <el-link
+                v-show="!expands"
+                type="text"
+                icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
+                :underline="false"
+                @click="toggleExpand()"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" content="折叠" placement="top">
-              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
+              <el-link
+                v-show="expands"
+                type="text"
+                icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
+                :underline="false"
+                @click="toggleExpand()"
+              />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" fixedNO
-          :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable" custom-column>
+        <JNPF-table
+          v-loading="listLoading"
+          :data="treeList"
+          row-key="id"
+          v-if="refreshTable"
+          fixedNO
+          :setColumnDisplayList="columnList"
+          :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }"
+          ref="dataTable"
+          custom-column
+        >
           <el-table-column prop="name" label="分类名称" min-width="200">
             <template slot-scope="scope">
               <i
-                :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>
+                :class="[
+                  scope.row.childrenList.length >= 1
+                    ? 'icon-ym icon-ym-tree-organization3'
+                    : 'icon-ym icon-ym-systemForm'
+                ]"
+              ></i>
               {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column prop="code" label="分类编码" min-width="120" />
-          <el-table-column prop="parentName" label="上级分类" min-width="120" />
+          <!-- <el-table-column prop="parentName" label="上级分类" min-width="120" /> -->
           <el-table-column prop="createTime" label="创建时间" width="180" />
+          <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
-          <el-table-column prop="plmSyncFlag" label="PLM同步状态" width="160" fixed="right" align="center">
+          <!-- <el-table-column prop="plmSyncFlag" label="PLM同步状态" width="160" fixed="right" align="center">
             <template slot-scope="scope">
               <el-tag type="danger" v-if="!scope.row.plmSyncFlag">同步失败</el-tag>
               <el-tag type="success" v-else>同步成功</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag"
-                  @click="PLMchange(scope.row.id)">同步PLM</el-button>
+              <tableOpts
+                @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
+                @del="handleDel(scope.row.id, scope.row.parentId)"
+              >
+                <!-- <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag" @click="PLMchange(scope.row.id)">
+                  同步PLM
+                </el-button> -->
               </tableOpts>
             </template>
           </el-table-column>
@@ -51,25 +114,32 @@
     </div>
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 import { getcategoryTree, deleteCategory, productPlmSync } from '@/api/basicData/materialSettings'
 import DepForm from './depForm'
 export default {
-  components: { DepForm },
+  components: { DepForm,ExportForm },
   data() {
     return {
+      exportFormVisible: false,
       listQuery: {
-        classAttribute: "process",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        classAttribute: 'process',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
       },
@@ -79,26 +149,64 @@ export default {
       btnLoading: false,
       listLoading: true,
       depFormVisible: false,
+      columnList: ['createByName']
     }
   },
   created() {
     this.initData()
   },
   methods: {
-    initData() {
-      this.loading = true
-      getcategoryTree(this.listQuery).then(res => {
-        this.treeList = res.data
-        if (this.treeList.length > 0) this.setTableIndex(this.treeList);
-        this.listLoading = false
-        this.btnLoading = false
-      }).catch(() => {
-        this.listLoading = false
-        this.btnLoading = false
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      console.log(columnList,'columnList')
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
       })
     },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let _data = {
+          ...this.listQuery,
+          exportType: '1028',
+          exportName: '工序信息',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => {})
+      }
+    },
+    initData() {
+      this.loading = true
+      getcategoryTree(this.listQuery)
+        .then((res) => {
+          this.treeList = res.data
+          if (this.treeList.length > 0) this.setTableIndex(this.treeList)
+          this.listLoading = false
+          this.btnLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+          this.btnLoading = false
+        })
+    },
     search() {
-      Object.keys(this.listQuery).forEach(key => {
+      Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -108,26 +216,29 @@ export default {
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
       arr.forEach((item, key) => {
-        item.index = key + 1;
+        item.index = key + 1
         if (index) {
-          item.index = index + 1;
+          item.index = index + 1
         }
         if (item.childrenList.length > 0) {
-          this.setTableIndex(item.childrenList, item.index);
+          this.setTableIndex(item.childrenList, item.index)
         }
-      });
+      })
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = {
-        classAttribute: "process",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        classAttribute: 'process',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
       }
@@ -136,7 +247,6 @@ export default {
     },
     addOrUpdateHandle(id, parentId) {
       this.addOrUpdateDep(id, parentId)
-
     },
     addOrUpdateDep(id, parentId) {
       this.depFormVisible = true
@@ -152,37 +262,43 @@ export default {
       }
     },
     toggleExpand() {
-      this.refreshTable = false;
-      this.expands = !this.expands;
+      this.refreshTable = false
+      this.expands = !this.expands
       this.$nextTick(() => {
-        this.refreshTable = true;
-      });
+        this.refreshTable = true
+      })
     },
     PLMchange(id) {
       this.listLoading = true
-      productPlmSync(id).then(res => {
-        if (res.msg === 'Success') {
-          this.$message.success('同步成功')
-          this.initData()
-        }
-        this.listLoading = false
-      }).catch(err => { this.listLoading = false })
+      productPlmSync(id)
+        .then((res) => {
+          if (res.msg === 'Success') {
+            this.$message.success('同步成功')
+            this.initData()
+          }
+          this.listLoading = false
+        })
+        .catch((err) => {
+          this.listLoading = false
+        })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        deleteCategory(id).then(res => {
-          if (res.msg === "Success") {
-            this.initData();
-            this.$message({
-              type: "success",
-              message: "删除成功",
-              duration: 1500
-            });
-          }
+      })
+        .then(() => {
+          deleteCategory(id).then((res) => {
+            if (res.msg === 'Success') {
+              this.initData()
+              this.$message({
+                type: 'success',
+                message: '删除成功',
+                duration: 1500
+              })
+            }
+          })
         })
-      }).catch(() => { })
+        .catch(() => {})
     }
   }
 }

@@ -46,36 +46,63 @@ export default {
       dbOptions: [],
       dbType: "MySQL",
       mainTableFields: [],
-      relationTable: ""
+      relationTable: "",
+      editType:'',
     }
   },
   methods: {
-    init(categoryList, id, type, webType, isToggle) {
+    init(categoryList, id, type, webType, isToggle,editType) {
       this.categoryList = categoryList
-      this.activeStep = 0
+      this.editType = editType || ''
+      if (this.editType){
+        this.activeStep = this.editType === 'form' ? 1 : this.editType === 'table' ? 2 : this.editType === 'flow' ? 3 : 0
+      }else{
+        this.activeStep = 0
+      }
       this.tables = []
       this.defaultTable = []
       this.dataForm.id = id || ''
       this.getDbOptions()
       this.visible = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
+        if (!this.editType) this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.loading = true
           getVisualDevInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            
             this.dataForm.webType = this.dataForm.webType || 2
             if (isToggle) this.dataForm.webType = webType
             this.maxStep = parseInt(this.dataForm.webType)
             this.formData = this.dataForm.formData && JSON.parse(this.dataForm.formData)
-            console.log(this.formData,'formData');
             this.columnData = this.dataForm.columnData && JSON.parse(this.dataForm.columnData)
             this.appColumnData = this.dataForm.appColumnData && JSON.parse(this.dataForm.appColumnData)
-            console.log(this.columnData,'组件数据');
             this.flowTemplateJson = this.dataForm.flowTemplateJson && JSON.parse(this.dataForm.flowTemplateJson)
             this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
-            console.log(this.tables,'数据表');
             this.defaultTable = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
+            if (this.editType){
+              this.maxStep = this.activeStep
+              if (this.editType === 'form'){
+                this.$refs['generator'].getData().then(res => {
+                  this.formData = res.formData
+                }).catch(err => {
+                  err.msg && this.$message.warning(err.msg)
+                })
+              }else if (this.editType === 'table'){
+                this.$refs['columnDesign'].getData().then(res => {
+                  this.columnData = res.columnData
+                  this.appColumnData = res.appColumnData
+                }).catch(err => {
+                  err.msg && this.$message.warning(err.msg)
+                })
+              }else if (this.editType === 'flow'){
+                this.$refs['process'].getData().then(res => {
+                  this.flowTemplateJson = res.formData
+                }).catch(err => {
+                  err.msg && this.$message.warning(err.msg)
+                })
+              }
+            }
             this.updateFields()
           }).catch(() => { this.loading = false })
         } else {
@@ -89,13 +116,24 @@ export default {
       const component = this.getComponent()
       this.$refs[component].getData().then(res => {
         this.btnLoading = true
-        if (this.dataForm.webType == 1) {
-          this.formData = res.formData
-        } else if (this.dataForm.webType == 3) {
-          this.flowTemplateJson = res.formData
-        } else {
-          this.columnData = res.columnData
-          this.appColumnData = res.appColumnData
+        if (!this.editType){
+          if (this.dataForm.webType == 1) {
+            this.formData = res.formData
+          } else if (this.dataForm.webType == 3) {
+            this.flowTemplateJson = res.formData
+          } else {
+            this.columnData = res.columnData
+            this.appColumnData = res.appColumnData
+          }
+        }else{
+          if (component === 'generator'){
+            this.formData = res.formData
+          }else if (component === 'columnDesign'){
+            this.columnData = res.columnData
+            this.appColumnData = res.appColumnData
+          }else{
+            this.flowTemplateJson = res.formData
+          }
         }
         this.dataForm.tables = JSON.stringify(this.tables)
         this.dataForm.formData = this.formData ? JSON.stringify(this.formData) : null
@@ -131,7 +169,7 @@ export default {
               this.$store.commit('generator/SET_TABLE', false)
               this.$store.commit('generator/SET_ALL_TABLE', [])
               this.$store.commit('generator/UPDATE_FORMITEM_LIST', [])
-              this.activeStep += 1
+              if (!this.editType) this.activeStep += 1
             } else {
               if (!this.exist()) return
               let subTable = this.tables.filter(o => o.typeId == '0')
@@ -140,14 +178,14 @@ export default {
               this.$store.commit('generator/SET_DATABASE', this.dataForm.dbLinkId)
               this.$store.commit('generator/SET_TABLE', true)
               this.$store.commit('generator/UPDATE_FORMITEM_LIST', this.mainTableFields)
-              this.activeStep += 1
+              if (!this.editType) this.activeStep += 1
             }
           }
         })
       } else if (this.activeStep == 1) {
         this.$refs['generator'].getData().then(res => {
           this.formData = res.formData
-          this.activeStep += 1
+          if (!this.editType) this.activeStep += 1
         }).catch(err => {
           err.msg && this.$message.warning(err.msg)
         })
@@ -155,7 +193,7 @@ export default {
         this.$refs['columnDesign'].getData().then(res => {
           this.columnData = res.columnData
           this.appColumnData = res.appColumnData
-          this.activeStep += 1
+          if (!this.editType) this.activeStep += 1
         }).catch(err => {
           err.msg && this.$message.warning(err.msg)
         })
@@ -164,12 +202,16 @@ export default {
     getComponent() {
       const webType = this.dataForm.webType || 2
       let component = 'columnDesign'
-      if (webType == 1) {
-        component = 'generator'
-      } else if (webType == 3) {
-        component = 'process'
-      } else {
-        component = 'columnDesign'
+      if (!this.editType){
+        if (webType == 1) {
+          component = 'generator'
+        } else if (webType == 3) {
+          component = 'process'
+        } else {
+          component = 'columnDesign'
+        }
+      }else{
+        component = this.editType === 'form' ? 'generator' : this.editType === 'table' ? 'columnDesign' : 'process'
       }
       return component
     }

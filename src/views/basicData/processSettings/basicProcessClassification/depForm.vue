@@ -3,10 +3,10 @@
     :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
       label-position="top" label-width="120px">
-      <el-form-item label="上级分类" prop="parentName">
+      <!-- <el-form-item label="上级分类" prop="parentName">
         <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
           :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="分类编码" prop="code">
         <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
       </el-form-item>

@@ -1,31 +1,5 @@
 <template>
   <div class="JNPF-common-layout" :element-loading-text="loadingText">
-    <div class="JNPF-common-layout-left">
-      <div class="JNPF-common-title">
-        <h2>产品分类</h2>
-        <span class="options">
-          <el-dropdown>
-            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
-      </div>
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-            <span class="text" :title="data.name">{{ data.name }}</span>
-          </span>
-        </el-tree>
-      </el-scrollbar>
-    </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
@@ -63,11 +37,6 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts @add="addOrUpdateHandle()">
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
-            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
-              @click="exportForm">导出</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -76,13 +45,13 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" ref="dataTable"
-           custom-column v-if="tableItems.length">
-           <template v-if="tableItems"> 
-              <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-                :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false" :align="item.align || 'left'"
-                v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
-              </el-table-column>
-           </template>
+          custom-column v-if="tableItems.length">
+          <template v-if="tableItems">
+            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+              :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+              :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+            </el-table-column>
+          </template>
 
           <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
           <el-table-column label="操作" width="180" fixed="right">
@@ -162,28 +131,20 @@
         </el-button>
       </span>
     </el-dialog>
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <!-- 导入产品 -->
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 
 <script>
-import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct, uploadCpProductData } from '@/api/masterDataManagement/productManage'
-import { getcategoryTree } from '@/api/basicData/materialSettings'
-
 import { mapState } from 'vuex'
 import { detailVisualDevInfo } from '@/api/system/system'
 import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
+import Form from './form'
 export default {
-  components: { ExportForm },
   name: 'finished_product',
+  components: { Form },
   data() {
     return {
-      exportFormVisible: false,
       title: "更多查询",
       background: true,//分页器背景颜色
       visible: false,
@@ -225,7 +186,6 @@ export default {
   },
   created() {
     this.getDevData()
-    this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
 
@@ -234,71 +194,7 @@ export default {
     ...mapState('user', ['token']),
   },
   methods: {
-    // 导出
-    exportForm() {
-      this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
-    },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1200',
-          exportName: '成品信息',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-        }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
-      }
-    },
-    // 展开或折叠全部
-    toggleExpand(expands) {
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.companyId)
-        })
-      })
-    },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
-    },
-    // 获取指定树状列表
-    getcategoryTree() {
-      this.listLoading = true
-      this.treeLoading = true
-      this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: "finish_product" }).then(res => {
-        this.treeData = res.data.length ? res.data : []
-        this.$nextTick(() => {
-          this.treeLoading = false
-          // this.initData()
-        })
-      }).catch(() => {
-        this.treeLoading = false
-        this.listLoading = false
-      })
-    },
-    handleNodeClick(data, node) {
-      if (this.listQuery.productCategoryId === data.id) return
-      this.listQuery.productCategoryId = data.id
-      this.listQuery.productCategoryCode = data.code
-      this.search()
-    },
+
     moreQueries() {
       this.visible = true
     },
@@ -326,17 +222,17 @@ export default {
         console.log(this.columnData);
         this.tableItems = this.columnData.columnList.map(item => {
           let formatterFunction = null
-          if (item.formatter){
+          if (item.formatter) {
             formatterFunction = new Function('return ' + item.formatter)
             let fnc = formatterFunction()
             console.log(fnc);
           }
-          
+
           return {
             ...item,
             prop: this.getToLowerCase(item.prop),
             minWidth: item.width ? item.width : 120,
-            formatter:item.formatter ? formatterFunction.bind(this)() : ''
+            formatter: item.formatter ? formatterFunction.bind(this)() : ''
           }
         })
         console.log(this.tableItems);
@@ -390,93 +286,6 @@ export default {
           })
         })
       }).catch(() => { })
-    },
-    // 导入
-    importForm() {
-      if (!this.listQuery.productCategoryId) {
-        this.$message.warning('请先选择产品分类')
-      } else {
-        this.$refs.UploadProduct.$el.querySelector('input').click()
-      }
-    },
-    // 下载模板
-    downLoadTemplate() {
-      const a = document.createElement('a')
-      a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
-      a.click()
-    },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append("file", data.file)
-      formData.append("productCategoryId", this.listQuery.productCategoryId)
-      formData.append("classAttribute", this.listQuery.classAttribute)
-      //调用上传文件接口
-      uploadCpProductData(formData).then(res => {
-        if (!res.data) {
-          this.$message.success(`导入成功`)
-        } else {
-          this.handleMessage(res.data)
-        }
-
-        this.formLoading = false
-        this.loadingText = ''
-      }).catch(err => {
-        this.$message.error(`导入数据超过最大限制：500`)
-        this.formLoading = false
-        this.loadingText = ''
-      })
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: "error",
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h('div',
-          {
-            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
-            h('el-button', {
-              props: {
-                type: 'text',
-                size: "mini",
-                icon: 'el-icon-download'
-              },
-              on: {
-                click: () => {
-                  this.downNoProduct(data)
-                }
-              },
-              style: {
-                border: "none",
-                textAlign: "center",
-                // width:"20%",
-                margin: "0 5px 0 5px ",
-              },
-            }, '下载导入错误数据')
-          ]
-        ),
-      })
-      return
-    },
-    // 智能新建
-    aiAdd() {
-      this.aiformVisible = true
-      this.$nextTick(() => {
-        this.$refs.aiForm.init()
-      })
     },
   }
 }

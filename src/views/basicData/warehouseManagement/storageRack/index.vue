@@ -113,6 +113,7 @@
           </div>
         </div>
         <JNPF-table
+          ref="tabForm"
           v-loading="listLoading"
           :data="tableDataList"
           row-key="id"

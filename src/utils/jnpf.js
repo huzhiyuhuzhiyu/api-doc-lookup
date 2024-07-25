@@ -262,6 +262,9 @@ const jnpf = {
     const url_string = location.href;
     return url_string.split('?')[1] || void ('');
   },
+  getToLowerCase(val) {
+    return val.replace(/_(.)/g, (match, group) => group.toUpperCase())
+  },
   interfaceDataHandler(data) {
     if (!data.dataProcessing) return data.data
     const dataHandler = this.getScriptFunc(data.dataProcessing)

@@ -45,11 +45,11 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent :rules="rules">
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="form.code" placeholder="请输入编码" clearable />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="form.name" placeholder="请输入名称" clearable />
@@ -82,9 +82,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="名称" />
-          <el-table-column prop="code" label="编码"> </el-table-column>
+          <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
           <el-table-column prop="remark" label="备注" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
@@ -166,6 +166,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: "",
+      columnList:["name"],
     };
   },
   watch: {

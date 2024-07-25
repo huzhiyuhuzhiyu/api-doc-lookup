@@ -1112,7 +1112,7 @@ export function editSwitch (id) {
 // 详情
 export function getBimBusinessInfo (id) {
   return request({
-    url: `/api/erp/bimBusinessSwitchConfig/detail/${id}`,
+    url: `/api/erp/bimBusinessSwitchConfig/detailByKey?configKey=${id}`,
     method: 'get',
   })
 }
@@ -1642,6 +1642,14 @@ export function deleteCluemanagement (id) {
 export function updateCluemanagementpool (data) {
   return request({
     url: `/api/zgt/bimClue/turn/pool`,
+    method: 'put',
+    data
+  })
+}
+// 分配线索
+export function Assignclues (data) {
+  return request({
+    url: `/api/zgt/bimClue/turn/clue`,
     method: 'put',
     data
   })

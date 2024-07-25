@@ -15,7 +15,13 @@ export function getbimProductAttributesList(data) {
         data: data
     })
 }
-
+// 产品属性-检查编码是否存在
+export function  checkAbnoramlTypeCode(typeCode,name,id) {
+  return request({
+    url: '/api/erp/bimProductAttributes/check/code/exist?typeCode='+typeCode+"&name="+name +"&id="+id,
+    method: 'GET'
+  })
+}
 // 产品属性——新增
 export function addBimProductAttributes(data) {
   return request({
@@ -34,7 +40,7 @@ export function delBimProductAttributes(id) {
 // 产品属性——修改
 export function updataBimProductAttributes(data) {
   return request({
-      url: '/api/erp/bimProductAttributes/insert',
+      url: '/api/erp/bimProductAttributes/modify',
       method: 'put',
       data: data
   })
@@ -384,5 +390,48 @@ export function  detailInstructionsList(id) {
   return request({
       url: '/api/crm/bim/update/instructions/detail/'+id,
       method: 'get',
+  })
+}
+
+// 类别属性列表
+export function getclassAttributeList(data) {
+  return request({
+      url: '/api/zgt/product/classAttribute/list',
+      method: 'post',
+      data: data
+  })
+}
+
+// 类别属性-检查编码是否存在
+export function  checkClassAttributeCode(code,id) {
+  return request({
+    url: '/api/zgt/product/classAttribute/check/code/exist?code='+code+"&id="+id,
+    method: 'GET'
+  })
+}
+
+// 类别属性——新增
+export function addClassAttributes(data) {
+  return request({
+      url: '/api/zgt/product/classAttribute/add',
+      method: 'post',
+      data: data
+  })
+}
+
+// 类别属性——详情
+export function getClassAttributeInfo(id) {
+  return request({
+      url: '/api/zgt/product/classAttribute/detail/'+id,
+      method: 'get',
+  })
+}
+
+// 类别属性——修改
+export function updataClassAttribute(data) {
+  return request({
+      url: '/api/zgt/product/classAttribute/update',
+      method: 'put',
+      data: data
   })
 }

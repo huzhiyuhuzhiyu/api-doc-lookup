@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.businessName" placeholder="请输入商机名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="width: 180px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -36,43 +36,44 @@
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()" />
-            </el-tooltip>
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column>
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="160" />
-            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
-            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-            <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <el-table-column label="操作" width="180" >
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+            <el-table-column prop="businessName" label="商机名称" min-width="160" />
+            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="code" label="客户编码" min-width="160" />
+            <el-table-column prop="money" label="商机金额" min-width="140" />
+            <el-table-column prop="dealDate" label="预计成交日期" min-width="160" />
+            <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
+            <el-table-column prop="ownerUserName" label="负责人" width="120" />
+            <el-table-column prop="remark" label="备注" min-width="180" />
+            <el-table-column prop="createTime" label="创建时间" width="180" />
+            <el-table-column prop="createByName" label="创建人" width="120" />
+            <el-table-column label="操作" width="180">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
-                @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-            @pagination="initData">
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
           </pagination>
         </div>
       </div>
@@ -88,16 +89,21 @@
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import { getServiceRecordList ,deleteServiceRecord} from '@/api/customerManagement/index'
+import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
 import Form from './Form'
 export default {
-  name: 'serviceRecords',
-  components: { Form,programme,SuperQuery },
+  name: 'businessOpportunityManage',
+  components: { Form, programme, SuperQuery },
   data() {
     return {
       superQueryJson: [
         {
-          prop: 'name',
+          prop: 'businessName',
+          label: "商机名称",
+          type: 'input'
+        },
+        {
+          prop: 'customerName',
           label: "客户名称",
           type: 'input'
         },
@@ -107,8 +113,36 @@ export default {
           type: 'input'
         },
         {
-          prop: 'serviceDescription',
-          label: "服务记录",
+          prop: 'money',
+          label: "商机金额",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'dealDate',
+          label: '预计成交日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        { // 日期时间选择器（区间）
+          prop: 'nextTime',
+          label: '下次联系时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: {}
+        },
+        {
+          prop: 'ownerUserName',
+          label: "负责人",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -126,7 +160,7 @@ export default {
           type: 'input'
         }
       ],
-      programmefrom:{},
+      programmefrom: {},
       superQueryVisible: false,
       programmetitle: '',
       programmelist1: [],
@@ -137,19 +171,9 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        createByName: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
+        businessName: "",
         pageNum: 1,
         pageSize: 20,
-        serviceDescription: "",
-        startTime: "",
-        startUpdateTime: "",
-        totalRowFlag: false,
-        createTimeArr: [],
         orderItems: [{
           asc: false,
           column: ""
@@ -209,8 +233,8 @@ export default {
         }, 100);
       };
     },
-    columnSetFun(){ 
-      console.log("this.$refs.dataTable",this.$refs.dataTable);
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
     initData() {
@@ -262,10 +286,10 @@ export default {
       this.programmetitle = ''
       this.initData()
     },
-    addOrUpdateHandle(id,btnType){
+    addOrUpdateHandle(id, btnType) {
       this.formVisible = true
-      this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType)
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType)
       })
     },
     handleDel(id) {
@@ -306,7 +330,7 @@ export default {
     background-color: #3fb9f8;
   }
   .plan-list-name {
-    &:hover{
+    &:hover {
       color: #606266;
     }
     .el-link--inner {

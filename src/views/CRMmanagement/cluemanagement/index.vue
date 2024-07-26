@@ -62,9 +62,11 @@
       </div>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="display: block;line-height:34px">
-          <topOpts @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
+          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
             <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
-            <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
+            <el-button type="primary" v-has="'btn_export'" icon="el-icon-download" @click="exportForm">导出</el-button>
           </topOpts>
           <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
           <div class="JNPF-common-head-right" style="float: right">
@@ -118,7 +120,7 @@
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)">
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)">
                 <el-dropdown>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -140,19 +142,21 @@
 
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
     <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" @goto="gotopool" />
-    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" @gotoclue="gotoclue"/>
+    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" @gotoclue="gotoclue" />
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import {
   getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { getCluemanagementlist, deleteCluemanagement } from "@/api/basicData/index";
+import { getCluemanagementlist, deleteCluemanagement, saleCluemanagementpoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -332,7 +336,8 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    }
+    },
+    ...mapState('user', ['token']),
   },
   watch: {
     filterText(val) {
@@ -359,6 +364,81 @@ export default {
     window.onresize = null
   },
   methods: {
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/线索导入模板.xlsx')
+      a.click()
+    },
+    importFun() {
+      this.$refs.UploadProduct.$el.querySelector('input').click()
+    },
+    // 上传
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append("file", data.file)
+      formData.append("customerSea", "high_seas")
+      //调用上传文件接口
+      saleCluemanagementpoolModel(formData).then(res => {
+        if (!res.data) {
+          this.$message.success(`导入成功`)
+          this.initData()
+          this.formLoading = false
+          this.loadingText = ''
+        } else {
+          this.handleMessage(res.data)
+        }
+
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.formLoading = false
+        this.loadingText = ''
+      })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
     //去线索池
     gotopool() {
       this.clueVisible = false
@@ -369,7 +449,7 @@ export default {
         this.search();
       })
     },
-    gotoclue(){
+    gotoclue() {
       this.clueVisiblefp = false
       this.$nextTick(() => {
         this.$refs.treeBox.setCurrentKey('clue')

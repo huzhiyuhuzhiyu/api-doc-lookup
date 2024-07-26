@@ -21,7 +21,7 @@
       </el-row> -->
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-            <topOpts @add="addOrUpdateHandle( )"  :isJudgePer="true" :addPerCode="'btn_add'" />
+            <topOpts @add="addOrUpdateHandle()"  :isJudgePer="true" :addPerCode="'btn_add'" />
               <!-- <el-dropdown> -->
           
             <!-- <el-dropdown-menu slot="dropdown">

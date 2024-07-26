@@ -51,7 +51,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts @add="addSupplier('', 'add')" :addText="'创建发货'">
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
@@ -69,8 +69,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC
+            @selection-change="selectCustomerFun" :setColumnDisplayList="columnList" @sort-change="sortChange"
+            custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
@@ -128,6 +129,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <addForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    
   </div>
 </template>
 
@@ -140,12 +143,14 @@ import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
+import addForm from "../saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'carrierProfile',
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
+      addFormVisible:false,
       btnsearchFlag: true,
       columnList: ["cooperativePartnerCode", "departmentName", "productName",],
       deliveryDateArr: [],
@@ -353,6 +358,7 @@ export default {
 
 
       ],
+      list: [],
     }
   },
   watch: {
@@ -376,6 +382,9 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    selectCustomerFun(val) {
+      this.list = val
+    },
     // 获取合计数据
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then(res => {
@@ -404,6 +413,7 @@ export default {
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
+
     // 为近3天  
     btnsearch2() {
 
@@ -496,6 +506,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFollowVisible = false
+      this.addFormVisible=false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -560,10 +571,27 @@ export default {
       })
     },
     addSupplier(id, btntype) {
-      this.formVisible = true
+      // this.formVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.Form.init(id, btntype)
+      // })
+      if (!this.list.length) return this.$message.error("请选择您要发货的产品")
+      let flag = this.hasDifferentCooperativePartnerCode(this.list)
+      if (flag) return this.$message.error("只能选择相同客户的明细订单")
+      console.log(this.list);
+      this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.addForm.init("", btntype,this.list)
       })
+    },
+    hasDifferentCooperativePartnerCode(arr) {
+      const codes = new Set();
+
+      for (const item of arr) {
+        codes.add(item.cooperativePartnerCode);
+      }
+
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
     },
     getCopyOrders(id, btntype) {
       this.formVisible = true
@@ -694,7 +722,8 @@ export default {
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
 }
-.btnBox{
+
+.btnBox {
   padding: 7px 10px;
 }
 </style>

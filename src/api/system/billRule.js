@@ -55,7 +55,7 @@ export function delBillRule(id) {
 
 export function getBillRuleConfig(data) {
   return request({
-    url: `/api/system/BillRule/getByCode`,
+    url: `/api/system/BillRule/getNumberByCode`,
     method: 'get',
     data
   })

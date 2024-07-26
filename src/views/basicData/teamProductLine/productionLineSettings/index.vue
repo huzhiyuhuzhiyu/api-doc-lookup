@@ -39,16 +39,31 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <!-- <el-dropdown> -->
-          <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('add')">
-            新建
-          </el-button>
+          <div>
+            <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('add')">
+              新建
+            </el-button>
+            <el-button
+              :disabled="tableDataList.length > 0 ? false : true"
+              size="mini"
+              type="primary"
+              icon="el-icon-download"
+              @click="exportForm"
+              >
+              导出
+            </el-button>  
+          </div>
+         
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产线编码" sortable="custom">
             <!-- <template slot-scope="scope">
 
@@ -59,11 +74,11 @@
                         </template> -->
           </el-table-column>
           <el-table-column prop="name" label="产线名称" sortable="custom" />
-          <el-table-column prop="state" label="状态">
+          <el-table-column prop="state" label="状态"  sortable="custom">
           </el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" />
+          <el-table-column prop="createByName" label="创建人" width="180"  sortable="custom" />
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
@@ -93,6 +108,7 @@
 
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
   
@@ -100,11 +116,14 @@
 import { deleteProductionLineData, getProductionLineList } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'quality',
-  components: { DepForm, },
+  components: { DepForm,ExportForm },
   data() {
     return {
+      exportFormVisible: false,
       depFormVisible: false,
       background: true,//分页器背景颜色
       visible: false,
@@ -135,6 +154,7 @@ export default {
 
       total: 0,
       formVisible: false,
+      columnList: ['remark','createByName']
     }
   },
   created() {
@@ -142,6 +162,44 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tableForm.showDrawer()
+    },
+     // 导出
+     exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      console.log(columnList,'columnList')
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let _data = {
+          ...this.tableQuery,
+          exportType: '1038',
+          exportName: '产线管理信息',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.tableQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => {})
+      }
+    },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       this.tableQuery.orderItems[0].asc = order === "ascending"

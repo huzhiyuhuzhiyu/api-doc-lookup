@@ -1228,10 +1228,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
-          const quotationNo = await this.jnpf.getCodeWayFun(code)
-          this.dataForm.quotationNo = quotationNo
-        }
+        this.dataForm.quotationNo = data.number
+      
       } catch (error) {
       }
     },

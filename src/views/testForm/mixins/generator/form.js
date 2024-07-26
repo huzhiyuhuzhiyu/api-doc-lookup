@@ -18,7 +18,8 @@ export default {
         state: 1,
         category: '',
         description: "",
-        tables: ''
+        tables: '',
+        approvalFlag:false,
       },
       dataRule: {
         fullName: [

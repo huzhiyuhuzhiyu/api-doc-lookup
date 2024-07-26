@@ -759,6 +759,64 @@ export const selectComponents = [
   },
   {
     __config__: {
+      jnpfKey: "comSelectProduct",
+      label: "选择产品",
+      labelWidth: undefined,
+      showLabel: true,
+      tag: "comSelectProduct",
+      tagIcon: "icon-ym icon-ym-generator-company",
+      defaultValue: [],
+      required: false,
+      layout: "colFormItem",
+      span: 24,
+      dragDisabled: false,
+      visibility: ["pc", "app"],
+      tableName: "",
+      regList: [],
+      trigger: "change"
+    },
+    on: {
+      change:
+        "({ data, formData, setFormData, setShowOrHide, setRequired, setDisabled, request, getFieldOptions, setFieldOptions }) => {\n    // 在此编写代码\n    \n}"
+    },
+    placeholder: "请选择",
+    multiple: false,
+    clearable: true,
+    filterable: false,
+    disabled: false,
+    relationParams: '',
+  },
+  {
+    __config__: {
+      jnpfKey: "ComSelectPartner",
+      label: "合作伙伴",
+      labelWidth: undefined,
+      showLabel: true,
+      tag: "ComSelectPartner",
+      tagIcon: "icon-ym icon-ym-generator-company",
+      defaultValue: [],
+      required: false,
+      layout: "colFormItem",
+      span: 24,
+      dragDisabled: false,
+      visibility: ["pc", "app"],
+      tableName: "",
+      regList: [],
+      trigger: "change"
+    },
+    on: {
+      change:
+        "({ data, formData, setFormData, setShowOrHide, setRequired, setDisabled, request, getFieldOptions, setFieldOptions }) => {\n    // 在此编写代码\n    \n}"
+    },
+    placeholder: "请选择",
+    multiple: false,
+    clearable: true,
+    filterable: false,
+    disabled: false,
+    selectClassifyType: 'customer',
+  },
+  {
+    __config__: {
       jnpfKey: "depSelect",
       label: "部门选择",
       labelWidth: undefined,

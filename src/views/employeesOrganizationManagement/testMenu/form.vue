@@ -21,8 +21,10 @@
                       <el-collapse v-model="child.active" :key="child.renderKey">
                         <template v-for="colItem in child.children">
                           <el-collapse-item :title="colItem.title" :name="colItem.name" :key="colItem.title">
-                            <JNPF-Col v-if="colItem.children.length" v-model="dataForm" :tabContent="colItem.children"
+                            <JNPF-Col v-if="colItem.children.length && colItem.title === '基本信息'" v-model="dataForm" :tabContent="colItem.children"
                             ref="dataForm" :openMode="openMode" />
+                            <JNPF-tableFormProduct  ref="linesForm" v-if="colItem.children.length && colItem.title === '产品信息'" 
+                             :tableItems="colItem.children[0].children" :value="linesList" hasDel />
                           </el-collapse-item>
                         </template>
                       </el-collapse>
@@ -74,6 +76,7 @@ export default {
       btnType: '',
       btnLoading: false,
       formLoading: false,
+      linesList: [],
     }
   },
   created() {
@@ -99,6 +102,7 @@ export default {
     },
     getDevDetail() {
       let queryString = this.jnpf.getQueryString()
+      let useComppont = ['comSelect','comSelect2','comSelectList','comselectPage','depSelect','posSelect','userSelect','roleSelect','groupSelect','treeSelect','address']
       detailVisualDevInfo(queryString).then(res => {
         let formData = JSON.parse(res.data.formData)
         console.log(formData, 'formData');
@@ -139,12 +143,12 @@ export default {
                 // 为 children 中的每个项添加 type 字段
                 newItem.children.forEach(child => {
                   if (child.jnpfKey) {
-                    child.type = child.jnpfKey === 'comInput' ? 'input' :
-                      child.jnpfKey === 'select' ? 'select' :
-                        'custom';
+                    child.type = useComppont.includes(child.jnpfKey) ? 'custom' : child.jnpfKey
                     child.prop =  child.__vModel__ ? that.jnpf.getToLowerCase(child.__vModel__) : child.label
                     child.sm =  child.span ? child.span : '8'
                     child.style = {}
+                    child.value = child.defaultValue
+                    if (child.jnpfKey === 'select') child.options = child.__slot__.options.map(item=>{return {label:item.fullName,value:item.id}})
                   }
                   if (child.required) {
                     child.itemRules.push(
@@ -199,12 +203,12 @@ export default {
                     // 为子级的 children 添加 type 字段
                     child.children.forEach(subChild => {
                       if (subChild.jnpfKey) {
-                        subChild.type = subChild.jnpfKey === 'comInput' ? 'input' :
-                          subChild.jnpfKey === 'select' ? 'select' :
-                            'custom';
+                        subChild.type = useComppont.includes(subChild.jnpfKey) ? 'custom' : subChild.jnpfKey
                         subChild.prop =  subChild.__vModel__ ? that.jnpf.getToLowerCase(subChild.__vModel__) : subChild.label
                         subChild.sm =  subChild.span ? subChild.span : '8'
                         subChild.style = {}
+                        subChild.value = subChild.defaultValue
+                        if (subChild.jnpfKey === 'select') subChild.options = subChild.__slot__.options.map(item=>{return {label:item.fullName,value:item.id}})
                       }
                       if (subChild.required) {
                         subChild.itemRules.push(

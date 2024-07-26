@@ -3,7 +3,7 @@
     <el-tabs v-model="currentTab" class="center-tabs">
       <el-tab-pane label="组件属性" name="field" />
       <el-tab-pane label="组件样式" name="style" />
-      <el-tab-pane label="表单属性" name="form" />
+      <!-- <el-tab-pane label="表单属性" name="form" /> -->
     </el-tabs>
     <div class="field-box">
       <el-scrollbar class="right-scrollbar">
@@ -108,8 +108,8 @@
             </template>
             <JNPFComInput v-if="activeData.__config__.jnpfKey==='comInput'"
               :active-data="activeData" />
-            <ClassifyRight v-if="activeData.__config__.jnpfKey==='comSelect2'"
-              :active-data="activeData" />
+            <ClassifyRight v-if="['comSelect2','comSelectProduct','ComSelectPartner'].includes(activeData.__config__.jnpfKey)"
+              :active-data="activeData" :drawingList="drawingList"/>
             <JNPF-textarea v-if="activeData.__config__.jnpfKey==='textarea'"
               :active-data="activeData" />
             <JNPFText v-if="activeData.__config__.jnpfKey==='JNPFText'" :active-data="activeData" />

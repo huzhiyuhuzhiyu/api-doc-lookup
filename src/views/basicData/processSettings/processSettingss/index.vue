@@ -256,7 +256,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
         pageNum: 1,
         pageSize: 20,

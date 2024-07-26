@@ -6,7 +6,7 @@
     <el-form-item label="占位提示" v-if="activeData.__config__.jnpfKey !=='editor'">
       <el-input v-model="activeData.placeholder" placeholder="请输入占位提示" />
     </el-form-item>
-    <el-form-item label="分类类型" v-if="activeData.__config__.jnpfKey === 'comSelect2'">
+    <el-form-item label="分类类型" v-if="['comSelect2','ComSelectPartner'].includes(activeData.__config__.jnpfKey)">
       <el-select v-model="activeData.selectClassifyType" placeholder="请选择" @change="onTypeChange">
         <el-option v-for="item in selectTypeClassifyOptions" :key="item.value" :label="item.label"
           :value="item.value" />
@@ -33,21 +33,17 @@
     <el-form-item label="是否必填">
       <el-switch v-model="activeData.__config__.required" />
     </el-form-item>
-    <el-divider>校验规则</el-divider>
+    <!-- <el-divider>校验规则</el-divider>
     <el-form-item>
       <span slot="label">是否唯一
-        <!-- <el-tooltip content="输入值唯一性校验" placement="top">
-          <a class="el-icon-warning-outline"></a>
-        </el-tooltip> -->
-      </span>
       <el-switch v-model="activeData.__config__.unique" />
-    </el-form-item>
+    </el-form-item> -->
   </el-row>
 </template>
 <script>
 import comMixin from './mixin';
 export default {
-  props: ['activeData'],
+  props: ['activeData','drawingList'],
   mixins: [comMixin],
   data() {
     return {
@@ -64,7 +60,18 @@ export default {
       key: +new Date()
     }
   },
-  created() { },
+  created() { 
+    console.log(this.drawingList,'this.drawingList');
+    
+  },
+  watch:{
+    drawingList:{
+      deep: true,
+      handler(newVal, oldVal) {
+        console.log(newVal,'newVal');
+      }
+    }
+  },
   methods: {
     onTypeChange() {
       this.$set(this.activeData.__config__, 'defaultValue', this.activeData.multiple ? [] : '')

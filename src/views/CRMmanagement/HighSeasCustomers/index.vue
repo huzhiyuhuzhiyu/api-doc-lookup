@@ -83,14 +83,14 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column hasC @selection-change="selectCustomerFun">
-            <el-table-column prop="name" label="客户名称" sortable="custom" width="120" >
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="160" >
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
                   scope.row.name
                   }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" width="120"/>
+            <el-table-column prop="code" label="客户编码" sortable="custom" width="160"/>
            
             <el-table-column prop="contacts" label="联系人" sortable="custom" width="120"/>
             <el-table-column prop="phone" label="电话" sortable="custom" width="120"/>
@@ -127,7 +127,7 @@
 
     </div>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData"/>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
@@ -155,7 +155,7 @@ export default {
   components: { Form, ExportForm, programme, SuperQuery},
   data() {
     return {
-      partnerCategoryId: '',
+      categoryId: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -223,7 +223,7 @@ export default {
 
 
       dataForm: {
-        partnerCategoryId: '',
+        categoryId: '',
         code: "",
         name: "",
         contacts: "",
@@ -311,8 +311,8 @@ export default {
       return data.name.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
-      this.partnerCategoryId = node.data.id
-      this.listQuery.partnerCategoryId = node.data.id
+      this.categoryId = node.data.id
+      this.listQuery.categoryId = node.data.id
       this.search();
     },
     changeLeft() {
@@ -328,9 +328,9 @@ export default {
         this.treeData = res.data.length ? res.data : []
         this.listLoading = false
         this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
-          this.listQuery.partnerCategoryId = this.treeData[0].id
-          this.partnerCategoryId = this.treeData[0].id
+          // this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+          this.listQuery.categoryId = ''
+          this.categoryId = ''
           this.treeLoading = false
           this.listLoading = false
           this.initData()
@@ -567,7 +567,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
-      this.listQuery.partnerCategoryId = this.partnerCategoryId
+      this.listQuery.categoryId = this.categoryId
       this.programmetitle = ''
       this.search()
     },

@@ -1654,3 +1654,11 @@ export function Assignclues (data) {
     data
   })
 }
+// 线索导入
+export function saleCluemanagementpoolModel(data) {
+  return request({
+    url: `/api/zgt/bimClue/upload/data`,
+    method: 'post',
+    data
+  })
+}

@@ -5,7 +5,7 @@
       label-width="120px">
       <el-form-item label="所属分类" prop="parentName">
         <ComSelect2 v-model="dataForm.parentName" :isdisabled="isdisabled" placeholder="请选择所属分类" auth
-          @change="onOrganizeChange" :currOrgId="dataForm.id" :type="dataForm.type" />
+          @change="onOrganizeChange" :currOrgId="dataForm.id" :selectClassifyType="dataForm.type"/>
       </el-form-item>
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />

@@ -115,7 +115,7 @@
       </div>
     </div>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
     <Form1 v-if="formVisible" ref="Form1" @close="closeForm" />
     <RecordForm1 v-if="recordFormVisible" ref="RecordForm1" @close="closeForm" />
 
@@ -135,7 +135,7 @@ export default {
   components: { Form1, RecordForm1, programme, SuperQuery },
   data() {
     return {
-      partnerCategoryId: '',
+      categoryId: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -198,6 +198,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
+        categoryId:'',
         code: "",
         contacts: "",
         createByName: "",
@@ -286,8 +287,8 @@ export default {
       return data.name.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
-      this.partnerCategoryId = node.data.id
-      this.listQuery.partnerCategoryId = node.data.id
+      this.categoryId = node.data.id
+      this.listQuery.categoryId = node.data.id
       this.search();
     },
     changeLeft() {
@@ -309,9 +310,9 @@ export default {
         this.treeData = res.data.length ? res.data : []
         this.listLoading = false
         this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
-          this.listQuery.partnerCategoryId = this.treeData[0].id
-          this.partnerCategoryId = this.treeData[0].id
+          // this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+          this.listQuery.categoryId = ''
+          this.categoryId = ''
           this.treeLoading = false
           this.listLoading = false
           this.initData()
@@ -364,7 +365,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.listQuery.partnerCategoryId = this.partnerCategoryId
+      this.listQuery.categoryId = this.categoryId
       this.programmetitle = ''
       this.initData()
     },

@@ -10,6 +10,9 @@
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
       </el-form-item>
+      <el-form-item label="排序" prop="sortCode">
+        <el-input v-model="dataForm.sortCode" placeholder="请输入排序" maxlength="20" />
+      </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注"/>
       </el-form-item>
@@ -33,6 +36,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        sortCode:'',
         name: '',
         remark: '',
         type: 'customer',

@@ -382,12 +382,12 @@
               <el-table-column label="操作" width="140">
                 <template slot-scope="scope">
                   <!-- <el-button @click="addtable(scope.row)" type="text" >添加</el-button> -->
-                  <el-button @click="deltable(scope)" v-if="!btnType=='look'" type="text"
+                  <el-button @click="deltable(scope)" v-if="btnType!=='look'" type="text"
                     style="color:rgb(245,108,108)">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="addtable()" v-if="!btnType=='look'">
+            <div class="table-actions" @click="addtable()" v-if="btnType!=='look'">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
@@ -496,11 +496,11 @@
               <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
                   <el-button @click="deleteth(scope)" type="text" style="color:rgb(245,108,108)"
-                    v-if="!btnType=='look'">删除</el-button>
+                    v-if="btnType!=='look'">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="table-actions" @click="adddeliveryAddressList()" v-if="!btnType">
+            <div class="table-actions" @click="adddeliveryAddressList()" v-if="btnType!=='look'">
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>

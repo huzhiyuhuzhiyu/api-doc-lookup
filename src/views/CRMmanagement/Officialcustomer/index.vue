@@ -74,10 +74,10 @@
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
-              <el-tooltip content="高级查询" placement="top" v-if="true">
+              <!-- <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
-              </el-tooltip>
+              </el-tooltip> -->
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
@@ -85,14 +85,14 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column hasC>
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="120">
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="160">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
                   scope.row.name
                   }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="120" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
            
             <el-table-column prop="taxId" label="税号" min-width="120" />
             <el-table-column prop="contacts" label="联系人" sortable="custom" min-width="100" />
@@ -130,7 +130,7 @@
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
      <!-- 高级查询 -->
      <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
   </div>
 </template>
 
@@ -154,7 +154,7 @@ export default {
   components: { Form, ExportForm, RecordForm ,SuperQuery,programme},
   data() {
     return {
-      partnerCategoryId: '',
+      categoryId: '',
       programmefrom: {},
       partentOrChild: 'partent',
       programmetitle: '',
@@ -182,7 +182,7 @@ export default {
 
 
       dataForm: {
-        partnerCategoryId: '',
+        categoryId: '',
         code: "",
         name: "",
         taxId: "",
@@ -330,8 +330,8 @@ export default {
       return data.name.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
-      this.partnerCategoryId = node.data.id
-      this.listQuery.partnerCategoryId = node.data.id
+      this.categoryId = node.data.id
+      this.listQuery.categoryId = node.data.id
       this.search();
     },
     changeLeft() {
@@ -347,9 +347,9 @@ export default {
         this.treeData = res.data.length ? res.data : []
         this.listLoading = false
         this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
-          this.listQuery.partnerCategoryId = this.treeData[0].id
-          this.partnerCategoryId = this.treeData[0].id
+          // this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+          this.listQuery.categoryId = ''
+          this.categoryId = ''
           this.treeLoading = false
           this.listLoading = false
           this.initData()
@@ -619,7 +619,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
-      this.listQuery.partnerCategoryId = this.partnerCategoryId
+      this.listQuery.categoryId = this.categoryId
       this.programmetitle = ''
       this.search()
     },

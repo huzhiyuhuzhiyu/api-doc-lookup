@@ -418,6 +418,7 @@ export default {
           duration: 1500,
           onClose: () => {
             this.planList.splice(i, 1)
+            this.$emit('saveproject')
           }
         })
       })
@@ -480,6 +481,7 @@ export default {
         this.getAdvancedQueryList()
         this.addPlanVisible = false
         this.saveBtnLoading = false
+        this.$emit('saveproject')
         this.$message({
           message: res.msg,
           type: 'success',

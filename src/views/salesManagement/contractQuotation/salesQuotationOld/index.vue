@@ -4,19 +4,19 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.quotationNo" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.cooperativePartnerIdText" placeholder="请输入客户名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.bidder" placeholder="请输入报价人" clearable @keyup.enter.native="search()" />
               </el-form-item>
@@ -57,7 +57,7 @@
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="quotationNo" label="报价单号" min-width="200" sortable="custom">
+            <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.quotationNo
@@ -481,4 +481,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .JNPF-common-search-box{
+    padding: 8px;
+  }
+  .JNPF-common-head{
+    padding: 8px;
+  }
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

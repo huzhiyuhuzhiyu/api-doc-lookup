@@ -140,67 +140,35 @@
                 </el-row>
               </el-form>
 
-              </el-form>
               <div
                 style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
                 <h5>产品信息</h5>
               </div>
               <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
+
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
                 <el-button type="text" style="margin-right:8px;margin-left:8px ; font-size:14px!important"
-                  :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                  @click="batchDelete">批量删除</el-button>|
-                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
-                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>| -->
+                  icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                  v-loading="tableloading">
-                  <!-- <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" /> -->
+                  v-loading="tableloading"> 
                   <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                  <!-- <JNPF-table ref="product" :data="dataFormTwo.data" :hasC="iszt" @selection-change="handeleProductInfoData"
-                height="700px" style="border: 1px solid #e3e7ee;"> -->
-                  <!-- <el-table-column prop="ordersId" label="订单号" width="200">
-                  <template slot="header">
-                    <span class="required">*</span>订单号
-                  </template>
-                </el-table-column> -->
-                  <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                  <!-- </el-table-column> -->
-                  <el-table-column prop="workOrderNo" label="工作令号" width="160" show-overflow-tooltip>
+       
+              
+
+                  <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip key="166">
                   </el-table-column>
-                  <el-table-column prop="customerProductNo" label="客户物料号" width="160" show-overflow-tooltip key="166">
+          
+                  <el-table-column prop="drawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
-                  <el-table-column prop="productCode" label="产品编码" width="180" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="productDrawingNo" label="产品图号" width="290" key="3" show-overflow-tooltip>
+                  
+                  <el-table-column prop="mainUnit" label="单位" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="outboundQuantity" label="已出库数量" width="120" key="6" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="undeliveredQuantity" label="待出库数量" width="120" key="7"
-                    v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'" show-overflow-tooltip>
-                  </el-table-column>
-                  <el-table-column prop="receivingQuantity" label="收货数量" width="170" v-if="btnType == 'qrsh'" key="2">
-                    <template slot="header">
-                      <span class="required">*</span>收货数量
-                    </template>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'receivingQuantity'"
-                        :rules='productRules.receivingQuantity'>
-                        <el-input v-model="scope.row.receivingQuantity" placeholder="请输入收货数量"
-                          :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                          style="width: 145px;">
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="pickingQuantity" label="拣货数量" width="200" key="8" v-if="btnType == 'qrsh'"
-                    show-overflow-tooltip>
+                  <el-table-column prop="waitDeliverNum" label="待发货数量" width="120" key="6" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="deliveryQuantity" label="发货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                     key="21">
@@ -217,31 +185,22 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="deliveryQuantity" label="换发货数量" width="170" key="29" v-else>
-                    <template slot="header">
-                      <span class="required">*</span>换发货数量
-                    </template>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
-                        :rules='productRules.deliveryQuantity'>
-                        <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入换发货数量"
-                          :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
-                          @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <!-- <el-table-column prop="receivedQuantity" label="确认收货数量" min-width="160" v-if="btnType == 'look'" key="5"
-                    show-overflow-tooltip> -->
-                  <el-table-column prop="mainUnit" label="单位" width="100" show-overflow-tooltip>
-
-                  </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入备注"
                         :disabled="btnType == 'look' ? true : false" maxlength="200" />
                     </template>
                   </el-table-column>
+                  <el-table-column prop="deliveryDate" label="交货日期" width="160"  />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160"  />
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="160"  />
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="160"  />
+                  <el-table-column prop="oil" label="油脂" width="160"  />
+                  <el-table-column prop="oilQuantity" label="油脂量" width="160"  />
+                  <el-table-column prop="clearance" label="游隙" width="160"  />
+                  <el-table-column prop="packagingMethod" label="包装方式" width="160"  />
+                  <el-table-column prop="orderNo" label="订单号" width="160"  />
+                  <el-table-column prop="workOrderNo" label="工作令号" width="160"  />
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                     <template slot-scope="scope">
                       <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -334,6 +293,77 @@
           </div>
 
         </el-dialog>
+        <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+          :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+          append-to-body>
+
+          <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+
+            <div class="JNPF-common-layout-center JNPF-flex-main">
+              <el-row class="JNPF-common-search-box" :gutter="16">
+                <el-form @submit.native.prevent>
+
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="交货日期">
+                      <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                        style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                        {{ $t('common.search') }}</el-button>
+                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                        $t('common.reset') }}
+                      </el-button>
+                    </el-form-item>
+                  </el-col>
+
+                </el-form>
+              </el-row>
+              <div class="JNPF-common-layout-main JNPF-flex-main">
+                <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" hasC @selection-change="handleSelectionChangeAllPruduct">
+                  <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
+                  <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                  <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                  <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                  <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
+                  <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                  <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
+                  <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
+                  <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
+                  <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                  <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                  <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
+                  <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                </JNPF-table>
+                <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                  @pagination="searchProductFun" />
+              </div>
+            </div>
+          </div>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click=" productVisible= false">{{ $t('common.cancelButton') }}</el-button>
+            <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+              确定</el-button>
+          </span>
+        </el-dialog>
 
 
       </div>
@@ -365,7 +395,7 @@ export default {
   data() {
     return {
       tableloading: false,
-
+      deliveryDateArr: [],
       getsaleOrderList,
       productTableItems: [
         { prop: 'orderNo', label: '订单号' },
@@ -432,7 +462,6 @@ export default {
       ],
       productRules: {
         deliveryQuantity: [{ required: true, trigger: 'blur' }, { validator: this.formValidate('positiveNumber', '发货数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
-        receivingQuantity: [{ required: true, trigger: 'blur' }, { validator: this.calcValidates(), trigger: 'blur' }]
       },
       ordersLineId: '',
       orderDateArr: [],
@@ -612,6 +641,26 @@ export default {
       treeLoading: false,
       selectRows: [],
       codeConfig: {},
+      orderForm: {
+        cooperativePartnerId: "",
+        customerProductDrawingNo: 1,
+        deliverQueryFlag: "",
+        drawingNo: "",        // customerProductNo: "",
+        deliveryStartTime: "",
+        deliveryEndTime: "",
+
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "t1.create_time"
+        }],
+
+      },
+      selectArr:[],
     }
   },
   created() {
@@ -624,7 +673,56 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    // 选择产品——搜索
+    searchProductFun() {
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartTime = ""
+        this.orderForm.deliveryEndTime = ""
+      }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      getsaleOrderDetailList(this.orderForm).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+        this.getOrderLineReportFun()
+      }).catch(() => {
+        this.listLoading = false
+      })
 
+    },
+    // 选择产品——重置
+    resetProductFun() {
+      this.deliveryDateArr = []
+      this.orderForm = {
+        cooperativePartnerId: this.dataForm.cooperativePartnerId,
+        customerProductDrawingNo: 1,
+        deliverQueryFlag: "",
+        drawingNo: "",        // customerProductNo: "",
+        deliveryStartTime: "",
+        deliveryEndTime: "",
+
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "t1.create_time"
+        }],
+
+      }
+      this.searchProductFun()
+
+    },
+    // 点击选择产品
+    openSeleceProductDialog() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      this.productVisible = true
+    },
     //数据格式化
     listDataFormatting(res) {
       res.data.records.forEach((item, index) => {
@@ -685,31 +783,7 @@ export default {
         }
       };
     },
-    //收货数量不能为0
-    calcValidates() {
-      return (rule, value, callback) => {
-        let index = Number(rule.field.match(/\d+/)[0])
-        let msg = `收货数量不能大于已出库数量`
-        if (value == 0) {
-          // this.$message.error('收货数量不能为"0"')
-          callback();
-        } else if (value < 0) {
-          this.$message.error('收货数量不能小于0')
-          callback(new Error('收货数量不能小于0'));
-        }
-        else {
-          let flag = false
-          let list = this.dataFormTwo.data
-          let num_1 = Number(list[index].receivingQuantity)
-          let num_2 = Number(list[index].outboundQuantity)
-          if (!(num_1 <= num_2)) { flag = true }
-          if (flag) {
-            this.$message.error(msg)
-            callback(new Error(msg));
-          } else { callback() }
-        }
-      };
-    },
+ 
     //选择发货方式
     changeDelivery(val) {
       if (val === 'self_pickup') {
@@ -763,9 +837,9 @@ export default {
     // },
     // 选完客户订单数据后 渲染在列表上
     submitAllProduct() {
-      this.allProVisible = false
-      this.selectArr.forEach(item => {
-        this.dataFormTwo.data = []
+      if(!this.selectArr.length) return this.$message.error("请选择产品！")
+      this.productVisible = false
+      this.selectArr.forEach(item => { 
         getOrderDetail(item.id).then(res => {
           res.data.orderLines.map((item) => {
             this.dataFormTwo.data.push(item)
@@ -890,51 +964,6 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-      if (this.btnType == 'qrsh') {
-        if (!row.receivingQuantity) {
-          return
-        }
-        row.receivingQuantity = row.receivingQuantity.replace(/[^0-9.]/g, '');
-
-        if (row.receivingQuantity.length == 1 && row.receivingQuantity == '.') {
-          // 如果第一位是小数点，则清空输入框
-          row.receivingQuantity = '';
-        } else if (row.receivingQuantity.length == 2 && row.receivingQuantity[0] == '0' && row.receivingQuantity[1] != '.') {
-          // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-          row.receivingQuantity = row.receivingQuantity.slice(0, 1) + '.' + row.receivingQuantity.slice(1);
-        } else if (row.receivingQuantity.length > 2 && row.receivingQuantity[0] == '0' && row.receivingQuantity[1] != '.') {
-          row.receivingQuantity = row.receivingQuantity.substring(1, row.receivingQuantity.length)
-        }
-        if (row.receivingQuantity.includes('.')) {
-          let dotCount = 0; // 小数点的数量
-          let result = ''; // 处理后的结果
-          for (let i = 0; i < row.receivingQuantity.length; i++) {
-            const char = row.receivingQuantity[i];
-            if (char === '.') {
-              if (dotCount === 0) {
-                // 第一个小数点保留
-                result += char;
-                dotCount++;
-              }
-            } else {
-              result += char;
-            }
-          }
-          row.receivingQuantity = result;
-          let arr = row.receivingQuantity.split('.')
-          if (arr[0].length > 8) {
-            arr[0] = arr[0].substring(0, 8)
-          }
-          if (arr[1].length > 2) {
-            arr[1] = arr[1].substring(0, 2)
-          }
-          row.receivingQuantity = arr[0] + '.' + arr[1]
-        } else {
-          if (row.receivingQuantity.length > 8) {
-            row.receivingQuantity = row.receivingQuantity.substring(0, 8);
-          }
-        }
-      } else {
         // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
         // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
         // 如果计算方向是除 则副数量等于主数量*套数/转换系数
@@ -982,47 +1011,8 @@ export default {
             row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
           }
         }
-      }
     },
-    // 所有产品弹框 重置搜索条件
-    resetAllProduct() {
-      this.orderDateArr = []
-      this.ProductListRequestObj = {
-        // neOrderState: 'finish',
-        orderNo: "",
-        cooperativePartnerName: "",
-        cooperativePartnerCode: '',
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        // distributeStatus: 'distributed',
-        shipmentState: "",
-        exchangeStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
-        startTime: "",
-        endTime: "",
-
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-      },
-        this.searchAllProduct()
-    },
+   
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
@@ -1054,10 +1044,8 @@ export default {
         this.dataForm.province = '',
         this.dataForm.city = '',
         this.dataForm.area = '',
-        this.dataForm.address = '',
         // this.dataForm.shipperId = '',
-        this.dataForm.remark = '',
-        this.defaultAddress = ''
+        this.dataForm.remark = ''
     },
     // 选择客户
     seleceCustomer(e) {
@@ -1103,12 +1091,23 @@ export default {
 
         }
       })
-      this.dataForm.country = e.countryText === '中国' ? 'CN' : e.country
+      getAddressInfo(e.id).then(row => {
+        let dfaddress = row.data.filter(item => { return item.defaultFlag })
+        if (dfaddress.length) {
+          this.dataForm.recipient = dfaddress[0].recipient
+          this.dataForm.phone = dfaddress[0].phone
+          this.dataForm.country = dfaddress[0].country === '中国' ? 'CN' : dfaddress[0].country
+          this.dataForm.province = dfaddress[0].province
+          this.dataForm.city = dfaddress[0].city
+          this.dataForm.area = dfaddress[0].area
+          this.dataForm.address = dfaddress[0].address
           if (this.dataForm.country === 'CN') {
-            this.defaultAddress = e.provinceText + e.cityText + e.areaText + e.address
+            this.defaultAddress = dfaddress[0].countryText + dfaddress[0].provinceText + dfaddress[0].cityText + dfaddress[0].areaText + dfaddress[0].address
           } else {
-            this.defaultAddress = e.countryText + e.address
+            this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
           }
+        }
+      })
 
     },
 
@@ -1181,27 +1180,7 @@ export default {
       loop(node)
       return fullPath
     },
-    filterNodeAllProduct(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
-    },
-    handleNodeAllProduct(data, node) {
-      if (this.ProductListRequestObj.productCategoryId === data.id) return
-      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
-      const nodePath = this.getNodePathProduct(node)
-      this.organizeIdTree = nodePath.map(o => o.id)
-      this.ProductListRequestObj.classAttribute = data.classAttribute
-      this.searchAllProduct()
-    },
-    getNodePathProduct(node) {
-      let fullPath = []
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data)
-        if (node.parent) loop(node.parent)
-      }
-      loop(node)
-      return fullPath
-    },
+ 
     toggleExpand(expands) {
       this.refreshTree = false
       this.expands = expands
@@ -1309,10 +1288,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          this.dataForm.orderNo = orderNo
-        }
+          this.dataForm.orderNo = data.orderNo
+          
       } catch (error) {
       }
     },
@@ -1347,19 +1324,7 @@ export default {
             return
           }
 
-          if (this.btnType == 'qrsh') {
-            this.dataFormTwo.data.forEach((item, index) => {
-              if (!item.receivingQuantity) {
-                this.iszhi = true
-                this.$message({
-                  message: `第${index + 1}行收货数量不能为空`,
-                  type: 'error',
-                  duration: 1500,
-                })
-              }
-
-            })
-          }
+      
           if (this.iszhi) {
             this.iszhi = false
             return
@@ -1417,7 +1382,6 @@ export default {
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               remark: item.remark ? item.remark : '',
               returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
             }
             obj1.receiptLineList.push(dep1)
             if (this.btnType == 'add' || this.btnType == 'copy') {
@@ -1437,7 +1401,6 @@ export default {
                 // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
                 sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
@@ -1468,7 +1431,6 @@ export default {
                 receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
                 remark: item.remark ? item.remark : '',
                 returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-                receivingQuantity: item.receivingQuantity ? item.receivingQuantity : '',
                 sourceNoticeLineList: [
                   {
                     id: item.sourceNoticeLineList ? item.sourceNoticeLineList[0].id : '',
@@ -1483,72 +1445,7 @@ export default {
               obj.noticeLineList.push(dep2)
             }
           })
-          if (this.btnType == 'qrsh') {
-            let isreceivingQuantity = this.dataFormTwo.data.some((item, index) => {
-              return item.receivingQuantity && item.receivingQuantity * 1 < item.outboundQuantity * 1
-            })
-            let isreceivingQuantitys = this.dataFormTwo.data.some((item, index) => {
-              return item.receivingQuantity && item.receivingQuantity * 1 > item.outboundQuantity * 1
-            })
-            if (isreceivingQuantitys) {
-              return
-            } else if (isreceivingQuantity) {
-              this.$confirm(`确认收货只能操作一次，您是否继续？`, '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-              }).then(() => {
-                this.btnLoading = true
-                editReceiptnoticelist(obj1).then(res => {
-                  this.$message({
-                    message: '确认收货成功',
-                    type: 'success',
-                    duration: 1500,
-                    onClose: () => {
-                      this.visible = false
-                      this.btnLoading = false
-                      this.$emit('close', true)
-                    }
-                  })
-                }).catch(() => {
-                  this.btnLoading = false
-                })
-              }).catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消'
-                })
-              })
-            }
-            else {
-              this.$confirm(`确认收货只能操作一次，您是否继续？`, '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-              }).then(() => {
-                this.btnLoading = true
-                editReceiptnoticelist(obj1).then(res => {
-                  this.$message({
-                    message: '确认收货成功',
-                    type: 'success',
-                    duration: 1500,
-                    onClose: () => {
-                      this.visible = false
-                      this.btnLoading = false
-                      this.$emit('close', true)
-                    }
-                  })
-                }).catch(() => {
-                  this.btnLoading = false
-                })
-              }).catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消'
-                })
-              })
-            }
-          } else {
+      
             let isQuantity = this.dataFormTwo.data.some((item, index) => {
               return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
             })
@@ -1622,7 +1519,6 @@ export default {
                 this.btnLoading = false
               })
             }
-          }
         }
       })
     }

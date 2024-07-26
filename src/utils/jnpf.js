@@ -24,18 +24,7 @@ const jnpf = {
      })
     
   },
-  getCodeWayFun(code) {
-     return new Promise((resolve, reject) => {
-      BillNumber(code).then(res=>{
-        res.data
-        resolve(res.data)
-      }).catch(error => {
-        reject(error)
-      })
-      
-     })
-    
-  },
+ 
   toDateText(dateTimeStamp) {
     if (!dateTimeStamp) return ''
     let result = ''

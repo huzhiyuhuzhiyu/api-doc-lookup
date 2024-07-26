@@ -17,17 +17,18 @@
         <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
         <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
           <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
-            <JNPF-col-table v-model="modelArr" ref="sleeveForm" :tableItems="modelItems" :openMode="openMode" />
+            <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
           </el-collapse-item>
-          <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
+          <el-collapse-item title="其他信息" name="basicInfo">
             <JNPF-col v-model="otherForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
           </el-collapse-item>
         </el-collapse>
         <!-- </el-tab-pane>
         </el-tabs> -->
+        
       </div>
     </div>
   </transition>
@@ -42,7 +43,7 @@ import {
   checkModelExist
 } from '@/api/masterDataManagement/productManage'
 import { getCooperativeData, getcategoryTree as getcategoryCoop, getByCode } from '@/api/basicData/index'
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 
 import tabs from './params'
@@ -112,19 +113,17 @@ export default {
         { prop: 'name', label: '钢球厂家名称', type: 'input' }
       ],
       businessType: '', //  参数设置  自动  还是 手输
-      modelArr: [
-        {
-          model: '',
-          innerCircle: '',
-          outerCircle: '',
-          steelBall: '',
-          steelBallNum: '',
-          oilNum: '',
-          holderNum: '',
-          createTime: '',
-          createByName: ''
-        }
-      ],
+      modelForm: {
+        model: '',
+        innerCircle: '',
+        outerCircle: '',
+        steelBall: '',
+        steelBallNum: '',
+        oilNum: '',
+        holderNum: '',
+        createTime: '',
+        createByName: ''
+      },
       modelItems: [
         {
           prop: 'model',
@@ -154,12 +153,12 @@ export default {
           ],
           itemDisabled: false
         },
-        { prop: 'innerCircle', label: '内圈', type: 'view' },
-        { prop: 'outerCircle', label: '外圈', type: 'view' },
-        { prop: 'steelBall', label: '钢球型号', type: 'view' },
-        { prop: 'steelBallNum', label: '钢球用量', type: 'view' },
-        { prop: 'oilNum', label: '油脂用量', type: 'view' },
-        { prop: 'holderNum', label: '保持架用量', type: 'view' },
+        { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
+        { prop: 'outerCircle', label: '外圈', type: 'input', itemDisabled: true },
+        { prop: 'steelBall', label: '钢球型号', type: 'input', itemDisabled: true },
+        { prop: 'steelBallNum', label: '钢球用量', type: 'input', itemDisabled: true },
+        { prop: 'oilNum', label: '油脂用量', type: 'input', itemDisabled: true },
+        { prop: 'holderNum', label: '保持架用量', type: 'input', itemDisabled: true }
       ],
       otherForm: {},
       otherItems: [
@@ -337,6 +336,56 @@ export default {
             }
           }
         }
+        if (tc.prop === 'mainUnit' || tc.prop === 'deputyUnit') {
+          let obj = {
+            pageNum: 1,
+            pageSize: 100
+          }
+          getUnitData(obj).then((res) => {
+            tc.options = res.data.records.map((item) => {
+              return { label: item.name, value: item.name }
+            })
+          })
+
+          if (tc.prop === 'mainUnit') {
+            tc.change = (val) => {
+              if (this.dataForm.deputyUnit) {
+                detailUnitData(val).then((res) => {
+                  res.data.unitRelList.forEach((it) => {
+                    if (it.targetName == this.dataForm.deputyUnit) {
+                      this.dataForm.ratio = it.ratio
+                      this.dataForm.calculationDirection = it.calculationDirection
+                    } else {
+                      this.dataForm.ratio = ''
+                      this.dataForm.calculationDirection = ''
+                    }
+                  })
+                })
+              }
+            }
+          }
+
+          if (tc.prop === 'deputyUnit') {
+            tc.change = (val) => {
+              if (this.dataForm.mainUnit) {
+                detailUnitData(val).then((res) => {
+                  res.data.unitRelList.forEach((it) => {
+                    if (it.targetName == this.dataForm.mainUnit) {
+                      this.dataForm.ratio = it.ratio
+                      this.dataForm.calculationDirection = it.calculationDirection
+                    } else {
+                      this.dataForm.ratio = ''
+                      this.dataForm.calculationDirection = ''
+                    }
+                  })
+                })
+              }
+            }
+          }
+          //  else {
+          //   this.otherForm.bomFlag = false
+          // }
+        }
       })
     })
     this.modelItems.forEach((tc) => {
@@ -356,7 +405,7 @@ export default {
         }
         tc.clearable = true
         tc.change = (val, data, paramsObj) => {
-          this.modelArr[0].model = data[0].all.model
+          this.modelForm.model = data[0].all.model
           const obj = {
             startTime: '',
             endTime: '',
@@ -372,10 +421,10 @@ export default {
             ],
             pageNum: 1,
             pageSize: 20,
-            model: this.modelArr[0].model
+            model: this.modelForm.model
           }
           getbimProductsModelList(obj).then((res) => {
-            this.modelArr = res.data.records
+            this.modelForm = res.data.records[0]
           })
         }
       }
@@ -548,7 +597,7 @@ export default {
               }
             })
           })
-          this.modelArr[0].model = this.dataForm.model
+          this.modelForm.model = this.dataForm.model
           const obj = {
             startTime: '',
             endTime: '',
@@ -564,10 +613,10 @@ export default {
             ],
             pageNum: 1,
             pageSize: 20,
-            model: this.modelArr[0].model
+            model: this.modelForm.model
           }
           getbimProductsModelList(obj).then((res) => {
-            this.modelArr = res.data.records
+            this.modelForm = res.data.records[0]
           })
           let target = this.modelItems.find((tc) => tc.prop === 'model')
           target.itemDisabled = true
@@ -699,7 +748,7 @@ export default {
   margin-right: 4px;
 }
 .orderInfo ::v-deep .el-collapse-item__wrap {
-  margin-bottom: 10px;
-  // border-bottom: none!important
+  // margin-bottom: 10px;
+  border-bottom: none !important;
 }
 </style>

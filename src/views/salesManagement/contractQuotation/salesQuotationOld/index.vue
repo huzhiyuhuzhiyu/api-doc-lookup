@@ -4,19 +4,19 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.quotationNo" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.cooperativePartnerIdText" placeholder="请输入客户名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.bidder" placeholder="请输入报价人" clearable @keyup.enter.native="search()" />
               </el-form-item>
@@ -57,7 +57,7 @@
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="quotationNo" label="报价单号" min-width="200" sortable="custom">
+            <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.quotationNo
@@ -67,13 +67,13 @@
             <el-table-column prop="deliver" label="致" width="200" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" width="200" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
-            <el-table-column prop="bidder" label="报价人" sortable="custom" width="120" />
-            <el-table-column prop="quotationTime" label="报价时间" width="180" sortable="custom" />
-            <el-table-column prop="validEnd" label="有效时间止" width="180" sortable="custom" />
+            <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
+            <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
+            <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
             <el-table-column prop="address" label="地址" min-width="300" />
-            <el-table-column prop="phone" label="电话" width="160" sortable="custom" />
-            <el-table-column prop="fax" label="传真" width="160" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额" width="140" sortable="custom" />
+            <el-table-column prop="phone" label="电话" width="120" sortable="custom" />
+            <el-table-column prop="fax" label="传真" width="120" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额" width="100" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>
@@ -481,4 +481,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .JNPF-common-search-box{
+    padding: 8px;
+  }
+  .JNPF-common-head{
+    padding: 8px;
+  }
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

@@ -5,24 +5,40 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="请输入订单号"
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
                   clearable />
               </el-form-item>
             </el-col>
-
             <el-col :span="4">
 
               <el-form-item>
-                <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
-                  :picker-options="global.timePickerOptionsArr" clearable>
+                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;" placeholder="发货开始日期" clearable>
+                </el-date-picker>-
+
+              </el-form-item>
+
+            </el-col>
+            <el-col :span="4">
+
+              <el-form-item>
+                <el-date-picker v-model="orderForm.deliveryEndTime" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;" placeholder="发货结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>
+            <el-col :span="8">
+              <el-form-item>
+                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
+              </el-form-item>
+            </el-col>
 
-            <el-col :span="6">
+            <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                   {{ $t('common.search') }}</el-button>
@@ -32,24 +48,6 @@
             </el-col>
 
           </el-form>
-          <el-col :span="4">
-            <el-form-item>
-              <el-button  @click="btnsearch1()">已延期</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-button  @click="btnsearch2()">近三天</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-button  @click="btnsearch3()">近7天</el-button>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-button  @click="btnsearch4()">近30天</el-button>
-          </el-col>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
@@ -84,12 +82,13 @@
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
             <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户货号" width="160" sortable="custom" />
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="规格型号" width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
             <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+            <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
 
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
@@ -112,6 +111,8 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
+            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
+
           </pagination>
 
         </div>
@@ -133,10 +134,10 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
-import Form from '../../orderManagement/orderList/Form'
-import OrderFollow from '../../orderManagement/orderList/orderFollow'
-import UserRelationList from '../../orderManagement/orderList/userRelation'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import Form from '../../orderManagement/orderList/Form.vue'
+import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
+import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -145,7 +146,8 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
-      columnList: ["cooperativePartnerCode", "departmentName", "productName", "createTime",],
+      btnsearchFlag: true,
+      columnList: ["cooperativePartnerCode", "departmentName", "productName",],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -155,7 +157,6 @@ export default {
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      salespersonList: [],
       detailFlag: false,
 
       orderForm: {
@@ -163,56 +164,34 @@ export default {
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        approvalStatus: "",
-        approvalStatus: "",
-        deliveryStartTime: "",
         deliveryEndTime: "",
+        deliveryStartTime: "",
+        extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
         }],
 
         superQuery: {},
       },
 
       detailTotal: 0,
-      salespersonList: [],
-      pickerOptions: {
-        disabledDate(time) {
-          // 获取当前日期
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          // 获取6个月前的日期
-          const sixMonthsAgo = new Date();
-          sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-          sixMonthsAgo.setHours(0, 0, 0, 0);
-          // 如果选择的日期范围超过6个月，或者结束日期不是当前日期，则禁用
-          return time.getTime() < sixMonthsAgo || time.getTime() > today;
-        }
-      },
+
       gradeList: [],
       defaultProps: {
         children: 'childrenList',
         label: 'name'
       },
-      createTimeArr: [],
-      orderDateArr: [],
-      CompletionDate: [],
       total: 0,
       diagramVisible: false,
       formVisible: false,
       filterText: '',
       totalDataForm: {},
-      btnType1: "",
-      btnType2: "primary",
-      btnType3: "",
-      btnType4: "",
+      totalNum: 0,
+      dateRange: [null, new Date()], //
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -244,7 +223,7 @@ export default {
         },
         {
           prop: 'customerProductNo',
-          label: "客户货号",
+          label: "客户料号",
           type: 'input'
         },
         {
@@ -259,7 +238,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "规格型号",
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -271,6 +250,11 @@ export default {
           prop: 'num',
           label: "数量(主)",
           type: 'input'
+        },
+        {
+          prop: "waitDeliverNum",
+          label: "待发货数量",
+          type: "input"
         },
         {
           prop: 'deputyUnit',
@@ -378,49 +362,83 @@ export default {
   },
 
   mounted() {
+
+  },
+  created() {
     // 默认设置为近3天  
     const end = new Date();
     const start = new Date();
-
     end.setDate(end.getDate() + 3);
     this.deliveryDateArr = [start, end];
-  },
-  created() {
-    this.getUserList()
-    this.getAttributeline()
-    let endDate = new Date().toISOString().slice(0, 10);
-    let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
-    this.orderDateArr[0] = startDate
-    this.orderDateArr[1] = endDate
-    this.orderForm.orderStartDate = startDate
-    this.orderForm.orderEndDate = endDate
-    this.initData()
+    this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+    this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+    this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    btnsearch1(e) {
-      this.btnType1 = "primary"
-      this.btnType2 = ""
-      this.btnType3 = ""
-      this.btnType4 = ""
+    // 获取合计数据
+    getOrderLineReportFun() {
+      getOrderLineReport(this.orderForm).then(res => {
+        console.log("合计", res);
+        this.totalNum = res.data ? res.data.total.num : 0
+      })
     },
-    btnsearch2(e) {
-      this.btnType1 = ""
-      this.btnType2 = "primary"
-      this.btnType3 = ""
-      this.btnType4 = ""
+    dateFun(dateStr) {
+      const date = new Date(dateStr);
+
+      // 获取年份、月份和日期  
+      const year = date.getFullYear(); // 获取年份  
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)  
+      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数  
+
+      // 拼接成年月日格式  
+      const formattedDate = `${year}-${month}-${day}`;
+      console.log("forma", formattedDate);
+      return formattedDate
     },
-    btnsearch3(e) {
-      this.btnType1 = ""
-      this.btnType2 = ""
-      this.btnType3 = "primary"
-      this.btnType4 = ""
+    btnsearch1() {
+      let end = new Date();
+      let start = "";
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.dataFormSubmit()
     },
-    btnsearch4(e) {
-      this.btnType1 = ""
-      this.btnType2 = ""
-      this.btnType3 = ""
-      this.btnType4 = "primary"
+    // 为近3天  
+    btnsearch2() {
+
+      const end = new Date();
+      const start = new Date();;
+      end.setDate(end.getDate() + 3);
+      this.deliveryDateArr = [start, end];
+      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.search()
+    },
+    // 为近7天  
+    btnsearch3() {
+
+      let end = new Date()
+      let start = new Date()
+
+      end.setDate(end.getDate() + 7);
+
+      this.deliveryDateArr = [start, end];
+      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.search()
+    },
+    // 为近30天  
+    btnsearch4() {
+
+      let end = new Date()
+      let start = new Date()
+      end.setDate(end.getDate() + 30);
+
+      this.deliveryDateArr = [start, end];
+      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.search()
     },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -432,17 +450,7 @@ export default {
     },
 
 
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then(res => {
-        this.customList = []
-        res.data.forEach(column => {
-          // 列表中显示
-          let propExists = this.customList.some(item2 => item2.prop === column.attributeColumn);
-          if (!propExists) { this.customList.push({ prop: column.attributeColumn, label: column.name }) }
-        })
-      })
-    },
+    // 
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -479,29 +487,11 @@ export default {
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
-
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-
       this.initData()
 
     },
 
-    // 获取销售人员
-    getUserList() {
-      let obj = {
-        currentPage: 1,
-        pageSize: -1
-      }
-      UserListAll(obj).then(res => {
-        this.salespersonList = res.data.list
-      })
-    },
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -517,6 +507,7 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
+        this.getOrderLineReportFun()
       }).catch(() => {
         this.listLoading = false
       })
@@ -530,27 +521,21 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
-      this.CompletionDate = []
+      // 默认设置为近3天  
+      const end = new Date();
+      const start = new Date();
+
+      end.setDate(end.getDate() + 3);
+      this.deliveryDateArr = [start, end];
       this.orderForm = {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        customerProductDrawingNo: "",
-        // customerProductNo: "",
-        orderType: "",
-        drawingNo: "",
-        orderNo: "",
-        productCode: "",
-        productName: "",
-        shipmentStatus: '',
-        orderStartDate: "",
-        orderEndDate: "",
-        deliveryStartTime: "",
+
+        approvalStatus: "ok",
+        documentStatus: "submit",
+        orderState: "not_finish",
         deliveryEndTime: "",
-        startTime: "",
-        endTime: "",
+        deliveryStartTime: "",
+        extensionFlag: 1,
+        deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -561,6 +546,7 @@ export default {
           column: "t1.create_time"
         }],
 
+        superQuery: {},
       }
 
       this.search()
@@ -707,5 +693,8 @@ export default {
 
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
+}
+.btnBox{
+  padding: 7px 10px;
 }
 </style>

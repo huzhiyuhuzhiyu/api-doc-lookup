@@ -4,21 +4,21 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
                 <el-input v-model="form.quotationNo" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.customerDrawingNumber" placeholder="请输入客户货号" clearable
+                <el-input v-model="form.customerDrawingNumber" placeholder="请输入 客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="请输入规格型号" clearable
+                <el-input v-model="form.productDrawingNo" placeholder="请输入品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -58,7 +58,7 @@
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="quotationNo" label="报价单号" min-width="200" sortable="custom">
+            <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.quotationNo
@@ -67,18 +67,18 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" width="200" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
-            <el-table-column prop="bidder" label="报价人" sortable="custom" width="120" />
-            <el-table-column prop="quotationTime" label="报价时间" width="180" sortable="custom" />
-            <el-table-column prop="validEnd" label="有效时间止" width="180" sortable="custom" />
-            <el-table-column prop="customerDrawingNumber" label="客户货号" width="180" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="规格型号" width="180" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位(主)" width="180" sortable="custom" />
-            <el-table-column prop="num" label="数量(主)" width="180" sortable="custom" />
-            <el-table-column prop="unitPrice" label="单价(含税)" width="180" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率(%)" width="180" sortable="custom" />
-            <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="180" sortable="custom" />
-            <el-table-column prop="amounts" label="金额(含税)" width="180" sortable="custom" />
-            <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="180" sortable="custom" />
+            <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
+            <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
+            <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
+            <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规" width="180" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+            <el-table-column prop="num" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
+            <el-table-column prop="taxRate" label="税率(%)" width="110" sortable="custom" />
+            <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="140" sortable="custom" />
+            <el-table-column prop="amounts" label="金额(含税)" width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="140" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="180" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
               <template slot-scope="scope">
@@ -105,6 +105,9 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="110" sortable="custom" />
+
+            
+
 
 
 
@@ -458,4 +461,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .JNPF-common-search-box{
+    padding: 8px;
+  }
+  .JNPF-common-head{
+    padding: 8px;
+  }
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

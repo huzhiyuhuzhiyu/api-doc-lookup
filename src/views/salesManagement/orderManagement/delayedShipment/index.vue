@@ -3,42 +3,42 @@
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-row class="JNPF-common-search-box" :gutter="10">
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="请输入订单号"
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
                   clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
 
               <el-form-item>
-                <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
-                    clearable>
+                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;" placeholder="发货开始日期" clearable>
+                </el-date-picker>-
+
+              </el-form-item>
+
+            </el-col>
+            <el-col :span="4">
+
+              <el-form-item>
+                <el-date-picker v-model="orderForm.deliveryEndTime" type="date" value-format="yyyy-MM-dd"
+                  style="width: 100%;" placeholder="发货结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>
-            <el-col :span="1.5">
+            <el-col :span="8">
               <el-form-item>
-                <el-button size="mini" @click="btnsearch1()">已延期</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
             </el-col>
-            <el-col :span="1.5">
-              <el-form-item>
-                <el-button size="mini" @click="btnsearch2()">近三天</el-button>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1.5">
-              <el-form-item>
-                <el-button size="mini" @click="btnsearch3()">近7天</el-button>
-              </el-form-item>
-            </el-col>
-            <el-col :span="1.5">
-              <el-button size="mini" @click="btnsearch4()">近30天</el-button>
-            </el-col>
-            <el-col :span="6">
+
+            <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                   {{ $t('common.search') }}</el-button>
@@ -82,10 +82,10 @@
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
             <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户货号" width="160" sortable="custom" />
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="规格型号" width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
             <el-table-column prop="num" label="数量" width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
@@ -110,6 +110,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
+            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
           </pagination>
 
         </div>
@@ -131,7 +132,7 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import Form from '../orderList/Form'
 import OrderFollow from '../orderList/orderFollow'
 import UserRelationList from '../orderList/userRelation'
@@ -169,13 +170,13 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        } ],
+        }],
 
         superQuery: {},
       },
 
       detailTotal: 0,
-     
+
       gradeList: [],
       defaultProps: {
         children: 'childrenList',
@@ -184,6 +185,7 @@ export default {
       total: 0,
       diagramVisible: false,
       formVisible: false,
+      totalNum: 0,
       filterText: '',
       totalDataForm: {},
       dateRange: [null, new Date()], //
@@ -218,7 +220,7 @@ export default {
         },
         {
           prop: 'customerProductNo',
-          label: "客户货号",
+          label: "客户料号",
           type: 'input'
         },
         {
@@ -233,7 +235,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "规格型号",
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -360,12 +362,19 @@ export default {
     const start = new Date();
     end.setDate(end.getDate() + 3);
     this.deliveryDateArr = [start, end];
-    this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-    this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+    this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+    this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    // 获取合计数据
+    getOrderLineReportFun() {
+      getOrderLineReport(this.orderForm).then(res => {
+        console.log("合计", res);
+        this.totalNum = res.data ? res.data.total.num : 0
+      })
+    },
     dateFun(dateStr) {
       const date = new Date(dateStr);
 
@@ -381,12 +390,10 @@ export default {
     },
     btnsearch1() {
       let end = new Date();
-      let start =  new Date();
-      start.setDate(start.getDate() -90);
-      this.deliveryDateArr = [start, end];
-      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
-      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-      console.log(this.deliveryDateArr);
+      let start = new Date();
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
     // 为近3天  
@@ -396,8 +403,8 @@ export default {
       const start = new Date();;
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = [start, end];
-      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近7天  
@@ -406,11 +413,11 @@ export default {
       let end = new Date()
       let start = new Date()
 
-      end.setDate(end.getDate() + 7); 
+      end.setDate(end.getDate() + 7);
 
       this.deliveryDateArr = [start, end];
-      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近30天  
@@ -421,8 +428,8 @@ export default {
       end.setDate(end.getDate() + 30);
 
       this.deliveryDateArr = [start, end];
-      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     superQuerySearch(query) {
@@ -473,13 +480,7 @@ export default {
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
 
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartTime = ""
-        this.orderForm.deliveryEndTime = ""
-      }
+
 
       this.initData()
 
@@ -499,6 +500,7 @@ export default {
       this.listLoading = true
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
+        this.getOrderLineReportFun()
         this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
@@ -525,8 +527,8 @@ export default {
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        deliveryEndTime: "",
-        deliveryStartTime: "",
+        deliveryEndTime: this.dateFun(this.deliveryDateArr[1]),
+        deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
@@ -686,5 +688,8 @@ export default {
 
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
+}
+.btnBox{
+  padding: 7px 10px;
 }
 </style>

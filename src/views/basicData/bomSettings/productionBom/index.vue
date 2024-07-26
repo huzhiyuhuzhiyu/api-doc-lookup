@@ -70,9 +70,9 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addOrUpdateHandle()">
-            <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
-              :loading="btnLoading">计算胶管长</el-button>
+          <topOpts @add="add()">
+            <!-- <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
+              :loading="btnLoading">计算胶管长</el-button> -->
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -350,6 +350,11 @@ export default {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(productId, btnType || 'add', approvalStatus)
+      })
+    },
+    add() {
+      this.$router.push({
+        path:"/basicData/bomSettings/BOMCreate",
       })
     },
     handleDel(id) {

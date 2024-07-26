@@ -57,6 +57,9 @@
                 @click="toggleExpand()"
               />
             </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -74,7 +77,7 @@
           ref="dataTable"
           custom-column
         >
-          <el-table-column prop="name" label="分类名称" min-width="200">
+          <el-table-column prop="name" label="分类名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <i
                 :class="[
@@ -86,9 +89,9 @@
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column prop="code" label="分类编码" min-width="120" />
+          <el-table-column prop="code" label="分类编码" min-width="120" sortable="custom" />
           <!-- <el-table-column prop="parentName" label="上级分类" min-width="120" /> -->
-          <el-table-column prop="createTime" label="创建时间" width="180" />
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="180" />
           <el-table-column prop="remark" label="备注" min-width="200" />
           <!-- <el-table-column prop="plmSyncFlag" label="PLM同步状态" width="160" fixed="right" align="center">
@@ -156,6 +159,22 @@ export default {
     this.initData()
   },
   methods: {
+    sortChange({ prop, order }) {
+      let newProp = ""
+      if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
+
+      }
+      this.listQuery.orderItems[0].asc = order === "ascending";
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp;
+      this.initData();
+    },
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -178,7 +197,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1028',
-          exportName: '工序信息',
+          exportName: '工序分类信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }

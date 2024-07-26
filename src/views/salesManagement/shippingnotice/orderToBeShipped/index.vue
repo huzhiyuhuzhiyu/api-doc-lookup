@@ -5,9 +5,9 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
+            <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="请输入订单号"
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
                   clearable />
               </el-form-item>
             </el-col>
@@ -31,10 +31,10 @@
             </el-col>
             <el-col :span="8">
               <el-form-item>
-                <el-button size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button size="mini" @click="btnsearch2()">近三天</el-button>
-                <el-button size="mini" @click="btnsearch3()">近7天</el-button>
-                <el-button size="mini" @click="btnsearch4()">近30天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
             </el-col>
 
@@ -693,5 +693,8 @@ export default {
 
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
+}
+.btnBox{
+  padding: 7px 10px;
 }
 </style>

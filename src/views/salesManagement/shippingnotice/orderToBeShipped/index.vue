@@ -373,10 +373,10 @@ export default {
   created() {
     // 默认设置为近3天  
     const end = new Date();
-    const start = new Date();
+    const start = "";
     end.setDate(end.getDate() + 3);
-    this.deliveryDateArr = [start, end];
-    this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+    this.deliveryDateArr = ["", end];
+    this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -418,10 +418,10 @@ export default {
     btnsearch2() {
 
       const end = new Date();
-      const start = new Date();;
+      const start = "";
       end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = [start, end];
-      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -429,12 +429,12 @@ export default {
     btnsearch3() {
 
       let end = new Date()
-      let start = new Date()
+      let start =""
 
       end.setDate(end.getDate() + 7);
 
-      this.deliveryDateArr = [start, end];
-      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -442,12 +442,12 @@ export default {
     btnsearch4() {
 
       let end = new Date()
-      let start = new Date()
+      let start = ""
       end.setDate(end.getDate() + 30);
 
-      this.deliveryDateArr = [start, end];
-      this.deliveryDateArr[0] = this.dateFun(this.deliveryDateArr[0])
-      this.deliveryDateArr[1] = this.dateFun(this.deliveryDateArr[1])
+      this.deliveryDateArr = ["", end];
+      this.deliveryDateArr[0] = ""
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     superQuerySearch(query) {

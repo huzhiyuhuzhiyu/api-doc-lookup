@@ -1262,11 +1262,11 @@ export default {
       if (data.row.customerProductNo) {
         getcooperativeProduct(query).then(res => {
           // console.log("客户产品", res);
-          this.$set(this.productData, index, res.data.records[0])
           console.log(777, this.productData);
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
-            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
+          this.$set(this.productData, index, res.data.records[0])
+          let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.taxRate) {
               let obj = {
                 taxRate: res.data.records[0].taxRate * 1,

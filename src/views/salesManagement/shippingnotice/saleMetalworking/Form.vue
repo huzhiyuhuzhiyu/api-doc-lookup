@@ -726,23 +726,7 @@ export default {
       this.productVisible = true
     this.searchProductFun()
     },
-    //数据格式化
-    listDataFormatting(res) {
-      res.data.records.forEach((item, index) => {
-        if (item.orderType === 'normal') {
-          item.orderType = '正常订单'
-        } else if (item.orderType === 'prediction') {
-          item.orderType = '预测订单'
-        } else if (item.orderType === 'sample') {
-          item.orderType = '样品订单'
-        } else if (item.orderType === 'stock_up') {
-          item.orderType = '备货订单'
-        } else if (item.orderType === 'urgent') {
-          item.orderType = '急件订单'
-        }
-      })
-      return res.data.records
-    },
+ 
     changeclick(e) {
       if (this.dataFormTwo.data.length) {
         this.$confirm('切换换货标识，将清空产品数据,是否继续？', '提示', {

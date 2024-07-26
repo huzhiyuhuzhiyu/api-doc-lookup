@@ -14,7 +14,7 @@
           </span>
         </div>
         <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
-            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable @input="handleInput">
           </el-input></div>
       </div>
 

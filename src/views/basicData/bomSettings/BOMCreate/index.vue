@@ -43,18 +43,23 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <el-tabs v-model="activeName">
                 <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
-                  <div
-                    style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-                    <h5>基本信息</h5>
-                  </div>
+                  <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
-                  <div
-                    style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-                    <h5>产品信息</h5>
-                  </div>
+                </el-collapse-item>
+
+
+
+                <el-collapse-item title="产品信息" name="productInfo">
                   <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                     :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
                     @deleteth="addOrDelLinesItem" customStyle />
+                </el-collapse-item>
+
+              </el-collapse>
+                  
+                
+              
                 </el-tab-pane>
                 <el-tab-pane label="附件" name="annex">
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
@@ -145,6 +150,18 @@
           </div>
         </div>
       </div>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+          :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+          <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+              {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+
+
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="goBom">返回列表</el-button>
+            <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+            <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+          </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -161,6 +178,7 @@ export default {
   components: { TableFormProduct, workFlow },
   data() {
     return {
+      activeNames: ["productInfo", "basicInfo"],
       datafilelist: [],
       activeName: "jcInfo",
       btnType: 'add',
@@ -283,6 +301,9 @@ export default {
       isDoubleFlag:false,
       approvalStatus:'',
       statusFlag:false,
+      tipsvisible: false,
+      submitmethodsTitle:'',
+      btnText:'继续新建'
     }
   },
   computed: {
@@ -357,7 +378,7 @@ export default {
         detailBomData(bomId).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          btnType !== 'look' ? this.getApproverData() : ''
+          // btnType !== 'look' ? this.getApproverData() : ''
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -444,7 +465,7 @@ export default {
         detailBomData(approvalStatus.id).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          btnType !== 'look' ? this.getApproverData() : ''
+          // btnType !== 'look' ? this.getApproverData() : ''
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -512,7 +533,7 @@ export default {
         detailBomData(approvalStatus.id).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          this.getApproverData()
+          // this.getApproverData()
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -555,7 +576,7 @@ export default {
           }
         }).catch(() => { this.btnLoading = false })
         // 审批
-        this.$nextTick(() => { this.getApproverData() })
+        // this.$nextTick(() => { this.getApproverData() })
         // 获取bom树
         if (!this.treeData.length) {
           getBomTree(approvalStatus.id).then(res => {
@@ -575,7 +596,7 @@ export default {
         this.treeLoading = false
         this.formLoading = false
          // 审批
-         this.$nextTick(() => { this.getApproverData() })
+        //  this.$nextTick(() => { this.getApproverData() })
       }
     },
     async handleConfirm(submitModel) {
@@ -860,6 +881,13 @@ export default {
                 this.$emit('close', true)
               }
             })
+
+             if (submitModel == "submit" ) {
+              this.submitmethodsTitle = "保存成功"
+            } else {
+              this.submitmethodsTitle = "提交成功"
+            }
+            this.tipsvisible = true
           }).catch(() => {
             this.btnLoading = false
           })
@@ -927,6 +955,11 @@ export default {
     },
     goBack() {
       this.$emit('close')
+    },
+    goBom(){
+      this.$router.push({
+        path:"/basicData/bomSettings/productionBom",
+      })
     },
     contentChanges(dataOrIndex, prop, value) {
       if (Array.isArray(dataOrIndex)) {
@@ -1138,6 +1171,17 @@ export default {
       })
 
     },
+       // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.dataForm = {}
+      this.linesList = []
+      this.tipsvisible = false
+    },
   }
 }
 </script>
@@ -1193,4 +1237,30 @@ export default {
   background-color: #f5f5f7 !important;
   color: #576a95;
 }
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
 </style>

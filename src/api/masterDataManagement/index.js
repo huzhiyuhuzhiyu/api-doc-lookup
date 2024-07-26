@@ -116,13 +116,19 @@ export function uploadDimProductsModel(data) {
 
 export function getProducts(data) {
   return request({
-      url: '/api/erp/products/list',
+      url: '/api/zgt/product/list',
       method: 'post',
       data: data
   })
 }
+// 根据规格型号 全匹配查产品
 
-
+export function getDetailByDrawNo(drawingNo) {
+  return request({
+      url: '/api/zgt/product/detailByDrawNo?drawNo='+drawingNo,
+      method: 'get',
+  })
+}
 
 
 // 数据表分类(列表)

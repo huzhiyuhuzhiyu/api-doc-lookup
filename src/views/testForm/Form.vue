@@ -14,8 +14,8 @@
         <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
         <p class="header-txt"> · 在线开发</p>
       </div>
-      <el-steps :active="activeStep" finish-status="success" simple
-        :class="'steps steps'+(maxStep+1)" v-if="!loading">
+      <el-steps :active="activeStep" finish-status="success" simple class="steps"
+        :class="['steps'+(maxStep+1),editType ? 'stepsCenter' : '']"  v-if="!loading">
         <template v-if="!editType">
           <el-step title="基础设置" @click.native="stepChick(0)" />
           <el-step title="表单设计" @click.native="stepChick(1)" />
@@ -201,3 +201,8 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+  .stepsCenter{
+    justify-content: center;
+  }
+</style>

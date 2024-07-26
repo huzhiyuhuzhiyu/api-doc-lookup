@@ -5,10 +5,10 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="btnType == 'add' ? '新建销售发货通知单' : btnType == 'edit' ? '编辑销售发货通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建销售发货通知单' : '查看销售发货通知单'" />
-          <div class="options" >
-            <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
+          <div class="options" v-if="btnType != 'look'">
+            <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')" v-if="btnType != 'qrsh'">
               保存草稿</el-button>
-            <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('submit')">
+            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
               保存并提交</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
@@ -22,9 +22,9 @@
               </div>
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="8" :xs="24" >
+                  <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
                     <el-form-item label="通知单号" prop="orderNo">
-                      <el-input v-model="dataForm.orderNo"  :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"/>
+                      <el-input v-model="dataForm.orderNo" :disabled="btnType == 'look'" />
                     </el-form-item>
                   </el-col>
                   <el-col :sm="8" :xs="24">
@@ -726,8 +726,7 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: [],
-      codeConfig:{},
+      selectRows: []
     }
   },
   created() {
@@ -1791,9 +1790,7 @@ export default {
     init(id, btnType) {
       // this.getProvinceList()
       this.dataForm.id = id || ''
-      this.btnType = btnType 
-      this.oldId = JSON.parse(JSON.stringify(id)) || ""
-      this.oldType = JSON.parse(JSON.stringify(btnType))
+      this.btnType = btnType
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
           if (res.data.attachmentList) {
@@ -1819,7 +1816,8 @@ export default {
           if (this.btnType == 'copy') {
             this.dataForm.stockStatus = ''
             this.dataForm.inspectionStatus = ''
-            this.dataForm.id = '' 
+            this.dataForm.id = ''
+            this.dataForm.deliverDate = ''
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.fullReceiptFlag = false
@@ -1908,51 +1906,9 @@ export default {
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
           }
-
         })
 
       }
-      if(btnType=='add'||btnType=='copy'){
-        const currentDate = new Date();
-
-        // 获取年份
-        const year = currentDate.getFullYear();
-
-        // 获取月份（注意月份从0开始，所以要加1）
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-        // 获取日期
-        const date = String(currentDate.getDate()).padStart(2, '0');
-
-        // 拼接为YYYY-MM-DD格式
-        const formattedDate = `${year}-${month}-${date}`;
-        this.dataForm.deliverDate = formattedDate;
-        this.fetchData("SHDD")
-
-      }
-    },
-    async fetchData(code) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          this.dataForm.orderNo = orderNo
-        }
-      } catch (error) {
-      }
-    },
-    // 继续修改
-    continueEdit() {
-      this.init(this.oldId, this.oldType)
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
-    // 继续新增
-    continueAdd() {
-      this.init('', 'add')
-
-      this.tipsvisible = false
     },
     goBack() {
       this.$emit('close')

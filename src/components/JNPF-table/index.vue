@@ -5,6 +5,11 @@
       :header-cell-style="headerCellStyle">
       <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
         align="center" :selectable="checkSelectable" />
+      <el-table-column align="center" label="拖动" width="60" v-if="hasMove">
+        <template>
+          <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
+        </template>
+      </el-table-column>
       <el-table-column prop="index" type="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO" align="center" />
       <jnpf-table-column :columns="columns" :columnList="columnList" v-if="customColumn" />
       <template v-else>
@@ -29,6 +34,7 @@
 <script>
 import JnpfTableColumn from './Column'
 import ColumnSettings from './ColumnSettings'
+import Sortable from 'sortablejs'
 export default {
   name: 'JNPF-table',
   components: { JnpfTableColumn, ColumnSettings },
@@ -45,6 +51,11 @@ export default {
     hasNO: {
       type: Boolean,
       default: true
+    },
+    // 是否有拖动 默认无
+    hasMove: {
+      type: Boolean,
+      default: false
     },
     // 序号 是否固定
     fixedNO: {
@@ -118,6 +129,11 @@ export default {
   },
   mounted() {
     this.getColumns()
+    if (this.hasMove){
+      console.log(111);
+      
+      this.rowDrop(); //声明表格拖动排序方法
+    }
   },
   beforeUpdate() {
     // this.getColumns()
@@ -168,14 +184,14 @@ export default {
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
 
         if (!cacheList) {
-            list.forEach(item => {
+          list.forEach(item => {
             if (this.setColumnDisplayList.includes(item.prop)) {
               item.columnVisible = false;
             } else {
               item.columnVisible = true;
             }
           });
-          this.columnList=list
+          this.columnList = list
           // this.columnList = list.map(item => {
           //   return {
           //     ...item,
@@ -249,6 +265,36 @@ export default {
       this.columnList = list
       this.$forceUpdate()
       this.refreshTable = true
+    },
+    // 表格拖动方法
+    rowDrop() {
+      const el = this.$refs.JNPFTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
+      this.sortable = Sortable.create(el, {
+        ghostClass: 'sortable-ghost',
+        setData: function (dataTransfer) {
+          dataTransfer.setData('Text', '')
+        },
+        onEnd: evt => {
+          const targetRow = this.data.splice(evt.oldIndex, 1)[0];
+          this.data.splice(evt.newIndex, 0, targetRow);
+          console.log(this.data);
+          let att = []
+          this.data.forEach((item, index) => {
+            let obj = {
+              id: item.id,
+              sortCode: index, 
+            }
+            att.push(obj)
+          });
+          console.log(att);
+          this.$emit('changeMove',att)
+          // updateSortBatch(att).then(res => {
+          //   this.$message.success("批量修改排序成功")
+          //   this.initData()
+
+          // })
+        }
+      });
     },
   }
 }

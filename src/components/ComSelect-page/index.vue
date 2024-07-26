@@ -98,7 +98,7 @@
     <el-dialog :title="computedDialogTitle" :close-on-click-modal="false" :visible="visible" lock-scroll
       class="JNPF-dialog JNPF-dialog_center selectPro" :width="dialogWidth" append-to-body @close="visible = false">
       <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-        <div class="JNPF-common-layout-left" v-if="renderTree">
+        <div class="JNPF-common-layout-left treeBox" v-if="renderTree">
           <div class="JNPF-common-title">
             <h2>{{ this.treeName }}</h2>
             <span class="options">

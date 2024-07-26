@@ -104,7 +104,7 @@
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" min-width="180"/>
-          <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120" >
+          <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
               <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>

@@ -360,7 +360,7 @@ export default {
         detailBomData(bomId).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          btnType !== 'look' ? this.getApproverData() : ''
+          // btnType !== 'look' ? this.getApproverData() : ''
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -447,7 +447,7 @@ export default {
         detailBomData(approvalStatus.id).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          btnType !== 'look' ? this.getApproverData() : ''
+          // btnType !== 'look' ? this.getApproverData() : ''
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -515,7 +515,7 @@ export default {
         detailBomData(approvalStatus.id).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          this.getApproverData()
+          // this.getApproverData()
           this.documentStatus = res.data.bom.documentStatus
           this.linesList = res.data.lines.map(line => {
             return {
@@ -558,7 +558,7 @@ export default {
           }
         }).catch(() => { this.btnLoading = false })
         // 审批
-        this.$nextTick(() => { this.getApproverData() })
+        // this.$nextTick(() => { this.getApproverData() })
         // 获取bom树
         if (!this.treeData.length) {
           getBomTree(approvalStatus.id).then(res => {
@@ -578,7 +578,7 @@ export default {
         this.treeLoading = false
         this.formLoading = false
          // 审批
-         this.$nextTick(() => { this.getApproverData() })
+        //  this.$nextTick(() => { this.getApproverData() })
       }
     },
     async handleConfirm(submitModel) {

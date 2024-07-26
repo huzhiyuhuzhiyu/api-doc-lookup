@@ -10,18 +10,20 @@
                 <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="请输入订单号" clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerCode" @keyup.enter.native="search()"
-                  placeholder="请输入客户编码" clearable />
-              </el-form-item>
-            </el-col>
+          
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
                   placeholder="请输入客户名称" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+            <el-form-item>
+              <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -30,16 +32,19 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-              @click="moreQueries()">更多查询</el-button>
+         
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="text" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -48,8 +53,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
-            @sort-change="sortChange" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -57,62 +62,45 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编码"    />
+            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160"  sortable="custom" />
             <el-table-column prop="orderType" label="订单类型" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in orderList" :key="index">
                   <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
                 </div>
               </template>
-            </el-table-column>
-           
-            <el-table-column prop="salesName" label="所属销售人员" width="160" />
-            <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="workOrderNo" label="工作令号" width="160"></el-table-column>
-            <el-table-column prop="sourceOrderNo" label="来源单号" width="160"></el-table-column>
-            <el-table-column prop="orderDate" label="订单日期" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="contractNo" label="客户合同号" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom"></el-table-column>
+            </el-table-column> 
+            <el-table-column prop="departmentName" label="所属部门" width="160"  sortable="custom"></el-table-column>
+            <el-table-column prop="salesName" label="所属销售 " width="140" sortable="custom"/>
+            <el-table-column prop="workOrderNo" label="工作令号" ></el-table-column>
+            <el-table-column prop="orderDate" label="订单日期" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="contractNo" label="客户合同号"  sortable="custom"></el-table-column>
+            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom"></el-table-column>
           
-            <el-table-column prop="orderState" label="订单状态" width="130" sortable="custom">
+            <el-table-column prop="orderState" label="订单状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
                 <div v-else-if="scope.row.orderState == 'finish'"><el-tag type="success">已完成</el-tag></div>
                 <div v-else-if="scope.row.orderState == 'part_finish'"><el-tag type="warning">部分完成</el-tag></div>
               </template>
             </el-table-column>
-         
-            <el-table-column prop="paymentMethod" label="付款方式" width="160" sortable="custom">
-              <template slot-scope="scope">
-                <div v-for="(item, index) in paymentMethodList" :key="index">
-                  <span v-if="item.enCode == scope.row.paymentMethod">{{ item.fullName }}</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="paymentCycleText" label="付款周期" width="160" sortable="custom">
-              <template slot-scope="scope">
-                <div v-for="(item, index) in paymentCycleList" :key="index">
-                  <span v-if="item.enCode == scope.row.paymentCycle">{{ item.fullName }}</span>
-                </div>
-              </template>
-            </el-table-column>
-          
-            <el-table-column prop="changesCount" label="变更次数" width="160">
-              <template slot-scope="scope">
-                <div>{{ scope.row.changesCount ? scope.row.changesCount : 0 }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="num" label="数量" width="160" />
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="160" sortable="custom" />
-            <el-table-column prop="documentStatus"  label="单据状态" width="120" sortable="custom"
+            <el-table-column prop="documentStatus"  label="单据状态" width="140" sortable="custom"
               :showOverflowTooltip="false" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
+          
+            <el-table-column prop="changesCount" label="变更次数" >
+              <template slot-scope="scope">
+                <div>{{ scope.row.changesCount ? scope.row.changesCount : 0 }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人"  sortable="custom" />
+           
          
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -145,7 +133,6 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
           </pagination>
         </div>
       </div>
@@ -153,142 +140,13 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="orderForm" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="订单号">
-              <el-input v-model="orderForm.orderNo" placeholder="请输入订单号" clearable />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="客户编码">
-              <el-input v-model="orderForm.cooperativePartnerCode" placeholder="请输入客户编码" clearable />
-            </el-form-item>
-
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="客户名称">
-              <el-input v-model="orderForm.cooperativePartnerName" placeholder="请输入客户名称" clearable />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="订单类型">
-              <el-select v-model="orderForm.orderType" placeholder="请选择订单类型" clearable>
-                <el-option v-for="(item, index) in orderList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="所属销售">
-              <el-input v-model="orderForm.salesName" placeholder="请输入所属销售"></el-input>
-            </el-form-item>
-            <!-- <user-select v-model="orderForm.salesId" placeholder="请输入所属销售" clearable style="width: 100%;">
-            </user-select> -->
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工作令号">
-              <el-input v-model="orderForm.workOrderNo" placeholder="请输入工作令号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="来源单号">
-              <el-input v-model="orderForm.sourceOrderNo" placeholder="请输入来源单号" clearable />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="发货完成时间">
-              <el-date-picker v-model="CompletionDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="开始时间" end-placeholder="结束时间" clearable>
-              </el-date-picker>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="订单日期">
-              <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                :picker-options="pickerOptions" start-placeholder="开始日期" end-placeholder="结束日期">
-              </el-date-picker>
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户合同号">
-              <el-input v-model="orderForm.contractNo" placeholder="请输入客户合同号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="发货状态">
-              <el-select v-model="orderForm.shipmentStatus" placeholder="请选择发货状态" filterable clearable>
-                <el-option v-for="(item, index) in shipmentsStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="orderForm.orderState" placeholder="请选择订单状态" filterable clearable>
-                <el-option v-for="(item, index) in orderStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="订单生产状态">
-              <el-select v-model="orderForm.productionStatus" placeholder="请选择订单生产状态" filterable clearable>
-                <el-option v-for="(item, index) in orderProduceStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="单据状态">
-              <el-select v-model="orderForm.documentStatus" placeholder="请选择单据状态" filterable clearable>
-                <el-option v-for="(item, index) in documentStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" filterable clearable>
-                <el-option v-for="(item, index) in approvalStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
-                value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%;" start-placeholder="开始时间" end-placeholder="结束时间"
-                clearable>
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索</el-button>
-      </span>
-    </el-dialog>
+ 
  
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
-
+   <!-- 高级查询 -->
+   <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -302,17 +160,19 @@ import UserRelationList from './userRelation'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow },
+  components: { Form, UserRelationList, ExportForm, OrderFollow ,SuperQuery },
   data() {
     return {
+      superQueryVisible:false,
+            columnList:["cooperativePartnerCode","departmentName","workOrderNo","contractNo","changesCount","createByName",],
       orderFollowVisible: false,
       productFormVisible: false,
       exportFormVisible: false,
       customList: [], // 列表中显示的自定义属性
       title: "更多查询",
-      visible: false,
       treeData: [],
       tableData: [],
       tableData1: [],
@@ -390,6 +250,7 @@ export default {
         approvalStatus: "",
         startTime: "",
         endTime: "",
+        superQuery:{},
 
         pageNum: 1,
         pageSize: 20,
@@ -401,34 +262,7 @@ export default {
           column: "create_time"
         }],
       },
-      orderDetailForm: {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        customerProductDrawingNo: "",
-        // customerProductNo: "",
-        orderType: "",
-        drawingNo: "",
-        orderNo: "",
-        productCode: "",
-        productName: "",
-        shipmentStatus: '',
-        orderCategory: "assembly",
-        orderStartDate: "",
-        orderEndDate: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-        startTime: "",
-        endTime: "",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-      },
+     
       detailTotal: 0,
       salespersonList: [],
       pickerOptions: {
@@ -457,8 +291,68 @@ export default {
       diagramVisible: false,
       formVisible: false,
       filterText: '',
-      totalDataForm: {},
-      orderForm1: {}
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: "订单号",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+         
+        {
+          prop: 'orderType',
+          label: "订单类型",
+          type: 'input'
+        },
+        {
+          prop: 'departmentName',
+          label: "所属部门",
+          type: 'input'
+        },
+        {
+          prop: 'salesName',
+          label: "所属销售人员",
+          type: 'custom',
+          component: 'user-select',
+        },
+        {
+          prop: 'workOrderNo',
+          label: "工作令号",
+          type: 'input'
+        },
+        {
+          prop: 'orderDate',
+          label: "订单日期",
+          type: 'input'
+        },
+        {
+          prop: 'contractNo',
+          label: "客户合同号",
+          type: 'input'
+        },
+        {
+          prop: 'deliveryDate',
+          label: "交货日期",
+          type: 'input'
+        }, {
+          prop: 'orderState',
+          label: "订单状态",
+          type: 'input'
+        },
+
+       
+    
+      ],
+      totalDataForm: {}, 
     }
   },
   watch: {
@@ -559,7 +453,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
+      if (prop === 'salesName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
@@ -572,47 +466,8 @@ export default {
       this.initData()
     },
  
-    moreQueries() {
-      this.visible = true
-    },
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.orderStartDate = this.orderDateArr[0]
-        this.orderForm.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.orderForm.orderStartDate = ""
-        this.orderForm.orderEndDate = ""
-      }
-      if (this.CompletionDate && this.CompletionDate.length > 0) {
-        this.orderForm.deliveryStartDate = this.CompletionDate[0]
-        this.orderForm.deliveryEndDate = this.CompletionDate[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
-      }
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0]
-        this.orderForm.endTime = this.createTimeArr[1]
-      } else {
-        this.orderForm.startTime = ""
-        this.orderForm.endTime = ""
-      }
-      this.initData()
-
-    },
-   
+  
+    
     // 获取销售人员
     getUserList() {
       let obj = {
@@ -632,28 +487,26 @@ export default {
         this.initData()
       }
     },
+    superQuerySearch(query) {
+      this.orderfo.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     initData() {
       this.listLoading = true
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
-        this.visible = false
       }).catch(() => {
         this.listLoading = false
       })
-      this.orderForm1 = JSON.parse(JSON.stringify(this.orderForm))
-      this.$set(this.orderForm1, 'pageSize', -1)
-      getsaleOrderList(this.orderForm1).then(res => {
-        this.tableData1 = res.data.records
-      }).catch(() => {
-
-      })
+      
     },
 
 
     search() {
-      this.dataFormSubmit()
+      this.initData() 
     },
   
     reset() {
@@ -764,11 +617,11 @@ export default {
       for (let i = 0; i < data.selectKey.length; i++) {
         includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
-      const targetListQuery = this.exportTableRef === 'dataTable' ? this.orderForm : this.orderDetailForm
+      const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === 'dataTable' ? '1004' : '1005',
-        exportName: this.exportTableRef === 'dataTable' ? '销售订单' : '销售订单明细',
+        exportType: '1004',
+        exportName:  '销售订单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

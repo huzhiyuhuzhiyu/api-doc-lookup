@@ -35,6 +35,34 @@ const global = {
     //   }
     // }]
   },
+  timePickerOptionsArr: { // 日期/时间区间选择器通用选项）
+    
+    shortcuts: [{ // 调用时使用 global.timePickerOptions.shortcuts 不设置日期/时间选择限制
+      text: '近3天',
+      onClick(picker) {
+        const end = new Date()
+        const start = new Date()
+        end.setTime(start.getTime() + 3600 * 1000 * 24 * 3)
+        picker.$emit('pick', [start, end])
+      }
+    }, {
+      text: '近7天',
+      onClick(picker) {
+        const end = new Date()
+        const start = new Date()
+        end.setTime(start.getTime() + 3600 * 1000 * 24 * 7)
+        picker.$emit('pick', [start, end])
+      }
+    },  {
+      text: '近30天',
+      onClick(picker) {
+        const end = new Date()
+        const start = new Date()
+        end.setTime(start.getTime() + 3600 * 1000 * 24 * 30)
+        picker.$emit('pick', [start, end])
+      }
+    }, ]
+  },
   timePickerOptions: { // 日期/时间区间选择器通用选项（禁用未发生的日期）
     disabledDate(time) {
       const currentDate = new Date();

@@ -19,7 +19,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="orderForm.customerProductNo" @keyup.enter.native="search()"
-                  placeholder="请输入客户货号" clearable />
+                  placeholder="请输入 客户料号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -63,27 +63,28 @@
             <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
             <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户货号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="规格型号" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-            <el-table-column prop="price" label="单价(含税)" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="taxRate" label="税率" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="totalAmount" label="金额(含税)" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="160" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-            <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
+            <el-table-column prop="salesName" label="所属销售" width="120" sortable="custom" />
+            <el-table-column prop="customerProductNo" label=" 客户料号" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+            <el-table-column prop="num" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="taxRate" label="税率" width="120" sortable="custom"></el-table-column>
+            <el-table-column prop="totalAmount" label="金额(含税)" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="contractNo" label="客户合同号" width="120"></el-table-column>
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="remark" label="备注" width="120" sortable="custom" />
             <el-table-column prop="documentStatus"  label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
@@ -130,6 +131,7 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
+            <div class="text"><span>合计数量:{{totalNum}}</span></div>
           </pagination>
          
         </div>
@@ -151,7 +153,7 @@
 <script>
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal,getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import Form from '../orderList/Form'
 import OrderFollow from '../orderList/orderFollow'
 import UserRelationList from '../orderList/userRelation'
@@ -163,6 +165,7 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow,SuperQuery},
   data() {
     return {
+      totalNum:0,
       columnList:["cooperativePartnerCode","departmentName","productName","deputyUnit","assistantNum","taxRate","createTime",],
       orderFollowVisible: false,
       superQueryVisible:false,
@@ -171,8 +174,7 @@ export default {
       customList: [], // 列表中显示的自定义属性
       tableData: [], 
       treeLoading: false,
-      listLoading: false, 
-      salespersonList: [],
+      listLoading: false,  
       detailFlag: false, 
       orderForm: {
         cooperativePartnerCode: "",
@@ -204,8 +206,7 @@ export default {
         superQuery:{},
       },
    
-      detailTotal: 0,
-      salespersonList: [],
+      detailTotal: 0, 
       pickerOptions: {
         disabledDate(time) {
           // 获取当前日期
@@ -264,7 +265,7 @@ export default {
         },
         {
           prop: 'customerProductNo',
-          label: "客户货号",
+          label: " 客户料号",
           type: 'input'
         },
         {
@@ -279,7 +280,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: "规格型号",
+          label: "品名规格",
           type: 'input'
         },
         {
@@ -398,9 +399,7 @@ export default {
   },
 
 
-  created() { 
-    this.getUserList()
-    this.getAttributeline()
+  created() {  
     let endDate = new Date().toISOString().slice(0, 10);
     let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
     this.orderDateArr[0] = startDate
@@ -411,6 +410,16 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    // 获取合计数据
+    getOrderLineReportFun(){
+      getOrderLineReport(this.orderForm).then(res=>{
+        console.log("合计",res);
+        this.totalNum=res.data?res.data.total.num:0
+      })
+    },
+
+
+
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -420,18 +429,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
  
-  
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then(res => {
-        this.customList = []
-        res.data.forEach(column => {
-          // 列表中显示
-          let propExists = this.customList.some(item2 => item2.prop === column.attributeColumn);
-          if (!propExists) { this.customList.push({ prop: column.attributeColumn, label: column.name }) }
-        })
-      })
-    },
+   
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -500,16 +498,7 @@ export default {
 
     },
    
-    // 获取销售人员
-    getUserList() {
-      let obj = {
-        currentPage: 1,
-        pageSize: -1
-      }
-      UserListAll(obj).then(res => {
-        this.salespersonList = res.data.list
-      })
-    },
+  
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -525,6 +514,7 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false 
+        this.getOrderLineReportFun()
       }).catch(() => {
         this.listLoading = false
       })

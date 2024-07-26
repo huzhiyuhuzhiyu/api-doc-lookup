@@ -78,13 +78,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="客户合同号" prop="contractNo">
-                          <el-input v-model="dataForm.contractNo" placeholder="请输入客户合同号"
-                            :disabled="btnType == 'look' ? true : false" maxlength="300" />
 
-                        </el-form-item>
-                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
@@ -176,13 +170,13 @@
                       style="width: 100%;height:100%">
 
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                      <el-table-column prop="customerProductNo" label="客户货号" width="160" :key="1212">
+                      <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
 
-                      
+
                       </el-table-column>
 
-                      <el-table-column prop="drawingNo" label="规格型号" min-width="320" :key="6">
-                    
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
@@ -194,13 +188,13 @@
                       </el-table-column>
 
                       <el-table-column prop="num" label="数量" width="100" :key="7">
-                     
+
                       </el-table-column>
                       <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
-                      
+
                       </el-table-column>
                       <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
-                    
+
 
                       </el-table-column>
                       <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
@@ -212,33 +206,34 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="13"></el-table-column>
-                    
+                      <el-table-column prop="contractNo" label="合同号" width="180" :key="13"></el-table-column>
+
                       <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                        
+
                       </el-table-column>
                       <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                       
+
                       </el-table-column>
 
                       <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                        
+
                       </el-table-column>
                       <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                       
+
                       </el-table-column>
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                        
+
                       </el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                       
+
                       </el-table-column>
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-                        
+
                       </el-table-column>
 
 
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
-                     
+
                       </el-table-column>
 
 
@@ -251,7 +246,7 @@
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                    <el-table-column prop="customerProductNo" label="客户货号" width="160" :key="1212">
+                    <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
 
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
@@ -261,9 +256,9 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="drawingNo" label="规格型号" min-width="320" :key="6">
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
                       <template slot="header">
-                        <span class="required">*</span>规格型号
+                        <span class="required">*</span>品名规格
                       </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.drawingNo" placeholder="请输入"
@@ -333,6 +328,12 @@
                         </el-date-picker>
                       </template>
                     </el-table-column>
+                    <el-table-column prop="contractNo" label="客户合同号" width="120" :key="11">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
+                      </template>
+                    </el-table-column>
+
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
                       <template slot="header">
                         <span class="required">*</span>打字内容
@@ -447,19 +448,14 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="4">
                     <el-form-item>
-                      <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户物料号" clearable
+                      <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
                   </el-col>
+
                   <el-col :span="4">
                     <el-form-item>
-                      <el-input v-model.trim="scheduleForm.customerProductDrawingNo" placeholder="请输入客户图号" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入产品图号" clearable
+                      <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
                   </el-col>
@@ -479,13 +475,12 @@
               </el-row>
               <JNPF-table v-loading="formLoading" :data="scheduleData" custom-column ref="scheduleRef"
                 :style="{ height: customStyleData + 'px' }">
-                <el-table-column prop="customerProductNo" label="客户物料号" min-width="160" />
-                <el-table-column prop="customerProductDrawingNo" label="客户图号" min-width="160" />
+                <el-table-column prop="customerProductNo" label="客户料号" min-width="160" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="产品图号" min-width="180" />
-                <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-                <el-table-column prop="num" label="数量(主)" min-width="140">
+                <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="mainUnit" label="单位" min-width="140" />
+                <el-table-column prop="num" label="数量" min-width="140">
                   <template slot-scope="scope">
                     <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
                   </template>
@@ -591,15 +586,8 @@
                 <el-row :gutter="20">
                   <el-form ref="diaForm" :model="scheduleForm" label-width="120px" label-position="top">
                     <el-col :span="12">
-                      <el-form-item label="客户物料号">
-                        <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户物料号" clearable
-                          @keyup.enter.native="searchDetail()" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :span="12">
-                      <el-form-item label="客户图号">
-                        <el-input v-model.trim="scheduleForm.customerProductDrawingNo" placeholder="请输入客户图号" clearable
+                      <el-form-item label="客户料号">
+                        <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
                           @keyup.enter.native="searchDetail()" />
                       </el-form-item>
                     </el-col>
@@ -616,8 +604,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
-                      <el-form-item label="产品图号">
-                        <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入产品图号" clearable
+                      <el-form-item label="品名规格">
+                        <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
                           @keyup.enter.native="searchDetail()" />
                       </el-form-item>
                     </el-col>
@@ -764,7 +752,7 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入图号" clearable />
+                      <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                     </el-form-item>
                   </el-col>
 
@@ -786,8 +774,7 @@
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="name" label="产品名称" />
-                  <el-table-column prop="drawingNo" label="图号" />
-                  <el-table-column prop="spec" label="规格型号" />
+                  <el-table-column prop="drawingNo" label="品名规格" />
 
                 </JNPF-table>
                 <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
@@ -825,8 +812,9 @@
               提交</el-button>
           </span>
         </el-dialog>
-        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
-          :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+          :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+          width="500px">
           <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
               {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
@@ -854,7 +842,6 @@ import { getcategoryTree as productTree } from '@/api/basicData/materialSettings
 import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
 import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getQuotationdatalist } from "@/api/salesManagement/index"
 import { getOrganization } from '@/api/permission/user'
 import { getDepartmentSelectorByAuth } from "@/api/permission/department";
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -940,13 +927,11 @@ export default {
       // 选择产品 弹框列表展示字段
       loadingText: '',
       ProductTableItems: [
-        { prop: 'customerProductNo', label: '客户物料号', fixed: 'left' },
-        { prop: 'customerProductDrawingNo', label: '客户图号', fixed: 'left' },
+        { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
         { prop: 'productCode', label: '产品编码' },
         { prop: 'productName', label: '产品名称' },
-        { prop: 'drawingNo', label: '产品图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位(主)' },
-        { prop: 'deputyUnit', label: '单位(副)' },
       ],
       // 选择客户产品参数
       ProductListRequestObjs: {
@@ -969,9 +954,9 @@ export default {
       },
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: "customerProductNo", label: "客户物料号", type: 'input' },
+        { prop: "customerProductNo", label: "客户料号", type: 'input' },
         { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "产品图号", type: 'input' },
+        { prop: "drawingNo", label: "品名规格", type: 'input' },
         { prop: "productCode", label: "产品编码", type: 'input' },
       ],
       datafilelist: [],
@@ -1080,7 +1065,6 @@ export default {
       provinces: [],
       cities: [],
       area: [],
-      contactsList: [],
       deliveryAddressList: [],
       countryList: [],
       listQuery: {
@@ -1101,7 +1085,6 @@ export default {
         cooperativePartnerId: "",
         salesId: "",
         salesName: "",
-        contractNo: "",
         contractId: "",
         departmentId: "",
         workOrderNo: "",
@@ -1257,14 +1240,14 @@ export default {
             this.taxRateList.push(obj)
           }
         } else {
-          this.$message.error("您输入的规格型号未匹配到对应的产品，请重新输入")
+          this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
           data.drawingNo = ""
         }
 
 
       })
     },
-    // 按下enter键  根据输入的客户货号(客户物料号)查找客户产品
+    // 按下enter键  根据输入的客户料号(客户物料号)查找客户产品
     searchCustomerProduct(data) {
       console.log("data", data);
       if (!this.dataForm.cooperativePartnerCode) return this.$message.error("请先选择客户")
@@ -1580,12 +1563,14 @@ export default {
       // 导入产品，获取数据渲染
       if (this.productData.length) {
         this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
-          this.uploadVisib = true
+      this.$refs['uploadRef'].clearFiles();
+      this.uploadVisib = true
 
           // this.$refs.UploadProduct.$el.querySelector('input').click()
         }).catch(() => { })
       } else {
-        this.uploadVisib = true
+      this.$refs['uploadRef'].clearFiles();
+      this.uploadVisib = true
       }
     },
     submit() {
@@ -1611,6 +1596,7 @@ export default {
           this.$message.success(`导入成功`)
           if (res.data.list.length > 0) {
             res.data.list.forEach(item => {
+              item.productCode=item.productsCode
               item.totalAmount = item.amounts
               item.excludingTaxAmount = item.excludingTaxAmounts
               if (this.dataForm.deliveryDate) {
@@ -2222,8 +2208,6 @@ export default {
       //     cancelButtonText: '取消',
       //     type: 'warning'
       //   }).then(() => {
-      this.dataForm.contractId = ''
-      this.dataForm.contractNo = ''
       // this.productData = []
       getCooperativeInfo(e.id).then(res => {
         let addressInfo = {}
@@ -2288,7 +2272,6 @@ export default {
 
       this.dataForm.code = e.code
       this.customerVisible = false
-      this.getQuotationdatalist()
 
 
       // }
@@ -2410,30 +2393,7 @@ export default {
         this.dataForm.delivery = "collect_payment"
       }
     },
-    // 获取合同数据
-    getQuotationdatalist() {
-      let orderForm = {
-        pageNum: 1,
-        pageSize: -1,
-        cooperativePartnerCode: this.dataForm.cooperativePartnerCode,
-        useDayFilter: true,
-      };
-      getQuotationdatalist(orderForm).then(res => {
-        if (res.data.records.length > 0) {
-          res.data.records.forEach(item => {
-            item.options = item.contractNo + "/" + item.validityStart + "/" + item.validityEnd
-          });
-        }
-        this.contactsList = res.data.records
-        if (this.contactsList.length > 0) {
-          this.contactsList.forEach(item => {
-            if (item.id == this.dataForm.contractId) {
-              this.dataForm.contractNo = item.options
-            }
-          });
-        }
-      })
-    },
+
     changeCountry(e) {
       this.dataForm.country = e
     },
@@ -2639,7 +2599,6 @@ export default {
             this.$nextTick(() => {
               res.data.order.approvalStatus = ""
               this.dataForm = res.data.order
-              this.getQuotationdatalist()
               if (!this.dataForm.cooperativePartnerId) {
                 this.contractFlag = true
               } else {
@@ -2702,7 +2661,6 @@ export default {
             this.dataForm.deliveryCompletionDate = ""
             this.dataForm.paymentMethod = res.data.order.paymentMethod
             this.dataForm.paymentCycle = res.data.order.paymentCycle
-            this.getQuotationdatalist()
             if (!this.dataForm.cooperativePartnerId) {
               this.contractFlag = true
             } else {
@@ -2748,7 +2706,6 @@ export default {
           orderType: "normal",
           orderCategory: "assembly",
           cooperativePartnerId: "",
-          contractNo: "",
           contractId: "",
           workOrderNo: "",
           orderDate: "",
@@ -2928,7 +2885,7 @@ export default {
                 if (!item.drawingNo) {
                   submitFlag = false
                   this.$message({
-                    message: "第" + (index + 1) + "行产品的规格型号不能为空",
+                    message: "第" + (index + 1) + "行产品的品名规格不能为空",
                     type: 'error',
                     duration: 1500,
                   })

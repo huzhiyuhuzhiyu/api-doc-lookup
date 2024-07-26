@@ -7,22 +7,24 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入发货单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerCode" placeholder="请输入客户编码" clearable
+                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            <el-col :span="5">
+            <el-form-item  >
+              <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                :picker-options="pickerOptions" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+              </el-date-picker>
+            </el-form-item>
+
+          </el-col>
 
             <el-col :span="6">
               <el-form-item>
@@ -32,8 +34,6 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-              @click="moreQueries()">更多查询</el-button>
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -61,7 +61,7 @@
             </div>
           </div>
 
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" :setColumnDisplayList="columnList"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="发货单号" min-width="200" sortable="custom">
@@ -71,17 +71,11 @@
                 }}</el-link>
               </template>
             </el-table-column>
-
             <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" />
-            <el-table-column prop="region.countryName" label="国家" width="160" />
-            <el-table-column prop="region.provinceName" label="省" width="160" />
-            <el-table-column prop="region.cityName" label="市" width="160" />
-            <el-table-column prop="region.areaName" label="区" width="160" />
-            <el-table-column prop="address" label="地址" min-width="300" />
             <el-table-column prop="delivery" label="发货方式" width="160">
               <template slot-scope="scope">
                 <div v-if="scope.row.delivery == 'deliver_goods'">
@@ -101,6 +95,21 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="region.countryName" label="国家" width="160" />
+            <el-table-column prop="region.provinceName" label="省" width="160" />
+            <el-table-column prop="region.cityName" label="市" width="160" />
+            <el-table-column prop="region.areaName" label="区" width="160" />
+            <el-table-column prop="address" label="地址" min-width="300" />
+            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.exchangeGoodsFlag">
+                  换货发货
+                </div>
+                <div v-else>
+                  正常发货
+                </div>
+              </template>
+            </el-table-column>
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'undelivered'">
@@ -114,48 +123,14 @@
                 </div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="shipperName" label="发货人" width="140" sortable="custom" /> -->
-            <el-table-column prop="createTime" label="申请日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="申请人" width="140" sortable="custom" />
-            <el-table-column prop="exchangeGoodsFlag" label="换货标识" width="120">
-              <template slot-scope="scope">
-                <div v-if="scope.row.exchangeGoodsFlag">
-                  换货发货
-                </div>
-                <div v-else>
-                  正常发货
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="reasonRejection" label="驳回理由" min-width="300" />
-            <el-table-column prop="approvalCompletionDate" label="审批完成日期" width="180"></el-table-column>
             <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" fixed="right" align="center">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'"><el-tag type="warning">审批中</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus == 'submit'"><el-tag type="success">审批通过</el-tag></div>
-                    <div v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus == 'submit'"><el-tag type="danger">审批拒绝</el-tag></div>
-                  </template>
-                </el-table-column> -->
-
-            <el-table-column prop="deliveryCompletionDate" label="发货完成日期" width="180"
-              sortable="custom"></el-table-column>
-
-            <!-- <el-table-column prop="fullReceiptFlag" label="是否确认收货" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.fullReceiptFlag == 1">
-                      <span>是</span>
-                    </div>
-                    <div v-else-if="scope.row.fullReceiptFlag == 0">
-                      <span>否</span>
-                    </div>
-                  </template>
-                </el-table-column> -->
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
@@ -197,130 +172,7 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20" v-if="activeName === 'orderList'">
-
-        <el-form ref="diaForm" :model="orderForm" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="发货单号">
-              <el-input v-model="orderForm.orderNo" placeholder="请输入发货单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户编码">
-              <el-input v-model="orderForm.partnerCode" placeholder="请输入客户编码" clearable />
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户名称">
-              <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="发货日期">
-              <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                :picker-options="pickerOptions" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-              </el-date-picker>
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="收件人">
-              <el-input v-model="orderForm.recipient" placeholder="请输入收件人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="换货标识">
-              <el-select v-model="orderForm.exchangeGoodsFlag" placeholder="请选择换货标识" filterable clearable>
-                <el-option v-for="(item, index) in exchangeList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="发货方式">
-              <el-select v-model="orderForm.delivery" placeholder="请选择发货方式" filterable clearable>
-                <el-option v-for="(item, index) in departMentList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="发货人">
-              <el-input v-model="orderForm.shipperName" placeholder="请输入发货人" clearable />
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="发货状态">
-              <el-select v-model="orderForm.deliveryStatus" placeholder="请选择发货状态" filterable clearable>
-                <el-option v-for="(item, index) in shipmentsStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单据状态">
-              <el-select v-model="orderForm.documentStatus" placeholder="请选择单据状态" filterable clearable>
-                <el-option v-for="(item, index) in documentStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="申请人">
-              <el-input v-model="orderForm.createByName" placeholder="请输入申请人" clearable />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="orderForm.approvalStatus" placeholder="请选择审批状态" filterable clearable>
-                <el-option v-for="(item, index) in approvalStateList" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
-            <el-form-item label="检验状态">
-              <el-select v-model="orderForm.inspectionStatus" placeholder="请选择检验状态" filterable clearable>
-                <el-option v-for="(item, index) in orderStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
-            <el-form-item label="是否确认收货">
-              <el-select v-model="orderForm.fullReceiptFlag" placeholder="请选择是否确认收货" filterable clearable>
-                <el-option v-for="(item, index) in isfullReceiptFlag" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="12">
-            <el-form-item label="发货完成日期">
-              <el-date-picker v-model="deliveryDateArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                style="width: 100%;" start-placeholder="开始时间" end-placeholder="结束时间"
-                :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="申请时间">
-              <el-date-picker v-model="createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                style="width: 100%;" start-placeholder="开始时间" end-placeholder="结束时间"
-                :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          搜索</el-button>
-      </span>
-    </el-dialog>
+ 
   </div>
 </template>
 
@@ -333,6 +185,7 @@ export default {
   components: { Form },
   data() {
     return {
+      columnList:["partnerCode","region.countryName","region.provinceName","region.cityName","region.areaName","address","createByName"],
       qxbtnLoading: false,
       hbbtnLoading: false,
       btnLoading: false,
@@ -341,8 +194,6 @@ export default {
       createTimeArrfahuo: [],
       deliveryDatefahuo: [],
       customList: [], // 列表中显示的自定义属性
-      title: "更多查询",
-      visible: false,
       detailVisible: false,
       treeData: [],
       tableData: [],
@@ -559,9 +410,7 @@ export default {
 
       this.initData()
     },
-    moreQueries() {
-      this.visible = true
-    },
+  
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -576,7 +425,6 @@ export default {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
-        this.visible = false
       }).catch(() => {
         this.listLoading = false
       })

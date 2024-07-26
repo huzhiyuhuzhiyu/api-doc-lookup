@@ -67,13 +67,13 @@
             <el-table-column prop="deliver" label="致" width="200" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" width="200" />
             <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
-            <el-table-column prop="bidder" label="报价人" sortable="custom" width="120" />
-            <el-table-column prop="quotationTime" label="报价时间" width="180" sortable="custom" />
-            <el-table-column prop="validEnd" label="有效时间止" width="180" sortable="custom" />
+            <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
+            <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
+            <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
             <el-table-column prop="address" label="地址" min-width="300" />
-            <el-table-column prop="phone" label="电话" width="160" sortable="custom" />
-            <el-table-column prop="fax" label="传真" width="160" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额" width="140" sortable="custom" />
+            <el-table-column prop="phone" label="电话" width="120" sortable="custom" />
+            <el-table-column prop="fax" label="传真" width="120" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额" width="100" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag>

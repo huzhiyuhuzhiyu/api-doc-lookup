@@ -150,3 +150,13 @@ export function distributeTransferPlan(data) {
     data: data
   })
 } 
+
+// 销售订单明细-报表
+
+export function getOrderLineReport(data) {
+  return request({
+    url: `/api/erp/sale/orders/line/report`,
+    method: 'post',
+    data: data
+  })
+} 

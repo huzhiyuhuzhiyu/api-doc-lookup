@@ -39,10 +39,25 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
                 <div class="JNPF-common-head">
                     <!-- <el-dropdown> -->
-                    <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier('add')">
+                    <div>
+                      <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier('add')">
                         新建
                     </el-button>
+                    <el-button
+                        :disabled="tableDataList.length > 0 ? false : true"
+                        size="mini"
+                        type="primary"
+                        icon="el-icon-download"
+                        @click="exportForm"
+                        >
+                        导出
+                    </el-button>   
+                    </div>
+                   
                     <div class="JNPF-common-head-right">
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+                        </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                             <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                                 @click="initData()" />
@@ -50,7 +65,7 @@
                     </div>
                 </div>
                 <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                    custom-column >
+                    custom-column  :setColumnDisplayList="columnList">
                     <el-table-column prop="code" label="班组编码" sortable="custom" min-width="160">
                         <template slot-scope="scope">
 
@@ -60,13 +75,13 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" label="班组名称" sortable="custom" min-width="160" />
-                    <el-table-column prop="workType" label="做工类型" min-width="120">
+                    <el-table-column prop="workType" label="做工类型" sortable="custom" min-width="120">
                         <template slot-scope="scope">
                             <div v-if="scope.row.workType == 'same'">同道工序</div>
                             <div v-else-if="scope.row.workType == 'different'">不同工序</div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="reportingType" label="报工类型" width="180">
+                    <el-table-column prop="reportingType" label="报工类型" sortable="custom" width="180">
                         <template slot-scope="scope">
                             <div v-if="scope.row.reportingType == 'by_process'">按工序和人报工</div>
                             <div v-else-if="scope.row.reportingType == 'by_total'">按工序总数报工</div>
@@ -110,6 +125,7 @@
 
 
         <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+        <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     </div>
 </template>
   
@@ -117,11 +133,14 @@
 import { getGroupList, deleteGroupData } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
     name: 'quality',
-    components: { DepForm, },
+    components: { DepForm,ExportForm },
     data() {
         return {
+            exportFormVisible: false,
             stateList: [{
                 label: "启用",
                 value: "enable"
@@ -151,7 +170,8 @@ export default {
 
             total: 0,
             formVisible: false,
-            filterText: ''
+            filterText: '',
+            columnList: ['remark','createByName']
         }
     },
     watch: {
@@ -249,7 +269,46 @@ export default {
             this.$nextTick(() => {
                 this.$refs.depForm.init(id, parentId, btnType)
             })
-        }
+        },
+        columnSetFun() {
+            this.$refs.tableForm.showDrawer()
+        },
+         // 导出
+         exportForm() {
+          this.exportFormVisible = true
+          let columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
+          columnList = columnList.map((item) => {
+            return { label: item.label, prop: item.prop }
+          })
+          console.log(columnList,'columnList')
+          this.$nextTick(() => {
+            this.$refs.exportForm.init(columnList)
+          })
+        },
+        download(data) {
+            console.log(data,'data')
+          if (data) {
+            this.exportFormVisible = false
+            let includeFieldMap = {}
+            for (let i = 0; i < data.selectKey.length; i++) {
+              includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+            }
+            let _data = {
+              ...this.tableQuery,
+              exportType: '1037',
+              exportName: '班组管理信息',
+              includeFieldMap,
+              pageSize: data.dataType == 0 ? this.tableQuery.pageSize : -1
+            }
+            excelExport(_data)
+              .then((res) => {
+                this.exportFormVisible = false
+                if (!res.data.url) return
+                this.jnpf.downloadFile(res.data.url)
+              })
+              .catch(() => {})
+          }
+        },
     }
 }
 </script>

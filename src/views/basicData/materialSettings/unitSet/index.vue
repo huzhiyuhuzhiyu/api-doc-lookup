@@ -3,14 +3,14 @@
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.unitCode" placeholder="请输入单位编码" clearable maxlength="20"> </el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入单位名称" clearable maxlength="20"> </el-input>
+              <el-input v-model="listQuery.name" placeholder="请输入单位名称" clearable maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -35,27 +35,65 @@
           </div>
         </div>
         <div class="tableBox">
-          <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column>
-            <el-table-column prop="unitCode" label="单位编码" min-width="120" sortable="custom" />
+          <JNPF-table
+            v-loading="listLoading"
+            :data="list"
+            @sort-change="sortChange"
+            highlight-current-row
+            @current-change="handleCurrentChange"
+            class="dataTable"
+            border
+            ref="listTable"
+            custom-column
+          >
+            <!-- <el-table-column prop="unitCode" label="单位编码" min-width="120" sortable="custom" /> -->
             <el-table-column prop="name" label="单位名称" min-width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="updateHandle(scope.row)">编辑</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  @click="handleDel(scope.$index, scope.row.id)">删除</el-button>
+                <el-button
+                  size="mini"
+                  type="text"
+                  class="JNPF-table-delBtn"
+                  @click="handleDel(scope.$index, scope.row.id)"
+                >
+                  删除
+                </el-button>
               </template>
             </el-table-column>
           </JNPF-table>
-          <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border :partentOrChild="'child'" custom-column>
-            <el-table-column prop="sourceName" min-width="120" label="单位名称1" />
+          <JNPF-table
+            v-loading="detailLoading"
+            :data="dataDetail"
+            class="dataTable"
+            border
+            :partentOrChild="'child'"
+            custom-column
+          >
+            <el-table-column prop="sourceName" min-width="120" label="主单位" />
             <el-table-column prop="ratio" min-width="120" label="转换系数" />
-            <el-table-column prop="targetName" min-width="120" label="单位名称2" />
+            <el-table-column prop="calculationDirection" min-width="120" label="计算方向">
+              <template slot-scope="{ row }">
+                <template v-if="row.calculationDirection == 'multiplication'">
+                  乘
+                </template>
+                <template v-else-if="row.calculationDirection == 'division'">
+                  除
+                </template>
+              </template>
+            </el-table-column>
+            <el-table-column prop="targetName" min-width="120" label="副单位" />
           </JNPF-table>
         </div>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData"
-          class="pagination" style="text-align: left; padding-left: 20px;" />
+        <pagination
+          :total="total"
+          :page.sync="listQuery.pageNum"
+          :limit.sync="listQuery.pageSize"
+          @pagination="initData"
+          class="pagination"
+          style="text-align: left; padding-left: 20px;"
+        />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
@@ -70,20 +108,22 @@ export default {
   components: { JNPFForm },
   data() {
     return {
-
       list: [],
       listLoading: true,
       total: 0,
       listQuery: {
-        unitCode: "",
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        unitCode: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
       },
@@ -104,17 +144,21 @@ export default {
   },
   mounted() {
     document.getElementsByClassName('el-table__body-wrapper')[1].onscroll = (event) => {
-      const tableWrapper = event.target;
-      const isBottom = tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight;
-      console.log(tableWrapper.scrollTop);
+      const tableWrapper = event.target
+      const isBottom = tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight
+      console.log(tableWrapper.scrollTop)
       if (isBottom && this.lazyLoadFlag) {
-        this.lazyLoadFlag = false;
+        this.lazyLoadFlag = false
         this.listQueryTwo.pageNum++
         // this.$message.success('滚动到底了')
-        detailUnitData({ id: this.selectedUnitId, ...this.listQueryTwo }).then(res => {
-          this.dataDetail.push(...res.data.records || [])
-          this.lazyLoadFlag = true
-        }).catch(err => { this.lazyLoadFlag = true })
+        detailUnitData({ id: this.selectedUnitId, ...this.listQueryTwo })
+          .then((res) => {
+            this.dataDetail.push(...(res.data.records || []))
+            this.lazyLoadFlag = true
+          })
+          .catch((err) => {
+            this.lazyLoadFlag = true
+          })
       }
     }
   },
@@ -125,13 +169,13 @@ export default {
       this.selectedUnitId = val.id
       this.detailLoading = true
       this.listQueryTwo.pageNum = 1
-      detailUnitData({ id: val.id, ...this.listQueryTwo }).then(res => {
-        this.dataDetail = res.data.records || [];
+      detailUnitData(val.name).then((res) => {
+        this.dataDetail = res.data.unitRelList || []
         this.detailLoading = false
       })
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = newProp
       this.initData()
@@ -139,12 +183,12 @@ export default {
     initData() {
       this.detailLoading = false
       this.dataDetail = []
-      getUnitData(this.listQuery).then(res => {
-        this.list = res.data.records || [];
+      getUnitData(this.listQuery).then((res) => {
+        this.list = res.data.records || []
         this.total = res.data.total
         this.listLoading = false
         this.$nextTick(() => {
-          this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]); // 自动选择第一项
+          this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]) // 自动选择第一项
         })
       })
     },
@@ -152,22 +196,24 @@ export default {
     handleDel(index, id) {
       this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
         type: 'warning'
-      }).then(() => {
-        deleteUnitData(id).then(res => {
-          if (res.msg === 'Success') res.msg = '删除成功'
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: res.msg,
-          });
+      })
+        .then(() => {
+          deleteUnitData(id).then((res) => {
+            if (res.msg === 'Success') res.msg = '删除成功'
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: res.msg
+            })
+          })
         })
-      }).catch(() => { });
+        .catch(() => {})
     },
     // 新增数据
     addOrUpdateHandle() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init("{}")
+        this.$refs.JNPFForm.init('{}')
       })
     },
     // 编辑数据
@@ -178,7 +224,7 @@ export default {
       })
     },
     search() {
-      Object.keys(this.listQuery).forEach(key => {
+      Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -192,20 +238,23 @@ export default {
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = {
-        unitCode: "",
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        unitCode: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20
       }
       this.search()
-    },
+    }
   }
 }
 </script>
@@ -217,12 +266,12 @@ export default {
 
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
-  >.dataTable:first-child {
+  > .dataTable:first-child {
     flex: 3;
     margin: 0 3px 0 0;
   }
 
-  >.dataTable:last-child {
+  > .dataTable:last-child {
     flex: 2;
   }
 }

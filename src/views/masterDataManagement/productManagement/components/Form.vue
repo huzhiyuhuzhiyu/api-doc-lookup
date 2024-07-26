@@ -156,7 +156,7 @@ export default {
           const orderNo = await this.jnpf.getCodeWayFun(code)
           this.dataForm.code = orderNo
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-          target.disable = true
+          target.itemDisabled = true
           
         }
       } catch (error) {}
@@ -177,6 +177,12 @@ export default {
           // 处理普通属性
           let detailObj = res.data
           for (const key in detailObj) { this.dataForm[key] = detailObj[key] }
+          this.jnpf.getBillRuleConfigFun(this.busSetId).then((res) => {
+              if (!res.modifyFlag) {
+                let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+                target.itemDisabled = true
+              }
+            })
         })
       } else {
         this.title = `新建${this.productName}档案`

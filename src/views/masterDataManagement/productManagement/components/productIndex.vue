@@ -63,7 +63,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
-            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+            <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true " size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
           </topOpts>
@@ -78,7 +78,7 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable">
-          <el-table-column prop="code" label="产品编码" min-width="140" fixed="left" sortable="custom">
+          <el-table-column prop="code" label="产品编码" min-width="140"  sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
@@ -86,7 +86,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" fixed="left" sortable="custom" />
+          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
           <el-table-column prop="mainUnit" label="主单位" width="120" />
@@ -97,7 +97,7 @@
               <template v-else-if="row.productSource == 'out'">外协</template>
             </template>
           </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120"  fixed="right" align="center">
+          <el-table-column prop="productStatus" label="产品状态" width="120"  align="center">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
@@ -187,6 +187,46 @@
      <!-- 导入产品 -->
      <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
+      <el-dialog
+      title="导入数据"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="uploadVisib"
+      lock-scroll
+      class="JNPF-dialog JNPF-dialog_center"
+      width="400px"
+    >
+      <el-upload
+        cass="upload-demo"
+        action="#"
+        accept=".xls, .xlsx"
+        :multiple="false"
+        :auto-upload="false"
+        :limit="1"
+        :on-preview="handlePreview"
+        drag
+        :on-remove="handleRemove"
+        :on-change="handleFileChange"
+        ref="uploadRef"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -258,6 +298,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
+      uploadVisib:false
     }
   },
   created() {
@@ -271,6 +312,23 @@ export default {
   methods: {
     columnSetFun(){ 
       this.$refs.dataTable.showDrawer()
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file = file.raw
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
     },
     // 导出
     exportForm() {
@@ -404,7 +462,8 @@ export default {
       if (!this.listQuery.productCategoryId){
         this.$message.warning('请先选择产品分类')
       }else{
-        this.$refs.UploadProduct.$el.querySelector('input').click()
+        // this.$refs.UploadProduct.$el.querySelector('input').click()
+        this.uploadVisib = true
       }
     },
     // 下载模板
@@ -419,7 +478,7 @@ export default {
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
-      formData.append("file", data.file)
+      formData.append("file", data)
       formData.append("productCategoryId", this.listQuery.productCategoryId)
       formData.append("classAttribute", this.listQuery.classAttribute)
       //调用上传文件接口

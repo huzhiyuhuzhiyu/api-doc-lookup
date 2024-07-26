@@ -108,7 +108,7 @@
               </el-dropdown-menu>
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+            <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
             <el-button
               :disabled="tableData.length > 0 ? false : true"
@@ -126,9 +126,12 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
-              </el-tooltip>
+              <el-link
+                icon="icon-ym icon-ym-filter JNPF-common-head-icon"
+                :underline="false"
+                @click="superQueryVisible = true"
+              />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -309,9 +312,54 @@
       ref="UploadProduct"
       :http-request="UploadProduct"
     />
-      <!-- 高级查询 -->
-      <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <!-- 高级查询 -->
+    <SuperQuery
+      :show="superQueryVisible"
+      ref="SuperQuery"
+      :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch"
+      @close="superQueryVisible = false"
+    />
+    <el-dialog
+      title="导入数据"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="uploadVisib"
+      lock-scroll
+      class="JNPF-dialog JNPF-dialog_center"
+      width="400px"
+    >
+      <el-upload
+        cass="upload-demo"
+        action="#"
+        accept=".xls, .xlsx"
+        :multiple="false"
+        :auto-upload="false"
+        :limit="1"
+        :on-preview="handlePreview"
+        drag
+        :on-remove="handleRemove"
+        :on-change="handleFileChange"
+        ref="uploadRef"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -325,7 +373,7 @@ import aiForm from './aiForm'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  components: { Form, ExportForm, aiForm,SuperQuery },
+  components: { Form, ExportForm, aiForm, SuperQuery },
   name: 'finished_product',
   data() {
     return {
@@ -403,130 +451,130 @@ export default {
       superQueryJson: [
         {
           prop: 'code',
-          label: "客户编码",
+          label: '客户编码',
           type: 'input'
         },
         {
           prop: 'drawingNo',
-          label: "规格型号",
+          label: '规格型号',
           type: 'input'
         },
         {
           prop: 'name',
-          label: "客户名称",
+          label: '客户名称',
           type: 'input'
         },
         {
           prop: 'productCategoryName',
-          label: "产品分类",
+          label: '产品分类',
           type: 'custom',
-          component: 'ComSelect-list',
+          component: 'ComSelect-list'
         },
         {
           prop: 'mainUnit',
-          label: "主单位",
+          label: '主单位',
           type: 'input'
         },
         {
           prop: 'productSource',
-          label: "产品来源",
+          label: '产品来源',
           type: 'input'
         },
         {
           prop: 'productStatus',
-          label: "产品状态",
+          label: '产品状态',
           type: 'input'
         },
         {
           prop: 'brand',
-          label: "品牌",
+          label: '品牌',
           type: 'input'
         },
         {
           prop: 'model',
-          label: "型号",
+          label: '型号',
           type: 'input'
         },
         {
           prop: 'sealingCoverStructure',
-          label: "密封盖-结构",
+          label: '密封盖-结构',
           type: 'input'
         },
         {
           prop: 'sealingCoverTyping',
-          label: "密封盖-打字",
+          label: '密封盖-打字',
           type: 'input'
         },
         {
           prop: 'structureType',
-          label: "结构类型",
+          label: '结构类型',
           type: 'input'
         },
         {
           prop: 'clearance',
-          label: "游隙",
+          label: '游隙',
           type: 'input'
         },
         {
           prop: 'steelBallManufacturer',
-          label: "钢球厂家",
+          label: '钢球厂家',
           type: 'input'
         },
         {
           prop: 'oil',
-          label: "油脂",
+          label: '油脂',
           type: 'input'
         },
         {
           prop: 'oilQuantity',
-          label: "油脂量",
+          label: '油脂量',
           type: 'input'
         },
         {
           prop: 'noise',
-          label: "噪音",
+          label: '噪音',
           type: 'input'
         },
         {
           prop: 'holder',
-          label: "保持架",
+          label: '保持架',
           type: 'input'
         },
         {
           prop: 'vibrationLevel',
-          label: "振动等级",
+          label: '振动等级',
           type: 'input'
         },
         {
           prop: 'accuracyLevel',
-          label: "精度等级",
+          label: '精度等级',
           type: 'input'
         },
         {
           prop: 'colour',
-          label: "颜色",
+          label: '颜色',
           type: 'input'
         },
         {
           prop: 'aperture',
-          label: "孔径",
+          label: '孔径',
           type: 'input'
         },
         {
           prop: 'remark',
-          label: "备注",
+          label: '备注',
           type: 'input'
         },
         {
           prop: 'createTime',
-          label: "创建时间",
+          label: '创建时间',
           type: 'input'
         },
         {
           prop: 'createByName',
-          label: "创建人",
+          label: '创建人',
           type: 'input'
-        },
+        }
         // { // 自定义选择器
         //   prop: 'salespersonId',
         //   label: '所属销售人员',
@@ -549,6 +597,7 @@ export default {
         //   pickerOptions: this.global.timePickerOptions
         // },
       ],
+      uploadVisib:false
     }
   },
   created() {
@@ -709,8 +758,19 @@ export default {
       if (!this.listQuery.productCategoryId) {
         this.$message.warning('请先选择产品分类')
       } else {
-        this.$refs.UploadProduct.$el.querySelector('input').click()
+        // this.$refs.UploadProduct.$el.querySelector('input').click()
+        this.uploadVisib = true
       }
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file = file.raw
     },
     // 下载模板
     downLoadTemplate() {
@@ -721,10 +781,11 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
+      console.log(data.file,'filr')
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
-      formData.append('file', data.file)
+      formData.append('file', data)
       formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
@@ -748,6 +809,13 @@ export default {
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
     },
     // 提示
     handleMessage(data) {
@@ -802,7 +870,7 @@ export default {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
-    },
+    }
   }
 }
 </script>

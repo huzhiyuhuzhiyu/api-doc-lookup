@@ -59,23 +59,36 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addOrUpdateHandle('', 'add')" />
+          <topOpts @add="addOrUpdateHandle('', 'add')">
+            <el-button
+              :disabled="tableData.length > 0 ? false : true"
+              size="mini"
+              type="primary"
+              icon="el-icon-download"
+              @click="exportForm"
+            >
+              导出
+            </el-button>
+          </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          :hasNO="true" ref="listTable" >
-          <el-table-column prop="code" label="工序编码" fixed="left" width="180" sortable="custom">
+          :hasNO="true" ref="listTable" :setColumnDisplayList="columnList">
+          <el-table-column prop="code" label="工序编码" width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
                 scope.row.code
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="name" label="工序名称" fixed="left" min-width="180" sortable="custom" />
+          <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="工序分类" min-width="180" sortable="custom" />
           <el-table-column prop="unitPrice" label="正品单价" min-width="180" />
           <el-table-column prop="rejectUnitPrice" label="次品单价" min-width="180" />
@@ -116,6 +129,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh"  @close="closeForm"/>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
   </div>
 </template>
@@ -124,10 +138,13 @@
 import { getBimProcessList, deleteBimProcess } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import JNPFForm from "./Form"
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { JNPFForm },
+  components: { JNPFForm ,ExportForm},
   data() {
     return {
+      exportFormVisible: false,
       visible: false,
       tableData: [],
       treeData: [],
@@ -167,6 +184,7 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
+      columnList: ['unitPrice','createByName','rejectUnitPrice','scrapUnitPrice']
     }
   },
   created() {
@@ -175,6 +193,57 @@ export default {
     this.getBusinessOptions()
   },
   methods: {
+    sortChange({ prop, order }) {
+      let newProp = ""
+      if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {
+        newProp = prop
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
+
+      }
+      this.listQuery.orderItems[0].asc = order === "ascending";
+      this.listQuery.orderItems[0].column = order === null ? "" : newProp;
+      this.initData();
+    },
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.listTable.showDrawer()
+    },
+     // 导出
+     exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.listTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      console.log(columnList,'columnList')
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let _data = {
+          ...this.listQuery,
+          exportType: '1034',
+          exportName: '工序管理信息',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => {})
+      }
+    },
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id

@@ -38,11 +38,10 @@ export function deleteUnitData(id) {
 }
 
 // 计量单位 详情
-export function detailUnitData(data) {
+export function detailUnitData(name) {
   return request({
-    url: `/api/erp/unit/detail/condition`,
-    method: 'POST',
-    data
+    url: `/api/erp/unit/detailByName?name=${name}`,
+    method: 'GET',   
   })
 }
 
@@ -58,6 +57,14 @@ export function getEffectUnitList(id) {
 export function checkUnitCodeExist(code) {
   return request({
     url: `/api/erp/unit/check/code/exist?unitCode=${code}`,
+    method: 'GET'
+  })
+}
+
+// 计量单位 检查编码是否存在
+export function checkUnitNameExist(name,id) {
+  return request({
+    url: `/api/erp/unit/check/name/exist?name=${name}&id=${id}`,
     method: 'GET'
   })
 }

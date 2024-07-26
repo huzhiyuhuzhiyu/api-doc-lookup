@@ -43,7 +43,7 @@
             </el-button>
           <el-button type="primary" size="mini" icon="el-icon-edit-outline" style="margin-left: 10px"
             @click="batchEditFun">批量修改</el-button>
-          <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
+          <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
           <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus"
             @click="importFun">导入</el-button>
           <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
@@ -86,6 +86,46 @@
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
     <Table-Form v-if="tableFormVisible" ref="TableForm" @refresh="refresh"></Table-Form>
+    <el-dialog
+      title="导入数据"
+      append-to-body
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :visible.sync="uploadVisib"
+      lock-scroll
+      class="JNPF-dialog JNPF-dialog_center"
+      width="400px"
+    >
+      <el-upload
+        cass="upload-demo"
+        action="#"
+        accept=".xls, .xlsx"
+        :multiple="false"
+        :auto-upload="false"
+        :limit="1"
+        :on-preview="handlePreview"
+        drag
+        :on-remove="handleRemove"
+        :on-change="handleFileChange"
+        ref="uploadRef"
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">
+          只能上传.xls/.xlsx文件
+          <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">
+            下载模板
+          </el-button>
+        </div>
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="saveSubmit()">
+          提交
+        </el-button>
+      </span>
+    </el-dialog>
     <!-- <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" /> -->
   </div>
 </template>
@@ -105,6 +145,7 @@ import { excelExport } from '@/api/basicData/index'
 import JNPFForm from "./Form";
 import TableForm from "./tabForm";
 import { mapGetters, mapState } from 'vuex'
+
 export default {
   components: { JNPFForm, ExportForm, TableForm },
   data() {
@@ -137,6 +178,7 @@ export default {
       total: 0,
       formVisible: false,
       selectList: [],
+      uploadVisib:false
     };
   },
   computed: {
@@ -183,8 +225,19 @@ export default {
     // 导出
     exportForm() {
       this.exportType(this.tableData, 'dataTable')
-
-
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePreview(file) {
+      console.log(file);
+    },
+    handleFileChange(file) {
+      console.log("所选文件:", file);
+      this.file = file.raw
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
     },
     download(data) {
       if (data) {
@@ -222,7 +275,8 @@ export default {
     },
     importFun() {
 
-      this.$refs.UploadProduct.$el.querySelector('input').click()
+      // this.$refs.UploadProduct.$el.querySelector('input').click()
+      this.uploadVisib = true
     },
     // 上传产品
     UploadProduct(data) {
@@ -230,7 +284,7 @@ export default {
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
-      formData.append("file", data.file)
+      formData.append("file", data)
       //调用上传文件接口
       uploadDimProductsModel(formData).then(res => {
         if (!res.data) {
@@ -284,6 +338,10 @@ export default {
         ),
       })
       return
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
     },
     // 导入产品  下载导入错误数据
     downNoProduct(res) {

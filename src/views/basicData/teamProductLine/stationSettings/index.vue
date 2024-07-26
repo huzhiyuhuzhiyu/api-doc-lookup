@@ -47,14 +47,27 @@
           <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('add')">
             新建
           </el-button> -->
-          <topOpts @add="addSupplier('add')"></topOpts>
+          <topOpts @add="addSupplier('add')">
+            <el-button
+              :disabled="tableDataList.length > 0 ? false : true"
+              size="mini"
+              type="primary"
+              icon="el-icon-download"
+              @click="exportForm"
+              >
+              导出
+            </el-button>  
+          </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="工位编码"  min-width="180" sortable="custom" />
           <el-table-column prop="name" label="工位名称" min-width="180" sortable="custom" />
           <el-table-column prop="state" label="状态" sortable="custom">
@@ -109,6 +122,7 @@
 
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
   
@@ -116,12 +130,15 @@
 import { deleteBimWorkstation, bimWorkstationList } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'stationSetting',
-  components: { DepForm, },
+  components: { DepForm,ExportForm },
   data() {
     return {
       depFormVisible: false,
+      exportFormVisible: false,
       background: true,//分页器背景颜色
       visible: false,
       tableDataList: [
@@ -151,6 +168,7 @@ export default {
 
       total: 0,
       formVisible: false,
+      columnList: ['remark','createByName']
     }
   },
   created() {
@@ -163,6 +181,45 @@ export default {
       this.tableQuery.orderItems[0].asc = order !== 'descending' 
       this.tableQuery.orderItems[0].column =  order === null ? "" : newProp
       this.initData()
+    },
+    columnSetFun() {
+      this.$refs.tableForm.showDrawer()
+    },
+     // 导出
+     exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      console.log(columnList,'columnList')
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+        console.log(data,'data')
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        let _data = {
+          ...this.tableQuery,
+          exportType: '1040',
+          exportName: '工位管理信息',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.tableQuery.pageSize : -1
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => {})
+      }
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {

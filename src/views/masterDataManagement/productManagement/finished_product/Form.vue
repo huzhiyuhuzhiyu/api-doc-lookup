@@ -23,7 +23,7 @@
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
           </el-collapse-item>
           <el-collapse-item title="其他信息" name="basicInfo">
-            <JNPF-col v-model="otherForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+            <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
           </el-collapse-item>
         </el-collapse>
         <!-- </el-tab-pane>
@@ -160,7 +160,6 @@ export default {
         { prop: 'oilNum', label: '油脂用量', type: 'input', itemDisabled: true },
         { prop: 'holderNum', label: '保持架用量', type: 'input', itemDisabled: true }
       ],
-      otherForm: {},
       otherItems: [
         {
           prop: 'saleFlag',
@@ -187,7 +186,8 @@ export default {
           type: 'select',
           options: [{ label: '是', value: true }, { label: '否', value: false }],
           clearable: false,
-          itemRules: [{ required: true, trigger: 'change' }]
+          itemRules: [{ required: true, trigger: 'change' }],
+          itemDisabled:false
         }
       ]
     }
@@ -330,9 +330,9 @@ export default {
         if (tc.prop === 'productSource') {
           tc.change = (val) => {
             if (val == 'assemble') {
-              this.otherForm.bomFlag = true
+              this.dataForm.bomFlag = true
             } else {
-              this.otherForm.bomFlag = false
+              this.dataForm.bomFlag = false
             }
           }
         }
@@ -620,6 +620,10 @@ export default {
           })
           let target = this.modelItems.find((tc) => tc.prop === 'model')
           target.itemDisabled = true
+
+          let targetOther = this.otherItems.find((tc) => tc.prop === 'bomFlag')
+          targetOther.itemDisabled = true
+
           this.formLoading = false
         })
       } else {

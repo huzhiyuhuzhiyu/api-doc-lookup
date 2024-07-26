@@ -70,10 +70,12 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="add()">
-            <!-- <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
-              :loading="btnLoading">计算胶管长</el-button> -->
-              <el-button
+          <!-- <topOpts @add="add()">
+            <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
+              :loading="btnLoading">计算胶管长</el-button>
+          </topOpts> -->
+          <div>
+            <el-button
               :disabled="tableData.length > 0 ? false : true"
               size="mini"
               type="primary"
@@ -82,7 +84,7 @@
               >
               导出
             </el-button>  
-          </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -118,7 +120,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-            >
+           >
             <template slot-scope="scope">
               <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
               <el-tag type="success"
@@ -131,31 +133,9 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.productId, 'edit', scope.row)"
-                @del="handleDel(scope.row.id)" :delDisabled="scope.row.documentStatus !== 'draft'">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                      @click.native="addOrUpdateHandle(scope.row.productId, 'add', scope.row)">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.productId, 'look', scope.row)">
+              <el-button type="text" @click.native="addOrUpdateHandle(scope.row.productId, 'look', scope.row)">
                       查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+              </el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -260,6 +240,7 @@ export default {
         productName: "",
         startTime: "",
         endTime: "",
+        historyFlag:1,
         startAndEndTime: [],
         orderItems: [{
           asc: false,
@@ -329,7 +310,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1035',
-          exportName: 'BOM管理信息',
+          exportName: '历史BOM信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }

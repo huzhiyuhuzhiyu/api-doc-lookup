@@ -235,8 +235,12 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="税率%" prop="taxRate">
-                    <el-input v-model="dataForm.taxRate" maxlength="2" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入税率" :disabled="btnType=='look' ? true : false" />
+                      <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;"
+                      :disabled="btnType === 'look' ? true : false">
+                      <el-option v-for="item in taxRateTypeList" size="small" :key="item.enCode" :label="item.fullName"
+                        :value="item.enCode">
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
 
@@ -536,6 +540,7 @@ import {
 export default {
   data() {
     return {
+      taxRateTypeList:[],
       tableData:[],
       loadingareafoundation:false,
       foundationloadingcity:false,
@@ -1057,6 +1062,16 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
+              if (resp.enCode == "taxrate") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.taxRateTypeList = response.data.list
+                })
+              }
               if (resp.enCode == "grade") {
                 let id = resp.id;
                 let obj = {
@@ -1085,16 +1100,6 @@ export default {
                 }
                 getDictionaryDataList(id, obj).then(response => {
                   this.paymentMethodList = response.data.list
-                })
-              }
-              if (resp.enCode == "billingType") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.billingTypeList = response.data.list
                 })
               }
               if (resp.enCode == "paymentCycle") {
@@ -1131,7 +1136,20 @@ export default {
             });
 
           }
-
+          if(item.enCode == "CWGL"){
+            item.children.forEach(resp => {
+              if (resp.enCode == "billingType") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.billingTypeList = response.data.list
+                })
+              }
+            })
+          }
         });
       })
     },

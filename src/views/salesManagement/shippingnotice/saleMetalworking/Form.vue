@@ -164,7 +164,7 @@
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
                   
-                  <el-table-column prop="mainUnit" label="单位" width="290" key="3" show-overflow-tooltip>
+                  <el-table-column prop="mainUnit" label="单位" width="290" key="13" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                     show-overflow-tooltip></el-table-column>
@@ -334,7 +334,7 @@
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
-                <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer" hasC @selection-change="handleSelectionChangeAllPruduct">
+                <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC @selection-change="handleSelectionChangeAllPruduct">
                   <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
@@ -353,7 +353,7 @@
                   <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                   <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 </JNPF-table>
-                <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                   @pagination="searchProductFun" />
               </div>
             </div>
@@ -394,6 +394,8 @@ export default {
   },
   data() {
     return {
+      productList:[],
+      productTotal:0,
       tableloading: false,
       deliveryDateArr: [],
       getsaleOrderList,
@@ -643,8 +645,8 @@ export default {
       codeConfig: {},
       orderForm: {
         cooperativePartnerId: "",
-        customerProductDrawingNo: 1,
-        deliverQueryFlag: "",
+        customerProductDrawingNo: "",
+        deliverQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -684,10 +686,10 @@ export default {
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       getsaleOrderDetailList(this.orderForm).then(res => {
-        this.tableData = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-        this.getOrderLineReportFun()
+        console.log("产品",res);
+        this.productList = res.data.records
+        this.productTotal = res.data.total
+        this.listLoading = false 
       }).catch(() => {
         this.listLoading = false
       })
@@ -698,8 +700,8 @@ export default {
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: 1,
-        deliverQueryFlag: "",
+        customerProductDrawingNo: "",
+        deliverQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -722,6 +724,7 @@ export default {
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.productVisible = true
+    this.searchProductFun()
     },
     //数据格式化
     listDataFormatting(res) {
@@ -1287,8 +1290,9 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
+        console.log("data,",data);
         this.codeConfig = data
-          this.dataForm.orderNo = data.orderNo
+          this.dataForm.orderNo = data.number
           
       } catch (error) {
       }

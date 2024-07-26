@@ -7,25 +7,24 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="5">
-            <el-form-item  >
-              <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                :picker-options="pickerOptions" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-              </el-date-picker>
-            </el-form-item>
 
-          </el-col>
 
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                  start-placeholder="发货开始日期" end-placeholder="发货结束日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -34,21 +33,21 @@
                 </el-button>
               </el-form-item>
             </el-col>
+
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button type="primary" icon="el-icon-plus" @click.native="Cancelshipment()" :loading="qxbtnLoading">
+              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
+                :loading="qxbtnLoading">
                 批量取消发货
               </el-button>
-              <el-button type="primary" icon="el-icon-circle-plus-outline" @click.native="mergeorderNo()"
-                :loading="hbbtnLoading">
-                合并
-              </el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -60,22 +59,22 @@
               </el-tooltip>
             </div>
           </div>
-
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" :setColumnDisplayList="columnList"
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
             @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="orderNo" label="发货单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="客户编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" />
+            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
+
             <el-table-column prop="delivery" label="发货方式" width="160">
               <template slot-scope="scope">
                 <div v-if="scope.row.delivery == 'deliver_goods'">
@@ -95,12 +94,12 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="region.countryName" label="国家" width="160" />
-            <el-table-column prop="region.provinceName" label="省" width="160" />
-            <el-table-column prop="region.cityName" label="市" width="160" />
-            <el-table-column prop="region.areaName" label="区" width="160" />
+            <el-table-column prop="countryName" label="国家" width="160" />
+            <el-table-column prop="provinceName" label="省" width="160" />
+            <el-table-column prop="cityName" label="市" width="160" />
+            <el-table-column prop="areaName" label="区" width="160" />
             <el-table-column prop="address" label="地址" min-width="300" />
-            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120">
+            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.exchangeGoodsFlag">
                   换货发货
@@ -123,10 +122,10 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="documentStatus" label="单据状态" sortable="custom" width="120" align="center">
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
-                <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
+                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
@@ -145,14 +144,6 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <!-- <el-dropdown-item @click.native="confirmreceipt(scope.row.id, 'qrsh')"
-                          v-if="scope.row.deliveryStatus == 'delivered' && scope.row.approvalStatus == 'ok' && scope.row.fullReceiptFlag == 0">
-                          确认收货
-                        </el-dropdown-item> -->
-                    <el-dropdown-item @click.native="splitorderNo(scope.row)"
-                      :disabled="scope.row.splitNum == '1' || scope.row.deliveryStatus !== 'undelivered' || scope.row.documentStatus == 'draft'">
-                      拆分
-                    </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
@@ -172,20 +163,24 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
- 
+
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
 import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
 import { UserListAll, } from '@/api/permission/user'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'foreigntradenotice',
-  components: { Form },
+  components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      columnList:["partnerCode","region.countryName","region.provinceName","region.cityName","region.areaName","address","createByName"],
+      rdeDateArr: [],
+      exportFormVisible: false,
       qxbtnLoading: false,
       hbbtnLoading: false,
       btnLoading: false,
@@ -194,6 +189,8 @@ export default {
       createTimeArrfahuo: [],
       deliveryDatefahuo: [],
       customList: [], // 列表中显示的自定义属性
+      title: "更多查询",
+      visible: false,
       detailVisible: false,
       treeData: [],
       tableData: [],
@@ -244,38 +241,23 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
-        orderCategory: 'metalworking',
-        notifyType: 'sale',
-        returnDeliveryType: 'delivery',
         orderNo: "",
-        partnerCode: "",
         partnerName: "",
-        rdsDate: '',
-        rdeDate: '',
-        recipient: '',
-        delivery: '',
-        shipperName: '',
-        deliveryStatus: '',
-        documentStatus: '',
-        createByName: '',
-        approvalStatus: '',
-        orderState: '',
-        fullReceiptFlag: '',
-        dfsTime: '',
-        dfeDate: '',
-        startTime: '',
-        endTime: '',
+        customerDrawingNumber: "",
+        productDrawingNo: "",
         pageNum: 1,
         pageSize: 20,
+        rdeDate: "",
+        rdsDate: "",
         orderItems: [{
           asc: false,
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "createTime"
         }],
+        superQuery: {},
       },
-      linesQuery: {},
 
       detailTotal: 0,
       salespersonList: [],
@@ -410,7 +392,7 @@ export default {
 
       this.initData()
     },
-  
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -421,6 +403,13 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.rdeDateArr.length > 0) {
+        this.orderForm.rdsDate = this.rdeDateArr[0]
+        this.orderForm.rdeDate = this.rdeDateArr[1]
+      } else {
+        this.orderForm.rdsDate = ""
+        this.orderForm.rdeDate = ""
+      }
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -517,6 +506,34 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+      }
+      const targetListQuery = this.orderForm
+      let _data = {
+        ...targetListQuery,
+        exportType: this.exportTableRef === '1061',
+        exportName: this.exportTableRef === '发货通知单明细',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    }
   }
 }
 </script>

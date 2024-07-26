@@ -12,7 +12,9 @@
       <div class="main">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
+            <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
               <el-row :gutter="20" class="custom-row">
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="工序名称" prop="name">
@@ -59,6 +61,10 @@
                 </el-col>
               </el-row>
             </el-form>
+                </el-collapse-item>
+
+              </el-collapse>
+          
             <div class="box">
 
             </div>
@@ -948,4 +954,33 @@ export default {
 ::v-deep .el-tabs__nav {
   display: block!important;;
 }
+</style>
+<style lang="scss" scoped>
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
 </style>

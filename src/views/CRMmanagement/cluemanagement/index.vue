@@ -385,13 +385,12 @@ export default {
       saleCluemanagementpoolModel(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
-          this.initData()
           this.formLoading = false
           this.loadingText = ''
         } else {
           this.handleMessage(res.data)
         }
-
+        this.initData()
       }).catch(err => {
         this.$message.error(`文件上传失败`)
         this.formLoading = false

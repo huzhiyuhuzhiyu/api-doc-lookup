@@ -48,18 +48,13 @@
                   <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
                 </el-collapse-item>
 
-
-
                 <el-collapse-item title="产品信息" name="productInfo">
                   <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                     :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
                     @deleteth="addOrDelLinesItem" customStyle />
                 </el-collapse-item>
-
               </el-collapse>
-                  
-                
-              
+
                 </el-tab-pane>
                 <el-tab-pane label="附件" name="annex">
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
@@ -175,6 +170,7 @@ import workFlow from '@/components/WorkFlow/settingBus.vue'
 import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 export default {
+  name:'BOMCreate',
   components: { TableFormProduct, workFlow },
   data() {
     return {
@@ -310,6 +306,8 @@ export default {
     ...mapGetters(['userInfo']),
   },
   created() {
+    console.log(this.$route.params,'this.$route.params')
+    
     this.dataFormItems.forEach(tc => {
       this.dataForm[tc.prop] = tc.value || ""; // 设置默认value
       // 添加自定义表单元素方法和参数
@@ -359,6 +357,16 @@ export default {
         })
       }
     })
+    if (this.$route.params.name) {
+    this.dataForm.productName = this.$route.params.name;
+    } else {
+      this.dataForm.productName = '';
+    }
+    if (this.$route.params.id) {
+    this.dataForm.productId = this.$route.params.id;
+    } else {
+      this.dataForm.productId = '';
+    }
   },
   methods: {
     async init(productId, btnType, approvalStatus,nodeData) {
@@ -828,73 +836,73 @@ export default {
           submitFlag = false
         }
       }
+      console.log(this.dataForm,'dataForm')
+      // // 自动聚焦未使用则提交
+      // if (submitFlag) {
+      //   // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
+      //   // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
+      //   this.dataForm.documentStatus = submitModel
 
-      // 自动聚焦未使用则提交
-      if (submitFlag) {
-        // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
-        // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
-        this.dataForm.documentStatus = submitModel
+      //   const formMethod = this.dataForm.id ? updateBomData : addBomData
+      //   if (this.datafilelist.length) {
+      //     this.datafilelist.map((item, index) => {
+      //       item.bimAttachments = {
+      //         businessType: '',
+      //         documentId: item.id,
+      //         fileFlag: '',
+      //         sort: index
+      //       }
+      //     })
+      //   }
+      //   let dataObj = {
+      //     attachmentList: this.datafilelist,
+      //     bom: this.dataForm,
+      //     lines: this.linesList,
+      //     form: form,
+      //     formNodeList,
+      //     nodeCondList: nodeJudg,
+      //     ccList: ccLists,
+      //     doubleSubmitFlag:this.isDoubleFlag
+      //   }
+      //   // 检查是否有循环问题
+      //   let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
+      //   if (!loopBugRes) { this.btnLoading = false }
+      //   else if (loopBugRes.data.length) {
+      //     let loopArr = []
+      //     loopBugRes.data.forEach(item => {
+      //       let temp = this.linesList.find(o => o.productId === item)
+      //       temp ? loopArr.push(temp.name) : ""
+      //     })
+      //     this.$message.error("子件与BOM树产生冲突：" + loopArr.join('、'))
+      //     this.btnLoading = false
+      //   } else {
+      //     formMethod(dataObj).then(res => {
+      //       let msg = res.msg
+      //       if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+      //       this.$message({
+      //         message: msg,
+      //         type: 'success',
+      //         duration: 1500,
+      //         onClose: () => {
+      //           this.visible = false
+      //           this.btnLoading = false
+      //           this.$emit('close', true)
+      //         }
+      //       })
 
-        const formMethod = this.dataForm.id ? updateBomData : addBomData
-        if (this.datafilelist.length) {
-          this.datafilelist.map((item, index) => {
-            item.bimAttachments = {
-              businessType: '',
-              documentId: item.id,
-              fileFlag: '',
-              sort: index
-            }
-          })
-        }
-        let dataObj = {
-          attachmentList: this.datafilelist,
-          bom: this.dataForm,
-          lines: this.linesList,
-          form: form,
-          formNodeList,
-          nodeCondList: nodeJudg,
-          ccList: ccLists,
-          doubleSubmitFlag:this.isDoubleFlag
-        }
-        // 检查是否有循环问题
-        let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
-        if (!loopBugRes) { this.btnLoading = false }
-        else if (loopBugRes.data.length) {
-          let loopArr = []
-          loopBugRes.data.forEach(item => {
-            let temp = this.linesList.find(o => o.productId === item)
-            temp ? loopArr.push(temp.name) : ""
-          })
-          this.$message.error("子件与BOM树产生冲突：" + loopArr.join('、'))
-          this.btnLoading = false
-        } else {
-          formMethod(dataObj).then(res => {
-            let msg = res.msg
-            if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
-
-             if (submitModel == "submit" ) {
-              this.submitmethodsTitle = "保存成功"
-            } else {
-              this.submitmethodsTitle = "提交成功"
-            }
-            this.tipsvisible = true
-          }).catch(() => {
-            this.btnLoading = false
-          })
-        }
-      } else {
-        this.btnLoading = false
-      }
+      //        if (submitModel == "submit" ) {
+      //         this.submitmethodsTitle = "保存成功"
+      //       } else {
+      //         this.submitmethodsTitle = "提交成功"
+      //       }
+      //       this.tipsvisible = true
+      //     }).catch(() => {
+      //       this.btnLoading = false
+      //     })
+      //   }
+      // } else {
+      //   this.btnLoading = false
+      // }
 
     },
     handleNodeClick(nodeData, node) {

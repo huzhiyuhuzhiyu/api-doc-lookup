@@ -33,19 +33,50 @@
       </el-row>
 
       <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head">
+                    <!-- <el-dropdown> -->
+        <div>
+            <el-button
+                :disabled="tableDataList.length > 0 ? false : true"
+                size="mini"
+                type="primary"
+                icon="el-icon-download"
+                @click="exportForm"
+                >
+                导出
+            </el-button>   
+            </div>
+           
+            <div class="JNPF-common-head-right">
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+                </el-tooltip>
+                <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                        @click="initData()" />
+                </el-tooltip>
+            </div>
+        </div>
         <JNPF-table v-loading="listLoading" highlight-current-row
-          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column>
+          :fixedNO="true" ref="dataTable" :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom"/>
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom"/>
           <el-table-column prop="drawingNo" label="产品图号" min-width="160" sortable="custom"/>
-          <el-table-column prop="spec" label="规格型号" min-width="140" />
-          <el-table-column prop="productType" label="物料分类" min-width="100">
+          <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" />
+          <el-table-column prop="productType" label="物料分类" min-width="100" sortable="custom">
             <template slot-scope="scope">
               <div> {{ productType.getType(scope.row.productType) }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="90"/>
+          <el-table-column prop="createByName" label="创建人" width="90" sortable="custom"/>
+          <el-table-column label="操作" width="180">
+            <template slot-scope="scope">
+              <el-button type="text" size="mini" @click.native="add(scope.row)">
+                新建
+              </el-button>
+            </template>
+          </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -99,7 +130,8 @@ export default {
         createTimeArr:[],
       },
       total: 0,
-      productType:productType
+      productType:productType,
+      columnList: ['name','createByName']
     }
   },
   created() {
@@ -109,6 +141,16 @@ export default {
     this.initData()
   },
   methods: {
+    add(item) {
+      console.log(item,'iiii')
+      this.$router.push({
+        name:"BOMCreate",
+        params: { id: item.id ,name:item.name} 
+      })
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -126,7 +168,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1125',
-          exportName: this.listQuery.productWithout === 'price' ? '采购无价格查询' :this.listQuery.productWithout === 'bom' ? '产品无BOM查询' : '产品无工艺查询',
+          exportName: this.listQuery.productWithout === 'price' ? '采购无价格查询' :this.listQuery.productWithout === 'bom' ? '待建BOM' : '产品无工艺查询',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }

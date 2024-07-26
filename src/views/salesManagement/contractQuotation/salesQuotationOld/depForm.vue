@@ -139,14 +139,14 @@
                       </template>
                       <template slot-scope="scope">
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.$index,$event)"
+                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.$index, $event)"
                           @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
                         <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位(主)" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="160">
                       <template slot="header">
                         <span class="required">*</span>数量
@@ -187,8 +187,8 @@
                         </el-form-item>
                       </template> -->
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;" :disabled="status"
-                          @change="changeTaxRate(scope.row, scope.$index)">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                          :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
@@ -624,6 +624,7 @@ export default {
       },
       codeConfig: {},
       selectName: [],
+      partnerInfo: {},
     }
   },
   watch: {
@@ -657,40 +658,7 @@ export default {
     this.getTaxRateFun()
   },
   methods: {
-    handleSelect(index,item) {
-      //返回的意见点击选择触发事件
-      console.log("产品数据", index,item);
-      
-      if (item.value) {
-        let obj = {
-          productDrawingNo: item.value,
-          customerDrawingNumber: "",
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [{
-            asc: false,
-            column: "quotationTime"
-          }],
-        }
-        getQuotationmxLists(obj).then(res => {
-          console.log("产品信息", res);
-          if(res.data.records.length){
-            this.$set(this.dataFormTwo.lines, index, res.data)
-          console.log(this.dataFormTwo.lines);
-          let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
-          if (!exists && res.data.taxRate) {
-            let obj = {
-              taxRate: res.data.taxRate * 1,
-              fullName: res.data.taxRate + '%',
-              enCode: res.data.taxRate + '%',
-            }
-            this.taxRateList.push(obj)
-          }
-          }
-        })
-      }
-    },
+
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -751,7 +719,7 @@ export default {
       if (!this.dataForm.cooperativePartnerId) {
         let air = []
         cb(air)
-         this.$message.error("请先选择客户!")
+        this.$message.error("请先选择客户!")
       } else {
         if (queryString.length >= 3) {
           let ProductListRequestObj = {
@@ -783,13 +751,14 @@ export default {
                 restaurants.forEach((item, index) => {
                   arr.push({
                     value: item.drawingNo,
+                    data: item,
                   })
                 })
                 cb(arr)
               } else {
                 let air = []
                 this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
-          queryString=""
+                queryString = ""
                 cb(air)
               }
 
@@ -805,14 +774,55 @@ export default {
         } else {
           let air = []
           cb(air)
-          
+
         }
       }
 
 
 
     },
+    handleSelect(index, item) {
+      //返回的意见点击选择触发事件
+      console.log("产品数据", index, item);
 
+      if (item.value) {
+        let obj = {
+          productDrawingNo: item.value,
+          customerDrawingNumber: "",
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [{
+            asc: false,
+            column: "quotationTime"
+          }],
+        }
+        getQuotationmxLists(obj).then(res => {
+          console.log("产品信息", res);
+          if (res.data.records.length) {
+            this.$set(this.dataFormTwo.lines, index, res.data)
+            console.log(this.dataFormTwo.lines);
+            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
+            if (!exists && res.data.taxRate) {
+              let obj = {
+                taxRate: res.data.taxRate * 1,
+                fullName: res.data.taxRate + '%',
+                enCode: res.data.taxRate + '%',
+              }
+              this.taxRateList.push(obj)
+            }
+          } else {
+            console.log("index", index);
+            item.taxRate = this.taxRate
+            item.data.customerDrawingNumber = this.dataFormTwo.lines[index].customerDrawingNumber
+            item.data.productDrawingNo = item.value
+            item.data.unitPrice = ""
+            this.$set(this.dataFormTwo.lines, index, item.data)
+            console.log("this.dataFormTwo.lines", this.dataFormTwo.lines);
+          }
+        })
+      }
+    },
 
 
 
@@ -993,6 +1003,7 @@ export default {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
       if (data && data.length) { // 数据有效，进行更新
         const partnerInfo = data[0].all
+        this.partnerInfo = data[0].all
         this.dataForm.cooperativePartnerId = partnerInfo.id
         this.dataForm.cooperativePartnerIdText = partnerInfo.name
         if (!this.status) {
@@ -1105,44 +1116,47 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
+      console.log("ROW", row, index);
       // 数量处理
-      row.num = row.num.replace(/[^\d.]/g, '');
-      if (row.num.length == 1 && row.num == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-      } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
-      } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
-        row.num = row.num.substring(1, row.num.length)
-      }
-      if (row.num.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.num.length; i++) {
-          const char = row.num[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
+      if (row.num) {
+        row.num = row.num.replace(/[^\d.]/g, '');
+        if (row.num.length == 1 && row.num == '.') {
+          // 如果第一位是小数点，则清空输入框
+          row.num = '';
+        } else if (row.num.length == 2 && row.num[0] == '0' && row.num[1] != '.') {
+          // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+          row.num = row.num.slice(0, 1) + '.' + row.num.slice(1);
+        } else if (row.num.length > 2 && row.num[0] == '0' && row.num[1] != '.') {
+          row.num = row.num.substring(1, row.num.length)
+        }
+        if (row.num.includes('.')) {
+          let dotCount = 0; // 小数点的数量
+          let result = ''; // 处理后的结果
+          for (let i = 0; i < row.num.length; i++) {
+            const char = row.num[i];
+            if (char === '.') {
+              if (dotCount === 0) {
+                // 第一个小数点保留
+                result += char;
+                dotCount++;
+              }
+            } else {
               result += char;
-              dotCount++;
             }
-          } else {
-            result += char;
           }
-        }
-        row.num = result;
-        let arr = row.num.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 2) {
-          arr[1] = arr[1].substring(0, 2)
-        }
-        row.num = arr[0] + '.' + arr[1]
-      } else {
-        if (row.num.length > 8) {
-          row.num = row.num.substring(0, 8);
+          row.num = result;
+          let arr = row.num.split('.')
+          if (arr[0].length > 8) {
+            arr[0] = arr[0].substring(0, 8)
+          }
+          if (arr[1].length > 2) {
+            arr[1] = arr[1].substring(0, 2)
+          }
+          row.num = arr[0] + '.' + arr[1]
+        } else {
+          if (row.num.length > 8) {
+            row.num = row.num.substring(0, 8);
+          }
         }
       }
       // if (row.num.length) {
@@ -1229,7 +1243,7 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.quotationNo = data.number
-      
+
       } catch (error) {
       }
     },

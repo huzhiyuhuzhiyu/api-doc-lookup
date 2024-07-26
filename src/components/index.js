@@ -33,6 +33,8 @@ import ComSelect2 from '@/components/Generator/components/ComSelect2'
 import ComSelect3 from '@/components/Generator/components/ComSelect3'
 import ComSelectList from '@/components/ComSelect-list'
 import ComSelectPage from '@/components/ComSelect-page'
+import ComSelectProduct from '@/components/ComSelect-product'
+import ComSelectPartner from '@/components/ComSelect-partner'
 import GroupSelect from '@/components/Generator/components/GroupSelect'
 import DepSelect from '@/components/Generator/components/DepSelect'
 import PosSelect from '@/components/Generator/components/PosSelect'
@@ -81,6 +83,8 @@ export default {
     Vue.component('ComSelect3', ComSelect3)
     Vue.component('ComSelectList', ComSelectList)
     Vue.component('ComSelectPage', ComSelectPage)
+    Vue.component('ComSelectProduct', ComSelectProduct)
+    Vue.component('ComSelectPartner', ComSelectPartner)
     Vue.component('GroupSelect', GroupSelect)
     Vue.component('DepSelect', DepSelect)
     Vue.component('PosSelect', PosSelect)

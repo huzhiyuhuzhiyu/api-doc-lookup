@@ -63,6 +63,9 @@
             <el-form-item label="功能状态" prop="state">
               <el-switch v-model="dataForm.state" :active-value="1" :inactive-value="0" />
             </el-form-item>
+            <el-form-item label="流程状态" prop="approvalFlag">
+              <el-switch v-model="dataForm.approvalFlag" :active-value="true" :inactive-value="false" />
+            </el-form-item>
             <el-form-item label="功能说明" prop="description">
               <el-input v-model="dataForm.description" placeholder="功能说明" type="textarea"
                 :rows="3" />

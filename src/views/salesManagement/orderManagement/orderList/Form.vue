@@ -289,6 +289,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
+                      <template slot="header">
+                        <span class="required">*</span>单价(含税)
+                      </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.price" :disabled="btnType == 'look' ? true : false"
                           @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
@@ -1228,6 +1231,7 @@ export default {
       getDetailByDrawNo(data.drawingNo).then(res => {
         if (res.data) {
           res.data.productCode = res.data.code
+          res.data.productsId=res.data.id
           this.$set(this.productData, idx, res.data)
           console.log(this.productData);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
@@ -2806,7 +2810,7 @@ export default {
           this.dataForm.documentStatus = value
           this.dataForm.excludingTaxTotalAmount = this.excludingTaxAmount
           this.dataForm.totalAmount = this.totalAmount
-          this.dataForm.taxAmount = this.totalAmount - this.excludingTaxAmount
+          this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount,2)
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
@@ -2852,15 +2856,7 @@ export default {
                 })
                 break
               }
-              if (Number(item.assistantNum) == 0) {
-                submitFlag = false
-                this.$message({
-                  message: "第" + (index + 1) + "行产品的副数量必须大于0",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
-              }
+            
               if (!item.deliveryDate) {
                 submitFlag = false
                 this.$message({

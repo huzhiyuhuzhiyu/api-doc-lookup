@@ -88,6 +88,8 @@ export default {
           formData[prop] = value;
         }
       });
+      console.log(formData,'formData');
+      
       this.$emit('input', { ...formData });
     }
   }

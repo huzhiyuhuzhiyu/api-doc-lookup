@@ -5,7 +5,7 @@
       label-width="120px">
 
       <el-form-item label="产线编码" prop="code">
-        <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20" :disabled="btntype ? true : false" />
+        <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
       </el-form-item>
       <el-form-item label="产线名称" prop="name">
         <el-input v-model.trim="dataForm.name" placeholder="请输入产线名称" maxlength="20" :disabled="btntype ? true : false" />
@@ -160,6 +160,7 @@ export default {
         }]
       },
       btntype: false,
+      codeConfig: {},
       dataRule: {
         code: [
           { required: true, message: '请输入产线编码', trigger: 'blur' },
@@ -190,6 +191,15 @@ export default {
   created() {
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {}
+    },
     // 选择工位弹框
     onOrganizeChangeTwo(val, data, param) {
       if (!data) return
@@ -267,6 +277,7 @@ export default {
             this.loading = false
           })
         } else {
+          this.fetchData('bm_sc_cx')
           this.formLoading = false
           this.dataFormTwo = []
         }

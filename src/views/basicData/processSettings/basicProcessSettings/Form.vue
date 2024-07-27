@@ -25,7 +25,7 @@
                 <el-col :span="12">
                   <el-form-item label="工序编码" prop="code">
                     <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                      placeholder="请输入工序编码" maxlength="20" :disabled="disabled"></el-input>
+                      placeholder="请输入工序编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -70,8 +70,8 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="生产资源配置" name="zypz">
-            <div class="main">
-              <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch>
+            <div>
+              <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch style="margin-top:-10px">
                 <div v-if="type !== 'look'">
                   <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
                     icon="el-icon-plus" :disabled="type == 'look' ? true : false"
@@ -328,6 +328,8 @@ export default {
       classData: [],
       equipData: [],
       toolData: [],
+      btntype:false,
+      codeConfig: {},
       requestObj2: {    //班组参数
         pageNum: 1,
         orderItems: [{
@@ -442,6 +444,16 @@ export default {
     // this.getBusinessType()
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.dataForm.code = data.number
+
+        }
+      } catch (error) {}
+    },
     // 单个删除
     handlerDelete(index, type) {
       if (type == 'personnel') {
@@ -820,6 +832,7 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.type === "add") {
           this.clearData()
+          this.fetchData('bm_gy_gx')
         } else {
           console.log("工序详情5555",);
           this.loading = true

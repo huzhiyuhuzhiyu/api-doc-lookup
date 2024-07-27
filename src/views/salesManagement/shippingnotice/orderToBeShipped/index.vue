@@ -129,7 +129,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <addForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm" :customList="customList" />
+    <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     
   </div>
 </template>
@@ -143,11 +143,11 @@ import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
-import addForm from "../saleMetalworking/Form.vue"
+import AddForm from "../saleMetalworking/Form.vue"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
+  components: { Form, UserRelationList,AddForm, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
       addFormVisible:false,
@@ -649,7 +649,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1005',
-        exportName: '销售订单明细',
+        exportName: '待发货订单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -682,8 +682,8 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 8px!important;
+
   margin-bottom: 5px;
 }
 

@@ -6,7 +6,7 @@
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="班组编码" prop="code">
-            <el-input v-model="dataForm.code" placeholder="请输入班组编码" maxlength="20" :disabled="btntype ? true : false" />
+            <el-input v-model="dataForm.code" placeholder="请输入班组编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
           </el-form-item>
         </el-col>
 
@@ -64,7 +64,7 @@
         </el-col>
 
         <el-col :span="24">
-          <el-table :data="lines" height="400" highlight-current-row>
+          <el-table :data="lines" height="300" highlight-current-row>
             <el-table-column prop="personnelIdText" label="人员名称" width="120">
               <template slot="header">
                   <span class="required">*</span>人员名称
@@ -228,12 +228,21 @@ export default {
         reportingType: [{ required: true, message: "请选择报工类型", trigger: "change" }]
 
       },
+      codeConfig: {},
     }
   },
   created() {
   },
   methods: {
-
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {}
+    },
     hangleC(e) {
       console.log(e);
       if (this.dataForm.workType == "different") {
@@ -293,6 +302,7 @@ export default {
 
           })
         } else {
+          this.fetchData('bm_sc_bz')
           this.formLoading = false
         }
       })

@@ -8,14 +8,14 @@
         <el-col :sm="12" :xs="24">
           <el-form-item label="收件人" prop="recipient">
             <el-input clearable v-model="dataForm.recipient" placeholder="请输入收件人" :disabled="type == 'look'"
-                        maxlength="20" />
+              maxlength="20" />
           </el-form-item>
         </el-col>
 
         <el-col :sm="12" :xs="24">
           <el-form-item label="收件人电话" prop="phone">
             <el-input clearable v-model="dataForm.phone" placeholder="请输入收件人电话" :disabled="type == 'look'"
-                        maxlength="20" />
+              maxlength="20" />
           </el-form-item>
         </el-col>
         <el-col :sm="12" :xs="24">
@@ -28,7 +28,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :sm="12" :xs="24" v-if="this.dataForm.country ==='CN'">
+        <el-col :sm="12" :xs="24" v-if="this.dataForm.country === 'CN'">
           <el-form-item label="省" prop="province">
 
             <el-select clearable v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
@@ -40,7 +40,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :sm="12" :xs="24" v-if="this.dataForm.country ==='CN'">
+        <el-col :sm="12" :xs="24" v-if="this.dataForm.country === 'CN'">
           <el-form-item label="市" prop="city">
             <el-select clearable v-model="dataForm.city" placeholder="请选择市" style="width: 100%;"
               :disabled="type == 'look'">
@@ -51,7 +51,7 @@
           </el-form-item>
         </el-col>
 
-        <el-col :sm="12" :xs="24" v-if="this.dataForm.country ==='CN'">
+        <el-col :sm="12" :xs="24" v-if="this.dataForm.country === 'CN'">
           <el-form-item label="区" prop="area">
 
             <el-select clearable v-model="dataForm.area" placeholder="请选择区" style="width: 100%;"
@@ -62,10 +62,10 @@
           </el-form-item>
         </el-col>
         <el-col :sm="24" :xs="24">
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="dataForm.address" type="textarea" :rows="3" maxlength="200" placeholder="请输入地址" />
-        </el-form-item>
-      </el-col>
+          <el-form-item label="地址" prop="address">
+            <el-input v-model="dataForm.address" type="textarea" :rows="3" maxlength="200" placeholder="请输入地址" />
+          </el-form-item>
+        </el-col>
       </el-form>
     </el-row>
     <span slot="footer" class="dialog-footer">
@@ -81,7 +81,7 @@
 import { getCounryData, getCooperativeData } from '@/api/basicData/index'
 import { getProvinceList, } from '@/api/system/province'
 import formValidate from "@/utils/formValidate";
-import { addPartnerAddress, editaddress, getAddressInfo, deleteAddress,detailAddress } from '@/api/basicData/index'
+import { addPartnerAddress, editaddress, getAddressInfo, deleteAddress, detailAddress } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -103,8 +103,8 @@ export default {
         recipient: "",
         remark: ""
       },
-      nodeId:-1,
-      countryList:[],
+      nodeId: -1,
+      countryList: [],
       provinces: [],
       cities: [],
       area: [],
@@ -126,12 +126,7 @@ export default {
   methods: {
     changeCountry(e) {
       console.log(e);
-      this.dataForm.country =e.code
-      if (this.dataForm.country!='CN') {
-        this.dataForm.province = ''
-        this.dataForm.city = ''
-        this.dataForm.area = ''
-      }
+      this.dataForm.country
     },
     // 国家
     getCounryDatas() {
@@ -167,7 +162,7 @@ export default {
       this.area = []
       this.cities = []
 
-      if (this.type === 'add') {
+      if (this.type === 'add' || this.type === 'edit') {
         this.dataForm.city = ""
         this.dataForm.area = ""
       }
@@ -189,7 +184,7 @@ export default {
       console.log("item", item);
       this.area = []
 
-      if (this.type === 'add') {
+      if (this.type === 'add' || this.type === 'edit') {
         this.dataForm.area = ""
         this.dataForm.city = ""
       }
@@ -203,7 +198,7 @@ export default {
       console.log(item, row);
       console.log("item", item);
       // this.dataForm.city = ""
-      if (this.type === 'add') {
+      if (this.type === 'add' || this.type === 'edit') {
         this.dataForm.area = ""
       }
       getProvinceList(item.id).then(res => {
@@ -212,10 +207,11 @@ export default {
       })
     },
 
-    init(id, type,parentId) {
+    init(id, type, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
-      console.log(id,type,parentId);
+      // console.log(id,type,parentId);
+      this.type = type
       this.dataForm.cooperativePartnerId = parentId
       this.organizeIdTree = []
       this.formLoading = true
@@ -223,7 +219,6 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           detailAddress(this.dataForm.id).then(res => {
-            console.log(res,'111');
             if (res.data.province) {
               let obj = {
                 id: res.data.province
@@ -268,7 +263,7 @@ export default {
                 this.visible = false
                 this.btnLoading = false
                 this.$emit('close', true)
-                
+
               }
             })
           }).catch(() => {
@@ -282,7 +277,7 @@ export default {
 </script>
 
 <style scoped>
-::v-deep .JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body{
-      padding: 10px !important;
+::v-deep .JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 10px !important;
 }
 </style>

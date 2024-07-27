@@ -35,17 +35,16 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-              @click="visible = true">更多查询</el-button>
+     
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button  type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
+              <el-button  size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
                 取消退货
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
@@ -124,7 +123,7 @@
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  :disabled="scope.row.documentStatus == 'draft'||scope.row.deliveryStatus == 'canceled' ? false : true"
                   @click="handleDel(scope.row.id)">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">

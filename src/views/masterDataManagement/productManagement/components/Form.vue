@@ -236,9 +236,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          this.dataForm.code = orderNo
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = true
           

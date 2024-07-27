@@ -1,6 +1,6 @@
 <template>
-  <el-dialog title="收货地址" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll append-to-body
-    class="JNPF-dialog JNPF-dialog_center" width="71%">
+  <el-dialog title="收货地址" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll
+    class="JNPF-dialog JNPF-dialog_center" width="1000px">
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
    
         <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -10,7 +10,7 @@
               <topOpts @add="addSupplier('', 'add')" />
               <div class="JNPF-common-head-right">
                 <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                  <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData(id)" />
+                  <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
                 </el-tooltip>
               </div>
             </div>
@@ -24,13 +24,13 @@
                   </template>
                 </el-table-column> -->
 
-                <el-table-column prop="recipient" label="收件人"  min-width="140"  />
-              <el-table-column prop="phone" label="收件人电话"  min-width="140"  />
-              <el-table-column prop="countryText" label="国家"  min-width="140"  />
-              <el-table-column prop="provinceText" label="省"  min-width="140"  />
-              <el-table-column prop="cityText" label="市" min-width="140"  />
-              <el-table-column prop="areaText" label="区" min-width="140" />
-              <el-table-column prop="defaultFlag" label="是否默认" min-width="120">
+              <el-table-column prop="recipient" label="收件人"  width="160"  />
+              <el-table-column prop="phone" label="收件人电话"  width="160"  />
+              <el-table-column prop="countryText" label="国家"  width="160"  />
+              <el-table-column prop="provinceText" label="省"  width="160"  />
+              <el-table-column prop="cityText" label="市" width="160"  />
+              <el-table-column prop="areaText" label="区" width="160" />
+              <el-table-column prop="defaultFlag" label="是否默认" width="160">
                 <template slot-scope="scope">
                     <div v-if="scope.row.defaultFlag == '1'">
                       <span>是</span>
@@ -90,27 +90,23 @@ export default {
       id:'',
       cooperativePartnerId: '',
       total: 0,
-
     }
   },
   methods: {
     // 获取列表数据
     initData(id) {
       this.visible = true
-        this.listLoading  = true
-
       this.id = id
       this.cooperativePartnerId = id
       getAddressInfo(id).then(res => {
-        console.log(res);
-        this.listLoading  = false
+        console.log(res,'地址列表');
+        // this.listLoading  = true
         this.tableData = res.data
         
       })
     },
     changeVal(val) {
       if (val) {
-        console.log(111);
         this.visible = false
         this.$emit('getChangeAddress',val)
       }
@@ -190,11 +186,5 @@ export default {
 
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
-}
-::v-deep .JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body{
-      padding: 10px !important;
-}
-::v-deep .el-dialog__body{
-  padding: 10px !important;
 }
 </style>

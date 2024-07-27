@@ -7,7 +7,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
+                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号"
                   clearable />
               </el-form-item>
             </el-col>
@@ -372,7 +372,7 @@ export default {
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then(res => {
         console.log("合计", res);
-        this.totalNum = res.data ? res.data.total.num : 0
+        this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
     dateFun(dateStr) {
@@ -616,7 +616,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType:  '1005',
-        exportName:  '销售订单明细',
+        exportName:  '延期发货预警',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -649,11 +649,13 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding: 8px!important;
+
   margin-bottom: 5px;
 }
-
+.JNPF-common-head{
+  padding: 8px;
+}
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 0px !important;
 }

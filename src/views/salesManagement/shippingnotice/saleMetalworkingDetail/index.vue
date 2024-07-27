@@ -75,7 +75,7 @@
             <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-            <el-table-column prop="phoncustomerDrawingNumbere" label="客户料号" width="160" sortable="custom" />
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" />
@@ -88,7 +88,7 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="remark" label="订单号" width="120" sortable="custom" />
-            <el-table-column prop="remark" label="发货标识" width="120" sortable="custom">
+            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
                 <template slot-scope="scope">
                   <div v-if="scope.row.exchangeGoodsFlag">
                     换货发货
@@ -238,9 +238,6 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "createTime"
         }],
         superQuery: {},
       },

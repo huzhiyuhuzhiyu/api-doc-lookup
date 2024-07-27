@@ -632,8 +632,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1005',
-        exportName: this.exportTableRef === '销售订单明细',
+        exportType: '1005',
+        exportName:   '销售订单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

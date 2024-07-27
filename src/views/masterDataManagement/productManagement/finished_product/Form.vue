@@ -12,9 +12,9 @@
       </div>
       <div class="main" v-loading="formLoading">
         <!-- 使用对象结合自定义组件渲染内容 -->
-        <!-- <el-tabs v-model="activeName"> -->
+        <el-tabs v-model="activeName">
         <!-- 普通属性 -->
-        <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
+        <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
         <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
           <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
             <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
@@ -26,8 +26,8 @@
             <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
           </el-collapse-item>
         </el-collapse>
-        <!-- </el-tab-pane>
-        </el-tabs> -->
+        </el-tab-pane>
+        </el-tabs>
         
       </div>
     </div>
@@ -709,6 +709,10 @@ export default {
   padding: 1;
 }
 
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
 }
@@ -729,11 +733,13 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 5px 0px;
+  padding: 0 10px 0px;
   border-top: none !important;
+
 }
+
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 5px;
+  padding-bottom: 0px
 }
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;

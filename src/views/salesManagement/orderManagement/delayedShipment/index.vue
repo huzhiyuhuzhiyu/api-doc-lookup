@@ -361,8 +361,8 @@ export default {
     const end = new Date();
     const start = new Date();
     end.setDate(end.getDate() + 3);
-    this.deliveryDateArr = [start, end];
-    this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+    this.deliveryDateArr = ["", end];
+    this.orderForm.deliveryStartTime = ""
     this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -402,8 +402,8 @@ export default {
       const end = new Date();
       const start = new Date();;
       end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = [start, end];
-      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -415,8 +415,8 @@ export default {
 
       end.setDate(end.getDate() + 7);
 
-      this.deliveryDateArr = [start, end];
-      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -427,8 +427,8 @@ export default {
       let start = new Date()
       end.setDate(end.getDate() + 30);
 
-      this.deliveryDateArr = [start, end];
-      this.orderForm.deliveryStartTime = this.dateFun(this.deliveryDateArr[0])
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -615,8 +615,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1005',
-        exportName: this.exportTableRef === '销售订单明细',
+        exportType:  '1005',
+        exportName:  '销售订单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

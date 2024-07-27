@@ -42,7 +42,7 @@
 
                   <el-col :sm="8" :xs="24">
                     <el-form-item label="客户名称" prop="partnerName">
-                      <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog">
+                      <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType=='look'" readonly @focus="openDialog">
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -153,22 +153,23 @@
               </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                 <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
-                  v-loading="tableloading"> 
+                  v-loading="tableloading">
                   <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-       
-              
+
+
 
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip key="166">
                   </el-table-column>
-          
+
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                   </el-table-column>
-                  
+
                   <el-table-column prop="mainUnit" label="单位" width="290" key="13" show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="waitDeliverNum" label="待发货数量" width="120" key="6" show-overflow-tooltip>
+                  <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
+                    show-overflow-tooltip>
                   </el-table-column>
                   <el-table-column prop="deliveryQuantity" label="发货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                     key="21">
@@ -191,22 +192,27 @@
                         :disabled="btnType == 'look' ? true : false" maxlength="200" />
                     </template>
                   </el-table-column>
-                  <el-table-column prop="deliveryDate" label="交货日期" width="160"  />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160"  />
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="160"  />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="160"  />
-                  <el-table-column prop="oil" label="油脂" width="160"  />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="160"  />
-                  <el-table-column prop="clearance" label="游隙" width="160"  />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="160"  />
-                  <el-table-column prop="orderNo" label="订单号" width="160"  />
-                  <el-table-column prop="workOrderNo" label="工作令号" width="160"  />
+                  <el-table-column prop="deliveryDate" label="交货日期" width="160" />
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
+                  <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                  <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
+                  <el-table-column prop="oil" label="油脂" width="160" />
+                  <el-table-column prop="oilQuantity" label="油脂量" width="160" />
+                  <el-table-column prop="clearance" label="游隙" width="160" />
+                  <el-table-column prop="packagingMethod" label="包装方式" width="160" />
+                  <el-table-column prop="orderNo" label="订单号" width="160" />
+                  <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                   <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                     <template slot-scope="scope">
                       <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
+                <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                    <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
+                    <span style="font-weight:500;margin:0 10px">总待发货数量：{{ totalWaitDeliverNum}}</span>
+                    <span style="font-weight:500;margin:0 10px">总发货数量：{{ totalDeliveryQuantity }}</span>
+                  </div>
               </el-form>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
@@ -334,7 +340,8 @@
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
-                <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC @selection-change="handleSelectionChangeAllPruduct">
+                <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
+                  @selection-change="handleSelectionChangeAllPruduct">
                   <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
                   <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                   <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
@@ -359,7 +366,7 @@
             </div>
           </div>
           <span slot="footer" class="dialog-footer">
-            <el-button @click=" productVisible= false">{{ $t('common.cancelButton') }}</el-button>
+            <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
             <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
               确定</el-button>
           </span>
@@ -394,8 +401,8 @@ export default {
   },
   data() {
     return {
-      productList:[],
-      productTotal:0,
+      productList: [],
+      productTotal: 0,
       tableloading: false,
       deliveryDateArr: [],
       getsaleOrderList,
@@ -662,8 +669,34 @@ export default {
         }],
 
       },
-      selectArr:[],
+      selectArr: [],
     }
+  },
+  computed: {
+    // 总发货数量
+    totalDeliveryQuantity: function () {
+      var totalNum = 0;
+      for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].deliveryQuantity])
+      }
+      return totalNum
+    },
+    // 总代发货数量
+    totalWaitDeliverNum: function () {
+      var totalNum = 0;
+      for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].waitDeliverNum])
+      }
+      return totalNum
+    },
+    // 总订单数量
+    totalOrdersNum: function () {
+      var totalNum = 0;
+      for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].ordersNum])
+      }
+      return totalNum
+    },
   },
   created() {
     // this.handleChange()
@@ -686,10 +719,10 @@ export default {
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       getsaleOrderDetailList(this.orderForm).then(res => {
-        console.log("产品",res);
+        console.log("产品", res);
         this.productList = res.data.records
         this.productTotal = res.data.total
-        this.listLoading = false 
+        this.listLoading = false
       }).catch(() => {
         this.listLoading = false
       })
@@ -724,25 +757,9 @@ export default {
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.productVisible = true
-    this.searchProductFun()
+      this.searchProductFun()
     },
-    //数据格式化
-    listDataFormatting(res) {
-      res.data.records.forEach((item, index) => {
-        if (item.orderType === 'normal') {
-          item.orderType = '正常订单'
-        } else if (item.orderType === 'prediction') {
-          item.orderType = '预测订单'
-        } else if (item.orderType === 'sample') {
-          item.orderType = '样品订单'
-        } else if (item.orderType === 'stock_up') {
-          item.orderType = '备货订单'
-        } else if (item.orderType === 'urgent') {
-          item.orderType = '急件订单'
-        }
-      })
-      return res.data.records
-    },
+
     changeclick(e) {
       if (this.dataFormTwo.data.length) {
         this.$confirm('切换换货标识，将清空产品数据,是否继续？', '提示', {
@@ -786,7 +803,7 @@ export default {
         }
       };
     },
- 
+
     //选择发货方式
     changeDelivery(val) {
       if (val === 'self_pickup') {
@@ -838,18 +855,27 @@ export default {
     //   this.parentId = s.parentId
     //   this.dataForm.userDepartmentName = s.organize
     // },
-    // 选完客户订单数据后 渲染在列表上
+    // 选完订单明细后 渲染在列表上
     submitAllProduct() {
-      if(!this.selectArr.length) return this.$message.error("请选择产品！")
+      if (!this.selectArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
-      this.selectArr.forEach(item => { 
-        getOrderDetail(item.id).then(res => {
-          res.data.orderLines.map((item) => {
-            this.dataFormTwo.data.push(item)
-          })
-        })
+      this.selectArr.forEach(item => {
+        item.ordersNum = item.num
+        this.dataFormTwo.data.push(item)
       });
+      let uniqueArr = [];
+      let idSet = new Set();
+
+      this.dataFormTwo.data.forEach(item => {
+        if (!idSet.has(item.id)) {
+          uniqueArr.push(item);
+          idSet.add(item.id);
+        }
+      });
+      this.dataFormTwo.data=uniqueArr
+      console.log("this.dataFormTwo", this.dataFormTwo.data);
     },
+
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -967,55 +993,55 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-        // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
-        // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
-        // 如果计算方向是除 则副数量等于主数量*套数/转换系数
-        // 使用正则表达式验证输入内容
-        if (!row.deliveryQuantity) {
-          return
-        }
-        row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '');
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      if (!row.deliveryQuantity) {
+        return
+      }
+      row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '');
 
-        if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
-          // 如果第一位是小数点，则清空输入框
-          row.deliveryQuantity = '';
-        } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
-          // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-          row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1);
-        } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
-          row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
-        }
-        if (row.deliveryQuantity.includes('.')) {
-          let dotCount = 0; // 小数点的数量
-          let result = ''; // 处理后的结果
-          for (let i = 0; i < row.deliveryQuantity.length; i++) {
-            const char = row.deliveryQuantity[i];
-            if (char === '.') {
-              if (dotCount === 0) {
-                // 第一个小数点保留
-                result += char;
-                dotCount++;
-              }
-            } else {
+      if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.deliveryQuantity = '';
+      } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1);
+      } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
+      }
+      if (row.deliveryQuantity.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.deliveryQuantity.length; i++) {
+          const char = row.deliveryQuantity[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
               result += char;
+              dotCount++;
             }
-          }
-          row.deliveryQuantity = result;
-          let arr = row.deliveryQuantity.split('.')
-          if (arr[0].length > 8) {
-            arr[0] = arr[0].substring(0, 8)
-          }
-          if (arr[1].length > 2) {
-            arr[1] = arr[1].substring(0, 2)
-          }
-          row.deliveryQuantity = arr[0] + '.' + arr[1]
-        } else {
-          if (row.deliveryQuantity.length > 8) {
-            row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
+          } else {
+            result += char;
           }
         }
+        row.deliveryQuantity = result;
+        let arr = row.deliveryQuantity.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 2) {
+          arr[1] = arr[1].substring(0, 2)
+        }
+        row.deliveryQuantity = arr[0] + '.' + arr[1]
+      } else {
+        if (row.deliveryQuantity.length > 8) {
+          row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
+        }
+      }
     },
-   
+
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
@@ -1183,7 +1209,7 @@ export default {
       loop(node)
       return fullPath
     },
- 
+
     toggleExpand(expands) {
       this.refreshTree = false
       this.expands = expands
@@ -1290,10 +1316,10 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        console.log("data,",data);
+        console.log("data,", data);
         this.codeConfig = data
-          this.dataForm.orderNo = data.number
-          
+        this.dataForm.orderNo = data.number
+
       } catch (error) {
       }
     },
@@ -1328,7 +1354,7 @@ export default {
             return
           }
 
-      
+
           if (this.iszhi) {
             this.iszhi = false
             return
@@ -1367,7 +1393,7 @@ export default {
             attachmentList: this.datafilelist,
             notice: this.dataForm,
             noticeLineList: [],
-            // sourceNoticeList: this.btnType == 'add' ? this.dataFormOne.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormOne.data
+            sourceNoticeList: this.btnType == 'add' ? this.dataFormTwo.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormTwo.data
           }
           this.dataFormTwo.data.forEach((item, index) => {
             let dep1 = {
@@ -1449,51 +1475,16 @@ export default {
               obj.noticeLineList.push(dep2)
             }
           })
-      
-            let isQuantity = this.dataFormTwo.data.some((item, index) => {
-              return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
-            })
-            if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
-              this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-              }).then(() => {
-                this.btnLoading = true
-                let formMethod = null;
-                if (this.btnType == 'edit') {
-                  formMethod = editQuotationMsendlist
-                } else if (this.btnType == 'add' || this.btnType == 'copy') {
-                  obj.notice.deliveryStatus = 'undelivered'
-                  formMethod = addQuotationsendlist
-                }
-                formMethod(obj).then(res => {
-                  let msg = "";
-                  if (formMethod == addQuotationsendlist) {
-                    msg = "新建成功"
-                  } else if (value == 'draft') {
-                    msg = "保存成功"
-                  } else if (value == 'submit') {
-                    msg = '提交成功'
-                  }
-                  this.$message({
-                    message: msg,
-                    type: 'success',
-                    duration: 1500,
-                  })
-                  this.visible = false
-                  this.btnLoading = false
-                  this.$emit('close', true)
-                }).catch(() => {
-                  this.btnLoading = false
-                })
-              }).catch(() => {
-                this.$message({
-                  type: 'info',
-                  message: '已取消'
-                })
-              })
-            } else {
+
+          let isQuantity = this.dataFormTwo.data.some((item, index) => {
+            return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
+          })
+          if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
+            this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
               this.btnLoading = true
               let formMethod = null;
               if (this.btnType == 'edit') {
@@ -1522,7 +1513,42 @@ export default {
               }).catch(() => {
                 this.btnLoading = false
               })
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消'
+              })
+            })
+          } else {
+            this.btnLoading = true
+            let formMethod = null;
+            if (this.btnType == 'edit') {
+              formMethod = editQuotationMsendlist
+            } else if (this.btnType == 'add' || this.btnType == 'copy') {
+              obj.notice.deliveryStatus = 'undelivered'
+              formMethod = addQuotationsendlist
             }
+            formMethod(obj).then(res => {
+              let msg = "";
+              if (formMethod == addQuotationsendlist) {
+                msg = "新建成功"
+              } else if (value == 'draft') {
+                msg = "保存成功"
+              } else if (value == 'submit') {
+                msg = '提交成功'
+              }
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+              })
+              this.visible = false
+              this.btnLoading = false
+              this.$emit('close', true)
+            }).catch(() => {
+              this.btnLoading = false
+            })
+          }
         }
       })
     }
@@ -1638,5 +1664,8 @@ $footerPadding: '10px';
 ::v-deep .has-gutter .el-table__cell.gutter {
   border-bottom: 1px solid #ebeef5;
   background-color: #f5f7fa;
+}
+.JNPF-common-search-box {
+  padding: 8px 0px 0;
 }
 </style>

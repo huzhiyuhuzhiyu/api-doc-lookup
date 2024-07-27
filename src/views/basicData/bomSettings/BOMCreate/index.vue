@@ -1,7 +1,8 @@
 <template>
+   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form" ref="main">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <!-- <el-page-header @back="goBack" :content="title" /> -->
+        <el-page-header @back="goBack" content="BOM创建" />
         <div class="options" v-if="btnType !== 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
@@ -158,6 +159,7 @@
           </span>
         </el-dialog>
     </div>
+  </transition>
 </template>
 
 <script>
@@ -838,71 +840,71 @@ export default {
       }
       console.log(this.dataForm,'dataForm')
       // // 自动聚焦未使用则提交
-      // if (submitFlag) {
-      //   // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
-      //   // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
-      //   this.dataForm.documentStatus = submitModel
+      if (submitFlag) {
+        // this.dataForm.version = this.dataForm.hasOwnProperty('version') ? (this.dataForm.version + 1) : 1
+        // this.dataForm.approvalStatus = this.dataForm.documentStatus === "submit" ? this.dataForm.approvalStatus : ""
+        this.dataForm.documentStatus = submitModel
 
-      //   const formMethod = this.dataForm.id ? updateBomData : addBomData
-      //   if (this.datafilelist.length) {
-      //     this.datafilelist.map((item, index) => {
-      //       item.bimAttachments = {
-      //         businessType: '',
-      //         documentId: item.id,
-      //         fileFlag: '',
-      //         sort: index
-      //       }
-      //     })
-      //   }
-      //   let dataObj = {
-      //     attachmentList: this.datafilelist,
-      //     bom: this.dataForm,
-      //     lines: this.linesList,
-      //     form: form,
-      //     formNodeList,
-      //     nodeCondList: nodeJudg,
-      //     ccList: ccLists,
-      //     doubleSubmitFlag:this.isDoubleFlag
-      //   }
-      //   // 检查是否有循环问题
-      //   let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
-      //   if (!loopBugRes) { this.btnLoading = false }
-      //   else if (loopBugRes.data.length) {
-      //     let loopArr = []
-      //     loopBugRes.data.forEach(item => {
-      //       let temp = this.linesList.find(o => o.productId === item)
-      //       temp ? loopArr.push(temp.name) : ""
-      //     })
-      //     this.$message.error("子件与BOM树产生冲突：" + loopArr.join('、'))
-      //     this.btnLoading = false
-      //   } else {
-      //     formMethod(dataObj).then(res => {
-      //       let msg = res.msg
-      //       if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-      //       this.$message({
-      //         message: msg,
-      //         type: 'success',
-      //         duration: 1500,
-      //         onClose: () => {
-      //           this.visible = false
-      //           this.btnLoading = false
-      //           this.$emit('close', true)
-      //         }
-      //       })
+        const formMethod = this.dataForm.id ? updateBomData : addBomData
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: '',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
+        let dataObj = {
+          attachmentList: this.datafilelist,
+          bom: this.dataForm,
+          lines: this.linesList,
+          form: form,
+          formNodeList,
+          nodeCondList: nodeJudg,
+          ccList: ccLists,
+          doubleSubmitFlag:this.isDoubleFlag
+        }
+        // 检查是否有循环问题
+        let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
+        if (!loopBugRes) { this.btnLoading = false }
+        else if (loopBugRes.data.length) {
+          let loopArr = []
+          loopBugRes.data.forEach(item => {
+            let temp = this.linesList.find(o => o.productId === item)
+            temp ? loopArr.push(temp.name) : ""
+          })
+          this.$message.error("子件与BOM树产生冲突：" + loopArr.join('、'))
+          this.btnLoading = false
+        } else {
+          formMethod(dataObj).then(res => {
+            let msg = res.msg
+            if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
 
-      //        if (submitModel == "submit" ) {
-      //         this.submitmethodsTitle = "保存成功"
-      //       } else {
-      //         this.submitmethodsTitle = "提交成功"
-      //       }
-      //       this.tipsvisible = true
-      //     }).catch(() => {
-      //       this.btnLoading = false
-      //     })
-      //   }
-      // } else {
-      //   this.btnLoading = false
-      // }
+             if (submitModel == "submit" ) {
+              this.submitmethodsTitle = "保存成功"
+            } else {
+              this.submitmethodsTitle = "提交成功"
+            }
+            this.tipsvisible = true
+          }).catch(() => {
+            this.btnLoading = false
+          })
+        }
+      } else {
+        this.btnLoading = false
+      }
 
     },
     handleNodeClick(nodeData, node) {
@@ -1201,7 +1203,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px 30px;
+  padding: 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -1220,7 +1222,7 @@ export default {
 }
 ::v-deep .el-tabs__content {
   height: calc(100% - 47px) !important;
- // overflow:auto!important;
+	overflow-y: auto;
 }
 .required {
   color: red;

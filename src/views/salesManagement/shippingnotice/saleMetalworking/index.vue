@@ -248,6 +248,7 @@ export default {
         productDrawingNo: "",
         pageNum: 1,
         pageSize: 20,
+        returnDeliveryType: 'delivery',
         rdeDate: "",
         rdsDate: "",
         orderItems: [{

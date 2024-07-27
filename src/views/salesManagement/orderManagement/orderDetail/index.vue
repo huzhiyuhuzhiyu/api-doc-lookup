@@ -666,11 +666,13 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding-top: 8px;
-  padding-bottom: 8px;
+ padding: 8px!important;
+
   margin-bottom: 5px;
 }
-
+.JNPF-common-head{
+  padding: 8px;
+}
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 0px !important;
 }

@@ -15,7 +15,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName" @tab-click="handleClick" class="el-table">
+        <el-tabs v-model="activeName" @tab-click="handleClick" >
           <el-tab-pane label="订单信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -1596,6 +1596,18 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
+}
+.options{
+  display: inline-block;
+    float: right;
+}
+.pageTitle{
+  display: inline-block;
+    font-size: 18px;
+    color: #303133;
+    height: 100%;
+    line-height: 36px;
+    font-weight: 700;
 }
 </style>
 

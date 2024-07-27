@@ -1231,7 +1231,7 @@ export default {
       getDetailByDrawNo(data.drawingNo).then(res => {
         if (res.data) {
           res.data.productCode = res.data.code
-          res.data.productsId=res.data.id
+          res.data.productsId = res.data.id
           this.$set(this.productData, idx, res.data)
           console.log(this.productData);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
@@ -1265,8 +1265,8 @@ export default {
           console.log(777, this.productData);
           // this.productData.push(res.data.records[0])
           if (res.data.records.length) {
-          this.$set(this.productData, index, res.data.records[0])
-          let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
+            this.$set(this.productData, index, res.data.records[0])
+            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.taxRate) {
               let obj = {
                 taxRate: res.data.records[0].taxRate * 1,
@@ -1567,14 +1567,12 @@ export default {
       // 导入产品，获取数据渲染
       if (this.productData.length) {
         this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
-      this.$refs['uploadRef'].clearFiles();
-      this.uploadVisib = true
+          this.uploadVisib = true
 
           // this.$refs.UploadProduct.$el.querySelector('input').click()
         }).catch(() => { })
       } else {
-      this.$refs['uploadRef'].clearFiles();
-      this.uploadVisib = true
+        this.uploadVisib = true
       }
     },
     submit() {
@@ -1600,7 +1598,7 @@ export default {
           this.$message.success(`导入成功`)
           if (res.data.list.length > 0) {
             res.data.list.forEach(item => {
-              item.productCode=item.productsCode
+              item.productCode = item.productsCode
               item.totalAmount = item.amounts
               item.excludingTaxAmount = item.excludingTaxAmounts
               if (this.dataForm.deliveryDate) {
@@ -1614,9 +1612,11 @@ export default {
           this.uploadVisib = false
         } else {
           this.handleMessage(res.data)
+      this.$refs['uploadRef'].clearFiles();
         }
         // this.tipsvisible=true
 
+      this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
         this.$message.error(`文件上传失败`)
         this.formLoading = false
@@ -2552,8 +2552,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-          this.dataForm.orderNo = data.number
-        
+        this.dataForm.orderNo = data.number
+
       } catch (error) {
       }
     },
@@ -2810,7 +2810,7 @@ export default {
           this.dataForm.documentStatus = value
           this.dataForm.excludingTaxTotalAmount = this.excludingTaxAmount
           this.dataForm.totalAmount = this.totalAmount
-          this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount,2)
+          this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
@@ -2856,7 +2856,7 @@ export default {
                 })
                 break
               }
-            
+
               if (!item.deliveryDate) {
                 submitFlag = false
                 this.$message({

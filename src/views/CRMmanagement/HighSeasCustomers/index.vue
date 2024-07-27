@@ -38,7 +38,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.name" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 190px;margin-left: 10px;">
+          <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}

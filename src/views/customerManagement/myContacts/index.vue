@@ -7,7 +7,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 190px;margin-left: 10px;">
+          <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -60,7 +60,7 @@
             <el-table-column prop="remark" label="备注" min-width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>

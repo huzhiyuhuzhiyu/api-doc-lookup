@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.businessName" placeholder="请输入商机名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.returnVisitNo" placeholder="请输入回访编号" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -31,16 +31,15 @@
           </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head">
-            <topOpts @add="addOrUpdateHandle('', 'add')">
+          <div class="JNPF-common-head" style="display:block;line-height:34px">
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
             </topOpts>
-            <div class="JNPF-common-head-right">
+            <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -48,17 +47,18 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="businessName" label="商机名称" min-width="160" />
+            <el-table-column prop="returnVisitNo" label="回访编号" min-width="160" />
+            <el-table-column prop="returnVisitTime" label="回访时间" min-width="180" />
+            <el-table-column prop="returnVisitForm" label="回访形式" min-width="140" />
             <el-table-column prop="customerName" label="客户名称" min-width="160" />
-            <el-table-column prop="code" label="客户编码" min-width="160" />
-            <el-table-column prop="money" label="商机金额" min-width="140" />
-            <el-table-column prop="dealDate" label="预计成交日期" min-width="160" />
-            <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
-            <el-table-column prop="ownerUser" label="负责人" width="120" />
-            <el-table-column prop="remark" label="备注" min-width="180" />
-            <el-table-column prop="createTime" label="创建时间" width="180" />
-            <el-table-column prop="createByName" label="创建人" width="120" />
-            <el-table-column label="操作" width="180">
+            <el-table-column prop="contactsName" label="联系人" min-width="120" />
+            <el-table-column prop="contractNo" label="合同编号" min-width="140" />
+            <el-table-column prop="customerSatisfaction" label="客户满意度" min-width="140" />
+            <el-table-column prop="feedback" label="客户反馈" min-width="200" />
+            <el-table-column prop="ownerUserName" label="回访人" min-width="120" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>
@@ -90,21 +90,46 @@
 </template>
 
 <script>
-import { getcrmBusinessList,deletecrmBusiness } from "@/api/CRMmanagement/index";
+import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
+import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import Form from './Form'
 export default {
-  name: 'businessOpportunityManage',
-  components: { Form, programme, SuperQuery },
+  name: 'myContacts',
+  components: {
+    SuperQuery,
+    programme,
+    Form
+  },
   data() {
     return {
       superQueryJson: [
         {
-          prop: 'businessName',
-          label: "商机名称",
+          prop: 'returnVisitNo',
+          label: "回访编号",
           type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'returnVisitTime',
+          label: '回访时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '回访开始时间',
+          endPlaceholder: '回访结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 下拉选
+          prop: 'returnVisitForm',
+          label: '回访形式',
+          type: 'select',
+          options: [
+            { label: '见面拜访', value: '1' },
+            { label: '电话', value: '2' },
+            { label: '短信', value: '3' },
+            { label: '邮件', value: '4' },
+            { label: '微信', value: '5' },
+          ]
         },
         {
           prop: 'customerName',
@@ -112,41 +137,35 @@ export default {
           type: 'input'
         },
         {
-          prop: 'code',
-          label: "客户编码",
+          prop: 'contactsName',
+          label: "联系人",
           type: 'input'
         },
         {
-          prop: 'money',
-          label: "商机金额",
+          prop: 'contractNo',
+          label: "合同编号",
           type: 'input'
         },
-        { // 日期时间选择器（区间）
-          prop: 'dealDate',
-          label: '预计成交日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: {}
-        },
-        { // 日期时间选择器（区间）
-          prop: 'nextTime',
-          label: '下次联系时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '开始时间',
-          endPlaceholder: '结束时间',
-          pickerOptions: {}
+        { // 下拉选
+          prop: 'customerSatisfaction',
+          label: '客户满意度',
+          type: 'select',
+          options: [
+            { label: '很满意', value: '1' },
+            { label: '满意', value: '2' },
+            { label: '一般', value: '3' },
+            { label: '不满意', value: '4' },
+            { label: '很不满意', value: '5' },
+          ]
         },
         {
-          prop: 'ownerUser',
-          label: "负责人",
+          prop: 'feedback',
+          label: "客户反馈",
           type: 'input'
         },
         {
-          prop: 'remark',
-          label: "备注",
+          prop: 'ownerUserName',
+          label: "回访人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -175,7 +194,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        businessName: "",
+        returnVisitNo: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -204,6 +223,26 @@ export default {
     window.onresize = null
   },
   methods: {
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deletecrmReturnVisit(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    addOrUpdateHandle(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -247,8 +286,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getcrmBusinessList(this.listQuery).then(res => {
+      getcrmReturnVisit(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -289,26 +327,6 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.programmetitle = ''
       this.initData()
-    },
-    addOrUpdateHandle(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deletecrmBusiness(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
     },
   }
 }

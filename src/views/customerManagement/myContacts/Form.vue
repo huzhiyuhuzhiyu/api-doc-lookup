@@ -124,7 +124,7 @@ export default {
       btntype: false,
       dataRule: {
         cooperativePartnerName: [
-          { required: true, message: '请输入客户名称', trigger: 'blur' },
+          { required: true, message: '请选择客户名称', trigger: 'blur' },
         ],
         name: [
           { required: true, message: '请输入姓名', trigger: 'blur' },

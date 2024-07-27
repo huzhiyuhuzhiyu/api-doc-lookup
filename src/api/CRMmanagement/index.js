@@ -67,3 +67,43 @@ export function updatecustomercontact(data) {
     data
   })
 }
+
+//回访管理
+//回访管理-列表
+export function getcrmReturnVisit(data) {
+  return request({
+    url: `/api/zgt/crmReturnVisit/list`,
+    method: 'POST',
+    data
+  })
+}
+// 回访管理 新增
+export function addcrmReturnVisit(data) {
+  return request({
+    url: `/api/zgt/crmReturnVisit/add`,
+    method: 'POST',
+    data
+  })
+}
+// 回访管理 详情
+export function detailcrmReturnVisit(id) {
+  return request({
+    url: `/api/zgt/crmReturnVisit/detail/${id}`,
+    method: 'GET'
+  })
+}
+//回访管理-删除
+export function deletecrmReturnVisit(id) {
+  return request({
+    url: `/api/zgt/crmReturnVisit/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 回访管理 编辑
+export function updatecrmReturnVisit(data) {
+  return request({
+    url: `/api/zgt/crmReturnVisit/update`,
+    method: 'PUT',
+    data
+  })
+}

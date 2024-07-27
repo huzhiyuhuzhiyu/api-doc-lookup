@@ -7,7 +7,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 180px;margin-left: 10px;">
+          <div style="width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -26,45 +26,65 @@
               </el-popover>
             </div>
           </div>
-          <div style="width: 82px;">
+          <!-- <div style="width: 82px;">
             <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          </div>
+          </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head" style="display:block">
-       
+          <div class="JNPF-common-head" style="display:block;line-height:34px">
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
+            </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()" />
-            </el-tooltip>
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column>
-            <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="160"/>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="160"/>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+            <el-table-column prop="cooperativePartnerName" label="客户名称" sortable="custom" min-width="160" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="160" />
             <el-table-column prop="name" label="姓名" min-width="140" />
-            <el-table-column prop="sex" label="性别" min-width="80"/>
-            <el-table-column prop="phone" label="电话" sortable="custom" min-width="140"/>
-            <el-table-column prop="email" label="邮箱" sortable="custom" min-width="140"/>
-            <el-table-column prop="address" label="地址"  min-width="160"/>
-            <el-table-column prop="displayName" label="职务"  min-width="140"/>
-            <el-table-column prop="departmentName" label="部门"  min-width="140"/>
+            <el-table-column prop="sex" label="性别" min-width="80" />
+            <el-table-column prop="phone" label="电话" sortable="custom" min-width="140" />
+            <el-table-column prop="email" label="邮箱" sortable="custom" min-width="140" />
+            <el-table-column prop="address" label="地址" min-width="160" />
+            <el-table-column prop="displayName" label="职务" min-width="140" />
+            <el-table-column prop="departmentName" label="部门" min-width="140" />
             <el-table-column prop="hobby" label="爱好" min-width="140" />
-            <el-table-column prop="remark" label="备注"  min-width="160"/>
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180"/>
-            <el-table-column prop="createByName" label="创建人" min-width="120"/>
+            <el-table-column prop="remark" label="备注" min-width="160" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column label="操作" width="180">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+              </template>
+            </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-            @pagination="initData">
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
           </pagination>
         </div>
       </div>
     </div>
+    <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
@@ -72,15 +92,18 @@
 </template>
 
 <script>
+import { deletecustomercontact } from '@/api/CRMmanagement/index'
+import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import { getMyContactsList } from '@/api/customerManagement/index'
 export default {
   name: 'myContacts',
-  components:{
+  components: {
     SuperQuery,
-    programme
+    programme,
+    Form
   },
   data() {
     return {
@@ -159,7 +182,7 @@ export default {
           type: 'input'
         }
       ],
-      programmefrom:{},
+      programmefrom: {},
       superQueryVisible: false,
       programmetitle: '',
       programmelist1: [],
@@ -212,6 +235,26 @@ export default {
     window.onresize = null
   },
   methods: {
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deletecustomercontact(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    addOrUpdateHandle(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -245,8 +288,8 @@ export default {
         }, 100);
       };
     },
-    columnSetFun(){ 
-      console.log("this.$refs.dataTable",this.$refs.dataTable);
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
     initData() {
@@ -255,7 +298,6 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getMyContactsList(this.listQuery).then(res => {
         this.tableData = res.data.records
@@ -272,8 +314,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (['cooperativePartnerCode','cooperativePartnerName'].includes(prop)){newProp = prop}
-      else{
+      if (['cooperativePartnerCode', 'cooperativePartnerName'].includes(prop)) { newProp = prop }
+      else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
@@ -290,6 +332,7 @@ export default {
       }
     },
     search() {
+      this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
@@ -322,7 +365,7 @@ export default {
     background-color: #3fb9f8;
   }
   .plan-list-name {
-    &:hover{
+    &:hover {
       color: #606266;
     }
     .el-link--inner {

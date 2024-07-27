@@ -4,14 +4,14 @@
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">客户分类</h2>
-          <span class="options" v-if="!leftFlag">
+          <!-- <span class="options" v-if="!leftFlag">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </span>
+          </span> -->
         </div>
         <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
@@ -38,7 +38,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.name" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 180px;margin-left: 10px;">
+          <div style="width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -57,9 +57,9 @@
               </el-popover>
             </div>
           </div>
-          <div style="width: 82px;">
+          <!-- <div style="width: 82px;">
             <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          </div>
+          </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
@@ -69,6 +69,10 @@
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -135,7 +139,6 @@ export default {
   components: { Form1, RecordForm1, programme, SuperQuery },
   data() {
     return {
-      categoryId: '',
       superQueryJson: [
         {
           prop: 'name',
@@ -287,7 +290,6 @@ export default {
       return data.name.indexOf(value) !== -1;
     },
     handleNodeClick(data, node) {
-      this.categoryId = node.data.id
       this.listQuery.categoryId = node.data.id
       this.search();
     },
@@ -312,7 +314,6 @@ export default {
         this.$nextTick(() => {
           // this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
           this.listQuery.categoryId = ''
-          this.categoryId = ''
           this.treeLoading = false
           this.listLoading = false
           this.initData()
@@ -328,7 +329,6 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getPartnerList(this.listQuery).then(res => {
         this.tableData = res.data.records
@@ -360,14 +360,14 @@ export default {
       }
     },
     search() {
+      this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-      this.listQuery.categoryId = this.categoryId
       this.programmetitle = ''
-      this.initData()
+      this.getcategoryTree()
     },
 
     addOrUpdateHandle(id, btntype) {

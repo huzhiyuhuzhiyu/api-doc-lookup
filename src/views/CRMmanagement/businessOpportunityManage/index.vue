@@ -7,7 +7,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.businessName" placeholder="请输入商机名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 180px;margin-left: 10px;">
+          <div style="width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -26,9 +26,9 @@
               </el-popover>
             </div>
           </div>
-          <div style="width: 82px;">
+          <!-- <div style="width: 82px;">
             <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          </div>
+          </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
@@ -37,6 +37,10 @@
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -50,7 +54,7 @@
             <el-table-column prop="money" label="商机金额" min-width="140" />
             <el-table-column prop="dealDate" label="预计成交日期" min-width="160" />
             <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
-            <el-table-column prop="ownerUserName" label="负责人" width="120" />
+            <el-table-column prop="ownerUser" label="负责人" width="120" />
             <el-table-column prop="remark" label="备注" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
@@ -86,10 +90,10 @@
 </template>
 
 <script>
+import { getcrmBusinessList,deletecrmBusiness } from "@/api/CRMmanagement/index";
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
 import Form from './Form'
 export default {
   name: 'businessOpportunityManage',
@@ -136,7 +140,7 @@ export default {
           pickerOptions: {}
         },
         {
-          prop: 'ownerUserName',
+          prop: 'ownerUser',
           label: "负责人",
           type: 'input'
         },
@@ -243,9 +247,8 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getServiceRecordList(this.listQuery).then(res => {
+      getcrmBusinessList(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -278,6 +281,7 @@ export default {
       }
     },
     search() {
+      this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
@@ -296,7 +300,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteServiceRecord(id).then(res => {
+        deletecrmBusiness(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

@@ -7,7 +7,7 @@
           <div style="width: 200px;">
             <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
-          <div style="width: 180px;margin-left: 10px;">
+          <div style="width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
               {{$t('common.search')}}</el-button>
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -26,9 +26,9 @@
               </el-popover>
             </div>
           </div>
-          <div style="width: 82px;">
+          <!-- <div style="width: 82px;">
             <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          </div>
+          </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
@@ -36,43 +36,42 @@
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()" />
-            </el-tooltip>
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-            custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="160" />
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
             <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <el-table-column label="操作" width="180" >
+            <el-table-column label="操作" width="180">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
-                @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-            @pagination="initData">
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
           </pagination>
         </div>
       </div>
@@ -88,11 +87,11 @@
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import { getServiceRecordList ,deleteServiceRecord} from '@/api/customerManagement/index'
+import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
 import Form from './Form'
 export default {
   name: 'serviceRecords',
-  components: { Form,programme,SuperQuery },
+  components: { Form, programme, SuperQuery },
   data() {
     return {
       superQueryJson: [
@@ -126,7 +125,7 @@ export default {
           type: 'input'
         }
       ],
-      programmefrom:{},
+      programmefrom: {},
       superQueryVisible: false,
       programmetitle: '',
       programmelist1: [],
@@ -209,8 +208,8 @@ export default {
         }, 100);
       };
     },
-    columnSetFun(){ 
-      console.log("this.$refs.dataTable",this.$refs.dataTable);
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
     initData() {
@@ -219,7 +218,6 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
       this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getServiceRecordList(this.listQuery).then(res => {
         this.tableData = res.data.records
@@ -254,6 +252,7 @@ export default {
       }
     },
     search() {
+      this.listQuery.pageNum = 1
       this.initData()
     },
     reset() {
@@ -262,10 +261,10 @@ export default {
       this.programmetitle = ''
       this.initData()
     },
-    addOrUpdateHandle(id,btnType){
+    addOrUpdateHandle(id, btnType) {
       this.formVisible = true
-      this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType)
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType)
       })
     },
     handleDel(id) {
@@ -306,7 +305,7 @@ export default {
     background-color: #3fb9f8;
   }
   .plan-list-name {
-    &:hover{
+    &:hover {
       color: #606266;
     }
     .el-link--inner {

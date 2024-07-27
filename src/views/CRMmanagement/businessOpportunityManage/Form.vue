@@ -25,8 +25,8 @@
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
-                  <el-form-item label="负责人" prop="createUserId">
-                    <user-select v-model="dataForm.createUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
+                  <el-form-item label="负责人" prop="ownerUserId">
+                    <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                     </user-select>
                   </el-form-item>
                 </el-col>
@@ -63,7 +63,7 @@
 
 <script>
 import { getPartnerList } from '@/api/customerManagement/index'
-import { addCluemanagement, updateCluemanagement, getCluemanagementDetail } from "@/api/basicData/index";
+import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -79,14 +79,14 @@ export default {
         money: '',
         dealDate: '',
         nextTime: '',
-        createUserId: '',
+        ownerUserId: '',
         businessName: '',
         customerName: '',
         remark: '',
       },
       btntype: false,
       dataRule: {
-        createUserId: [
+        ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
         customerName: [
@@ -114,7 +114,7 @@ export default {
     },
     //负责人
     hangleSelectSales(e, r) {
-      this.$nextTick(() => { this.$refs.dataForm.validateField("createUserId") });
+      this.$nextTick(() => { this.$refs.dataForm.validateField("ownerUserId") });
     },
     goBack() {
       this.$emit('close')
@@ -126,7 +126,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          getCluemanagementDetail(this.dataForm.id).then(res => {
+          detailcrmBusiness(this.dataForm.id).then(res => {
             this.dataForm = res.data
             this.formLoading = false
           })
@@ -142,7 +142,7 @@ export default {
           let obj = {
             ...this.dataForm
           }
-          let formMethod = this.dataForm.id ? updateCluemanagement(obj) : addCluemanagement(obj);
+          let formMethod = this.dataForm.id ? updatecrmBusiness(obj) : addcrmBusiness(obj);
           formMethod.then(res => {
             let msg = ""
             if (this.btntype == "edit") {

@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header']">
         <el-page-header @back="goBack"
-          :content="btnType === 'look' ? '查看我的客户档案' : btnType === 'add'  ? $t(`customer.addCustomer`) : '转为正式客户'" />
+          :content="btnType === 'look' ? '查看我的客户' : btnType === 'add'  ? '新建我的客户' : '转为正式客户'" />
         <div class="options" >
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType !== 'look'">
             提交</el-button>
@@ -17,16 +17,16 @@
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
+                  <el-form-item label="客户编码" prop="code">
+                    <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
+                      :disabled="btnType === 'look' ? true : false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="8" :xs="24">
                   <el-form-item label="所属分类" prop="partnerCategoryIdText">
                     <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="btnType === 'look'" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :selectClassifyType="dataForm.type" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户编码" prop="code">
-                    <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
-                      :disabled="btnType === 'look' ? true : false" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -542,6 +542,16 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
+            <JNPF-table ref="dataTable"  :data="tableData" 
+            custom-column>
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
+            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+            <el-table-column prop="createBy" label="创建人" min-width="120" />
+          </JNPF-table>
+          </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
@@ -566,6 +576,7 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   data() {
     return {
+      tableData:[],
       taxRateTypeList:[],
       loadingareafoundation:false,
       foundationloadingcity:false,
@@ -1214,6 +1225,7 @@ export default {
         detailPartner(this.dataForm.id).then(res => {
           console.log("res=>",res);
           this.dataForm = res.data.cooperativePartner
+          this.tableData=res.data.recordsList
           this.dataForm.provincecityarea = []
           if (res.data.province) {
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.province)

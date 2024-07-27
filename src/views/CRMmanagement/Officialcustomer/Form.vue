@@ -4,7 +4,7 @@
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack"
-          :content="btnType=='look' ? '查看正式客户' :btnType=='add'? '新增正式客户' :'编辑正式客户'" />
+          :content="btnType=='look' ? '查看正式客户' :btnType=='add'? '新建正式客户' :'编辑正式客户'" />
         <div class="options" >
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType!='look'">
             提交</el-button>
@@ -18,16 +18,16 @@
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
+                  <el-form-item label="客户编码" prop="code">
+                    <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
+                      :disabled="btnType=='look' ? true : false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="8" :xs="24">
                   <el-form-item label="所属分类" prop="partnerCategoryId">
                     <ComSelect2 v-model="dataForm.partnerCategoryId" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :selectClassifyType="dataForm.type" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户编码" prop="code">
-                    <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20"
-                      :disabled="btnType=='look' ? true : false" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -509,7 +509,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
-            <JNPF-table ref="dataTable"  :data="tableData" :fixedNO="true"  
+            <JNPF-table ref="dataTable"  :data="tableData" 
             custom-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />

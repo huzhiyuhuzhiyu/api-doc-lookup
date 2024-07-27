@@ -12,62 +12,66 @@
       <div class="main">
         <el-tabs v-model="activeName">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
-              <el-row :gutter="30" class="custom-row" style="padding: 0 10px;">
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="姓名" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入姓名" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="性别" prop="sex">
-                    <el-select v-model="dataForm.sex" placeholder="请选择性别" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                      <el-option v-for="(item, index) in sexList" :key="index" :label="item.label" :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="客户名称" prop="cooperativePartnerName">
-                    <ComSelect-list :isdisabled="btntype=== 'look'" v-model="dataForm.cooperativePartnerName" placeholder="请选择客户名称" @change="onPartnerChange" :title="'选择客户'" :method="getPartnerList" :requestObj="requestObj" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="电话" prop="phone">
-                    <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="dataForm.email" placeholder="请输入邮箱" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="地址" prop="address">
-                    <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btntype === 'look' ? true : false" maxlength="300" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="职务" prop="displayName">
-                    <el-input v-model="dataForm.displayName" placeholder="请输入职务" :disabled="btntype === 'look' ? true : false" maxlength="300" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="部门" prop="departmentName">
-                    <el-input v-model="dataForm.departmentName" placeholder="请输入部门" :disabled="btntype === 'look' ? true : false" maxlength="300" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="爱好" prop="hobby">
-                    <el-input v-model="dataForm.hobby" placeholder="请输入爱好" :disabled="btntype === 'look' ? true : false" maxlength="300" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="8" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo">
+                <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="姓名" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入姓名" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="性别" prop="sex">
+                        <el-select v-model="dataForm.sex" placeholder="请选择性别" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                          <el-option v-for="(item, index) in sexList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="客户名称" prop="cooperativePartnerName">
+                        <ComSelect-list :isdisabled="btntype=== 'look'" v-model="dataForm.cooperativePartnerName" placeholder="请选择客户名称" @change="onPartnerChange" :title="'选择客户'" :method="getPartnerList" :requestObj="requestObj" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="电话" prop="phone">
+                        <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="dataForm.email" placeholder="请输入邮箱" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="地址" prop="address">
+                        <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btntype === 'look' ? true : false" maxlength="300" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="职务" prop="displayName">
+                        <el-input v-model="dataForm.displayName" placeholder="请输入职务" :disabled="btntype === 'look' ? true : false" maxlength="300" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="部门" prop="departmentName">
+                        <el-input v-model="dataForm.departmentName" placeholder="请输入部门" :disabled="btntype === 'look' ? true : false" maxlength="300" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="爱好" prop="hobby">
+                        <el-input v-model="dataForm.hobby" placeholder="请输入爱好" :disabled="btntype === 'look' ? true : false" maxlength="300" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -81,6 +85,7 @@ import { addcustomercontact, detailcustomercontact, updatecustomercontact } from
 export default {
   data() {
     return {
+      activeNames: ["basicInfo"],
       requestObj: {
         customerStatus: 'private_sea',
       },
@@ -198,7 +203,42 @@ export default {
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
+}
 ::v-deep .el-form-item__content p {
   border: none;
 }

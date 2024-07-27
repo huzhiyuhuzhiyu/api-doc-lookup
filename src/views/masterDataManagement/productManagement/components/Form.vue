@@ -24,6 +24,9 @@
                     </div> -->
                   <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
                 </el-collapse-item>
+                <el-collapse-item title="其他信息" name="basicInfo">
+                  <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+                </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
           </template>
@@ -74,6 +77,26 @@ export default {
         classAttribute: this.classAttribute,
       },
       businessType:'', //  参数设置  自动  还是 手输
+      otherItems: [
+        {
+          prop: 'saleFlag',
+          label: '是否可销售',
+          value: true,
+          type: 'select',
+          options: [{ label: '是', value: true }, { label: '否', value: false }],
+          clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }]
+        },
+        {
+          prop: 'tradeFlag',
+          label: '是否贸易件',
+          value: false,
+          type: 'select',
+          options: [{ label: '是', value: true }, { label: '否', value: false }],
+          clearable: false,
+          itemRules: [{ required: true, trigger: 'change' }]
+        },
+      ]
     }
   },
   created() {
@@ -139,7 +162,68 @@ export default {
         }
       })
     })
-
+    this.otherItems.forEach((tc) => {
+      if (tc.prop == 'tradeFlag') {
+        tc.change = (val, data) => {
+          if (!val) {
+            this.tabs[0].tabContent.forEach((ele) => {
+              if (
+                [
+                  'sealingCoverStructure',
+                  // 'sealingCoverTyping',
+                  'structureType',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  // 'oilQuantity',
+                  'noise',
+                  'holder'
+                  // 'vibrationLevel',
+                  // 'accuracyLevel',
+                  // 'colour',
+                  // 'aperture'
+                ].includes(ele.prop)
+              ) {
+                ele.itemRules[0].required = true
+              }
+              if (ele.prop == 'productSource') {
+                ele.options = [
+                  { label: '组装', value: 'assemble' },
+                  { label: '自制', value: 'produce' },
+                  { label: '采购', value: 'purchase' },
+                  { label: '外协', value: 'out' }
+                ]
+              }
+            })
+          } else {
+            this.tabs[0].tabContent.forEach((ele) => {
+              if (
+                [
+                  'sealingCoverStructure',
+                  // 'sealingCoverTyping',
+                  'structureType',
+                  'clearance',
+                  'steelBallManufacturer',
+                  'oil',
+                  // 'oilQuantity',
+                  'noise',
+                  'holder'
+                  // 'vibrationLevel',
+                  // 'accuracyLevel',
+                  // 'colour',
+                  // 'aperture'
+                ].includes(ele.prop)
+              ) {
+                ele.itemRules[0].required = false
+              }
+              if (ele.prop == 'productSource') {
+                ele.options = [{ label: '采购', value: 'purchase' }]
+              }
+            })
+          }
+        }
+      }
+    })
 
   },
   computed: {
@@ -274,12 +358,13 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 5px 0px;
-  border-top:none!important;
+  padding: 0 10px 0px;
+  border-top: none !important;
 
 }
-::v-deep .el-collapse-item__content{
-  padding-bottom: 5px
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
 }
 
 ::v-deep .JNPF-common-page-header {
@@ -298,8 +383,8 @@ export default {
   color: red;
   margin-right: 4px;
 }
-.orderInfo ::v-deep  .el-collapse-item__wrap{
-  margin-bottom:10px;
-  // border-bottom: none!important
+.orderInfo ::v-deep .el-collapse-item__wrap {
+  // margin-bottom: 10px;
+  border-bottom: none !important;
 }
 </style>

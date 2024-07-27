@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left treeBox">
       <div class="JNPF-common-title">
         <h2>产品分类</h2>
         <span class="options">

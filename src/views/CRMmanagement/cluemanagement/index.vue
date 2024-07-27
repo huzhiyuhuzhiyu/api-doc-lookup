@@ -4,14 +4,14 @@
       <div class="JNPF-common-title" style="display: block;padding:0">
         <div class="title_box">
           <h2 v-if="!leftFlag">线索</h2>
-          <span class="options" v-if="!leftFlag">
+          <!-- <span class="options" v-if="!leftFlag">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
-          </span>
+          </span> -->
         </div>
         <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
@@ -37,7 +37,7 @@
         <div style="width: 200px;">
           <el-input v-model="listQuery.clueName" placeholder="请输入线索名称" clearable @keyup.enter.native="search()" />
         </div>
-        <div style="width: 180px;margin-left: 10px;">
+        <div style="min-width: 190px;margin-left: 10px;">
           <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
             {{$t('common.search')}}</el-button>
           <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
@@ -56,22 +56,25 @@
             </el-popover>
           </div>
         </div>
-        <div style="width: 82px;">
+        <!-- <div style="width: 82px;">
           <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-        </div>
+        </div> -->
       </div>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="display: block;line-height:34px">
           <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
             <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
-            <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button>
-            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importFun">导入</el-button>
-            <el-button type="primary" v-has="'btn_export'" icon="el-icon-download" @click="exportForm">导出</el-button>
+            <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+            <el-button type="primary" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </topOpts>
           <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
           <div class="JNPF-common-head-right" style="float: right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -139,7 +142,20 @@
         <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
 
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="submit()">
+          提交</el-button>
+      </span>
+    </el-dialog>
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
@@ -178,6 +194,8 @@ export default {
   },
   data() {
     return {
+      file:{},
+      uploadVisib: false,
       columnList: ["createByName", "createTime"],
       exportFormVisible: false,
       data: [{ fullName: '线索', id: 'clue' }, { fullName: '线索池', id: 'pool' }],
@@ -364,6 +382,20 @@ export default {
     window.onresize = null
   },
   methods: {
+    submit() {
+      this.UploadProduct(this.file)
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    // 导入产品
+    importProductFun() {
+      this.uploadVisib = true
+    },
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
@@ -371,16 +403,15 @@ export default {
       a.setAttribute('href', location.origin + '/static/线索导入模板.xlsx')
       a.click()
     },
-    importFun() {
-      this.$refs.UploadProduct.$el.querySelector('input').click()
-    },
+    // importFun() {
+    //   this.$refs.UploadProduct.$el.querySelector('input').click()
+    // },
     // 上传
     UploadProduct(data) {
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
-      formData.append("file", data.file)
-      formData.append("customerSea", "high_seas")
+      formData.append("file", data)
       //调用上传文件接口
       saleCluemanagementpoolModel(formData).then(res => {
         if (!res.data) {
@@ -390,9 +421,11 @@ export default {
         } else {
           this.handleMessage(res.data)
         }
+        this.uploadVisib = false
         this.initData()
       }).catch(err => {
         this.$message.error(`文件上传失败`)
+        this.uploadVisib = false
         this.formLoading = false
         this.loadingText = ''
       })

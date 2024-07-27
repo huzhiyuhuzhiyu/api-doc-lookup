@@ -799,6 +799,7 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
+        console.log(data,'dat')
         this.codeConfig = data
         if (!data.modifyFlag && data.codeWay == 'auto') {
           const orderNo = await this.jnpf.getCodeWayFun(code)

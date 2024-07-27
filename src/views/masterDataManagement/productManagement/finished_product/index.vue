@@ -206,7 +206,7 @@
             <template slot-scope="scope">
               <tableOpts
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)"
+                :hasDel="false"
               >
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">

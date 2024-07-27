@@ -369,6 +369,11 @@ export default {
     } else {
       this.dataForm.productId = '';
     }
+    if (this.$route.params.drawNo) {
+    this.dataForm.drawNo = this.$route.params.drawNo;
+    } else {
+      this.dataForm.drawNo = '';
+    }
   },
   methods: {
     async init(productId, btnType, approvalStatus,nodeData) {
@@ -881,17 +886,17 @@ export default {
           formMethod(dataObj).then(res => {
             let msg = res.msg
             if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
-
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
+            this.visible = false
              if (submitModel == "submit" ) {
               this.submitmethodsTitle = "保存成功"
             } else {

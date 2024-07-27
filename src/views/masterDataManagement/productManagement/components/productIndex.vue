@@ -91,7 +91,7 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
@@ -115,7 +115,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)">
+              :hasDel="false">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini" v-has="'btn_detail'">

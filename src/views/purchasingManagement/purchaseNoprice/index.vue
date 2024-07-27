@@ -145,7 +145,7 @@ export default {
       console.log(item,'iiii')
       this.$router.push({
         name:"BOMCreate",
-        params: { id: item.id ,name:item.name} 
+        params: { id: item.id ,name:item.name,drawNo:item.drawingNo} 
       })
     },
     columnSetFun() {

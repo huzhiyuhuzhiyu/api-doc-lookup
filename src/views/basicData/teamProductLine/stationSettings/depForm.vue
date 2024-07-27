@@ -1,6 +1,7 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建工位' : !btntype ? '编辑工位' : '查看工位' " :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+  <el-drawer :title="!dataForm.id ? '新建工位' : !btntype ? '编辑工位' : '查看工位' " :close-on-click-modal="false" :close-on-press-escape="false"
+    :visible.sync="visible" lock-scroll  width="600px">
+    <div style="padding:10px">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
       label-width="120px">
 
@@ -22,12 +23,13 @@
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" :disabled="btntype ? true : false" placeholder="请输入备注"/>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer" v-if="!btntype">
+    <span style="display:flex;justify-content: flex-end;" v-if="!btntype">
       <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
       <el-button :disabled="btntype ? true : false" type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交</el-button>
     </span>
-  </el-dialog>
+  </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -85,6 +87,7 @@ export default {
   },
   methods: {
     init(id, type) {
+      console.log(type,'type')
       this.visible = true
       this.dataForm.id = id || ''
       if (type == "edit" || type == "add") {

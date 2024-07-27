@@ -248,6 +248,7 @@ export default {
       visible: false,
       loading: false,
       activeName: "jcInfo",
+      activeNames: ['jcInfo', 'basicInfo'],
       actTitle: "",
       configurationName: 'personnel',
       btnLoading: false,
@@ -956,7 +957,13 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background-color: #fff;
+}
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;

@@ -142,168 +142,8 @@ export default {
         }
       ],
       sleeveItems: [
-        {
-          prop: 'productCategoryName',
-          label: '产品分类',
-          value: '',
-          type: 'custom',
-          customComponent: 'ComSelect-list',
-          change: this.remoteProductMethod,
-          requestObj: { classAttribute: 'finish_product' },
-          method: getcategoryTree,
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '不能为空',
-                  (errMsg, index) => {
-                    this.$message.error(`基础信息第${index + 1}行：产品分类${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            { required: true, message: '请选择产品分类', trigger: 'no' }
-          ],
-          minWidth: 180
-        },
-        {
-          prop: 'code',
-          label: '产品编码',
-          minWidth: 180,
-          value: '',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            {
-              validator: (rule, value, callback) => {
-                let temp = rule.field.match(/\d+/)
-                let tempIndex = temp ? Number(temp[0]) : undefined
-                if (!value) {
-                  callback()
-                } else if (this.sleeveList.some((item, index) => item.code === value && tempIndex !== index)) {
-                  this.$message.error(`第${tempIndex + 1}行产品编码重复`)
-                  callback(new Error(`第${tempIndex + 1}行产品编码重复`))
-                } else {
-                  checkCodeExist({ id: this.sleeveList[tempIndex].id || '', code: value })
-                    .then((res) => {
-                      if (!res.data) {
-                        callback()
-                      } else {
-                        this.$message.error(`第${tempIndex + 1}行产品编码重复`)
-                        callback(new Error(`第${tempIndex}行产品编码重复`))
-                      }
-                    })
-                    .catch((err) => {
-                      callback(new Error(' '))
-                    })
-                }
-              },
-              trigger: 'blur'
-            }
-          ],
-          render: true,
-          itemDisabled:false
-        },
-        {
-          prop: 'drawingNo',
-          label: '规格型号',
-          value: '',
-          type: 'input',
-          maxlength: '1000',
-          itemDisabled: true,
-          minWidth: 220,
-          placeholder: '规格型号自动生成'
-        },
-        {
-          prop: 'name',
-          label: '产品名称',
-          value: '',
-          type: 'input',
-          maxlength: 100,
-          itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 180
-        },
-        {
-          prop: 'mainUnit',
-          label: '主单位',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 180
-        },
-        {
-          prop: 'deputyUnit',
-          label: '副单位',
-          value: '',
-          type: 'input',
-          itemRules: [{ required: true, trigger: 'blur' }],
-          minWidth: 180
-        },
-        {
-          prop: 'ratio',
-          label: '转换系数',
-          value: '',
-          type: 'input',
-          itemRules: [
-            { required: true, trigger: 'blur' },
-            { validator: formValidate({ type: 'decimal', params: [10, 6] }), trigger: 'blur' },
-            { validator: formValidate('positiveNumber'), trigger: 'blur' }
-          ],
-          minWidth: 180
-        },
-        {
-          prop: 'calculationDirection',
-          label: '计算方向',
-          value: '',
-          type: 'select',
-          options: [{ label: '乘', value: 'multiplication' }, { label: '除', value: 'division' }],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 180
-        },
-        {
-          prop: 'productSource',
-          label: '产品来源',
-          value: '',
-          type: 'select',
-          options: [
-            { label: '组装', value: 'assemble' },
-            { label: '自制', value: 'produce' },
-            { label: '采购', value: 'purchase' },
-            { label: '外协', value: 'out' }
-          ],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 180
-        },
-        {
-          prop: 'productStatus',
-          label: '产品状态',
-          value: 'enable',
-          type: 'select',
-          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }],
-          itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 180,
-          render:true
-        },
-
-        //  一下全部都是 custom，组件选择
-        {
-          prop: 'brand',
-          label: '品牌',
-          value: '',
-          typeCode: 'pa011',
-          type: 'select',
-          options: [],
-          filterable: true,
-          remote: true,
-          maxlength: 50,
-          minWidth: 220,
-          blur: this.elementBlur,
-          minWidth: 180
-        },
-        // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
-        {
+         // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
+         {
           prop: 'model',
           label: '型号',
           value: '',
@@ -562,6 +402,170 @@ export default {
           ],
           itemDisabled: false
         },
+      
+        {
+          prop: 'drawingNo',
+          label: '规格型号',
+          value: '',
+          type: 'input',
+          maxlength: '1000',
+          itemDisabled: true,
+          minWidth: 220,
+          placeholder: '规格型号自动生成'
+        },
+        {
+          prop: 'code',
+          label: '产品编码',
+          minWidth: 180,
+          value: '',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                let temp = rule.field.match(/\d+/)
+                let tempIndex = temp ? Number(temp[0]) : undefined
+                if (!value) {
+                  callback()
+                } else if (this.sleeveList.some((item, index) => item.code === value && tempIndex !== index)) {
+                  this.$message.error(`第${tempIndex + 1}行产品编码重复`)
+                  callback(new Error(`第${tempIndex + 1}行产品编码重复`))
+                } else {
+                  checkCodeExist({ id: this.sleeveList[tempIndex].id || '', code: value })
+                    .then((res) => {
+                      if (!res.data) {
+                        callback()
+                      } else {
+                        this.$message.error(`第${tempIndex + 1}行产品编码重复`)
+                        callback(new Error(`第${tempIndex}行产品编码重复`))
+                      }
+                    })
+                    .catch((err) => {
+                      callback(new Error(' '))
+                    })
+                }
+              },
+              trigger: 'blur'
+            }
+          ],
+          render: true,
+          itemDisabled:false
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类',
+          value: '',
+          type: 'custom',
+          customComponent: 'ComSelect-list',
+          change: this.remoteProductMethod,
+          requestObj: { classAttribute: 'finish_product' },
+          method: getcategoryTree,
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '不能为空',
+                  (errMsg, index) => {
+                    this.$message.error(`基础信息第${index + 1}行：产品分类${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            },
+            { required: true, message: '请选择产品分类', trigger: 'no' }
+          ],
+          minWidth: 180
+        },
+       
+        {
+          prop: 'name',
+          label: '产品名称',
+          value: '',
+          type: 'input',
+          maxlength: 100,
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 180
+        },
+        {
+          prop: 'mainUnit',
+          label: '主单位',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 180
+        },
+        {
+          prop: 'deputyUnit',
+          label: '副单位',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 180
+        },
+        {
+          prop: 'ratio',
+          label: '转换系数',
+          value: '',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            { validator: formValidate({ type: 'decimal', params: [10, 6] }), trigger: 'blur' },
+            { validator: formValidate('positiveNumber'), trigger: 'blur' }
+          ],
+          minWidth: 180
+        },
+        {
+          prop: 'calculationDirection',
+          label: '计算方向',
+          value: '',
+          type: 'select',
+          options: [{ label: '乘', value: 'multiplication' }, { label: '除', value: 'division' }],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 180
+        },
+        {
+          prop: 'productSource',
+          label: '产品来源',
+          value: '',
+          type: 'select',
+          options: [
+            { label: '组装', value: 'assemble' },
+            { label: '自制', value: 'produce' },
+            { label: '采购', value: 'purchase' },
+            { label: '外协', value: 'out' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 180
+        },
+        {
+          prop: 'productStatus',
+          label: '产品状态',
+          value: 'enable',
+          type: 'select',
+          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 180,
+          render:true
+        },
+
+        //  一下全部都是 custom，组件选择
+        {
+          prop: 'brand',
+          label: '品牌',
+          value: '',
+          typeCode: 'pa011',
+          type: 'select',
+          options: [],
+          filterable: true,
+          remote: true,
+          maxlength: 50,
+          minWidth: 220,
+          blur: this.elementBlur,
+          minWidth: 180
+        },
+       
+       
         {
           prop: 'vibrationLevel',
           label: '振动等级',

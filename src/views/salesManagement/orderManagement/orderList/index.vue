@@ -55,37 +55,37 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码"    />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160"  sortable="custom" />
-            <el-table-column prop="orderType" label="订单类型" width="120" sortable="custom">
+            <el-table-column prop="cooperativePartnerCode" label="客户编码"  min-width="120"  />
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160"  sortable="custom" />
+            <el-table-column prop="orderType" label="订单类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in orderList" :key="index">
                   <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
                 </div>
               </template>
             </el-table-column> 
-            <el-table-column prop="departmentName" label="所属部门" width="160"  sortable="custom"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售 " width="140" sortable="custom"/>
-            <el-table-column prop="workOrderNo" label="工作令号" ></el-table-column>
-            <el-table-column prop="orderDate" label="订单日期" width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="contractNo" label="客户合同号"  sortable="custom"></el-table-column>
-            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="departmentName" label="所属部门" min-width="160"  sortable="custom"></el-table-column>
+            <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom"/>
+            <el-table-column prop="workOrderNo" label="工作令号" min-width="140"></el-table-column>
+            <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="contractNo" label="客户合同号" min-width="140"  sortable="custom"></el-table-column>
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
           
-            <el-table-column prop="orderState" label="订单状态" width="120" sortable="custom">
+            <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
                 <div v-else-if="scope.row.orderState == 'finish'"><el-tag type="success">已完成</el-tag></div>
                 <div v-else-if="scope.row.orderState == 'part_finish'"><el-tag type="warning">部分完成</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="documentStatus"  label="单据状态" width="140" sortable="custom"
+            <el-table-column prop="documentStatus"  label="单据状态" min-width="140" sortable="custom"
               :showOverflowTooltip="false" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
@@ -93,13 +93,13 @@
               </template>
             </el-table-column>
           
-            <el-table-column prop="changesCount" label="变更次数" >
+            <el-table-column prop="changesCount" label="变更次数" min-width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.changesCount ? scope.row.changesCount : 0 }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人"  sortable="custom" />
+            <el-table-column prop="createByName" label="创建人"  sortable="custom" min-width="120"/>
            
          
             <el-table-column label="操作" width="180" fixed="right">

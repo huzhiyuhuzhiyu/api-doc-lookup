@@ -71,7 +71,7 @@
             <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
             <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
             <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规" width="180" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
             <el-table-column prop="num" label="数量" width="80" sortable="custom" />
             <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />

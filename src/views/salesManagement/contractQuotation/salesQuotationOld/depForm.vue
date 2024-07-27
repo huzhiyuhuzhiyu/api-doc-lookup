@@ -139,14 +139,14 @@
                       </template>
                       <template slot-scope="scope">
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.$index,$event)"
+                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.row,scope.$index, $event)"
                           @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
                         <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位(主)" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="num" label="数量" width="160">
                       <template slot="header">
                         <span class="required">*</span>数量
@@ -169,7 +169,7 @@
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'unitPrice'"
                           :rules='productRules.unitPrice'>
                           <el-input v-model="scope.row.unitPrice" placeholder="请输入单价" :disabled="status" maxlength="20"
-                            @input="watchnums(scope.row, scope.$index)" style="width: 135px;"
+                            @input="watchPrice(scope.row, scope.$index)" style="width: 135px;"
                             oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
                         </el-form-item>
@@ -187,8 +187,8 @@
                         </el-form-item>
                       </template> -->
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;" :disabled="status"
-                          @change="changeTaxRate(scope.row, scope.$index)">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                          :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
@@ -220,7 +220,7 @@
                   </el-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
-                    <span style="font-weight:500;margin:0 10px">总金额：{{ totalPrice }}</span>
+                    <span style="font-weight:500;margin:0 10px">总金额：{{ totalAmount }}</span>
                   </div>
                 </el-form>
               </el-collapse-item>
@@ -392,7 +392,7 @@
               <JNPF-table :data="historyPriceData" ref="dataTable" custom-column>
                 <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
                 <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="150" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="品名规" width="180" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="80" sortable="custom" />
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
@@ -624,6 +624,8 @@ export default {
       },
       codeConfig: {},
       selectName: [],
+      partnerInfo: {},
+      totalAmount:0,
     }
   },
   watch: {
@@ -643,13 +645,7 @@ export default {
       }
       return totalNum
     },
-    totalPrice: function () {
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        totalPrice = this.jnpf.math('add', [totalPrice, this.dataFormTwo.lines[a].amounts])
-      }
-      return this.jnpf.numberFormat(totalPrice, 6)
-    },
+    
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
   },
@@ -657,40 +653,7 @@ export default {
     this.getTaxRateFun()
   },
   methods: {
-    handleSelect(index,item) {
-      //返回的意见点击选择触发事件
-      console.log("产品数据", index,item);
-      
-      if (item.value) {
-        let obj = {
-          productDrawingNo: item.value,
-          customerDrawingNumber: "",
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [{
-            asc: false,
-            column: "quotationTime"
-          }],
-        }
-        getQuotationmxLists(obj).then(res => {
-          console.log("产品信息", res);
-          if(res.data.records.length){
-            this.$set(this.dataFormTwo.lines, index, res.data)
-          console.log(this.dataFormTwo.lines);
-          let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
-          if (!exists && res.data.taxRate) {
-            let obj = {
-              taxRate: res.data.taxRate * 1,
-              fullName: res.data.taxRate + '%',
-              enCode: res.data.taxRate + '%',
-            }
-            this.taxRateList.push(obj)
-          }
-          }
-        })
-      }
-    },
+
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -751,9 +714,9 @@ export default {
       if (!this.dataForm.cooperativePartnerId) {
         let air = []
         cb(air)
-         this.$message.error("请先选择客户!")
+        this.$message.error("请先选择客户!")
       } else {
-        if (queryString.length >= 3) {
+        if (queryString && queryString.length >= 3) {
           let ProductListRequestObj = {
             classAttributeList: [],
             classAttribute: "",
@@ -783,13 +746,14 @@ export default {
                 restaurants.forEach((item, index) => {
                   arr.push({
                     value: item.drawingNo,
+                    data: item,
                   })
                 })
                 cb(arr)
               } else {
                 let air = []
                 this.$message.error("您输入的品名规格暂未匹配到对应的产品数据，请重新输入!")
-          queryString=""
+                queryString = ""
                 cb(air)
               }
 
@@ -805,14 +769,57 @@ export default {
         } else {
           let air = []
           cb(air)
-          
+
         }
       }
 
 
 
     },
+    handleSelect(row,index, item) {
+      //返回的意见点击选择触发事件
+      console.log("产品数据", index, item);
 
+      if (item.value) {
+        let obj = {
+          productDrawingNo: item.value,
+          customerDrawingNumber: "",
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [{
+            asc: false,
+            column: "quotationTime"
+          }],
+        }
+        getQuotationmxLists(obj).then(res => {
+          console.log("产品信息", res);
+          if (res.data.records.length) {
+    
+            this.$set(this.dataFormTwo.lines, index, res.data.records[0])
+            console.log(this.dataFormTwo.lines);
+            let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
+            if (!exists && res.data.taxRate) {
+              let obj = {
+                taxRate: res.data.taxRate * 1,
+                fullName: res.data.taxRate + '%',
+                enCode: res.data.taxRate + '%',
+              }
+              this.taxRateList.push(obj)
+            }
+          } else {
+            console.log("index", index);
+            item.data.taxRate = this.taxRate
+            item.data.productDrawingNo = item.value
+            item.data.productsId = item.data.id
+       
+            this.$set(this.dataFormTwo.lines, index, item.data)
+            console.log("this.dataFormTwo.lines", this.dataFormTwo.lines);
+      this.watchPrice(row, index)
+    }
+        })
+      }
+    },
 
 
 
@@ -841,12 +848,18 @@ export default {
     // 输入品名规格  查找对应得产品数据 按下enter键 自动新增一行空白数据
     searchDrawingNoProduct(data, idx) {
       console.log(data, idx);
+      let obj = JSON.parse(JSON.stringify(this.createdData))
+      obj.taxRate = this.taxRate
+      this.dataFormTwo.lines.push(obj)
+      if (data.num || data.unitPrice) return
       getDetailByDrawNo(data.productDrawingNo).then(res => {
         if (res.data) {
           res.data.unitPrice = ""
           res.data.customerDrawingNumber = data.customerDrawingNumber
           res.data.productCode = res.data.code
+          res.data.productDrawingNo = res.data.drawingNo
           res.data.productsId = res.data.id
+          res.data.taxRate = this.taxRate
           this.$set(this.dataFormTwo.lines, idx, res.data)
           console.log(this.dataFormTwo.lines);
           let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
@@ -862,8 +875,7 @@ export default {
           this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
           data.productDrawingNo = ""
         }
-        let obj = JSON.parse(JSON.stringify(this.createdData))
-        this.dataFormTwo.lines.push(obj)
+
 
       })
     },
@@ -993,6 +1005,7 @@ export default {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerIdText') }) // 校验操作的元素(name是组件绑定的value)
       if (data && data.length) { // 数据有效，进行更新
         const partnerInfo = data[0].all
+        this.partnerInfo = data[0].all
         this.dataForm.cooperativePartnerId = partnerInfo.id
         this.dataForm.cooperativePartnerIdText = partnerInfo.name
         if (!this.status) {
@@ -1103,10 +1116,95 @@ export default {
         }
       })
     },
+    // 监听单价(含税)输入
+    watchPrice(row, index) {
+      row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
+      // 单价处理
+      if (row.unitPrice.length == 1 && row.unitPrice == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.unitPrice = '';
+      } else if (row.unitPrice.length == 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.unitPrice = row.unitPrice.slice(0, 1) + '.' + row.unitPrice.slice(1);
+      } else if (row.unitPrice.length > 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
+        row.unitPrice = row.unitPrice.substring(1, row.unitPrice.length)
+      }
+      if (row.unitPrice.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.unitPrice.length; i++) {
+          const char = row.unitPrice[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+        row.unitPrice = result;
+        let arr = row.unitPrice.split('.')
+        if (arr[0].length > 12) {
+          arr[0] = arr[0].substring(0, 12)
+        }
+        if (arr[1].length > 6) {
+          arr[1] = arr[1].substring(0, 6)
+        }
+        row.unitPrice = arr[0] + '.' + arr[1]
+      } else {
+        if (row.unitPrice.length > 20) {
+          row.unitPrice = row.unitPrice.substring(0, 20);
+        }
+      }
+      if (row.unitPrice && row.unitPrice != '0') {
+        let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 4)
+        row.excludingTaxUnitPrice = b ? b : 0
+      } else {
+        row.excludingTaxUnitPrice = ''
+      }
+
+      if (!row.num || !row.unitPrice) {
+        row.amounts = ''
+        row.totalTaxAmount = ''
+        this.dataForm.totalAmount = 0
+      } else {
+        let a = this.jnpf.numberFormat((row.unitPrice * row.num), 6)
+        console.log("aaa",a);
+        row.amounts = a ? a : '' // 含税金额
+        console.log("row.amounts",row.amounts);
+        console.log("this.s",this.dataFormTwo.lines);
+      }
+      var totalPrice = 0;
+      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+        let item=this.dataFormTwo.lines[a]
+        console.log("item",item.amounts);
+        
+        totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
+      }
+      this.totalAmount=totalPrice
+
+      if( this.dataFormTwo.lines.length==1&&(!row.num||!row.unitPrice)){
+        console.log("进来了");
+        this.totalAmount=0
+      }
+      if (row.excludingTaxUnitPrice && row.num) {
+        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+        row.excludingTaxAmounts = c ? c : ''
+      } else {
+        row.excludingTaxAmounts = ''
+      }
+      if (row.excludingTaxAmounts && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 6)
+        row.totalTaxAmount = d ? d : 0
+      }
+    },
     // 监听主数量输入
     watchnums(row, index) {
+      console.log("ROW", row, index);
       // 数量处理
-      row.num = row.num.replace(/[^\d.]/g, '');
+      row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
       if (row.num.length == 1 && row.num == '.') {
         // 如果第一位是小数点，则清空输入框
         row.num = '';
@@ -1150,50 +1248,9 @@ export default {
       //   // 数量变化 更新审批流程
       //   // this.$nextTick(() => { this.getApproverData() })//暂时注释
       // }
-      row.unitPrice = row.unitPrice ? row.unitPrice.replace(/[^\d.]/g, '') : ''
-
-      // 单价处理
-      if (row.unitPrice.length == 1 && row.unitPrice == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.unitPrice = '';
-      } else if (row.unitPrice.length == 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.unitPrice = row.unitPrice.slice(0, 1) + '.' + row.unitPrice.slice(1);
-      } else if (row.unitPrice.length > 2 && row.unitPrice[0] == '0' && row.unitPrice[1] != '.') {
-        row.unitPrice = row.unitPrice.substring(1, row.unitPrice.length)
-      }
-      if (row.unitPrice.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-        for (let i = 0; i < row.unitPrice.length; i++) {
-          const char = row.unitPrice[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-        row.unitPrice = result;
-        let arr = row.unitPrice.split('.')
-        if (arr[0].length > 12) {
-          arr[0] = arr[0].substring(0, 12)
-        }
-        if (arr[1].length > 6) {
-          arr[1] = arr[1].substring(0, 6)
-        }
-        row.unitPrice = arr[0] + '.' + arr[1]
-      } else {
-        if (row.unitPrice.length > 20) {
-          row.unitPrice = row.unitPrice.substring(0, 20);
-        }
-      }
 
 
-      // 税率
+
       if (row.unitPrice && row.unitPrice != '0') {
         let b = this.jnpf.numberFormat((row.unitPrice / (1 + row.taxRate / 100)), 4)
         row.excludingTaxUnitPrice = b ? b : 0
@@ -1209,6 +1266,13 @@ export default {
         let a = this.jnpf.numberFormat((row.unitPrice * row.num), 6)
         row.amounts = a ? a : '' // 含税金额
       }
+      var totalPrice = 0;
+      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+        let item=this.dataFormTwo.lines[a]
+        console.log("item",item.amounts);
+        totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
+      }
+      this.totalAmount=totalPrice
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
         row.excludingTaxAmounts = c ? c : ''
@@ -1219,6 +1283,7 @@ export default {
         let d = this.jnpf.numberFormat((row.amounts * 1 - row.excludingTaxAmounts * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
+      console.log("pfijspdfjp");
     },
     // 产品列表选中 
     handeleProductInfoData(val) {
@@ -1229,7 +1294,7 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.quotationNo = data.number
-      
+
       } catch (error) {
       }
     },

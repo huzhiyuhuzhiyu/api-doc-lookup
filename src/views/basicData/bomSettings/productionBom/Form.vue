@@ -12,7 +12,7 @@
       </div>
       <div class="contain">
         <div class="JNPF-common-layout">
-          <div class="JNPF-common-layout-left" v-if="title !== '新建BOM' && !statusFlag">
+          <div class="JNPF-common-layout-left treeBox" v-if="title !== '新建BOM' && !statusFlag">
             <div class="JNPF-common-title">
               <h2>BOM树</h2>
               <span class="options">
@@ -1155,7 +1155,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px 30px;
+  padding: 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {

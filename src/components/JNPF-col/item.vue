@@ -4,7 +4,7 @@
     <el-form-item :rules="Rules" :label="item.jnpfKey === 'groupTitle' ? '' : item.label" :prop="item.prop">
 
       <!-- 输入框 -->
-      <template v-if="item.type === 'input'">
+      <template v-if="item.type === 'input' || item.jnpfKey === 'comInput'">
         <el-input v-if="!item.remote" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" :disabled="readOnly"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event) : ''"
@@ -36,7 +36,7 @@
       </el-select>
 
       <!-- 文本域 -->
-      <el-input type="textarea" v-else-if="item.type === 'textarea'" v-bind="$attrs" v-on="$listeners"
+      <el-input type="textarea" v-else-if="item.type === 'textarea' || item.jnpfKey === 'textarea'" v-bind="$attrs" v-on="$listeners"
         :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200" :disabled="readOnly"
         :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
         @input="item.hasOwnProperty('input') ? item.input($event) : ''"

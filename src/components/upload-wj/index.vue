@@ -5,11 +5,11 @@
         <el-upload v-bind="$attrs" action="#" :file-list="fileList" :show-file-list="false" v-if="!detailed" :on-change="onChange" :auto-upload="false" multiple :on-progress="onProgress" accept=".jpg, .jpeg, .png, .xls, .xlsx, .doc, .docx, .txt, .pdf, .MPF" :headers="{
                         'token': `${token}`
                     }">
-          <el-button size="small" type="primary" icon="el-icon-upload" style="margin-top:10px" v-if="!disabled">点击上传</el-button>
+          <el-button size="small" type="primary" icon="el-icon-upload" v-if="!disabled">点击上传</el-button>
           <el-button size="small" slot="tip" type="primary" icon="el-icon-upload" style="margin-top:10px" disabled v-else>点击上传</el-button>
           <div slot="tip" class="el-upload__tip">只能上传不超过{{ fileSize }}{{ sizeUnit }}的{{ acceptText }}文件</div>
         </el-upload>
-        <div v-else class="upload-list">
+        <div v-else class="upload-list" style="padding-top: 0;">
           <p>附件列表</p>
         </div>
         <div v-if="uploadlist">

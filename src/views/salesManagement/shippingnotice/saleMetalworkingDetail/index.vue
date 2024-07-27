@@ -18,13 +18,13 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入客户料号" clearable
+                <el-input v-model="orderForm.customerDrawingNumber" placeholder="请输入客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerDrawingNumber" placeholder="请输入客户料号" clearable
+                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -43,10 +43,10 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button type="primary" icon="el-icon-plus" @click.native="Cancelshipment()" :loading="qxbtnLoading">
+              <el-button  size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()" :loading="qxbtnLoading">
                 批量取消发货
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
@@ -75,11 +75,11 @@
             <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-            <el-table-column prop="phone" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="phone" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="phone" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="phone" label="单位" width="160" />
-            <el-table-column prop="phone" label="发货数量" width="160" sortable="custom" />
+            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="160" />
+            <el-table-column prop="deliveryQuantity" label="发货数量" width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -88,8 +88,7 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="remark" label="订单号" width="120" sortable="custom" />
-            <el-table-column prop="remark" label="发货标识" width="120" sortable="custom">
-              <el-table-column prop="exchangeGoodsFlag" label="换货标识" width="120">
+            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
                 <template slot-scope="scope">
                   <div v-if="scope.row.exchangeGoodsFlag">
                     换货发货
@@ -98,7 +97,6 @@
                     正常发货
                   </div>
                 </template>
-              </el-table-column>
             </el-table-column>
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
@@ -240,9 +238,6 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "createTime"
         }],
         superQuery: {},
       },
@@ -505,7 +500,7 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1005',
+        exportType: this.exportTableRef === '1061',
         exportName: this.exportTableRef === '发货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1

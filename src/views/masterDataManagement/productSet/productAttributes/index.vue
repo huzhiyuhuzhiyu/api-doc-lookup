@@ -82,7 +82,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column :setColumnDisplayList="columnList">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column>
           <el-table-column prop="name" label="名称" />
           <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
           <el-table-column prop="remark" label="备注" />
@@ -166,7 +166,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: "",
-      columnList:["name"],
+   
     };
   },
   watch: {

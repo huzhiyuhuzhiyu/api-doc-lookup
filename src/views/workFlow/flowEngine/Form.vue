@@ -367,3 +367,47 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+::v-deep .left-scrollbar {
+  height: 100%;
+  overflow: hidden;
+}
+::v-deep .center-scrollbar {
+  width: 100%;
+}
+::v-deep .node-wrap-box::after{
+ 
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    border-radius: 4px;
+    /* border: 1px solid transparent; */
+    -webkit-transition: all .1s cubic-bezier(.645,.045,.355,1);
+    transition: all .1s cubic-bezier(.645,.045,.355,1);
+    box-shadow: none !important; 
+    background: none !important;
+}
+
+::v-deep .node-wrap-box {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: relative;
+    width: 220px;
+    min-height: 72px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    background: none !important;
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>

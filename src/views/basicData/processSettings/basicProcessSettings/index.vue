@@ -1,9 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title">
-        <h2>工序分类</h2>
-        <span class="options">
+        <h2 v-if="!leftFlag">工序分类</h2>
+        <span class="options" v-if="!leftFlag">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
@@ -14,7 +14,7 @@
           </el-dropdown>
         </span>
       </div>
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -25,6 +25,12 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute" >
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute" >
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
@@ -184,7 +190,8 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: ['unitPrice','createByName','rejectUnitPrice','scrapUnitPrice']
+      columnList: ['unitPrice','createByName','rejectUnitPrice','scrapUnitPrice'],
+      leftFlag: false,
     }
   },
   created() {
@@ -193,6 +200,10 @@ export default {
     this.getBusinessOptions()
   },
   methods: {
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+     
+    },
     sortChange({ prop, order }) {
       let newProp = ""
       if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {

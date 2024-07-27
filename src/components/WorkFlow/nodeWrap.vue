@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="node-wrap" v-if="nodeConfig.nodeType<3">
-            <div class="node-wrap-box" :class="(nodeConfig.nodeType==0?'start-node ':'')+(isTried&&nodeConfig.error?'active error':'')">
+            <div class="node2-wrap-box" :class="(nodeConfig.nodeType==0?'start-node ':'')+(isTried&&nodeConfig.error?'active error':'')">
                 <div>
                     <div :class="['title',nodeConfig.nodeType==0 && busType === 'busing' ? 'titleOk' : nodeConfig.nodeName == '抄送人' && busType === 'busing' ? 'titleCsr' : nodeConfig.approvalStatus && (nodeConfig.approvalStatus == 'ok' || nodeConfig.approvalStatus == 'rebut' || nodeConfig.approvalStatus == 'transferred') ? 'titleOk'  : nodeConfig.approvalStatus && nodeConfig.approvalStatus == 'wait' ? 'titleWait' :  nodeConfig.approvalStatus == 'no' ? 'titleNo' : '' ]" :style="`background: rgb(${bgColor});`">
                         <span v-if="nodeConfig.nodeType==0">{{nodeConfig.nodeName}}</span>

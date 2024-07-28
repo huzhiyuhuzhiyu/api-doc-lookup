@@ -322,7 +322,7 @@ export default {
           item.sourceName = _data.unit.name
           item.targetUnitCode = item.targetName
         })
-        // console.log(_data)
+
         // this.btnLoading = false
         // return
         let queryMehtod = this.dataForm.id ? updateUnitData : addUnitData
@@ -348,7 +348,7 @@ export default {
         targetName: ''
       }
       this.dataFormTwo.push(item)
-      console.log(this.dataFormTwo,'2')
+     
     },
     // 删除项
     delequipment_process_relList(scope) {

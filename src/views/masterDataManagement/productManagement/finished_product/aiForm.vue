@@ -817,17 +817,11 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
-        console.log(data,'dat')
         this.codeConfig = data
         if (!data.modifyFlag && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          // this.dataForm.code = orderNo
-
-          let target = this.sleeveItems.find(tc => tc.prop === 'code')
+          let target = this.sleeveItems.find((tc) => tc.prop === 'code')
+          this.sleeveList[0].code = data.number
           target.itemDisabled = true
-          this.sleeveList.forEach((item) => {
-            if (!item.code) item.code = orderNo
-          })
         }
       } catch (error) {}
     },
@@ -934,14 +928,15 @@ export default {
       this.$emit('close', true)
     },
     // 对应套筒新增行
-    addSleeveList() {
+    async addSleeveList() {
       let index = this.sleeveList.length
+      const data = await this.jnpf.getBillRuleConfigFun('bm_cp_cp')
       this.sleeveList.push({
         index,
         id: '',
         productCategoryName: '',
         productCategoryId: '',
-        code: '',
+        code: data.number,
         drawingNo: '',
         name: '',
         mainUnit: '套',
@@ -968,7 +963,6 @@ export default {
         remark: '',
         classAttribute: 'finish_product'
       })
-      this.fetchData('bm_cp_cp')
     },
     // 对应套筒删除当前行
     deleteth(row, index) {

@@ -146,7 +146,6 @@ export default {
     document.getElementsByClassName('el-table__body-wrapper')[1].onscroll = (event) => {
       const tableWrapper = event.target
       const isBottom = tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight
-      console.log(tableWrapper.scrollTop)
       if (isBottom && this.lazyLoadFlag) {
         this.lazyLoadFlag = false
         this.listQueryTwo.pageNum++
@@ -189,6 +188,10 @@ export default {
         this.listLoading = false
         this.$nextTick(() => {
           this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]) // 自动选择第一项
+          detailUnitData(this.list[0].name).then((res) => {
+            this.dataDetail = res.data.unitRelList || []
+            this.detailLoading = false
+      })
         })
       })
     },

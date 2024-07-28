@@ -208,7 +208,10 @@
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
                 :hasDel="false"
               >
-                <el-dropdown hide-on-click>
+              <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                查看详情
+              </el-button>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}
@@ -220,7 +223,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>

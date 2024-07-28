@@ -788,6 +788,24 @@ export default {
           trigger: 'blur'
         })
       }
+      if (
+        tc.prop === 'name' || 
+        tc.prop === 'brand' || // 品牌
+        tc.prop === 'mainUnit' || 
+        tc.prop === 'deputyUnit' || 
+        tc.prop === 'ratio' || 
+        tc.prop === 'calculationDirection' || 
+        tc.prop === 'productSource' || 
+        tc.prop === 'productStatus' || 
+        tc.prop === 'vibrationLevel' || // 振动等级
+        tc.prop === 'accuracyLevel' || // 精度等级
+        tc.prop === 'colour' || // 颜色
+        tc.prop === 'aperture' || // 孔径
+        tc.prop === 'remark'
+      ){
+        tc.render = false
+      }
+
     })
   },
   computed: {
@@ -926,11 +944,11 @@ export default {
         code: '',
         drawingNo: '',
         name: '',
-        mainUnit: '',
-        deputyUnit: '',
-        ratio: '',
-        calculationDirection: '',
-        productSource: '',
+        mainUnit: '套',
+        deputyUnit: '套',
+        ratio: 1,
+        calculationDirection: 'multiplication',
+        productSource: 'assemble',
         productStatus: 'enable',
         brand: '',
         model: '',

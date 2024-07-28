@@ -296,7 +296,7 @@ export default {
             let _data = {
               ...this.tableQuery,
               exportType: '1037',
-              exportName: '班组管理信息',
+              exportName: '班组设置信息',
               includeFieldMap,
               pageSize: data.dataType == 0 ? this.tableQuery.pageSize : -1
             }

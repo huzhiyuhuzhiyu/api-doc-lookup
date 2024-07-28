@@ -2,7 +2,7 @@
   <div>
     <el-drawer title="资源配置" :visible.sync="drawer" :direction="direction" :wrapperClosable="false"
       :before-close="handleClose" size="40%" columnSettings-drawer class="JNPF-common-drawer">
-      <el-tabs v-model="activeName" @tab-click="handleClick" stretch>
+      <el-tabs v-model="activeName" @tab-click="handleClick" stretch style="padding:10px">
         <div v-if="type !== 'look'">
           <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
             :disabled="type == 'look' ? true : false" @click="openSeleceProcessDialog(personData.length, activeName)">选择{{

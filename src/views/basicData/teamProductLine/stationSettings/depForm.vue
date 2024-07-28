@@ -59,7 +59,8 @@ export default {
         id:'',
         code: "",
         name: "",
-        state:""
+        state:"",
+        remark:''
       },
       codeConfig: {},
       btntype: false,

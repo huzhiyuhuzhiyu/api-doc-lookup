@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="分类编码">
-              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
+              <el-input v-model="listQuery.code" :placeholder="$t('common.enterKeyword')"
                 clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>

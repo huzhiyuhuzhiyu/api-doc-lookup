@@ -1,5 +1,6 @@
 import { getVisualDevInfo, Update, Create } from '@/api/onlineDev/visualDev'
 import commonMixin from '@/mixins/generator/common'
+import { column } from 'mathjs'
 export default {
   mixins: [commonMixin],
   data() {
@@ -19,7 +20,7 @@ export default {
         category: '',
         description: "",
         tables: '',
-        approvalFlag:false,
+        approvalFlag: false,
       },
       dataRule: {
         fullName: [
@@ -48,16 +49,16 @@ export default {
       dbType: "MySQL",
       mainTableFields: [],
       relationTable: "",
-      editType:'',
+      editType: '',
     }
   },
   methods: {
-    init(categoryList, id, type, webType, isToggle,editType) {
+    init(categoryList, id, type, webType, isToggle, editType) {
       this.categoryList = categoryList
       this.editType = editType || ''
-      if (this.editType){
+      if (this.editType) {
         this.activeStep = this.editType === 'form' ? 1 : this.editType === 'table' ? 2 : this.editType === 'flow' ? 3 : 0
-      }else{
+      } else {
         this.activeStep = 0
       }
       this.tables = []
@@ -71,7 +72,7 @@ export default {
           this.loading = true
           getVisualDevInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
-            
+
             this.dataForm.webType = this.dataForm.webType || 2
             if (isToggle) this.dataForm.webType = webType
             this.maxStep = parseInt(this.dataForm.webType)
@@ -81,22 +82,22 @@ export default {
             this.flowTemplateJson = this.dataForm.flowTemplateJson && JSON.parse(this.dataForm.flowTemplateJson)
             this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
             this.defaultTable = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
-            if (this.editType){
+            if (this.editType) {
               this.maxStep = this.activeStep
-              if (this.editType === 'form'){
+              if (this.editType === 'form') {
                 this.$refs['generator'].getData().then(res => {
                   this.formData = res.formData
                 }).catch(err => {
                   err.msg && this.$message.warning(err.msg)
                 })
-              }else if (this.editType === 'table'){
+              } else if (this.editType === 'table') {
                 this.$refs['columnDesign'].getData().then(res => {
                   this.columnData = res.columnData
                   this.appColumnData = res.appColumnData
                 }).catch(err => {
                   err.msg && this.$message.warning(err.msg)
                 })
-              }else if (this.editType === 'flow'){
+              } else if (this.editType === 'flow') {
                 this.$refs['process'].getData().then(res => {
                   this.flowTemplateJson = res.formData
                 }).catch(err => {
@@ -117,7 +118,7 @@ export default {
       const component = this.getComponent()
       this.$refs[component].getData().then(res => {
         this.btnLoading = true
-        if (!this.editType){
+        if (!this.editType) {
           if (this.dataForm.webType == 1) {
             this.formData = res.formData
           } else if (this.dataForm.webType == 3) {
@@ -126,18 +127,24 @@ export default {
             this.columnData = res.columnData
             this.appColumnData = res.appColumnData
           }
-        }else{
-          if (component === 'generator'){
+        } else {
+          if (component === 'generator') {
             this.formData = res.formData
-          }else if (component === 'columnDesign'){
+          } else if (component === 'columnDesign') {
             this.columnData = res.columnData
             this.appColumnData = res.appColumnData
-          }else{
+          } else {
             this.flowTemplateJson = res.formData
           }
         }
         this.dataForm.tables = JSON.stringify(this.tables)
         this.dataForm.formData = this.formData ? JSON.stringify(this.formData) : null
+        if (this.columnData.master.data){
+          this.columnData.master.condList = this.getCondList(this.columnData.master.data)
+        }
+        if (this.columnData.slave.data){
+          this.columnData.slave.condList = this.getCondList(this.columnData.slave.data)
+        }
         this.dataForm.columnData = this.columnData ? JSON.stringify(this.columnData) : null
         this.dataForm.appColumnData = this.appColumnData ? JSON.stringify(this.appColumnData) : null
         this.dataForm.flowTemplateJson = this.flowTemplateJson ? JSON.stringify(this.flowTemplateJson) : null
@@ -203,7 +210,7 @@ export default {
     getComponent() {
       const webType = this.dataForm.webType || 2
       let component = 'columnDesign'
-      if (!this.editType){
+      if (!this.editType) {
         if (webType == 1) {
           component = 'generator'
         } else if (webType == 3) {
@@ -211,10 +218,21 @@ export default {
         } else {
           component = 'columnDesign'
         }
-      }else{
+      } else {
         component = this.editType === 'form' ? 'generator' : this.editType === 'table' ? 'columnDesign' : 'process'
       }
       return component
-    }
+    },
+    getCondList(sqlQuery){
+      const pattern = /#\{(.*?)\}/g;
+      let matches;
+      const condList = [];
+
+      // 使用 exec 方法逐个查找匹配项
+      while ((matches = pattern.exec(sqlQuery)) !== null) {
+        condList.push(`#${matches[1]}`); // 将匹配到的内容添加到数组中
+      }
+      return condList;
+    },
   }
 }

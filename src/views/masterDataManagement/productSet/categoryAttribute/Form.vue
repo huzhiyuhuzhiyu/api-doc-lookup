@@ -6,8 +6,8 @@
     :close-on-press-escape="false"
     :visible.sync="visible"
     lock-scroll
-    class="JNPF-dialog JNPF-dialog_center"
     width="500px"
+    class="JNPF-common-drawer"
   >
   <template slot="title">
       <div class="custom_title">
@@ -120,14 +120,14 @@ export default {
   methods: {
     init(id, btntype) {
       this.visible = true
-      this.title = !id ? '新建类别属性' : '编辑类别属性'
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
           remark: '',
           code: ''
         }
-      } else {
+        this.title = '新建类别属性'
+      } else if (btntype == 'edit'){
         getClassAttributeInfo(id).then((res) => {
           this.dataForm.code = res.data.code
           this.autoCode = res.data.code
@@ -135,6 +135,17 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
+          this.title ='编辑类别属性'
+        })
+      }else if (btntype == 'copy'){
+        getClassAttributeInfo(id).then((res) => {
+          this.dataForm.code = res.data.code
+          this.autoCode = res.data.code
+
+          this.dataForm.name = res.data.name
+          this.dataForm.remark = res.data.remark
+          this.title = '新增类别属性'
+          // this.dataForm.id = res.data.id
         })
       }
       this.btntype = btntype
@@ -152,7 +163,7 @@ export default {
         if (valid) {
           this.btnLoading = true
 
-          let formMethod = this.btntype == 'add' ? addClassAttributes : updataClassAttribute
+          let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
 
           if (formMethod == updataClassAttribute) {
             formMethod(this.dataForm)

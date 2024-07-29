@@ -1,6 +1,6 @@
 <template>
   <el-drawer :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
+    :visible.sync="visible" lock-scroll width="500px" @close="$emit('close')" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
         {{ title }}
@@ -116,16 +116,25 @@ export default {
       this.visible = true
       this.dataForm.id = id || ''
       this.dataForm.parentId = parentId || '-1'
-      this.title = !this.dataForm.id ? '新建产品分类' : '编辑产品分类'
       this.formLoading = true
       this.$nextTick(() => {
-        if (this.dataForm.id) {
+        if (btntype== 'edit') {
           detailCategory(this.dataForm.id).then(res => {
             this.dataForm = res.data
             this.autoCode = res.data.code
+            this.title = '编辑产品分类'
             this.formLoading = false
           })
-        } else {
+        } else if (btntype== 'copy') {
+          detailCategory(this.dataForm.id).then(res => {
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.title = '新建产品分类'
+            delete this.dataForm.id //true
+            this.formLoading = false
+          })
+        } else if (btntype== 'add') {
+          this.title = '新建产品分类'
           this.formLoading = false
         }
       })

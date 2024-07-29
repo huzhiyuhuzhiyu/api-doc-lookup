@@ -63,7 +63,7 @@
             <el-form-item>
               <el-input
                 v-model="listQuery.drawingNo"
-                placeholder="请输入规格型号"
+                placeholder="请输入品名规格"
                 clearable
                 @keyup.enter.native="search()"
               />
@@ -160,7 +160,7 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
@@ -256,8 +256,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入规格型号" clearable />
+            <el-form-item label="品名规格">
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -467,7 +467,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '规格型号',
+          label: '品名规格',
           type: 'input'
         },
         {

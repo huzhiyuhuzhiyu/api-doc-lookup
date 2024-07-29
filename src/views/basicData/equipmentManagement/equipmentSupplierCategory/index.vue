@@ -94,7 +94,7 @@ export default {
     return {
       listQuery: {
         keyword: '',
-        type: "supplier",
+        type: "equipment_supplier",
         orderItems: [{
           asc: false,
           column: "createTime"

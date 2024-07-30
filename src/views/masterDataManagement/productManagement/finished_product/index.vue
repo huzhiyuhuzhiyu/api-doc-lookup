@@ -52,7 +52,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.code"
+                v-model="listQuery.productCode"
                 placeholder="请输入产品编码"
                 clearable
                 @keyup.enter.native="search()"
@@ -62,7 +62,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.drawingNo"
+                v-model="listQuery.productDrawingNo"
                 placeholder="请输入品名规格"
                 clearable
                 @keyup.enter.native="search()"

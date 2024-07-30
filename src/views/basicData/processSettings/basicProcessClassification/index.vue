@@ -4,14 +4,14 @@
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="6">
-            <el-form-item :label="$t('common.keyword')">
-              <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')"
+            <el-form-item label="分类名称">
+              <el-input v-model="listQuery.name" placeholder="请输入分类名称"
                 clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="分类编码">
-              <el-input v-model="listQuery.code" :placeholder="$t('common.enterKeyword')"
+              <el-input v-model="listQuery.code" placeholder="请输入分类编码"
                 clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>

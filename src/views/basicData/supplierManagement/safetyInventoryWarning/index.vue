@@ -162,46 +162,16 @@
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
-          <el-table-column prop="mainUnit" label="主单位" width="120" />
-          <el-table-column prop="productSource" label="产品来源" width="120">
-            <template slot-scope="{ row }">
-              <template v-if="row.productSource == 'produce'">
-                自制
-              </template>
-              <template v-else-if="row.productSource == 'purchase'">
-                采购
-              </template>
-              <template v-else-if="row.productSource == 'out'">
-                外协
-              </template>
-            </template>
-          </el-table-column>
-          <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
-            <template slot-scope="{ row }">
-              <el-tag type="success" disable-transitions v-if="row.productStatus == 'enable'">启用</el-tag>
-              <el-tag type="danger" disable-transitions v-else-if="row.productStatus == 'disabled'">禁用</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="model" label="型号" width="120" />
-          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
-          <el-table-column prop="structureType" label="结构类型" width="120" />
-          <el-table-column prop="clearance" label="游隙" width="120" />
-          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-          <el-table-column prop="oil" label="油脂" width="120" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-          <el-table-column prop="noise" label="噪音" width="120" />
-          <el-table-column prop="holder" label="保持架" width="120" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" />
-          <el-table-column prop="colour" label="颜色" width="120" />
-          <el-table-column prop="aperture" label="孔径" width="120" />
-          <el-table-column prop="remark" label="备注" width="120" />
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" />
+          <el-table-column prop="mainUnit" label="主单位" min-width="120" />
+          <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
+          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" />
+          <el-table-column prop="inventoryQuantity" label="库存数量（主）" min-width="130" />
+          <el-table-column prop="occupancyQuantity" label="占用数量（主）" min-width="130" />
+          <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
+          <el-table-column prop="deputyAvailableQuantity" label="可用库存（副）" min-width="130" />
+          <el-table-column prop="deputyInventoryQuantity" label="库存数量（副）" min-width="130" />
+          <el-table-column prop="deputyOccupancyQuantity" label="占用数量（副）" min-width="130" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts
@@ -383,7 +353,7 @@ import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   components: { Form, ExportForm, SuperQuery },
-  name: 'finished_product',
+  name: 'safetyInventoryWarning',
   data() {
     return {
       exportFormVisible: false,

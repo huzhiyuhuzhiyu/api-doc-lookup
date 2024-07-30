@@ -89,7 +89,8 @@
         v-on="$listeners"></el-checkbox> -->
 
       <!-- 开关 -->
-      <!-- <el-switch v-else-if="item.type === 'switch'" v-bind="$attrs" v-on="$listeners"></el-switch> -->
+      <el-switch v-else-if="item.type === 'switch'" v-bind="$attrs" v-on="$listeners"  active-value="1"
+        inactive-value="0" @change="item.hasOwnProperty('change') ? item.change($event,item) : ''"></el-switch>
 
       <!-- 评分 -->
       <!-- <el-rate v-else-if="item.type === 'rate'" v-bind="$attrs" :colors="['#99A9BF', '#F7BA2A', '#FF9900']"

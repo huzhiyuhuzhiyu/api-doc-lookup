@@ -150,8 +150,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入规格型号" clearable />
+            <el-form-item label="品名规格">
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

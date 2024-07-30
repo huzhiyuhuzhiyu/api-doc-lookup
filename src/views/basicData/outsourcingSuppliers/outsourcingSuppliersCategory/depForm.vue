@@ -1,13 +1,28 @@
 <template>
-  <el-dialog
+  <el-drawer
     :title="!dataForm.id ? '新建外协供应商分类' : '编辑外协供应商分类'"
     :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll
-    class="JNPF-dialog JNPF-dialog_center" width="500px">
+    class="JNPF-common-drawer" width="500px">
+    <template slot="title">
+      <div style="margin-left:-10px">
+        {{ !dataForm.id ? '新建外协供应商分类' : '编辑外协供应商分类' }}
+      </div>
+    </template>
+    <div style="padding:10px;">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule" label-position="top"
       label-width="120px">
       <el-form-item label="上级分类" prop="parentName">
-        <ComSelect2 v-model="dataForm.parentName" :isdisabled="isdisabled" placeholder="请选择所属分类" auth @change="onOrganizeChange"
-          :currOrgId="dataForm.id" :type="dataForm.type" />
+        <ComSelect-list
+            :isdisabled="dataForm.id ? true : false"
+            v-model="dataForm.parentName"
+            placeholder="请选择上级分类"
+            auth
+            @change="onOrganizeChange"
+            :title="'选择上级分类'"
+            :method="getcategoryTree"
+            :requestObj="requestObjTwo"
+            :paramsObj="{}"
+          />
       </el-form-item>
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称"  maxlength="20"/>
@@ -16,17 +31,18 @@
         <el-input v-model="dataForm.remark" type="textarea" :rows="3"  maxlength="200" placeholder="请输入备注"/>
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span style="display:flex;justify-content:flex-end">
       <el-button @click="visible = false">{{$t('common.cancelButton')}}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交</el-button>
     </span>
-  </el-dialog>
+  </div>
+  </el-drawer>
 </template>
 
 <script>
 import {  updateDepartment } from '@/api/permission/department'
-import { addCategory,getCategoryInfo,editCategory,checkCategorychildNode} from "@/api/basicData/index";
+import {getcategoryTree, addCategory,getCategoryInfo,editCategory,checkCategorychildNode} from "@/api/basicData/index";
 
 export default {
   data() {
@@ -35,6 +51,11 @@ export default {
       formLoading: false,
       btnLoading: false,
       isdisabled:false,
+      getcategoryTree,
+      requestObjTwo: {
+        pageSize: -1,
+        type: "outsourcing_suppliers"
+      },
       dataForm: {
         name: '',
         remark: '',

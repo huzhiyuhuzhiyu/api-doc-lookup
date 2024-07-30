@@ -21,9 +21,20 @@
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                    <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
+                    <!-- <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
-                      :type="dataForm.type" />
+                      :type="dataForm.type" /> -->
+                      <ComSelect-list
+            :isdisabled="dataForm.id ? true : false"
+            v-model="dataForm.parentName"
+            placeholder="请选择上级分类"
+            auth
+            @change="onOrganizeChange"
+            :title="'选择上级分类'"
+            :method="getcategoryTree"
+            :requestObj="requestObjTwo"
+            :paramsObj="{}"
+          />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -199,7 +210,22 @@
                       maxlength="512" />
                   </el-form-item>
                 </el-col>
-
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账开始日期" prop="reconciliationStartDate">
+                    <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" format="yyyy-MM-dd"
+                      style="width: 100%;" value-format="yyyy-MM-dd"  placeholder="请选择对账开始日期"
+                      :disabled="btnType ? true : false">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="8" :xs="24">
+                  <el-form-item label="对账结束日期" prop="reconciliationEndDate">
+                    <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" format="yyyy-MM-dd"
+                      style="width: 100%;" value-format="yyyy-MM-dd"  placeholder="请选择对账结束日期"
+                      :disabled="btnType ? true : false">
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
 
 
 
@@ -572,7 +598,7 @@
 import { createOrganize, updateOrganize, getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
-  editPartner, addPartner
+  editPartner, addPartner, getcategoryTree
   , getCooperativeInfo, getCounryData, checkCode,getBimBusinessInfo
 } from '@/api/basicData/index'
 import formValidate from "@/utils/formValidate";
@@ -582,6 +608,11 @@ import {
 export default {
   data() {
     return {
+      getcategoryTree,
+      requestObjTwo: {
+        pageSize: -1,
+        type: 'outsourcing_suppliers'
+      },
       loadingareafoundation:false,
       foundationloadingcity:false,
       loadingarea:false,
@@ -684,6 +715,8 @@ export default {
         paymentCycle: "",
         // salespersonId: "",
         website: "",
+        reconciliationStartDate:'',
+        reconciliationEndDate:'',
         orderFreezeFlag: false,
         shipmentFreezeFlag: false,
         modeTransport: "",
@@ -775,13 +808,19 @@ export default {
         ],
         paymentCycle: [
           { required: true, message: '请选择付款周期', trigger: 'change' },
+        ],
+        reconciliationStartDate: [
+          { required: true, message: '请选择对账开始日期', trigger: 'change' },
+        ],
+        reconciliationEndDate: [
+          { required: true, message: '请选择对账结束日期', trigger: 'change' },
         ]
       },
       isattachmentswitch:''
     }
   },
   created() {
-    this.getAttachmentswitch()
+    // this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
     // this.getCounryDatas()

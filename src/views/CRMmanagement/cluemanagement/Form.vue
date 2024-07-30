@@ -178,10 +178,10 @@ export default {
     }
   },
   created() {
-    getbimProductAttributes('585429807173478149').then(res => {
+    getbimProductAttributes('428523727035040965').then(res => {
       this.sourceList = res.data.list.length ? res.data.list : []
     })
-    getbimProductAttributes('585430224678692613').then(res => {
+    getbimProductAttributes('428119776947078341').then(res => {
       this.levelList = res.data.list.length ? res.data.list : []
     })
     getbimProductAttributes('585430056520656645').then(res => {

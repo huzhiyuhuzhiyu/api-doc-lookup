@@ -246,17 +246,17 @@ export default {
 
       this.dataFormTwo = []
     },
-    init(rowData) {
+    init(rowData,btntype) {
       rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = Object.keys(rowData).length ? rowData.id : 0
       this.visible = true
-      this.dialogTitle = !this.dataForm.id ? '新建常用单位' : `编辑常用单位`
+      
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
-        if (!this.dataForm.id) {
+        if (btntype=='add') {
           this.clearData()
-        } else {
+        } else if(btntype == 'edit'){
           this.loading = true
           this.dataForm = rowData
           this.autoName = rowData.name
@@ -267,6 +267,22 @@ export default {
             this.dataFormTwo.forEach((item) => {
               item.index = ind++
             })
+            this.dialogTitle = `编辑常用单位`
+            this.loading = false
+          })
+        }else if(btntype == 'copy'){
+          this.loading = true
+          this.dataForm = rowData
+          this.autoName = rowData.name
+          // 获取当前项对应关系
+          detailUnitData(rowData.name).then((res) => {
+            this.dataFormTwo = res.data.unitRelList
+            let ind = 0
+            this.dataFormTwo.forEach((item) => {
+              item.index = ind++
+            })
+            delete this.dataForm.id 
+            this.dialogTitle = '新建常用单位'
             this.loading = false
           })
         }

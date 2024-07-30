@@ -379,11 +379,10 @@ import { excelExport } from '@/api/basicData/index'
 import { getProductList, deleteProduct, uploadCpProductData } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
-import aiForm from './aiForm'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  components: { Form, ExportForm, aiForm, SuperQuery },
+  components: { Form, ExportForm, SuperQuery },
   name: 'finished_product',
   data() {
     return {
@@ -647,7 +646,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1200',
-          exportName: '成品信息',
+          exportName: '安全库存预警信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
@@ -680,7 +679,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: 'finish_product' })
+      getcategoryTree({ classAttribute: '' })
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {

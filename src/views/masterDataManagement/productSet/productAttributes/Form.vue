@@ -6,7 +6,7 @@
     :close-on-press-escape="false"
     :visible.sync="visible"
     lock-scroll
-    class="JNPF-dialog JNPF-dialog_center"
+    class="JNPF-common-drawer"
     width="500px"
   >
   <template slot="title">
@@ -120,7 +120,7 @@ export default {
   methods: {
     init(code, btntype) {
       this.visible = true
-      this.title = !code ? '新建产品属性' : '编辑产品属性'
+      
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
@@ -129,7 +129,8 @@ export default {
           typeCode: code,
           id:''
         }
-      } else {
+        this.title = '新建产品属性'
+      } else if (btntype == 'edit') {
         getBimProductAttributesInfo(code).then((res) => {
           // this.dataForm.code = res.data.code
           this.autoName = res.data.name
@@ -137,6 +138,17 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
+          this.title = '编辑产品属性'
+        })
+      } else if (btntype == 'copy') {
+        getBimProductAttributesInfo(code).then((res) => {
+          // this.dataForm.code = res.data.code
+          this.autoName = res.data.name
+          this.dataForm.typeCode = res.data.typeCode
+          this.dataForm.name = res.data.name
+          this.dataForm.remark = res.data.remark
+          this.title = '新建产品属性'
+         
         })
       }
       this.btntype = btntype

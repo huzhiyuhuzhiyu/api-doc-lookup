@@ -153,7 +153,7 @@ export default {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
                 checkDrawExist({id:this.dataForm.id,drawingNo:this.jnpf.specialCodeUrl(this.dataForm.drawingNo)}).then((res) => {
                   if (!res.data) { callback() }
-                  else { callback(new Error('此规格型号已存在')) }
+                  else { callback(new Error('此品名规格已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })
               }
             },

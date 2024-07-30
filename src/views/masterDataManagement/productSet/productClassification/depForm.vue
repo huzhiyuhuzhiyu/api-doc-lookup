@@ -1,6 +1,12 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
+  <el-drawer :title="!dataForm.id ? '新建产品分类' : '编辑产品分类'" :close-on-click-modal="false" :close-on-press-escape="false"
+    :visible.sync="visible" lock-scroll width="500px" @close="$emit('close')" class="JNPF-common-drawer">
+    <template slot="title">
+      <div class="custom_title">
+        {{ title }}
+      </div>
+    </template>
+    <div style="padding:10px">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
       label-position="top" label-width="120px">
       <el-form-item label="上级分类" prop="parentName">
@@ -31,13 +37,14 @@
         <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span style="display:flex;justify-content: flex-end;">
       <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         {{ $t('common.submitButton') }}
       </el-button>
     </span>
-  </el-dialog>
+  </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -49,6 +56,7 @@ export default {
         pageSize: -1,
         classAttribute: ''
       },
+      title:'',
       getcategoryTree,
       visible: false,
       formLoading: false,
@@ -110,13 +118,23 @@ export default {
       this.dataForm.parentId = parentId || '-1'
       this.formLoading = true
       this.$nextTick(() => {
-        if (this.dataForm.id) {
+        if (btntype== 'edit') {
           detailCategory(this.dataForm.id).then(res => {
             this.dataForm = res.data
             this.autoCode = res.data.code
+            this.title = '编辑产品分类'
             this.formLoading = false
           })
-        } else {
+        } else if (btntype== 'copy') {
+          detailCategory(this.dataForm.id).then(res => {
+            this.dataForm = res.data
+            this.autoCode = res.data.code
+            this.title = '新建产品分类'
+            delete this.dataForm.id //true
+            this.formLoading = false
+          })
+        } else if (btntype== 'add') {
+          this.title = '新建产品分类'
           this.formLoading = false
         }
       })
@@ -151,3 +169,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+}
+</style>

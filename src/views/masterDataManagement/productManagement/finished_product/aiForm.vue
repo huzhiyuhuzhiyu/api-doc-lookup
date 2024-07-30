@@ -405,13 +405,13 @@ export default {
       
         {
           prop: 'drawingNo',
-          label: '规格型号',
+          label: '品名规格',
           value: '',
           type: 'input',
           maxlength: '1000',
           itemDisabled: true,
           minWidth: 220,
-          placeholder: '规格型号自动生成'
+          placeholder: '品名规格自动生成'
         },
         {
           prop: 'code',
@@ -788,6 +788,24 @@ export default {
           trigger: 'blur'
         })
       }
+      if (
+        tc.prop === 'name' || 
+        tc.prop === 'brand' || // 品牌
+        tc.prop === 'mainUnit' || 
+        tc.prop === 'deputyUnit' || 
+        tc.prop === 'ratio' || 
+        tc.prop === 'calculationDirection' || 
+        tc.prop === 'productSource' || 
+        tc.prop === 'productStatus' || 
+        tc.prop === 'vibrationLevel' || // 振动等级
+        tc.prop === 'accuracyLevel' || // 精度等级
+        tc.prop === 'colour' || // 颜色
+        tc.prop === 'aperture' || // 孔径
+        tc.prop === 'remark'
+      ){
+        tc.render = false
+      }
+
     })
   },
   computed: {
@@ -801,14 +819,9 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
         if (!data.modifyFlag && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          // this.dataForm.code = orderNo
-
-          let target = this.sleeveItems.find(tc => tc.prop === 'code')
+          let target = this.sleeveItems.find((tc) => tc.prop === 'code')
+          this.sleeveList[0].code = data.number
           target.itemDisabled = true
-          this.sleeveList.forEach((item) => {
-            if (!item.code) item.code = orderNo
-          })
         }
       } catch (error) {}
     },
@@ -915,21 +928,22 @@ export default {
       this.$emit('close', true)
     },
     // 对应套筒新增行
-    addSleeveList() {
+    async addSleeveList() {
       let index = this.sleeveList.length
+      const data = await this.jnpf.getBillRuleConfigFun('bm_cp_cp')
       this.sleeveList.push({
         index,
         id: '',
         productCategoryName: '',
         productCategoryId: '',
-        code: '',
+        code: data.number,
         drawingNo: '',
         name: '',
-        mainUnit: '',
-        deputyUnit: '',
-        ratio: '',
-        calculationDirection: '',
-        productSource: '',
+        mainUnit: '套',
+        deputyUnit: '套',
+        ratio: 1,
+        calculationDirection: 'multiplication',
+        productSource: 'assemble',
         productStatus: 'enable',
         brand: '',
         model: '',
@@ -949,7 +963,6 @@ export default {
         remark: '',
         classAttribute: 'finish_product'
       })
-      this.fetchData('bm_cp_cp')
     },
     // 对应套筒删除当前行
     deleteth(row, index) {

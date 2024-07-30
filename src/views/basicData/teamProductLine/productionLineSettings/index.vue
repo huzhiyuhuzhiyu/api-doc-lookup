@@ -187,7 +187,7 @@ export default {
         let _data = {
           ...this.tableQuery,
           exportType: '1038',
-          exportName: '产线管理信息',
+          exportName: '产线设置信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.tableQuery.pageSize : -1
         }

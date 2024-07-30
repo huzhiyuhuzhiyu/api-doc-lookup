@@ -118,7 +118,11 @@
                 :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)"
-              ></tableOpts>
+              >
+                <!-- <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id,scope.row.parentId, 'copy')">
+                  复制
+                </el-button> -->
+              </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -172,14 +176,7 @@ export default {
   },
   methods: {
     switchShow(row) {
-      let obj = {
-        enCode: row.enCode,
-        sortCode: row.sortCode,
-        id: row.id,
-        parentId: row.parentId,
-        fullName: row.fullName,
-        isTree: row.isTree
-      }
+      let obj = row
       updateCategory(obj)
         .then((response) => {
           this.$message({
@@ -187,9 +184,7 @@ export default {
             type: 'success',
             duration: 1500,
             onClose: () => {
-              this.visible = false
-              this.btnLoading = false
-              this.$emit('close', true)
+              this.initData()
             }
           })
         })
@@ -198,7 +193,6 @@ export default {
         })
     },
     columnSetFun() {
-      console.log('this.$refs.dataTable', this.$refs.dataTable)
       this.$refs.dataTable.showDrawer()
     },
     initData() {

@@ -1,15 +1,21 @@
 <template>
-  <el-dialog
+  <el-drawer
     @closed="cancelFun"
     :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="visible"
     lock-scroll
-    class="JNPF-dialog JNPF-dialog_center"
     width="500px"
+    class="JNPF-common-drawer"
   >
-    <el-form
+  <template slot="title">
+      <div class="custom_title">
+        {{ title }}
+      </div>
+    </template>
+    <div style="padding:10px">
+      <el-form
       ref="dataForm"
       v-loading="formLoading"
       :model="dataForm"
@@ -27,13 +33,14 @@
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span style="display:flex;justify-content: flex-end;">
       <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交
       </el-button>
     </span>
-  </el-dialog>
+    </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -57,6 +64,7 @@ export default {
         remark: '',
         code: ''
       },
+      title:'',
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
@@ -118,7 +126,8 @@ export default {
           remark: '',
           code: ''
         }
-      } else {
+        this.title = '新建类别属性'
+      } else if (btntype == 'edit'){
         getClassAttributeInfo(id).then((res) => {
           this.dataForm.code = res.data.code
           this.autoCode = res.data.code
@@ -126,6 +135,17 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
+          this.title ='编辑类别属性'
+        })
+      }else if (btntype == 'copy'){
+        getClassAttributeInfo(id).then((res) => {
+          this.dataForm.code = res.data.code
+          this.autoCode = res.data.code
+
+          this.dataForm.name = res.data.name
+          this.dataForm.remark = res.data.remark
+          this.title = '新增类别属性'
+          // this.dataForm.id = res.data.id
         })
       }
       this.btntype = btntype
@@ -143,7 +163,7 @@ export default {
         if (valid) {
           this.btnLoading = true
 
-          let formMethod = this.btntype == 'add' ? addClassAttributes : updataClassAttribute
+          let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
 
           if (formMethod == updataClassAttribute) {
             formMethod(this.dataForm)
@@ -186,3 +206,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+}
+</style>

@@ -153,7 +153,7 @@ export default {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
                 checkDrawExist({id:this.dataForm.id,drawingNo:this.jnpf.specialCodeUrl(this.dataForm.drawingNo)}).then((res) => {
                   if (!res.data) { callback() }
-                  else { callback(new Error('此规格型号已存在')) }
+                  else { callback(new Error('此品名规格已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })
               }
             },
@@ -236,9 +236,8 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (data && data.codeWay == 'auto') {
-          const orderNo = await this.jnpf.getCodeWayFun(code)
-          this.dataForm.code = orderNo
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = true
           

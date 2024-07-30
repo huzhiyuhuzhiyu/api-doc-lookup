@@ -72,12 +72,12 @@ export default {
       getcategoryTree,
       requestObjTwo: {
         pageSize: -1,
-        type: 'supplier'
+        type: 'equipment_supplier'
       },
       dataForm: {
         name: '',
         remark: '',
-        type: 'supplier',
+        type: 'equipment_supplier',
         parentId: '',
         parentName: ''
       },
@@ -127,7 +127,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          this.dataForm.type = 'supplier'
+          this.dataForm.type = 'equipment_supplier'
           let formMethod = this.dataForm.id ? editCategory : addCategory
           console.log('formMethod', formMethod)
           if (formMethod == editCategory) {

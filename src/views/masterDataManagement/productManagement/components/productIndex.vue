@@ -37,12 +37,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
@@ -91,7 +91,7 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120"  />
@@ -115,8 +115,11 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
+              :hasDel="false">
+              <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                查看详情
+              </el-button>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini" v-has="'btn_detail'">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -127,7 +130,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>
@@ -147,8 +150,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入规格型号" clearable />
+            <el-form-item label="品名规格">
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">

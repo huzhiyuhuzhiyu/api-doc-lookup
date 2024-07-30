@@ -1,14 +1,20 @@
 <template>
-  <el-dialog
+  <el-drawer
     @closed="cancelFun"
     :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :visible.sync="visible"
     lock-scroll
-    class="JNPF-dialog JNPF-dialog_center"
+    class="JNPF-common-drawer"
     width="500px"
   >
+  <template slot="title">
+      <div class="custom_title">
+        {{ title }}
+      </div>
+    </template>
+  <div style="padding:10px">
     <el-form
       ref="dataForm"
       v-loading="formLoading"
@@ -27,13 +33,14 @@
         <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
       </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <span style="display:flex;justify-content: flex-end;">
       <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         提交
       </el-button>
     </span>
-  </el-dialog>
+  </div>
+  </el-drawer>
 </template>
 
 <script>
@@ -58,6 +65,7 @@ export default {
         // code: '',
         typeCode: ''
       },
+      title:'',
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
@@ -112,6 +120,7 @@ export default {
   methods: {
     init(code, btntype) {
       this.visible = true
+      
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
@@ -120,7 +129,8 @@ export default {
           typeCode: code,
           id:''
         }
-      } else {
+        this.title = '新建产品属性'
+      } else if (btntype == 'edit') {
         getBimProductAttributesInfo(code).then((res) => {
           // this.dataForm.code = res.data.code
           this.autoName = res.data.name
@@ -128,6 +138,17 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
+          this.title = '编辑产品属性'
+        })
+      } else if (btntype == 'copy') {
+        getBimProductAttributesInfo(code).then((res) => {
+          // this.dataForm.code = res.data.code
+          this.autoName = res.data.name
+          this.dataForm.typeCode = res.data.typeCode
+          this.dataForm.name = res.data.name
+          this.dataForm.remark = res.data.remark
+          this.title = '新建产品属性'
+         
         })
       }
       this.btntype = btntype
@@ -189,3 +210,10 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+}
+</style>

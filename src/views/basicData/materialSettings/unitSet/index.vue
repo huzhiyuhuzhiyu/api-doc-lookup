@@ -51,7 +51,7 @@
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="updateHandle(scope.row)">编辑</el-button>
+                <el-button size="mini" type="text" @click="updateHandle(scope.row,'edit')">编辑</el-button>
                 <el-button
                   size="mini"
                   type="text"
@@ -60,6 +60,7 @@
                 >
                   删除
                 </el-button>
+                <!-- <el-button size="mini" type="text" @click="updateHandle(scope.row,'copy')">复制</el-button> -->
               </template>
             </el-table-column>
           </JNPF-table>
@@ -146,7 +147,6 @@ export default {
     document.getElementsByClassName('el-table__body-wrapper')[1].onscroll = (event) => {
       const tableWrapper = event.target
       const isBottom = tableWrapper.scrollHeight - tableWrapper.scrollTop === tableWrapper.clientHeight
-      console.log(tableWrapper.scrollTop)
       if (isBottom && this.lazyLoadFlag) {
         this.lazyLoadFlag = false
         this.listQueryTwo.pageNum++
@@ -189,6 +189,10 @@ export default {
         this.listLoading = false
         this.$nextTick(() => {
           this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]) // 自动选择第一项
+          detailUnitData(this.list[0].name).then((res) => {
+            this.dataDetail = res.data.unitRelList || []
+            this.detailLoading = false
+      })
         })
       })
     },
@@ -217,10 +221,10 @@ export default {
       })
     },
     // 编辑数据
-    updateHandle(rowData) {
+    updateHandle(rowData,btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(JSON.stringify(rowData))
+        this.$refs.JNPFForm.init(JSON.stringify(rowData),btntype)
       })
     },
     search() {

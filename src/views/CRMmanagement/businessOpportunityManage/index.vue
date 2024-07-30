@@ -58,7 +58,7 @@
             <el-table-column prop="remark" label="备注" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
-            <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>

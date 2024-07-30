@@ -236,18 +236,32 @@
               <el-form-item label="高级查询">
                 <el-switch v-model="columnData.hasSuperQuery"></el-switch>
               </el-form-item>
-              <el-form-item label="主表SQL">
-                <el-input v-model="columnData.sqlStr">
+              <el-form-item label="主列SQL">
+                <el-input type="text"  :autosize="{ minRows: 2, maxRows: 4 }" v-model="columnData.master.column">
                   <template slot="append">
                     <el-button type="primary" plain @click="getSql">执行</el-button>
                   </template>
                 </el-input>
               </el-form-item>
-              <el-form-item label="子表SQL" v-if="columnData.type == 5 || columnData.type == 6">
-                <el-input v-model="columnData.sqllineStr">
+              <el-form-item label="主数据SQL">
+                <el-input type="textarea"  :autosize="{ minRows: 2, maxRows: 4 }" v-model="columnData.master.data">
+                  <!-- <template slot="append">
+                    <el-button type="primary" plain @click="getSql">执行</el-button>
+                  </template> -->
+                </el-input>
+              </el-form-item>
+              <el-form-item label="子列SQL" v-if="columnData.type == 5 || columnData.type == 6">
+                <el-input type="text"  :autosize="{ minRows: 2, maxRows: 4 }" v-model="columnData.slave.column">
                   <template slot="append">
                     <el-button type="primary" plain @click="getLineSql">执行</el-button>
                   </template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="子数据SQL" v-if="columnData.type == 5 || columnData.type == 6">
+                <el-input type="textarea"  :autosize="{ minRows: 2, maxRows: 4 }" v-model="columnData.slave.data">
+                  <!-- <template slot="append">
+                    <el-button type="primary" plain @click="getLineSql">执行</el-button>
+                  </template> -->
                 </el-input>
               </el-form-item>
               <el-form-item label="排序类型">
@@ -308,8 +322,17 @@ const defaultFormatter = '(row, column, cellValue, index)=>{\r\n   \r\n}'
 const defaultColumnData = {
   searchList: [], // 查询字段
   hasSuperQuery: true, // 高级查询
-  sqlStr: '', // 主表sql
-  sqllineStr: '', // 子表sql
+  // 增加master 和 slave 
+  master:{
+    column:'',
+    data:'',
+    condList:[]
+  },
+  slave:{
+    column:'',
+    data:'',
+    condList:[]
+  },
   columnList: [], // 字段列表
   columnLineList: [], // 明细 字段列表
   columnOptions: [], // 字段列表
@@ -516,7 +539,7 @@ export default {
     if (typeof this.conf === 'object' && this.conf !== null) {
       this.columnData = Object.assign({}, defaultColumnData, this.conf)
     }
-    if (!this.columnData.sqlStr) {
+    if (!this.columnData.master.column) {
       this.searchOptions = []
       this.columnOptions = []
     }
@@ -544,7 +567,7 @@ export default {
     getSql() {
       let data = {
         dataSource: 's_sql',
-        sourceConfig: this.columnData.sqlStr,
+        sourceConfig: this.columnData.master.column,
         enableTenant: 0
       }
       getSqlData(data).then(res => {
@@ -579,7 +602,7 @@ export default {
     getLineSql() {
       let data = {
         dataSource: 's_sql',
-        sourceConfig: this.columnData.sqllineStr,
+        sourceConfig: this.columnData.slave.column,
         enableTenant: 0
       }
       getSqlData(data).then(res => {

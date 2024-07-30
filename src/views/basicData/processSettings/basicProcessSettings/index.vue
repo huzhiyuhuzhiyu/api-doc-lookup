@@ -202,7 +202,6 @@ export default {
   methods: {
     changeLeft() {
       this.leftFlag = !this.leftFlag
-     
     },
     sortChange({ prop, order }) {
       let newProp = ""

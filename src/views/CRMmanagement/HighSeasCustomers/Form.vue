@@ -626,7 +626,7 @@ export default {
   },
   created() {
     this.getAttachmentswitch()
-    // this.getProvinceList()
+    this.getProvinceList()
     this.getDictionaryType()
   },
   methods: {
@@ -1113,26 +1113,26 @@ export default {
             })
           }
 
-          // if (res.data.cooperativePartner.province) {
-          //   let obj = {
-          //     id: res.data.cooperativePartner.province
-          //   }
-          //   getProvinceList(res.data.cooperativePartner.province).then(res => {
-          //     console.log(res);
-          //     this.cities = res.data.list
-          //   })
+          if (res.data.cooperativePartner.province) {
+            let obj = {
+              id: res.data.cooperativePartner.province
+            }
+            getProvinceList(res.data.cooperativePartner.province).then(res => {
+              console.log(res);
+              this.cities = res.data.list
+            })
 
-          // }
-          // if (res.data.cooperativePartner.city) {
-          //   let ooo = {
-          //     id: res.data.cooperativePartner.city
-          //   }
-          //   // this.changeCity(ooo)
-          //   getProvinceList(res.data.cooperativePartner.city).then(res => {
-          //     console.log(res);
-          //     this.area = res.data.list
-          //   })
-          // }
+          }
+          if (res.data.cooperativePartner.city) {
+            let ooo = {
+              id: res.data.cooperativePartner.city
+            }
+            // this.changeCity(ooo)
+            getProvinceList(res.data.cooperativePartner.city).then(res => {
+              console.log(res);
+              this.area = res.data.list
+            })
+          }
 
           this.contactsList = res.data.contactsList
           this.deliveryAddressList = res.data.deliveryAddressList

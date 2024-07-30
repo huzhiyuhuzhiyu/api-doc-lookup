@@ -44,36 +44,69 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" ref="dataTable"
-          custom-column v-if="tableItems.length">
-          <template v-if="tableItems">
-            <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
-              :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
-              :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
-            </el-table-column>
-          </template>
-
-          <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
+        <div class="tableBox">
+          <JNPF-table class="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            @sort-change="sortChange" ref="dataTable" custom-column v-if="tableItems.length"
+            @current-change="handleCurrentChange">
+            <template v-if="tableItems">
+              <el-table-column v-for="item in tableItems" :key="item.prop" :prop="item.prop" :label="item.label"
+                :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+                :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+              </el-table-column>
             </template>
-          </el-table-column>
-        </JNPF-table>
+
+            <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+                  @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <JNPF-table class="dataTable" v-loading="detailLoading" :data="tableLineData" :fixedNO="true"
+            @sort-change="sortChange" ref="dataLineTable" custom-column v-if="tableLineItems.length">
+            <template v-if="tableLineItems">
+              <el-table-column v-for="item in tableLineItems" :key="item.prop" :prop="item.prop" :label="item.label"
+                :formatter="item.formatter || toFormatter" :sortable="item.sortable ? 'custom' : false"
+                :align="item.align || 'left'" v-bind="{ minWidth: item.hasOwnProperty('minWidth') ? item.width : 140 }">
+              </el-table-column>
+            </template>
+
+            <!-- <el-table-column prop="documentType" label="单据状态"></el-table-column> -->
+            <!-- <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+                  @del="handleDel(scope.row.id)">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+              </template>
+            </el-table-column> -->
+          </JNPF-table>
+        </div>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
@@ -137,7 +170,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { detailVisualDevInfo } from '@/api/system/system'
+import { detailVisualDevInfo, getDocData } from '@/api/system/system'
 import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
 import Form from './form'
 export default {
@@ -151,24 +184,26 @@ export default {
       aiformVisible: false,
       treeData: [],
       tableData: [],
+      tableLineData: [],
       treeLoading: false,
       listLoading: false,
       loadingText: false,
       initListQuery: {
-        sourceType: "",
-        orderNo: "",
+        type: "master",
+        visualId: "",
+        condList: [],
         pageNum: 1,
-        partnerName: "",
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        pageSize: 20
       },
       listQuery: {},
+      initLineListQuery: {
+        type: "slave",
+        visualId: "",
+        condList: [],
+        pageNum: 1,
+        pageSize: 20
+      },
+      listLineQuery: {},
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
       productSourceList: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], // 产品来源
       total: 0,
@@ -181,14 +216,15 @@ export default {
       },
       columnData: [],
       formatterFunction: null,
-      tableItems: []
+      tableItems: [],
+      tableLineItems: [],
+      listCondList: [],
+      listLineCondList: [],
+      detailLoading: false,
     }
   },
-  created() {
+  async created() {
     this.getDevData()
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
-
   },
   computed: {
     ...mapState('user', ['token']),
@@ -220,6 +256,14 @@ export default {
       detailVisualDevInfo(queryString).then(res => {
         this.columnData = JSON.parse(res.data.columnData)
         console.log(this.columnData);
+        this.initListQuery.visualId = res.data.id
+        this.initLineListQuery.visualId = res.data.id
+        this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+        this.listLineQuery = JSON.parse(JSON.stringify(this.initLineListQuery))
+        console.log(this.listQuery);
+
+        this.listCondList = this.columnData.master.condList
+        this.listLineCondList = this.columnData.slave.condList
         this.tableItems = this.columnData.columnList.map(item => {
           let formatterFunction = null
           if (item.formatter) {
@@ -230,12 +274,25 @@ export default {
 
           return {
             ...item,
-            prop: this.getToLowerCase(item.prop),
             minWidth: item.width ? item.width : 120,
             formatter: item.formatter ? formatterFunction.bind(this)() : ''
           }
         })
-        console.log(this.tableItems);
+        this.tableLineItems = this.columnData.columnLineList.map(item => {
+          let formatterFunction = null
+          if (item.formatter) {
+            formatterFunction = new Function('return ' + item.formatter)
+            let fnc = formatterFunction()
+          }
+          return {
+            ...item,
+            minWidth: item.width ? item.width : 120,
+            formatter: item.formatter ? formatterFunction.bind(this)() : ''
+          }
+        })
+        console.log(this.tableLineItems);
+        this.initData()
+
       }).catch(() => { })
     },
     toFormatter(row, column, cellValue, index) {
@@ -243,13 +300,14 @@ export default {
     },
     initData() {
       this.listLoading = true
+      console.log(this.listQuery, 'list');
+
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      // this.listQuery.pageNum = 1
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getWarehouseList(this.listQuery).then(res => {
+      // this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
+      getDocData(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -257,6 +315,25 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
+    },
+    // 内容选择事件
+    handleCurrentChange(val) {
+      console.log('1111111111111111', val)
+
+      if (!val) return
+      this.detailLoading = true
+      if (this.listLineCondList.length) {
+        console.log('this.listLineCondList', this.listLineCondList)
+        const fieldsWithoutHash = this.listLineCondList.map(field => field.slice(1));
+        const condList = fieldsWithoutHash.map(field => val[field])
+        this.listLineQuery.condList = condList
+        getDocData(this.listLineQuery).then(res => {
+          this.tableLineData = res.data.records
+          this.detailLoading = false
+        }).catch(() => {
+          this.detailLoading = false
+        })
+      }
     },
     search() {
       this.initData()
@@ -291,3 +368,21 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style scoped lang="scss">
+.tableBox {
+  flex: auto;
+  display: flex;
+  position: relative;
+
+  // border: 1px solid #dedede;
+  // box-shadow: inset 0 0 0 1px #dedede;
+  >.dataTable:first-child {
+    flex: 3;
+    margin: 0 3px 0 0;
+  }
+
+  >.dataTable:last-child {
+    flex: 2;
+  }
+}
+</style>

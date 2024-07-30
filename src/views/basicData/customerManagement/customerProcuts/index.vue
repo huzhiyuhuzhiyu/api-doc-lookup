@@ -6,12 +6,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.partnerCode" placeholder="请输入客户编码" clearable @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
+                客户名称、客户料号、品名规格
                 <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
@@ -19,7 +14,13 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入客户产品图号" clearable @keyup.enter.native="search()" />
+                    <el-input v-model.trim="listQuery.partnerCode" placeholder="请输入客户料号" clearable @keyup.enter.native="search()" />
+                  </el-form-item>
+                </el-col>
+               
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入品名规格" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
 
@@ -34,7 +35,6 @@
                   </el-form-item>
 
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
 
               </el-form>
             </el-row>
@@ -159,73 +159,7 @@
       </el-tabs>
     </div>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="客户编码">
-              <el-input v-model="listQuery.partnerCode" placeholder="请输入客户编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户名称">
-              <el-input v-model="listQuery.partnerName" placeholder="请输入客户名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户产品图号">
-              <el-input v-model="listQuery.customerProductDrawingNo" placeholder="请输入客户产品图号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="客户物料号">
-              <el-input v-model="listQuery.customerProductNo" placeholder="请输入客户物料号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品图号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入产品图号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="价格起始日期">
-              <el-date-picker v-model="listQuery.priceDateArr2" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="请选择价格起始日期" end-placeholder="请选择价格起始日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="价格到期日期">
-              <el-date-picker v-model="listQuery.priceDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="请选择价格到期日期" end-placeholder="请选择价格结束日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
 
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="listQuery.startAndEndTime" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="请选择创建开始时间" end-placeholder="请选择创建结束时间" :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索
-        </el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
   
@@ -239,7 +173,6 @@ export default {
   components: { ExportForm },
   data() {
     return {
-      title: "更多查询",
       exportFormVisible: false,
       depFormVisible: false,
       background: true,//分页器背景颜色
@@ -399,27 +332,7 @@ export default {
     },
     dataFormSubmit() {
       this.listQuery.pageNum = 1
-      if (this.listQuery.startAndEndTime && this.listQuery.startAndEndTime.length > 0) {
-        this.listQuery.startTime = this.listQuery.startAndEndTime[0] + " 00:00:00"
-        this.listQuery.endTime = this.listQuery.startAndEndTime[1] + " 23:59:59"
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
-      }
-      if (this.listQuery.priceDateArr && this.listQuery.priceDateArr.length > 0) {
-        this.listQuery.stopStartDate = this.listQuery.priceDateArr[0]
-        this.listQuery.stopEndDate = this.listQuery.priceDateArr[1]
-      } else {
-        this.listQuery.stopStartDate = ''
-        this.listQuery.stopEndDate = ''
-      }
-      if (this.listQuery.priceDateArr2 && this.listQuery.priceDateArr2.length > 0) {
-        this.listQuery.startStartDate = this.listQuery.priceDateArr2[0]
-        this.listQuery.startEndDate = this.listQuery.priceDateArr2[1]
-      } else {
-        this.listQuery.startStartDate = ''
-        this.listQuery.startEndDate = ''
-      }
+      
       this.initData()
     },
     initData() {
@@ -511,4 +424,5 @@ export default {
   }
 }
 </script>
+
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

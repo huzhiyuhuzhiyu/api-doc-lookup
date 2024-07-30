@@ -248,3 +248,17 @@ export function checkArrangeArr(data) {
     data
   })
 }
+
+
+
+
+
+// 设置成品安全库存和最高库存
+
+export function batchUpdataProductIncentory(data) {
+  return request({
+    url: `/api/erp/products/inventory/modify/batch`,
+    method: 'put',
+    data
+  })
+}

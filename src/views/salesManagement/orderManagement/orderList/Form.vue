@@ -978,7 +978,7 @@ export default {
       // 选择全部产品参数
       allProVisible: false,
       ProductMethodArr: [
-        { label: "物料分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "" } },
+        { label: "产品分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "" } },
       ],
       allproductData: [],
       allProductTotal: 0,

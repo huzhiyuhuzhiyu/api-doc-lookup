@@ -1,23 +1,23 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
+      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
-          <h2 v-if="!leftFlag">业务分类</h2>
-          <span class="options" v-if="!leftFlag">  
+          <h2 >业务分类</h2>
+          <span class="options" >  
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
                 <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>s
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
               </el-dropdown-menu>
             </el-dropdown>
           </span>
         </div>
-        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+        <div > <el-input placeholder="输入关键字进行过滤" v-model="filterText"
             style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
       </div>

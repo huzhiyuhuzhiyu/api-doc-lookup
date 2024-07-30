@@ -896,7 +896,22 @@ export default {
     },
     // 批量删除
     batchDelete() {
-
+      // 遍历选中的行的数据
+      if (this.selectRows.length < 1) {
+        this.$message({
+          message: "请选择你要删除的数据",
+          type: "error",
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
     },
 
     // 单个删除
@@ -1191,8 +1206,8 @@ export default {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
           item.ordersNum = item.num
-          item.productDrawingNo=item.drawingNo
-          item.saleOrderNo=item.orderNo
+          item.productDrawingNo = item.drawingNo
+          item.saleOrderNo = item.orderNo
         });
         this.getAddressInfoFun(data[0].cooperativePartnerId)
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
@@ -1203,9 +1218,9 @@ export default {
         this.customerVisible = false
         this.dataFormTwo.data = data
         getCooperativeInfo(data[0].cooperativePartnerId).then(res => {
-          console.log("res",res);
-        this.customerData = res.data.cooperativePartner
-      })
+          console.log("res", res);
+          this.customerData = res.data.cooperativePartner
+        })
       }
       // this.getProvinceList()
       this.dataForm.id = id || ''

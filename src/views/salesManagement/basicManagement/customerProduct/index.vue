@@ -38,8 +38,6 @@
                   </el-form-item>
 
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
 
               </el-form>
             </el-row>
@@ -47,6 +45,10 @@
               <div class="JNPF-common-head">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top" v-if="true">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="superQueryVisible = true" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('tableForm')" />
@@ -58,7 +60,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
-                :data="tableDataList" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnLists">
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
@@ -114,8 +116,6 @@
                   </el-form-item>
 
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
 
               </el-form>
             </el-row>
@@ -123,6 +123,10 @@
               <div class="JNPF-common-head">
                 <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm">导出</el-button>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top" v-if="true">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="superQueryVisible = true" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('tableForms')" />
@@ -134,7 +138,7 @@
                 </div>
               </div>
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForms"
-                :data="tableDataList" @sort-change="sortChange" custom-column  :setColumnDisplayList="columnLists">
+                :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" min-width="180" />
@@ -159,7 +163,8 @@
       </el-tabs>
     </div>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -167,13 +172,15 @@
 import { getBimVehicleTypeData, deleteBimVehicleType, getPartnerOrProductData } from '@/api/basicData/index'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 
 export default {
   name: 'PartnerProduct',
-  components: { ExportForm },
+  components: { ExportForm, SuperQuery },
   data() {
     return {
-      columnLists:["partnerCode","productName"],
+      superQueryVisible:false,
+      columnLists: ["partnerCode", "productName"],
       exportFormVisible: false,
       depFormVisible: false,
       background: true,//分页器背景颜色
@@ -198,12 +205,76 @@ export default {
 
         pageNum: 1,
         pageSize: 20,
-
+        superQuery: {},
       },
-     
+
       total: 0,
       formVisible: false,
-      activeName: 'latestprice'
+      activeName: 'latestprice',
+      superQueryJson: [
+        {
+          prop: 'partnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+
+        {
+          prop: 'customerProductNo',
+          label: "客户料号",
+          type: 'input',
+        },
+    
+        {
+          prop: 'drawingNo',
+          label: "品名规格 ",
+          type: 'custom', 
+        },
+        {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input',
+        },
+        {
+          prop: 'productName',
+          label: "产品名称",
+          type: 'input',
+        },
+        {
+          prop: 'price',
+          label: "销售单价(含税)",
+          type: 'input',
+        },
+        {
+          prop: 'excludingTaxPrice',
+          label: "销售单价(不含税)",
+          type: 'input',
+        },
+        {
+          prop: 'workOrderNo',
+          label: "工作令号",
+          type: 'input'
+        },
+
+        {
+          prop: 'dateOrderStop',
+          label: "要求",
+          type: 'input'
+        },
+   
+
+
+
+      ],
     }
   },
   created() {
@@ -215,6 +286,11 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     columnSetFun(ref) {
       this.$refs[ref].showDrawer()
     },
@@ -382,4 +458,18 @@ export default {
   }
 }
 </script>
+
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style scoped>
+::v-deep .el-tabs__item {
+  padding: 0 10px;
+}
+
+::v-deep .el-tabs__header {
+  padding: 0 8px !important;
+}
+
+::v-deep .el-tabs__nav-wrap {
+  margin-bottom: 0px;
+}
+</style>

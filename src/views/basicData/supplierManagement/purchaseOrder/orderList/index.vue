@@ -24,26 +24,26 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-                  <el-col :span="12">
-                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                  <!-- <el-col :span="12">
+                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName"> -->
                       <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
                       </el-input> -->
                       <!-- 供应商选择弹窗  -->
-                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                      <!-- <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                         v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                         @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
                         treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                         :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                         :searchList="PartnerTableSearchList" />
                     </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
+                  </el-col> -->
+                  <!-- <el-col :span="12">
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                         style="width: 100%;" placeholder="请选择交货日期">
                       </el-date-picker>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                 </el-form>
               </el-row>
               <div
@@ -52,20 +52,10 @@
               </div>
               <div :style="{ height: customStyleData + 'px'}">
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                  <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择产品</el-button>|
-                  <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
                     :data="dataFormTwo.data" id="table" border height="100%">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                          <div class="viewData">
-                            <span>{{ scope.row.productDrawingNo }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+            
                     <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
                       <template slot-scope="scope">
                         <el-link type="primary" @click.native="openSource(scope.row.productsId)">{{
@@ -78,8 +68,16 @@
                         </el-form-item> -->
                       </template>
                     </el-table-column>
-                   
-                    <!-- <el-table-column prop="spec" label="规格型号" min-width="200" show-overflow-tooltip>
+                    <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
+                          <div class="viewData">
+                            <span>{{ scope.row.productDrawingNo }}</span>
+                          </div>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="spec" label="规格型号" min-width="200" show-overflow-tooltip>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'spec'">
                           <div class="viewData">
@@ -87,7 +85,7 @@
                           </div>
                         </el-form-item>
                       </template>
-                    </el-table-column> -->
+                    </el-table-column>
                     <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                       <template slot="header">
                         <span class="required">*</span>交货日期
@@ -102,7 +100,7 @@
                       </template>
                     </el-table-column>
 
-                    <!-- <el-table-column prop="orderQuantity" label="可下单数量" min-width="140">
+                    <el-table-column prop="orderQuantity" label="可下单数量" min-width="140">
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'orderQuantity'">
                           <div class="viewData">
@@ -110,7 +108,7 @@
                           </div>
                         </el-form-item>
                       </template>
-                    </el-table-column> -->
+                    </el-table-column>
 
                     <el-table-column prop="purchaseQuantity" label="数量(主)" min-width="180">
                       <template slot="header">
@@ -138,7 +136,7 @@
                       </template>
                     </el-table-column>
 
-                  <!-- <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="180">
+                  <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
                         :rules='productRules.purchaseQuantity2'>
@@ -147,9 +145,9 @@
                         </el-input>
                       </el-form-item>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
 
-                    <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
+                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
                           <div class="viewData">
@@ -157,15 +155,15 @@
                           </div>
                         </el-form-item>
                       </template>
-                    </el-table-column> -->
+                    </el-table-column>
 
-                  <!-- <el-table-column prop="fixedPrice" label="定价" min-width="180">
+                  <el-table-column prop="fixedPrice" label="定价" min-width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                         {{ scope.row.fixedPrice || '未找到供应商单价' }}
                       </el-form-item>
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
 
                   <el-table-column prop="price" label="含税单价" min-width="180">
                     <template slot="header">
@@ -370,9 +368,6 @@
       </div>
     </transition>
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
-    <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
-          dialogTitle="选择产品" :listMethod="getcooperativeProduct" :listRequestObj="ProductListRequestObjs"
-          :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
   </div>
 </template>
 <script>
@@ -383,7 +378,6 @@ import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
-import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
 export default {
   components: {
     sourceForm, workFlow
@@ -391,41 +385,6 @@ export default {
   data() {
     return {
       datafilelist: [],
-         // 选择客户产品参数
-      ProductListRequestObjs: {
-        contractId: null,
-        customerProductNo: "",
-        productCode: "",
-        productName: "",
-        partnerId: "",
-        productStatus: 'enable',
-        partnerType: "customer",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-      },
-      ProductTableItems: [
-        { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
-        { prop: 'productCode', label: '产品编码' },
-        { prop: 'productName', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'mainUnit', label: '单位(主)' },
-      ],
-      // 客户产品查询条件
-      ProductTableSearchList: [
-        { prop: "customerProductNo", label: "客户料号", type: 'input' },
-        { prop: "productName", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "品名规格", type: 'input' },
-        { prop: "productCode", label: "产品编码", type: 'input' },
-      ],
-      getcooperativeProduct,
-      productVisible:false,
       sourceFormVisible: false,
       activeName: 'jcInfo',
       dialogTitle: '',
@@ -628,123 +587,7 @@ export default {
     }
   },
   methods: {
-       // 根据订单类型  打开不同的选择产品弹框
-    openSeleceProductDialog() {
-      if (this.dataForm.cooperativePartnerId) {
 
-        // this.productVisible = true
-        // this.getcooperativeProduct()
-        this.$refs["comSelect-page"].openDialog()
-        } else {
-        this.$message({
-          message: "请先选择供应商",
-          type: 'error',
-          duration: 1500,
-        })
-      }
-      // if (this.dataForm.orderType == 'normal' || this.dataForm.orderType == 'urgent') {
-      //   if (this.dataForm.cooperativePartnerId) {
-
-      //     // this.productVisible = true
-      //     // this.getcooperativeProduct()
-      //     this.$refs["comSelect-page"].openDialog()
-      //   } else {
-      //     this.$message({
-      //       message: "请先选择客户",
-      //       type: 'error',
-      //       duration: 1500,
-      //     })
-      //   }
-      // } else {
-      //   this.allProVisible = true
-      //   let arr = [];
-      //   this.ProductListRequestObj = {
-      //     classAttributeList: [],
-      //     classAttribute: "",
-      //     productDrawingNo: "",
-      //     queryType: 2,
-      //     productStatus: 'enable',
-
-      //     productCategoryId: "",
-      //     code: "",
-      //     name: "",
-      //     orderItems: [{
-      //       "asc": false,
-      //       "column": ""
-      //     }, {
-      //       "asc": false,
-      //       "column": "create_time"
-      //     }],
-      //     pageNum: 1,
-      //     pageSize: 20,
-      //   }
-      //   this.allproductData = []
-      //   let successTotal = 0;
-      //   let tempTreeData = [...this.ProductMethodArr]
-      //   this.ProductMethodArr.forEach((item, index) => {
-      //     item.method(item.requeseObj).then(res => {
-      //       if (Array.isArray(res.data)) {
-      //         tempTreeData[index] = {
-      //           id: item.label,
-      //           name: item.label,
-      //           classAttribute: item.classAttribute,
-      //           childrenList: res.data
-      //         }
-      //       } else {
-      //         tempTreeData[index] = {
-      //           id: item.label,
-      //           name: item.label,
-      //           classAttribute: item.classAttribute,
-      //           childrenList: res.data.records
-      //         }
-      //       }
-      //       if ((++successTotal) === this.ProductMethodArr.length) {
-      //         this.ProductTreeData = tempTreeData
-      //         this.initData2()
-      //       }
-      //     })
-      //   });
-      // }
-
-
-    },
-       // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct(val, data, paramsObj) {
-      this.productVisible = false
-      data.forEach(i => {
-        const item = i.all
-
-        if (item.taxRate) {
-          item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 6)
-
-        } else {
-          item.excludingTaxPrice = item.price
-        }
-        if (this.btnType == 'edit') {
-          item.id = ""
-        }
-        this.dataFormTwo.data.push(item)
-      });
-    },
-     // 批量删除
-     batchDelete() {
-      // 遍历选中的行的数据
-      if (this.selectRows.length < 1) {
-        this.$message({
-          message: "请选择你要删除的数据",
-          type: "error",
-          duration: 1500,
-        })
-      }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i];
-        const index = this.dataFormTwo.data.indexOf(row);
-        if (index > -1) {
-          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
-        }
-      }
-      this.selectRows = []; // 清空选中的行的数据
-    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery

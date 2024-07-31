@@ -68,7 +68,7 @@
                       <el-col :sm="6" :xs="24" v-if="jyFlag">
                         <el-form-item label="检验标志" prop="inspectionResults">
                           <el-select v-model="dataForm.inspectionResults" placeholder="检验结果" clearable
-                            style="width: 100%;" :disabled="salesFlag" filterable>
+                            style="width: 100%;" :disabled="btnType == 'look'" filterable>
                             <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -106,7 +106,7 @@
                   </div>
 
                   <el-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
-                    border height="460" :key="165" style="width: 100%;">
+                    border :key="165" style="width: 100%;">
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
@@ -132,6 +132,8 @@
                     <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                    <el-table-column prop="totalAmount" label="原产品批次号" width="120" :key="125"
+                      v-if="dataForm.businessType == 'inbound_sale_return'"></el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
@@ -139,11 +141,12 @@
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column>
-                    <el-table-column prop="shelfSpaceName" label="货位" width="120" :key="1011" v-if="allocationFlag">
-                      <template slot="header">
+                    <el-table-column prop="shelfSpaceName" label="货位" width="120" :key="1011"
+                      v-if="allocationFlag || !jyFlag">
+                      <template slot="header" v-if="jyFlag">
                         <span class="required">*</span>货位
                       </template>
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" v-if="jyFlag">
                         <el-input v-model="scope.row.shelfSpaceName" readonly
                           @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="货位">{{
                             scope.row.shelfSpaceName }}
@@ -151,7 +154,13 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
+                    <el-table-column label="操作" width="100" v-if="productData.length">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
+                      </template>
+                    </el-table-column>
                   </el-table>
+
                 </el-collapse-item>
 
               </el-collapse>
@@ -161,7 +170,7 @@
         </div>
       </div>
       <!-- 销售发货 产品信息 -->
-      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" @close="productVisible = false"
         :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
         append-to-body>
 
@@ -210,15 +219,25 @@
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="waitDeliverNum" label="待出库数量" width="160" sortable="custom" />
+                <el-table-column prop="undeliveredQuantity" label="待出库数量" width="160" sortable="custom" v-if="dataForm.businessType=='outbound_sale_send'" />
                 <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
+                <!-- { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" }, -->
+                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" v-if="dataForm.businessType!='outbound_sale_send'||dataForm.businessType!='inbound_sale_return'"/>
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" v-if="dataForm.businessType!='outbound_sale_send'||dataForm.businessType!='inbound_sale_return'"/>
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -362,13 +381,11 @@ export default {
       },
       orderForm: { //获取产品数据
         cooperativePartnerId: "",
-        customerProductDrawingNo: "",
-        orderState: "not_finish",
-        shipmentStatus: 'not_finish',
         drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-
+        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -378,7 +395,6 @@ export default {
           asc: false,
           column: "t1.create_time"
         }],
-
       },
       productList: [],
       productTotal: 0,
@@ -410,6 +426,7 @@ export default {
       productionLotList: [],
       loadingText: '',
       copyLinesData: [],
+      previousValue: "",
 
     }
   },
@@ -426,6 +443,8 @@ export default {
   methods: {
     // 打开选择货位弹框
     openSeleceWareDialog(row, index) {
+      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
+      this.WareListRequestObj.warehouseId = this.dataForm.warehouseId
       this.currentProductIndex = index
       this.$refs['ComSelect-page'].openDialog()
     },
@@ -434,24 +453,29 @@ export default {
     },
     addth(val1, val2, val3) {
       this.shelfSpaceForm = val2
-      let index=this.currentProductIndex
-      this.$emit(this.productData[index],'shelfSpaceName',val2[0].name)
-      this.$emit(this.productData[index],'areaId',val2[0].all.areaId)
-      this.$emit(this.productData[index],'goodsShelvesId',val2[0].all.goodsShelvesId)
-      this.$emit(this.productData[index],'warehouseId',val2[0].all.warehouseId)
-      this.$emit(this.productData[index],'shelfSpaceId',val2[0].all.id)
- 
-      
-      console.log("object,",this.productData);
+      let index = this.currentProductIndex
+      this.$set(this.productData[index], 'shelfSpaceName', val2[0].name)
+      this.$set(this.productData[index], 'areaId', val2[0].all.areaId)
+      this.$set(this.productData[index], 'goodsShelvesId', val2[0].all.goodsShelvesId)
+      this.$set(this.productData[index], 'warehouseId', val2[0].all.warehouseId)
+      this.$set(this.productData[index], 'shelfSpaceId', val2[0].all.id)
+
+
+      console.log("object,", this.productData);
+    },
+    // 产品信息列表复制功能
+    copyFun(row, index) {
+      this.productData.splice(index + 1, 0, row);
+
     },
 
-    // 点击选择产品 销售发货
+    // 点击选择产品 销售发货 
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.productVisible = true
       this.searchProductFun()
     },
-    // 销售发货选择产品——搜索
+    // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       if (this.deliveryDateArr.length) {
         this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
@@ -461,8 +485,29 @@ export default {
         this.orderForm.deliveryEndTime = ""
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      if (this.dataForm.businessType == 'outbound_sale_send') {
+        // 销售发货
+        this.orderForm.orderState = 'not_finish'
+        this.orderForm.shipmentStatus = 'shipmentStatus'
+      } else if (this.dataForm.businessType == 'inbound_sale_return') {
+        this.orderForm.returnQueryFlag = 1
+      }
+      // { label: "销售发货", value: "outbound_sale_send" },
+      //   { label: "销售退货", value: "inbound_sale_return" },
+      //   { label: "采购收货", value: "inbound_purchase" },
+      //   { label: "采购退货", value: "outbound_purchase" },
+      //   { label: "生产领料", value: "outbound_pick_out" },
+      //   { label: "生产退料", value: "inbound_return_materials" },
+      //   { label: "外协发料", value: "outbound_external_send" },
+      //   { label: "外协退料", value: "inbound_external_return" },
+      //   { label: "外协收货", value: "inbound_external" },
+      //   { label: "外协退货", value: "outbound_external" },  
+
       getsaleOrderDetailList(this.orderForm).then(res => {
         console.log("产品", res);
+        res.data.records.forEach(item => {
+          item.undeliveredQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.num, item.outboundQuantity]), 6)
+        });
         this.productList = res.data.records
         this.productTotal = res.data.total
         this.listLoading = false
@@ -486,7 +531,7 @@ export default {
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-
+        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -505,9 +550,16 @@ export default {
     submitAllProduct() {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
-      this.selectSaleProductArr.forEach(item => {
+      let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
+      arr.forEach(item => {
         item.costPrice = item.price
+        if(this.dataForm.businessType=='outbound_sale_send'){
+          item.num = item.undeliveredQuantity
+        }
         item.ordersNum = item.num
+        item.classAttribute = "finish_product"
+        item.ordersId = item.ordersId
+        item.ordersLineId = item.id
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
         this.productData.push(item)
@@ -633,6 +685,19 @@ export default {
     },
     // 选择业务类型
     selectSourceTypeFun(val) {
+      console.log(val);
+      // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
+
+      if (val != this.previousValue) {
+        this.productData = []
+        this.dataForm['cooperativePartnerId'] = ""
+        this.dataForm['partnerName'] = ""
+        this.customerInfo = {}
+        this.previousValue = val
+        this.$refs.dataForm.clearValidate(['cooperativePartnerId'])
+      } else {
+
+      }
       if (this.dataForm.businessType == 'inbound_sale_return' ||
         this.dataForm.businessType == 'inbound_purchase' ||
         this.dataForm.businessType == 'inbound_return_materials' ||
@@ -644,7 +709,23 @@ export default {
         this.jyFlag = false
 
       }
-
+      this.orderForm = { //获取产品数据
+        cooperativePartnerId: "",
+        drawingNo: "",        // customerProductNo: "",
+        customerProductDrawingNo: "",
+        deliveryStartTime: "",
+        deliveryEndTime: "",
+        classAttribute: "finish_product",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "t1.create_time"
+        }],
+      }
 
     },
     // 打开选择客户弹框
@@ -855,8 +936,22 @@ export default {
     // 继续新增
     continueAdd() {
       this.init('', 'add')
-
       this.tipsvisible = false
+      this.btnLoading = false
+      this.dataForm = {  //表单信息
+        orderNo: "",
+        businessType: "",
+        warehouseName: "",
+        warehouseId: "",
+        cooperativePartnerId: "",
+        partnerName: "",
+        documentType: "",
+        id: "",
+        warehouseType: "",
+        inspectionResults: "",
+      },
+        this.$refs.dataForm.resetFields();
+      this.init('', 'add')
     },
     async fetchData(code) {
       try {
@@ -912,10 +1007,10 @@ export default {
         this.$message.error('请至少选择一个产品')
       }
       if (this.allocationFlag) {
-        this.productData.forEach((item,index) => {
-          if(!item.warehouseId){
-            submitFlag=false
-            this.$message.error("产品信息第"+(index + 1)+"行货位不能为空")
+        this.productData.forEach((item, index) => {
+          if (!item.shelfSpaceId) {
+            submitFlag = false
+            this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
           }
         })
       }

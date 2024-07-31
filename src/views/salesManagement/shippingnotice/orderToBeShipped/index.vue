@@ -389,7 +389,7 @@ export default {
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then(res => {
         console.log("合计", res);
-        this.totalNum = res.data ? res.data.total.num : 0
+        this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
     dateFun(dateStr) {

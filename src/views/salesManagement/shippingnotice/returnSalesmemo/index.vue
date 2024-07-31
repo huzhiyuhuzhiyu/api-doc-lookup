@@ -44,12 +44,16 @@
               </el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
-                取消发货
+                取消退货
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
             </div>
             <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                   @click="columnSetFun()" />
@@ -71,51 +75,24 @@
             </el-table-column>
             <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-
-            <el-table-column prop="delivery" label="发货方式" width="160">
-              <template slot-scope="scope">
-                <div v-if="scope.row.delivery == 'deliver_goods'">
-                  <span>送货</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'self_pickup'">
-                  <span>自提</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'express_delivery'">
-                  <span>快递</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'freight_transport'">
-                  <span>货运</span>
-                </div>
-                <div v-else-if="scope.row.delivery == 'collect_payment'">
-                  <span>到付</span>
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="countryName" label="国家" width="160" />
-            <el-table-column prop="provinceName" label="省" width="160" />
-            <el-table-column prop="cityName" label="市" width="160" />
-            <el-table-column prop="areaName" label="区" width="160" />
-            <el-table-column prop="address" label="地址" min-width="300" />
-            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
+            <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.exchangeGoodsFlag">
-                  换货发货
+                  换货
                 </div>
                 <div v-else>
-                  正常发货
+                 退货
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
+            <el-table-column prop="deliveryStatus" label="退货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'undelivered'">
-                  <el-tag type="primary">未完成</el-tag>
+                <div v-if="scope.row.deliveryStatus == 'not_returned'">
+                  <el-tag type="primary">待退货</el-tag>
                 </div>
-                <div v-else-if="scope.row.deliveryStatus == 'delivered'">
-                  <el-tag type="success">已完成</el-tag>
+                <div v-else-if="scope.row.deliveryStatus == 'returned'">
+                  <el-tag type="success">已退货 </el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
                   <el-tag type="danger">已取消</el-tag>
@@ -165,6 +142,9 @@
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -179,7 +159,8 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      columnList:["partnerName","provinceName","cityName","areaName","address","countryName","createByName" ],
+      superQueryVisible:false,
+            columnList:["partnerCode","createByName",], 
       rdeDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -279,7 +260,91 @@ export default {
       total: 0,
       diagramVisible: false,
       formVisible: false,
-      selectArr: []
+      selectArr: [],
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: "订单号",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+
+        {
+          prop: 'orderType',
+          label: "订单类型",
+          type: 'select',
+
+          options: [
+            { label: "正常订单", value: "normal" },
+            { label: "预测订单", value: "prediction" },
+            { label: "样品订单", value: "sample" },
+            { label: "备货订单", value: "stock_up" },
+            { label: "急件订单", value: "urgent" },
+          ]
+
+        },
+        {
+          prop: 'departmentName',
+          label: "所属部门",
+          type: 'custom',
+          component: 'com-select',
+        },
+        {
+          prop: 'salesName',
+          label: "所属销售人员",
+          type: 'custom',
+          component: 'user-select',
+        },
+        {
+          prop: 'workOrderNo',
+          label: "工作令号",
+          type: 'input'
+        },
+        {
+          prop: 'orderDate',
+          label: '订单日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'contractNo',
+          label: "客户合同号",
+          type: 'input'
+        },
+        {
+          prop: 'deliveryDate',
+          label: '交货日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        }, {
+          prop: 'orderState',
+          label: "订单状态",
+          type: 'select',
+          options: [
+            { label: "未完成", value: "not_finish" },
+            { label: "已完成", value: "finish" },
+            { label: "部分完成", value: "part_finish" },
+          ]
+        },
+
+
+
+      ],
     }
   },
   created() {
@@ -307,7 +372,7 @@ export default {
     },
     //禁用复选框
     checkSelectable(row) {
-      if (row.deliveryStatus !== 'undelivered' || row.documentStatus == 'draft') return false
+      if (row.outboundQuantity >0 || row.documentStatus == 'draft'||row.deliveryStatus=='canceled') return false
       return true
     },
     // 选中得数据
@@ -338,43 +403,7 @@ export default {
         })
       }).catch(() => { })
     },
-    //合并订单
-    mergeorderNo() {
-      if (this.selectArr.length < 2) return this.$message.error("请先选择多条订单数据")
-      let hasItemList = []
-      this.selectArr.map(i => {
-        if (i.stockStatus == 'finished') hasItemList.push(i.orderNo)
-      })
-      if (hasItemList.length) return this.$message.error(`已经备货的订单：${hasItemList.join('、')}不能合并`)
-      if (this.selectArr.some(item => item.partnerCode !== this.selectArr[0].partnerCode)) return this.$message.error("所选订单客户不同")
-      this.$confirm('确定合并所选订单', this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        let a = this.selectArr.map(item => {
-          return item.id
-        })
-        this.hbbtnLoading = true
-        mergelist(a).then(res => {
-          this.hbbtnLoading = false
-          this.$message.success('合并成功')
-          this.initData()
-        }).catch(() => {
-          this.hbbtnLoading = false
-        })
-      }).catch(() => { })
-    },
-    //拆分订单
-    splitorderNo(row) {
-      if (row.stockStatus == 'finished') return this.$message.error(`该订单已经备货不能拆分`)
-      this.$confirm('确定拆分所选订单', this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        splitlist(row.id).then(res => {
-          this.$message.success('拆分成功')
-          this.initData()
-        })
-      }).catch(() => { })
-    },
+   
     handleClick(e) {
       this.activeName = e.name
     },
@@ -414,6 +443,11 @@ export default {
         this.listLoading = false
       })
 
+    },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
     },
     search() {
    

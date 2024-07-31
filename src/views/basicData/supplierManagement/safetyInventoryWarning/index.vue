@@ -102,19 +102,6 @@
         <div class="JNPF-common-head" style="padding:10px">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
-            <!-- <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>
-                <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown> -->
-            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
-            <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button> -->
             <el-button
               :disabled="tableData.length > 0 ? false : true"
               size="mini"
@@ -153,50 +140,20 @@
           :setColumnDisplayList="columnList"
           @selection-change="handeleProductInfoData"
         >
-          <el-table-column prop="code" label="产品编码" min-width="140" >
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                {{ scope.row.code }}
-              </el-link>
-            </template>
+          <el-table-column prop="code" label="产品编码" min-width="100" >
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="100" sortable="custom" />
           <el-table-column prop="mainUnit" label="主单位" min-width="120" />
-          <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
+          <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
           <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" sortable="custom"/>
-          <el-table-column prop="inventoryQuantity" label="库存数量（主）" min-width="130" sortable="custom"/>
-          <el-table-column prop="occupancyQuantity" label="占用数量（主）" min-width="130" sortable="custom"/>
+          <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom"/>
+          <el-table-column prop="occupancyQuantity" label="占用数量(主)" min-width="130" sortable="custom"/>
           <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
-          <el-table-column prop="deputyAvailableQuantity" label="可用库存（副）" min-width="130" sortable="custom"/>
-          <el-table-column prop="deputyInventoryQuantity" label="库存数量（副）" min-width="130" sortable="custom"/>
-          <el-table-column prop="deputyOccupancyQuantity" label="占用数量（副）" min-width="130" sortable="custom"/>
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                :hasDel="false"
-              >
-              <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                查看详情
-              </el-button>
-                <!-- <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
-              </tableOpts>
-            </template>
-          </el-table-column>
+          <el-table-column prop="deputyAvailableQuantity" label="可用库存(副)" min-width="130" sortable="custom"/>
+          <el-table-column prop="deputyInventoryQuantity" label="库存数量(副)" min-width="130" sortable="custom"/>
+          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom"/>
         </JNPF-table>
         <pagination
           :total="total"
@@ -707,7 +664,7 @@ export default {
     },
 
         // 生成采购订单 将选中的数据传递过去
-        addOrUpdateHandle() {
+    addOrUpdateHandle() {
       if (this.selectData.length === 0) {
         this.$message({
           message: "请选择你要生成的采购订单",

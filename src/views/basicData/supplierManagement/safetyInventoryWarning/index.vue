@@ -52,8 +52,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.code"
-                placeholder="请输入产品编码"
+                v-model="listQuery.productDrawingNo"
+                placeholder="请输入品名规格"
                 clearable
                 @keyup.enter.native="search()"
               />
@@ -62,24 +62,21 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.drawingNo"
-                placeholder="请输入品名规格"
+                v-model="listQuery.productName"
+                placeholder="请输入产品名称"
                 clearable
                 @keyup.enter.native="search()"
               />
             </el-form-item>
           </el-col>
-
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in productSourceList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+              <el-input
+                v-model="listQuery.productCode"
+                placeholder="请输入产品编码"
+                clearable
+                @keyup.enter.native="search()"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -90,7 +87,7 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-          <el-button
+          <!-- <el-button
             style="float: right;margin-right: 20px;"
             size="mini"
             type="primary"
@@ -98,13 +95,14 @@
             @click="moreQueries()"
           >
             更多查询
-          </el-button>
+          </el-button> -->
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <div>
-            <el-dropdown style="margin-right:10px;">
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
+            <!-- <el-dropdown style="margin-right:10px;">
               <el-button size="mini" type="primary" icon="el-icon-plus">
                 新建
                 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -113,10 +111,10 @@
                 <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>
                 <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
               </el-dropdown-menu>
-            </el-dropdown>
+            </el-dropdown> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button> -->
             <el-button
               :disabled="tableData.length > 0 ? false : true"
               size="mini"
@@ -148,12 +146,14 @@
           v-loading="listLoading"
           :data="tableData"
           :fixedNO="true"
+          hasC
           @sort-change="sortChange"
           custom-column
           ref="dataTable"
           :setColumnDisplayList="columnList"
+          @selection-change="handeleProductInfoData"
         >
-          <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
+          <el-table-column prop="code" label="产品编码" min-width="140" >
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
                 {{ scope.row.code }}
@@ -162,16 +162,16 @@
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-          <el-table-column prop="productCategoryName" label="产品分类" width="120" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="主单位" min-width="120" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
-          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" />
-          <el-table-column prop="inventoryQuantity" label="库存数量（主）" min-width="130" />
-          <el-table-column prop="occupancyQuantity" label="占用数量（主）" min-width="130" />
+          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" sortable="custom"/>
+          <el-table-column prop="inventoryQuantity" label="库存数量（主）" min-width="130" sortable="custom"/>
+          <el-table-column prop="occupancyQuantity" label="占用数量（主）" min-width="130" sortable="custom"/>
           <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
-          <el-table-column prop="deputyAvailableQuantity" label="可用库存（副）" min-width="130" />
-          <el-table-column prop="deputyInventoryQuantity" label="库存数量（副）" min-width="130" />
-          <el-table-column prop="deputyOccupancyQuantity" label="占用数量（副）" min-width="130" />
+          <el-table-column prop="deputyAvailableQuantity" label="可用库存（副）" min-width="130" sortable="custom"/>
+          <el-table-column prop="deputyInventoryQuantity" label="库存数量（副）" min-width="130" sortable="custom"/>
+          <el-table-column prop="deputyOccupancyQuantity" label="占用数量（副）" min-width="130" sortable="custom"/>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts
@@ -367,9 +367,11 @@ export default {
       listLoading: false,
       loadingText: false,
       leftFlag: false,
+      selectData: [],                    // 选中的数据 带到form页
       initListQuery: {
         code: '',
         name: '',
+        safeInventoryWarnFlag:1,
         orderItems: [
           {
             asc: false,
@@ -389,7 +391,7 @@ export default {
         productStatus: '', // 产品状态
         customerQueryFields: [],
         createTimeArr: [],
-        classAttribute: 'finish_product'
+        classAttribute: ''
       },
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
@@ -407,25 +409,11 @@ export default {
         label: 'name'
       },
       columnList: [
-        'name',
-        'mainUnit',
-        'brand',
-        'model',
-        'sealingCoverStructure',
-        'sealingCoverTyping',
-        'structureType',
-        'clearance',
-        'steelBallManufacturer',
-        'oil',
-        'oilQuantity',
-        'noise',
-        'holder',
-        'vibrationLevel',
-        'accuracyLevel',
-        'colour',
-        'aperture',
-        'remark',
-        'createByName'
+        'code',
+        'deputyUnit',
+        'deputyAvailableQuantity',
+        'deputyInventoryQuantity',
+        'deputyOccupancyQuantity',
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -589,6 +577,10 @@ export default {
     ...mapState('user', ['token'])
   },
   methods: {
+    // 选中列表的数据 将其带到生成订单下面表单表格中
+    handeleProductInfoData(val) {
+      this.selectData = val
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
@@ -714,11 +706,61 @@ export default {
       this.initData()
     },
 
-    addOrUpdateHandle(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
+        // 生成采购订单 将选中的数据传递过去
+        addOrUpdateHandle() {
+      if (this.selectData.length === 0) {
+        this.$message({
+          message: "请选择你要生成的采购订单",
+          type: "error",
+          duration: 1500,
+        })
+      } else {
+
+        let msg = true
+        let tempList = JSON.parse(JSON.stringify(this.selectData))
+        let hasItemList = []
+        for (let i = 0; i < this.selectData.length; i++) {
+          let item = this.selectData[i];
+
+            if (item.orderedQuantity != null) {
+              if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
+                hasItemList.push(item.productName)
+                if (hasItemList.length) {
+                  this.$message.error(`已下单数量已大于或等于计划需求数的产品：${hasItemList.join('、')}`)
+                  msg = false
+                } else {
+                  msg = true
+                }
+              }
+            }
+        }
+        if (msg) {
+          this.selectData.forEach((item, index) => {
+            item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
+            if (item.calculationDirection === 'multiplication') {
+
+              this.$set(this.selectData[index], 'purchaseQuantity2', this.jnpf.numberFormat(item.purchaseQuantity * item.ratio))
+            } else {
+              this.$set(this.selectData[index], 'purchaseQuantity2', this.jnpf.numberFormat(item.purchaseQuantity / item.ratio))
+            }
+          })
+          // var maxDate = null; // 最大日期初始值设为null
+          // // 遍历列表中的数据 找到最大交期
+          // for (var i = 0; i < this.selectData.length; i++) {
+          //   var currentDate = new Date(this.selectData[i].deliveryDate);
+          //   if (maxDate === null || currentDate > maxDate) {
+          //     maxDate = currentDate;
+          //   }
+          // }
+          // let demandDelivery = null
+          // demandDelivery = maxDate.toISOString().split('T')[0];
+          this.formVisible = true
+          this.$nextTick(() => {
+            this.$refs.Form.init(this.selectData)
+          })
+        }
+      }
+
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

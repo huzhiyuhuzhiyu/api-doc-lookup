@@ -807,7 +807,11 @@ export default {
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
           } else {
+            this.uploadVisib = false
             this.handleMessage(res.data)
           }
 
@@ -815,6 +819,7 @@ export default {
           this.loadingText = ''
         })
         .catch((err) => {
+          this.uploadVisib = false
           this.$message.error(`导入数据超过最大限制：500`)
           this.formLoading = false
           this.loadingText = ''
@@ -823,6 +828,8 @@ export default {
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
     },
     cancelFun() {
       this.uploadVisib = false

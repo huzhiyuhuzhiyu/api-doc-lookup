@@ -17,33 +17,33 @@
         <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo" ref="orderInfos">
-              <div
+              <!-- <div
                 style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
                    <h5>基本信息</h5>
-              </div>
+              </div> -->
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-                  <el-col :span="12">
-                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                  <!-- <el-col :span="12">
+                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName"> -->
                       <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
                       </el-input> -->
                       <!-- 供应商选择弹窗  -->
-                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                      <!-- <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                         v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                         @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
                         treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
                         :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
                         :searchList="PartnerTableSearchList" />
                     </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
+                  </el-col> -->
+                  <!-- <el-col :span="12">
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                         style="width: 100%;" placeholder="请选择交货日期">
                       </el-date-picker>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                 </el-form>
               </el-row>
               <div
@@ -726,14 +726,16 @@ export default {
     },
     init(data, demandDelivery) {
       console.log(data, demandDelivery)
+      console.log(data.purchaseOrderLines,'ooosteelBallManufacturer')
+     
       if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
-        this.dataForm = data
+        this.dataForm = data[0]
         this.$set(this.dataFormTwo, "data", JSON.parse(JSON.stringify(data.purchaseOrderLines)))
       } else {
         // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
         this.$set(this.dataFormTwo, "data", JSON.parse(JSON.stringify(data)))
       }
-      // console.log(this.dataFormTwo.data, '传递过来的数据');
+      console.log(this.dataFormTwo.data, '传递过来的数据');
       var maxDate = null; // 最大日期初始值设为null
       // 遍历数组，比较日期来找到最大日期
       for (var i = 0; i < this.dataFormTwo.data.length; i++) {
@@ -754,6 +756,7 @@ export default {
       // 明细中最大的交货日期
       this.demandDelivery = maxDate.toISOString().split('T')[0];
       this.demandDelivery2 = demandDelivery
+      console.log(this.dataFormTwo,'this.dataFormTwo')
       // 取明细第一条数据的产品id，自动带下其第一条供应商设为主表供应商
       priceList(this.dataFormTwo.data[0].productsId).then(res => {
         if (!res.data.length) return
@@ -768,7 +771,7 @@ export default {
         this.supplierdata('', data)
       })
       // 审批
-      this.$nextTick(() => { this.getApproverData() })
+      // this.$nextTick(() => { this.getApproverData() })
     },
     // 侧边拉出产品信息
     async openSource(id) {

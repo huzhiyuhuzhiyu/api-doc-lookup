@@ -124,9 +124,6 @@ export default {
   created() {
   },
   methods: {
-    dataFormSubmit() {
-
-    },
     deleteFun(row) {
       this.sleeveList.splice(row.$index, 1)
 
@@ -153,11 +150,14 @@ export default {
       // 校验表格表单（套筒属性）
       let sleeveForm = this.$refs['sleeveForm'].$refs.main
       let valid_3 = await sleeveForm.validate().catch(err => false)
-      if (!valid_3 && submitFlag) {
+      if(this.btnType == 'add'){
+         if (!valid_3 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(sleeveForm.fields)
       }
-
+      }
+     
+      console.log(submitFlag,'submitFlag')
       // 判断条件后发送请求
       if (submitFlag) {
         const formMethod = this.btnType == 'edit' ? updataBimProductsModel : addBimProductsModel

@@ -21,9 +21,19 @@
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                    <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
+                    <!-- <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
-                      :type="dataForm.type" />
+                      :type="dataForm.type" /> -->
+                    <ComSelect-list
+                    :isdisabled="dataForm.id ? true : false"
+                    v-model="dataForm.parentName"
+                    placeholder="请选择上级分类"
+                    auth
+                    @change="onOrganizeChange"
+                    :title="'选择上级分类'"
+                    :method="getcategoryTree"
+                    :requestObj="requestObjTwo"
+                    :paramsObj="{}" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -534,7 +544,7 @@
 import { createOrganize, updateOrganize, getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
-  editPartner, addPartner
+  editPartner, addPartner,getcategoryTree
   , getCooperativeInfo, getCounryData, checkCode,getBimBusinessInfo
 } from '@/api/basicData/index'
 import formValidate from "@/utils/formValidate";
@@ -544,6 +554,11 @@ import {
 export default {
   data() {
     return {
+      getcategoryTree,
+      requestObjTwo: {
+        pageSize: -1,
+        type: 'equipment_supplier'
+      },
       loadingareafoundation:false,
       foundationloadingcity:false,
       loadingarea:false,
@@ -637,7 +652,8 @@ export default {
         partnerCategoryId: "",
         partnerCategoryIdText: "",
         paymentMethod: "",
-        type: "supplier",
+        type: "equipment_supplier",
+        customerStatus:'formal',
         fax: "",
         zipCode: "",
         personResponsible: '',
@@ -789,10 +805,10 @@ export default {
       }
     },
     changeCountry(e,index) {
-      console.log(e);
+
       this.dataForm.country =e.code
       if (this.dataForm.country!='CN') {
-        console.log(this.deliveryAddressList,'收货地址');
+
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -804,7 +820,7 @@ export default {
       this.area=[]
     },
     handleAddress(e) {
-      console.log(123, e);
+     
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -940,7 +956,7 @@ export default {
       this.area=[]
 
       getProvinceList(item.id).then(res => {
-        console.log(res);
+       
         this.cities = res.data.list
       })
     },
@@ -966,7 +982,7 @@ export default {
       }
 
       getProvinceList(item.id).then(res => {
-        console.log(res);
+     
         this.area = res.data.list
       })
     },
@@ -994,7 +1010,7 @@ export default {
     // 获取等级、付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
-        console.log("rescc", res);
+      
         let data = res.data.list
         data.forEach(item => {
           if (item.enCode == "partnerArchives") {
@@ -1007,7 +1023,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("response", response);
+             
                   this.gradeList = response.data.list
                 })
               }
@@ -1018,7 +1034,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("地区", response);
+            
                   this.areaList = response.data.list
                 })
               }
@@ -1029,7 +1045,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("付款方式", response);
+               
                   this.paymentMethodList = response.data.list
                 })
               }
@@ -1192,9 +1208,7 @@ export default {
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-      console.log("表单", this.dataForm);
-      console.log("联系人", this.contactsList);
-      console.log("收货地址", this.deliveryAddressList);
+      
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1324,7 +1338,7 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item,index) => {
               item.bimAttachments = {
-                businessType: 'supplier',
+                businessType: 'equipment_supplier',
                 documentId: item.id,
                 fileFlag: '',
                 sort: index
@@ -1337,7 +1351,7 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-          console.log("flag", flag);
+          
           if (flag === false) return
           this.btnLoading = true
           const formMethod = this.dataForm.id ? editPartner : addPartner

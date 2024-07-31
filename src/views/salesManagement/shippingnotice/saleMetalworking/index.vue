@@ -42,6 +42,10 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()"
+                :loading="hbbtnLoading">
+                合并订单
+              </el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
                 取消发货
@@ -50,6 +54,10 @@
                 @click="exportForm('dataTable')">导出</el-button>
             </div>
             <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                   @click="columnSetFun()" />
@@ -59,9 +67,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"  :setColumnDisplayList="columnList"
-            @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange" hasC>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -112,17 +120,17 @@
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'undelivered'">
-                  <el-tag type="primary">未完成</el-tag>
+                  <el-tag type="primary">待发货</el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'delivered'">
-                  <el-tag type="success">已完成</el-tag>
+                  <el-tag type="success">已发货</el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
                   <el-tag type="danger">已取消</el-tag>
                 </div>
               </template>
             </el-table-column>
-      <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
@@ -135,7 +143,7 @@
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft'||scope.row.deliveryStatus == 'canceled' ? false : true"
+                  :disabled="scope.row.documentStatus == 'draft' || scope.row.deliveryStatus == 'canceled' ? false : true"
                   @click="handleDel(scope.row.id)">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -147,6 +155,10 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
+                    <el-dropdown-item @click.native="splitorderNo(scope.row)">
+                      拆分
+                    </el-dropdown-item>
+
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
                     </el-dropdown-item>
@@ -163,7 +175,9 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -179,7 +193,8 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      columnList:["partnerName","provinceName","cityName","areaName","address","countryName","createByName" ],
+      superQueryVisible:false,
+      columnList: ["partnerName", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       rdeDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -279,7 +294,81 @@ export default {
       total: 0,
       diagramVisible: false,
       formVisible: false,
-      selectArr: []
+      selectArr: [],
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: "单号",
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: "客户编码",
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '发货日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'recipient',
+          label: "收件人",
+          type: 'input'
+        },
+        {
+          prop: 'phone',
+          label: "收件人电话",
+          type: 'input'
+        },
+        {
+          prop: 'delivery',
+          label: "发货方式",
+          type: 'select',
+
+          options: [
+            { label: "送货", value: "deliver_goods" },
+            { label: "自提", value: "self_pickup" },
+            { label: "快递", value: "express_delivery" },
+            { label: "货运", value: "freight_transport" },
+            { label: "到付", value: "collect_payment" },
+          ]
+
+        },
+        {
+          prop: 'exchangeGoodsFlag',
+          label: "发货标识",
+          type: 'select',
+
+          options: [
+          { label: "正常发货", value: false },
+          { label: "换货发货", value: true }
+          ]
+
+        },
+      
+        {
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'select',
+          options: [
+          { label: "草稿", value: "draft" },
+          { label: "提交", value: "submit" },
+          ]
+        },
+
+
+
+      ],
     }
   },
   created() {
@@ -294,6 +383,11 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     //明细列表取消发货
     Cancelshipmentline(id) {
       this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
@@ -365,6 +459,7 @@ export default {
     },
     //拆分订单
     splitorderNo(row) {
+      console.log("row", row);
       if (row.stockStatus == 'finished') return this.$message.error(`该订单已经备货不能拆分`)
       this.$confirm('确定拆分所选订单', this.$t('common.tipTitle'), {
         type: 'warning'
@@ -405,7 +500,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-    
+
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -416,7 +511,7 @@ export default {
 
     },
     search() {
-   
+
       if (this.rdeDateArr.length > 0) {
         this.orderForm.rdsDate = this.rdeDateArr[0]
         this.orderForm.rdeDate = this.rdeDateArr[1]
@@ -424,7 +519,7 @@ export default {
         this.orderForm.rdsDate = ""
         this.orderForm.rdeDate = ""
       }
-     
+
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item

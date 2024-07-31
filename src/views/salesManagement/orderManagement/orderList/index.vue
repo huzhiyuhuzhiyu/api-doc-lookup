@@ -10,7 +10,7 @@
                 <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="请输入订单号" clearable />
               </el-form-item>
             </el-col>
-          
+
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
@@ -18,12 +18,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-            <el-form-item>
-              <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
+              <el-form-item>
+                <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                  style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -32,13 +32,14 @@
                 </el-button>
               </el-form-item>
             </el-col>
-         
+
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -46,8 +47,9 @@
                   @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
@@ -62,22 +64,22 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码"  min-width="120"  />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160"  sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="120" />
+            <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="orderType" label="订单类型" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-for="(item, index) in orderList" :key="index">
                   <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
                 </div>
               </template>
-            </el-table-column> 
-            <el-table-column prop="departmentName" label="所属部门" min-width="160"  sortable="custom"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom"/>
+            </el-table-column>
+            <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom" />
             <el-table-column prop="workOrderNo" label="工作令号" min-width="140"></el-table-column>
             <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="contractNo" label="客户合同号" min-width="140"  sortable="custom"></el-table-column>
+            <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
-          
+
             <el-table-column prop="orderState" label="订单状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
@@ -85,23 +87,23 @@
                 <div v-else-if="scope.row.orderState == 'part_finish'"><el-tag type="warning">部分完成</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="documentStatus"  label="单据状态" min-width="140" sortable="custom"
+            <el-table-column prop="documentStatus" label="单据状态" min-width="140" sortable="custom"
               :showOverflowTooltip="false" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-          
+
             <el-table-column prop="changesCount" label="变更次数" min-width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.changesCount ? scope.row.changesCount : 0 }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人"  sortable="custom" min-width="120"/>
-           
-         
+            <el-table-column prop="createByName" label="创建人" sortable="custom" min-width="120" />
+
+
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
@@ -140,12 +142,12 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
- 
- 
+
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
-   <!-- 高级查询 -->
-   <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
@@ -163,11 +165,11 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow ,SuperQuery },
+  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
-      superQueryVisible:false,
-            columnList:["cooperativePartnerCode","departmentName","workOrderNo","contractNo","changesCount","createByName",],
+      superQueryVisible: false,
+      columnList: ["cooperativePartnerCode", "departmentName", "workOrderNo", "contractNo", "changesCount", "createByName",],
       orderFollowVisible: false,
       productFormVisible: false,
       exportFormVisible: false,
@@ -250,7 +252,7 @@ export default {
         approvalStatus: "",
         startTime: "",
         endTime: "",
-        superQuery:{},
+        superQuery: {},
 
         pageNum: 1,
         pageSize: 20,
@@ -262,7 +264,7 @@ export default {
           column: "create_time"
         }],
       },
-     
+
       detailTotal: 0,
       salespersonList: [],
       pickerOptions: {
@@ -291,6 +293,63 @@ export default {
       diagramVisible: false,
       formVisible: false,
       filterText: '',
+      // { // 下拉选
+      //     prop: 'type',
+      //     label: '示例：类型',
+      //     type: 'select',
+      //     options: [{ label: '类型1', value: '1' }, { label: '类型2', value: '2' }]
+      //   },
+      //   { // 日期选择器
+      //     prop: 'date',
+      //     label: '示例：日期',
+      //     type: 'date',
+      //     valueFormat: "yyyy-MM-dd",
+      //     pickerOptions: this.global.timePicker
+      //   },
+      //   { // 日期时间选择器
+      //     prop: 'datetime',
+      //     label: '示例：日期时间',
+      //     type: 'datetime',
+      //     valueFormat: "yyyy-MM-dd HH:mm:ss",
+      //     pickerOptions: this.global.timePicker
+      //   },
+      //   { // 日期选择器（区间）
+      //     prop: 'daterange',
+      //     label: '示例：日期区间',
+      //     type: 'daterange',
+      //     valueFormat: "yyyy-MM-dd",
+      //     startPlaceholder: '开始日期',
+      //     endPlaceholder: '结束日期',
+      //     pickerOptions: this.global.timePickerOptions
+      //   },
+      //   { // 日期时间选择器（区间）
+      //     prop: 'datetimerange',
+      //     label: '示例：日期时间区间',
+      //     type: 'datetimerange',
+      //     valueFormat: "yyyy-MM-dd HH:mm:ss",
+      //     startPlaceholder: '开始时间',
+      //     endPlaceholder: '结束时间',
+      //     pickerOptions: this.global.timePickerOptions
+      //   },
+      //   { // 自定义选择器（选择仓库为例）
+      //     prop: 'warehouseName',
+      //     label: '示例：选择自定义数据-仓库',
+      //     type: 'custom',
+      //     component: 'ComSelect-list',
+      //     method: getWarehouseList,
+      //     events: { // 监听事件
+      //       change: (val, data, paramsObj) => {
+      //         let conditionItem = this.conditionList[paramsObj.superQueryConditionIndex]
+      //         conditionItem.value = data[0].name
+      //         conditionItem.shiftConditionItem = { warehouseId: data[0].id } // 搜索发起时，转换为此搜索条件
+      //       }
+      //     },
+      //     props: { // 继承到自定义组件上的属性
+      //       dialogTitle: '选择仓库',
+      //       method: getWarehouseList,
+      //       requestObj: { chooseUserFlag: true, type: 'normal' },
+      //     },
+      //   }
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -307,16 +366,26 @@ export default {
           label: "客户名称",
           type: 'input'
         },
-         
+
         {
           prop: 'orderType',
           label: "订单类型",
-          type: 'input'
+          type: 'select',
+
+          options: [
+            { label: "正常订单", value: "normal" },
+            { label: "预测订单", value: "prediction" },
+            { label: "样品订单", value: "sample" },
+            { label: "备货订单", value: "stock_up" },
+            { label: "急件订单", value: "urgent" },
+          ]
+
         },
         {
           prop: 'departmentName',
           label: "所属部门",
-          type: 'input'
+          type: 'custom',
+          component: 'com-select',
         },
         {
           prop: 'salesName',
@@ -331,8 +400,12 @@ export default {
         },
         {
           prop: 'orderDate',
-          label: "订单日期",
-          type: 'input'
+          label: '订单日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
         {
           prop: 'contractNo',
@@ -341,18 +414,27 @@ export default {
         },
         {
           prop: 'deliveryDate',
-          label: "交货日期",
-          type: 'input'
+          label: '交货日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         }, {
           prop: 'orderState',
           label: "订单状态",
-          type: 'input'
+          type: 'select',
+          options: [
+            { label: "未完成", value: "not_finish" },
+            { label: "已完成", value: "finish" },
+            { label: "部分完成", value: "part_finish" },
+          ]
         },
 
-       
-    
+
+
       ],
-      totalDataForm: {}, 
+      totalDataForm: {},
     }
   },
   watch: {
@@ -368,8 +450,8 @@ export default {
       }
       return totalNum
     },
-   
-   
+
+
 
   },
 
@@ -387,11 +469,11 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    columnSetFun(){ 
+    columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
- 
-  
+
+
     // 获取产品列表字段 编排属性
     getAttributeline() {
       getAttributeline('product').then(res => {
@@ -411,8 +493,8 @@ export default {
         return cellValue;
       }
     },
-  
-  
+
+
     // 获取等级付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
@@ -465,9 +547,9 @@ export default {
       this.orderForm.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
- 
-  
-    
+
+
+
     // 获取销售人员
     getUserList() {
       let obj = {
@@ -488,7 +570,7 @@ export default {
       }
     },
     superQuerySearch(query) {
-      this.orderfo.superQuery = query
+      this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
@@ -501,14 +583,14 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-      
+
     },
 
 
     search() {
-      this.initData() 
+      this.initData()
     },
-  
+
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
@@ -551,7 +633,7 @@ export default {
 
       this.search()
     },
- 
+
     // 订单跟踪
     orderFollow(id) {
       this.orderFollowVisible = true
@@ -582,7 +664,7 @@ export default {
         // }, 600);
       }
     },
- 
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -621,7 +703,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1004',
-        exportName:  '销售订单',
+        exportName: '销售订单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -654,7 +736,7 @@ export default {
 
 
 .JNPF-common-search-box {
- padding: 8px!important;
+  padding: 8px !important;
   margin-bottom: 5px;
 }
 
@@ -669,9 +751,11 @@ export default {
   padding-top: 2px;
   padding-bottom: 2px;
 }
-.JNPF-common-head{
+
+.JNPF-common-head {
   padding: 8px;
 }
+
 .main {
   padding: 10px 30px 0;
 }

@@ -313,7 +313,7 @@ export default {
   methods: {
    
     superQuerySearch(query) {
-      this.formlist.superQuery = query
+      this.form.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

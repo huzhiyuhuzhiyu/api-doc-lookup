@@ -34,6 +34,15 @@ export function insertOutOrder(data) {
     })
   }
 
+    // 采购和外协订单明细
+    export function purchaseOrderReport(data) {
+      return request({
+        url: `/api/erp/purPurchaseOrderLine/report`,
+        method: 'post',
+        data
+      })
+    }
+
   //详情
   export const purPurchaseOrderdetail = (id) => {
     return request({

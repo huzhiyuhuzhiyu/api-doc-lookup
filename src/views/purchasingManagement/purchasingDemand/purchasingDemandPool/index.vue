@@ -37,8 +37,8 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
+          <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -46,8 +46,8 @@
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
-            <el-button size="mini" type="primary" @click="batchQuiry()">批量询价</el-button>
-            <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button>
+            <!-- <el-button size="mini" type="primary" @click="batchQuiry()">批量询价</el-button>
+            <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button> -->
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">

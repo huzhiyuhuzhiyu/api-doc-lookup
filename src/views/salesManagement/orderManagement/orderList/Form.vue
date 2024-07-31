@@ -338,9 +338,9 @@
                     </el-table-column>
 
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>打字内容
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                           style="width: 100%;">
@@ -350,9 +350,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>精度等级
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                           <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -362,9 +362,9 @@
                     </el-table-column>
 
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>振动等级
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -373,9 +373,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>油脂
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -384,9 +384,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>油脂量
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -395,9 +395,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>游隙
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -406,9 +406,9 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-                      <template slot="header">
+                      <!-- <template slot="header">
                         <span class="required">*</span>包装方式
-                      </template>
+                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
@@ -978,7 +978,7 @@ export default {
       // 选择全部产品参数
       allProVisible: false,
       ProductMethodArr: [
-        { label: "物料分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "" } },
+        { label: "产品分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "" } },
       ],
       allproductData: [],
       allProductTotal: 0,
@@ -2568,6 +2568,7 @@ export default {
       this.init('', 'add')
 
       this.tipsvisible = false
+      this.btnLoading = false
     },
     init(id, btnType) {
       this.dataForm.id = id || ''
@@ -2894,69 +2895,69 @@ export default {
                   })
                   break
                 }
-                if (!item.sealingCoverTyping) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的打字内容不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.accuracyLevel) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的精度等级不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.vibrationLevel) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的振动等级不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.oil) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的油脂不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.oilQuantity) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的油脂量不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.clearance) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的游隙不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
-                if (!item.packagingMethod) {
-                  submitFlag = false
-                  this.$message({
-                    message: "第" + (index + 1) + "行产品的包装方式不能为空",
-                    type: 'error',
-                    duration: 1500,
-                  })
-                  break
-                }
+                // if (!item.sealingCoverTyping) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的打字内容不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.accuracyLevel) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的精度等级不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.vibrationLevel) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的振动等级不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.oil) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的油脂不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.oilQuantity) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的油脂量不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.clearance) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的游隙不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
+                // if (!item.packagingMethod) {
+                //   submitFlag = false
+                //   this.$message({
+                //     message: "第" + (index + 1) + "行产品的包装方式不能为空",
+                //     type: 'error',
+                //     duration: 1500,
+                //   })
+                //   break
+                // }
 
 
 

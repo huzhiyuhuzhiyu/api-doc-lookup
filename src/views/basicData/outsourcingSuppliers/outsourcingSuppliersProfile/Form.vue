@@ -707,6 +707,7 @@ export default {
         partnerCategoryIdText: "",
         paymentMethod: "",
         type: "outsourcing_suppliers",
+        customerStatus:'formal',
         fax: "",
         zipCode: "",
         personResponsible: '',
@@ -741,9 +742,9 @@ export default {
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              console.log(this.dataForm.id);
+             
               checkCode(value, this.dataForm.id, this.dataForm.type).then(res => {
-                console.log('res===>', res);
+                
                 if (res.data) {
                   callback(new Error("编码重复"));
                 } else {
@@ -871,10 +872,10 @@ export default {
       }
     },
     changeCountry(e, index) {
-      console.log(e);
+    
       this.dataForm.country = e.code
       if (this.dataForm.country != 'CN') {
-        console.log(this.deliveryAddressList, '收货地址');
+       
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -898,7 +899,7 @@ export default {
     //     "pageSize": -1
     //   }
     //   getCounryData(obj).then(res => {
-    //     console.log("国家数据", res);
+
     //     // this.countryList = res.data.records
     //     let a = res.data.records.filter((item) => {
     //       return item.name !== '中国'
@@ -906,14 +907,14 @@ export default {
     //     let b = res.data.records.filter((item) => {
     //       return item.name == '中国'
     //     })
-    //     // console.log('国家',abc);
+
     //     a.unshift(b[0])
-    //     // console.log(res);
+
     //     this.countryList = a
     //   })
     // },
     handleAddress(e) {
-      console.log(123, e);
+     
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -924,7 +925,7 @@ export default {
       }
     },
     handleChange($event) {
-      console.log(123, $event);
+    
       if ($event == 'domestic') {
         // 国内
         this.countryList = [{
@@ -954,12 +955,12 @@ export default {
           "pageSize": -1
         }
         getCounryData(obj).then(res => {
-          console.log("国家数据", res);
+        
           // this.countryList = res.data.records
           this.countryList = res.data.records.filter((item) => {
             return item.name !== '中国'
           })
-          console.log(this.countryList, 'this.countryListthis.countryList');
+       
         })
       }
     },
@@ -1036,12 +1037,12 @@ export default {
     },
     // 联系人信息删除当前行
     deltable(row, index) {
-      console.log("row", row, index);
+    
       this.contactsList.splice(row.$index, 1)
     },
     // 根据选择的省份获取相应的城市数据
     changeProvince(item, row) {
-      console.log("item", item);
+     
 
       if (row) {
         row.area = ''
@@ -1055,7 +1056,7 @@ export default {
       this.cities = []
       this.area = []
       getProvinceList(item.id).then(res => {
-        console.log(res);
+    
         this.cities = res.data.list
       })
     },
@@ -1080,9 +1081,9 @@ export default {
         this.dataForm.area = []
         this.dataForm.area = ""
       }
-      console.log("item", item);
+   
       getProvinceList(item.id).then(res => {
-        console.log(res);
+       
         this.area = res.data.list
       })
     },
@@ -1097,7 +1098,7 @@ export default {
     // 获取省份数据
     getProvinceList() {
       getProvinceList(this.nodeId, this.listQuery).then(res => {
-        console.log("省份数据", res);
+      
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
@@ -1111,7 +1112,7 @@ export default {
     // 获取等级、付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
-        console.log("rescc", res);
+     
         let data = res.data.list
         data.forEach(item => {
           if (item.enCode == "partnerArchives") {
@@ -1124,7 +1125,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("response", response);
+              
                   this.gradeList = response.data.list
                 })
               }
@@ -1135,7 +1136,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("地区", response);
+                  
                   this.areaList = response.data.list
                 })
               }
@@ -1146,7 +1147,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("付款方式", response);
+                  
                   this.paymentMethodList = response.data.list
                 })
               }
@@ -1303,7 +1304,7 @@ export default {
       this.$emit('close')
     },
     onOrganizeChange(val, data) {
-      console.log("123", val, data);
+     
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryIdText')
       })
@@ -1311,10 +1312,7 @@ export default {
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-      console.log("表单", this.dataForm);
-      console.log("联系人", this.contactsList);
-      console.log("收货地址", this.deliveryAddressList);
-
+     
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1444,7 +1442,7 @@ export default {
           if (this.datafilelist.length) {
             this.datafilelist.map((item, index) => {
               item.bimAttachments = {
-                businessType: '',
+                businessType: 'outsourcing_suppliers',
                 documentId: item.id,
                 fileFlag: '',
                 sort: index
@@ -1457,7 +1455,7 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-          console.log("flag", flag);
+        
           if (flag === false) return
           this.btnLoading = true
           const formMethod = this.dataForm.id ? editPartner : addPartner

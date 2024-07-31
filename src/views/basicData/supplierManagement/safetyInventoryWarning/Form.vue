@@ -54,8 +54,11 @@
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
                   <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceProductDialog">选择产品</el-button>|
                   <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                  <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
+                  <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                    @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data"
                     :data="dataFormTwo.data" id="table" border height="100%">
+                    <el-table-column type="selection" width="55" fixed="left" :key="2">
+                    </el-table-column>
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                       <template slot-scope="scope">
@@ -563,6 +566,7 @@ export default {
       transferData: [],
       formLoading: false,
       customStyleData: 0,
+      selectRows: [],
     }
   },
   created() {
@@ -726,6 +730,10 @@ export default {
         this.dataFormTwo.data.push(item)
       });
     },
+    // 产品列表选中 
+    handeleProductInfoData(val) {
+      this.selectRows = val
+    },
      // 批量删除
      batchDelete() {
       // 遍历选中的行的数据
@@ -796,7 +804,7 @@ export default {
       return flag
     },
     supplierdata(id, data) {
-      console.log(data, '供应商数据');
+     
       this.$nextTick(() => { this.$refs['elForm'].validateField('cooperativePartnerName') })
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''

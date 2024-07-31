@@ -272,13 +272,13 @@ export default {
     viewFun(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, true)
+        this.$refs.Form.init(id, type)
       })
     },
     editFun(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, false)
+        this.$refs.Form.init(id, type)
       })
     },
     addSupplier() {
@@ -350,85 +350,10 @@ export default {
         }).catch(() => { })
       }
     },
-    // 下载模板
-    downLoadTemplate() {
-      const a = document.createElement('a')
-      a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/出入库导入模板.xlsx')
-      a.click()
-    },
+ 
 
 
-
-    importFun() {
-
-      this.$refs.UploadProduct.$el.querySelector('input').click()
-    },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append("file", data.file)
-      formData.append("customerSea", "high_seas")
-      //调用上传文件接口
-      uploadProduct(formData).then(res => {
-        if (!res.data) {
-          this.$message.success(`导入成功`)
-          this.initData()
-          this.formLoading = false
-          this.loadingText = ''
-        } else {
-          this.handleMessage(res.data)
-        }
-
-      }).catch(err => {
-        this.$message.error(`文件上传失败`)
-        this.formLoading = false
-        this.loadingText = ''
-      })
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: "error",
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h('div',
-          {
-            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在出入库数据错误！'),
-            h('el-button', {
-              props: {
-                type: 'text',
-                size: "mini",
-                icon: 'el-icon-download'
-              },
-              on: {
-                click: () => {
-                  this.downNoProduct(data)
-                }
-              },
-              style: {
-                border: "none",
-                textAlign: "center",
-                // width:"20%",
-                margin: "0 5px 0 5px ",
-              },
-            }, '下载导入错误数据')
-          ]
-        ),
-      })
-      return
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-    },
+ 
 
 
 

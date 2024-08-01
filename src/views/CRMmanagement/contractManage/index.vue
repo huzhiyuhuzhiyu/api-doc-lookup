@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.visitPlanName" placeholder="请输入拜访计划名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.no" placeholder="请输入合同编号" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -47,24 +47,28 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="visitPlanName" label="拜访计划名称" min-width="160" />
-            <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
-            <el-table-column prop="customerName" label="客户名称" min-width="180" />
-            <el-table-column prop="contactsName" label="联系人" min-width="180" />
-            <el-table-column prop="businessName" label="商机名称" min-width="180" />
-            <el-table-column prop="visitGoal" label="拜访目的" min-width="180">
+            <el-table-column prop="no" label="合同编号" min-width="160" />
+            <el-table-column prop="contractName" label="合同名称" min-width="180" />
+            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="businessName" label="商机名称" min-width="160" />
+            <el-table-column prop="money" label="合同金额" min-width="160" />
+            <el-table-column prop="orderTime" label="下单日期" min-width="180" />
+            <el-table-column prop="contractStartTime" label="合同开始日期" min-width="180" />
+            <el-table-column prop="contractEndTime" label="合同结束日期" min-width="180" />
+            <el-table-column prop="customerDeptName" label="客户签约人" min-width="180" />
+            <el-table-column prop="ownerDeptName" label="公司签约人" min-width="180" />
+            <el-table-column prop="contractType" label="合同类型" min-width="160">
               <template slot-scope="scope">
-                {{visitGoalfaction(scope.row.visitGoal)}}
+                {{contractTypefunction(scope.row.contractType)}}
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" min-width="180" />
-            <el-table-column prop="delayReason" label="延期原因" min-width="180" />
-            <el-table-column prop="delayRemark" label="延期备注" min-width="180" />
-            <el-table-column prop="cancelReason" label="取消原因" min-width="180" />
-            <el-table-column prop="cancelRemark" label="取消备注" min-width="180" />
-            <el-table-column prop="activityName" label="跟进记录内容" min-width="180" />
-            <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
-            <el-table-column prop="visitStatus" label="状态" min-width="180" />
+            <!-- <el-table-column prop="checkStatus" label="审核状态" min-width="160" />
+            <el-table-column prop="receivedMoney" label="已收款金额" min-width="160" />
+            <el-table-column prop="unreceivedMoney" label="未收款金额" min-width="160" />
+            <el-table-column prop="invoicedMoney" label="开票金额" min-width="160" /> -->
+            <el-table-column prop="ownerUserName" label="负责人" min-width="160" />
+            <!-- <el-table-column prop="contractStatus" label="合同状态" min-width="160" /> -->
+            <el-table-column prop="remark" label="备注" min-width="160" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column label="操作" width="180" fixed="right">
@@ -100,7 +104,7 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
+import { deletecrmContract, getcrmContractlist } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -114,22 +118,18 @@ export default {
   },
   data() {
     return {
-      visitGoalList:[],
-      datalist:[],
+      typecontractList: [],
+      datalist: [],
       superQueryJson: [
         {
-          prop: 'visitPlanName',
-          label: "拜访计划名称",
+          prop: 'no',
+          label: "合同编号",
           type: 'input'
         },
-        { // 日期时间选择器（区间）
-          prop: 'visitTime',
-          label: '预计拜访时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '回访开始时间',
-          endPlaceholder: '回访结束时间',
-          pickerOptions: {}
+        {
+          prop: 'contractName',
+          label: "合同名称",
+          type: 'input'
         },
         {
           prop: 'customerName',
@@ -137,61 +137,72 @@ export default {
           type: 'input'
         },
         {
-          prop: 'contactsName',
-          label: "联系人",
-          type: 'input'
-        },
-        {
           prop: 'businessName',
           label: "商机名称",
           type: 'input'
         },
+        {
+          prop: 'money',
+          label: "合同金额",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'orderTime',
+          label: '下单日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '下单开始日期',
+          endPlaceholder: '下单结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 日期选择器（区间）
+          prop: 'contractStartTime',
+          label: '合同开始日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        { // 日期选择器（区间）
+          prop: 'contractEndTime',
+          label: '合同结束日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        {
+          prop: 'customerDeptName',
+          label: "客户签约人",
+          type: 'input'
+        },
+        {
+          prop: 'ownerDeptName',
+          label: "公司签约人",
+          type: 'input'
+        },
         { // 下拉选
-          prop: 'visitGoal',
-          label: '拜访目的',
+          prop: 'contractType',
+          label: '合同类型',
           type: 'select',
-          options: []
-        },
-        {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
-        },
-        {
-          prop: 'delayReason',
-          label: "延期原因",
-          type: 'input'
-        },
-        {
-          prop: 'delayRemark',
-          label: "延期备注",
-          type: 'input'
-        },
-        {
-          prop: 'cancelReason',
-          label: "取消原因",
-          type: 'input'
-        },
-        {
-          prop: 'cancelRemark',
-          label: "取消备注",
-          type: 'input'
-        },
-        {
-          prop: 'activityName',
-          label: "跟进记录内容",
-          type: 'input'
+          options: [
+            { label: '直销合同', value: '1' },
+            { label: '代理合同', value: '2' },
+            { label: '服务合同', value: '3' },
+            { label: '快销合同', value: '4' },
+          ]
         },
         {
           prop: 'ownerUserName',
           label: "负责人",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'visitStatus',
-          label: '状态',
-          type: 'select',
-          options: []
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -219,7 +230,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        returnVisitNo: '',
+        no: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -240,6 +251,12 @@ export default {
       return (this.$route.meta.modelId || '') + this.partentOrChild
     }
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   created() {
     this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
@@ -248,18 +265,8 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
-  mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
-  },
   methods: {
-    visitGoalfaction(val) {
-      let _data = this.visitGoalList.filter(item => item.enCode == val)[0]
-      return _data ? _data.fullName : val
-    },
-    // 获取客户满意度、回访形式数据
+    // 获取合同类型数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -267,16 +274,16 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "Purposeofvisit") {
+              if (resp.enCode == "typeofcontract") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  this.visitGoalList = response.data.list
+                  this.typecontractList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'visitGoal') {
+                    if (item.prop == 'contractType') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -289,11 +296,15 @@ export default {
         })
       })
     },
+    contractTypefunction(val) {
+      let _data = this.typecontractList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deletecrmReturnVisit(id).then(res => {
+        deletecrmContract(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -352,7 +363,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getcrmReturnVisit(this.listQuery).then(res => {
+      getcrmContractlist(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

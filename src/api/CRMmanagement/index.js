@@ -107,3 +107,42 @@ export function updatecrmReturnVisit(data) {
     data
   })
 }
+//合同管理
+//合同管理-列表
+export function getcrmContractlist(data) {
+  return request({
+    url: `/api/zgt/crmContract/list`,
+    method: 'POST',
+    data
+  })
+}
+// 合同管理 新增
+export function addcrmContract(data) {
+  return request({
+    url: `/api/zgt/crmContract/add`,
+    method: 'POST',
+    data
+  })
+}
+// 合同管理 详情
+export function detailcrmContract(id) {
+  return request({
+    url: `/api/zgt/crmContract/detail/${id}`,
+    method: 'GET'
+  })
+}
+//合同管理-删除
+export function deletecrmContract(id) {
+  return request({
+    url: `/api/zgt/crmContract/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 合同管理 编辑
+export function updatecrmContract(data) {
+  return request({
+    url: `/api/zgt/crmContract/update`,
+    method: 'PUT',
+    data
+  })
+}

@@ -190,7 +190,18 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="对账开始日期" prop="reconciliationStartDate">
+                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="对账结束日期" prop="reconciliationEndDate">
+                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="开票类型" prop="billingTypeText">
                         <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;" :disabled="btnType=='look' ? true : false">
@@ -584,7 +595,9 @@ export default {
         remark: "",
         departmentId: "",
         departmentIdText: "",
-        customerStatus: "formal"
+        customerStatus: "formal",
+        reconciliationStartDate: '',
+        reconciliationEndDate: '',
       },
       organizeIdTree: [],
       parentId: '',
@@ -651,7 +664,7 @@ export default {
 
         ],
         taxRate: [
-          { required: true, message: '请输入税率', trigger: 'blur' },
+          { required: true, message: '请选择税率', trigger: 'blur' },
         ],
         paymentMethod: [
           { required: true, message: '请选择付款方式', trigger: 'change' },

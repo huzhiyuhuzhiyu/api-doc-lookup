@@ -433,7 +433,7 @@
                   </el-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
-                    <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
                   </div>
@@ -1752,22 +1752,7 @@ export default {
 
       }
     },
-    checkassistantNum() {
-      if (!row.assistantNum) {
-        this.$message({
-          message: "请填写第" + (index + 1) + "行产品的副数量",
-          type: 'error',
-          duration: 1500,
-        })
-      } else if (Number(row.assistantNum) == 0) {
-        this.$message({
-          message: "第" + (index + 1) + "行产品的副数量必须大于0",
-          type: 'error',
-          duration: 1500,
-        })
-
-      }
-    },
+  
     // 含税价格输入失去焦点 检验不能为  0
     checkPrice(row, index) {
       if (!row.price) {
@@ -1916,72 +1901,7 @@ export default {
       console.log("productArr", productArr);
       this.productData = productArr
     },
-    // 监听副数量
-    watchassistantNum(row, index) {
-      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
-      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
-      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
-      // 使用正则表达式验证输入内容
-      row.assistantNum = row.assistantNum.replace(/[^\d.]/g, '');
-      let productArr = [...this.productData]
-
-      if (row.assistantNum.length == 1 && row.assistantNum == '.') {
-        // 如果第一位是小数点，则清空输入框
-        row.num = '';
-        row.assistantNum = '';
-      } else if (row.assistantNum.length == 2 && row.assistantNum[0] == '0' && row.assistantNum[1] != '.') {
-        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.assistantNum = row.assistantNum.slice(0, 1) + '.' + row.assistantNum.slice(1);
-      } else if (row.assistantNum.length > 2 && row.assistantNum[0] == '0' && row.assistantNum[1] != '.') {
-        row.assistantNum = row.assistantNum.substring(1, row.assistantNum.length)
-      }
-
-
-      if (row.assistantNum.includes('.')) {
-        let dotCount = 0; // 小数点的数量
-        let result = ''; // 处理后的结果
-
-        for (let i = 0; i < row.assistantNum.length; i++) {
-          const char = row.assistantNum[i];
-          if (char === '.') {
-            if (dotCount === 0) {
-              // 第一个小数点保留
-              result += char;
-              dotCount++;
-            }
-          } else {
-            result += char;
-          }
-        }
-
-        row.assistantNum = result;
-        let arr = row.assistantNum.split('.')
-        if (arr[0].length > 8) {
-          arr[0] = arr[0].substring(0, 8)
-        }
-        if (arr[1].length > 4) {
-          arr[1] = arr[1].substring(0, 4)
-        }
-        row.assistantNum = arr[0] + '.' + arr[1]
-      } else {
-        if (row.assistantNum.length > 8) {
-          row.assistantNum = row.assistantNum.substring(0, 8);
-        }
-      }
-      console.log("index", index);
-      console.log("row.assistantNum", row.assistantNum);
-      if (row.calculationDirection == 'multiplication') {
-        productArr[index].num = this.jnpf.numberFormat(row.assistantNum * row.ratio, 4)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 6)
-      } else {
-        productArr[index].num = this.jnpf.numberFormat(row.assistantNum / row.ratio, 4)
-        productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
-        productArr[index].excludingTaxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.excludingTaxPrice]), 6)
-      }
-      console.log("productArr", productArr);
-      this.productData = productArr
-    },
+  
 
 
     // 产品列表选中 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="item.type == 'view'">
+    <template v-if="item.type == 'view' || item.jnpfKey === 'JNPFTableText'">
       <div class="viewData">
         <span>{{ scope.row[item.prop] }}</span>
       </div>
@@ -8,11 +8,12 @@
     <template v-else>
       <el-form-item :prop="'data.' + scope.$index + '.' + item.prop" :rules='Rules'>
         <!-- 输入框 -->
-        <el-input v-if="item.type === 'input'" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
-          style="width:100%" :disabled="readOnly" :maxlength="item.maxlength || 20"
-          :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+        <el-input v-if="item.type === 'input' || item.jnpfKey === 'comInput' || item.jnpfKey === 'JNPFTableInput'"
+          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="readOnly"
+          :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
-          @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" :key="1">
+          @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''"
+          @keyup.enter.native="item.hasOwnProperty('keyup') ? item.keyup($event, scope, options) : ''" :key="1">
           <template v-if="item.itemSlot" :slot="item.itemSlot.position">
             <div v-if="!item.itemSlot.click"> {{ item.itemSlot.content }} </div>
             <el-button v-else @click="item.itemSlot.click"> {{ item.itemSlot.content }} </el-button>
@@ -20,11 +21,12 @@
         </el-input>
 
         <!-- 下拉框 -->
-         <!-- 远程搜索改为高阶函数 可增加自定义传参 -->
+        <!-- 远程搜索改为高阶函数 可增加自定义传参 -->
         <el-select v-else-if="item.type === 'select'" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
           style="width:100%" :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
-          :filterable="item.filterable || false" reserve-keyword :remote-method="(val)=>item.remoteMethod(val,item) || (() => { })"
-          :remote="item.remote || false" @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
+          :filterable="item.filterable || false" reserve-keyword
+          :remote-method="(val) => item.remoteMethod(val, item) || (() => { })" :remote="item.remote || false"
+          @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''">
           <el-option v-for="(o, index) in rowOptions" :key="o.label + index" :label="o.label" :value="o.value"
             :disabled="o.disabled">
@@ -32,9 +34,9 @@
         </el-select>
 
         <!-- 文本域 -->
-        <el-input type="textarea" v-else-if="item.type === 'textarea'" v-bind="$attrs" v-on="$listeners"
-          :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200" :disabled="readOnly"
-          :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+        <el-input type="textarea" v-else-if="item.type === 'textarea' || item.jnpfKey === 'textarea'" v-bind="$attrs"
+          v-on="$listeners" :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200"
+          :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />
 
@@ -122,7 +124,9 @@
 
 export default {
   data() {
-    return {}
+    return {
+      options: []
+    }
   },
   props: {
     item: {
@@ -136,6 +140,23 @@ export default {
     scope: {
       type: Object,
       required: true
+    },
+    lineData: {
+      type: Array,
+    }
+  },
+  created() {
+     let obj = this.lineData.find(item=>item.prop === 'taxRate')
+     this.options = obj.options
+  },
+  mounted() {
+    // console.log(this.item)
+    // console.log(this.scope)
+    if (this.item.prop === 'taxRate') {
+      // 获取 item2 中的 options
+      this.options = this.item.options;
+    } else {
+      // console.log('item2 的 prop 与 item1 的 taxRate 不匹配');
     }
   },
   computed: {

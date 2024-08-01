@@ -254,6 +254,7 @@
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
+import {  getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 export default {
   name: 'ComSelect-product',
   props: {
@@ -694,7 +695,8 @@ export default {
           this.jnpf.searchTimeFormat(this.listQuery, item.prop, item.startTime, item.endTime)
         })
       }
-      getProducts(this.listQuery).then(async listRes => {
+      let listMethod = this.listQuery.partnerId ? getcooperativeProduct : getProducts
+      listMethod(this.listQuery).then(async listRes => {
         if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
         else if (Array.isArray(listRes.data)) { this.tableData = listRes.data }
         else { this.tableData = listRes.data.records }
@@ -755,6 +757,7 @@ export default {
     },
     // 双击行
     rowDblclickFun(data) {
+      if (!this.checkSelectable(data)) return // 行被禁用时此方法不生效
       if (this.rowDblclick) {
         this.rowDblclick(data)
       } else if (this.$refs.defaultTableActionRef) {

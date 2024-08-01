@@ -8,13 +8,12 @@
     <div class="field-box">
       <el-scrollbar class="right-scrollbar">
         <!-- 组件属性 -->
-        <el-form v-show="currentTab==='field' && showField" size="small" label-width="90px"
-          labelPosition="left">
+        <el-form v-show="currentTab === 'field' && showField" size="small" label-width="90px" labelPosition="left">
           <template v-if="activeData.__config__">
             <template v-if="$store.getters.hasTable">
-              <template v-if="activeData.__config__.jnpfKey==='table'">
+              <template v-if="activeData.__config__.jnpfKey === 'table'">
                 <el-form-item
-                  v-if="activeData.__vModel__!==undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
+                  v-if="activeData.__vModel__ !== undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
                   label="控件字段">
                   <el-input v-model="activeData.__vModel__" placeholder="请输入数据库字段" disabled />
                 </el-form-item>
@@ -22,24 +21,24 @@
               <template v-else>
                 <template v-if="!activeData.__config__.isSubTable">
                   <el-form-item
-                    v-if="activeData.__vModel__!==undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
+                    v-if="activeData.__vModel__ !== undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
                     label="数据库表">
-                    <el-select v-model="activeData.__config__.tableName" placeholder="请选择数据库表"
-                      @change="tableChange" filterable>
+                    <el-select v-model="activeData.__config__.tableName" placeholder="请选择数据库表" @change="tableChange"
+                      filterable>
                       <el-option v-for="item in allTable" :key="item.table" :value="item.table"
-                        :label="item.tableName?item.table+'('+item.tableName+')':item.table">
+                        :label="item.tableName ? item.table + '(' + item.tableName + ')' : item.table">
                         <span class="custom-option-left">
-                          {{ item.tableName?item.table+'('+item.tableName+')':item.table}}
+                          {{ item.tableName ? item.table + '(' + item.tableName + ')' : item.table }}
                         </span>
-                        <span class="custom-option-right">{{item.typeId=='1'?'主表':'子表'}}</span>
+                        <span class="custom-option-right">{{ item.typeId == '1' ? '主表' : '子表' }}</span>
                       </el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item
-                    v-if="activeData.__vModel__!==undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
+                    v-if="activeData.__vModel__ !== undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
                     label="控件字段">
-                    <el-select v-model="activeData.__vModel__" placeholder="请选择数据库字段" clearable
-                      @change="fieldChange" filterable popper-class="field-select-popper">
+                    <el-select v-model="activeData.__vModel__" placeholder="请选择数据库字段" clearable @change="fieldChange"
+                      filterable popper-class="field-select-popper">
                       <p class="el-select-dropdown__empty" slot="empty">
                         <span>无匹配数据，</span>
                         <el-link type="primary" :underline="false" @click="openFieldDialog">添加字段
@@ -52,9 +51,8 @@
                         </el-option>
                       </el-option-group>
                       <el-option-group label="">
-                        <el-option v-for="item in fieldOptions" :key="item.realField"
-                          :value="item.realField"
-                          :label="item.fieldName?item.field+'('+item.fieldName+')':item.field">
+                        <el-option v-for="item in fieldOptions" :key="item.realField" :value="item.realField"
+                          :label="item.fieldName ? item.field + '(' + item.fieldName + ')' : item.field">
                         </el-option>
                       </el-option-group>
                     </el-select>
@@ -62,35 +60,31 @@
                 </template>
                 <template v-if="activeData.__config__.isSubTable && subTable.length">
                   <el-form-item label="数据库表">
-                    <el-select v-model="activeData.__config__.relationTable" placeholder="请选择数据库表"
-                      filterable disabled>
+                    <el-select v-model="activeData.__config__.relationTable" placeholder="请选择数据库表" filterable disabled>
                       <el-option v-for="item in allTable" :key="item.table" :value="item.table"
-                        :label="item.tableName?item.table+'('+item.tableName+')':item.table">
+                        :label="item.tableName ? item.table + '(' + item.tableName + ')' : item.table">
                       </el-option>
                     </el-select>
                   </el-form-item>
                   <el-form-item
-                    v-if="activeData.__vModel__!==undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
+                    v-if="activeData.__vModel__ !== undefined && !noVModelList.includes(activeData.__config__.jnpfKey)"
                     label="控件字段">
-                    <el-select v-model="activeData.__vModel__" placeholder="请选择数据库字段" clearable
-                      @change="fieldChange1" filterable>
+                    <el-select v-model="activeData.__vModel__" placeholder="请选择数据库字段" clearable @change="fieldChange1"
+                      filterable>
                       <p class="el-select-dropdown__empty" slot="empty">
                         <span>无匹配数据，</span>
                         <el-link type="primary" :underline="false" @click="openFieldDialog">添加字段
                         </el-link>
                       </p>
-                      <el-option-group label=""
-                        v-if="getSubTableFiled(activeData.__config__.relationTable).length">
+                      <el-option-group label="" v-if="getSubTableFiled(activeData.__config__.relationTable).length">
                         <el-option disabled value="-">
                           <el-link type="primary" :underline="false" @click="openFieldDialog">添加字段
                           </el-link>
                         </el-option>
                       </el-option-group>
                       <el-option-group label="">
-                        <el-option
-                          v-for="item in getSubTableFiled(activeData.__config__.relationTable)"
-                          :key="item.field" :value="item.field"
-                          :label="item.fieldName?item.field+'('+item.fieldName+')':item.field">
+                        <el-option v-for="item in getSubTableFiled(activeData.__config__.relationTable)" :key="item.field"
+                          :value="item.field" :label="item.fieldName ? item.field + '(' + item.fieldName + ')' : item.field">
                         </el-option>
                       </el-option-group>
                     </el-select>
@@ -100,80 +94,64 @@
             </template>
             <template v-else>
               <el-form-item label="控件字段"
-                v-if="activeData.__vModel__!==undefined  && !noVModelList.includes(activeData.__config__.jnpfKey)">
+                v-if="activeData.__vModel__ !== undefined && !noVModelList.includes(activeData.__config__.jnpfKey)">
                 <el-input v-model="activeData.__vModel__" placeholder="请输入数据库字段"
-                  @change="inputFieldChange($event,activeData.__config__.formId,activeData.__config__.parentVModel)"
-                  :disabled="activeData.__config__.jnpfKey==='table'" />
+                  @change="inputFieldChange($event, activeData.__config__.formId, activeData.__config__.parentVModel)"
+                  :disabled="activeData.__config__.jnpfKey === 'table'" />
               </el-form-item>
             </template>
-            <JNPFComInput v-if="activeData.__config__.jnpfKey==='comInput'"
-              :active-data="activeData" />
-            <ClassifyRight v-if="['comSelect2','comSelectProduct','ComSelectPartner'].includes(activeData.__config__.jnpfKey)"
-              :active-data="activeData" :drawingList="drawingList"/>
-            <JNPF-textarea v-if="activeData.__config__.jnpfKey==='textarea'"
-              :active-data="activeData" />
-            <JNPFText v-if="activeData.__config__.jnpfKey==='JNPFText'" :active-data="activeData" />
-            <JnpfLink v-if="activeData.__config__.jnpfKey==='link'" :active-data="activeData" />
-            <JnpfAlert v-if="activeData.__config__.jnpfKey==='alert'" :active-data="activeData" />
-            <JNPFNumInput v-if="activeData.__config__.jnpfKey==='numInput'"
-              :active-data="activeData" />
-            <JNPFAmount v-if="activeData.__config__.jnpfKey==='JNPFAmount'"
-              :active-data="activeData" />
-            <JNPFPsdInput v-if="activeData.__config__.jnpfKey==='PsdInput'"
-              :active-data="activeData" />
-            <JNPFRadio v-if="activeData.__config__.jnpfKey==='radio'" :active-data="activeData" />
-            <JNPFCheckbox v-if="activeData.__config__.jnpfKey==='checkbox'"
-              :active-data="activeData" />
-            <JNPFSelect v-if="activeData.__config__.jnpfKey==='select'" :active-data="activeData"
-              :key="activeData.__config__.renderKey" :dictionaryOptions="dictionaryOptions"
+            <JNPFComInput v-if="activeData.__config__.jnpfKey === 'comInput'" :active-data="activeData" />
+            <ClassifyRight
+              v-if="['comSelect2', 'comSelectProduct', 'ComSelectPartner'].includes(activeData.__config__.jnpfKey)"
+              :active-data="activeData" :drawingList="drawingList" />
+            <JNPF-textarea v-if="activeData.__config__.jnpfKey === 'textarea'" :active-data="activeData" />
+            <JNPFText v-if="activeData.__config__.jnpfKey === 'JNPFText'" :active-data="activeData" />
+            <TableText v-if="['JNPFTableText','JNPFTableInput'].includes(activeData.__config__.jnpfKey)" :active-data="activeData" />
+            <JnpfLink v-if="activeData.__config__.jnpfKey === 'link'" :active-data="activeData" />
+            <JnpfAlert v-if="activeData.__config__.jnpfKey === 'alert'" :active-data="activeData" />
+            <JNPFNumInput v-if="activeData.__config__.jnpfKey === 'numInput'" :active-data="activeData" />
+            <JNPFAmount v-if="activeData.__config__.jnpfKey === 'JNPFAmount'" :active-data="activeData" />
+            <JNPFPsdInput v-if="activeData.__config__.jnpfKey === 'PsdInput'" :active-data="activeData" />
+            <JNPFRadio v-if="activeData.__config__.jnpfKey === 'radio'" :active-data="activeData" />
+            <JNPFCheckbox v-if="activeData.__config__.jnpfKey === 'checkbox'" :active-data="activeData" />
+            <JNPFSelect v-if="activeData.__config__.jnpfKey === 'select'" :active-data="activeData"
+              :key="activeData.__config__.renderKey" :dictionaryOptions="dictionaryOptions" :productAttrOptions="productAttrOptions"
               :dataInterfaceOptions="dataInterfaceOptions" />
-            <JNPFCascader v-if="activeData.__config__.jnpfKey==='cascader'"
-              :active-data="activeData" />
-            <JNPFTime v-if="activeData.__config__.jnpfKey==='time'" :active-data="activeData" />
-            <JNPFTimeRange v-if="activeData.__config__.jnpfKey==='timeRange'"
-              :active-data="activeData" />
-            <JNPFDate v-if="activeData.__config__.jnpfKey==='date'" :active-data="activeData" />
-            <JNPFDateRange v-if="activeData.__config__.jnpfKey==='dateRange'"
-              :active-data="activeData" />
-            <JNPFColorPicker v-if="activeData.__config__.jnpfKey==='colorPicker'"
-              :active-data="activeData" />
-            <JNPFRate v-if="activeData.__config__.jnpfKey==='rate'" :active-data="activeData" />
-            <JNPFSwitch v-if="activeData.__config__.jnpfKey==='switch'" :active-data="activeData" />
-            <JNPFSlider v-if="activeData.__config__.jnpfKey==='slider'" :active-data="activeData" />
-            <JNPFDivider v-if="activeData.__config__.jnpfKey==='divider'"
-              :active-data="activeData" />
-            <JNPFUploadFz v-if="activeData.__config__.jnpfKey==='uploadFz'"
-              :active-data="activeData" />
-            <JNPFUploadImg v-if="activeData.__config__.jnpfKey==='uploadImg'"
-              :active-data="activeData" />
+            <JNPFCascader v-if="activeData.__config__.jnpfKey === 'cascader'" :active-data="activeData" />
+            <JNPFTime v-if="activeData.__config__.jnpfKey === 'time'" :active-data="activeData" />
+            <JNPFTimeRange v-if="activeData.__config__.jnpfKey === 'timeRange'" :active-data="activeData" />
+            <JNPFDate v-if="activeData.__config__.jnpfKey === 'date'" :active-data="activeData" />
+            <JNPFDateRange v-if="activeData.__config__.jnpfKey === 'dateRange'" :active-data="activeData" />
+            <JNPFColorPicker v-if="activeData.__config__.jnpfKey === 'colorPicker'" :active-data="activeData" />
+            <JNPFRate v-if="activeData.__config__.jnpfKey === 'rate'" :active-data="activeData" />
+            <JNPFSwitch v-if="activeData.__config__.jnpfKey === 'switch'" :active-data="activeData" />
+            <JNPFSlider v-if="activeData.__config__.jnpfKey === 'slider'" :active-data="activeData" />
+            <JNPFDivider v-if="activeData.__config__.jnpfKey === 'divider'" :active-data="activeData" />
+            <JNPFUploadFz v-if="activeData.__config__.jnpfKey === 'uploadFz'" :active-data="activeData" />
+            <JNPFUploadImg v-if="activeData.__config__.jnpfKey === 'uploadImg'" :active-data="activeData" />
             <JNPFComRight v-if="isCommon" :active-data="activeData" />
-            <JNPFAddress v-if="activeData.__config__.jnpfKey==='address'"
-              :active-data="activeData" />
-            <TreeSelect v-if="activeData.__config__.jnpfKey==='treeSelect'"
-              :active-data="activeData" />
-            <GroupTitle v-if="activeData.__config__.jnpfKey==='groupTitle'"
-              :active-data="activeData" />
-            <RelationForm v-if="activeData.__config__.jnpfKey==='relationForm'"
-              :active-data="activeData" v-on="$listeners" :key="activeData.__config__.renderKey" />
-            <RelationFormAttr v-if="activeData.__config__.jnpfKey==='relationFormAttr'"
-              :active-data="activeData" ref="relationFormAttr" />
-            <JNPFCalculate v-if="activeData.__config__.jnpfKey==='calculate'"
-              :active-data="activeData" ref="calculate" />
+            <JNPFAddress v-if="activeData.__config__.jnpfKey === 'address'" :active-data="activeData" />
+            <TreeSelect v-if="activeData.__config__.jnpfKey === 'treeSelect'" :active-data="activeData" />
+            <GroupTitle v-if="activeData.__config__.jnpfKey === 'groupTitle'" :active-data="activeData" />
+            <RelationForm v-if="activeData.__config__.jnpfKey === 'relationForm'" :active-data="activeData"
+              v-on="$listeners" :key="activeData.__config__.renderKey" />
+            <RelationFormAttr v-if="activeData.__config__.jnpfKey === 'relationFormAttr'" :active-data="activeData"
+              ref="relationFormAttr" />
+            <JNPFCalculate v-if="activeData.__config__.jnpfKey === 'calculate'" :active-data="activeData" ref="calculate" />
             <PopupSelect
-              v-if="activeData.__config__.jnpfKey==='popupSelect'||activeData.__config__.jnpfKey==='popupTableSelect'"
+              v-if="activeData.__config__.jnpfKey === 'popupSelect' || activeData.__config__.jnpfKey === 'popupTableSelect'"
               :active-data="activeData" />
-            <PopupAttr v-if="activeData.__config__.jnpfKey==='popupAttr'" :active-data="activeData"
-              ref="popupAttr" />
-            <Tab v-if="activeData.__config__.jnpfKey==='tab'" :active-data="activeData" />
-            <Collapse v-if="activeData.__config__.jnpfKey==='collapse'" :active-data="activeData" />
-            <template v-if="activeData.__config__.jnpfKey==='barcode'">
+            <PopupAttr v-if="activeData.__config__.jnpfKey === 'popupAttr'" :active-data="activeData" ref="popupAttr" />
+            <Tab v-if="activeData.__config__.jnpfKey === 'tab'" :active-data="activeData" />
+            <Collapse v-if="activeData.__config__.jnpfKey === 'collapse'" :active-data="activeData" />
+            <template v-if="activeData.__config__.jnpfKey === 'barcode'">
               <el-form-item label="控件标题">
                 <el-input v-model="activeData.__config__.label" placeholder="请输入控件标题" />
               </el-form-item>
               <el-form-item label="编码格式">
                 <el-select v-model="activeData.format" placeholder="请选择">
-                  <el-option :label="item.label" :value="item.value"
-                    v-for="(item,i) in barcodeFormatOptions" :key="i"></el-option>
+                  <el-option :label="item.label" :value="item.value" v-for="(item, i) in barcodeFormatOptions"
+                    :key="i"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="条码颜色">
@@ -184,8 +162,8 @@
                   controls-position="right" />
               </el-form-item>
               <el-form-item label="高度">
-                <el-input-number v-model="activeData.height" placeholder="高度" :min="0"
-                  :precision="0" controls-position="right" />
+                <el-input-number v-model="activeData.height" placeholder="高度" :min="0" :precision="0"
+                  controls-position="right" />
               </el-form-item>
               <el-form-item label="默认值">
                 <el-select v-model="activeData.dataType" placeholder="请选择">
@@ -193,19 +171,17 @@
                   <el-option label="组件联动" value="relation"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="固定值" v-if="activeData.dataType==='static'">
-                <el-input v-model="activeData.staticText" placeholder="请输入固定值"
-                  @change="onBarcodeTextChange" />
+              <el-form-item label="固定值" v-if="activeData.dataType === 'static'">
+                <el-input v-model="activeData.staticText" placeholder="请输入固定值" @change="onBarcodeTextChange" />
               </el-form-item>
-              <el-form-item label="选择组件" v-if="activeData.dataType==='relation'">
-                <el-select v-model="activeData.relationField" placeholder="请选择" clearable
-                  filterable>
-                  <el-option :label="item.__config__.label" :value="item.__vModel__"
-                    v-for="(item,i) in drawingOptions" :key="i"></el-option>
+              <el-form-item label="选择组件" v-if="activeData.dataType === 'relation'">
+                <el-select v-model="activeData.relationField" placeholder="请选择" clearable filterable>
+                  <el-option :label="item.__config__.label" :value="item.__vModel__" v-for="(item, i) in drawingOptions"
+                    :key="i"></el-option>
                 </el-select>
               </el-form-item>
             </template>
-            <template v-if="activeData.__config__.jnpfKey==='qrcode'">
+            <template v-if="activeData.__config__.jnpfKey === 'qrcode'">
               <el-form-item label="控件标题">
                 <el-input v-model="activeData.__config__.label" placeholder="请输入控件标题" />
               </el-form-item>
@@ -223,18 +199,17 @@
                   <el-option label="当前表单路径" value="form"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="固定值" v-if="activeData.dataType==='static'">
+              <el-form-item label="固定值" v-if="activeData.dataType === 'static'">
                 <el-input v-model="activeData.staticText" placeholder="请输入固定值" />
               </el-form-item>
-              <el-form-item label="选择组件" v-if="activeData.dataType==='relation'">
-                <el-select v-model="activeData.relationField" placeholder="请选择" clearable
-                  filterable>
-                  <el-option :label="item.__config__.label" :value="item.__vModel__"
-                    v-for="(item,i) in drawingOptions" :key="i"></el-option>
+              <el-form-item label="选择组件" v-if="activeData.dataType === 'relation'">
+                <el-select v-model="activeData.relationField" placeholder="请选择" clearable filterable>
+                  <el-option :label="item.__config__.label" :value="item.__vModel__" v-for="(item, i) in drawingOptions"
+                    :key="i"></el-option>
                 </el-select>
               </el-form-item>
             </template>
-            <template v-if="activeData.__config__.jnpfKey==='button'">
+            <template v-if="activeData.__config__.jnpfKey === 'button'">
               <el-form-item label="控件文本">
                 <el-input v-model="activeData.buttonText" placeholder="请输入控件文本" />
               </el-form-item>
@@ -260,11 +235,11 @@
               <el-form-item label="控件标题">
                 <el-input v-model="activeData.__config__.label" placeholder="请输入控件标题" />
               </el-form-item>
-              <el-form-item label="单据模板" v-if="activeData.__config__.jnpfKey==='billRule'">
-                <BillRule :value="activeData.__config__.rule"
-                  :title="activeData.__config__.ruleName" @change="onRuleChange" />
+              <el-form-item label="单据模板" v-if="activeData.__config__.jnpfKey === 'billRule'">
+                <BillRule :value="activeData.__config__.rule" :title="activeData.__config__.ruleName"
+                  @change="onRuleChange" />
               </el-form-item>
-              <el-form-item label="显示内容" v-if="activeData.__config__.jnpfKey==='currOrganize'">
+              <el-form-item label="显示内容" v-if="activeData.__config__.jnpfKey === 'currOrganize'">
                 <el-select v-model="activeData.showLevel" placeholder="请选择显示内容">
                   <el-option label="显示组织" value="all"></el-option>
                   <el-option label="显示部门" value="last"></el-option>
@@ -274,40 +249,38 @@
                 <el-switch v-model="activeData.__config__.noShow" />
               </el-form-item>
             </template>
-            <template v-if="activeData.on && (modelType==1||modelType==6)">
+            <template v-if="activeData.on && (modelType == 1 || modelType == 6)">
               <el-divider>脚本事件</el-divider>
-              <div v-for="(value,key) in activeData.on" :key="key">
+              <div v-for="(value, key) in activeData.on" :key="key">
                 <el-form-item :label="key">
-                  <el-button style="width: 100%;" @click="editFunc(value,key)">
-                    {{getTipText(key)}}
+                  <el-button style="width: 100%;" @click="editFunc(value, key)">
+                    {{ getTipText(key) }}
                   </el-button>
                 </el-form-item>
               </div>
             </template>
-            <template v-if="activeData.__config__.jnpfKey==='table'">
+            <template v-if="activeData.__config__.jnpfKey === 'table'">
               <el-form-item label="控件标题">
                 <el-input v-model="activeData.__config__.label" placeholder="请输入控件标题" />
               </el-form-item>
               <el-form-item label="关联子表" v-if="$store.getters.hasTable">
-                <el-select v-model="activeData.__config__.tableName" placeholder="请选择关联子表"
-                  @change="onTableNameChange">
+                <el-select v-model="activeData.__config__.tableName" placeholder="请选择关联子表" @change="onTableNameChange">
                   <el-option v-for="item in subTable" :key="item.table"
-                    :label="item.tableName?item.table+'('+item.tableName+')':item.table"
-                    :value="item.table">
+                    :label="item.tableName ? item.table + '(' + item.tableName + ')' : item.table" :value="item.table">
                     <span class="custom-option-left">
-                      {{ item.tableName?item.table+'('+item.tableName+')':item.table}}
+                      {{ item.tableName ? item.table + '(' + item.tableName + ')' : item.table }}
                     </span>
-                    <span class="custom-option-right">{{item.typeId=='1'?'主表':'子表'}}</span>
+                    <span class="custom-option-right">{{ item.typeId == '1' ? '主表' : '子表' }}</span>
                   </el-option>
                 </el-select>
               </el-form-item>
               <table-config :active-data="activeData" />
             </template>
-            <template v-if="activeData.__config__.jnpfKey==='card'">
+            <template v-if="activeData.__config__.jnpfKey === 'card'">
               <el-form-item label="卡片标题" label-width="76px">
                 <el-input v-model="activeData.header" placeholder="请输入卡片标题" />
               </el-form-item>
-              <el-form-item label="显示阴影" label-width="76px" v-show="showType==='pc'">
+              <el-form-item label="显示阴影" label-width="76px" v-show="showType === 'pc'">
                 <el-radio-group v-model="activeData.shadow" size="small">
                   <el-radio-button label="always">一直显示</el-radio-button>
                   <el-radio-button label="hover">移入显示</el-radio-button>
@@ -316,37 +289,32 @@
               </el-form-item>
             </template>
             <!-- row 布局 -->
-            <template v-if="activeData.__config__.jnpfKey==='row'">
-              <el-form-item v-if="activeData.__config__.componentName!==undefined" label="组件名">
+            <template v-if="activeData.__config__.jnpfKey === 'row'">
+              <el-form-item v-if="activeData.__config__.componentName !== undefined" label="组件名">
                 {{ activeData.__config__.componentName }}
               </el-form-item>
             </template>
-            <el-form-item
-              v-if="activeData.__config__.layout==='rowFormItem'&&activeData.gutter!==undefined"
-              label="栅格间隔">
-              <el-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔"
-                controls-position="right" />
+            <el-form-item v-if="activeData.__config__.layout === 'rowFormItem' && activeData.gutter !== undefined" label="栅格间隔">
+              <el-input-number v-model="activeData.gutter" :min="0" placeholder="栅格间隔" controls-position="right" />
             </el-form-item>
           </template>
         </el-form>
         <!-- 组件样式 -->
-        <el-form v-show="currentTab === 'style'" size="small" label-width="90px"
-          labelPosition="left">
+        <el-form v-show="currentTab === 'style'" size="small" label-width="90px" labelPosition="left">
           <template v-if="activeData.__config__">
             <template v-if="!activeData.__config__.isSubTable">
               <el-form-item label="控件栅格">
-                <el-slider v-model="activeData.__config__.span" :max="24" :min="6" show-stops
-                  :step="2" show-tooltip />
+                <el-slider v-model="activeData.__config__.span" :max="24" :min="6" show-stops :step="2" show-tooltip />
               </el-form-item>
               <el-form-item label="标题宽度"
-                v-if="!['divider','JNPFText','link','alert','button','table','groupTitle ','card','row','tab','collapse'].includes(activeData.__config__.jnpfKey)">
-                <el-input-number v-model="activeData.__config__.labelWidth" placeholder="标题宽度"
-                  :min="0" :precision="0" controls-position="right" />
+                v-if="!['divider', 'JNPFText', 'link', 'alert', 'button', 'table', 'groupTitle ', 'card', 'row', 'tab', 'collapse'].includes(activeData.__config__.jnpfKey)">
+                <el-input-number v-model="activeData.__config__.labelWidth" placeholder="标题宽度" :min="0" :precision="0"
+                  controls-position="right" />
               </el-form-item>
             </template>
-            <el-form-item label="控件宽度" v-if="activeData.__config__.isSubTable">
-              <el-input-number v-model="activeData.__config__.columnWidth" placeholder="控件宽度"
-                :min="0" :precision="0" controls-position="right" />
+            <el-form-item label="控件宽度">
+              <el-input-number v-model="activeData.__config__.columnWidth" placeholder="控件宽度" :min="0" :precision="0"
+                controls-position="right" />
             </el-form-item>
             <!-- <el-form-item label="多端显示">
               <el-checkbox-group v-model="activeData.__config__.visibility" size="mini"
@@ -358,8 +326,7 @@
           </template>
         </el-form>
         <!-- 表单属性 -->
-        <el-form v-show="currentTab === 'form'" size="small" label-width="100px"
-          labelPosition="left">
+        <el-form v-show="currentTab === 'form'" size="small" label-width="100px" labelPosition="left">
           <el-form-item label="表单尺寸">
             <el-radio-group v-model="formConf.size">
               <el-radio-button label="medium">中等</el-radio-button>
@@ -371,19 +338,17 @@
             <el-radio-group v-model="formConf.labelPosition">
               <el-radio-button label="left">左对齐</el-radio-button>
               <el-radio-button label="right">右对齐</el-radio-button>
-              <el-radio-button label="top" :disabled="formConf.formStyle==='word-form'">顶部对齐
+              <el-radio-button label="top" :disabled="formConf.formStyle === 'word-form'">顶部对齐
               </el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="标题宽度">
-            <el-input-number v-model="formConf.labelWidth" :min="0" placeholder="标题宽度"
-              controls-position="right" />
+            <el-input-number v-model="formConf.labelWidth" :min="0" placeholder="标题宽度" controls-position="right" />
           </el-form-item>
           <el-form-item label="栅格间隔">
-            <el-input-number v-model="formConf.gutter" :min="0" placeholder="栅格间隔"
-              controls-position="right" />
+            <el-input-number v-model="formConf.gutter" :min="0" placeholder="栅格间隔" controls-position="right" />
           </el-form-item>
-          <el-form-item label="弹窗类型" v-if="modelType != 3 && modelType!=6 && webType==2">
+          <el-form-item label="弹窗类型" v-if="modelType != 3 && modelType != 6 && webType == 2">
             <el-select v-model="formConf.popupType" placeholder="请选择">
               <el-option label="居中弹窗" value="general"></el-option>
               <el-option label="右侧弹窗" value="drawer"></el-option>
@@ -396,27 +361,23 @@
               <el-option label="公文风格" value="word-form"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="表单宽度" v-if="formConf.popupType==='general'">
+          <el-form-item label="表单宽度" v-if="formConf.popupType === 'general'">
             <el-select v-model="formConf.generalWidth" placeholder="请选择">
-              <el-option v-for="item in generalWidthOptions" :label="item" :value="item"
-                :key="item" />
+              <el-option v-for="item in generalWidthOptions" :label="item" :value="item" :key="item" />
             </el-select>
           </el-form-item>
-          <el-form-item label="表单宽度" v-if="formConf.popupType==='fullScreen'">
+          <el-form-item label="表单宽度" v-if="formConf.popupType === 'fullScreen'">
             <el-select v-model="formConf.fullScreenWidth" placeholder="请选择">
-              <el-option v-for="item in fullScreenWidthOptions" :label="item" :value="item"
-                :key="item" />
+              <el-option v-for="item in fullScreenWidthOptions" :label="item" :value="item" :key="item" />
             </el-select>
           </el-form-item>
-          <el-form-item label="表单宽度" v-if="formConf.popupType==='drawer'">
+          <el-form-item label="表单宽度" v-if="formConf.popupType === 'drawer'">
             <el-select v-model="formConf.drawerWidth" placeholder="请选择">
-              <el-option v-for="item in generalWidthOptions" :label="item" :value="item"
-                :key="item" />
+              <el-option v-for="item in generalWidthOptions" :label="item" :value="item" :key="item" />
             </el-select>
           </el-form-item>
           <el-form-item label="主键策略">
-            <el-select v-model="formConf.primaryKeyPolicy" placeholder="请选择"
-              :disabled="!!getFormInfo().id">
+            <el-select v-model="formConf.primaryKeyPolicy" placeholder="请选择" :disabled="!!getFormInfo().id">
               <el-option label="雪花ID" :value="1" />
               <el-option label="自增长ID" :value="2" />
             </el-select>
@@ -429,7 +390,7 @@
             </span>
             <el-switch v-model="formConf.concurrencyLock" />
           </el-form-item>
-          <template v-if="modelType!=3 && modelType!=6 && webType!=3">
+          <template v-if="modelType != 3 && modelType != 6 && webType != 3">
             <el-divider>表单按钮</el-divider>
             <div class="per-cell">
               <el-checkbox v-model="formConf.hasConfirmBtn" disabled>确定</el-checkbox>
@@ -439,32 +400,30 @@
               <el-checkbox v-model="formConf.hasCancelBtn" disabled>取消</el-checkbox>
               <el-input v-model="formConf.cancelButtonText" />
             </div>
-            <template v-if="webType==2">
-              <div class="per-cell" :class="{'last':!formConf.hasPrintBtn}">
+            <template v-if="webType == 2">
+              <div class="per-cell" :class="{ 'last': !formConf.hasPrintBtn }">
                 <el-checkbox v-model="formConf.hasPrintBtn">打印</el-checkbox>
                 <el-input v-model="formConf.printButtonText" />
               </div>
               <el-form-item label="" v-if="formConf.hasPrintBtn">
-                <JNPF-TreeSelect :options="printTplList" v-model="formConf.printId"
-                  placeholder="请选择打印模板" lastLevel clearable></JNPF-TreeSelect>
+                <JNPF-TreeSelect :options="printTplList" v-model="formConf.printId" placeholder="请选择打印模板" lastLevel
+                  clearable></JNPF-TreeSelect>
               </el-form-item>
             </template>
           </template>
-          <template v-if="formConf.funcs && (modelType==1||modelType==6)">
+          <template v-if="formConf.funcs && (modelType == 1 || modelType == 6)">
             <el-divider>脚本事件</el-divider>
             <el-form-item label="onLoad">
-              <el-button style="width: 100%;"
-                @click="editFunc(formConf.funcs.onLoad,'onLoad',true)">表单加载触发
+              <el-button style="width: 100%;" @click="editFunc(formConf.funcs.onLoad, 'onLoad', true)">表单加载触发
               </el-button>
             </el-form-item>
             <el-form-item label="beforeSubmit">
-              <el-button style="width: 100%;"
-                @click="editFunc(formConf.funcs.beforeSubmit,'beforeSubmit',true)">提交前置触发
+              <el-button style="width: 100%;" @click="editFunc(formConf.funcs.beforeSubmit, 'beforeSubmit', true)">提交前置触发
               </el-button>
             </el-form-item>
             <el-form-item label="afterSubmit">
               <el-button style="width: 100%;"
-                @click="editFunc(formConf.funcs.afterSubmit,'afterSubmit',true)">提交后置触发</el-button>
+                @click="editFunc(formConf.funcs.afterSubmit, 'afterSubmit', true)">提交后置触发</el-button>
             </el-form-item>
           </template>
         </el-form>
@@ -472,8 +431,8 @@
     </div>
     <form-script :visible.sync="formScriptVisible" :tpl="activeScript" :fields="drawingList"
       @updateScript="updateScript" />
-    <field-dialog :visible.sync="fieldDialogVisible" ref="fieldDialog"
-      @close="fieldDialogVisible=false" @updateOptions="updateFieldOptions" />
+    <field-dialog :visible.sync="fieldDialogVisible" ref="fieldDialog" @close="fieldDialogVisible = false"
+      @updateOptions="updateFieldOptions" />
   </div>
 </template>
 
@@ -490,6 +449,7 @@ import JNPFComInput from './RightComponents/ComInput'
 import ClassifyRight from './RightComponents/ClassifyRight'
 import JNPFTextarea from './RightComponents/Textarea'
 import JNPFText from './RightComponents/JNPFText'
+import TableText from './RightComponents/TableText'
 import JnpfLink from './RightComponents/JnpfLink'
 import JnpfAlert from './RightComponents/JnpfAlert'
 import JNPFNumInput from './RightComponents/NumInput'
@@ -522,7 +482,7 @@ import PopupAttr from './RightComponents/PopupAttr'
 import Tab from './RightComponents/Tab'
 import Collapse from './RightComponents/Collapse'
 import TableConfig from './RightComponents/Table'
-
+import { getbimProductAttributes } from "@/api/masterDataManagement/index";
 const commonRightList = ['comSelect', 'depSelect', 'posSelect', 'userSelect', 'groupSelect', "roleSelect", 'editor']
 const systemList = ['createUser', 'createTime', 'modifyUser', 'modifyTime', 'currOrganize', 'currDept', 'currPosition', 'billRule']
 
@@ -534,6 +494,7 @@ export default {
     JNPFComInput,
     JNPFTextarea,
     JNPFText,
+    TableText,
     JnpfLink,
     JnpfAlert,
     JNPFNumInput,
@@ -586,6 +547,7 @@ export default {
       printTplList: [],
       fieldOptions: [],
       dictionaryOptions: [],
+      productAttrOptions: [],
       dataInterfaceOptions: [],
       justifyOptions: [
         {
@@ -766,6 +728,7 @@ export default {
   },
   created() {
     this.getDictionaryType()
+    this.getProductAttr()
     this.getDataInterfaceSelector()
     this.getPrintTplList()
     if (!this.activeData || !this.activeData.__config__) return
@@ -932,7 +895,7 @@ export default {
       this.setDefaultOptions()
     },
     setDefaultOptions() {
-      console.log(this.formItemList,'this.formItemList');
+      console.log(this.formItemList, 'this.formItemList');
       if (!this.$store.getters.hasTable) return
       if (this.activeData.__vModel__ === undefined || this.activeData.__config__.jnpfKey === 'table') return
       if (!this.activeData.__config__.tableName || this.activeData.__config__.tableName === this.mainTable) {
@@ -989,6 +952,11 @@ export default {
     getDictionaryType() {
       getDictionaryTypeSelector().then(res => {
         this.dictionaryOptions = res.data.list
+      })
+    },
+    getProductAttr() {
+      getbimProductAttributes('575966014227880773').then(res => {
+        this.productAttrOptions = res.data.list
       })
     },
     getDataInterfaceSelector() {
@@ -1111,57 +1079,70 @@ export default {
   height: 100%;
   background: #fff;
   border-radius: 4px;
+
   .field-box {
     position: relative;
     height: calc(100% - 42px);
     box-sizing: border-box;
     overflow: hidden;
   }
+
   .el-scrollbar {
     height: 100%;
   }
 }
+
 ::v-deep .select-item,
 .select-item {
   display: flex;
   border: 1px dashed #fff;
   box-sizing: border-box;
-  & .el-input + .el-input {
+
+  & .el-input+.el-input {
     margin-left: 4px;
   }
-  & + .select-item {
+
+  &+.select-item {
     margin-top: 4px;
   }
+
   &.sortable-chosen {
     border: 1px dashed #409eff;
   }
+
   .select-line-icon {
     line-height: 32px;
     font-size: 22px;
     padding: 0 4px;
     color: #606266;
+
     .icon-ym-darg {
       font-size: 20px;
       line-height: 31px;
       display: inline-block;
     }
   }
+
   .close-btn {
     cursor: pointer;
     color: #f56c6c;
   }
+
   .option-drag {
     cursor: move;
   }
 }
+
 .time-range {
   .el-date-editor {
     width: 227px;
   }
+
   ::v-deep .el-icon-time {
     display: none;
   }
 }
+
 .document-link {
   position: absolute;
   display: block;
@@ -1178,36 +1159,46 @@ export default {
   color: #fff;
   font-size: 18px;
 }
+
 .node-label {
   font-size: 14px;
 }
+
 .node-icon {
   color: #bebfc3;
 }
+
 .right-scrollbar {
   .el-form {
-    >>> .el-date-editor,
-    >>> .el-cascader,
-    >>> .el-select {
+
+    >>>.el-date-editor,
+    >>>.el-cascader,
+    >>>.el-select {
       width: 100%;
     }
   }
 }
+
 .per-cell {
   display: flex;
   align-items: center;
   margin-bottom: 18px;
+
   .el-checkbox {
     width: 146px;
   }
+
   &.last {
     margin-bottom: 0;
   }
 }
+
 .visibility-checkbox {
   width: 100%;
-  >>> .el-checkbox-button {
+
+  >>>.el-checkbox-button {
     width: 50%;
+
     .el-checkbox-button__inner {
       width: 100%;
       text-align: center;
@@ -1218,6 +1209,7 @@ export default {
 <style lang="scss">
 .field-select-popper {
   .el-select-dropdown__empty {
+
     span,
     .el-link {
       line-height: 16px;
@@ -1225,9 +1217,11 @@ export default {
     }
   }
 }
+
 .custom-option-left {
   float: left;
 }
+
 .custom-option-right {
   float: right;
   color: #8492a6;

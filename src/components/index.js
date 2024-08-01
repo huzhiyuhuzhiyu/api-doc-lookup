@@ -18,6 +18,8 @@ import uploadBtn from '@/components/JNPF-uploadBtn'
 import UploadWj from "@/components/upload-wj";
 // 代码生成器专供
 import JNPFText from '@/components/Generator/components/JNPFText'
+import JNPFTableText from '@/components/Generator/components/JNPFTableText'
+import JNPFTableInput from '@/components/Generator/components/JNPFTableInput'
 import JnpfLink from '@/components/Generator/components/JnpfLink'
 import JnpfBarcode from '@/components/Generator/components/JnpfBarcode'
 import JnpfQrcode from '@/components/Generator/components/JnpfQrcode'
@@ -68,6 +70,8 @@ export default {
     Vue.component('uploadBtn', uploadBtn)
     Vue.component('UserBox', UserBox)
     Vue.component('JNPFText', JNPFText)
+    Vue.component('JNPFTableText', JNPFTableText)
+    Vue.component('JNPFTableInput', JNPFTableInput)
     Vue.component('JnpfLink', JnpfLink)
     Vue.component('JnpfBarcode', JnpfBarcode)
     Vue.component('JnpfQrcode', JnpfQrcode)

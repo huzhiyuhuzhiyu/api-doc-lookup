@@ -178,7 +178,7 @@
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column>
+                    <!-- <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column> -->
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                     <!-- <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column> -->
                     <!-- <el-table-column prop="shelfSpaceName" label="货位" width="120" :key="1011"

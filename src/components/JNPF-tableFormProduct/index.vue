@@ -1,32 +1,40 @@
 <template>
   <div>
+    <div v-if="btnType !== 'look'">
+      <template v-for="item in btnList">
+        <el-button :key="item.btnText" type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+          :icon="item.icon" :disabled="item.disabled" @click="item.click">{{ item.btnText }}</el-button>|
+      </template>
+    </div>
     <el-form :model="JNPFColTableData" ref="main">
-      <el-table class="TableForm table" :data="JNPFColTableData.data" hasNO fixedNO hasC border ref="main">
+      <el-table class="TableForm table" :data="JNPFColTableData.data" v-bind="$attrs" v-on="$listeners"  border ref="mainTableForm">
+        <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
+          align="center" :selectable="checkSelectable" />
         <el-table-column type="index" width="60" label="序号" align="center" :fixed="true ? 'left' : false" />
-
         <template v-for="item in tableItems">
           <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop"
-            :label="item.label" :width="item.width" :min-width="item.minWidth" :fixed="item.fixed"
+            :label="item.label" :width="item.width"
+            :min-width="item.minWidth ? item.minWidth : item.columnWidth ? item.columnWidth : 120" :fixed="item.fixed"
             :show-overflow-tooltip="item.type === 'view'">
             <template slot="header" v-if="isRequire(item)">
               <span class="required">*</span>{{ item.label }}
             </template>
             <template slot-scope="scope">
               <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-                :value="JNPFColTableData.data[scope.$index][scope.column.property]"
+                :value="JNPFColTableData.data[scope.$index][scope.column.property]" :lineData="tableItems"
                 @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
                 :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
             </template>
           </el-table-column>
         </template>
 
-        <el-table-column label="操作" width="180" :fixed="true ? 'right' : false" v-if="hasA">
+        <el-table-column label="操作" :width="(hasEdit && hasDel) ? 180 : 90" :fixed="true ? 'right' : false" v-if="hasA">
           <template slot-scope="scope">
             <!-- 抽屉 -->
             <el-button size="mini" type="text" v-if="hasEdit" @click="handlerOpenSource(scope)"
               :disabled="editDisabled">{{ editText }}</el-button>
-            <el-button size="mini" type="text" v-if="hasDel"
-            :disabled="delDisabled" @click="handlerDel(scope)">{{ delText }}</el-button>
+            <el-button size="mini" type="text" v-if="hasDel" :disabled="delDisabled" @click="handlerDel(scope)">{{ delText
+            }}</el-button>
           </template>
         </el-table-column>
 
@@ -52,6 +60,22 @@ export default {
     value: {
       type: Array,
       required: true
+    },
+    checkSelectable: {
+      type: Function,
+      default: () => (row) => {
+        if (row.top) return false
+        return true
+      }
+    },
+    // 多选框 默认无
+    hasC: {
+      type: Boolean,
+      default: false
+    },
+    fixedSelect: {
+      type: Boolean,
+      default: true
     },
     tableItems: {
       type: Array,
@@ -95,6 +119,10 @@ export default {
       type: Boolean,
       default: false
     },
+    btnList: {
+      type: Array,
+      default: []
+    }
   },
   watch: {
     value: {

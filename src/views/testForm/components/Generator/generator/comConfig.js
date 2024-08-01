@@ -26,9 +26,9 @@ const ruleTrigger = {
 // 动态options
 const dyOptionsList = ['radio', 'checkbox', 'select', 'cascader', 'treeSelect']
 // 不添加vModel
-const noVModelList = ['divider', 'JNPFText', 'link', 'alert', 'groupTitle', 'relationFormAttr', 'popupAttr', 'button', 'barcode', 'qrcode']
+const noVModelList = ['divider', 'JNPFText', 'link', 'alert', 'groupTitle', 'relationFormAttr', 'popupAttr', 'button', 'barcode', 'qrcode','UploadWj','JNPFTableText','JNPFTableInput']
 // 不可以添加到子表组件
-const noTableAllowList = ['divider', 'JNPFText', 'link', 'alert', 'groupTitle', 'button', 'barcode', 'qrcode', 'editor', 'radio', 'checkbox', 'createUser', 'createTime', 'modifyUser', 'modifyTime', 'currOrganize', 'currDept', 'currPosition', 'rate', 'slider', 'PsdInput', 'colorPicker']
+const noTableAllowList = ['divider', 'JNPFText', 'link', 'alert', 'groupTitle', 'button', 'barcode', 'qrcode', 'editor', 'radio', 'checkbox', 'createUser', 'createTime', 'modifyUser', 'modifyTime', 'currOrganize', 'currDept', 'currPosition', 'rate', 'slider', 'PsdInput', 'colorPicker','UploadWj']
 // 不可以添加到列表展示
 const noColumnShowList = ['PsdInput', 'colorPicker', 'rate', 'slider', 'divider', 'uploadImg', 'uploadFz', 'editor', 'JNPFText', 'relationFormAttr', 'popupAttr', 'groupTitle']
 // 不可以添加到搜索

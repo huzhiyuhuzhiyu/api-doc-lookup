@@ -37,6 +37,47 @@
     border-radius: 4px;
     overflow: hidden;
 
+    ::v-deep .select-item,
+    .select-item {
+      display: flex;
+      border: 1px dashed #fff;
+      box-sizing: border-box;
+
+      & .el-input+.el-input {
+        margin-left: 4px;
+      }
+
+      &+.select-item {
+        margin-top: 4px;
+      }
+
+      &.sortable-chosen {
+        border: 1px dashed #409eff;
+      }
+
+      .select-line-icon {
+        line-height: 32px;
+        font-size: 22px;
+        padding: 0 4px;
+        color: #606266;
+
+        .icon-ym-darg {
+          font-size: 20px;
+          line-height: 31px;
+          display: inline-block;
+        }
+      }
+
+      .close-btn {
+        cursor: pointer;
+        color: #f56c6c;
+      }
+
+      .option-drag {
+        cursor: move;
+      }
+    }
+
     .field-box {
       position: relative;
       height: calc(100% - 42px);
@@ -59,7 +100,8 @@
       .searchList,
       .columnList {
         height: 100%;
-        ::v-deep .el-tabs__content{
+
+        ::v-deep .el-tabs__content {
           height: 100%;
           overflow: auto;
         }

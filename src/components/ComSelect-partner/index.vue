@@ -748,7 +748,6 @@ export default {
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj)
         }
-        console.log(selectedData[0], 'chuandi');
 
         this.innerValue = this.selectedData[0]
         this.$nextTick(() => { this.btnLoading = false })
@@ -763,7 +762,6 @@ export default {
         else return null
       }
       this.itemScope = getFunction(this, "scope")
-      console.log(this.selectedData);
 
       if (!this.value || !this.value.length) {
         this.innerValue = ''

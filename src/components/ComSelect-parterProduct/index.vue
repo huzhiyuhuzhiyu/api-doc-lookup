@@ -1,69 +1,3 @@
-<!-- --- ComSelect-page 使用说明 ---
-================================================================
-  -- 组件属性/事件/方法 --
-  --------------------------------------------------------------
-  * 属性
-  - value 绑定的值（dom显示内容）
-  - title 弹出窗口标题（即将弃用，建议使用dialogTitle）
-  - placeholder dom占位符
-  - paramsObj 其他参数(会跟随@change一起返回，传什么就回什么)
-  - collapseTags 多选情况下在页面中的显示模式（默认false；true显示一项其他收起 / false全部显示）
-  - elementShow 是否在页面上显示此表单元素（默认true；true正常显示 / false不显示）
-  - isdisabled 是否禁用页面上的此表单元素（默认false；true禁用 / false不禁用）
-  - tagMultipleLine 多选模式下，选择的标签是否多行显示（默认false；true多行 / false单行）
-  - clearable 是否带有删除按钮（默认false；true带有删除按钮 / false不带有删除按钮）
-  * 事件
-  - beforeOpen 打开之前的回调方法
-  - beforeSubmit 提交之前的回调方法
-  * 方法
-  - input 提交时触发
-  - change 提交时触发
-================================================================
-================================================================
-  -- 组件左侧(树)属性/事件 --
-  --------------------------------------------------------------
-  * 属性
-  - renderTree 是否渲染左侧树（默认true；true渲染 / false不渲染）
-  - treeTitle 左侧树状列表的标题
-  - methodArr 左侧树状列表的请求方法
-  * 事件
-  - treeNodeClick 树节点被点击的回调方法
-  - dataFormatting 树数据格式化方法
-================================================================
-================================================================
-  -- 组件右侧(列表)属性/事件/插槽 --
-  --------------------------------------------------------------
-  * 属性
-  - tableItems 表格展示的字段
-  - listMethod 表格数据的请求方法
-  - listRequestObj 表格数据的请求体
-  - searchList 搜素条件列表
-  - dialogWidth 窗口宽度（默认70%）
-  - maxShowSearchField 搜索栏最多展示多少个搜索条件（超出内容会收缩至更多查询）
-  - moreSearchList 更多查询中的搜素条件列表（传入会覆盖searchList收缩到更多查询中的搜索条件）
-  - isNeedDate 是否需要有日期的查询
-  - searchDateList 需要搜索的数组
-  - multiple 是否开启多选（默认false；true多选 / false单选）
-  - listDataTreeFlag 列表是否树状结构（默认false；true列表结构树状 / false列表结构平级）
-  * 事件
-  - checkSelectable 判断列表行是否可选的方法
-  - listDataFormatting 列表数据格式化方法
-  - rowDblclick 列表行双击事件
-  * 插槽
-  - table-action 自定义操作栏
-================================================================
-  change事件推荐写法
-  单选：(val, data, paramsObj) => {
-    this.$nextTick(() => { this.$refs['dataForm'].validateField('name') }) // 校验操作的元素(name是组件绑定的value)
-    if (data && data.length) { // 数据有效，进行更新
-      this.dataForm.id = data[0].id // 或者this.dataForm['id'] = data[0].all.id
-      this.dataForm.name = data[0].name // 或者this.dataForm['name'] = data[0].all.name
-    } else { // 不选择任何内容，置空绑定的值
-      this.dataForm.id = ""
-      this.dataForm.name = ""
-    }
-  }
- -->
 <template>
   <div :class="[elementShow ? 'popupSelect-container' : '']">
     <div class="el-select" @click.stop="openDialog" @keyup.enter="openDialog" v-show="elementShow">
@@ -79,51 +13,24 @@
           </el-tag>
         </span>
         <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
-          <el-tag v-for="(item, i) in tagsList" :key="item + '_' + i" :size="collapseTagSize"
-            :closable="!selectDisabled" type="info" @close="deleteTag($event, i)" disable-transitions>
+          <el-tag v-for="(item, i) in tagsList" :key="item + '_' + i" :size="collapseTagSize" :closable="!selectDisabled"
+            type="info" @close="deleteTag($event, i)" disable-transitions>
             <span class="el-select__tags-text">{{ item }}</span>
           </el-tag>
         </transition-group>
       </div>
-      <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder"
-        :disabled="isdisabled" readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null"
-        @mouseenter.native="inputHovering = true" @mouseleave.native="inputHovering = false">
+      <el-input ref="reference" v-model="innerValue" type="text" :placeholder="currentPlaceholder" :disabled="isdisabled"
+        readonly :validate-event="false" :tabindex="(multiple) ? '-1' : null" @mouseenter.native="inputHovering = true"
+        @mouseleave.native="inputHovering = false">
         <template slot="suffix">
           <i v-show="!showClose" :class="['el-select__caret', 'el-input__icon', 'el-icon-arrow-up']"></i>
-          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close"
-            @click="handleClearClick"></i>
+          <i v-if="showClose" class="el-select__caret el-input__icon el-icon-circle-close" @click="handleClearClick"></i>
         </template>
       </el-input>
     </div>
     <el-dialog :title="computedDialogTitle" :close-on-click-modal="false" :visible="visible" lock-scroll
       class="JNPF-dialog JNPF-dialog_center selectPro" :width="dialogWidth" append-to-body @close="visible = false">
       <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-        <div class="JNPF-common-layout-left treeBox" v-if="renderTree">
-          <div class="JNPF-common-title">
-            <h2>{{ this.treeName }}</h2>
-            <span class="options">
-              <el-dropdown>
-                <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="getData()">刷新数据</el-dropdown-item>
-                  <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                  <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </span>
-          </div>
-          <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-            <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
-              highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-              class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-              <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-                <i
-                  :class="[data.childrenList && data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-                <span class="text" :title="data.name">{{ data.name }}</span>
-              </span>
-            </el-tree>
-          </el-scrollbar>
-        </div>
         <div class="JNPF-common-layout-center JNPF-flex-main">
           <el-row :class="['JNPF-common-search-box', searchList === undefined ? 'noSearchList' : '']" :gutter="16">
             <el-form @submit.native.prevent>
@@ -218,8 +125,7 @@
       </template>
     </el-dialog>
     <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="moreQueriesVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px"
-      append-to-body>
+      :visible.sync="moreQueriesVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px" append-to-body>
       <el-row :gutter="20">
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
 
@@ -254,9 +160,9 @@
 
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
-
+import {  getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 export default {
-  name: 'ComSelect-page',
+  name: 'ComSelect-partnerProduct',
   props: {
     value: {},
     ids: {
@@ -264,36 +170,37 @@ export default {
     },
     title: {
       type: String,
-      default: '选择'
+      default: '选择客户产品'
     },
     dialogTitle: {
       type: String,
-      default: ''
+      default: '选择客户产品'
     },
     tagMultipleLine: {
       type: Boolean,
       default: false
     },
-    methodArr: {
-      /*
-        数组写法：[
-          { label: "原材料分类", classAttribute: "raw_material", method: getcategoryTree, requestObj: { classAttribute: "raw_material" } },
-          { label: "半成品分类", classAttribute: "semi_finished", method: getcategoryTree, requestObj: { classAttribute: "semi_finished" } },
-          { label: "成品分类", classAttribute: "finish_product", method: getcategoryTree, requestObj: { classAttribute: "finish_product" } },
-          { label: "辅料分类", classAttribute: "accessories", method: getcategoryTree, requestObj: { classAttribute: "accessories" } },
-          { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
-        ]
-        对象写法：{ method: getWarehouseList, requestObj: { chooseUserFlag: true } }
-      */
-    },
+    // methodArr: {
+    //   /*
+    //     数组写法：[
+    //       { label: "原材料分类", classAttribute: "raw_material", method: getcategoryTree, requestObj: { classAttribute: "raw_material" } },
+    //       { label: "半成品分类", classAttribute: "semi_finished", method: getcategoryTree, requestObj: { classAttribute: "semi_finished" } },
+    //       { label: "成品分类", classAttribute: "finish_product", method: getcategoryTree, requestObj: { classAttribute: "finish_product" } },
+    //       { label: "辅料分类", classAttribute: "accessories", method: getcategoryTree, requestObj: { classAttribute: "accessories" } },
+    //       { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+    //     ]
+    //     对象写法：{ method: getWarehouseList, requestObj: { chooseUserFlag: true } }
+    //   */
+    //   default:()=> [{ label: "物料分类", classAttribute: "", method: productTree, requeseObj: { classAttribute: "" } }],
+    // },
     /* 列表数据请求方法 */
-    listMethod: {
-      required: true
-    },
+    // listMethod: {
+    //   // required: true
+    //   default: getProducts
+    // },
     /* 列表数据请求体 */
     listRequestObj: {
-      type: Object | Function,
-      required: true
+      // type: Object | Function,
       /* 
         对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         函数写法：(rowIndex) => {
@@ -301,6 +208,27 @@ export default {
           return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
         }
       */
+      default: () => ({
+        contractId: null,
+        customerProductNo: "",
+        productCode: "",
+        productName: "",
+        partnerId: "",
+        productStatus: "enable",
+        partnerType: "customer",
+        orderItems: [
+          {
+            "asc": false,
+            "column": ""
+          },
+          {
+            "asc": false,
+            "column": "create_time"
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      })
     },
     paramsObj: {
       type: Object | Array,
@@ -308,18 +236,25 @@ export default {
     },
     treeTitle: {
       type: String,
-      default: "未设置treeTitle"
+      default: "客户产品分类"
     },
     searchList: {
       type: Array,
-      default: () => []
-      /* [
-          {prop:'code',label:'编码',type:'input'},
-          {prop:'name',label:'名称',type:'input'}
-        ] */
+      default: () =>
+        [
+          { prop: 'customerProductNo', label: ' 客户料号', type: 'input'  },
+          { prop: 'productCode', label: '产品编码', type: 'input' },
+          { prop: 'productName', label: '产品名称', type: 'input' },
+        ]
     },
     moreSearchList: {
-      type: Array
+      type: Array,
+      default: () => [
+        { prop: 'customerProductNo', label: ' 客户料号', type: 'input'  },
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' },
+        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+      ]
       /* [
           {prop:'code',label:'编码',type:'input'},
           {prop:'name',label:'名称',type:'input'}
@@ -352,7 +287,13 @@ export default {
     },
     tableItems: {
       type: Array,
-      default: () => []
+      default: () => [
+        { prop: 'customerProductNo', label: ' 客户料号'  },
+        { prop: 'productCode', label: '产品编码' },
+        { prop: 'productName', label: '产品名称' },
+        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'mainUnit', label: '单位(主)' },
+      ]
       /* [
           { prop: 'code', label: '编码' }, // 标准
           { prop: 'name', label: '名称', sortable: 'custom' }, // 附带排序（会把prop驼峰转为下划线形式）
@@ -396,16 +337,6 @@ export default {
       type: Function,
       default: (row) => {
         return true
-      }
-    },
-    treeNodeClick: {
-      type: Function,
-      default: (data, node, listQuery) => {
-        if (listQuery.productCategoryId === data.id) return listQuery
-        listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ""
-        listQuery.productCategoryCode = data.hasOwnProperty('code') ? data.code : ""
-        listQuery.classAttribute = data.classAttribute
-        return listQuery
       }
     },
     rowDblclick: {
@@ -490,7 +421,7 @@ export default {
       refreshTree: true,
       expandsTable: false,
       initRSelectData: [],
-      throttleFlag: true
+      throttleFlag: true,
     }
   },
   computed: {
@@ -529,6 +460,8 @@ export default {
     }
   },
   created() {
+    console.log(this.listRequestObj);
+
     this.getData()
   },
   mounted() {
@@ -592,110 +525,39 @@ export default {
       this.$nextTick(() => {
         if (typeof this.listRequestObj === 'function') { this.listQuery = this.listRequestObj(this.itemScope.$index) }
         else { this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj)) }
-        // 判断是否要渲染树
-        if (this.renderTree) {
-          // 判断树请求是否为数组
-          if (Array.isArray(this.methodArr)) {
-            if (!this.methodArr.length) { console.warn(`<ComSelect-page/> ${this.computedDialogTitle} 请求方法无效：methodArr长度为0，如果不需要渲染左侧树状列表请将 renderTree 设为 false`); }
-            else {
-              if (this.methodArr.length === 1 && this.methodArr[0].classAttribute === 'material') { // 产品专项优化
-                this.treeName = this.methodArr[0].label
-              }
-              let tempTreeData = [...this.methodArr]
-              let successTotal = 0
-              this.methodArr.forEach((item, index) => {
-                item.method(item.requestObj).then(res => {
-                  if (this.dataFormatting) {
-                    tempTreeData[index] = {
-                      id: item.label,
-                      name: item.label,
-                      classAttribute: item.classAttribute,
-                      childrenList: this.dataFormatting({ ...res, listQuery: item.requestObj })
-                    }
-                  } else if (Array.isArray(res.data)) {
-                    tempTreeData[index] = {
-                      id: item.label,
-                      name: item.label,
-                      classAttribute: item.classAttribute,
-                      childrenList: res.data
-                    }
-                  } else {
-                    tempTreeData[index] = {
-                      id: item.label,
-                      name: item.label,
-                      classAttribute: item.classAttribute,
-                      childrenList: res.data.records
-                    }
-                  }
-                  if ((++successTotal) === this.methodArr.length) {
-                    if (this.methodArr.length === 1 && this.methodArr[0].classAttribute === 'material') {
-                      this.treeData = tempTreeData[0].childrenList
-                    } else {
-                      this.treeData = tempTreeData
-                    }
-                    this.initData()
-                  }
-                })
-              })
-            }
-          } else {
-            if (!this.methodArr || JSON.stringify(this.methodArr) === "{}") { console.warn(`<ComSelect-page/> ${this.computedDialogTitle} 请求方法无效：methodArr是一个无效的对象，正确写法：{}，如果不需要渲染左侧树状列表请将 renderTree 设为 false`); }
-            else {
-              this.methodArr.method(this.methodArr.requestObj).then(res => {
-                if (this.dataFormatting) { this.treeData = this.dataFormatting({ ...res, listQuery: this.methodArr.requestObj }) }
-                else if (Array.isArray(res.data)) { this.treeData = res.data }
-                else { this.treeData = res.data.records }
-                this.initData()
-              })
-            }
-          }
-        } else { this.initData() }
+        this.initData()
       })
     },
     // 获取列表数据
     initData() {
-      this.moreQueriesVisible = false
-      this.listLoading = true
-      // 增加搜索日期使用
-      if (this.isNeedDate && this.searchDateList.length) {
-        this.searchDateList.forEach((item) => {
-          this.jnpf.searchTimeFormat(this.listQuery, item.prop, item.startTime, item.endTime)
-        })
-      }
-      this.listMethod(this.listQuery).then(async listRes => {
-        if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
-        else if (Array.isArray(listRes.data)) { this.tableData = listRes.data }
-        else { this.tableData = listRes.data.records }
-        this.tableData.forEach((row, index) => { row._index = index });
-        this.total = listRes.data.total
-        await this.$nextTick()
-        if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
-          const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
-          allLines.forEach(line => {
-            line.style.cursor = 'default'
+      if (!this.listQuery.partnerId){
+        this.$message.warning('请先选择客户')
+      }else{
+        this.moreQueriesVisible = false
+        this.listLoading = true
+        // 增加搜索日期使用
+        if (this.isNeedDate && this.searchDateList.length) {
+          this.searchDateList.forEach((item) => {
+            this.jnpf.searchTimeFormat(this.listQuery, item.prop, item.startTime, item.endTime)
           })
         }
-        this.treeLoading = false
-        this.listLoading = false
-      })
-    },
-    toggleExpand(expands) {
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.companyId)
+        getcooperativeProduct(this.listQuery).then(async listRes => {
+          if (this.listDataFormatting) { this.tableData = this.listDataFormatting({ ...listRes, listQuery: this.listQuery }) }
+          else if (Array.isArray(listRes.data)) { this.tableData = listRes.data }
+          else { this.tableData = listRes.data.records }
+          this.tableData.forEach((row, index) => { row._index = index });
+          this.total = listRes.data.total
+          await this.$nextTick()
+          if (!this.multiple && !this.$refs.defaultTableActionRef && !this.rowDblclick) { // 使用了自定义插槽且没有设置行双击事件的
+            const allLines = [...document.querySelectorAll('.even-row'), ...document.querySelectorAll('.odd-row')]
+            allLines.forEach(line => {
+              line.style.cursor = 'default'
+            })
+          }
+          this.treeLoading = false
+          this.listLoading = false
         })
-      })
-    },
-    handleNodeClick(data, node) {
-      this.listQuery = this.treeNodeClick(data, node, this.listQuery)
-      this.search()
-    },
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      }
     },
     search() {
       Object.keys(this.listQuery).forEach(key => {
@@ -712,18 +574,8 @@ export default {
       // this.search()
     },
     onClose() { },
-    getNodePath(node) {
-      let fullPath = []
-      const loop = (node) => {
-        if (node.level) fullPath.unshift(node.data)
-        if (node.parent) loop(node.parent)
-      }
-      loop(node)
-      return fullPath
-    },
     // 双击行
     rowDblclickFun(data) {
-      if (!this.checkSelectable(data)) return // 行被禁用时此方法不生效
       if (this.rowDblclick) {
         this.rowDblclick(data)
       } else if (this.$refs.defaultTableActionRef) {
@@ -824,10 +676,13 @@ export default {
           let submitFlag = true
           if (this.beforeSubmit) { submitFlag = await this.beforeSubmit(this.rSelectData[0].all, this.paramsObj) }
           if (!submitFlag) return this.btnLoading = false
-          // this.innerValue = this.selectedData[0]
+
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj)
         }
+        console.log(selectedData[0], 'chuandi');
+
+        this.innerValue = this.selectedData[0]
         this.$nextTick(() => { this.btnLoading = false })
         this.visible = false
         this.$nextTick(() => { this.handleResize() });
@@ -840,6 +695,8 @@ export default {
         else return null
       }
       this.itemScope = getFunction(this, "scope")
+      console.log(this.selectedData);
+
       if (!this.value || !this.value.length) {
         this.innerValue = ''
         this.selectedIds = []
@@ -850,7 +707,7 @@ export default {
       } else if (this.multiple) {
         if (!this.rSelectData.length || JSON.parse(JSON.stringify(this.selectedData)) !== JSON.parse(JSON.stringify(this.tagsList))) {
           this.selectedIds = typeof this.ids === 'function' ? this.ids(this.paramsObj) : [...this.ids]
-          this.selectedData = [...this.value]
+          // this.selectedData = [...this.value]
           this.rSelectData = this.value.map((item, index) => { return { id: this.selectedIds[index], name: this.selectedData[index], all: undefined } })
           this.tagsList = JSON.parse(JSON.stringify(this.selectedData))
           this.initRSelectData = JSON.parse(JSON.stringify(this.rSelectData));
@@ -859,10 +716,10 @@ export default {
       } else {
         if (!this.rSelectData.length || this.selectedData[0] !== this.value) {
           this.selectedIds = []
-          this.selectedData = [this.value]
+          // this.selectedData = [this.value]
           this.rSelectData = [{ name: this.value }]
         }
-        this.innerValue = this.value
+        this.innerValue = this.selectedData[0]
       }
     },
     deleteTag(event, index) {
@@ -916,9 +773,11 @@ export default {
 
 <style lang="scss" scoped>
 $footerPadding : '10px';
+
 ::v-deep.JNPF-common-search-box .el-input__inner {
   padding: 0 10px;
 }
+
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
 }

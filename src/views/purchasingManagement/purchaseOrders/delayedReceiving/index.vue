@@ -24,7 +24,7 @@
             <el-col :span="4">
 
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryEndTime" type="date" value-format="yyyy-MM-dd"
+                <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
                   style="width: 100%;" placeholder="发货结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
@@ -78,28 +78,27 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
-            <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-            <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
-
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
+            <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
+           
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
+            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="120" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -159,13 +158,14 @@ export default {
 
       orderForm: {
 
-        approvalStatus: "ok",
-        documentStatus: "submit",
-        orderState: "not_finish",
-        deliveryEndTime: "",
+        // approvalStatus: "ok",
+        // documentStatus: "submit",
+        // orderState: "not_finish",
+        deliveryEndDate: "",
         deliveryStartTime: "",
-        extensionFlag: 1,
-        deliverQueryFlag: 1,
+        // extensionFlag: 1,
+        // deliverQueryFlag: 1,
+        receiptQueryFlag:1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -364,7 +364,7 @@ export default {
     end.setDate(end.getDate() + 3);
     this.deliveryDateArr = ["", end];
     this.orderForm.deliveryStartTime = ""
-    this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+    this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -394,7 +394,7 @@ export default {
       let start = new Date();
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
     // 为近3天  
@@ -405,7 +405,7 @@ export default {
       end.setDate(end.getDate() + 3);
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近7天  
@@ -418,7 +418,7 @@ export default {
 
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     // 为近30天  
@@ -430,7 +430,7 @@ export default {
 
       this.deliveryDateArr = ["", end];
       this.orderForm.deliveryStartTime = ""
-      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
     superQuerySearch(query) {
@@ -528,7 +528,7 @@ export default {
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        deliveryEndTime: this.dateFun(this.deliveryDateArr[1]),
+        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
         deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
         extensionFlag: 1,
         deliverQueryFlag: 1,
@@ -616,7 +616,7 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType:  '1005',
+        exportType:  '1003',
         exportName:  '延期发货预警',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1

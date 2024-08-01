@@ -187,7 +187,7 @@
 <script>
 import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getCooperativeData } from '@/api/basicData/index'
+import { getCooperativeData, getCooperativeInfo } from '@/api/basicData/index'
 export default {
   name: 'ComSelect-partner',
   props: {
@@ -377,21 +377,21 @@ export default {
       throttleFlag: true,
       methodArr: [{ label: "客户分类", classAttribute: "", method: getcategoryTrees, requestObj: { type: "customer" } }],
       tableItems: [
-        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '编码' },
-        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '名称' },
+        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '编码' },
+        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '名称' },
         { prop: 'taxId', label: '税号' },
       ],
       moreSearchList: [
-        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '编码', type: 'input' },
-        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '名称', type: 'input' },
+        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '编码', type: 'input' },
+        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '名称', type: 'input' },
         { prop: 'taxId', label: '税号', type: 'input' },
       ],
       searchList: [
-        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '编码', type: 'input' },
-        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户': '供应商' + '名称', type: 'input' },
+        { prop: 'code', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '编码', type: 'input' },
+        { prop: 'name', label: this.selectClassifyType === 'customer' ? '客户' : '供应商' + '名称', type: 'input' },
         { prop: 'taxId', label: '税号', type: 'input' },
       ],
-      listRequestObj:{
+      listRequestObj: {
         code: "",
         name: "",
         taxId: "",
@@ -443,16 +443,18 @@ export default {
         this.methodArr[0].label = '客户分类'
       } else if (this.selectClassifyType === 'supplier') {
         title = '供应商'
-         this.methodArr[0].label = '供应商分类'
+        this.methodArr[0].label = '供应商分类'
       }
       return title
     },
   },
   created() {
     this.listRequestObj.type = this.selectClassifyType
-    
+
     this.methodArr[0].requestObj.type = this.selectClassifyType
-    this.getData()
+    if (!this.value){
+      this.getData()
+    }
   },
   mounted() {
     addResizeListener(this.$el, this.handleResize);
@@ -497,6 +499,9 @@ export default {
     }
   },
   methods: {
+    getDetail() {
+
+    },
     async openDialog() {
       if (this.isdisabled) return
       let openFlag = true
@@ -785,7 +790,15 @@ export default {
           // this.selectedData = [this.value]
           this.rSelectData = [{ name: this.value }]
         }
-        this.innerValue = this.selectedData[0]
+        // 获取默认显示
+        if (this.value) {
+          getCooperativeInfo(this.value).then(res => {
+            this.innerValue = res.data.cooperativePartner.name
+          }).catch(()=>this.innerValue = '')
+        }else{
+          this.innerValue = this.selectedData[0]
+        }
+
       }
     },
     deleteTag(event, index) {

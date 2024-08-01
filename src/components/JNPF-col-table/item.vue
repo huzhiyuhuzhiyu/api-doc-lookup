@@ -181,7 +181,6 @@ export default {
         if (!rule.message && !rule.validator) { rule.message = this.Placeholder }
         R.push(rule);
       });
-
       return R;
     },
     readOnly() {
@@ -213,5 +212,6 @@ export default {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 32px;
 }
 </style>

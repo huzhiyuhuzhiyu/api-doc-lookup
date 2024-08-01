@@ -32,12 +32,37 @@
     <el-form-item label="是否禁用">
       <el-switch v-model="activeData.disabled" />
     </el-form-item>
+    <el-divider>校验规则</el-divider>
     <el-form-item label="是否必填">
       <el-switch v-model="activeData.__config__.required" />
     </el-form-item>
+    <template v-if="activeData.__config__.jnpfKey === 'date'">
+      <div v-for=" (item, index) in activeData.__config__.regList" :key="index" class="reg-item">
+        <span class="close-btn" @click="activeData.__config__.regList.splice(index, 1)">
+          <i class="el-icon-close" />
+        </span>
+        <el-form-item label="表达式" v-if="item.pattern">
+          <el-input v-model="item.pattern" placeholder="请输入正则" />
+        </el-form-item>
+        <el-form-item label="错误提示" style="margin-bottom:18">
+          <el-input v-model="item.message" placeholder="请输入错误提示" />
+        </el-form-item>
+        <el-form-item label="校验方法" style="margin-bottom:18" v-if="item.validate">
+          <el-input v-model="item.validate" placeholder="请添加自定义校验方法" />
+        </el-form-item>
+      </div>
+      <div class="mt-10">
+        <el-button type="primary" @click="addCustomReg" style="margin-left:10px">
+          自定义校验脚本
+        </el-button>
+      </div>
+    </template>
+    <VaildateScriptVue :visible.sync="vaildateVisible" :tpl="validate" @updateScript="updateScript">
+    </VaildateScriptVue>
   </el-row>
 </template>
 <script>
+import VaildateScriptVue from './VaildateScript.vue'
 const dateTimeFormat = {
   date: 'yyyy-MM-dd',
   week: 'yyyy 第 WW 周',
@@ -52,8 +77,11 @@ import comMixin from './mixin';
 export default {
   props: ['activeData'],
   mixins: [comMixin],
+  components: { VaildateScriptVue },
   data() {
     return {
+      vaildateVisible: false,
+      validate: "(rule,value,callback ) => {\n    // 在此编写代码\n    \n}",
       dateTypeOptions: [
         {
           label: '日(date)',
@@ -116,7 +144,23 @@ export default {
     },
     dateTypeChange(val) {
       this.setTimeValue(dateTimeFormat[val], val)
-    }
+    },
+    addHandle(row) {
+      this.activeData.__config__.regList.push({
+        pattern: row.pattern,
+        message: row.message
+      })
+    },
+    addCustomReg() {
+      this.vaildateVisible = true
+    },
+    updateScript(data) {
+      this.activeData.__config__.regList.push({
+        pattern: '',
+        message: '',
+        validate: data
+      })
+    },
   }
 }
 </script>

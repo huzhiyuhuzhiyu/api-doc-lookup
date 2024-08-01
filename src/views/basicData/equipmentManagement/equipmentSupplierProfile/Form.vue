@@ -26,7 +26,7 @@
                       :type="dataForm.type" /> -->
                     <ComSelect-list
                     :isdisabled="dataForm.id ? true : false"
-                    v-model="dataForm.parentName"
+                    v-model="dataForm.partnerCategoryIdText"
                     placeholder="请选择上级分类"
                     auth
                     @change="onOrganizeChange"

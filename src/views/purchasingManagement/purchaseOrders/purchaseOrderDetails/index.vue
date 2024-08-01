@@ -2,139 +2,123 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
 
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                      $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-                <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <div class="JNPF-common-head">
-                <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
-                <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
-                <div class="JNPF-common-head-right">
-                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
-                  </el-tooltip>
-                </div>
-              </div>
-              <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
-                highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+<el-row class="JNPF-common-search-box" :gutter="16">
+  <el-form @submit.native.prevent>
 
-                <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
-                  <template slot-scope="scope">
-                    <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                      scope.row.orderNo
-                    }}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-                <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+    <el-col :span="4">
+      <el-form-item>
+        <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入采购单号" clearable
+          @keyup.enter.native="searchDetail()" />
+      </el-form-item>
+    </el-col>
+    <el-col :span="4">
+      <el-form-item>
+        <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+          @keyup.enter.native="searchDetail()" />
+      </el-form-item>
+    </el-col>
+    <el-col :span="4">
+      <el-form-item>
+        <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
+          @keyup.enter.native="searchDetail()" />
+      </el-form-item>
+    </el-col>
+    <el-col :span="6">
+      <el-form-item>
+        <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
+          {{ $t('common.search') }}</el-button>
+        <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">{{
+          $t('common.reset') }}
+        </el-button>
+      </el-form-item>
+    </el-col>
+    <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+      icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueriesDetail()">更多查询</el-button>
+  </el-form>
+</el-row>
+<div class="JNPF-common-layout-main JNPF-flex-main">
+  <div class="JNPF-common-head">
+    <el-button :loading="btnLoading" size="mini" type="danger" @click="handleBatchStop()">批量停止</el-button>
+    <div class="JNPF-common-head-right">
+      <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+        <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+          @click="initData()" />
+      </el-tooltip>
+    </div>
+  </div>
+  <JNPF-table @selection-change="handeleFinshData" hasC v-loading="listLoading" highlight-current-row
+    :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail"
+    custom-column :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
+    <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+      <template slot-scope="scope">
+        <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">{{
+          scope.row.orderNo
+        }}</el-link>
+      </template>
+    </el-table-column>
+    <!-- <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" /> -->
+    <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+    <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+    <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+    <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+    <el-table-column prop="mainUnit" label="单位" min-width="120" />
+    <el-table-column prop="qty" label="数量" min-width="100" sortable="custom" />
+    <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
+    <el-table-column prop="price" label="单价(含税)" min-width="140" sortable="custom" />
+    <el-table-column prop="taxRate" label="税率(%)" min-width="120" sortable="custom" />
+    <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
+    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
+    <el-table-column prop="taxAmount" label="税额" min-width="80" />
+    <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="150" sortable="custom" />
+    <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+    <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
+      <template slot-scope="scope">
+        <div v-if="scope.row.receivingStatus == 'receiving'||scope.row.receivingStatus == 'returning'"><el-tag>未完成</el-tag> </div>
+        <div v-if="scope.row.receivingStatus == 'received'||scope.row.receivingStatus == 'returned'"><el-tag type="success">已完成</el-tag></div>
+        <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
+      </template>
+    </el-table-column>
+    <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
+    <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
+    <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
+    <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
+    <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
+    <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
+    <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
+    <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
+    <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
+    <el-table-column prop="remark" label="备注" min-width="120" />
+    <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+    <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+    <el-table-column label="操作" width="90" fixed="right">
+      <template slot-scope="scope">
+        <el-dropdown hide-on-click>
+          <span class="el-dropdown-link">
+            <el-button type="text" size="mini">
+              {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
+              查看详情
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="download(scope.row.purchaseOrderId)">
+              下载订货单
+            </el-dropdown-item>
+            <el-dropdown-item @click.native="printPurchaseOrder(scope.row.purchaseOrderId)">
+              打印订货单
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </template>
+    </el-table-column>
 
-                <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
-                <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
-                  sortable="custom" /> -->
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
-                <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
-                <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
-                <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
-                  <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'||scope.row.receivingStatus == 'returning'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'||scope.row.receivingStatus == 'returned'"><el-tag type="success">已完成</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remark" min-width="140" label="备注" />
-                <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-                <el-table-column prop="createByName" label="创建人" />
-                <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
-                  </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
-                    <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批撤回</el-tag></div>
-                  </template>
-                </el-table-column> -->
-                <el-table-column label="操作" min-width="90" fixed="right">
-                  <template slot-scope="scope">
-                    <el-dropdown hide-on-click>
-                      <span class="el-dropdown-link">
-                        <el-button type="text" size="mini">
-                          {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                      </span>
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item
-                          v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                          @click.native="withdrawnAddHandle(scope.row.id, 'add')">
-                          重新提交
-                        </el-dropdown-item>
-                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                          @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                          审批撤回
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                          查看详情
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="download(scope.row.id)">
-                          下载订货单
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                          打印订货单
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                  </template>
-                </el-table-column>
-
-              </JNPF-table>
-              <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-                :limit.sync="listQuery.pageSize" @pagination="initData" />
-            </div>
-          </div>
+  </JNPF-table>
+  <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background"
+    :limit.sync="listsQuery.pageSize" @pagination="detailData" />
+</div>
+</div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
@@ -286,7 +270,7 @@
   
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import { purchaseOrderList, detailpurchaseOrderList, purPurchaseOrderExport, purPurchaseOrderdetail, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
+import { purchaseOrderList,purchaseOrderReport, detailpurchaseOrderList, purPurchaseOrderExport, purPurchaseOrderdetail, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -360,9 +344,6 @@ export default {
         orderType: "procure",
         orderItems: [{
           asc: false,
-          column: ""
-        }, {
-          asc: false,
           column: "createTime"
         }],
         pageNum: 1,
@@ -417,16 +398,26 @@ export default {
         { label: "已完成", value: "received" }
       ],
       columnList: [
-        'cooperativePartnerCode',
-        'excludingTaxTotalAmount',
+        'productCode',
+        'excludingTaxPrice',
         'taxAmount',
-        'receivingStatus',
+        'excludingTaxTotalAmount',
+        'standardValue',
+        'sealingCoverTyping',
+        'accuracyLevel',
+        'vibrationLevel',
+        'oil',
+        'oilQuantity',
+        'clearance',
+        'packagingMethod',
+        'processName',
         'createByName'
       ],
     }
   },
   created() {
     this.initData()
+    this.detailData()
   },
   methods: {
     checkSelectable(row) {

@@ -15,7 +15,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName" @tab-click="handleClick" class="el-table">
+        <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="订单信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -111,7 +111,7 @@
                   <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                    @click="batchDelete">批量删除</el-button>|
+                    @click="batchDelete">批量删除</el-button>
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
@@ -253,77 +253,89 @@
         </div>
 
       </el-dialog>
-      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
-          :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-          append-to-body>
+      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false"
+        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+        append-to-body @close="productVisible = false">
 
-          <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
 
-            <div class="JNPF-common-layout-center JNPF-flex-main">
-              <el-row class="JNPF-common-search-box" :gutter="16">
-                <el-form @submit.native.prevent>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
-                    </el-form-item>
-                  </el-col>
-                
-                  <el-col :span="6">
-                    <el-form-item label="交货日期">
-                      <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                        style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                      </el-date-picker>
-                    </el-form-item>
-                  </el-col>
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                  </el-form-item>
+                </el-col>
 
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
-                        {{ $t('common.search') }}</el-button>
-                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
-                        $t('common.reset') }}
-                      </el-button>
-                    </el-form-item>
-                  </el-col>
+                <el-col :span="6">
+                  <el-form-item label="交货日期">
+                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
 
-                </el-form>
-              </el-row>
-              <div class="JNPF-common-layout-main JNPF-flex-main">
-                <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
-                  @selection-change="handleSelectionChangeAllPruduct">
-                  <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                  <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-                  <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                  <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                  <el-table-column prop="mainUnit" label="单位" width="160"/>
-                  <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                  <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                  <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                  <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                  <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                  <el-table-column prop="remark" label="备注" width="160" />
-                  <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-                </JNPF-table>
-                <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                  @pagination="searchProductFun" />
-              </div>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                      $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
+                @selection-change="handleSelectionChangeAllPruduct">
+                <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
+                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="160" />
+                <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="remark" label="备注" width="160" />
+                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+              </JNPF-table>
+              <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                @pagination="searchProductFun" />
             </div>
           </div>
-          <span slot="footer" class="dialog-footer">
-            <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
-            <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
-              确定</el-button>
-          </span>
-        </el-dialog>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click=" productVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+        width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="goBack">返回列表</el-button>
+          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+        </span>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -336,24 +348,26 @@ import {
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail,getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
+import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
-      productList:[],
-      deliveryDateArr:[],
-      totalDeliveryQuantity:0,
+      tipsvisible: false,
+      submitmethodsTitle: "",
+      btnText: "",
+      productList: [],
+      deliveryDateArr: [],
       activeNames: ["productInfo", "basicInfo"],
-      productTotal:0,
+      productTotal: 0,
       codeConfig: {},
       datafilelist: [],
       provinces: [],
       orderForm: {
         cooperativePartnerId: "",
         customerProductDrawingNo: "",
-        returnQueryFlag : 1,
+        returnQueryFlag: 1,
         partnerName: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -590,6 +604,17 @@ export default {
       selectRows: []
     }
   },
+  computed: {
+    // 总发货数量
+    totalDeliveryQuantity: function () {
+      var totalNum = 0;
+      for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].deliveryQuantity])
+      }
+      return totalNum
+    },
+
+  },
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
@@ -783,15 +808,7 @@ export default {
         this.cusProductData = res.data.records
       })
     },
-    // 选中客户产品
-    handleSelectionChange(e) {
-      e.forEach(item => {
-        item.productName = item.name
-        item.productCode = item.code
-        item.price = item.purchasePrice
-      });
-      this.dataFormTwo.productData = e
-    },
+
     // 选择产品——搜索
     searchProductFun() {
       if (this.deliveryDateArr.length) {
@@ -812,13 +829,13 @@ export default {
       })
 
     },
- // 选择产品——重置
- resetProductFun() {
+    // 选择产品——重置
+    resetProductFun() {
       this.deliveryDateArr = []
       this.orderForm = {
         cooperativePartnerId: this.dataForm.cooperativePartnerId,
         customerProductDrawingNo: "",
-        returnQueryFlag : 1,
+        returnQueryFlag: 1,
         drawingNo: "",        // customerProductNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -837,12 +854,12 @@ export default {
       this.searchProductFun()
 
     },
-       // 点击选择产品
-       openSeleceProductDialog() {
-        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
-        this.productVisible = true
-        this.searchProductFun()
-      },
+    // 点击选择产品
+    openSeleceProductDialog() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      this.productVisible = true
+      this.searchProductFun()
+    },
     submitAllProduct() {
       if (!this.selectArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
@@ -859,7 +876,7 @@ export default {
           idSet.add(item.id);
         }
       });
-      this.dataFormTwo.productData=uniqueArr
+      this.dataFormTwo.productData = uniqueArr
       console.log("this.dataFormTwo", this.dataFormTwo.productData);
     },
     // },
@@ -1069,7 +1086,7 @@ export default {
               logisticsNumber: '',
               cooperativePartnerId: '',
               remark: '',
-              orderNo:this.codeConfig.number
+              orderNo: this.codeConfig.number
             },
               this.dataFormTwo.productData = []
             this.customerData = e
@@ -1095,7 +1112,7 @@ export default {
             notifyType: 'sale',
             logisticsCompany: '',
             ordersId: '',
-            orderNo:this.codeConfig.number,
+            orderNo: this.codeConfig.number,
             deliverDate: '',
             logisticsNumber: '',
             cooperativePartnerId: '',
@@ -1222,12 +1239,15 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.orderNo = data.number
-
+        this.$set(this.dataForm,'orderNo',data.number)
+        console.log("dataForm",this.dataForm);
       } catch (error) {
       }
     },
     init(id, btnType) {
+      console.log("id",id,btnType);
       this.dataForm.id = id || ''
+      
       this.btnType = btnType
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
@@ -1252,42 +1272,84 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            getOrderDetail(res.data.notice.ordersId).then(res1 => {
-              res1.data.orderLines.map((item) => {
-                res.data.noticeLineList.map((item1) => {
-                  if (item.productsId == item1.productId) {
-                    item1.outboundQuantity = item.outboundQuantity
-                    item1.returnQuantity = item.returnQuantity
-                    item1.deliveryQuantity = ''
+            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
+            //   res1.data.orderLines.map((item) => {
+            //     res.data.noticeLineList.map((item1) => {
+            //       if (item.productsId == item1.productId) {
+            //         item1.outboundQuantity = item.outboundQuantity
+            //         item1.returnQuantity = item.returnQuantity
+            //         item1.deliveryQuantity = ''
 
-                  }
-                })
-              })
-              this.dataFormTwo.productData = res.data.noticeLineList
-            })
+            //       }
+            //     })
+            //   })
+             
+            // })
+            res.data.noticeLineList.forEach(item => {
+              item.deliveryQuantity = ''
+            });
+             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
-            getOrderDetail(res.data.notice.ordersId).then(res2 => {
-              res2.data.orderLines.map((item) => {
-                res.data.noticeLineList.map((item1) => {
-                  if (item.productsId == item1.productId) {
-                    item1.outboundQuantity = item.outboundQuantity
-                    item1.returnQuantity = item.returnQuantity
-                  }
-                })
-              })
-              this.dataFormTwo.productData = res.data.noticeLineList
-            })
+            this.dataFormTwo.productData = res.data.noticeLineList
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
           }
         })
       }
       if (btnType == 'add' || btnType == 'copy') {
-        this.fetchData("SRDH")
+        console.log(55555);
+        this.formLoading=true
+        setTimeout(() => {
+          this.formLoading=false
+          this.fetchData("SRDH")
+          
+        }, 500);
+      }
+      if (this.btnType == 'edit') {
+        this.btnText = "继续修改"
+      } else if (this.btnType == 'add' || this.btnType == 'copy') {
+        this.btnText = "继续新增"
       }
     },
     goBack() {
-      this.$emit('close')
+      this.$emit('close', true)
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.dataFormTwo.productData = []
+      this.dataForm = {
+        exchangeGoodsFlag: false,
+        inspectionStatus: '',
+        // orderCategory: "assembly",
+        returnDeliveryType: 'back',
+        notifyType: 'sale',
+        logisticsCompany: '',
+        ordersId: '',
+        deliverDate: '',
+        partnerName: '',
+        orderNo: '',
+        logisticsNumber: '',
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
+        cooperativePartnerId: '',
+        remark: ''
+      }
+      this.$refs.dataForm.resetFields();
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
     },
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
@@ -1315,7 +1377,7 @@ export default {
           }
           if (!this.dataFormTwo.productData.length) {
             this.$message({
-              message: '请选择订单',
+              message: '请选择产品',
               type: 'error',
               duration: 1500,
             })
@@ -1400,24 +1462,30 @@ export default {
             formMethod = addQuotationsendlist
           }
           formMethod(obj).then(res => {
-            let msg = "";
-            if (formMethod == addQuotationsendlist) {
-              msg = "新建成功"
-            } else if (value == 'draft') {
-              msg = "保存成功"
+            // let msg = "";
+            // if (formMethod == addQuotationsendlist) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
+            if (value == 'draft') {
+              this.submitmethodsTitle = "保存成功"
             } else if (value == 'submit') {
-              msg = '提交成功'
+              this.submitmethodsTitle = "提交成功"
             }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
-              }
-            })
+            this.tipsvisible = true
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
           }).catch(() => {
             this.btnLoading = false
           })
@@ -1538,6 +1606,7 @@ $footerPadding: '10px';
   border-bottom: 1px solid #ebeef5;
   background-color: #f5f7fa;
 }
+
 .JNPF-preview-main .main {
   padding-top: 0;
 }
@@ -1598,4 +1667,3 @@ $footerPadding: '10px';
   border-bottom: none !important
 }
 </style>
-

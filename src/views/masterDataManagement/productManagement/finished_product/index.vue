@@ -52,7 +52,7 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.code"
+                v-model="listQuery.productCode"
                 placeholder="请输入产品编码"
                 clearable
                 @keyup.enter.native="search()"
@@ -62,8 +62,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-input
-                v-model="listQuery.drawingNo"
-                placeholder="请输入规格型号"
+                v-model="listQuery.productDrawingNo"
+                placeholder="请输入品名规格"
                 clearable
                 @keyup.enter.native="search()"
               />
@@ -160,7 +160,7 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="drawingNo" label="规格型号" min-width="300" sortable="custom" />
+          <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
 
           <el-table-column prop="productCategoryName" label="产品分类" width="120" />
@@ -256,8 +256,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入规格型号" clearable />
+            <el-form-item label="品名规格">
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -467,7 +467,7 @@ export default {
         },
         {
           prop: 'drawingNo',
-          label: '规格型号',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -807,7 +807,11 @@ export default {
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)
+            this.uploadVisib = false
+            this.$refs['UploadProduct']
+            this.initData()
           } else {
+            this.uploadVisib = false
             this.handleMessage(res.data)
           }
 
@@ -815,6 +819,7 @@ export default {
           this.loadingText = ''
         })
         .catch((err) => {
+          this.uploadVisib = false
           this.$message.error(`导入数据超过最大限制：500`)
           this.formLoading = false
           this.loadingText = ''
@@ -823,6 +828,8 @@ export default {
     // 导入产品  下载导入错误数据
     downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
     },
     cancelFun() {
       this.uploadVisib = false

@@ -375,7 +375,19 @@
               确定</el-button>
           </span>
         </el-dialog>
+        <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+          :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+          width="500px">
+          <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+              {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
+
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="goBack">返回列表</el-button>
+            <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+            <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+          </span>
+        </el-dialog>
 
       </div>
     </transition>
@@ -405,6 +417,9 @@ export default {
   },
   data() {
     return {
+      tipsvisible: false,
+      btnText: "",
+      submitmethodsTitle: "",
       activeNames: ["productInfo", "basicInfo"],
       productList: [],
       productTotal: 0,
@@ -866,6 +881,8 @@ export default {
       this.productVisible = false
       this.selectArr.forEach(item => {
         item.ordersNum = item.num
+        item.productDrawingNo = item.drawingNo
+        item.ordersLineId=item.id
         this.dataFormTwo.data.push(item)
       });
       let uniqueArr = [];
@@ -896,7 +913,22 @@ export default {
     },
     // 批量删除
     batchDelete() {
-
+      // 遍历选中的行的数据
+      if (this.selectRows.length < 1) {
+        this.$message({
+          message: "请选择你要删除的数据",
+          type: "error",
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.dataFormTwo.data.indexOf(row);
+        if (index > -1) {
+          this.dataFormTwo.data.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
     },
 
     // 单个删除
@@ -1015,36 +1047,17 @@ export default {
     // 选择客户
     seleceCustomer(e) {
       console.log("客户信息", e);
-      if (e.cooperativePartnerId)
-        getCooperativeInfo(e.id).then(res => {
-          if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-            this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
-              type: 'warning'
-            }).then(() => {
-              this.$message({
-                type: 'success',
-                message: '切换成功'
-              })
-              this.deletedata()
-              this.dataFormTwo.data = []
-              this.customerData = e
-              this.dataForm.cooperativePartnerId = e.id
-              this.ProductListRequestObj.cooperativePartnerCode = e.code
-              this.code = e.code
-              this.dataForm.partnerName = e.name
-              this.dataForm.code = e.code
-              this.customerVisible = false
-
-            }).catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-              this.customerVisible = true
+      getCooperativeInfo(e.id).then(res => {
+        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
+          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '切换成功'
             })
-          } else {
             this.deletedata()
             this.dataFormTwo.data = []
             this.customerData = e
@@ -1055,8 +1068,26 @@ export default {
             this.dataForm.code = e.code
             this.customerVisible = false
 
-          }
-        })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            this.customerVisible = true
+          })
+        } else {
+          this.deletedata()
+          this.dataFormTwo.data = []
+          this.customerData = e
+          this.dataForm.cooperativePartnerId = e.id
+          this.ProductListRequestObj.cooperativePartnerCode = e.code
+          this.code = e.code
+          this.dataForm.partnerName = e.name
+          this.dataForm.code = e.code
+          this.customerVisible = false
+
+        }
+      })
       this.getAddressInfoFun(e.id)
 
     },
@@ -1186,13 +1217,12 @@ export default {
     handleClick(tab, event) {
     },
     init(id, btnType, data) {
-      console.log("传递数据", data);
       if (data && data.length) {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
           item.ordersNum = item.num
-          item.productDrawingNo=item.drawingNo
-          item.saleOrderNo=item.orderNo
+          item.productDrawingNo = item.drawingNo
+          item.saleOrderNo = item.orderNo
         });
         this.getAddressInfoFun(data[0].cooperativePartnerId)
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
@@ -1203,11 +1233,13 @@ export default {
         this.customerVisible = false
         this.dataFormTwo.data = data
         getCooperativeInfo(data[0].cooperativePartnerId).then(res => {
-          console.log("res",res);
-        this.customerData = res.data.cooperativePartner
-      })
+          console.log("res", res);
+          this.customerData = res.data.cooperativePartner
+        })
       }
+      this.formLoading=true
       // this.getProvinceList()
+      console.log("传递数据", btnType);
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
@@ -1241,9 +1273,13 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.fullReceiptFlag = false
+            res.data.noticeLineList.forEach(item => {
+              item.deliveryQuantity=""
+            });
+            this.dataFormTwo.data=res.data.noticeLineList
 
-
-
+             
+            console.log("this.dataFormTwo.data",this.dataFormTwo.data);
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
 
@@ -1272,6 +1308,13 @@ export default {
         this.fetchData("SSDH")
 
       }
+      if (this.btnType == 'edit') {
+        this.btnText = "继续修改"
+      } else if (this.btnType == 'add' || this.btnType == 'copy') {
+        this.btnText = "继续新增"
+      }
+      this.formLoading=false
+
     },
     async fetchData(code) {
       try {
@@ -1279,7 +1322,7 @@ export default {
         console.log("data,", data);
         this.codeConfig = data
         this.dataForm.orderNo = data.number
-
+        console.log(this.dataForm);
       } catch (error) {
       }
     },
@@ -1291,12 +1334,34 @@ export default {
     },
     // 继续新增
     continueAdd() {
-      this.init('', 'add')
 
       this.tipsvisible = false
+      this.btnLoading = false
+      this.dataForm={
+        exchangeGoodsFlag: false,
+        partnerName: '',
+        returnDeliveryType: 'delivery',
+        notifyType: 'sale',
+        ordersId: '',
+        orderNo: '',
+        deliverDate: '',
+        recipient: '',
+        phone: '',
+        country: '',
+        province: '',
+        city: '',
+        area: '',
+        address: '',
+        delivery: 'deliver_goods',
+        // shipperId: '',
+        cooperativePartnerId: '',
+        remark: ''
+      }
+      this.$refs.dataForm.resetFields();
+      this.init('', 'add')
     },
     goBack() {
-      this.$emit('close')
+      this.$emit('close', true)
     },
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
@@ -1455,21 +1520,20 @@ export default {
               }
               formMethod(obj).then(res => {
                 let msg = "";
-                if (formMethod == addQuotationsendlist) {
-                  msg = "新建成功"
-                } else if (value == 'draft') {
-                  msg = "保存成功"
+                if (value == 'draft') {
+                  this.submitmethodsTitle = "保存成功"
                 } else if (value == 'submit') {
-                  msg = '提交成功'
+                  this.submitmethodsTitle = "提交成功"
                 }
-                this.$message({
-                  message: msg,
-                  type: 'success',
-                  duration: 1500,
-                })
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
+                this.tipsvisible = true
+                // this.$message({
+                //   message: msg,
+                //   type: 'success',
+                //   duration: 1500,
+                // })
+                // this.visible = false
+                // this.btnLoading = false
+                // this.$emit('close', true)
               }).catch(() => {
                 this.btnLoading = false
               })
@@ -1490,21 +1554,12 @@ export default {
             }
             formMethod(obj).then(res => {
               let msg = "";
-              if (formMethod == addQuotationsendlist) {
-                msg = "新建成功"
-              } else if (value == 'draft') {
-                msg = "保存成功"
-              } else if (value == 'submit') {
-                msg = '提交成功'
-              }
-              this.$message({
-                message: msg,
-                type: 'success',
-                duration: 1500,
-              })
-              this.visible = false
-              this.btnLoading = false
-              this.$emit('close', true)
+              if (value == 'draft') {
+                  this.submitmethodsTitle = "保存成功"
+                } else if (value == 'submit') {
+                  this.submitmethodsTitle = "提交成功"
+                }
+                this.tipsvisible = true
             }).catch(() => {
               this.btnLoading = false
             })

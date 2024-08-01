@@ -3,14 +3,13 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack"
-          :content="btnType == 'add' ? '新建销售退货通知单' : btnType == 'edit' ? '编辑销售退货通知单' : btnType == 'copy' ? '新建销售退货通知单' : '查看销售退货通知单'" />
+        <div class="pageTitle">新建销售退货通知单</div>
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
-          <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+          <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
         </div>
       </div>
       <div class="main" v-loading="formLoading">
@@ -1282,9 +1281,8 @@ export default {
           }
         })
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        this.fetchData("SRDH")
-      }
+      
+      this.fetchData("SRDH")
     },
     goBack() {
       this.$emit('close')

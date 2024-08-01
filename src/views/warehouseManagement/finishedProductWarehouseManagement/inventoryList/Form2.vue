@@ -76,11 +76,17 @@ export default {
       customerInfo: {},
       copyLinesData: [],
       originTypeList: [
-        { label: "发退货单", value: "send_return" },
-        { label: "领退料单", value: "picking_return" },
-        { label: "采购收退货单", value: "purchase_delivery_return" },
-        { label: "外协收退货单", value: "outside_delivery_return" },
-      ]
+        { label: "销售发货", value: "outbound" },
+        { label: "销售退货", value: "inbound_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external" },
+        { label: "外协退料", value: "inbound_external" },
+        { label: "外协收货", value: "inbound_outsourcing" },
+      ],
+      codeConfig:{},
     }
   },
   created() {
@@ -94,6 +100,7 @@ export default {
     }
   },
   methods: {
+
     // 获取仓库设置 是否开启库位管理时
     getWarehouseConfig() {
 
@@ -254,6 +261,17 @@ export default {
       } else {
         this.title = '新建出入库单'
         this.formLoading = false
+        this.fetchData("CRDH")
+
+      }
+    },
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.orderNo = data.number
+
+      } catch (error) {
       }
     },
     async handleConfirm(submitModel) {
@@ -426,7 +444,7 @@ export default {
     // 对应子数据新增或删除行
     addOrDelLinesItem(data, type) {
       let paramType = Array.isArray(data) ? 'Array' : 'Object'
-      console.log("data",data);
+      console.log("data", data);
       console.log("paramType", paramType);
       if (paramType === 'Object') {
         this.linesList.splice(data.$index, 1)
@@ -454,7 +472,7 @@ export default {
         for (let i = 0; i < data.length; i++) {
           let item = data[i];
           item.remark = ""
-            item.costPrice=item.price
+          item.costPrice = item.price
           if (item.calculationDirection === 'multiplication') {
             item.deputyNum = this.jnpf.numberFormat(item.num * item.ratio, 4)
           } else {
@@ -499,7 +517,7 @@ export default {
     },
     // 打开抽屉
     openSide(scope) {
-      console.log("scope",scope);
+      console.log("scope", scope);
       this.wareVisibled = true
       this.$nextTick(() => {
         let rowDetailList = [JSON.parse(JSON.stringify(this.linesList[scope.$index]))]

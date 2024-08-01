@@ -574,7 +574,7 @@ export default {
           for (const key in detailObj) {
             this.dataForm[key] = detailObj[key]
           }
-          // 编辑时，如果已经规格型号那些，不允许修改
+          // 编辑时，如果已经品名规格那些，不允许修改
           this.tabs[0].tabContent.forEach((tc) => {
             if (
               [

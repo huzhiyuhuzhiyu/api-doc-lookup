@@ -39,8 +39,8 @@
 <script>
 import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
 import { getByCode} from '@/api/basicData/index'
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-
+import { getcategoryTree,getUnitData,detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
 export default {
   props:{
@@ -59,6 +59,7 @@ export default {
   },
   data() {
     return {
+      getbimProductAttributesList, // 产品类别属性列表请求api
       datafilelist: [],
       activeName: "basicInfo",
       activeNames: ['basicInfo'],
@@ -126,7 +127,19 @@ export default {
             tc.dialogTitle = '选择产品分类'
           } else { console.warn(tc.prop + "不在判断条件内") }
         }
+           // 若干需要选择的产品
+        if (tc.prop === 'brand') {
+          let data = []
+          getbimProductAttributesList({ typeCode: tc.typeCode }).then((res) => {
+            data = res.data.records.map((item) => {
+              return { label: item.name, value: item.name }
+            })
+            tc.options = data
+          })
 
+          tc.clearable = true
+  
+        }
         // 添加校验编码和图号唯一性的规则
         if (tc.prop === 'code') {
           if (!tc.itemRules) { tc.itemRules = [] }
@@ -153,12 +166,63 @@ export default {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
                 checkDrawExist({id:this.dataForm.id,drawingNo:this.jnpf.specialCodeUrl(this.dataForm.drawingNo)}).then((res) => {
                   if (!res.data) { callback() }
-                  else { callback(new Error('此规格型号已存在')) }
+                  else { callback(new Error('此品名规格已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })
               }
             },
             trigger: 'blur'
           })
+        }
+
+        if (tc.prop === 'mainUnit' || tc.prop === 'deputyUnit') {
+          let obj = {
+            pageNum: 1,
+            pageSize: 100
+          }
+          getUnitData(obj).then((res) => {
+            tc.options = res.data.records.map((item) => {
+              return { label: item.name, value: item.name }
+            })
+          })
+
+          if (tc.prop === 'mainUnit') {
+            tc.change = (val) => {
+              if (this.dataForm.deputyUnit) {
+                detailUnitData(val).then((res) => {
+                  res.data.unitRelList.forEach((it) => {
+                    if (it.targetName == this.dataForm.deputyUnit) {
+                      this.dataForm.ratio = it.ratio
+                      this.dataForm.calculationDirection = it.calculationDirection
+                    } else {
+                      this.dataForm.ratio = ''
+                      this.dataForm.calculationDirection = ''
+                    }
+                  })
+                })
+              }
+            }
+          }
+
+          if (tc.prop === 'deputyUnit') {
+            tc.change = (val) => {
+              if (this.dataForm.mainUnit) {
+                detailUnitData(val).then((res) => {
+                  res.data.unitRelList.forEach((it) => {
+                    if (it.targetName == this.dataForm.mainUnit) {
+                      this.dataForm.ratio = it.ratio
+                      this.dataForm.calculationDirection = it.calculationDirection
+                    } else {
+                      this.dataForm.ratio = ''
+                      this.dataForm.calculationDirection = ''
+                    }
+                  })
+                })
+              }
+            }
+          }
+          //  else {
+          //   this.otherForm.bomFlag = false
+          // }
         }
       })
     })

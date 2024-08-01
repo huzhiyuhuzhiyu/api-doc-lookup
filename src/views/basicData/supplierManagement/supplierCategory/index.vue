@@ -56,6 +56,11 @@
           </el-table-column>
           <el-table-column prop="parentName" label="上级分类" />
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
+          <el-table-column prop="sortCode" label="排序" width="100" align="center">
+            <template slot-scope="scope">
+              <el-input @blur="switchShow(scope.row, 'sortCode')" clearable v-model="scope.row.sortCode"></el-input>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" label="备注" width="300">
           </el-table-column>
           <el-table-column label="操作" width="180">
@@ -79,7 +84,7 @@
 
 <script>
 import { getOrganizeList, delOrganize } from '@/api/permission/organize'
-import { getcategoryTree, deleteCategory } from '@/api/basicData/index'
+import { getcategoryTree, deleteCategory,editCategory } from '@/api/basicData/index'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 export default {
@@ -109,6 +114,24 @@ export default {
     this.initData()
   },
   methods: {
+    switchShow(row) {
+      let obj = row
+      delete obj.burdenSortCode
+      editCategory(obj)
+        .then((response) => {
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+        .catch(() => {
+          this.btnLoading = false
+        })
+    },
     initData() {
       this.loading = true
       getcategoryTree(this.listQuery).then(res => {

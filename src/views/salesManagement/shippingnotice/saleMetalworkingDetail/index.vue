@@ -47,7 +47,7 @@
                 新建
               </el-button>
               <el-button  size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()" :loading="qxbtnLoading">
-                批量取消发货
+                取消发货
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
             </div>
@@ -161,7 +161,7 @@
 import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
 import { UserListAll, } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import Form from './Form'
+import Form from '../saleMetalworking/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'foreigntradenotice',

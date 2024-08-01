@@ -1,10 +1,10 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
+      <div class="JNPF-common-title" style="display: block;padding:0"  v-if="!leftFlag">
         <div class="title_box">
-          <h2 v-if="!leftFlag">业务分类</h2>
-          <span class="options" v-if="!leftFlag">
+          <h2>业务分类</h2>
+          <span class="options" >
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">

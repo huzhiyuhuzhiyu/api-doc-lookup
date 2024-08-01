@@ -1,10 +1,10 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
+      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
-          <h2  v-if="!leftFlag">{{ $t('common.organization') }}</h2>
-          <span  v-if="!leftFlag" class="options">
+          <h2  >{{ $t('common.organization') }}</h2>
+          <span   class="options">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
@@ -18,7 +18,7 @@
             </el-dropdown>
           </span>
         </div>
-        <div v-if="!leftFlag"  >
+        <div   >
           <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
         </div>
       </div>

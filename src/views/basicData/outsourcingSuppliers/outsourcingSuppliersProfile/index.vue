@@ -88,7 +88,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
           @sort-change="sortChange" custom-column>
-          <el-table-column prop="code" label="外协供应商编码" width="160" fixed="left" sortable="custom">
+          <el-table-column prop="code" label="外协供应商编码" width="160"  sortable="custom">
             <template slot-scope="scope">
 
               <el-link type="primary"
@@ -98,7 +98,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="taxId" label="税号" width="200" />
-          <el-table-column prop="name" label="名称" width="120" fixed="left" sortable="custom" />
+          <el-table-column prop="name" label="名称" width="120"  sortable="custom" />
           <el-table-column prop="regionCodeText" label="地区" width="100" />
           <el-table-column prop="countryText" label="国家" min-width="150" />
           <el-table-column prop="provinceText" label="省" width="160" />
@@ -118,6 +118,8 @@
           <el-table-column prop="bank" label="开户银行" width="160" />
           <el-table-column prop="bankInfo" label="银行账号" width="160" />
           <el-table-column prop="gradeText" label="等级" width="160"></el-table-column>
+          <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="160"></el-table-column>
+          <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="160"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="160" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -366,7 +368,7 @@ export default {
     // 获取数据字典——等级
     getDictionaryType() {
       getDictionaryType().then(res => {
-        console.log("rescc", res);
+       
         let data = res.data.list
         data.forEach(item => {
           if (item.enCode == "partnerArchives") {
@@ -379,7 +381,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  console.log("response", response);
+                
                   this.gradeList = response.data.list
                 })
               }
@@ -418,7 +420,7 @@ export default {
         type: "outsourcing_suppliers"
       };
       getcategoryTree(listQuery).then(res => {
-        console.log(99, res);
+        
         this.treeData = res.data
         this.$nextTick(() => {
           this.treeLoading = false
@@ -431,7 +433,7 @@ export default {
     initData() {
       this.listLoading = true
       getCooperativeData(this.form).then(res => {
-        console.log("res++", res);
+        
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -480,7 +482,7 @@ export default {
 
     },
     handleNodeClick(data, node) {
-      console.log("请选择节点", node);
+      
       if (this.form.partnerCategoryId === data.id) return
       this.form.partnerCategoryId = data.id
       const nodePath = this.getNodePath(node)
@@ -503,7 +505,7 @@ export default {
       })
     },
     addOrUpdateHandle(id, parentId) {
-      console.log("121342134", id, parentId);
+      
       this.formVisible = true
       if (id) {
         // setTimeout(() => {

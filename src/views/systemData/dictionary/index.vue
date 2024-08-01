@@ -1,10 +1,10 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
+      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
-          <h2 v-if="!leftFlag">字典分类</h2>
-          <span class="options" v-if="!leftFlag">
+          <h2 >字典分类</h2>
+          <span class="options">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
@@ -18,7 +18,7 @@
             </el-dropdown>
           </span>
         </div>
-        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+        <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
           style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
         </el-input></div>
       </div>

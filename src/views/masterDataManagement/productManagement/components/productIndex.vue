@@ -37,12 +37,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
@@ -62,8 +62,8 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
+          <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -150,8 +150,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="规格型号">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入规格型号" clearable />
+            <el-form-item label="品名规格">
+              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -483,7 +483,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/产品导入模板.xlsx')
+      a.setAttribute('href', location.origin + `/static/${this.productName}导入模板.xlsx`)
       a.click()
     },
     // 上传产品
@@ -498,6 +498,9 @@ export default {
       uploadProductData(formData).then(res => {
         if (!res.data){
           this.$message.success(`导入成功`)
+          this.uploadVisib = false
+          this.$refs['uploadRef'].clearFiles();
+          this.initData()
         }else{
           this.handleMessage(res.data)
         }
@@ -513,6 +516,8 @@ export default {
      // 导入产品  下载导入错误数据
      downNoProduct(res){
       this.jnpf.downloadFile(res.url, res.name)
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
     },
     // 提示
     handleMessage(data){

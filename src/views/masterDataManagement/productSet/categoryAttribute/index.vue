@@ -62,7 +62,11 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"></tableOpts>
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+                <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
+                复制
+              </el-button> -->
+            </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -269,7 +273,16 @@ export default {
         // }, 600);
       }
     },
-
+    copyHandle(id) {
+      this.formVisible = true
+      if (id) {
+        // setTimeout(() => {
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, 'copy')
+        })
+        // }, 600);
+      }
+    },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

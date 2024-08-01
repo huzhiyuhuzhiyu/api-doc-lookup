@@ -1662,3 +1662,13 @@ export function saleCluemanagementpoolModel(data) {
     data
   })
 }
+
+// 查找批次号
+
+export function getBatchNumber(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/list`,
+    method: 'post',
+    data
+  })
+}

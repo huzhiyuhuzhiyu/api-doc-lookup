@@ -13,8 +13,9 @@
             </el-dropdown>
           </span>
         </div>
-        <div > <el-input placeholder="输入关键字进行过滤" v-model="filterText"
-            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable @input="handleInput">
+        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable
+            @input="handleInput">
           </el-input></div>
       </div>
 
@@ -40,8 +41,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="关键词">
-              <el-input v-model="query.keyword" placeholder="请输入关键词查询" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="query.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="6">
@@ -56,8 +56,8 @@
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" icon="el-icon-search" @click="search()">
-                {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
+                {{ $t('common.search') }}</el-button>
+              <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
               </el-button>
             </el-form-item>
           </el-col>
@@ -65,14 +65,13 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="handleAdd('',3)">
+          <topOpts @add="handleAdd('', 3)">
             <!-- <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData"
               @on-success="initData" /> -->
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()" />
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
@@ -88,15 +87,13 @@
             </template>
           </el-table-column>
           <el-table-column prop="creatorUser" label="创建人" width="140" />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat"
-            width="160" />
-          <el-table-column prop="lastModifyTime" label="最后修改时间" :formatter="jnpf.tableDateFormat"
-            width="160" />
+          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="160" />
+          <el-table-column prop="lastModifyTime" label="最后修改时间" :formatter="jnpf.tableDateFormat" width="160" />
           <el-table-column prop="sortCode" label="排序" width="70" align="center" />
           <el-table-column prop="state" label="状态" width="80" align="center">
             <template slot-scope="scope">
               <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
-                {{scope.row.state==1?'启用':'禁用'}}</el-tag>
+                {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" fixed="right" width="180">
@@ -104,16 +101,16 @@
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-dropdown>
                   <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i
+                    <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
                         class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','form')">编辑表单
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'form')">编辑表单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','table')">编辑列表
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'table')">编辑列表
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,scope.row.webType,'','flow')">编辑流程
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'flow')">编辑流程
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="openReleaseDialog(scope.row)">同步菜单
                     </el-dropdown-item>
@@ -127,17 +124,17 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- <AddBox :visible.sync="addVisible" :webType="currWebType" @add="handleAdd" /> -->
-    <el-dialog title="同步菜单" :visible.sync="releaseDialogVisible"
-      class="JNPF-dialog JNPF-dialog_center release-dialog" lock-scroll width="600px">
+    <el-dialog title="同步菜单" :visible.sync="releaseDialogVisible" class="JNPF-dialog JNPF-dialog_center release-dialog"
+      lock-scroll width="800px">
       <el-alert title="将该功能的表单、列表、流程同步至系统菜单" type="warning" :closable="false" show-icon />
       <div class="dialog-main">
-        <div class="item" :class="{'active':releaseQuery.pc===1}" @click="selectToggle('pc')">
+        <div class="item" :class="{ 'active': releaseQuery.pc === 1 }" @click="selectToggle('pc')">
           <i class="item-icon icon-ym icon-ym-pc"></i>
           <p class="item-title">同步Web端菜单</p>
           <div class="icon-checked">
@@ -152,12 +149,16 @@
           </div>
         </div> -->
       </div>
-      <el-form class="dialog-form-main" :model="releaseQuery" :rules="releaseQueryRule"
-        label-position="right" label-width="60px" ref="releaseForm">
+      <el-form class="dialog-form-main" :model="releaseQuery" :rules="releaseQueryRule" label-position="right"
+        label-width="120px" ref="releaseForm">
         <template v-if="!currRow.pcIsRelease">
-          <el-form-item label="上级" prop="pcModuleParentId" v-if="releaseQuery.pc">
-            <JNPF-TreeSelect v-model="releaseQuery.pcModuleParentId" :options="menuData"
-              placeholder="选择上级菜单" />
+          <el-form-item label="选择应用" prop="systemId" v-if="releaseQuery.pc">
+            <el-select v-model="releaseQuery.systemId" placeholder="请选择应用" @change="changeSystem">
+              <el-option v-for="item in userInfo.systemIds" :key="item.id" :label="item.name" :value="item.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="上级菜单" prop="pcModuleParentId" v-if="releaseQuery.pc">
+            <JNPF-TreeSelect v-model="releaseQuery.pcModuleParentId" :options="menuData" placeholder="选择上级菜单" />
           </el-form-item>
         </template>
         <!-- <template v-if="!currRow.appIsRelease">
@@ -170,9 +171,9 @@
         </template> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="releaseDialogVisible = false">{{$t('common.cancelButton')}}</el-button>
+        <el-button @click="releaseDialogVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="releaseBtnLoading" @click="release">
-          {{$t('common.confirmButton')}}</el-button>
+          {{ $t('common.confirmButton') }}</el-button>
       </span>
     </el-dialog>
     <previewDialog :visible.sync="previewDialogVisible" :id="currId" type="webDesign" />
@@ -184,12 +185,13 @@ import Form from './Form'
 // import AddBox from '@/views/generator/AddBox'
 import mixin from './mixins/generator/index'
 import previewDialog from '@/components/PreviewDialog'
-import { Release,ReleaseNew } from '@/api/onlineDev/visualDev'
+import { Release, ReleaseNew } from '@/api/onlineDev/visualDev'
 import { getMenuSelector } from '@/api/system/menu'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'onlineDev-webDesign',
   mixins: [mixin],
-  components: { Form , previewDialog },
+  components: { Form, previewDialog },
   data() {
     return {
       query: { keyword: '', type: 6 },
@@ -203,8 +205,8 @@ export default {
         pageSize: 20,
         sort: 'desc',
         sidx: '',
-        keyword:"",
-        category:"",
+        keyword: "",
+        category: "",
       },
       total: 0,
       sort: 'webDesign',
@@ -218,10 +220,14 @@ export default {
         app: 0,
         pcModuleParentId: '',
         appModuleParentId: '',
+        systemId: '',
       },
       releaseQueryRule: {
         pcModuleParentId: [
           { required: true, message: '上级菜单不能为空', trigger: 'change' }
+        ],
+        systemId: [
+          { required: true, message: '应用不能为空', trigger: 'change' }
         ],
         appModuleParentId: [
           { required: true, message: '上级菜单不能为空', trigger: 'change' }
@@ -233,8 +239,11 @@ export default {
       refreshTree: true,
       leftFlag: false,
       expands: true,
-      treeLoading:false,
+      treeLoading: false,
     }
+  },
+  computed: {
+    ...mapGetters(['device', 'userInfo', 'menuList']),
   },
   methods: {
     preview(id) {
@@ -246,17 +255,22 @@ export default {
     openReleaseDialog(row) {
       this.currRow = row
       this.releaseDialogVisible = true
-      this.releaseQuery = {
-        pc: 1,
-        app: 0,
-        pcModuleParentId: '',
-        appModuleParentId: '',
-      }
+      // this.releaseQuery = {
+      //   pc: 1,
+      //   app: 0,
+      //   pcModuleParentId: '',
+      //   appModuleParentId: '',
+      //   systemId:'',
+      // }
       this.$nextTick(() => {
         this.$refs['releaseForm'].resetFields()
       })
-      this.getMenuSelector()
-      this.getAPPMenuSelector()
+    },
+    changeSystem(val){
+      if (val) {
+        this.getMenuSelector()
+        this.getAPPMenuSelector()
+      }
     },
     selectToggle(key) {
       this.releaseQuery[key] = this.releaseQuery[key] === 1 ? 0 : 1
@@ -280,7 +294,7 @@ export default {
       })
     },
     getMenuSelector() {
-      getMenuSelector({ category: 'Web' }, 0).then(res => {
+      getMenuSelector({ category: 'Web' }, 0, this.releaseQuery.systemId).then(res => {
         let topItem = {
           fullName: "顶级节点",
           hasChildren: true,
@@ -300,23 +314,27 @@ export default {
 </script>
 <style lang="scss" scoped>
 .release-dialog {
-  >>> .el-dialog {
+  >>>.el-dialog {
     .el-dialog__body {
       padding: 12px 55px;
     }
   }
+
   .dialog-form-main {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
-    >>> .el-form-item {
+
+    >>>.el-form-item {
       width: 215px;
     }
   }
+
   .dialog-main {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
+
     .item {
       position: relative;
       width: 215px;
@@ -327,17 +345,21 @@ export default {
       text-align: center;
       padding-top: 20px;
       color: #606266;
+
       &.active {
         border-color: #1890ff;
         color: #1890ff;
         box-shadow: 0 0 6px rgba(6, 58, 108, 0.1);
+
         .item-icon {
           border-color: #1890ff;
         }
+
         .icon-checked {
           display: block;
         }
       }
+
       .item-icon {
         display: inline-block;
         width: 44px;
@@ -349,10 +371,12 @@ export default {
         text-align: center;
         border-radius: 50%;
       }
+
       .item-title {
         font-size: 16px;
         font-weight: 400;
       }
+
       .icon-checked {
         display: none;
         width: 18px;
@@ -392,5 +416,4 @@ export default {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-}
-</style>
+}</style>

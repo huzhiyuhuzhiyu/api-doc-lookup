@@ -44,6 +44,8 @@ export default {
     getData() {
       return new Promise((resolve, reject) => {
         let columnData = this.$refs.columnMain.getData()
+        console.log(columnData,'columnDatacolumnDatacolumnData');
+        
         if (!columnData) reject({ msg: '', target: 2 })
         let appColumnData = this.$refs.columnMainApp.getData()
         if (!appColumnData.columnList || !appColumnData.columnList.length) {

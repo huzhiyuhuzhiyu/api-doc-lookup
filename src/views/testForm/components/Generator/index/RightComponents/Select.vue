@@ -16,12 +16,13 @@
       </el-select>
     </el-form-item>
     <el-divider>数据选项</el-divider>
-    <el-form-item label="" label-width="40px">
+    <el-form-item label="" label-width="0px">
       <el-radio-group v-model="activeData.__config__.dataType" size="small"
         style="text-align:center" @change="dataTypeChange">
         <el-radio-button label="static">静态数据</el-radio-button>
         <el-radio-button label="dictionary">数据字典</el-radio-button>
-        <el-radio-button label="dynamic">远端数据</el-radio-button>
+        <!-- <el-radio-button label="dynamic">远端数据</el-radio-button> -->
+        <el-radio-button label="productAttr">产品属性</el-radio-button>
       </el-radio-group>
     </el-form-item>
     <template v-if="activeData.__config__.dataType==='static'">
@@ -59,6 +60,13 @@
         </el-select>
       </el-form-item>
     </template>
+    <template v-if="activeData.__config__.dataType === 'productAttr'">
+      <el-form-item label="产品属性">
+        <JNPF-TreeSelect :options="proOptions" v-model="activeData.__config__.productAttrType"
+          placeholder="请选择产品属性" lastLevel clearable @change="getProductType">
+        </JNPF-TreeSelect>
+      </el-form-item>
+    </template>
     <template v-if="activeData.__config__.dataType === 'dynamic'">
       <el-form-item label="远端数据">
         <interface-dialog :value="activeData.__config__.propsUrl"
@@ -90,6 +98,28 @@
     <el-form-item label="是否必填">
       <el-switch v-model="activeData.__config__.required" />
     </el-form-item>
+    <el-divider>校验规则</el-divider>
+    <div v-for="(item, index) in activeData.__config__.regList" :key="index" class="reg-item">
+      <span class="close-btn" @click="activeData.__config__.regList.splice(index, 1)">
+        <i class="el-icon-close" />
+      </span>
+      <el-form-item label="表达式" v-if="item.pattern">
+        <el-input v-model="item.pattern" placeholder="请输入正则" />
+      </el-form-item>
+      <el-form-item label="错误提示" style="margin-bottom:0">
+        <el-input v-model="item.message" placeholder="请输入错误提示" />
+      </el-form-item>
+      <el-form-item label="校验方法" style="margin-bottom:0" v-if="item.validate">
+        <el-input v-model="item.validate" placeholder="请添加自定义校验方法"/>
+      </el-form-item>
+    </div>
+    <div class="mt-10">
+      <el-button type="primary" @click="addCustomReg" style="margin-left:10px">
+        自定义校验脚本
+      </el-button>
+    </div>
+    <VaildateScriptVue :visible.sync="vaildateVisible" :tpl="validate"
+    @updateScript="updateScript"></VaildateScriptVue>
   </el-row>
 </template>
 <script>
@@ -98,18 +128,24 @@ import draggable from 'vuedraggable'
 import { getDictionaryDataSelector } from '@/api/systemData/dictionary'
 import { getDataInterfaceRes } from '@/api/systemData/dataInterface'
 import InterfaceDialog from '@/components/Process/PropPanel/InterfaceDialog'
+import VaildateScriptVue from './VaildateScript.vue'
+import { getbimProductAttributesList } from "@/api/masterDataManagement/index";
 export default {
-  props: ['activeData', 'dictionaryOptions', 'dataInterfaceOptions'],
+  props: ['activeData', 'dictionaryOptions', 'dataInterfaceOptions','productAttrOptions'],
   mixins: [comMixin],
-  components: { draggable, InterfaceDialog },
+  components: { draggable, InterfaceDialog, VaildateScriptVue },
   data() {
     return {
-
+      vaildateVisible:false,
+      validate:"(rule,value,callback ) => {\n    // 在此编写代码\n    \n}"
     }
   },
   computed: {
     dicOptions() {
       return this.dictionaryOptions
+    },
+    proOptions() {
+      return this.productAttrOptions
     },
     interfaceOptions() {
       return this.dataInterfaceOptions
@@ -124,9 +160,28 @@ export default {
       getDictionaryDataSelector(val).then(res => {
         this.activeData.__slot__.options = res.data.list
       })
-    }
+    },
+    'activeData.__config__.productAttrType': function (val) {
+      if (!val) {
+        this.activeData.__slot__.options = []
+        return
+      }
+    },
   },
   methods: {
+    getProductType(val , node){
+      let query = {
+        typeCode:node.enCode
+      }
+      getbimProductAttributesList(query).then(res => {
+        this.activeData.__slot__.options = res.data.records.map(item=>{
+          return {
+            fullName:item.name,
+            id:item.name
+          }
+        })
+      })
+    },
     addSelectItem() {
       this.activeData.__slot__.options.push({
         fullName: '',
@@ -179,7 +234,17 @@ export default {
         this.activeData.__config__.propsName = ''
         this.activeData.__slot__.options = []
       })
-    }
+    },
+    addCustomReg(){
+      this.vaildateVisible = true
+    },
+    updateScript(data) {
+      this.activeData.__config__.regList.push({
+        pattern:'',
+        message:'',
+        validate:data
+      })
+    },
   }
 }
 </script>

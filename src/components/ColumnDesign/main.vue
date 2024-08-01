@@ -458,6 +458,8 @@ export default {
       this.columnData = Object.assign({}, defaultColumnData, this.conf)
     }
     this.columnData.columnOptions = columnOptions
+    console.log(this.searchOptions ,'this.searchOptions ');
+    
     if (!this.columnOptions.length) this.columnData.columnList = []
     if (!this.searchOptions.length) this.columnData.searchList = []
     this.setBtnValue(this.columnData.btnsList, this.btnsOption)

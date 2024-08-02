@@ -22,48 +22,25 @@
                    <h5>基本信息</h5>
               </div> -->
               <el-row :gutter="15" class="">
-                <el-form
-                  ref="elForm"
-                  :model="dataForm"
-                  :rules="rules"
-                  size="small"
-                  label-width="100px"
-                  label-position="top"
-                >
+                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                  label-position="top">
                   <el-col :span="12">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
                       </el-input> -->
                       <!-- 供应商选择弹窗  -->
-                      <ComSelect-page
-                        clearable
-                        :isdisabled="type === 'look'"
-                        :treeNodeClick="treeNodeClick"
-                        v-model="dataForm.cooperativePartnerName"
-                        :beforeSubmit="beforeSubmit"
-                        ref="ComSelect-page"
-                        @change="supplierdata"
-                        :tableItems="PartnerTableItems"
-                        :placeholder="'请选择供应商名称'"
-                        title="选择供应商"
-                        treeTitle="供应商分类"
-                        :methodArr="PartnerMethodArr"
-                        :listMethod="getCooperativeData"
-                        :listRequestObj="PartnerListRequestObj"
-                        :paramsObj="{ oldData }"
-                        :searchList="PartnerTableSearchList"
-                      />
+                      <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                        v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                        :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                        :searchList="PartnerTableSearchList" />
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="交货日期" prop="deliveryDate">
-                      <el-date-picker
-                        v-model="dataForm.deliveryDate"
-                        type="date"
-                        value-format="yyyy-MM-dd"
-                        style="width: 100%;"
-                        placeholder="请选择交货日期"
-                      ></el-date-picker>
+                      <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                        style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
                     </el-form-item>
                   </el-col>
                 </el-form>
@@ -80,16 +57,9 @@
                         批量删除
                       </el-button>
                       |
-                      <el-table
-                        style="border: 1px solid #e3e7ee;"
-                        :fixedNO="true"
-                        @selection-change="handeleProductInfoData"
-                        v-bind="dataFormTwo.data"
-                        :data="dataFormTwo.data"
-                        id="table"
-                        border
-                        height="100%"
-                      >
+                      <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                        @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
+                        id="table" border height="100%">
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
@@ -129,17 +99,10 @@
                             交货日期
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item
-                              :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
-                              :rules="productRules.deliveryDate"
-                            >
-                              <el-date-picker
-                                v-model="scope.row.deliveryDate"
-                                type="date"
-                                value-format="yyyy-MM-dd"
-                                style="width: 100%;"
-                                placeholder="请选择交货日期"
-                              ></el-date-picker>
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'"
+                              :rules="productRules.deliveryDate">
+                              <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                                style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -160,16 +123,10 @@
                             数量(主)
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item
-                              :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
-                              :rules="productRules.purchaseQuantity"
-                            >
-                              <el-input
-                                @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                                v-model="scope.row.purchaseQuantity"
-                                maxlength="20"
-                                placeholder="请输入主数量"
-                              ></el-input>
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
+                              :rules="productRules.purchaseQuantity">
+                              <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
+                                v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="请输入主数量"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -231,16 +188,10 @@
                             税率(%)
                           </template>
                           <template slot-scope="scope">
-                            <el-form-item
-                              :prop="'data.' + scope.$index + '.' + 'taxRate'"
-                              :rules="productRules.taxRate"
-                            >
-                              <el-input
-                                oninput="value = value.replace(/\D/g,'')"
-                                maxlength="2"
-                                v-model="scope.row.taxRate"
-                                placeholder="请输入税率"
-                              ></el-input>
+                            <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'"
+                              :rules="productRules.taxRate">
+                              <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
+                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input>
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -309,12 +260,8 @@
                         </el-table-column>
                         <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                           <template slot-scope="scope">
-                            <el-input
-                              :title="scope.row.remark"
-                              v-model="scope.row.remark"
-                              maxlength="20"
-                              placeholder="请输入备注"
-                            >
+                            <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
+                              placeholder="请输入备注">
                               {{ scope.row.remark }}
                             </el-input>
                           </template>
@@ -322,11 +269,8 @@
 
                         <el-table-column label="操作" width="180" fixed="right" v-if="dataFormTwo.data.length > 1">
                           <template slot-scope="scope">
-                            <el-button
-                              type="text"
-                              class="JNPF-table-delBtn"
-                              @click="delequipment_process_relList(scope.$index)"
-                            >
+                            <el-button type="text" class="JNPF-table-delBtn"
+                              @click="delequipment_process_relList(scope.$index)">
                               删除
                             </el-button>
                           </template>
@@ -346,23 +290,14 @@
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow">
-              <workFlow
-                v-if="workVisible"
-                :nodeFirst="firstOneNode"
-                :btnType="type"
-                :nodeConfig.sync="busNodeConfig"
-                ref="workflowRef"
-              />
+              <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
+                ref="workflowRef" />
               <div class="noDataTip" v-if="!workVisible">
                 <span class="el-table__empty-text">
                   <div data-v-4d190d64="" class="el-empty">
                     <div class="el-empty__image" style="width: 120px;">
-                      <svg
-                        viewBox="0 0 79 86"
-                        version="1.1"
-                        xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink"
-                      >
+                      <svg viewBox="0 0 79 86" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
                         <defs>
                           <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%" y2="100%">
                             <stop stop-color="#FCFCFD" offset="0%"></stop>
@@ -377,80 +312,43 @@
                         <g id="Illustrations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                           <g id="B-type" transform="translate(-1268.000000, -535.000000)">
                             <g id="Group-2" transform="translate(1268.000000, 535.000000)">
-                              <path
-                                id="Oval-Copy-2"
+                              <path id="Oval-Copy-2"
                                 d="M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z"
-                                fill="#F7F8FC"
-                              ></path>
-                              <polygon
-                                id="Rectangle-Copy-14"
-                                fill="#E5E7E9"
+                                fill="#F7F8FC"></path>
+                              <polygon id="Rectangle-Copy-14" fill="#E5E7E9"
                                 transform="translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) "
-                                points="13 58 53 58 42 45 2 45"
-                              ></polygon>
-                              <g
-                                id="Group-Copy"
-                                transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)"
-                              >
-                                <polygon
-                                  id="Rectangle-Copy-10"
-                                  fill="#E5E7E9"
+                                points="13 58 53 58 42 45 2 45"></polygon>
+                              <g id="Group-Copy"
+                                transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)">
+                                <polygon id="Rectangle-Copy-10" fill="#E5E7E9"
                                   transform="translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) "
-                                  points="2.84078316e-14 3 18 3 23 7 5 7"
-                                ></polygon>
-                                <polygon
-                                  id="Rectangle-Copy-11"
-                                  fill="#EDEEF2"
-                                  points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"
-                                ></polygon>
-                                <rect
-                                  id="Rectangle-Copy-12"
-                                  fill="url(#linearGradient-1-48)"
+                                  points="2.84078316e-14 3 18 3 23 7 5 7"></polygon>
+                                <polygon id="Rectangle-Copy-11" fill="#EDEEF2"
+                                  points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"></polygon>
+                                <rect id="Rectangle-Copy-12" fill="url(#linearGradient-1-48)"
                                   transform="translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) "
-                                  x="38"
-                                  y="7"
-                                  width="17"
-                                  height="36"
-                                ></rect>
-                                <polygon
-                                  id="Rectangle-Copy-13"
-                                  fill="#F8F9FB"
+                                  x="38" y="7" width="17" height="36"></rect>
+                                <polygon id="Rectangle-Copy-13" fill="#F8F9FB"
                                   transform="translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) "
-                                  points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"
-                                ></polygon>
+                                  points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
                               </g>
-                              <rect
-                                id="Rectangle-Copy-15"
-                                fill="url(#linearGradient-2-48)"
-                                x="13"
-                                y="45"
-                                width="40"
-                                height="36"
-                              ></rect>
+                              <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
+                                height="36">
+                              </rect>
                               <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
                                 <mask id="mask-4-48" fill="white">
                                   <use xlink:href="#path-3-48"></use>
                                 </mask>
-                                <use
-                                  id="Mask"
-                                  fill="#E0E3E9"
+                                <use id="Mask" fill="#E0E3E9"
                                   transform="translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) "
-                                  xlink:href="#path-3-48"
-                                ></use>
-                                <polygon
-                                  id="Rectangle-Copy"
-                                  fill="#D5D7DE"
-                                  mask="url(#mask-4-48)"
+                                  xlink:href="#path-3-48"></use>
+                                <polygon id="Rectangle-Copy" fill="#D5D7DE" mask="url(#mask-4-48)"
                                   transform="translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) "
-                                  points="7 0 24 0 20 18 -1.70530257e-13 16"
-                                ></polygon>
+                                  points="7 0 24 0 20 18 -1.70530257e-13 16"></polygon>
                               </g>
-                              <polygon
-                                id="Rectangle-Copy-18"
-                                fill="#F8F9FB"
+                              <polygon id="Rectangle-Copy-18" fill="#F8F9FB"
                                 transform="translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) "
-                                points="62 45 79 45 70 58 53 58"
-                              ></polygon>
+                                points="62 45 79 45 70 58 53 58"></polygon>
                             </g>
                           </g>
                         </g>
@@ -479,18 +377,9 @@
       </div>
     </transition>
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
-    <ComSelect-page
-      ref="comSelect-page"
-      @change="submitCustomerProduct"
-      :tableItems="ProductTableItems"
-      dialogTitle="选择产品"
-      :listMethod="getcooperativeProduct"
-      :listRequestObj="ProductListRequestObjs"
-      :searchList="ProductTableSearchList"
-      :elementShow="false"
-      :multiple="true"
-      :renderTree="false"
-    />
+    <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
+      dialogTitle="选择产品" :listMethod="getcooperativeProduct" :listRequestObj="ProductListRequestObjs"
+      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
   </div>
 </template>
 <script>
@@ -822,7 +711,7 @@ export default {
       selectRows: []
     }
   },
-  created() {},
+  created() { },
   computed: {
     ...mapGetters(['userInfo']),
     computedValue() {
@@ -859,7 +748,7 @@ export default {
   watch: {
     'dataFormTwo.data': {
       // immediate:true,
-      handler: function(newVal, oldVal) {
+      handler: function (newVal, oldVal) {
         newVal.forEach((item) => {
           if (item.price && item.taxRate) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
@@ -1182,7 +1071,7 @@ export default {
           this.dataFormTwo.data[i],
           'orderQuantity',
           this.dataFormTwo.data[i].planDemandQuantity -
-            (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
+          (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
         ) // 	可下单数量
         this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
       }
@@ -1301,8 +1190,8 @@ export default {
             designatedMembersId: item.designatedMembersId
               ? item.designatedMembersId
               : item.nodeUserList.length
-              ? item.nodeUserList[0].targetId
-              : ''
+                ? item.nodeUserList[0].targetId
+                : ''
           }
         })
         // 抄送人
@@ -1484,14 +1373,14 @@ export default {
                       ? item.operationalFormula == 'lt'
                         ? '1'
                         : item.operationalFormula == 'gt'
-                        ? '2'
-                        : item.operationalFormula == 'eq'
-                        ? '4'
-                        : item.operationalFormula == 'ge'
-                        ? '5'
-                        : item.operationalFormula == 'le'
-                        ? '3'
-                        : ''
+                          ? '2'
+                          : item.operationalFormula == 'eq'
+                            ? '4'
+                            : item.operationalFormula == 'ge'
+                              ? '5'
+                              : item.operationalFormula == 'le'
+                                ? '3'
+                                : ''
                       : ''
                 }
               })
@@ -1761,9 +1650,11 @@ export default {
   background-color: #f5f5f7 !important;
   color: #576a95;
 }
+
 ::v-deep .el-form {
   height: 100% !important;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;

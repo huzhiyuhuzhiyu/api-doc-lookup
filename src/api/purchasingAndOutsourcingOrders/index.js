@@ -130,3 +130,11 @@ export function insertOutOrder(data) {
       data
     })
   }
+
+  export function purPurchaseReceiptReturnGoodsList(data) {
+    return request({
+      url: `/api/erp/purPurchaseReceiptReturnGoods/list`,
+      method: 'post',
+      data
+    })
+  }

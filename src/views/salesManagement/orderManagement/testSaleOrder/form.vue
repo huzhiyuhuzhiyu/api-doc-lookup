@@ -4,7 +4,7 @@
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="$emit('close')" :content="title" />
-        <div class="options" v-if="btnType !== 'look'">
+        <div class="options">
           <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
             @click="handleConfirm('draft')">
             保存草稿</el-button>
@@ -27,9 +27,9 @@
                           <el-collapse-item :title="colItem.title" :name="colItem.name" :key="colItem.title">
                             <JNPF-Col v-if="colItem.children.length && colItem.title === '基本信息'" v-model="dataForm"
                               :tabContent="masterList" ref="dataForm" :openMode="openMode" />
-                            <JNPF-tableFormProduct @selection-change="handeleProductInfoData" hasC ref="linesForm"
+                            <JNPF-tableFormProduct @selection-change="handeleProductInfoData" :hasC="btnType === 'look' ? false : true" ref="linesForm"
                               :btnList="btnList"
-                              v-if="colItem.children.length && colItem.title === '产品信息' && linesList.length"
+                              v-if="colItem.children.length && colItem.title === '产品信息' && linesList.length" :hasA="btnType === 'look' ? false : true"
                               :tableItems="linesListItems" :value="linesList" hasDel :hasEdit="false" @delData="delData"
                               @input="linesChange" :lineBottomList="lineBottomList" :key="renderKey" />
                           </el-collapse-item>
@@ -46,6 +46,181 @@
               </template>
             </el-tab-pane>
           </template>
+          <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
+              <el-row class="JNPF-common-search-box" :gutter="16">
+                <el-form @submit.native.prevent>
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
+                        @keyup.enter.native="searchDetail()" />
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
+                        @keyup.enter.native="searchDetail()" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
+                        {{ $t('common.search') }}</el-button>
+                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">{{
+                        $t('common.reset') }}
+                      </el-button>
+                      <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+                    </el-form-item>
+                  </el-col>
+                  <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+                    icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
+                </el-form>
+              </el-row>
+              <JNPF-table v-loading="formLoading" :data="scheduleData" custom-column ref="scheduleRef">
+                <el-table-column prop="customerProductNo" label="客户料号" min-width="160" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" />
+                <el-table-column prop="productName" label="产品名称" min-width="160" />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
+                <el-table-column prop="mainUnit" label="单位" min-width="140" />
+                <el-table-column prop="num" label="数量" min-width="140">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="140">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.utilizationQuantity ? scope.row.utilizationQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="productionQuantity" label="需生产数量" min-width="140">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.productionQuantity ? scope.row.productionQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="purchaseQuantity" label="需采购数量" min-width="140">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="outsourcingQuantity" label="需外协数量" min-width="140">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.outsourcingQuantity ? scope.row.outsourcingQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="planFlag" label="是否转计划" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.planFlag ? '是' : '否' }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="calFlag" label="是否运算" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.calFlag ? '是' : '否' }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="sendDownFlag" label="是否下达生产" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.sendDownFlag ? '是' : '否' }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="completedQuantity" label="生产完成数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.completedQuantity ? scope.row.completedQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="prodSchedule" label="生产进度" min-width="160">
+                  <template slot-scope="scope">
+                    <el-progress
+                      :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="packingCount" label="生产已装箱数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.packingCount ? scope.row.packingCount : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="receivedQuantity" label="生产已入库数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="undeliveredQuantity" label="发货待出数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.undeliveredQuantity ? scope.row.undeliveredQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="outboundQuantity" label="发货已出数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.outboundQuantity ? scope.row.outboundQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="deliverSchedule" label="发货进度" min-width="160">
+                  <template slot-scope="scope">
+                    <el-progress
+                      :percentage="Number((scope.row.outboundQuantity / scope.row.num * 100).toFixed(2)) || 0"></el-progress>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="shipmentStatus" label="发货状态" width="130" align="center">
+                  <template slot-scope="scope">
+                    <el-tag type="warning" v-if="scope.row.shipmentStatus == 'not_finish'">未完成</el-tag>
+                    <el-tag type="success" v-else-if="scope.row.shipmentStatus == 'finish'">已完成</el-tag>
+                    <el-tag type="danger" v-else-if="scope.row.shipmentStatus == 'stopped'">已停止</el-tag>
+                  </template>
+
+                </el-table-column>
+                <el-table-column prop="returnQuantity" label="已退货数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.returnQuantity ? scope.row.returnQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="replacementQuantity" label="已换货数量" min-width="120">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.replacementQuantity ? scope.row.replacementQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" />
+              </JNPF-table>
+              <pagination :total="total" :page.sync="scheduleForm.pageNum" :background="background"
+                :limit.sync="scheduleForm.pageSize" @pagination="searchDetail" />
+              <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+              <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false"
+                :modal-append-to-body="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+                width="1000px">
+                <el-row :gutter="20">
+                  <el-form ref="diaForm" :model="scheduleForm" label-width="120px" label-position="top">
+                    <el-col :span="12">
+                      <el-form-item label="客户料号">
+                        <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
+                          @keyup.enter.native="searchDetail()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="产品编码">
+                        <el-input v-model.trim="scheduleForm.productsCode" placeholder="请输入产品编码" clearable
+                          @keyup.enter.native="searchDetail()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="产品名称">
+                        <el-input v-model.trim="scheduleForm.productsName" placeholder="请输入产品名称" clearable
+                          @keyup.enter.native="searchDetail()" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="品名规格">
+                        <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
+                          @keyup.enter.native="searchDetail()" />
+                      </el-form-item>
+                    </el-col>
+                  </el-form>
+                </el-row>
+                <span slot="footer" class="dialog-footer">
+                  <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+                  <el-button type="primary" @click="searchDetail()">
+                    {{ $t('common.search') }}
+                  </el-button>
+                </span>
+              </el-dialog>
+            </el-tab-pane>
         </el-tabs>
       </div>
       <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -90,7 +265,10 @@ import request from "@/utils/request";
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getcooperativeProduct, getWorkOrderNo, getOrderDetail, addOrders, editOrders, uploadProduct, getCopyOrders } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
+import { getscheduleList , excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
+  components:{ ExportForm },
   data() {
     return {
       getProducts,
@@ -181,11 +359,30 @@ export default {
       btnText: '',
       submitmethodsTitle: '',
       tipsvisible: false,
+      scheduleData: [],
+      scheduleForm: {},
+      scheduleForm1: {
+        ordersId: '',
+        productsName: '',
+        productsCode: '',
+        customerProductNo: '',
+        customerProductDrawingNo: '',
+        productsDrawingNo: '',
+        orderItems: [{
+          "asc": true,
+          "column": ""
+        }],
+        pageNum: 1,
+        pageSize: 20,
+      },
+      background: true,
+      total:0,
+      visible: false,
+      exportFormVisible: false,
     }
   },
   created() {
     this.fetchData("SHDD")
-    this.getDevDetail()
   },
   computed: {
     openMode() {
@@ -241,19 +438,14 @@ export default {
       deep: true
     },
   },
-  mounted() {
-    console.log(this.$refs);
-    
-    // this.$nextTick(() => { this.$refs.linesForm[0].setDefaultValue() })
-  },
   methods: {
     init(id, btnType) {
-      this.visible = true
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.formLoading = true
       if (this.dataForm.id) {
         this.title = btnType === 'look' ? '查看销售订单' : btnType === 'copy' ? '新建销售订单' : '编辑销售订单'
+        this.getDevDetail()
         getOrderDetail(this.dataForm.id).then(res => {
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
@@ -270,13 +462,16 @@ export default {
           }
           this.dataForm = res.data.order
           this.linesList = res.data.orderLines
-          if (btnType === 'copy'){
+          if (btnType === 'copy') {
             this.dataForm.orderState = "not_finish"
             this.dataForm.deliveryCompletionDate = ""
             this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
+            this.dataForm.id = ''
+            this.linesList.forEach(item=>item.id = '')
           }
-          if (btnType === 'look'){
-            this.btnList.forEach(item=>item.render = false)
+          if (btnType === 'look') {
+            this.btnList.forEach(item => item.render = false)
+            this.searchDetail()
           }
           this.formLoading = false
         })
@@ -284,6 +479,7 @@ export default {
         this.title = '新建销售订单'
         this.formLoading = false
         this.getWorkOrderNoFun()
+        this.getDevDetail()
       }
     },
     getDevDetail() {
@@ -337,6 +533,7 @@ export default {
                     child.itemRules = []
                     child.value = child.defaultValue || ''
                     child.render = !child.noShow
+                    child.disabled = that.btnType === 'look' ? true : child.disabled
                     if (child.prop === 'customerProductNo') {
                       child.keyup = that.searchCustomerProduct
                     }
@@ -411,7 +608,7 @@ export default {
                         subChild.itemRules = []
                         subChild.value = subChild.defaultValue || ''
                         subChild.render = !subChild.noShow
-
+                        subChild.disabled = that.btnType === 'look' ? true : subChild.disabled
                         if (subChild.jnpfKey === 'select') subChild.options = subChild.__slot__.options.map(item => { return { label: item.fullName, value: subChild.prop === 'taxRate' ? item.enCode : item.id } })
                       }
                       if (subChild.required) {
@@ -492,7 +689,11 @@ export default {
         console.log(this.masterList, 'this.masterList')
         this.masterList.forEach(item => {
           if (item.prop === 'orderNo') {
-            item.disabled = (this.codeConfig.codeWay == 'auto' && this.codeConfig.modifyFlag == true) ? false : true
+            item.disabled = this.btnType === 'look' ? true : (this.codeConfig.codeWay == 'auto' && this.codeConfig.modifyFlag == true) ? false : true
+          }
+          if (item.on && item.on.change) {
+            let formatterFunction = new Function('return ' + item.on.change)
+            item.change = formatterFunction.bind(that)()
           }
         })
       })
@@ -925,6 +1126,73 @@ export default {
         this.linesList.push(this.createdData)
       })
     },
+    searchDetail() {
+      this.formLoading = true
+      this.scheduleForm.ordersId = this.dataForm.id
+      Object.keys(this.scheduleForm).forEach(key => {
+        let item = this.scheduleForm[key]
+        this.scheduleForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.total = 0
+      getscheduleList(this.scheduleForm).then(res => {
+        this.scheduleData = res.data.records
+        this.total = res.data.total
+        this.formLoading = false
+        this.visible = false
+      }).catch(() => {
+        this.visible = false
+        this.formLoading = false
+      })
+    },
+    resetDetail() {
+      this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
+      this.scheduleForm.pageNum = 1
+      this.searchDetail()
+    },
+    switchStyleheight() {
+      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
+      const mainHeight = mainRegion.clientHeight;
+      const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
+      const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
+      let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
+      maxHeight = maxHeight > 500 ? maxHeight : 500
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100);
+      };
+    },
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.scheduleRef.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.scheduleForm,
+          exportType: '1105',
+          exportName: '销售订单进度跟踪',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.scheduleForm.pageSize : -1
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
   },
 }
 </script>
@@ -966,5 +1234,20 @@ export default {
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
+}
+/* 进度跟踪样式 */
+::v-deep #pane-schedule {
+  height: calc(100% - 10px) !important;
+  display: flex;
+  flex-direction: column;
+}
+::v-deep .el-tabs__content {
+  /* height: auto !important; */
+  height: calc(100% - 47px) !important;
+  overflow: auto !important;
+  // padding: 0 20px;
+}
+::v-deep .el-tabs {
+  height: 100% !important;
 }
 </style>

@@ -10,20 +10,20 @@
       <el-input :value="setDefaultValue(activeData.__config__.defaultValue)" placeholder="请输入默认值"
         @input="onDefaultValueInput" />
     </el-form-item>
-    <el-form-item label="前缀" v-show="showType==='pc'">
+    <el-form-item label="前缀" v-show="showType === 'pc'">
       <el-input v-model="activeData.__slot__.prepend" placeholder="请输入前缀" />
     </el-form-item>
-    <el-form-item label="后缀" v-show="showType==='pc'">
+    <el-form-item label="后缀" v-show="showType === 'pc'">
       <el-input v-model="activeData.__slot__.append" placeholder="请输入后缀" />
     </el-form-item>
-    <el-form-item label="前图标" v-show="showType==='pc'">
+    <el-form-item label="前图标" v-show="showType === 'pc'">
       <el-input v-model="activeData['prefix-icon']" placeholder="请输入前图标名称">
         <el-button slot="append" @click="openIconsDialog('prefix-icon')">
           选择
         </el-button>
       </el-input>
     </el-form-item>
-    <el-form-item label="后图标" v-show="showType==='pc'">
+    <el-form-item label="后图标" v-show="showType === 'pc'">
       <el-input v-model="activeData['suffix-icon']" placeholder="请输入后图标名称">
         <el-button slot="append" @click="openIconsDialog('suffix-icon')">
           选择
@@ -68,27 +68,32 @@
       </span>
       <el-switch v-model="activeData.__config__.unique" />
     </el-form-item>
-    <div v-for="(item, index) in activeData.__config__.regList" :key="index" class="reg-item">
-      <span class="close-btn" @click="activeData.__config__.regList.splice(index, 1)">
-        <i class="el-icon-close" />
-      </span>
-      <el-form-item label="表达式" v-if="item.pattern">
-        <el-input v-model="item.pattern" placeholder="请输入正则" />
-      </el-form-item>
-      <el-form-item label="错误提示" style="margin-bottom:0">
-        <el-input v-model="item.message" placeholder="请输入错误提示" />
-      </el-form-item>
-      <el-form-item label="校验方法" style="margin-bottom:0" v-if="item.validate">
-        <el-input v-model="item.validate" placeholder="请添加自定义校验方法"/>
-      </el-form-item>
-    </div>
+    <draggable :list="activeData.__config__.regList" :animation="340" group="selectItem" handle=".option-drag">
+      <div v-for="(item, index) in activeData.__config__.regList" :key="index" class="reg-item">
+        <div class="select-line-icon option-drag">
+            <i class="icon-ym icon-ym-darg" />
+        </div>
+        <span class="close-btn" @click="activeData.__config__.regList.splice(index, 1)">
+          <i class="el-icon-close" />
+        </span>
+        <el-form-item label="表达式" v-if="item.pattern">
+          <el-input v-model="item.pattern" placeholder="请输入正则" />
+        </el-form-item>
+        <el-form-item label="错误提示" style="margin-bottom:18">
+          <el-input v-model="item.message" placeholder="请输入错误提示" />
+        </el-form-item>
+        <el-form-item label="校验方法" style="margin-bottom:18" v-if="item.validate">
+          <el-input type="textarea" :rows="4" v-model="item.validate" placeholder="请添加自定义校验方法" />
+        </el-form-item>
+      </div>
+    </draggable>
     <div class="mt-10">
       <el-dropdown>
         <el-button type="primary">添加常用校验<i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="addHandle(item)" v-for="(item,i) in ruleList" :key="i">
-            {{item.label}}</el-dropdown-item>
+          <el-dropdown-item @click.native="addHandle(item)" v-for="(item, i) in ruleList" :key="i">
+            {{ item.label }}</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <!-- <el-button type="primary" @click="addReg" style="margin-left:10px">
@@ -98,20 +103,19 @@
         自定义校验脚本
       </el-button>
     </div>
-    <iconBox :visible.sync="iconsVisible" :current="activeData[currentIconModel]"
-      @choiceIcon="setIcon" />
-      <VaildateScriptVue :visible.sync="vaildateVisible" :tpl="validate"
-      @updateScript="updateScript"></VaildateScriptVue>
+    <iconBox :visible.sync="iconsVisible" :current="activeData[currentIconModel]" @choiceIcon="setIcon" />
+    <VaildateScriptVue :visible.sync="vaildateVisible" :tpl="validate" @updateScript="updateScript"></VaildateScriptVue>
   </el-row>
 </template>
 <script>
 import iconBox from '@/components/JNPF-iconBox'
 import comMixin from './mixin';
 import VaildateScriptVue from './VaildateScript.vue'
+import draggable from 'vuedraggable'
 export default {
   props: ['activeData'],
   mixins: [comMixin],
-  components: { iconBox , VaildateScriptVue },
+  components: { iconBox, VaildateScriptVue ,draggable},
   data() {
     return {
       iconsVisible: false,
@@ -153,8 +157,8 @@ export default {
           label: '身份证'
         },
       ],
-      vaildateVisible:false,
-      validate:"(rule,value,callback ) => {\n    // 在此编写代码\n    \n}"
+      vaildateVisible: false,
+      validate: "(rule,value,callback ) => {\n    // 在此编写代码\n    \n}"
     }
   },
   created() { },
@@ -172,14 +176,14 @@ export default {
         message: row.message
       })
     },
-    addCustomReg(){
+    addCustomReg() {
       this.vaildateVisible = true
     },
     updateScript(data) {
       this.activeData.__config__.regList.push({
-        pattern:'',
-        message:'',
-        validate:data
+        pattern: '',
+        message: '',
+        validate: data
       })
 
     },

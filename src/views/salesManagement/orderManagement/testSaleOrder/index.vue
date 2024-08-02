@@ -71,7 +71,7 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'copy')">
                       复制订单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>

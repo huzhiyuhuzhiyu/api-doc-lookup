@@ -49,11 +49,19 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="returnVisitNo" label="回访编号" min-width="160" />
             <el-table-column prop="returnVisitTime" label="回访时间" min-width="180" />
-            <el-table-column prop="returnVisitForm" label="回访形式" min-width="140" />
+            <el-table-column prop="returnVisitForm" label="回访形式" min-width="140">
+              <template slot-scope="scope">
+                {{VisitForm(scope.row.returnVisitForm)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="customerName" label="客户名称" min-width="160" />
             <el-table-column prop="contactsName" label="联系人" min-width="120" />
             <el-table-column prop="contractNo" label="合同编号" min-width="140" />
-            <el-table-column prop="customerSatisfaction" label="客户满意度" min-width="140" />
+            <el-table-column prop="customerSatisfaction" label="客户满意度" min-width="140">
+              <template slot-scope="scope">
+                {{satisfaction(scope.row.customerSatisfaction)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="feedback" label="客户反馈" min-width="200" />
             <el-table-column prop="ownerUserName" label="回访人" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
@@ -90,6 +98,7 @@
 </template>
 
 <script>
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
@@ -104,6 +113,9 @@ export default {
   },
   data() {
     return {
+      datalist:[],
+      customerSatisfactionList: [],
+      returnVisitFormList: [],
       superQueryJson: [
         {
           prop: 'returnVisitNo',
@@ -123,13 +135,7 @@ export default {
           prop: 'returnVisitForm',
           label: '回访形式',
           type: 'select',
-          options: [
-            { label: '见面拜访', value: '1' },
-            { label: '电话', value: '2' },
-            { label: '短信', value: '3' },
-            { label: '邮件', value: '4' },
-            { label: '微信', value: '5' },
-          ]
+          options: []
         },
         {
           prop: 'customerName',
@@ -150,13 +156,7 @@ export default {
           prop: 'customerSatisfaction',
           label: '客户满意度',
           type: 'select',
-          options: [
-            { label: '很满意', value: '1' },
-            { label: '满意', value: '2' },
-            { label: '一般', value: '3' },
-            { label: '不满意', value: '4' },
-            { label: '很不满意', value: '5' },
-          ]
+          options: []
         },
         {
           prop: 'feedback',
@@ -216,13 +216,75 @@ export default {
     }
   },
   created() {
+    this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
   beforeDestroy() {
     window.onresize = null
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   methods: {
+    VisitForm(val) {
+      let _data = this.returnVisitFormList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    satisfaction(val) {
+      let _data = this.customerSatisfactionList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    // 获取客户满意度、回访形式数据
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == "partnerArchives") {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "Customersatisfaction") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.customerSatisfactionList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'customerSatisfaction') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+              if (resp.enCode == "Followupform") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.returnVisitFormList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'returnVisitForm') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      })
+    },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -293,10 +355,6 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
-      })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
       })
     },
     sortChange({ prop, order }) {

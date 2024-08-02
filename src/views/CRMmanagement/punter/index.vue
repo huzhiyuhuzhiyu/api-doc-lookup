@@ -247,6 +247,12 @@ export default {
       return (this.$route.meta.modelId || '') + this.partentOrChild
     }
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   beforeDestroy() {
     window.onresize = null
   },
@@ -337,10 +343,6 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
-      })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
       })
     },
     sortChange({ prop, order }) {

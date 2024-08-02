@@ -278,6 +278,12 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
     this.getcategoryTree()
@@ -569,10 +575,6 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
-      })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
       })
     },
 

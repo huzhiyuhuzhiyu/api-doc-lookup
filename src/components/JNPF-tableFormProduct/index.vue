@@ -1,13 +1,18 @@
 <template>
   <div>
-    <div v-if="btnType !== 'look'">
+    <div v-if="btnType !== 'look'" style="display:flex">
       <template v-for="item in btnList">
-        <el-button :key="item.btnText" type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-          :icon="item.icon" :disabled="item.disabled" @click="item.click">{{ item.btnText }}</el-button>|
+        <div :key="item.btnText" >
+          <el-button v-if="item.render"  type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+            :icon="item.icon" :disabled="item.disabled" @click="item.click(item.type)">{{ item.btnText }}
+          </el-button>
+          <span v-if="item.render" style="line-height:36px">|</span>
+        </div>
       </template>
     </div>
     <el-form :model="JNPFColTableData" ref="main">
-      <el-table class="TableForm table" :data="JNPFColTableData.data" v-bind="$attrs" v-on="$listeners"  border ref="mainTableForm">
+      <el-table class="TableForm table" :data="JNPFColTableData.data" v-bind="$attrs" v-on="$listeners" border
+        ref="mainTableForm">
         <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
           align="center" :selectable="checkSelectable" />
         <el-table-column type="index" width="60" label="序号" align="center" :fixed="true ? 'left' : false" />
@@ -20,9 +25,9 @@
               <span class="required">*</span>{{ item.label }}
             </template>
             <template slot-scope="scope">
-              <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
+              <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]" :key="'data.' + scope.$index + '.' + item.prop"
                 :value="JNPFColTableData.data[scope.$index][scope.column.property]" :lineData="tableItems"
-                @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
+                @input="handleInput($event, scope.column.property, scope.$index)" 
                 :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
             </template>
           </el-table-column>
@@ -40,6 +45,11 @@
 
         <div class="noDataTip" v-if="JNPFColTableData.data.length === 0">暂无数据</div>
       </el-table>
+      <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text" v-if="lineBottomList.length">
+        <template v-for="item in lineBottomList">
+          <span style="font-weight:500;margin-right:10px" :key="item.label">{{ item.label }}{{ item.value }}</span>
+        </template>
+      </div>
     </el-form>
   </div>
 </template>
@@ -122,7 +132,11 @@ export default {
     btnList: {
       type: Array,
       default: []
-    }
+    },
+    lineBottomList: {
+      type: Array,
+      default: []
+    },
   },
   watch: {
     value: {
@@ -146,6 +160,8 @@ export default {
   },
   mounted() {
     this.setDefaultValue();
+    console.log(this.lineBottomList,'lineBottomList');
+    
   },
   methods: {
     handlerDel(scope) {

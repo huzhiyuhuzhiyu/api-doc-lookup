@@ -707,7 +707,7 @@ export default {
 
         ],
         taxRate: [
-          { required: false, message: '请输入税率', trigger: 'blur' },
+          { required: false, message: '请选择税率', trigger: 'blur' },
         ],
         includingTaxPrecision: [
           { required: false, message: '请输入含税计价精度', trigger: 'blur' },

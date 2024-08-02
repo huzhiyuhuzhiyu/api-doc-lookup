@@ -33,113 +33,117 @@
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="treeBox_bot gjsearch" ref="fangan">
-        <div style="width: 200px;">
-          <el-input v-model="listQuery.clueName" placeholder="请输入线索名称" clearable @keyup.enter.native="search()" />
-        </div>
-        <div style="min-width: 190px;margin-left: 10px;">
-          <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
-            {{$t('common.search')}}</el-button>
-          <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
-          </el-button>
-        </div>
-        <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
-          <div v-if="programmelist.length">
-            <span class="text">方案：</span>
-            <el-button :class="[programmetitle==item.fullName?'is-reverse':'']" size="mini" v-for="item in programmelist" :key="item.id" @click="actionreverse(item)">{{item.fullName}}</el-button>
-            <el-popover placement="bottom-end" trigger="click" v-if="programmelist1.length" style="margin-left: 10px;">
-              <el-button slot="reference" icon="el-icon-arrow-down" size="mini"></el-button>
-              <div :class="['plan-list-item',programmetitle==o.fullName?'is-reverse':'']" v-for="(o, i) in programmelist1" :key="i" @click="actionreverse(o)">
-                <el-link class="plan-list-name" :underline="false">{{ o.fullName }}
-                </el-link>
-              </div>
-            </el-popover>
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+        <div class="treeBox_bot gjsearch" ref="fangan">
+          <div style="width: 200px;">
+            <el-input v-model="listQuery.clueName" placeholder="请输入线索名称" clearable @keyup.enter.native="search()" />
           </div>
-        </div>
-        <!-- <div style="width: 82px;">
+          <div style="min-width: 190px;margin-left: 10px;">
+            <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+              {{$t('common.search')}}</el-button>
+            <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
+            </el-button>
+          </div>
+          <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
+            <div v-if="programmelist.length">
+              <span class="text">方案：</span>
+              <el-button :class="[programmetitle==item.fullName?'is-reverse':'']" size="mini" v-for="item in programmelist" :key="item.id" @click="actionreverse(item)">{{item.fullName}}</el-button>
+              <el-popover placement="bottom-end" trigger="click" v-if="programmelist1.length" style="margin-left: 10px;">
+                <el-button slot="reference" icon="el-icon-arrow-down" size="mini"></el-button>
+                <div :class="['plan-list-item',programmetitle==o.fullName?'is-reverse':'']" v-for="(o, i) in programmelist1" :key="i" @click="actionreverse(o)">
+                  <el-link class="plan-list-name" :underline="false">{{ o.fullName }}
+                  </el-link>
+                </div>
+              </el-popover>
+            </div>
+          </div>
+          <!-- <div style="width: 82px;">
           <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
         </div> -->
-      </div>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="display: block;line-height:34px">
-          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
-            <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
-            <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
-            <el-button type="primary" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
-          </topOpts>
-          <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
-          <div class="JNPF-common-head-right" style="float: right">
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-            <el-tooltip content="高级查询" placement="top">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
-          </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column fixedNO row-key="id" :setColumnDisplayList="columnList">
-          <!-- <el-table-column align="center" label="拖动" width="60">
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head" style="display: block;line-height:34px">
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
+              <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
+              <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
+              <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+              <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
+            </topOpts>
+            <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
+            <div class="JNPF-common-head-right" style="float: right">
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableList" @selection-change="handleSelectionChange" hasC custom-column fixedNO row-key="id" :setColumnDisplayList="columnList">
+            <!-- <el-table-column align="center" label="拖动" width="60">
             <template>
               <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" title='点击拖动' />
             </template>
           </el-table-column> -->
-          <!-- <el-table-column align="center" label="序号" width="60">
+            <!-- <el-table-column align="center" label="序号" width="60">
             <template slot-scope="scope">
               {{ scope.$index+1 }}
             </template>
           </el-table-column> -->
-          <el-table-column prop="clueName" label="线索名称" width="160" />
-          <el-table-column prop="nextTime" label="下次联系时间" width="180" />
-          <el-table-column prop="source" label="线索来源" width="150">
-            <template slot-scope="scope">
-              {{sourcefunction(scope.row.source)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="mobile" label="手机" width="140" />
-          <el-table-column prop="telephone" label="电话" width="120" />
-          <el-table-column prop="email" label="邮箱" width="160" />
-          <!-- <el-table-column prop="provinceText" label="省" width="120" />
+            <el-table-column prop="clueName" label="线索名称" width="160" />
+            <el-table-column prop="nextTime" label="下次联系时间" width="180" />
+            <el-table-column prop="source" label="线索来源" width="150">
+              <template slot-scope="scope">
+                {{sourcefunction(scope.row.source)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="mobile" label="手机" width="140" />
+            <el-table-column prop="telephone" label="电话" width="120" />
+            <el-table-column prop="email" label="邮箱" width="160" />
+            <!-- <el-table-column prop="provinceText" label="省" width="120" />
           <el-table-column prop="cityText" label="市" width="140" />
           <el-table-column prop="areaText" label="区" width="140" /> -->
-          <el-table-column prop="areaText" label="地址" width="160" />
-          <el-table-column prop="address" label="详细地址" width="200" />
-          <el-table-column prop="industry" label="客户行业" width="140">
-            <template slot-scope="scope">
-              {{industryfunction(scope.row.industry)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="level" label="客户级别" width="130">
-            <template slot-scope="scope">
-              {{levelfunction(scope.row.level)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="ownerUser" label="负责人" width="120" key="123" />
-          <el-table-column prop="createByName" label="创建人" width="120" />
-          <el-table-column prop="createTime" label="创建时间" width="180" />
-          <el-table-column prop="remark" label="备注" min-width="180" />
-          <el-table-column label="操作" width="180" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)">
-                <el-dropdown>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize" @pagination="initData" />
+            <el-table-column prop="areaText" label="地址" width="160" />
+            <el-table-column prop="address" label="详细地址" width="200" />
+            <el-table-column prop="industry" label="客户行业" width="140">
+              <template slot-scope="scope">
+                {{industryfunction(scope.row.industry)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="level" label="客户级别" width="130">
+              <template slot-scope="scope">
+                {{levelfunction(scope.row.level)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="ownerUser" label="负责人" width="120" key="123" />
+            <el-table-column prop="createByName" label="创建人" width="120" />
+            <el-table-column prop="createTime" label="创建时间" width="180" />
+            <el-table-column prop="remark" label="备注" min-width="180" />
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id,'edit')" @del="handleDel(scope.row.id)">
+                  <el-dropdown>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id,'look')">
+                        查看详情
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+          </pagination>
+          <!-- <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" /> -->
+        </div>
       </div>
     </div>
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
@@ -168,10 +172,8 @@
 </template>
 
 <script>
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapState } from 'vuex'
-import {
-  getbimProductAttributes
-} from "@/api/masterDataManagement/index";
 import { getCluemanagementlist, deleteCluemanagement, saleCluemanagementpoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import ExportForm from '@/components/no_mount/ExportBox/index'
@@ -194,7 +196,7 @@ export default {
   },
   data() {
     return {
-      file:{},
+      file: {},
       uploadVisib: false,
       columnList: ["createByName", "createTime"],
       exportFormVisible: false,
@@ -222,28 +224,13 @@ export default {
           prop: 'level',
           label: '客户级别',
           type: 'select',
-          options: [
-            { label: 'A(重点客户)', value: '1' },
-            { label: 'B(普通客户)', value: '2' },
-            { label: 'C(非优先客户)', value: '3' }
-          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         { // 下拉选
           prop: 'source',
           label: '线索来源',
           type: 'select',
-          options: [
-            { label: '促销', value: '1' },
-            { label: '搜索引擎', value: '2' },
-            { label: '广告', value: '3' },
-            { label: '转介绍', value: '4' },
-            { label: '线上注册', value: '5' },
-            { label: '线上询价', value: '6' },
-            { label: '预约上门', value: '7' },
-            { label: '陌拜', value: '8' },
-            { label: '电话咨询', value: '9' },
-            { label: '邮件咨询', value: '10' }
-          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         {
           prop: 'mobile',
@@ -269,16 +256,7 @@ export default {
           prop: 'industry',
           label: '客户行业',
           type: 'select',
-          options: [
-            { label: 'IT', value: '1' },
-            { label: '金融业', value: '2' },
-            { label: '房地产', value: '3' },
-            { label: '商业服务', value: '4' },
-            { label: '运输/物流', value: '5' },
-            { label: '生产', value: '6' },
-            { label: '政府', value: '7' },
-            { label: '文化传媒', value: '8' }
-          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         {
           prop: 'ownerUser',
@@ -364,24 +342,86 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
-    getbimProductAttributes('585429807173478149').then(res => {
-      this.sourcelist = res.data.list.length ? res.data.list : []
-    })
-    getbimProductAttributes('585430224678692613').then(res => {
-      this.levellist = res.data.list.length ? res.data.list : []
-    })
-    getbimProductAttributes('585430056520656645').then(res => {
-      this.industrylist = res.data.list.length ? res.data.list : []
-    })
+    this.getDictionaryType()
     this.getcategoryTree()
   },
+  // mounted() {
+  //   // this.rowDrop(); //声明表格拖动排序方法
+  // },
   mounted() {
-    // this.rowDrop(); //声明表格拖动排序方法
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
   },
   beforeDestroy() {
     window.onresize = null
   },
   methods: {
+    // 获取数据字典数据
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == "partnerArchives") {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "grade") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.levellist = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'level') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+              if (resp.enCode == "channel") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.sourcelist = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'source') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+              if (resp.enCode == "CustomerIndustry") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.industrylist = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'industry') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      })
+    },
     submit() {
       this.UploadProduct(this.file)
     },
@@ -662,10 +702,6 @@ export default {
         this.listLoading = false
         this.btnLoading = false
       })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
-      })
     },
     addOrUpdateHandle(id, type) {
       this.formVisible = true
@@ -703,6 +739,7 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
 <style scoped lang="scss">
 .is-reverse {
   color: #fff !important;

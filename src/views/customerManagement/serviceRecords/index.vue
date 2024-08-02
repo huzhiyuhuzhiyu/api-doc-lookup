@@ -94,6 +94,7 @@ export default {
   components: { Form, programme, SuperQuery },
   data() {
     return {
+      datalist:[],
       superQueryJson: [
         {
           prop: 'name',
@@ -174,6 +175,12 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   methods: {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -226,10 +233,6 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
-      })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
       })
     },
     sortChange({ prop, order }) {

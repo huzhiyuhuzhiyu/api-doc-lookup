@@ -334,7 +334,7 @@ export default {
         this.inputWidth = reference.$el.getBoundingClientRect().width;
       }
     });
-    this.setDefault()
+    // this.setDefault()
   },
   beforeDestroy() {
     if (this.$el && this.handleResize) removeResizeListener(this.$el, this.handleResize);

@@ -34,7 +34,7 @@ export function insertOutOrder(data) {
     })
   }
 
-    // 采购和外协订单明细
+    // 采购和外协订单明细-报表
     export function purchaseOrderReport(data) {
       return request({
         url: `/api/erp/purPurchaseOrderLine/report`,

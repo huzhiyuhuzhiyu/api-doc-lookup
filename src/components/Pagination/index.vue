@@ -86,7 +86,7 @@ export default {
 
 <style scoped>
 .pagination-container {
-  background: #fff;
+  background: #f5f7fa;
   text-align: right;
   overflow: auto hidden;
   position: relative;

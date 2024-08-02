@@ -258,9 +258,7 @@ export default {
       orderForm: {},
       orderFormlist: {
         orderNo: "",
-        partnerName: "",
-        customerDrawingNumber: "",
-        productDrawingNo: "",
+        partnerName: "", 
         pageNum: 1,
         pageSize: 20,
         returnDeliveryType: 'delivery',

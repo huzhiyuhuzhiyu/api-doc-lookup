@@ -5,8 +5,12 @@
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="btnType !== 'look'">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
-            提交</el-button>
+          <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+            @click="handleConfirm('draft')">
+            保存草稿</el-button>
+          <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+            @click="handleConfirm('submit')">
+            保存并提交</el-button>
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -27,7 +31,7 @@
                               :btnList="btnList"
                               v-if="colItem.children.length && colItem.title === '产品信息' && linesList.length"
                               :tableItems="linesListItems" :value="linesList" hasDel :hasEdit="false" @delData="delData"
-                              @input="linesChange" />
+                              @input="linesChange" :lineBottomList="lineBottomList" :key="renderKey" />
                           </el-collapse-item>
                         </template>
                       </el-collapse>
@@ -61,6 +65,17 @@
             提交</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="$emit('close', true)">返回列表</el-button>
+          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+        </span>
+      </el-dialog>
       <ComSelect-product ref="comSelect-product" @change="submitCustomerProduct" :dialogTitle="dialogTitle"
         :tableItems="tableItems" :listRequestObj="listRequestObj" :searchList="ProductTableSearchList"
         :elementShow="false" :multiple="true" :renderTree="renderTree" />
@@ -72,19 +87,17 @@
 import { detailVisualDevInfo } from '@/api/system/system'
 import formValidate from "@/utils/formValidate";
 import request from "@/utils/request";
-import Process from '@/components/Process/Preview'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getcooperativeProduct, getWorkOrderNo } from '@/api/salesManagement/assemblyOrders'
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getcooperativeProduct, getWorkOrderNo, getOrderDetail, addOrders, editOrders, uploadProduct, getCopyOrders } from '@/api/salesManagement/assemblyOrders'
 import { mapGetters, mapState } from 'vuex'
 export default {
-  components: { Process },
   data() {
     return {
       getProducts,
       getcooperativeProduct,
       request,
       formValidate,
+      renderKey: +new Date(),
       valType: false,
       title: '',
       activeName: "基本信息",
@@ -98,9 +111,15 @@ export default {
       linesList: [],
       linesListItems: [],
       btnList: [
-        { icon: 'el-icon-plus', btnText: '选择产品', disabled: false, click: this.openSeleceProductDialog },
-        { icon: 'el-icon-plus', btnText: '导入产品', disabled: false, click: this.importProductFun },
-        { icon: 'el-icon-delete', btnText: '批量删除', disabled: false, click: this.batchDelete },
+        { icon: 'el-icon-plus', btnText: '选择客户产品', render: true, disabled: false, click: this.openSeleceProductDialog, type: 'customer' },
+        { icon: 'el-icon-plus', btnText: '选择产品', render: true, disabled: false, click: this.openSeleceProductDialog, type: 'product' },
+        { icon: 'el-icon-plus', btnText: '导入产品', render: true, disabled: false, click: this.importProductFun },
+        { icon: 'el-icon-delete', btnText: '批量删除', render: true, disabled: false, click: this.batchDelete },
+      ],
+      lineBottomList: [
+        { label: '总主数量：', value: '' },
+        { label: '总金额(含税)：', value: '' },
+        { label: '总金额(不含税)：', value: '' },
       ],
       datafilelist: [],
       renderTree: true,  // 默认渲染树
@@ -158,7 +177,10 @@ export default {
       codeConfig: {},
       uploadVisib: false,
       file: null,
-      selectRows: []
+      selectRows: [],
+      btnText: '',
+      submitmethodsTitle: '',
+      tipsvisible: false,
     }
   },
   created() {
@@ -169,15 +191,95 @@ export default {
     openMode() {
       return this.title === '新建销售订单' ? '新建' : this.title === '编辑销售订单' ? '编辑' : '只读'
     },
+    totalNum: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.linesList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.linesList[i].num])
+      }
+      return totalNums
+    },
+    totalAmount: function () {
+      var totalAmounts = 0;
+      for (var i = 0; i < this.linesList.length; i++) {
+        totalAmounts = this.jnpf.math('add', [totalAmounts, this.linesList[i].totalAmount])
+      }
+      return totalAmounts
+    },
+    excludingTaxAmount: function () {
+      var excludingTaxAmounts = 0;
+      for (var i = 0; i < this.linesList.length; i++) {
+        excludingTaxAmounts = this.jnpf.math('add', [excludingTaxAmounts, this.linesList[i].excludingTaxAmount])
+      }
+      return excludingTaxAmounts
+    },
     ...mapGetters(['userInfo']),
+  },
+  watch: {
+    'linesList': {
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if (item.price && item.taxRate) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 4)
+          }
+          if (item.num && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat((item.num * item.excludingTaxPrice), 4)
+          }
+          if (item.price && item.num) {
+            item.totalAmount = this.jnpf.numberFormat((item.price * item.num), 4)
+          }
+          if (item.calculationDirection == 'multiplication') {
+            item.assistantNum = this.jnpf.numberFormat(item.num * item.ratio, 4)
+          } else {
+            item.assistantNum = this.jnpf.numberFormat(item.num / item.ratio, 4)
+          }
+        })
+        this.lineBottomList[0].value = this.totalNum
+        this.lineBottomList[1].value = this.totalAmount
+        this.lineBottomList[2].value = this.excludingTaxAmount
+
+      },
+      deep: true
+    },
+  },
+  mounted() {
+    console.log(this.$refs);
+    
+    // this.$nextTick(() => { this.$refs.linesForm[0].setDefaultValue() })
   },
   methods: {
     init(id, btnType) {
       this.visible = true
       this.dataForm.id = id || ''
       this.btnType = btnType
+      this.formLoading = true
       if (this.dataForm.id) {
-        this.title = btnType === 'look' ? '查看销售订单' : '编辑销售订单'
+        this.title = btnType === 'look' ? '查看销售订单' : btnType === 'copy' ? '新建销售订单' : '编辑销售订单'
+        getOrderDetail(this.dataForm.id).then(res => {
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
+          this.dataForm = res.data.order
+          this.linesList = res.data.orderLines
+          if (btnType === 'copy'){
+            this.dataForm.orderState = "not_finish"
+            this.dataForm.deliveryCompletionDate = ""
+            this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
+          }
+          if (btnType === 'look'){
+            this.btnList.forEach(item=>item.render = false)
+          }
+          this.formLoading = false
+        })
       } else {
         this.title = '新建销售订单'
         this.formLoading = false
@@ -247,18 +349,8 @@ export default {
                     }
                     if (child.jnpfKey === 'select') child.options = child.__slot__.options.map(item => { return { label: item.fullName, value: child.prop === 'taxRate' ? item.enCode : item.id } })
                   }
-                  if (child.required) {
-                    child.itemRules.push(
-                      { required: child.required, message: child.placeholder, trigger: child.trigger }
-                    )
-                  }
                   if (child.regList && Array.isArray(child.regList)) {
                     child.regList.forEach(item => {
-                      if (item.pattern) {
-                        child.itemRules.push(
-                          { pattern: `${eval(item.pattern)}`, message: item.message, trigger: 'blur' },
-                        )
-                      }
                       if (item.validate) {
                         that.valType = false
                         // 如果是formValidate开头的自定义校验，把formValidate添加that标记
@@ -286,7 +378,17 @@ export default {
                           { validator: that.valType ? item.validate : eval(item.validate), trigger: child.trigger }
                         )
                       }
+                      if (item.pattern) {
+                        child.itemRules.push(
+                          { pattern: `${eval(item.pattern)}`, message: item.message, trigger: 'blur' },
+                        )
+                      }
                     })
+                  }
+                  if (child.required) {
+                    child.itemRules.push(
+                      { required: child.required, message: child.placeholder, trigger: child.trigger }
+                    )
                   }
                 });
               }
@@ -396,10 +498,10 @@ export default {
       })
 
     },
-    openSeleceProductDialog() {
+    openSeleceProductDialog(type) {
       console.log(this.dataForm);
 
-      if (this.dataForm.orderType == 'normal' || this.dataForm.orderType == 'urgent') {
+      if (type === 'customer') {
         if (this.dataForm.cooperativePartnerId) {
           this.listRequestObj.partnerId = this.dataForm.cooperativePartnerId
           this.listRequestObj.partnerType = 'customer'
@@ -461,7 +563,6 @@ export default {
     },
     // 导入产品
     importProductFun() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       // 导入产品，获取数据渲染
       if (this.linesList.length) {
         this.$confirm(`确定导入新的产品数据吗？这会覆盖已有的数据`, `提示`, { type: 'warning' }).then(() => {
@@ -596,7 +697,50 @@ export default {
     },
 
     submitCustomerProduct(id, data, paramsObj) {
-
+      if (data.length) {
+        let selectArr = []
+        let list = data.map(item => item.all)
+        // 产品 && 客户产品
+        list.forEach((item, index) => {
+          selectArr.push({
+            productsId: item.id || item.productsId,                 // 产品id
+            productName: item.name || item.productName,              // 产品名称
+            productCode: item.code || item.productCode,                // 产品编码
+            drawingNo: item.drawingNo,             // 品名规格
+            availableQuantity: item.availableQuantity || 0,   // 可用库存
+            customerProductNo: item.customerProductNo || '',
+            price: item.costPrice || item.price,              // 含税单价
+            num: item.num || 0,
+            assistantNum: item.assistantNum || 0,
+            sealingCoverTyping: item.sealingCoverTyping,
+            accuracyLevel: item.accuracyLevel,
+            vibrationLevel: item.vibrationLevel,
+            oil: item.oil,
+            oilQuantity: item.oilQuantity,
+            clearance: item.clearance,
+            packagingMethod: item.packagingMethod || '',
+            contractNo: item.contractNo || '',
+            ratio: item.ratio,                     // 转换系数
+            calculationDirection: item.calculationDirection,  // 计算方向
+            mainUnit: item.mainUnit,                   // 主单位
+            remark: item.remark,
+            deliveryDate: '',                          // 交期
+          })
+        })
+        if (this.linesList.length) {
+          let index = this.linesList.findIndex(item =>
+            item.drawingNo === "" &&
+            item.productsId === "" &&
+            item.num === "" &&
+            item.price === "" &&
+            item.deliveryDate === ""
+          )
+          if (index !== -1) {
+            // 使用 splice 插入 newDataArray
+            this.linesList.splice(index, 0, ...selectArr);
+          }
+        }
+      }
     },
     // 子表数据更改
     linesChange(dataOrIndex, prop, value) {
@@ -609,9 +753,18 @@ export default {
     searchDrawingNoProduct($event, scope, options) {
       getDetailByDrawNo(scope.row.drawingNo).then(res => {
         if (res.data) {
-          res.data.productCode = res.data.code
-          res.data.productsId = res.data.id
-          this.$set(this.linesList, scope.$index, res.data)
+          this.linesList[scope.$index].productsId = res.data.id
+          this.linesList[scope.$index].productCode = res.data.code
+          this.linesList[scope.$index].mainUnit = res.data.mainUnit
+          this.linesList[scope.$index].availableQuantity = res.data.availableQuantity || 0
+          this.linesList[scope.$index].price = res.data.costPrice || 0
+          this.linesList[scope.$index].sealingCoverTyping = res.data.sealingCoverTyping
+          this.linesList[scope.$index].accuracyLevel = res.data.accuracyLevel
+          this.linesList[scope.$index].vibrationLevel = res.data.vibrationLevel
+          this.linesList[scope.$index].oil = res.data.oil
+          this.linesList[scope.$index].oilQuantity = res.data.oilQuantity
+          this.linesList[scope.$index].clearance = res.data.clearance
+          this.linesList[scope.$index].remark = res.data.remark
           let exists = options.some(item => item.taxRate === parseInt(res.data.taxRate));
           if (!exists && res.data.taxRate) {
             let obj = {
@@ -622,14 +775,11 @@ export default {
           }
         } else {
           this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
-          scope.row.drawingNo = ""
         }
       })
     },
     // 按下enter键  根据输入的客户料号(客户物料号)查找客户产品
     searchCustomerProduct($event, scope, options) {
-      console.log(scope);
-      console.log(options);
       if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       let index = scope.$index
       let query = JSON.parse(JSON.stringify(this.ProductListRequestObjs))
@@ -639,6 +789,13 @@ export default {
         getcooperativeProduct(query).then(res => {
           if (res.data.records.length) {
             this.$set(this.linesList, index, res.data.records[0])
+            this.$set(this.linesList[index], 'num', '')
+            this.$set(this.linesList[index], 'totalAmount', '')
+            this.$set(this.linesList[index], 'excludingTaxAmount', '')
+            this.$set(this.linesList[index], 'deliveryDate', '')
+            this.$set(this.linesList[index], 'contractNo', '')
+            this.$set(this.linesList[index], 'packagingMethod', '')
+            this.linesList[index].availableQuantity = res.data.records[0].availableQuantity || 0
             let exists = options.some(item => item.taxRate === parseInt(res.data.records[0].taxRate));
             if (!exists && res.data.taxRate) {
               let obj = {
@@ -654,7 +811,119 @@ export default {
       let obj = JSON.parse(JSON.stringify(this.createdData))
       this.linesList.push(obj)
       console.log(this.linesList);
-      
+    },
+    // 继续修改
+    continueEdit() {
+      this.init(this.dataForm.id, this.btnType)
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    async handleConfirm(value) {
+      let submitFlag = true
+      this.btnLoading = true
+      // 校验表单
+      console.log(this.$refs['dataForm']);
+
+      let dataForm = this.$refs['dataForm'][0].$refs.main
+      let valid = await dataForm.validate().catch(err => false)
+      if (!valid && submitFlag) {
+        submitFlag = false
+        this.btnLoading = false
+        this.jnpf.focusErrValidItem(dataForm.fields)
+      }
+
+      if (this.linesList.length < 1) {
+        this.$message({
+          message: "请至少添加一条产品",
+          type: 'error',
+          duration: 1500,
+        })
+        submitFlag = false
+        this.btnLoading = false
+      }
+      // let orderLineList = []
+      if (this.linesList.length === 1) {
+        // 空行校验表格表单
+        let linesForm = this.$refs['linesForm'][0].$refs.main
+        let valid_3 = await linesForm.validate().catch(err => false)
+        if (!valid_3 && submitFlag) {
+          submitFlag = false
+          this.btnLoading = false
+          this.jnpf.focusErrValidItem(linesForm.fields)
+        }
+      } else {
+        let index = this.linesList.findIndex(item =>
+          item.drawingNo === "" &&
+          item.productsId === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.deliveryDate === ""
+        )
+        if (index !== -1) {
+          // 删除空行
+          this.linesList.splice(index, 1);
+          // 校验表格表单
+          this.$nextTick(async () => {
+            let linesForm = this.$refs['linesForm'][0].$refs.main
+            let valid_3 = await linesForm.validate().catch(err => false)
+            if (!valid_3 && submitFlag) {
+              submitFlag = false
+              this.btnLoading = false
+              this.jnpf.focusErrValidItem(linesForm.fields)
+            }
+
+            if (submitFlag) {
+              this.submit(value)
+            } else {
+              this.btnLoading = false
+              this.linesList.push(this.createdData)
+            }
+          })
+        }
+      }
+
+    },
+    submit(value) {
+      this.dataForm.documentStatus = value
+      this.dataForm.excludingTaxTotalAmount = this.excludingTaxAmount
+      this.dataForm.totalAmount = this.totalAmount
+      this.dataForm.taxAmount = this.jnpf.numberFormat(this.totalAmount - this.excludingTaxAmount, 2)
+      if (this.datafilelist.length) {
+        this.datafilelist.map((item, index) => {
+          item.bimAttachments = {
+            businessType: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        })
+      }
+      let _data = {
+        order: this.dataForm,
+        attachmentList: this.datafilelist,
+        orderLineList: this.linesList
+      }
+      let formMethod = null;
+      if (this.btnType == 'edit') {
+        formMethod = editOrders
+        this.btnText = "继续修改"
+      } else if (this.btnType == 'add' || this.btnType == 'copy') {
+        formMethod = addOrders
+        this.btnText = "继续新增"
+      }
+      formMethod(_data).then(res => {
+        this.submitmethodsTitle = value == "draft" ? "保存成功" : "提交成功"
+        this.tipsvisible = true
+      }).catch(() => {
+        this.btnLoading = false
+        this.linesList.push(this.createdData)
+      })
     },
   },
 }

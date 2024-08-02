@@ -199,9 +199,8 @@
                       <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                       <el-table-column prop="oil" label="油脂" width="160" />
                       <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                      <el-table-column prop="clearance" label="游隙" width="160" />
-                      <el-table-column prop="packagingMethod" label="包装方式" width="160" />
-                      <el-table-column prop="saleOrderNo" label="订单号" width="160" />
+                      <el-table-column prop="clearance" label="游隙" width="160" /> 
+                      <el-table-column prop="orderNo" label="订单号" width="160" />
                       <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">

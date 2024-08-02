@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑商机' : btntype == 'add' ? '新建商机' : '查看商机'" />
+        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑合同' : btntype == 'add' ? '新建合同' : '查看合同'" />
         <div class="options" v-if="btntype !== 'look'">
           <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
             提交</el-button>
@@ -17,14 +17,14 @@
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机名称" prop="businessName">
-                        <el-input v-model="dataForm.businessName" placeholder="请输入商机名称" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="合同名称" prop="contractName">
+                        <el-input v-model="dataForm.contractName" placeholder="请输入合同名称" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -33,20 +33,51 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机金额" prop="money">
-                        <el-input v-model="dataForm.money" placeholder="请输入商机金额" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                      <el-form-item label="客户签约人" prop="customerDeptId">
+                        <el-select v-model="dataForm.customerDeptId" placeholder="请选择客户签约人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.customerName">
+                          <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
+                        </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="预计成交日期" prop="dealDate">
-                        <el-date-picker v-model="dataForm.dealDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择预计成交日期" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="公司签约人" prop="ownerDeptId">
+                        <user-select v-model="dataForm.ownerDeptId" placeholder="请选择公司签约人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales1">
+                        </user-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="商机名称" prop="businessName">
+                        <ComSelect-page v-model="dataForm.businessName" @change="businessChange" :tableItems="businessIdTableItems" dialogTitle="选择商机" placeholder="请选择商机" :listMethod="getcrmBusinessList" :listRequestObj="businessRequestObj" :searchList="businessSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="合同金额" prop="money">
+                        <el-input v-model="dataForm.money" placeholder="请输入合同金额" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="下单日期" prop="orderTime">
+                        <el-date-picker v-model="dataForm.orderTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择下单日期" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="下次联系时间" prop="nextTime">
-                        <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="合同开始日期" prop="contractStartTime">
+                        <el-date-picker v-model="dataForm.contractStartTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择合同开始日期" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="合同结束日期" prop="contractEndTime">
+                        <el-date-picker v-model="dataForm.contractEndTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择合同结束日期" :disabled="btntype == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="合同类型" prop="contractType">
+                        <el-select v-model="dataForm.contractType" placeholder="请选择合同类型" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                          <el-option v-for="(item, index) in typecontractList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -99,13 +130,22 @@
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'discount'" :rules='productRules.discount'>
+                          <!-- <el-select v-model="scope.row.discount" placeholder="请选择折扣" style="width: 100%;" :disabled="btntype == 'look'" @change="changeTaxRate(scope.row, scope.$index)">
+                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.discount"></el-option>
+                          </el-select> -->
                           <el-input v-model="scope.row.discount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="changeTaxRate(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
+                    <!-- <el-table-column prop="excludingTaxUnitPrice" label="售价(不含税)" width="150" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
+                    </el-table-column> -->
                     <el-table-column prop="totalcostPrice" label="成本价合计" width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="costPriceSum" label="合计" width="160" show-overflow-tooltip>
+                    <el-table-column prop="priceSum" label="合计" width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="230">
                       <template slot-scope="scope">
@@ -120,7 +160,7 @@
                   </el-table>
                 </el-form>
                 <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;display:flex;justify-content: space-between;" class="text">
-                  <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderdiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
+                  <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderDiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
                   <div>
                     <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额：{{ totalAmount }}</span>
@@ -128,6 +168,9 @@
                 </div>
               </el-collapse-item>
             </el-collapse>
+          </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype=='look'" :detailed="btntype=='look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -137,17 +180,33 @@
 </template>
 
 <script>
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getCategoryTrees } from '@/api/basicData/index'
-import { getPartnerList } from '@/api/customerManagement/index'
-import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness } from '@/api/CRMmanagement/index'
+import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
+import { addcrmContract, updatecrmContract, detailcrmContract, detailcrmBusiness, getcrmBusinessList } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
+      getcrmBusinessList,
+      datafilelist: [],
       isattachmentswitch: '1',
+      typecontractList: [],
       contactsIdList: [],
       getcategoryTrees,
+      businessRequestObj: {
+        customerName: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
       // 客户列表
       partnerRequestObj: {
         taxId: "",
@@ -165,6 +224,16 @@ export default {
           column: "create_time"
         }],
       },
+      //商机列表字段
+      businessIdTableItems: [
+        { prop: 'businessName', label: '商机名称' },
+        { prop: 'money', label: '商机金额' },
+        { prop: 'nextTime', label: '下次联系时间' },
+        { prop: 'remark', label: '备注' }
+      ],
+      businessSearchList: [
+        { prop: 'businessName', label: '商机名称', type: 'input' },
+      ],
       // 客户列表字段
       partnerTableItems: [
         { prop: 'code', label: '客户编码' },
@@ -244,25 +313,39 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        businessName: '',
-        remark: '',
+        orderDiscount: null,
         ownerUserId: '',
+        contractName: '',
         customerName: '',
         customerId: '',
+        businessId: '',
+        businessName: '',
         money: '',
-        dealDate: '',
-        nextTime: ''
+        orderTime: '',
+        contractStartTime: '',
+        contractEndTime: '',
+        customerDeptId: '',
+        customerDeptName: '',
+        ownerDeptId: '',
+        contractType: '',
+        remark: ''
       },
       btntype: false,
       dataRule: {
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
-        customerName: [
-          { required: true, message: '请选择客户', trigger: 'blur' },
+        contractName: [
+          { required: true, message: '请输入合同名称', trigger: 'blur' },
         ],
-        businessName: [
-          { required: true, message: '请输入商机名称', trigger: 'blur' },
+        customerName: [
+          { required: true, message: '请选择客户名称', trigger: 'blur' },
+        ],
+        money: [
+          { required: true, message: '请输入合同金额', trigger: 'blur' },
+        ],
+        orderTime: [
+          { required: true, message: '请选择下单日期', trigger: 'blur' },
         ]
       },
     }
@@ -276,12 +359,56 @@ export default {
       return totalNum
     },
   },
+  created() {
+    this.getDictionaryType()
+  },
   methods: {
+    // 获取合同类型数据
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == "partnerArchives") {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "typeofcontract") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.typecontractList = response.data.list
+                })
+              }
+            })
+          }
+        })
+      })
+    },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
       listQuery.partnerCategoryId = data.id
       return listQuery
+    },
+    //商机选框传值
+    businessChange(val, data) {
+      if (data && data.length) { // 数据有效，进行更新
+        this.dataForm.businessName = data[0].all.businessName
+        this.dataForm.businessId = data[0].all.id
+        this.productVisible = true
+        detailcrmBusiness(this.dataForm.businessId).then(res => {
+          this.dataFormTwo.lines = res.data.lines
+          this.Wholeorderdiscount()
+          this.productVisible = false
+        }).catch(() => {
+          this.productVisible = false
+        })
+      } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.businessName = ""
+        this.dataForm.businessId = ""
+      }
     },
     // 客户选框传值
     partnerChange(val, data, paramsObj) {
@@ -289,6 +416,17 @@ export default {
       if (data && data.length) { // 数据有效，进行更新
         this.dataForm.customerName = data[0].all.name
         this.dataForm.customerId = data[0].all.id
+        this.businessRequestObj.customerName = this.dataForm.customerName
+        this.dataForm.customerDeptId = ''
+        this.dataForm.customerDeptName = ''
+        this.dataForm.businessName = ""
+        this.dataForm.businessId = ""
+        getMyContactsList({
+          cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
+          pageSize: -1,
+        }).then(res => {
+          this.contactsIdList = res.data.records
+        })
       } else { // 不选择任何内容，置空绑定的值
         this.dataForm.customerId = ""
         this.dataForm.customerName = ""
@@ -312,22 +450,22 @@ export default {
       let c = 0
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
         let item = this.dataFormTwo.lines[a]
-        c = this.jnpf.math('add', [c, item.costPriceSum])
+        c = this.jnpf.math('add', [c, item.priceSum])
       }
-      this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderdiscount * 1 / 100)), 4)
+      this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
       this.dataForm.money = this.totalAmount
     },
     changeTaxRate(row, index) {
       let productArr = [...this.dataFormTwo.lines]
       productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.price * (1 - (row.discount * 1 / 100)), 4)
-      productArr[index].costPriceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
-      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum), 4)
+      productArr[index].priceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
+      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum), 4)
       this.dataFormTwo.lines = productArr
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
         let item = this.dataFormTwo.lines[a]
         console.log("item", item.amounts);
-        totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       }
       this.totalAmount = totalPrice
       this.dataForm.money = this.totalAmount
@@ -397,19 +535,19 @@ export default {
       }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
-        row.costPriceSum = c ? c : ''
+        row.priceSum = c ? c : ''
       } else {
-        row.costPriceSum = ''
+        row.priceSum = ''
       }
-      if (row.costPriceSum && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum * 1), 6)
+      if (row.priceSum && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
         let item = this.dataFormTwo.lines[a]
 
-        totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       }
       this.totalAmount = totalPrice
       this.dataForm.money = this.totalAmount
@@ -474,12 +612,12 @@ export default {
       }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
-        row.costPriceSum = c ? c : ''
+        row.priceSum = c ? c : ''
       } else {
-        row.costPriceSum = ''
+        row.priceSum = ''
       }
-      if (row.costPriceSum && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum * 1), 6)
+      if (row.priceSum && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
       if (row.costPrice && row.num) {
@@ -491,7 +629,8 @@ export default {
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
         let item = this.dataFormTwo.lines[a]
-        totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+        console.log("item", item.amounts);
+        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       }
       this.totalAmount = totalPrice
       this.dataForm.money = this.totalAmount
@@ -499,7 +638,7 @@ export default {
     //选择产品
     submitCustomerProduct(val, data,) {
       this.productVisible = false
-      data.map(i => {
+      let a = data.map(i => {
         const item = i.all
         this.dataFormTwo.lines.push({
           productId: item.id,
@@ -512,7 +651,7 @@ export default {
           price: '',
           discount: '',
           totalcostPrice: '',
-          costPriceSum: '',
+          priceSum: '',
           remark: '',
         })
       });
@@ -540,29 +679,66 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
+      this.productVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          detailcrmBusiness(this.dataForm.id).then(res => {
-            this.dataForm = res.data.business
+          detailcrmContract(this.dataForm.id).then(res => {
+            this.dataForm = res.data.contract
             this.dataFormTwo.lines = res.data.lines
             this.Wholeorderdiscount()
+            getMyContactsList({
+              cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
+              pageSize: -1,
+            }).then(res => {
+              this.contactsIdList = res.data.records
+            })
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
+            this.productVisible = false
             this.formLoading = false
           })
         } else {
+          this.productVisible = false
           this.formLoading = false
         }
       })
     },
     dataFormSubmit() {
       // 校验子表
+      if (!this.dataFormTwo.lines.length) {
+        this.$message.error('请添加产品')
+        return
+      }
       Promise.all([this.$refs['dataForm'].validate(), this.$refs['productForm'].validate()]).then(() => {
         this.btnLoading = true;
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'customer',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let obj = {
-          business: this.dataForm,
+          attachmentList: this.datafilelist,
+          contract: this.dataForm,
           lines: this.dataFormTwo.lines
         }
-        let formMethod = this.dataForm.id ? updatecrmBusiness(obj) : addcrmBusiness(obj);
+        let formMethod = this.dataForm.id ? updatecrmContract(obj) : addcrmContract(obj);
         formMethod.then(res => {
           let msg = ""
           if (this.btntype == "edit") {

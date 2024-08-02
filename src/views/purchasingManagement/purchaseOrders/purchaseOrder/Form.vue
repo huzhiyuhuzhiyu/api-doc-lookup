@@ -88,7 +88,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
                         <div class="viewData">
@@ -97,7 +97,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
+                  <!-- <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'spec'">
                         <div class="viewData">
@@ -105,7 +105,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
                   <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
                     <template slot-scope="scope">

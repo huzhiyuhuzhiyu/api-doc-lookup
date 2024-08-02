@@ -19,36 +19,19 @@
           </span>
         </div>
         <div v-if="!leftFlag">
-          <el-input
-            placeholder="输入关键字进行过滤"
-            v-model="filterText"
-            style="width:200px;margin:10px auto;display:block"
-            suffix-icon="el-icon-search"
-            clearable
-          ></el-input>
+          <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+            suffix-icon="el-icon-search" clearable></el-input>
         </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree
-          ref="treeBox"
-          :data="treeData"
-          :props="defaultProps"
-          :default-expand-all="expands"
-          highlight-current
-          :expand-on-click-node="false"
-          node-key="id"
-          @node-click="handleNodeClick"
-          class="JNPF-common-el-tree"
-          v-if="refreshTree"
-          :filter-node-method="filterNode"
-        >
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[
-                data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-              ]"
-            />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -94,11 +77,12 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
           <div style="display:flex;">
-          <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
-            新建
-          </el-button>
-          <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
-        </div>
+            <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
+              新建
+            </el-button>
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">导出</el-button>
+          </div>
           <!-- <div>
                   <topOpts @add="addSupplier()" />
                   <el-button type="primary" icon="el-icon-download" size="mini" @click="exportData()"
@@ -117,57 +101,45 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table
-          ref="dataTable"
-          v-loading="listLoading"
-          highlight-current-row
-          :data="tableData"
-          :fixedNO="true"
-          @sort-change="sortChange"
-          custom-column
-          :setColumnDisplayList="columnList"
-        >
-          <el-table-column prop="code" label="编码" width="140"  sortable="custom">
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
+          @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+          <el-table-column prop="code" label="编码" width="140" sortable="custom">
             <template slot-scope="scope">
-              <el-link
-                type="primary"
-                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')"
-              >
+              <el-link type="primary"
+                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
                 {{ scope.row.code }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="taxId" label="税号" width="200" />
-          <el-table-column prop="name" label="名称" width="120"  sortable="custom" />
-          <el-table-column prop="regionCodeText" label="地区" width="100" />
+          <el-table-column prop="taxId" label="税号" min-width="200" />
+          <el-table-column prop="name" label="名称" min-width="120" sortable="custom" />
+          <el-table-column prop="regionCodeText" label="地区" min-width="100" />
           <el-table-column prop="countryText" label="国家" min-width="150" />
-          <el-table-column prop="provinceText" label="省" width="160" />
-          <el-table-column prop="cityText" label="市" width="160" />
-          <el-table-column prop="areaText" label="区" width="160" />
-          <el-table-column prop="address" label="地址" width="160" />
-          <el-table-column prop="billingTypeText" label="开票类型" width="160" />
-          <el-table-column prop="taxRate" label="税率%" width="100" sortable="custom" />
+          <el-table-column prop="provinceText" label="省" min-width="160" />
+          <el-table-column prop="cityText" label="市" min-width="160" />
+          <el-table-column prop="areaText" label="区" min-width="160" />
+          <el-table-column prop="address" label="地址" min-width="160" />
+          <el-table-column prop="billingTypeText" label="开票类型" min-width="160" />
+          <el-table-column prop="taxRate" label="税率%" min-width="100" sortable="custom" />
           <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
-          <el-table-column prop="personResponsible" label="负责人" width="160" />
-          <el-table-column prop="contacts" label="联系人" width="160" />
-          <el-table-column prop="phone" label="电话" width="160" />
-          <el-table-column prop="mobilePhone" label="手机号" width="160" />
+          <el-table-column prop="personResponsible" label="负责人" min-width="160" />
+          <el-table-column prop="contacts" label="联系人" min-width="160" />
+          <el-table-column prop="phone" label="电话" min-width="160" />
+          <el-table-column prop="mobilePhone" label="手机号" min-width="160" />
           <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
           <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
-          <el-table-column prop="email" label="邮箱" width="160" />
-          <el-table-column prop="bank" label="开户银行" width="160" />
-          <el-table-column prop="bankInfo" label="银行账号" width="160" />
-          <el-table-column prop="gradeText" label="等级" width="160"></el-table-column>
-          <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="160"></el-table-column>
-          <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="160"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="160" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column prop="email" label="邮箱" min-width="160" />
+          <el-table-column prop="bank" label="开户银行" min-width="160" />
+          <el-table-column prop="bankInfo" label="银行账号" min-width="160" />
+          <el-table-column prop="gradeText" label="等级" min-width="160"></el-table-column>
+          <el-table-column prop="reconciliationStartDate" label="对账开始日期" min-width="160"></el-table-column>
+          <el-table-column prop="reconciliationEndDate" label="对账结束日期" min-width="160"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="160" />
+          <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                @del="handleDel(scope.row.id)"
-              >
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+                @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -177,8 +149,7 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')"
-                    >
+                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -187,13 +158,8 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination
-          :total="total"
-          :page.sync="form.pageNum"
-          :background="background"
-          :limit.sync="form.pageSize"
-          @pagination="initData"
-        />
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
+          @pagination="initData" />
       </div>
     </div>
     <!-- </div> -->
@@ -206,15 +172,8 @@
     </el-tabs> -->
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
-    <el-dialog
-      :title="title"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :visible.sync="visible"
-      lock-scroll
-      class="JNPF-dialog JNPF-dialog_center"
-      width="800px"
-    >
+    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
         <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
           <el-col :span="12">
@@ -260,26 +219,16 @@
           <el-col :span="12">
             <el-form-item label="等级">
               <el-select v-model="form.grade" placeholder="请选择等级" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in gradeList"
-                  :key="index"
-                  :label="item.fullName"
-                  :value="item.enCode"
-                ></el-option>
+                <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
+                  :value="item.enCode"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="认定日期">
-              <el-date-picker
-                v-model="form.customerRecognitionTime"
-                type="daterange"
-                value-format="yyyy-MM-dd"
-                style="width: 100%;"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :picker-options="pickerOptions"
-              ></el-date-picker>
+              <el-date-picker v-model="form.customerRecognitionTime" type="daterange" value-format="yyyy-MM-dd"
+                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
+                :picker-options="pickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-form>
@@ -306,7 +255,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'supplierProfile',
-  components: { Form, UserRelationList,ExportForm },
+  components: { Form, UserRelationList, ExportForm },
   data() {
     return {
       title: '更多查询',
@@ -440,8 +389,8 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-     // 导出
-     exportForm() {
+    // 导出
+    exportForm() {
       this.exportFormVisible = true
       let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
@@ -470,7 +419,7 @@ export default {
         }).catch(() => { })
       }
     },
-    handleClick() {},
+    handleClick() { },
     moreQueries() {
       this.visible = true
     },
@@ -681,7 +630,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     handleUserRelation(id, parentId, btnType) {
       this.formVisible = true

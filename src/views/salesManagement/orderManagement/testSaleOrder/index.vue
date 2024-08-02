@@ -34,7 +34,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <topOpts @add="addOrUpdateHandle()">
+          <topOpts @add="addOrUpdateHandle('','add')">
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="columnData.hasSuperQuery">
@@ -59,7 +59,7 @@
           </template>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
                 @del="handleDel(scope.row.id)">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -68,6 +68,9 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'copy')">
+                      复制订单
+                    </el-dropdown-item>
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
                       查看详情
                     </el-dropdown-item>
@@ -91,9 +94,9 @@
 <script>
 import { mapState } from 'vuex'
 import { detailVisualDevInfo, getDocData } from '@/api/system/system'
+import { deleteOrders} from '@/api/salesManagement/assemblyOrders'
 import Form from './form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { isArray } from 'mathjs'
 export default {
   name: 'testSaleOrder',
   components: { SuperQuery , Form },
@@ -269,7 +272,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteProduct(id).then(res => {
+        deleteOrders(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

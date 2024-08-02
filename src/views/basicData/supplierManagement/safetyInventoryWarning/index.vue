@@ -15,34 +15,22 @@
         </span>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree
-          ref="treeBox"
-          :data="treeData"
-          :props="defaultProps"
-          :default-expand-all="expands"
-          highlight-current
-          :expand-on-click-node="false"
-          node-key="id"
-          @node-click="handleNodeClick"
-          class="JNPF-common-el-tree"
-          v-if="refreshTree"
-          :filter-node-method="filterNode"
-        >
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[
-                data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-              ]"
-            />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
       </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute" >
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
 
@@ -51,32 +39,20 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input
-                v-model="listQuery.productDrawingNo"
-                placeholder="请输入品名规格"
-                clearable
-                @keyup.enter.native="search()"
-              />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input
-                v-model="listQuery.productName"
-                placeholder="请输入产品名称"
-                clearable
-                @keyup.enter.native="search()"
-              />
+              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input
-                v-model="listQuery.productCode"
-                placeholder="请输入产品编码"
-                clearable
-                @keyup.enter.native="search()"
-              />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -102,13 +78,8 @@
         <div class="JNPF-common-head" style="padding:10px">
           <div>
             <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
-            <el-button
-              :disabled="tableData.length > 0 ? false : true"
-              size="mini"
-              type="primary"
-              icon="el-icon-download"
-              @click="exportForm"
-            >
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
           </div>
@@ -118,63 +89,38 @@
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link
-                icon="icon-ym icon-ym-filter JNPF-common-head-icon"
-                :underline="false"
-                @click="superQueryVisible = true"
-              />
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table
-          v-loading="listLoading"
-          :data="tableData"
-          :fixedNO="true"
-          hasC
-          @sort-change="sortChange"
-          custom-column
-          ref="dataTable"
-          :setColumnDisplayList="columnList"
-          @selection-change="handeleProductInfoData"
-        >
-          <el-table-column prop="code" label="产品编码" min-width="100" >
-          </el-table-column>
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
+          custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
+          <el-table-column prop="code" label="产品编码" min-width="100"></el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="productCategoryName" label="产品分类" width="100" sortable="custom" />
           <el-table-column prop="mainUnit" label="主单位" min-width="120" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
-          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" sortable="custom"/>
-          <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom"/>
-          <el-table-column prop="occupancyQuantity" label="占用数量(主)" min-width="130" sortable="custom"/>
+          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" sortable="custom" />
+          <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom" />
+          <el-table-column prop="occupancyQuantity" label="占用数量(主)" min-width="130" sortable="custom" />
           <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
-          <el-table-column prop="deputyAvailableQuantity" label="可用库存(副)" min-width="130" sortable="custom"/>
-          <el-table-column prop="deputyInventoryQuantity" label="库存数量(副)" min-width="130" sortable="custom"/>
-          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom"/>
+          <el-table-column prop="deputyAvailableQuantity" label="可用库存(副)" min-width="130" sortable="custom" />
+          <el-table-column prop="deputyInventoryQuantity" label="库存数量(副)" min-width="130" sortable="custom" />
+          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom" />
         </JNPF-table>
-        <pagination
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :background="background"
-          :limit.sync="listQuery.pageSize"
-          @pagination="initData"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
+          :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
-    <el-dialog
-      :title="title"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :visible.sync="visible"
-      lock-scroll
-      class="JNPF-dialog JNPF-dialog_center"
-      width="1000px"
-    >
+    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
           <el-col :span="12">
@@ -195,39 +141,24 @@
           <el-col :span="12">
             <el-form-item label="产品来源">
               <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
-                <el-option
-                  v-for="item in productSourceList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="item in productSourceList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="产品状态">
               <el-select v-model="listQuery.productStatus" placeholder="请选择产品状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="item in productStatusList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="item in productStatusList" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="创建时间">
-              <el-date-picker
-                v-model="listQuery.createTimeArr"
-                type="datetimerange"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']"
-                style="width: 100%;"
-                start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间"
-                clearable
-              ></el-date-picker>
+              <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
+                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
+                end-placeholder="请选择创建结束时间" clearable></el-date-picker>
             </el-form-item>
           </el-col>
         </el-form>
@@ -241,45 +172,15 @@
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
-    <el-upload
-      action="#"
-      v-show="false"
-      accept=".xls, .xlsx"
-      :headers="{ token }"
-      ref="UploadProduct"
-      :http-request="UploadProduct"
-    />
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
+      :http-request="UploadProduct" />
     <!-- 高级查询 -->
-    <SuperQuery
-      :show="superQueryVisible"
-      ref="SuperQuery"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch"
-      @close="superQueryVisible = false"
-    />
-    <el-dialog
-      title="导入数据"
-      append-to-body
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :visible.sync="uploadVisib"
-      lock-scroll
-      class="JNPF-dialog JNPF-dialog_center"
-      width="400px"
-    >
-      <el-upload
-        cass="upload-demo"
-        action="#"
-        accept=".xls, .xlsx"
-        :multiple="false"
-        :auto-upload="false"
-        :limit="1"
-        :on-preview="handlePreview"
-        drag
-        :on-remove="handleRemove"
-        :on-change="handleFileChange"
-        ref="uploadRef"
-      >
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
+        :on-preview="handlePreview" drag :on-remove="handleRemove" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
         <div class="el-upload__text"><em>点击选取文件上传</em></div>
         <div class="el-upload__tip" slot="tip">
@@ -324,11 +225,11 @@ export default {
       listLoading: false,
       loadingText: false,
       leftFlag: false,
-      selectData: [],                    // 选中的数据 带到form页
+      selectData: [], // 选中的数据 带到form页
       initListQuery: {
         code: '',
         name: '',
-        safeInventoryWarnFlag:1,
+        safeInventoryWarnFlag: 1,
         orderItems: [
           {
             asc: false,
@@ -370,7 +271,7 @@ export default {
         'deputyUnit',
         'deputyAvailableQuantity',
         'deputyInventoryQuantity',
-        'deputyOccupancyQuantity',
+        'deputyOccupancyQuantity'
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -522,7 +423,7 @@ export default {
         //   pickerOptions: this.global.timePickerOptions
         // },
       ],
-      uploadVisib:false
+      uploadVisib: false
     }
   },
   created() {
@@ -575,7 +476,7 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     // 展开或折叠全部
@@ -593,6 +494,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
+
     // 获取指定树状列表
     getcategoryTree() {
       this.listLoading = true
@@ -663,42 +565,48 @@ export default {
       this.initData()
     },
 
-        // 生成采购订单 将选中的数据传递过去
+    // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle() {
       if (this.selectData.length === 0) {
         this.$message({
-          message: "请选择你要生成的采购订单",
-          type: "error",
-          duration: 1500,
+          message: '请选择你要生成的采购订单',
+          type: 'error',
+          duration: 1500
         })
       } else {
-
         let msg = true
         let tempList = JSON.parse(JSON.stringify(this.selectData))
         let hasItemList = []
         for (let i = 0; i < this.selectData.length; i++) {
-          let item = this.selectData[i];
+          let item = this.selectData[i]
 
-            if (item.orderedQuantity != null) {
-              if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
-                hasItemList.push(item.productName)
-                if (hasItemList.length) {
-                  this.$message.error(`已下单数量已大于或等于计划需求数的产品：${hasItemList.join('、')}`)
-                  msg = false
-                } else {
-                  msg = true
-                }
+          if (item.orderedQuantity != null) {
+            if (item.planDemandQuantity * 1 <= item.orderedQuantity * 1) {
+              hasItemList.push(item.productName)
+              if (hasItemList.length) {
+                this.$message.error(`已下单数量已大于或等于计划需求数的产品：${hasItemList.join('、')}`)
+                msg = false
+              } else {
+                msg = true
               }
             }
+          }
         }
         if (msg) {
           this.selectData.forEach((item, index) => {
             item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
             if (item.calculationDirection === 'multiplication') {
-
-              this.$set(this.selectData[index], 'purchaseQuantity2', this.jnpf.numberFormat(item.purchaseQuantity * item.ratio))
+              this.$set(
+                this.selectData[index],
+                'purchaseQuantity2',
+                this.jnpf.numberFormat(item.purchaseQuantity * item.ratio)
+              )
             } else {
-              this.$set(this.selectData[index], 'purchaseQuantity2', this.jnpf.numberFormat(item.purchaseQuantity / item.ratio))
+              this.$set(
+                this.selectData[index],
+                'purchaseQuantity2',
+                this.jnpf.numberFormat(item.purchaseQuantity / item.ratio)
+              )
             }
           })
           // var maxDate = null; // 最大日期初始值设为null
@@ -717,7 +625,6 @@ export default {
           })
         }
       }
-
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -733,7 +640,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     // 导入
     importForm() {
@@ -745,13 +652,13 @@ export default {
       }
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      console.log(file, fileList)
     },
     handlePreview(file) {
-      console.log(file);
+      console.log(file)
     },
     handleFileChange(file) {
-      console.log("所选文件:", file);
+      console.log('所选文件:', file)
       this.file = file.raw
     },
     // 下载模板
@@ -763,7 +670,7 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
-      console.log(data.file,'filr')
+      console.log(data.file, 'filr')
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -794,7 +701,7 @@ export default {
     },
     cancelFun() {
       this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles();
+      this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
       this.UploadProduct(this.file)

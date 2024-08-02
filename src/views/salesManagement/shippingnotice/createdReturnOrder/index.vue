@@ -322,7 +322,7 @@
             确定</el-button>
         </span>
       </el-dialog>
-      <!-- <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
         <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
@@ -331,10 +331,9 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
         </span>
-      </el-dialog> -->
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -353,7 +352,7 @@ import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 export default {
   data() {
     return {
-      // tipsvisible: false,
+      tipsvisible: false,
       submitmethodsTitle: "",
       btnText: "",
       productList: [],
@@ -1184,9 +1183,31 @@ export default {
       console.log(666);
     },
     goBack() {
-      this.$emit('close', true)
+      this.$router.push({
+        path: "/salesManagement/shippingnotice/returnSalesmemo",
+      })
     },
+    continueAdd() {
+      this.tipsvisible = false
+      this.dataFormTwo.productData = []
+      this.dataForm = {
+        exchangeGoodsFlag: false,
+        inspectionStatus: '',
+        returnDeliveryType: 'back',
+        notifyType: 'sale',
+        logisticsCompany: '',
+        ordersId: '',
+        deliverDate: '',
+        partnerName: '',
+        orderNo: '',
+        logisticsNumber: '',
 
+        cooperativePartnerId: '',
+        remark: ''
+      }
+      this.$refs.dataForm.resetFields();
+      this.init()
+    },
 
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
@@ -1301,35 +1322,9 @@ export default {
             } else if (value == 'submit') {
               msg = '提交成功'
             }
+            this.tipsvisible = true
 
 
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                // this.visible = false
-                this.btnLoading = false
-                this.dataFormTwo.productData = []
-                this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  inspectionStatus: '',
-                  returnDeliveryType: 'back',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  partnerName: '',
-                  orderNo: '',
-                  logisticsNumber: '',
-
-                  cooperativePartnerId: '',
-                  remark: ''
-                }
-                this.$refs.dataForm.resetFields();
-                this.init()
-              }
-            })
           }).catch(() => {
             this.btnLoading = false
           })

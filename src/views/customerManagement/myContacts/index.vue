@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.name" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -107,6 +107,7 @@ export default {
   },
   data() {
     return {
+      datalist:[],
       superQueryJson: [
         {
           prop: 'cooperativePartnerName',
@@ -234,6 +235,12 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
+  mounted() {
+    getAdvancedQueryList(this.currMenuId).then(row => {
+      this.datalist = row.data.list
+      this.switchStyle()
+    })
+  },
   methods: {
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -306,10 +313,6 @@ export default {
         this.visible = false
       }).catch(() => {
         this.listLoading = false
-      })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
       })
     },
     sortChange({ prop, order }) {

@@ -307,63 +307,63 @@ export default {
       }
       let componentList = deepClone(this.columnOptions)
       let demoFieldOptions = [
-        { // 下拉选
-          prop: 'type',
-          label: '示例：类型',
-          type: 'select',
-          options: [{ label: '类型1', value: '1' }, { label: '类型2', value: '2' }]
-        },
-        { // 日期选择器
-          prop: 'date',
-          label: '示例：日期',
-          type: 'date',
-          valueFormat: "yyyy-MM-dd",
-          pickerOptions: this.global.timePicker
-        },
-        { // 日期时间选择器
-          prop: 'datetime',
-          label: '示例：日期时间',
-          type: 'datetime',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          pickerOptions: this.global.timePicker
-        },
-        { // 日期选择器（区间）
-          prop: 'daterange',
-          label: '示例：日期区间',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        { // 日期时间选择器（区间）
-          prop: 'datetimerange',
-          label: '示例：日期时间区间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '开始时间',
-          endPlaceholder: '结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
-        { // 自定义选择器（选择仓库为例）
-          prop: 'warehouseName',
-          label: '示例：选择自定义数据-仓库',
-          type: 'custom',
-          component: 'ComSelect-list',
-          method: getWarehouseList,
-          events: { // 监听事件
-            change: (val, data, paramsObj) => {
-              let conditionItem = this.conditionList[paramsObj.superQueryConditionIndex]
-              conditionItem.value = data[0].name
-              conditionItem.shiftConditionItem = { warehouseId: data[0].id } // 搜索发起时，转换为此搜索条件
-            }
-          },
-          props: { // 继承到自定义组件上的属性
-            dialogTitle: '选择仓库',
-            method: getWarehouseList,
-            requestObj: { chooseUserFlag: true, type: 'normal' },
-          },
-        }
+        // { // 下拉选
+        //   prop: 'type',
+        //   label: '示例：类型',
+        //   type: 'select',
+        //   options: [{ label: '类型1', value: '1' }, { label: '类型2', value: '2' }]
+        // },
+        // { // 日期选择器
+        //   prop: 'date',
+        //   label: '示例：日期',
+        //   type: 'date',
+        //   valueFormat: "yyyy-MM-dd",
+        //   pickerOptions: this.global.timePicker
+        // },
+        // { // 日期时间选择器
+        //   prop: 'datetime',
+        //   label: '示例：日期时间',
+        //   type: 'datetime',
+        //   valueFormat: "yyyy-MM-dd HH:mm:ss",
+        //   pickerOptions: this.global.timePicker
+        // },
+        // { // 日期选择器（区间）
+        //   prop: 'daterange',
+        //   label: '示例：日期区间',
+        //   type: 'daterange',
+        //   valueFormat: "yyyy-MM-dd",
+        //   startPlaceholder: '开始日期',
+        //   endPlaceholder: '结束日期',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
+        // { // 日期时间选择器（区间）
+        //   prop: 'datetimerange',
+        //   label: '示例：日期时间区间',
+        //   type: 'datetimerange',
+        //   valueFormat: "yyyy-MM-dd HH:mm:ss",
+        //   startPlaceholder: '开始时间',
+        //   endPlaceholder: '结束时间',
+        //   pickerOptions: this.global.timePickerOptions
+        // },
+        // { // 自定义选择器（选择仓库为例）
+        //   prop: 'warehouseName',
+        //   label: '示例：选择自定义数据-仓库',
+        //   type: 'custom',
+        //   component: 'ComSelect-list',
+        //   method: getWarehouseList,
+        //   events: { // 监听事件
+        //     change: (val, data, paramsObj) => {
+        //       let conditionItem = this.conditionList[paramsObj.superQueryConditionIndex]
+        //       conditionItem.value = data[0].name
+        //       conditionItem.shiftConditionItem = { warehouseId: data[0].id } // 搜索发起时，转换为此搜索条件
+        //     }
+        //   },
+        //   props: { // 继承到自定义组件上的属性
+        //     dialogTitle: '选择仓库',
+        //     method: getWarehouseList,
+        //     requestObj: { chooseUserFlag: true, type: 'normal' },
+        //   },
+        // }
       ]
       this.fieldOptions = componentList.concat(demoFieldOptions)
       // 寄存属性

@@ -58,7 +58,7 @@ export function getfinAccountGoodsList(data) {
 
 export function getsalefinAccountList(data) {
   return request({
-    url: `/api/erp/sale/orders/notice/bill/page`,
+    url: `/api/wms/stock/move/bill/page`,
     method: 'post',
     data
   })

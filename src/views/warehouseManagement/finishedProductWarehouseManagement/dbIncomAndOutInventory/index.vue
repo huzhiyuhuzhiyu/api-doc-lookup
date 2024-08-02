@@ -162,7 +162,7 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist } from '@/api/salesManagement'
+import { getQuotationdatasendlist,getStockMovelist } from '@/api/salesManagement/index'
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
 import { Release } from '@/api/onlineDev/visualDev'
@@ -301,9 +301,15 @@ export default {
     this.$refs.treeBox.setCurrentKey(this.treeData[0].type) // 默认选中节点第一个
     // 进入页面  默认查询销售发货通知单数据
 
-    this.getTabdataList()
+    // this.getTabdataList()
+    this.getStockMovelistFun()
   },
   methods: {
+    getStockMovelistFun(){
+      getStockMovelist().then(res=>{
+        console.log("左侧分类数据",res);
+      })
+    },
     // 点击出库/入库按钮
     incomAndOutInventFun(data,btnType) {
       if (this.categoryType == 'delivery') {
@@ -578,5 +584,8 @@ export default {
 
 .JNPF-common-layout .JNPF-common-layout-left .JNPF-common-el-tree {
   height: 100%;
+}
+.JNPF-common-head {
+  padding: 10px;
 }
 </style>

@@ -2,7 +2,7 @@
   <div class="tableContainer" v-if="!refreshTable">
     <el-table :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
       :element-loading-text="$t('common.loadingText')" v-bind="$attrs" v-on="$listeners" :border="border"
-      :header-cell-style="headerCellStyle">
+      :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd">
       <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
         align="center" :selectable="checkSelectable" />
       <el-table-column align="center" label="拖动" width="60" v-if="hasMove">
@@ -129,9 +129,7 @@ export default {
   },
   mounted() {
     this.getColumns()
-    if (this.hasMove){
-      console.log(111);
-      
+    if (this.hasMove) {
       this.rowDrop(); //声明表格拖动排序方法
     }
   },
@@ -143,6 +141,10 @@ export default {
     if (this.refreshTable) this.refreshTable = false
   },
   methods: {
+    // 当列宽拖动结束时调用
+    handleHeaderDragEnd(val, oldVal, initiator, column) {
+      this.$nextTick(() => { this.doLayout()})
+    },
     setShowOverflowTooltip() {
       const children = this.$slots.default;
       if (children.length > 0) {
@@ -282,12 +284,12 @@ export default {
           this.data.forEach((item, index) => {
             let obj = {
               id: item.id,
-              sortCode: index, 
+              sortCode: index,
             }
             att.push(obj)
           });
           console.log(att);
-          this.$emit('changeMove',att)
+          this.$emit('changeMove', att)
           // updateSortBatch(att).then(res => {
           //   this.$message.success("批量修改排序成功")
           //   this.initData()

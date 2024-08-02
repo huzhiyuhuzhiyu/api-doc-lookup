@@ -343,12 +343,12 @@ export default {
       ProductTableSearchList: [
         { prop: 'code', label: '产品编码', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ],
       tableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'productDrawingNo', label: '品名规格' },
       ],
       listMethod: null,
       createdData: {},
@@ -738,7 +738,7 @@ export default {
         this.ProductTableSearchList = [
           { prop: 'code', label: '产品编码', type: 'input' },
           { prop: 'name', label: '产品名称', type: 'input' },
-          { prop: 'drawingNo', label: '品名规格', type: 'input' },
+          { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         ]
         this.tableItems = [
           { prop: 'code', label: '产品编码' },

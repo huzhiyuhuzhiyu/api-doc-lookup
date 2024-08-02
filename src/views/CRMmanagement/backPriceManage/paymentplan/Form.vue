@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑回访' : btntype == 'add' ? '新建回访' : '查看回访'" />
+        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑回款计划' : btntype == 'add' ? '新建回款计划' : '查看回款计划'" />
         <div class="options" v-if="btntype !== 'look'">
           <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
             提交</el-button>
@@ -17,51 +17,47 @@
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回访时间" prop="returnVisitTime">
-                        <el-date-picker v-model="dataForm.returnVisitTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择回访时间" :disabled="btntype == 'look' ? true : false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="回访人" prop="ownerUserId">
-                        <user-select v-model="dataForm.ownerUserId" placeholder="请选择回访人" clearable style="width: 100%" :disabled="btntype == 'look'">
+                      <el-form-item label="负责人" prop="ownerUserId">
+                        <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回访形式" prop="returnVisitForm">
-                        <el-select v-model="dataForm.returnVisitForm" placeholder="请选择回访形式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in returnVisitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户" prop="customerName">
+                      <el-form-item label="客户名称" prop="customerName">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="联系人" prop="contactsId">
-                        <el-select v-model="dataForm.contactsId" placeholder="请选择联系人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.customerName">
-                          <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
+                      <el-form-item label="合同编号" prop="contractNum">
+                        <ComSelect-page v-model="dataForm.contractNum" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="计划回款金额" prop="money">
+                        <el-input v-model="dataForm.money" placeholder="请输入计划回款金额" :disabled="btntype == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="计划回款日期" prop="returnDate">
+                        <el-date-picker v-model="dataForm.returnDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择计划回款日期" :disabled="btntype == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="前几天提醒" prop="remind">
+                        <el-input v-model="dataForm.remind" placeholder="请输入前几天提醒" :disabled="btntype == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="回款方式" prop="returnType">
+                        <el-select v-model="dataForm.returnType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                          <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="合同编号" prop="contractId">
-                        <el-input v-model="dataForm.contractId" placeholder="请输入合同编号" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户满意度" prop="customerSatisfaction">
-                        <el-select v-model="dataForm.customerSatisfaction" placeholder="请选择客户满意度" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in customerSatisfactionList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户反馈" prop="feedback">
-                        <el-input v-model="dataForm.feedback" placeholder="请输入客户反馈" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -79,13 +75,38 @@
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
-import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit } from '@/api/CRMmanagement/index'
+import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
-      customerSatisfactionList: [],
-      returnVisitFormList: [],
-      contactsIdList: [],
+      getcrmContractlist,
+      //合同列表字段
+      contractTableItems: [
+        { prop: 'no', label: '合同编号' },
+        { prop: 'contractName', label: '合同名称' },
+        { prop: 'customerName', label: '客户名称' },
+        { prop: 'businessName', label: '商机名称' },
+        { prop: 'money', label: '合同金额' },
+        { prop: 'orderTime', label: '下单日期' },
+      ],
+      //合同列表搜索
+      contractSearchList: [
+        { prop: 'contractName', label: '合同名称', type: 'input' },
+      ],
+      //合同请求条件
+      contractRequestObj: {
+        customerName: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+      returnTypeList: [],
       getcategoryTrees,
       // 客户搜索条件
       partnerSearchList: [
@@ -126,28 +147,34 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        returnVisitTime: '',
+        id: '',
         ownerUserId: '',
-        contactsName: '',
         ownerUserName: '',
-        feedback: '',
         customerName: '',
         customerId: '',
-        contractId: '',
-        contactsId: '',
-        customerSatisfaction: '',
-        returnVisitForm: ''
+        contractNum: '',
+        money: '',
+        returnDate: '',
+        remind: '',
+        returnType: '',
+        remark: ''
       },
       btntype: false,
       dataRule: {
-        returnVisitTime: [
-          { required: true, message: '请选择回访时间', trigger: 'blur' },
-        ],
         ownerUserId: [
-          { required: true, message: '请选择回访人', trigger: 'blur' },
+          { required: true, message: '请选择负责人', trigger: 'blur' },
+        ],
+        money: [
+          { required: true, message: '请输入计划回款金额', trigger: 'blur' },
+        ],
+        returnDate: [
+          { required: true, message: '请选择计划回款日期', trigger: 'blur' },
         ],
         customerName: [
           { required: true, message: '请选择客户', trigger: 'blur' },
+        ],
+        contractNum: [
+          { required: true, message: '请选择合同编号', trigger: 'blur' },
         ]
       },
     }
@@ -156,7 +183,19 @@ export default {
     this.getDictionaryType()
   },
   methods: {
-    // 获取客户满意度、回访形式数据
+    //负责人
+    hangleSelectSales(e, r) {
+      this.$nextTick(() => { this.$refs.dataForm.validateField("ownerUserId") });
+    },
+    //合同选框传值
+    contractChange(val, data) {
+      if (data && data.length) {
+        this.dataForm.contractNum = data[0].all.no
+      } else { // 不选择任何内容，置空绑定的值
+        this.dataForm.contractNum = ""
+      }
+    },
+    // 获取客户满意度、回款计划形式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -164,24 +203,14 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "Customersatisfaction") {
+              if (resp.enCode == "paymentMethod") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  this.customerSatisfactionList = response.data.list
-                })
-              }
-              if (resp.enCode == "Followupform") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.returnVisitFormList = response.data.list
+                  this.returnTypeList = response.data.list
                 })
               }
             })
@@ -201,17 +230,12 @@ export default {
       if (data && data.length) { // 数据有效，进行更新
         this.dataForm.customerName = data[0].all.name
         this.dataForm.customerId = data[0].all.id
-        this.dataForm.contactsId = ''
-        this.dataForm.contactsName = ''
-        getMyContactsList({
-          cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
-          pageSize: -1,
-        }).then(res => {
-          this.contactsIdList = res.data.records
-        })
+        this.dataForm.contractNum = ""
+        this.contractRequestObj.customerName = this.dataForm.customerName
       } else { // 不选择任何内容，置空绑定的值
         this.dataForm.customerId = ""
         this.dataForm.customerName = ""
+        this.dataForm.contractNum = ""
       }
     },
     goBack() {
@@ -227,13 +251,6 @@ export default {
         if (this.dataForm.id) {
           detailcrmReturnVisit(this.dataForm.id).then(res => {
             this.dataForm = res.data
-            getMyContactsList({
-              cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
-              pageSize: -1,
-            }).then(res => {
-              this.contactsIdList = res.data.records
-              this.formLoading = false
-            })
           })
         } else {
           this.formLoading = false

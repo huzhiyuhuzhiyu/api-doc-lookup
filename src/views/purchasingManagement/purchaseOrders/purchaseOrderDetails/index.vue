@@ -41,7 +41,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button :loading="btnLoading" size="mini" type="danger" @click="handleBatchStop()">批量停止</el-button>
+              <!-- <el-button :loading="btnLoading" size="mini" type="danger" @click="handleBatchStop()">批量停止</el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('detailTableData')">
                 导出
               </el-button>

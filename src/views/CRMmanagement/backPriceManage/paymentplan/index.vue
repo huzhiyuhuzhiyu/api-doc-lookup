@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.visitPlanName" placeholder="请输入拜访计划名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.customerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -46,25 +46,28 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="visitPlanName" label="拜访计划名称" min-width="160" />
-            <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
-            <el-table-column prop="customerName" label="客户名称" min-width="180" />
-            <el-table-column prop="contactsName" label="联系人" min-width="180" />
-            <el-table-column prop="businessName" label="商机名称" min-width="180" />
-            <el-table-column prop="visitGoal" label="拜访目的" min-width="180">
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="no" label="合同编号" min-width="160" />
+            <el-table-column prop="num" label="期数" min-width="100" />
+            <el-table-column prop="money" label="计划回款金额（元）" min-width="160" />
+            <el-table-column prop="returnDate" label="计划回款日期" min-width="160" />
+            <el-table-column prop="remind" label="提前几天提醒" min-width="110" />
+            <el-table-column prop="returnType" label="回款方式" min-width="140">
               <template slot-scope="scope">
-                {{visitGoalfaction(scope.row.visitGoal)}}
+                {{returnTypeVisitForm(scope.row.returnType)}}
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" min-width="180" />
-            <el-table-column prop="delayReason" label="延期原因" min-width="180" />
-            <el-table-column prop="delayRemark" label="延期备注" min-width="180" />
-            <el-table-column prop="cancelReason" label="取消原因" min-width="180" />
-            <el-table-column prop="cancelRemark" label="取消备注" min-width="180" />
-            <el-table-column prop="activityName" label="跟进记录内容" min-width="180" />
-            <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
-            <el-table-column prop="visitStatus" label="状态" min-width="180" />
+            <el-table-column prop="ownerUserName" label="负责人" min-width="120" />
+            <el-table-column prop="realReceivedMoney" label="实际回款金额（元）" min-width="160" />
+            <el-table-column prop="realReturnDate" label="实际回款时间" min-width="180" />
+            <el-table-column prop="unreceivedMoney" label="未回款金额" min-width="140" />
+            <el-table-column prop="receivedStatus" label="回款状态" min-width="120">
+              <template slot-scope="scope">
+                {{receivedStatusForm(scope.row.receivedStatus)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column label="操作" width="180" fixed="right">
@@ -114,84 +117,92 @@ export default {
   },
   data() {
     return {
-      visitGoalList:[],
-      datalist:[],
+      receivedStatusList: [
+        { fullName: '待回款', enCode: '1' },
+        { fullName: '逾期', enCode: '2' },
+        { fullName: '回款完成', enCode: '3' }
+      ],
+      datalist: [],
+      payList: [],
       superQueryJson: [
-        {
-          prop: 'visitPlanName',
-          label: "拜访计划名称",
-          type: 'input'
-        },
-        { // 日期时间选择器（区间）
-          prop: 'visitTime',
-          label: '预计拜访时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '回访开始时间',
-          endPlaceholder: '回访结束时间',
-          pickerOptions: {}
-        },
         {
           prop: 'customerName',
           label: "客户名称",
           type: 'input'
         },
         {
-          prop: 'contactsName',
-          label: "联系人",
+          prop: 'no',
+          label: "合同编号",
           type: 'input'
         },
         {
-          prop: 'businessName',
-          label: "商机名称",
+          prop: 'num',
+          label: "期数",
+          type: 'input'
+        },
+        {
+          prop: 'money',
+          label: "计划回款金额（元）",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'returnDate',
+          label: '计划回款日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '回款开始日期',
+          endPlaceholder: '回款结束日期',
+          pickerOptions: {}
+        },
+        {
+          prop: 'remind',
+          label: "提前几天提醒",
           type: 'input'
         },
         { // 下拉选
-          prop: 'visitGoal',
-          label: '拜访目的',
+          prop: 'returnType',
+          label: '回款方式',
           type: 'select',
           options: []
-        },
-        {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
-        },
-        {
-          prop: 'delayReason',
-          label: "延期原因",
-          type: 'input'
-        },
-        {
-          prop: 'delayRemark',
-          label: "延期备注",
-          type: 'input'
-        },
-        {
-          prop: 'cancelReason',
-          label: "取消原因",
-          type: 'input'
-        },
-        {
-          prop: 'cancelRemark',
-          label: "取消备注",
-          type: 'input'
-        },
-        {
-          prop: 'activityName',
-          label: "跟进记录内容",
-          type: 'input'
         },
         {
           prop: 'ownerUserName',
           label: "负责人",
           type: 'input'
         },
+        {
+          prop: 'realReceivedMoney',
+          label: "实际回款金额（元）",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'realReturnDate',
+          label: '实际回款时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '回款开始时间',
+          endPlaceholder: '回款结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'unreceivedMoney',
+          label: "未回款金额",
+          type: 'input'
+        },
         { // 下拉选
-          prop: 'visitStatus',
-          label: '状态',
+          prop: 'receivedStatus',
+          label: '回款状态',
           type: 'select',
-          options: []
+          options: [
+            { label: '待回款', value: '1' },
+            { label: '逾期', value: '2' },
+            { label: '回款完成', value: '3' }
+          ]
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -219,7 +230,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        returnVisitNo: '',
+        customerName: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -255,11 +266,15 @@ export default {
     })
   },
   methods: {
-    visitGoalfaction(val) {
-      let _data = this.visitGoalList.filter(item => item.enCode == val)[0]
+    receivedStatusForm(val) {
+      let _data = this.receivedStatusList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
     },
-    // 获取客户满意度、回访形式数据
+    returnTypeVisitForm(val) {
+      let _data = this.payList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    // 获取付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -267,16 +282,16 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "Purposeofvisit") {
+              if (resp.enCode == "paymentMethod") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  this.visitGoalList = response.data.list
+                  this.payList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'visitGoal') {
+                    if (item.prop == 'returnType') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -361,17 +376,6 @@ export default {
         this.listLoading = false
       })
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (['cooperativePartnerCode', 'cooperativePartnerName'].includes(prop)) { newProp = prop }
-      else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
-    },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false

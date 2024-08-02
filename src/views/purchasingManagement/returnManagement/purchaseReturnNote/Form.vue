@@ -3,13 +3,14 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <div class="pageTitle">新建销售退货通知单</div>
+        <el-page-header @back="goBack"
+          :content="btnType == 'add' ? '新建采购退货通知单' : btnType == 'edit' ? '编辑采购退货通知单' : btnType == 'copy' ? '新建采购退货通知单' : '查看采购退货通知单'" />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交</el-button>
-          <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
+          <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
@@ -331,7 +332,8 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
-          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
+          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -383,7 +385,7 @@ export default {
       },
       // orderList: [
       //   { label: "外协通知", value: "external" },
-      //   { label: "销售通知", value: "sale" },
+      //   { label: "采购通知", value: "sale" },
       // ],
       inspectionStatusList: [
         { label: "待检验", value: "unInspect" },
@@ -624,7 +626,6 @@ export default {
     this.getAttributeline()
   },
   mounted() {
-    this.init()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
@@ -657,7 +658,21 @@ export default {
         }
       };
     },
-
+    // 选完客户订单数据后 渲染在列表上
+    // submitAllProduct() {
+    //   this.allProVisible = false
+    //   console.log(" this.selectArr", this.selectArr);
+    //   this.selectArr.forEach(item => {
+    //     console.log('订单...', item);
+    //     this.dataFormTwo.productData = []
+    //     getOrderDetail(item.id).then(res => {
+    //       console.log('订单详情', res);
+    //       res.data.orderLines.map((item) => {
+    //         this.dataFormTwo.productData.push(item)
+    //       })
+    //     })
+    //   });
+    // },
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -668,8 +683,56 @@ export default {
       const time = y + '-' + m + '-' + d
       return time
     },
+    // handleChange($event) {
+    //   this.dataForm.country = ''
 
-
+    //   this.countryList = []
+    //   let obj = {
+    //     "keyword": "",
+    //     "orderItems": [
+    //       {
+    //         "asc": true,
+    //         "column": ""
+    //       }
+    //     ],
+    //     "pageNum": 1,
+    //     "pageSize": -1
+    //   }
+    //   getCounryData(obj).then(res => {
+    //     this.countryList = res.data.records
+    //   })
+    // },
+    // 根据选择的省份获取相应的城市数据
+    changeProvince(item, row) {
+      this.dataForm.city = ""
+      this.dataForm.area = ""
+      getProvinceList(item.id).then(res => {
+        // this.changeCity()
+        this.cities = res.data.list
+      })
+    },
+    // 根据选择的城市获取各区的数据
+    changeCity(item, row) {
+      if (row) {
+        row.area = ''
+      } else {
+        this.dataForm.area = ""
+      }
+      getProvinceList(item.id).then(res => {
+        this.areas = res.data.list
+      })
+    },
+    // 获取省份数据
+    getProvinceList() {
+      getProvinceList(this.nodeId, this.listQuery).then(res => {
+        this.provinces = res.data.list
+        this.init(id, parentId)
+      }).catch(() => {
+        this.listLoading = false
+        this.btnLoading = false
+        this.refreshTable = true
+      })
+    },
     // 产品列表选中 
     handeleProductInfoData(val) {
       this.selectRows = val
@@ -710,7 +773,10 @@ export default {
       }
 
     },
-
+    // 选完客户产品数据后 渲染在列表上
+    submitCustomerProduct() {
+      this.productVisible = false
+    },
 
     // 重置客户产品搜索条件
     resetcusProduct() {
@@ -978,7 +1044,7 @@ export default {
       })
     },
 
-    // 选完所属销售，带出所属部门
+    // 选完所属采购，带出所属部门
     hangleSelectSales(e, r) {
       this.dataForm.departmentId = r.parentId
       this.dataForm.departmentName = r.organize
@@ -1173,26 +1239,94 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.orderNo = data.number
-        this.$set(this.dataForm, 'orderNo', data.number)
-        console.log("dataForm", this.dataForm);
+        this.$set(this.dataForm,'orderNo',data.number)
+        console.log("dataForm",this.dataForm);
       } catch (error) {
       }
     },
-    init() {
-      this.fetchData("SRDH")
-      console.log(666);
+    init(id, btnType) {
+      console.log("id",id,btnType);
+      this.dataForm.id = id || ''
+      
+      this.btnType = btnType
+      if (this.dataForm.id) {
+        getQuotationsendlist(this.dataForm.id).then(res => {
+          this.dataForm = res.data.notice
+          if (res.data.attachmentList) {
+            res.data.attachmentList.forEach((item) => {
+              this.datafilelist.push(
+                {
+                  name: item.document.fullName,
+                  fileSize: item.document.fileSize,
+                  filename: item.document.filePath,
+                  id: item.document.id,
+                  url: item.url
+                }
+              )
+            })
+          }
+          if (this.btnType == 'copy') {
+            this.dataForm.inspectionStatus = ''
+            this.dataForm.id = ''
+            this.dataForm.deliverDate = ''
+            this.datafilelist = []
+            this.dataForm.approvalStatus = ''
+            this.dataForm.packingStatus = 'unboxed'
+            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
+            //   res1.data.orderLines.map((item) => {
+            //     res.data.noticeLineList.map((item1) => {
+            //       if (item.productsId == item1.productId) {
+            //         item1.outboundQuantity = item.outboundQuantity
+            //         item1.returnQuantity = item.returnQuantity
+            //         item1.deliveryQuantity = ''
+
+            //       }
+            //     })
+            //   })
+             
+            // })
+            res.data.noticeLineList.forEach(item => {
+              item.deliveryQuantity = ''
+            });
+             this.dataFormTwo.productData = res.data.noticeLineList
+          } else if (this.btnType == 'edit') {
+            this.dataFormTwo.productData = res.data.noticeLineList
+          } else {
+            this.dataFormTwo.productData = res.data.noticeLineList
+          }
+        })
+      }
+      if (btnType == 'add' || btnType == 'copy') {
+        console.log(55555);
+        this.formLoading=true
+        setTimeout(() => {
+          this.formLoading=false
+          this.fetchData("SRDH")
+          
+        }, 500);
+      }
+      if (this.btnType == 'edit') {
+        this.btnText = "继续修改"
+      } else if (this.btnType == 'add' || this.btnType == 'copy') {
+        this.btnText = "继续新增"
+      }
     },
     goBack() {
-      this.$router.push({
-        path: "/salesManagement/shippingnotice/returnSalesmemo",
-      })
+      this.$emit('close', true)
     },
-    continueAdd() {
+    // 继续修改
+    continueEdit() {
+      this.init(this.oldId, this.oldType)
       this.tipsvisible = false
+      this.btnLoading = false
+    },
+    // 继续新增
+    continueAdd() {
       this.dataFormTwo.productData = []
       this.dataForm = {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
+        // orderCategory: "assembly",
         returnDeliveryType: 'back',
         notifyType: 'sale',
         logisticsCompany: '',
@@ -1201,14 +1335,22 @@ export default {
         partnerName: '',
         orderNo: '',
         logisticsNumber: '',
-
+        //   phone: '',
+        //   country: '',
+        //   province: '',
+        //   city: '',
+        //   area: '',
+        //   address: '',
+        //   delivery: '',
+        //   shipperId: '',
         cooperativePartnerId: '',
         remark: ''
       }
       this.$refs.dataForm.resetFields();
-      this.init()
+      this.init('', 'add')
+      this.tipsvisible = false
+      this.btnLoading = false
     },
-
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
         if (!valid) {
@@ -1313,18 +1455,37 @@ export default {
           })
           this.btnLoading = true
           let formMethod = null;
-
-          obj.notice.deliveryStatus = 'not_returned'
-          addQuotationsendlist(obj).then(res => {
-            let msg = "";
+          if (this.btnType == 'edit') {
+            formMethod = editQuotationMsendlist
+          } else if (this.btnType == 'add' || this.btnType == 'copy') {
+            obj.notice.deliveryStatus = 'not_returned'
+            formMethod = addQuotationsendlist
+          }
+          formMethod(obj).then(res => {
+            // let msg = "";
+            // if (formMethod == addQuotationsendlist) {
+            //   msg = "新建成功"
+            // } else if (value == 'draft') {
+            //   msg = "保存成功"
+            // } else if (value == 'submit') {
+            //   msg = '提交成功'
+            // }
             if (value == 'draft') {
-              msg = "保存成功"
+              this.submitmethodsTitle = "保存成功"
             } else if (value == 'submit') {
-              msg = '提交成功'
+              this.submitmethodsTitle = "提交成功"
             }
             this.tipsvisible = true
-
-
+            // this.$message({
+            //   message: msg,
+            //   type: 'success',
+            //   duration: 1500,
+            //   onClose: () => {
+            //     this.visible = false
+            //     this.btnLoading = false
+            //     this.$emit('close', true)
+            //   }
+            // })
           }).catch(() => {
             this.btnLoading = false
           })
@@ -1504,19 +1665,5 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
-}
-
-.options {
-  display: inline-block;
-  float: right;
-}
-
-.pageTitle {
-  display: inline-block;
-  font-size: 18px;
-  color: #303133;
-  height: 100%;
-  line-height: 36px;
-  font-weight: 700;
 }
 </style>

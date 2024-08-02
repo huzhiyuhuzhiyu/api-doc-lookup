@@ -236,7 +236,7 @@ export default {
         },
         {
           prop: 'reconciliationDate',
-          label: '订单日期',
+          label: '对账日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
@@ -317,7 +317,7 @@ export default {
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },

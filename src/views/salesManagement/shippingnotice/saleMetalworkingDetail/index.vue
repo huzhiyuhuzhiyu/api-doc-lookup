@@ -289,7 +289,7 @@ export default {
     },
     //禁用复选框
     checkSelectable(row) {
-      if (row.deliveryStatus !== 'undelivered' || row.documentStatus == 'draft') return false
+      if (row.deliveryStatus !== 'not_finished' || row.documentStatus == 'draft') return false
       return true
     },
     // 选中得数据

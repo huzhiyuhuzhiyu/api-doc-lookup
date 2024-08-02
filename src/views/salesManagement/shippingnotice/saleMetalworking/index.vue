@@ -194,7 +194,7 @@ export default {
   data() {
     return {
       superQueryVisible:false,
-      columnList: ["partnerName", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
+      columnList: ["partnerCode", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       rdeDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -399,8 +399,14 @@ export default {
     },
     //禁用复选框
     checkSelectable(row) {
-      if (row.deliveryStatus !== 'undelivered' || row.documentStatus == 'draft') return false
-      return true
+      if (row.deliveryStatus !== 'not_finished' || row.documentStatus == 'draft') {
+        console.log(222);
+        return false
+      }else{
+        console.log(333);
+        return true
+
+      }
     },
     // 选中得数据
     handleSelectionChange(val) {

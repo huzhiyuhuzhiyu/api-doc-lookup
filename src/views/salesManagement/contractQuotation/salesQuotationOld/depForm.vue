@@ -625,7 +625,6 @@ export default {
       codeConfig: {},
       selectName: [],
       partnerInfo: {},
-      totalAmount:0,
     }
   },
   watch: {
@@ -645,7 +644,13 @@ export default {
       }
       return totalNum
     },
-    
+    totalAmount: function () {
+      var totalAmount = 0;
+      for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
+        totalAmount = this.jnpf.math('add', [totalAmount, this.dataFormTwo.lines[i].amounts])
+      }
+      return totalAmount
+    },
     ...mapGetters(['userInfo']),
     ...mapState('user', ['token']),
   },
@@ -1186,8 +1191,7 @@ export default {
       this.totalAmount=totalPrice
 
       if( this.dataFormTwo.lines.length==1&&(!row.num||!row.unitPrice)){
-        console.log("进来了");
-        this.totalAmount=0
+        console.log("进来了"); 
       }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
@@ -1272,7 +1276,6 @@ export default {
         console.log("item",item.amounts);
         totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
       }
-      this.totalAmount=totalPrice
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
         row.excludingTaxAmounts = c ? c : ''

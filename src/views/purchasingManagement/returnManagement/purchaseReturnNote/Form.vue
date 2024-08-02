@@ -28,7 +28,7 @@
                         </el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="退货标识" prop="exchangeGoodsFlag">
                         <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
                           :disabled="btnType == 'look' ? true : false">
@@ -36,15 +36,20 @@
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="客户名称" prop="partnerName">
-                        <el-input v-model="dataForm.partnerName" placeholder="请选择客户" readonly @focus="openDialog"
+                      <el-form-item label="供应商名称" prop="partnerName">
+                        <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'">
                         </el-input>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="操作人" prop="salesman">
+                        <el-input v-model="dataForm.salesman" placeholder="请选择操作人" :disabled="btnType == 'look'">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="退货日期" prop="deliverDate">
                         <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择退货日期" type="date"
@@ -175,14 +180,14 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
+      <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
         append-to-body @close="handleClose">
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-left">
             <div class="JNPF-common-title">
-              <h2>客户分类</h2>
+              <h2>供应商分类</h2>
               <span class="options">
                 <el-dropdown>
                   <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
@@ -350,6 +355,7 @@ import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
+import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -381,6 +387,7 @@ export default {
           asc: false,
           column: "t1.create_time"
         }],
+        receivingStatus: 'receiving'
 
       },
       // orderList: [
@@ -515,7 +522,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: "",
-        type: "customer",
+        type: "supplier",
       },
       defaultProps: {
         children: 'childrenList',
@@ -819,7 +826,7 @@ export default {
         this.orderForm.deliveryEndTime = ""
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      getsaleOrderDetailList(this.orderForm).then(res => {
+      detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("产品", res);
         this.productList = res.data.records
         this.productTotal = res.data.total
@@ -856,7 +863,7 @@ export default {
     },
     // 点击选择产品
     openSeleceProductDialog() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择供应商")
       this.productVisible = true
       this.searchProductFun()
     },
@@ -1057,7 +1064,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: "",
-        type: "customer",
+        type: "supplier",
       }
       this.initData()
     },
@@ -1143,7 +1150,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: "",
-        type: "customer",
+        type: "supplier",
       }
       this.getcategoryTree()
     },
@@ -1214,7 +1221,7 @@ export default {
       this.treeLoading = true
       let listQuery = {
         keyword: '',
-        type: "customer"
+        type: "supplier"
       };
       getcategoryTrees(listQuery).then(res => {
         this.treeData = res.data

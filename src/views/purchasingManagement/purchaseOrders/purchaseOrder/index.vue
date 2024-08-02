@@ -2,93 +2,95 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
+        <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-form @submit.native.prevent>
 
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                      @keyup.enter.native="search()" />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                      $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-                <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
+                  $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+            <!-- <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
                   icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button> -->
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <div class="JNPF-common-head">
-                <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
-                <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
-                <div class="JNPF-common-head-right">
-                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
-                  </el-tooltip>
-                </div>
-              </div>
-              <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
-                highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-                custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
+            <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
+            <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
+          <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
+            highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
+            custom-column :checkSelectable="checkSelectable"  :setColumnDisplayList="columnList">
 
-                <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
-                  <template slot-scope="scope">
-                    <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                      scope.row.orderNo
-                    }}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-                <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
+            <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
+                  scope.row.orderNo
+                }}</el-link>
+              </template>
+            </el-table-column>
+            <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
+            <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
 
-                <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
+            <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
                 <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
                   sortable="custom" /> -->
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
-                <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
-                <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
-                <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
-                  <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'||scope.row.receivingStatus == 'returning'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'||scope.row.receivingStatus == 'returned'"><el-tag type="success">已完成</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="remark" min-width="140" label="备注" />
-                <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-                <el-table-column prop="createByName" label="创建人" />
-                <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
+            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
+            <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
+                  <el-tag>未完成</el-tag> </div>
+                <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'"><el-tag
+                    type="success">已完成</el-tag></div>
+                <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="remark" min-width="140" label="备注" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" />
+            <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
                   fixed="right">
                   <template slot-scope="scope">
                     <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
                     <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
                   </template>
                 </el-table-column> -->
-                <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
+            <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
                   fixed="right">
                   <template slot-scope="scope">
                     <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
@@ -98,43 +100,43 @@
                         type="warning">审批撤回</el-tag></div>
                   </template>
                 </el-table-column> -->
-                <el-table-column label="操作" min-width="90" fixed="right">
-                  <template slot-scope="scope">
-                    <el-dropdown hide-on-click>
-                      <span class="el-dropdown-link">
-                        <el-button type="text" size="mini">
-                          {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                        </el-button>
-                      </span>
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item
-                          v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                          @click.native="withdrawnAddHandle(scope.row.id, 'add')">
-                          重新提交
-                        </el-dropdown-item>
-                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                          @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                          审批撤回
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                          查看详情
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="download(scope.row.id)">
-                          下载订货单
-                        </el-dropdown-item>
-                        <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                          打印订货单
-                        </el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                  </template>
-                </el-table-column>
+            <el-table-column label="操作" min-width="90" fixed="right">
+              <template slot-scope="scope">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      @click.native="withdrawnAddHandle(scope.row.id, 'add')">
+                      重新提交
+                    </el-dropdown-item>
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                      审批撤回
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="download(scope.row.id)">
+                      下载订货单
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
+                      打印订货单
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
 
-              </JNPF-table>
-              <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-                :limit.sync="listQuery.pageSize" @pagination="initData" />
-            </div>
-          </div>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
+            :limit.sync="listQuery.pageSize" @pagination="initData" />
+        </div>
+      </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
@@ -145,7 +147,8 @@
 
           <el-col :span="12">
             <el-form-item label="采购单号">
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
@@ -171,7 +174,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="订单状态">
-              <el-select v-model="listQuery.receivingStatus" placeholder="订单状态"  style="width: 100%;" clearable>
+              <el-select v-model="listQuery.receivingStatus" placeholder="订单状态" style="width: 100%;" clearable>
                 <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -245,7 +248,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="订单状态">
-              <el-select v-model="listsQuery.receivingStatus" placeholder="订单状态"  style="width: 100%;">
+              <el-select v-model="listsQuery.receivingStatus" placeholder="订单状态" style="width: 100%;">
                 <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -280,10 +283,10 @@
       </span>
     </el-dialog>
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-    <PrintForm  ref="PrintForm" :value="printData" :dataValue="printForm"   :pages="pages"/>
+    <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
   </div>
 </template>
-  
+
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { purchaseOrderList, detailpurchaseOrderList, purPurchaseOrderExport, purPurchaseOrderdetail, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
@@ -346,7 +349,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        receivingStatus:'receiving',
+        receivingStatus: 'receiving',
       },
       // 明细参数
       listsQuery: {
@@ -370,7 +373,7 @@ export default {
         startTime: "",
         productCode: "",
         productName: "",
-        receivingStatus:'receiving',
+        receivingStatus: 'receiving',
       },
       total: 0,
       formVisible: false,
@@ -408,9 +411,9 @@ export default {
         }]
       },
       selectData: [],
-      pages:0,      // 总页数
-      printData:[], // 表格数据
-      printForm:{}, // 表单数据
+      pages: 0,      // 总页数
+      printData: [], // 表格数据
+      printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [
         { label: "未完成", value: "receiving" },
@@ -781,9 +784,9 @@ export default {
         //   this.printData = this.printData.concat(this.printData); 
         // }
         // console.log(Math.ceil(this.printData.length/20));
-        this.pages = Math.ceil(this.printData.length/20)
-        console.log(this.printPageDataFn(this.printData,20));
-        this.printData = this.printPageDataFn(this.printData,20)
+        this.pages = Math.ceil(this.printData.length / 20)
+        console.log(this.printPageDataFn(this.printData, 20));
+        this.printData = this.printPageDataFn(this.printData, 20)
         this.$nextTick(() => {
           console.log(this.$refs.PrintForm);
           console.log(this.$refs.PrintForm.$el);
@@ -813,65 +816,65 @@ export default {
       })
     },
     // 处理分页
-    printPageDataFn(data, pageSize = 20){
-    const printTable = []
-    if (data && data.length > 0) {
+    printPageDataFn(data, pageSize = 20) {
+      const printTable = []
+      if (data && data.length > 0) {
         let remainderLength = Math.floor(data.length / pageSize) * pageSize
         let pagedata = []
         let pageNum = 0
-        for (let i = 0; i < data.length; i ++) {
-            if (pageNum < pageSize) {
-                pagedata.push(data[i])
-            }
-            pageNum ++
-            if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
-                printTable.push({
-                  total:pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount*1, 0),
-                  UpperMoney:this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount*1, 0).toFixed(2)),
-                  pagedata:pagedata
-                })
-                pagedata = []
-                pageNum = 0
-            }
+        for (let i = 0; i < data.length; i++) {
+          if (pageNum < pageSize) {
+            pagedata.push(data[i])
+          }
+          pageNum++
+          if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
+            printTable.push({
+              total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0),
+              UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)),
+              pagedata: pagedata
+            })
+            pagedata = []
+            pageNum = 0
+          }
         }
         if (pageSize > data.length && pagedata && pagedata.length > 0) {
-            printTable.push({
-              total:pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount, 0),
-              UpperMoney:this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount*1, 0).toFixed(2)),
-              pagedata:pagedata
-            })
+          printTable.push({
+            total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount, 0),
+            UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)),
+            pagedata: pagedata
+          })
         }
-    }
-    return printTable
+      }
+      return printTable
     },
     // 处理金额
     digitUppercase(n) {
-        var fraction = ['角', '分'];
-        var digit = [
-          '零', '壹', '贰', '叁', '肆',
-          '伍', '陆', '柒', '捌', '玖'
-        ];
-        var unit = [
-          ['元', '万', '亿'],
-          ['', '拾', '佰', '仟']
-        ];
-        var head = n < 0 ? '欠' : '';
-        n = Math.abs(n);
-        var s = '';
-        for (var i = 0; i < fraction.length; i++) {
-          s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+      var fraction = ['角', '分'];
+      var digit = [
+        '零', '壹', '贰', '叁', '肆',
+        '伍', '陆', '柒', '捌', '玖'
+      ];
+      var unit = [
+        ['元', '万', '亿'],
+        ['', '拾', '佰', '仟']
+      ];
+      var head = n < 0 ? '欠' : '';
+      n = Math.abs(n);
+      var s = '';
+      for (var i = 0; i < fraction.length; i++) {
+        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+      }
+      s = s || '整';
+      n = Math.floor(n);
+      for (var i = 0; i < unit[0].length && n > 0; i++) {
+        var p = '';
+        for (var j = 0; j < unit[1].length && n > 0; j++) {
+          p = digit[n % 10] + unit[1][j] + p;
+          n = Math.floor(n / 10);
         }
-        s = s || '整';
-        n = Math.floor(n);
-        for (var i = 0; i < unit[0].length && n > 0; i++) {
-          var p = '';
-          for (var j = 0; j < unit[1].length && n > 0; j++) {
-            p = digit[n % 10] + unit[1][j] + p;
-            n = Math.floor(n / 10);
-          }
-          s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
-        }
-        return head + s.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零').replace(/^整$/, '零元整');
+        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+      }
+      return head + s.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零').replace(/^整$/, '零元整');
     },
 
 

@@ -710,9 +710,9 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.search()
     },
-    confirm() {
+    async confirm() {
       this.btnLoading = true
-      setTimeout(async () => {
+      // setTimeout(async () => {
         let selectedData = []
         for (let i = 0; i < this.selectedIds.length; i++) {
           let item = []
@@ -753,12 +753,11 @@ export default {
           this.$emit('input', this.selectedIds[0])
           this.$emit('change', this.selectedIds[0], selectedData[0], this.paramsObj)
         }
-
         this.innerValue = this.selectedData[0]
         this.$nextTick(() => { this.btnLoading = false })
         this.visible = false
         this.$nextTick(() => { this.handleResize() });
-      }, 100)
+      // }, 100)
     },
     setDefault() {
       let getFunction = (e, property) => {

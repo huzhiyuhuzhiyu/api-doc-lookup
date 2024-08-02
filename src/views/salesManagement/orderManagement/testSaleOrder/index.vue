@@ -71,7 +71,7 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'copy')">
                       复制订单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -115,7 +115,14 @@ export default {
         visualId: "",
         condList: [],
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
       },
       listQuery: {},
       customQuery:{
@@ -146,6 +153,9 @@ export default {
     ...mapState('user', ['token']),
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     superQuerySearch(query) {
       this.superQuery = query
       this.superQueryVisible = false
@@ -155,9 +165,8 @@ export default {
       this.visible = true
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.listQuery.orderItems[0].column = order === null ? "" : prop
       this.initData()
     },
     // 关闭新建、编辑页面
@@ -175,11 +184,9 @@ export default {
       let queryString = this.jnpf.getQueryString()
       detailVisualDevInfo(queryString).then(res => {
         this.columnData = JSON.parse(res.data.columnData)
-        console.log(this.columnData);
         this.initListQuery.visualId = res.data.id
         this.initListQuery.pageSize = this.columnData.pageSize
         this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-        console.log(this.listQuery);
         this.searchList = this.columnData.searchList.map(item=>{
           return {
             ...item,
@@ -217,13 +224,10 @@ export default {
     },
     initData() {
       this.listLoading = true
-      console.log(this.listQuery, 'list');
-
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      // this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
       getDocData(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -236,7 +240,6 @@ export default {
     search(type) {
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
       if (type === 'basic'){
-        console.log(this.searchList);
         this.basicQuery = {
           matchLogic:'AND',
           condition: this.searchList.filter(item => item.fieldValue).map(item=>{

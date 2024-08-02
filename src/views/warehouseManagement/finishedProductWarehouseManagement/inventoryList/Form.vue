@@ -130,7 +130,7 @@
                         <span class="required">*</span>批次号
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.batchNumber" readonly
+                        <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'" 
                           @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
                           {{ scope.row.batchNumber }}
                         </el-input>
@@ -170,7 +170,7 @@
                     <el-table-column prop="originalBatchNumber" label="原产品批次号" width="140" :key="1255"
                       v-if="dataForm.businessType == 'inbound_sale_return'">
                       <template slot-scope="scope">
-                        <el-input :disabled="btnType == look" v-model="scope.row.originalBatchNumber"
+                        <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
                           placeholder="原产品批次号"></el-input>
                       </template>
                     </el-table-column>
@@ -194,7 +194,7 @@
                       </template>
                     </el-table-column> -->
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
-                    <el-table-column label="操作" width="100" v-if="productData.length&&btnType!='look'">
+                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                       <template slot-scope="scope">
                         <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
                       </template>
@@ -520,7 +520,7 @@ export default {
     // },
     // 产品信息列表复制功能
     copyFun(row, index) {
-      let data=JSON.parse(JSON.stringify(row))
+      let data = JSON.parse(JSON.stringify(row))
       this.productData.splice(index + 1, 0, data);
 
     },
@@ -605,20 +605,23 @@ export default {
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       arr.forEach(item => {
+        item.ordersNum = JSON.parse(JSON.stringify(item.num))
         item.costPrice = item.price
         if (this.dataForm.businessType == 'outbound_sale_send') {
           item.num = item.undeliveredQuantity
         }
         if (this.dataForm.businessType == 'inbound_sale_return') {
 
-          item.num = ""
           item.totalAmount = ""
-        item.ordersNum = JSON.parse(JSON.stringify(item.num))
+          item.num = ""
 
         }
         item.classAttribute = "finish_product"
         item.ordersId = item.ordersId
         item.ordersLineId = item.id
+        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+        console.log(" item.excludingTaxCostPrice", item.excludingTaxCostPrice, item.ordersNum);
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
         this.productData.push(item)
@@ -869,7 +872,7 @@ export default {
           } else {
             this.customerInfo = {}
           }
-          this.productData = res.data.lines
+          this.productData = res.data.spaceLines
           this.spaceLines = res.data.spaceLines
 
           this.formLoading = false
@@ -976,9 +979,9 @@ export default {
           if (!totalNum[item.ordersLineId]) {
             totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
           }
-          totals[item.ordersLineId].totalNum +=Number(item.num)
-          totalNum[item.ordersLineId].totalNum +=  Number(item.num);
-        } 
+          totals[item.ordersLineId].totalNum += Number(item.num)
+          totalNum[item.ordersLineId].totalNum += Number(item.num);
+        }
         for (let id in totals) {
           if (totals[id].totalNum > totals[id].ordersNum) {
             console.log(`同产品 ${id} 的总数量不能超过订单数量`);

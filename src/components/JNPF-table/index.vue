@@ -10,7 +10,7 @@
           <i class="drag-handler icon-ym icon-ym-darg" style="cursor: move;font-size:20px" disabled title='点击拖动' />
         </template>
       </el-table-column>
-      <el-table-column prop="index" type="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO" align="center" />
+      <el-table-column prop="index" type="index" width="60" label="序号" v-if="hasNO" :fixed="fixedNO" align="center"  :key="Math.random()"/>
       <jnpf-table-column :columns="columns" :columnList="columnList" v-if="customColumn" />
       <template v-else>
         <slot />

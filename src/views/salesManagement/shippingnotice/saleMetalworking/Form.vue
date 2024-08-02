@@ -447,8 +447,8 @@ export default {
         { label: "已检验", value: "inspected" },
       ],
       deliveryStatusList: [
-        { label: "未完成", value: "undelivered" },
-        { label: "已完成", value: "delivered" },
+        { label: "未完成", value: "not_finished" },
+        { label: "已完成", value: "finished" },
         { label: "已取消", value: "canceled" }
       ],
       documentStatusList: [

@@ -336,7 +336,7 @@ export default {
         [
           { prop: 'code', label: '产品编码', type: 'input' },
           { prop: 'name', label: '产品名称', type: 'input' },
-          { prop: 'drawingNo', label: '品名规格', type: 'input' },
+          { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         ]
     },
     moreSearchList: {
@@ -344,7 +344,7 @@ export default {
       default:()=> [
         { prop: 'code', label: '产品编码', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
       ]
       /* [
           {prop:'code',label:'编码',type:'input'},

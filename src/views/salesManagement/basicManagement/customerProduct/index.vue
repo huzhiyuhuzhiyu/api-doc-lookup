@@ -67,7 +67,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="price" min-width="120" label="销售单价(含税)" />
+                <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
@@ -145,7 +145,7 @@
                 <el-table-column prop="drawingNo" label="品名规格" min-width="400" />
                 <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="price" min-width="120" label="销售单价(含税)" />
+                <el-table-column prop="price" min-width="140" label="销售单价(含税)" />
 
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />

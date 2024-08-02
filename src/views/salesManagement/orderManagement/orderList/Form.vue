@@ -155,10 +155,14 @@
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
-                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button>|
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button><text
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">|</text>
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>
@@ -1003,7 +1007,6 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      attributeLines: [],
       productData: [],
       codeInfo: "",
 
@@ -1206,7 +1209,6 @@ export default {
     }
   },
   created() {
-    this.getAttributeline()
     // this.getProvinceList() 
   },
   mounted() {
@@ -1612,11 +1614,11 @@ export default {
           this.uploadVisib = false
         } else {
           this.handleMessage(res.data)
-      this.$refs['uploadRef'].clearFiles();
+          this.$refs['uploadRef'].clearFiles();
         }
         // this.tipsvisible=true
 
-      this.$refs['uploadRef'].clearFiles();
+        this.$refs['uploadRef'].clearFiles();
       }).catch(err => {
         this.$message.error(`文件上传失败`)
         this.formLoading = false
@@ -1752,7 +1754,7 @@ export default {
 
       }
     },
-  
+
     // 含税价格输入失去焦点 检验不能为  0
     checkPrice(row, index) {
       if (!row.price) {
@@ -1901,7 +1903,7 @@ export default {
       console.log("productArr", productArr);
       this.productData = productArr
     },
-  
+
 
 
     // 产品列表选中 
@@ -1938,8 +1940,11 @@ export default {
     // 选完客户产品数据后 渲染在列表上
     submitCustomerProduct(val, data, paramsObj) {
       this.productVisible = false
-      data.forEach(i => {
-        const item = i.all
+      let arr = []
+      let allArray = data.map(item => item.all);
+      console.log("all", allArray);
+      allArray.forEach(item => {
+
 
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + (Number(item.taxRate)) / 100), 6)
@@ -1950,83 +1955,89 @@ export default {
         if (this.btnType == 'edit') {
           item.id = ""
         }
-        this.productData.push(item)
       });
+      if (this.productData.length) {
+        let index = this.productData.findIndex(item =>
+          item.drawingNo === "" &&
+          item.productsId === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.deliveryDate === ""
+        )
+        if (index !== -1) {
+          // 使用 splice 插入 newDataArray
+          this.productData.splice(index, 0, ...allArray);
+        }
+      }
     },
 
 
-    // 选中客户产品
-    handleSelectionChange(val) {
-      console.log(3563456, val);
-      this.selectArr = val
-      this.$forceUpdate()
-    },
 
+    openSeleceCustomerProductDialog() {
+      if (this.dataForm.cooperativePartnerId) {
+
+        // this.productVisible = true
+        // this.getcooperativeProduct()
+        this.$refs["comSelect-page"].openDialog()
+      } else {
+        this.$message({
+          message: "请先选择客户",
+          type: 'error',
+          duration: 1500,
+        })
+      }
+    },
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
-      if (this.dataForm.orderType == 'normal' || this.dataForm.orderType == 'urgent') {
-        if (this.dataForm.cooperativePartnerId) {
 
-          // this.productVisible = true
-          // this.getcooperativeProduct()
-          this.$refs["comSelect-page"].openDialog()
-        } else {
-          this.$message({
-            message: "请先选择客户",
-            type: 'error',
-            duration: 1500,
-          })
-        }
-      } else {
-        this.allProVisible = true
-        let arr = [];
-        this.ProductListRequestObj = {
-          classAttributeList: [],
-          classAttribute: "",
-          productDrawingNo: "",
-          queryType: 2,
-          productStatus: 'enable',
+      this.allProVisible = true
+      let arr = [];
+      this.ProductListRequestObj = {
+        classAttributeList: [],
+        classAttribute: "",
+        productDrawingNo: "",
+        queryType: 2,
+        productStatus: 'enable',
 
-          productCategoryId: "",
-          code: "",
-          name: "",
-          orderItems: [{
-            "asc": false,
-            "column": ""
-          }, {
-            "asc": false,
-            "column": "create_time"
-          }],
-          pageNum: 1,
-          pageSize: 20,
-        }
-        this.allproductData = []
-        let successTotal = 0;
-        let tempTreeData = [...this.ProductMethodArr]
-        this.ProductMethodArr.forEach((item, index) => {
-          item.method(item.requeseObj).then(res => {
-            if (Array.isArray(res.data)) {
-              tempTreeData[index] = {
-                id: item.label,
-                name: item.label,
-                classAttribute: item.classAttribute,
-                childrenList: res.data
-              }
-            } else {
-              tempTreeData[index] = {
-                id: item.label,
-                name: item.label,
-                classAttribute: item.classAttribute,
-                childrenList: res.data.records
-              }
-            }
-            if ((++successTotal) === this.ProductMethodArr.length) {
-              this.ProductTreeData = tempTreeData
-              this.initData2()
-            }
-          })
-        });
+        productCategoryId: "",
+        code: "",
+        name: "",
+        orderItems: [{
+          "asc": false,
+          "column": ""
+        }, {
+          "asc": false,
+          "column": "create_time"
+        }],
+        pageNum: 1,
+        pageSize: 20,
       }
+      this.allproductData = []
+      let successTotal = 0;
+      let tempTreeData = [...this.ProductMethodArr]
+      this.ProductMethodArr.forEach((item, index) => {
+        item.method(item.requeseObj).then(res => {
+          if (Array.isArray(res.data)) {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data
+            }
+          } else {
+            tempTreeData[index] = {
+              id: item.label,
+              name: item.label,
+              classAttribute: item.classAttribute,
+              childrenList: res.data.records
+            }
+          }
+          if ((++successTotal) === this.ProductMethodArr.length) {
+            this.ProductTreeData = tempTreeData
+            this.initData2()
+          }
+        })
+      });
 
 
     },
@@ -2086,28 +2097,34 @@ export default {
           item.productCode = item.code,
           item.price = item.purchasePrice,
           item.productsId = item.id
-        if (this.btnType == 'edit') {
-          item.id = ""
-        }
+        
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.purchasePrice) / (1 + (Number(item.taxRate)) / 100), 6)
 
         } else {
           item.excludingTaxPrice = item.purchasePrice
         }
-
-        this.productData.push(item)
       });
+      if (this.productData.length) {
+        let index = this.productData.findIndex(item =>
+          item.drawingNo === "" &&
+          item.productsId === "" &&
+          item.num === "" &&
+          item.price === "" &&
+          item.deliveryDate === ""
+        )
+        if (index !== -1) {
+          // 使用 splice 插入 newDataArray
+          this.productData.splice(index, 0, ...this.selectArr);
+        }else{
+          this.productData=[...this.productData,...this.selectArr]
+        }
+      }
 
       // this.productData=[...this.productData,...this.selectArr]
     },
 
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then(res => {
-        this.attributeLines = res.data
-      })
-    },
+
     handleClose() {
       this.form = {
         code: "",
@@ -2745,8 +2762,7 @@ export default {
           let obj = {
             attachmentList: this.datafilelist,
             order: this.dataForm,
-            attributeLines: this.attributeLines,
-            orderLines: [],
+            orderLineList: [],
           }
           if (this.productData.length < 1) {
             submitFlag = false
@@ -2890,22 +2906,7 @@ export default {
 
 
             }
-            this.productData.forEach((item, index) => {
-              item.itemNumber = index + 1
-              item.approvalStatus = ""
-              item.shipmentStatus = ""
-              let objs = {
-                line: {},
-                values: {}
-              };
-              if (this.btnType == "copy") {
-                item.outboundQuantity = "0"
-              }
-              objs.line = item
-              objs.values = this.extractSameKeys(f, item,)
-              objs.values['orderAttributeType'] = 'sale_order'
-              obj.orderLines.push(objs)
-            });
+            obj.orderLineList=this.productData
           }
           if (submitFlag === false) return
           this.btnLoading = true

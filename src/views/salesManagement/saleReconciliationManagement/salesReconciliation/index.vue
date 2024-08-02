@@ -39,14 +39,14 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
-         <div>
-          <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成销售对账</el-button>
-          <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
-            icon="el-icon-download" @click="exportForm">导出</el-button>
-         </div>
+          <div>
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成销售对账</el-button>
+            <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
+              type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
+          </div>
           <div class="JNPF-common-head-right">
 
-          
+
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -68,22 +68,22 @@
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="returnDeliveryType" label="发/退货类型" min-width="180" sortable="custom">
+          <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
+          <el-table-column prop="businessType" label="发/退货类型" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.returnDeliveryType == 'delivery'">发货</div>
-              <div v-else-if="scope.row.returnDeliveryType == 'back'">退货</div>
+              <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
+              <div v-else-if="scope.row.businessType == 'inbound_sale_return'">退货</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="180" />
           <el-table-column prop="num" label="出入库数量" min-width="180" />
-          <el-table-column prop="price" label="单价(含税)" min-width="140" />
+          <el-table-column prop="costPrice" label="单价(含税)" min-width="140" />
           <el-table-column prop="taxRate" label="税率(%)" min-width="140" />
-          <el-table-column prop="excludingTaxAmount" label="金额" min-width="140">
+          <el-table-column prop="totalAmount" label="金额" min-width="140">
             <template slot-scope="scope">
-              <div v-if="scope.row.returnDeliveryType == 'delivery'" style="color: #67C23A">+{{
-                scope.row.excludingTaxAmount }}</div>
-              <div v-else-if="scope.row.returnDeliveryType == 'back'" style="color:red">-{{ scope.row.excludingTaxAmount
+              <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
+                scope.row.totalAmount }}</div>
+              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{ scope.row.totalAmount
                 }}</div>
             </template>
           </el-table-column>
@@ -91,7 +91,7 @@
           <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
 
 
-       
+
 
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
@@ -137,33 +137,25 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "createTime"
         }],
-        createByName: "",
         endTime: "",
-        keyword: "",
-        ordersNo: "",
+        orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        partnerCode: "",
         partnerName: "",
-        productCode: "",
-        productDrawingNo: "",
-        productName: "",
-        rdeDate: "",
         startTime: "",
-        returnDeliveryType: "",
-        rdsDate: "",
-        superQuery:{},
+        businessType: 'send_return',
+        superQuery: {},
       },
       receiptReturnTypeList: [
         {
           label: '发货',
-          value: 'delivery'
+          value: 'outbound_sale_send'
         },
         {
           label: '退货',
-          value: 'back'
+          value: 'inbound_sale_return'
         },
       ],
       createRequirementDate: [],
@@ -229,9 +221,14 @@ export default {
         },
         {
           prop: 'createTime',
-          label: "创建时间",
-          type: 'input'
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
         },
+
         {
           prop: 'createByName',
           label: "创建人",
@@ -344,13 +341,7 @@ export default {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.rdsDate = this.deliveryDate[0]
-        this.listQuery.rdeDate = this.deliveryDate[1]
-      } else {
-        this.listQuery.rdsDate = ''
-        this.listQuery.rdeDate = ''
-      }
+   
       getsalefinAccountList(this.listQuery).then(res => {
         console.log(res, '销售发/退货列表');
         res.data.records.forEach(item => {
@@ -393,7 +384,7 @@ export default {
         createByName: "",
         endTime: "",
         keyword: "",
-        ordersNo: "",
+        orderNo: "",
         pageNum: 1,
         pageSize: 20,
         partnerCode: "",

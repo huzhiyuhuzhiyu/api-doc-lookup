@@ -9,7 +9,7 @@
       <el-form-item :prop="'data.' + scope.$index + '.' + item.prop" :rules='Rules'>
         <!-- 输入框 -->
         <el-input v-if="item.type === 'input' || item.jnpfKey === 'comInput' || item.jnpfKey === 'JNPFTableInput'"
-          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="readOnly"
+          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="item.disabled" :readonly="item.readonly"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''"
@@ -23,7 +23,7 @@
         <!-- 下拉框 -->
         <!-- 远程搜索改为高阶函数 可增加自定义传参 -->
         <el-select v-else-if="item.type === 'select'" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder"
-          style="width:100%" :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+          style="width:100%" :disabled="item.disabled" :readonly="item.readonly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           :filterable="item.filterable || false" reserve-keyword
           :remote-method="(val) => item.remoteMethod(val, item) || (() => { })" :remote="item.remote || false"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
@@ -36,13 +36,13 @@
         <!-- 文本域 -->
         <el-input type="textarea" v-else-if="item.type === 'textarea' || item.jnpfKey === 'textarea'" v-bind="$attrs"
           v-on="$listeners" :placeholder="Placeholder" style="width:100%" :maxlength="item.maxlength || 200"
-          :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+          :disabled="item.disabled" :readonly="item.readonly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />
 
         <!-- 多选框 -->
         <el-select v-else-if="item.type === 'multiple'" multiple collapse-tags v-bind="$attrs" v-on="$listeners"
-          :placeholder="Placeholder" style="width:100%" :disabled="readOnly"
+          :placeholder="Placeholder" style="width:100%" :disabled="item.disabled" :readonly="item.readonly"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''">
           <el-option v-for="o in rowOptions" :key="o.label" :label="o.label" :value="o.value" :disabled="o.disabled">
@@ -53,11 +53,11 @@
         <component v-else-if="item.type === 'custom'" :is="item.customComponent" v-bind="{ ...item, ...$attrs }"
           v-on="$listeners" :placeholder="Placeholder" style="width:100%" auth
           @change="(val, data, paramsObj) => { item.change && item.change(val, data, paramsObj); $emit('change', val, data, paramsObj); }"
-          :disabled="readOnly" :isdisabled="readOnly" />
+          :disabled="item.disabled" :readonly="item.readonly" :isdisabled="readOnly" />
 
         <!-- 单个日期选择器 -->
         <el-date-picker v-else-if="item.type === 'date'" type="date" value-format="yyyy-MM-dd" style="width: 100%"
-          v-bind="$attrs" :placeholder="Placeholder" v-on="$listeners" :disabled="readOnly"
+          v-bind="$attrs" :placeholder="Placeholder" v-on="$listeners" :disabled="item.disabled" :readonly="item.readonly"
           :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />
@@ -66,7 +66,7 @@
         <el-date-picker v-else-if="item.type === 'date_interval'" type="daterange" value-format="yyyy-MM-dd"
           style="width: 100%" v-bind="$attrs" :start-placeholder="item.startPlaceholder || '请选择开始日期'"
           :end-placeholder="item.endPlaceholder || '请选择结束日期'" v-on="$listeners" :picker-options="global.timePickerOptions"
-          :disabled="readOnly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
+          :disabled="item.disabled" :readonly="item.readonly" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''" />
 

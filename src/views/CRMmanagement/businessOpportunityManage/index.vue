@@ -39,8 +39,7 @@
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -90,7 +89,7 @@
 </template>
 
 <script>
-import { getcrmBusinessList,deletecrmBusiness } from "@/api/CRMmanagement/index";
+import { getcrmBusinessList, deletecrmBusiness } from "@/api/CRMmanagement/index";
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
@@ -100,7 +99,7 @@ export default {
   components: { Form, programme, SuperQuery },
   data() {
     return {
-      datalist:[],
+      datalist: [],
       superQueryJson: [
         {
           prop: 'businessName',
@@ -223,7 +222,7 @@ export default {
     },
     async switchStyle() {
       await this.$nextTick();
-      const programmes = this.$refs.programmes.offsetWidth
+      const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
       if (programmes <= 100) {
         this.programmelist = []
         this.programmelist1 = this.datalist.slice(0)

@@ -243,6 +243,13 @@ export function getQuotationdatasendlist (data) {
     data
   })
 }
+// 获取分类类型
+export function getStockMovelist () {
+  return request({
+    url: `/api/wms/stock/move/todo/list`,
+    method: 'get',
+  })
+}
 // 新增
 export function addQuotationsendlist (data) {
   return request({

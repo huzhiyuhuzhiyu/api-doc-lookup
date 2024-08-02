@@ -115,7 +115,14 @@ export default {
         visualId: "",
         condList: [],
         pageNum: 1,
-        pageSize: 20
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
       },
       listQuery: {},
       customQuery:{

@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="$emit('close')" :content="title" />
+        <el-page-header @back="$emit('close',true)" :content="title" />
         <div class="options">
           <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
             @click="handleConfirm('draft')">
@@ -11,7 +11,7 @@
           <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
             @click="handleConfirm('submit')">
             保存并提交</el-button>
-          <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
+          <el-button @click="$emit('close',true)">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
@@ -468,6 +468,7 @@ export default {
             this.ProductListRequestObjs.partnerId = this.dataForm.cooperativePartnerId
             this.dataForm.id = ''
             this.linesList.forEach(item=>item.id = '')
+            this.fetchData("SHDD")
           }
           if (btnType === 'look') {
             this.btnList.forEach(item => item.render = false)
@@ -1028,6 +1029,7 @@ export default {
     async handleConfirm(value) {
       let submitFlag = true
       this.btnLoading = true
+      this.formLoading = true
       // 校验表单
       console.log(this.$refs['dataForm']);
 
@@ -1036,6 +1038,7 @@ export default {
       if (!valid && submitFlag) {
         submitFlag = false
         this.btnLoading = false
+        this.formLoading = false
         this.jnpf.focusErrValidItem(dataForm.fields)
       }
 
@@ -1047,6 +1050,7 @@ export default {
         })
         submitFlag = false
         this.btnLoading = false
+        this.formLoading = false
       }
       // let orderLineList = []
       if (this.linesList.length === 1) {
@@ -1056,6 +1060,7 @@ export default {
         if (!valid_3 && submitFlag) {
           submitFlag = false
           this.btnLoading = false
+          this.formLoading = false
           this.jnpf.focusErrValidItem(linesForm.fields)
         }
       } else {
@@ -1076,6 +1081,7 @@ export default {
             if (!valid_3 && submitFlag) {
               submitFlag = false
               this.btnLoading = false
+              this.formLoading = false
               this.jnpf.focusErrValidItem(linesForm.fields)
             }
 
@@ -1083,6 +1089,7 @@ export default {
               this.submit(value)
             } else {
               this.btnLoading = false
+              this.formLoading = false
               this.linesList.push(this.createdData)
             }
           })
@@ -1121,8 +1128,10 @@ export default {
       formMethod(_data).then(res => {
         this.submitmethodsTitle = value == "draft" ? "保存成功" : "提交成功"
         this.tipsvisible = true
+        this.formLoading = false
       }).catch(() => {
         this.btnLoading = false
+        this.formLoading = false
         this.linesList.push(this.createdData)
       })
     },

@@ -336,7 +336,7 @@ export default {
     },
     async switchStyle() {
       await this.$nextTick();
-      const programmes = this.$refs.programmes.offsetWidth
+      const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
       if (programmes <= 100) {
         this.programmelist = []
         this.programmelist1 = this.datalist.slice(0)

@@ -267,7 +267,7 @@ export default {
         ]
       },
       productVisible: false,
-      totalAmount: 0,
+      // totalAmount: 0,
       ProductMethodArr: { method: getCategoryTrees, requestObj: { classAttribute: "" } },
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
@@ -354,10 +354,20 @@ export default {
     totalNum: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num])
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num * 1])
       }
       return totalNum
     },
+    totalAmount: function () {
+      var totalPrice = 0;
+      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+        let item = this.dataFormTwo.lines[a]
+        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum * 1])
+      }
+      totalPrice = this.jnpf.numberFormat(totalPrice * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
+      this.dataForm.money = totalPrice
+      return totalPrice
+    }
   },
   created() {
     this.getDictionaryType()
@@ -447,13 +457,13 @@ export default {
       this.dataFormTwo.lines.splice(row.$index, 1)
     },
     Wholeorderdiscount() {
-      let c = 0
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        c = this.jnpf.math('add', [c, item.priceSum])
-      }
-      this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
-      this.dataForm.money = this.totalAmount
+      // let c = 0
+      // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+      //   let item = this.dataFormTwo.lines[a]
+      //   c = this.jnpf.math('add', [c, item.priceSum])
+      // }
+      // this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
+      // this.dataForm.money = this.totalAmount
     },
     changeTaxRate(row, index) {
       let productArr = [...this.dataFormTwo.lines]
@@ -461,14 +471,14 @@ export default {
       productArr[index].priceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
       productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum), 4)
       this.dataFormTwo.lines = productArr
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        console.log("item", item.amounts);
-        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
-      }
-      this.totalAmount = totalPrice
-      this.dataForm.money = this.totalAmount
+      // var totalPrice = 0;
+      // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+      //   let item = this.dataFormTwo.lines[a]
+      //   console.log("item", item.amounts);
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
+      // }
+      // this.totalAmount = totalPrice
+      // this.dataForm.money = this.totalAmount
     },
     // 监听售价(含税)输入
     watchPrice(row, index) {
@@ -530,9 +540,9 @@ export default {
         let a = this.jnpf.numberFormat((row.price * row.num), 6)
         row.amounts = a ? a : '' // 含税金额
       }
-      if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.price)) {
-        this.totalAmount = 0
-      }
+      // if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.price)) {
+      //   this.totalAmount = 0
+      // }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
         row.priceSum = c ? c : ''
@@ -543,14 +553,14 @@ export default {
         let d = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
+      // var totalPrice = 0;
+      // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+      //   let item = this.dataFormTwo.lines[a]
 
-        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
-      }
-      this.totalAmount = totalPrice
-      this.dataForm.money = this.totalAmount
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
+      // }
+      // this.totalAmount = totalPrice
+      // this.dataForm.money = this.totalAmount
     },
     // 监听主数量输入
     watchnums(row, index) {
@@ -626,14 +636,14 @@ export default {
       } else {
         row.totalcostPrice = ''
       }
-      var totalPrice = 0;
-      for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item = this.dataFormTwo.lines[a]
-        console.log("item", item.amounts);
-        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
-      }
-      this.totalAmount = totalPrice
-      this.dataForm.money = this.totalAmount
+      // var totalPrice = 0;
+      // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
+      //   let item = this.dataFormTwo.lines[a]
+      //   console.log("item", item.amounts);
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
+      // }
+      // this.totalAmount = totalPrice
+      // this.dataForm.money = this.totalAmount
     },
     //选择产品
     submitCustomerProduct(val, data,) {

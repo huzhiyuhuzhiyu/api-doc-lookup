@@ -355,6 +355,7 @@ import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分�
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
+import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -370,23 +371,27 @@ export default {
       datafilelist: [],
       provinces: [],
       orderForm: {
-        cooperativePartnerId: "",
-        customerProductDrawingNo: "",
-        returnQueryFlag: 1,
-        partnerName: "",        // customerProductNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        deliveryEndDate: '',
+        deliveryStartDate: '',
+        endTime: '',
+        orderNo: '',
+        orderType: 'procure',
+        orderItems: [
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-
+        startTime: '',
+        productCode: '',
+        productName: '',
+        // classAttribute: 'finish_product',
+        receivingStatus: 'received'
       },
       // orderList: [
       //   { label: "外协通知", value: "external" },
@@ -761,10 +766,10 @@ export default {
         this.orderForm.deliveryEndTime = ""
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      purchaseOrderReport(this.orderForm).then(res => {
+      detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("产品", res);
-        this.productList = res.data.page.records
-        this.productTotal = res.data.page.total
+        this.productList = res.data.records
+        this.productTotal = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

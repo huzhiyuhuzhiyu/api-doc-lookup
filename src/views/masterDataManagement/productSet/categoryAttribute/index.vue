@@ -8,12 +8,12 @@
         <el-form @submit.native.prevent :rules="rules">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
+              <el-input v-model="form.name" placeholder="请输入名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
+              <el-input v-model="form.code" placeholder="请输入编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="8">

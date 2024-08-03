@@ -1270,7 +1270,7 @@ export default {
 
       this.btnType = btnType
       if (this.dataForm.id) {
-        getQuotationsendlist(this.dataForm.id).then(res => {
+        getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then(res => {
           this.dataForm = res.data.notice
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
@@ -1311,10 +1311,18 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach(item => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach(item => {
+              item.drawingNo = item.productDrawingNo
+            })
           }
         })
+
+        console.log(this.dataFormTwo.productData, 'data')
       }
       if (btnType == 'add' || btnType == 'copy') {
         console.log(55555);
@@ -1438,7 +1446,7 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              
+
               // notifyType: 'sale',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',

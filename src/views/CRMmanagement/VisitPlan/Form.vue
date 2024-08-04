@@ -17,8 +17,8 @@
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="拜访计划名称" prop="visitPlanName">
-                        <el-input v-model="dataForm.visitPlanName" placeholder="请输入拜访计划名称" :disabled="btntype == 'look'" />
+                      <el-form-item label="拜访计划名称" prop="visitName">
+                        <el-input v-model="dataForm.visitName" placeholder="请输入拜访计划名称" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -51,8 +51,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="拜访目的" prop="visitGoal">
-                        <el-select v-model="dataForm.visitGoal" placeholder="请选择拜访目的" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="拜访目的" prop="visitAim">
+                        <el-select v-model="dataForm.visitAim" placeholder="请选择拜访目的" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in visitGoalList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
@@ -74,10 +74,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
-import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmBusinessList } from '@/api/CRMmanagement/index'
+import { addcrmVisit, detailcrmVisit, updatecrmVisit, getcrmBusinessList } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -146,7 +147,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        visitPlanName: '',
+        visitName: '',
         visitTime: '',
         ownerUserId: '',
         ownerUserName: '',
@@ -155,12 +156,12 @@ export default {
         contactsId: '',
         businessName: '',
         businessId: '',
-        visitGoal: '',
+        visitAim: '',
         remark: ''
       },
       btntype: false,
       dataRule: {
-        visitPlanName: [
+        visitName: [
           { required: true, message: '请输入拜访计划名称', trigger: 'blur' },
         ],
         visitTime: [
@@ -169,7 +170,7 @@ export default {
         customerName: [
           { required: true, message: '请选择客户', trigger: 'blur' },
         ],
-        visitGoal: [
+        visitAim: [
           { required: true, message: '请选择拜访目的', trigger: 'blur' },
         ]
       },
@@ -177,6 +178,10 @@ export default {
   },
   created() {
     this.getDictionaryType()
+    this.dataForm.ownerUserId = this.userInfo.userId
+  },
+  computed:{
+    ...mapGetters(['userInfo']),
   },
   methods: {
     //商机选框传值
@@ -251,7 +256,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          detailcrmReturnVisit(this.dataForm.id).then(res => {
+          detailcrmVisit(this.dataForm.id).then(res => {
             this.dataForm = res.data
             getMyContactsList({
               cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
@@ -273,7 +278,7 @@ export default {
           let obj = {
             ...this.dataForm
           }
-          let formMethod = this.dataForm.id ? updatecrmReturnVisit(obj) : addcrmReturnVisit(obj);
+          let formMethod = this.dataForm.id ? updatecrmVisit(obj) : addcrmVisit(obj);
           formMethod.then(res => {
             let msg = ""
             if (this.btntype == "edit") {

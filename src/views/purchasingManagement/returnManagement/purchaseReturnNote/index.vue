@@ -6,35 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input
-                  v-model="orderForm.orderNo"
-                  placeholder="请输入单号"
-                  clearable
-                  @keyup.enter.native="search()"
-                />
+                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input
-                  v-model="orderForm.partnerName"
-                  placeholder="请输入客户名称"
-                  clearable
-                  @keyup.enter.native="search()"
-                />
+                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-date-picker
-                  v-model="rdeDateArr"
-                  type="daterange"
-                  value-format="yyyy-MM-dd"
-                  style="width: 100%;"
-                  start-placeholder="退货开始日期"
-                  end-placeholder="退货结束日期"
-                  clearable
-                ></el-date-picker>
+                <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                  start-placeholder="退货开始日期" end-placeholder="退货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -55,51 +39,31 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-close"
-                @click.native="Cancelshipment()"
-                :loading="qxbtnLoading"
-              >
+              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
+                :loading="qxbtnLoading">
                 取消退货
-              </el-button>
+              </el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link
-                  icon="icon-ym icon-ym-filter JNPF-common-head-icon"
-                  :underline="false"
-                  @click="superQueryVisible = true"
-                />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link
-                  icon="icon-ym icon-ym-shezhi JNPF-common-head-icon"
-                  :underline="false"
-                  @click="columnSetFun()"
-                />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table
-            ref="dataTable"
-            v-loading="listLoading"
-            :data="tableData"
-            :fixedNO="true"
-            :setColumnDisplayList="columnList"
-            @sort-change="sortChange"
-            custom-column
-            :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange"
-            hasC
-          >
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -109,7 +73,7 @@
             </el-table-column>
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-            <el-table-column prop="partnerName" label="操作员" width="200" sortable="custom" />
+            <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
 
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -122,21 +86,11 @@
             <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button
-                  size="mini"
-                  type="text"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')"
-                >
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">
                   编辑
                 </el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  class="JNPF-table-delBtn"
-                 
-                  @click="handleDel(scope.row.id)"
-                >
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>
@@ -158,12 +112,8 @@
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination
-            :total="total"
-            :page.sync="orderForm.pageNum"
-            :limit.sync="orderForm.pageSize"
-            @pagination="initData"
-          />
+          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+            @pagination="initData" />
         </div>
       </div>
     </div>
@@ -172,13 +122,8 @@
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
-    <SuperQuery
-      :show="superQueryVisible"
-      ref="SuperQuery"
-      :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch"
-      @close="superQueryVisible = false"
-    />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -195,8 +140,14 @@ import {
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
+import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+import {
+  getpurPurchaseReceiptReturnGoodsdetail,
+  addpurPurchaseReceiptReturnGoods,
+  editpurPurchaseReceiptReturnGoods,
+  deletepurPurchaseReceiptReturnGoods
+} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -318,53 +269,27 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '订单号',
+          label: '单号',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          prop: 'partnerCode',
+          label: '供应商编码',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-
-        {
-          prop: 'orderType',
-          label: '订单类型',
-          type: 'select',
-
-          options: [
-            { label: '正常订单', value: 'normal' },
-            { label: '预测订单', value: 'prediction' },
-            { label: '样品订单', value: 'sample' },
-            { label: '备货订单', value: 'stock_up' },
-            { label: '急件订单', value: 'urgent' }
-          ]
-        },
-        {
-          prop: 'departmentName',
-          label: '所属部门',
-          type: 'custom',
-          component: 'com-select'
-        },
-        {
-          prop: 'salesName',
-          label: '所属销售人员',
-          type: 'custom',
-          component: 'user-select'
-        },
-        {
-          prop: 'workOrderNo',
-          label: '工作令号',
+          prop: 'partnerName',
+          label: '供应商名称',
           type: 'input'
         },
         {
-          prop: 'orderDate',
-          label: '订单日期',
+          prop: 'salesman',
+          label: '操作员',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '退货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
@@ -372,29 +297,35 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'contractNo',
-          label: '客户合同号',
-          type: 'input'
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+          ]
         },
         {
-          prop: 'deliveryDate',
-          label: '交货日期',
+          prop: 'createTime',
+          label: '创建时间',
           type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'orderState',
-          label: '订单状态',
-          type: 'select',
-          options: [
-            { label: '未完成', value: 'not_finish' },
-            { label: '已完成', value: 'finish' },
-            { label: '部分完成', value: 'part_finish' }
-          ]
-        }
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+    
       ]
     }
   },
@@ -421,7 +352,7 @@ export default {
             this.initData()
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     //禁用复选框
     checkSelectable(row) {
@@ -458,7 +389,7 @@ export default {
               this.qxbtnLoading = false
             })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
 
     handleClick(e) {
@@ -566,7 +497,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -605,8 +536,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发货通知单明细',
+        exportType: '1072',
+        exportName: '采购退货单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

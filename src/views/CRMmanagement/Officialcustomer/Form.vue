@@ -20,7 +20,7 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20" :disabled="btnType=='look' ? true : false" />
+                        <el-input v-model="dataForm.code" placeholder="请输入客户编码" maxlength="20" :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -482,6 +482,7 @@ import {
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       activeNames: ["basicInfo"],
       taxRateTypeList: [],
       tableData: [],
@@ -693,6 +694,15 @@ export default {
     this.getDictionaryType()
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.code = data.number
+
+      } catch (error) {
+      }
+    },
     actiompro(value) {
       if (value) {
         this.dataForm.province = value[0]
@@ -1108,6 +1118,7 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
+      if(this.btnType === 'add') this.fetchData('ZGTKHBM')
       // getBimBusinessInfo('460918012862529542').then(res=>{
       //   console.log("编码配置");
       //   this.businessType = res.data.configValue1

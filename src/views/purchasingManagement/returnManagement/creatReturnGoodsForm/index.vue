@@ -46,7 +46,7 @@
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24">
+                    <!-- <el-col :sm="6" :xs="24">
                       <el-form-item label="类别属性" prop="classAttribute">
                         <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable
                           style="width: 100%;">
@@ -54,7 +54,7 @@
                             :value="item.value"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
@@ -140,21 +140,21 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <!-- <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" /> -->
-                    <el-table-column prop="deliveryQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                    <!-- <el-table-column prop="requiredReceivedQuantity" label="待入库数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
                         退货数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
-                          :rules="productRules.deliveryQuantity">
-                          <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
+                          :rules="productRules.receivedQuantity">
+                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入退货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
-                            {{ scope.row.deliveryQuantity }}
+                            {{ scope.row.receivedQuantity }}
                           </el-input>
                         </el-form-item>
                       </template>
@@ -415,6 +415,7 @@ export default {
         deliveryStartTime: '',
         deliveryEndTime: '',
         receiptReturnType: 'back',
+        notificationType: 'procure',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -469,7 +470,7 @@ export default {
         { label: '急件订单', value: 'urgent' }
       ],
       productRules: {
-        deliveryQuantity: [
+        receivedQuantity: [
           { required: true, trigger: 'blur' },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
@@ -611,6 +612,7 @@ export default {
         // orderCategory: "assembly",
         salesman: '',
         receiptReturnType: 'back',
+        notificationType: 'procure',
         // notifyType: 'sale',
         logisticsCompany: '',
         ordersId: '',
@@ -654,7 +656,7 @@ export default {
     totalDeliveryQuantity: function () {
       var totalNum = 0
       for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].deliveryQuantity])
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
       }
       return totalNum
     }
@@ -697,8 +699,8 @@ export default {
         } else {
           let flag = false
           let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].deliveryQuantity)
-          let num_2 = Number(list[index].purchaseQuantity)
+          let num_1 = Number(list[index].receivedQuantity)
+          let num_2 = Number(list[index].receiptQuantity)
           if (!(num_1 <= num_2)) {
             flag = true
           }
@@ -900,25 +902,25 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-      if (!row.deliveryQuantity) {
+      if (!row.receivedQuantity) {
         return
       }
-      row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '')
+      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '')
 
-      if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
+      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
         // 如果第一位是小数点，则清空输入框
-        row.deliveryQuantity = ''
-      } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        row.receivedQuantity = ''
+      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
         // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1)
-      } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
-        row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
+        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1)
+      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
+        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
       }
-      if (row.deliveryQuantity.includes('.')) {
+      if (row.receivedQuantity.includes('.')) {
         let dotCount = 0 // 小数点的数量
         let result = '' // 处理后的结果
-        for (let i = 0; i < row.deliveryQuantity.length; i++) {
-          const char = row.deliveryQuantity[i]
+        for (let i = 0; i < row.receivedQuantity.length; i++) {
+          const char = row.receivedQuantity[i]
           if (char === '.') {
             if (dotCount === 0) {
               // 第一个小数点保留
@@ -929,18 +931,18 @@ export default {
             result += char
           }
         }
-        row.deliveryQuantity = result
-        let arr = row.deliveryQuantity.split('.')
+        row.receivedQuantity = result
+        let arr = row.receivedQuantity.split('.')
         if (arr[0].length > 8) {
           arr[0] = arr[0].substring(0, 8)
         }
         if (arr[1].length > 2) {
           arr[1] = arr[1].substring(0, 2)
         }
-        row.deliveryQuantity = arr[0] + '.' + arr[1]
+        row.receivedQuantity = arr[0] + '.' + arr[1]
       } else {
-        if (row.deliveryQuantity.length > 8) {
-          row.deliveryQuantity = row.deliveryQuantity.substring(0, 8)
+        if (row.receivedQuantity.length > 8) {
+          row.receivedQuantity = row.receivedQuantity.substring(0, 8)
         }
       }
       if (!row.receivedQuantity) {
@@ -1089,6 +1091,7 @@ export default {
                 exchangeGoodsFlag: false,
                 // orderCategory: "assembly",
                 receiptReturnType: 'back',
+                notificationType: 'procure',
                 // notifyType: 'sale',
                 logisticsCompany: '',
                 ordersId: '',
@@ -1120,6 +1123,7 @@ export default {
             exchangeGoodsFlag: false,
             // orderCategory: "assembly",
             receiptReturnType: 'back',
+            notificationType: 'procure',
             // notifyType: 'sale',
             logisticsCompany: '',
             ordersId: '',
@@ -1297,7 +1301,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-            if (!item.deliveryQuantity) {
+            if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
                 message: this.dataForm.exchangeGoodsFlag
@@ -1308,7 +1312,7 @@ export default {
               })
             } else if (
               item.outboundQuantity &&
-              item.deliveryQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
+              item.receivedQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
             ) {
               this.iszhi = true
               this.$message({
@@ -1316,7 +1320,7 @@ export default {
                 type: 'error',
                 duration: 1500
               })
-            } else if (item.deliveryQuantity == 0) {
+            } else if (item.receivedQuantity == 0) {
               this.iszhi = true
               this.$message({
                 message: this.dataForm.exchangeGoodsFlag
@@ -1335,7 +1339,7 @@ export default {
             console.log(item, 'it')
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+              receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
@@ -1344,7 +1348,8 @@ export default {
               productsId: item.productsId ? item.productsId : '',
               classAttribute: item.classAttribute ? item.classAttribute : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId :'',
+              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1355,7 +1360,7 @@ export default {
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+              receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
@@ -1364,7 +1369,8 @@ export default {
               productsId: item.productsId ? item.productsId : '',
               classAttribute: item.classAttribute ? item.classAttribute : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : '',
+              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              purchaseOrderId: item.purchaseOrderId ? item.purchaseOrderId : '',
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1404,6 +1410,7 @@ export default {
                     exchangeGoodsFlag: false,
                     inspectionStatus: '',
                     receiptReturnType: 'back',
+                    notificationType: 'procure',
                     notifyType: 'sale',
                     logisticsCompany: '',
                     ordersId: '',

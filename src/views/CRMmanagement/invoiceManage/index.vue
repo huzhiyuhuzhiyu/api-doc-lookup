@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.visitName" placeholder="请输入拜访计划名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.customerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -46,25 +46,29 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="visitName" label="拜访计划名称" min-width="160" />
-            <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
-            <el-table-column prop="customerName" label="客户名称" min-width="180" />
-            <el-table-column prop="contactsName" label="联系人" min-width="180" />
-            <el-table-column prop="businessName" label="商机名称" min-width="180" />
-            <el-table-column prop="visitAim" label="拜访目的" min-width="180">
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+            <el-table-column prop="invoiceApplyNumber" label="发票申请编号" min-width="160" />
+            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="contractNum" label="合同编号" min-width="160" />
+            <el-table-column prop="receivablesNum" label="回款编号" min-width="160" />
+            <el-table-column prop="invoiceMoney" label="开票金额" min-width="160" />
+            <el-table-column prop="contractMoney" label="合同金额" min-width="160" />
+            <el-table-column prop="invoiceDate" label="开票日期" min-width="160" />
+            <el-table-column prop="invoiceType" label="开票类型" min-width="160" >
               <template slot-scope="scope">
-                {{visitGoalfaction(scope.row.visitAim)}}
+                {{returnTypeVisitForm(scope.row.returnType)}}
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" min-width="180" />
-            <el-table-column prop="delayReason" label="延期原因" min-width="180" />
-            <el-table-column prop="delayRemark" label="延期备注" min-width="180" />
-            <el-table-column prop="cancelReason" label="取消原因" min-width="180" />
-            <el-table-column prop="cancelRemark" label="取消备注" min-width="180" />
-            <el-table-column prop="activityName" label="跟进记录内容" min-width="180" />
-            <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
-            <el-table-column prop="visitStatus" label="状态" min-width="180" />
+            <el-table-column prop="ownerUserName" label="负责人" min-width="120" />
+            <el-table-column prop="invoiceStatus" label="审核状态" min-width="120">
+              <template slot-scope="scope">
+                {{receivedStatusForm(scope.row.checkStatus)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="contactsName" label="发票号码" min-width="120" />
+            <el-table-column prop="realInvoiceDate" label="实际开票日期" min-width="120" />
+            <el-table-column prop="settingName" label="物流单号" min-width="120" />
+            <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column label="操作" width="180" fixed="right">
@@ -100,7 +104,7 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmVisit, getcrmVisitlist } from '@/api/CRMmanagement/index'
+import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -114,22 +118,18 @@ export default {
   },
   data() {
     return {
-      visitGoalList:[],
-      datalist:[],
+      receivedStatusList: [
+        { fullName: '未通过', enCode: '1' },
+        { fullName: '待审核', enCode: '2' },
+        { fullName: '通过', enCode: '3' }
+      ],
+      datalist: [],
+      payList: [],
       superQueryJson: [
         {
-          prop: 'visitName',
-          label: "拜访计划名称",
+          prop: 'number',
+          label: "回款编码",
           type: 'input'
-        },
-        { // 日期时间选择器（区间）
-          prop: 'visitTime',
-          label: '预计拜访时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '回访开始时间',
-          endPlaceholder: '回访结束时间',
-          pickerOptions: {}
         },
         {
           prop: 'customerName',
@@ -137,49 +137,43 @@ export default {
           type: 'input'
         },
         {
-          prop: 'contactsName',
-          label: "联系人",
+          prop: 'contractNum',
+          label: "合同编号",
           type: 'input'
         },
+        { // 日期选择器（区间）
+          prop: 'returnDate',
+          label: '回款日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '回款开始日期',
+          endPlaceholder: '回款结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
         {
-          prop: 'businessName',
-          label: "商机名称",
+          prop: 'money',
+          label: "回款金额",
           type: 'input'
         },
         { // 下拉选
-          prop: 'visitAim',
-          label: '拜访目的',
+          prop: 'returnType',
+          label: '回款方式',
           type: 'select',
           options: []
         },
-        {
-          prop: 'remark',
-          label: "备注",
-          type: 'input'
+        { // 下拉选
+          prop: 'checkStatus',
+          label: '审核状态',
+          type: 'select',
+          options: [
+            { label: '未通过', value: '1' },
+            { label: '待审核', value: '2' },
+            { label: '通过', value: '3' }
+          ]
         },
         {
-          prop: 'delayReason',
-          label: "延期原因",
-          type: 'input'
-        },
-        {
-          prop: 'delayRemark',
-          label: "延期备注",
-          type: 'input'
-        },
-        {
-          prop: 'cancelReason',
-          label: "取消原因",
-          type: 'input'
-        },
-        {
-          prop: 'cancelRemark',
-          label: "取消备注",
-          type: 'input'
-        },
-        {
-          prop: 'activityName',
-          label: "跟进记录内容",
+          prop: 'contractMoney',
+          label: "合同金额",
           type: 'input'
         },
         {
@@ -187,11 +181,10 @@ export default {
           label: "负责人",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'visitStatus',
-          label: '状态',
-          type: 'select',
-          options: []
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -219,7 +212,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        returnVisitNo: '',
+        customerName: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -258,11 +251,15 @@ export default {
         this.switchStyle()
       })
     },
-    visitGoalfaction(val) {
-      let _data = this.visitGoalList.filter(item => item.enCode == val)[0]
+    receivedStatusForm(val) {
+      let _data = this.receivedStatusList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
     },
-    // 获取客户满意度、回访形式数据
+    returnTypeVisitForm(val) {
+      let _data = this.payList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    // 获取付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -270,16 +267,16 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "Purposeofvisit") {
+              if (resp.enCode == "paymentMethod") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  this.visitGoalList = response.data.list
+                  this.payList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'visitAim') {
+                    if (item.prop == 'returnType') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -296,7 +293,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deletecrmVisit(id).then(res => {
+        deletecrmReturnVisit(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -355,7 +352,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getcrmVisitlist(this.listQuery).then(res => {
+      getcrmReturnVisit(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -364,17 +361,6 @@ export default {
         this.listLoading = false
       })
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (['cooperativePartnerCode', 'cooperativePartnerName'].includes(prop)) { newProp = prop }
-      else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
-    },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false

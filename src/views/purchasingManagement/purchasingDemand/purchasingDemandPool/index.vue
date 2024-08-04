@@ -47,6 +47,13 @@
             <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button> -->
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -56,26 +63,30 @@
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable">
-          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+
+
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
           <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="180" />
-          <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" />
-          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="120" />
+          <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+          <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
+
           <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="90">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>
             </template>
           </el-table-column>
-          <el-table-column prop="hasPrice" label="有无价格" width="90">
+          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="120" />
+          <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
             <template slot-scope="scope">
               <div v-if="scope.row.hasPrice">有</div>
               <div v-else>无</div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="orderedQuantity" label="已下单数量" min-width="120" />
-          <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" />
-          <el-table-column prop="mainUnit" label="单位" min-width="80" />
+          <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
+
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
           <el-table-column prop="source" label="来源" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -95,15 +106,16 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" />
-          <el-table-column prop="createTime" label="创建需求时间" min-width="180" sortable="custom" />
-          <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom" fixed="right">
+          <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+          <!-- <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom" fixed="right">
             <template slot-scope="scope">
               <div v-if="scope.row.demandStatus == 'not_finish'"><el-tag type="warning">未完成</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finishing'"><el-tag>完成中</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
@@ -163,8 +175,8 @@
           </el-col>
 
           <el-col :span="12">
-            <el-form-item label="产品图号">
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable
+            <el-form-item label="品名规格">
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -244,6 +256,11 @@ export default {
   components: { JNPFForm, QuiryForm, fixedForm },
   data() {
     return {
+      columnList: [
+        'productCode',
+        'source',
+        'createByName',
+      ],
       sourceDialog: false,
       sourceList: [],
       title: '更多查询',
@@ -281,7 +298,7 @@ export default {
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
-        productDrawingNo: '', //产品图号
+        productDrawingNo: '', //品名规格
         source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
         sourceOrderNo: '', //来源单号
         startTime: '', //创建开始时间
@@ -364,6 +381,9 @@ export default {
     this.initData()
   },
   methods: {
+    columnSetFun() {
+      this.$refs.tableForm.showDrawer()
+    },
     getPoolSourceList(id) {
       let obj = {
         createByName: '',
@@ -495,7 +515,7 @@ export default {
           poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
           productCode: '', //产品编码
           productName: '', //产品名称
-          productDrawingNo: '', //产品图号
+          productDrawingNo: '', //品名规格
           source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
           sourceOrderNo: '', //来源单号
           startTime: ''

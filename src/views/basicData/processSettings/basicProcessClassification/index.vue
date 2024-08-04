@@ -32,14 +32,14 @@
             </el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" content="展开" placement="top">
+            <!-- <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
             <el-tooltip effect="dark" content="折叠" placement="top">
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
-            </el-tooltip>
+            </el-tooltip> -->
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />

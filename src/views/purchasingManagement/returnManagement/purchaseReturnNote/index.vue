@@ -269,53 +269,27 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '订单号',
+          label: '单号',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          prop: 'partnerCode',
+          label: '供应商编码',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-
-        {
-          prop: 'orderType',
-          label: '订单类型',
-          type: 'select',
-
-          options: [
-            { label: '正常订单', value: 'normal' },
-            { label: '预测订单', value: 'prediction' },
-            { label: '样品订单', value: 'sample' },
-            { label: '备货订单', value: 'stock_up' },
-            { label: '急件订单', value: 'urgent' }
-          ]
-        },
-        {
-          prop: 'departmentName',
-          label: '所属部门',
-          type: 'custom',
-          component: 'com-select'
-        },
-        {
-          prop: 'salesName',
-          label: '所属销售人员',
-          type: 'custom',
-          component: 'user-select'
-        },
-        {
-          prop: 'workOrderNo',
-          label: '工作令号',
+          prop: 'partnerName',
+          label: '供应商名称',
           type: 'input'
         },
         {
-          prop: 'orderDate',
-          label: '订单日期',
+          prop: 'salesman',
+          label: '操作员',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '退货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
@@ -323,29 +297,35 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'contractNo',
-          label: '客户合同号',
-          type: 'input'
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+          ]
         },
         {
-          prop: 'deliveryDate',
-          label: '交货日期',
+          prop: 'createTime',
+          label: '创建时间',
           type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'orderState',
-          label: '订单状态',
-          type: 'select',
-          options: [
-            { label: '未完成', value: 'not_finish' },
-            { label: '已完成', value: 'finish' },
-            { label: '部分完成', value: 'part_finish' }
-          ]
-        }
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+    
       ]
     }
   },
@@ -557,7 +537,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1072',
-        exportName:  '采购退货单',
+        exportName: '采购退货单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

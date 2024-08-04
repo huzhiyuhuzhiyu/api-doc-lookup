@@ -69,15 +69,16 @@
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange" hasC>
+            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
+                <el-link type="primary"
+                  @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
@@ -169,7 +170,7 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      columnList: ['partnerName', 'createByName'],
+      columnList: [ 'createByName'],
       linesTotal: 0,
       linesTableData: [],
       createTimeArrfahuo: [],
@@ -294,11 +295,6 @@ export default {
         },
 
         {
-          prop: 'customerProductNo',
-          label: '客户料号',
-          type: 'input'
-        },
-        {
           prop: 'productDrawingNo',
           label: '品名规格',
           type: 'input'
@@ -366,22 +362,7 @@ export default {
           label: '订单号',
           type: 'input'
         },
-        {
-          prop: 'exchangeGoodsFlag',
-          label: '退货标识',
-          type: 'select',
-          options: [{ label: '换货', value: true }, { label: '退货', value: false }]
-        },
-        {
-          prop: 'deliveryStatus',
-          label: '退货状态',
-          type: 'select',
-          options: [
-            { label: '待退货', value: 'not_returned' },
-            { label: '已退货', value: 'returned' },
-            { label: '已取消', value: 'canceled' }
-          ]
-        },
+
         {
           prop: 'documentStatus',
           label: '单据状态',
@@ -396,7 +377,17 @@ export default {
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
-        }
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
       ]
     }
   },

@@ -67,12 +67,12 @@
               <el-button type="primary" icon="el-icon-bangzhu" size="mini" @click="releaseFun">释放</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -87,7 +87,7 @@
                   }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" width="160" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
 
             <el-table-column prop="lxr" label="联系人" sortable="custom" width="120" />
             <el-table-column prop="tel" label="电话" sortable="custom" width="140" />
@@ -119,7 +119,7 @@
       </div>
     </div>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form1 v-if="formVisible" ref="Form1" @close="closeForm" />
     <RecordForm1 v-if="recordFormVisible" ref="RecordForm1" @close="closeForm" />
 
@@ -248,15 +248,18 @@ export default {
     }
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   beforeDestroy() {
     window.onresize = null
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

@@ -71,11 +71,11 @@
             </topOpts>
             <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
             <div class="JNPF-common-head-right" style="float: right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -93,9 +93,9 @@
               {{ scope.$index+1 }}
             </template>
           </el-table-column> -->
-            <el-table-column prop="clueName" label="线索名称" width="160" />
+            <el-table-column prop="clueName" label="线索名称" min-width="160" />
             <el-table-column prop="nextTime" label="下次联系时间" width="180" />
-            <el-table-column prop="source" label="线索来源" width="150">
+            <el-table-column prop="source" label="线索来源" min-width="150">
               <template slot-scope="scope">
                 {{sourcefunction(scope.row.source)}}
               </template>
@@ -106,14 +106,14 @@
             <!-- <el-table-column prop="provinceText" label="省" width="120" />
           <el-table-column prop="cityText" label="市" width="140" />
           <el-table-column prop="areaText" label="区" width="140" /> -->
-            <el-table-column prop="areaText" label="地址" width="160" />
-            <el-table-column prop="address" label="详细地址" width="200" />
-            <el-table-column prop="industry" label="客户行业" width="140">
+            <el-table-column prop="areaText" label="地址" min-width="160" />
+            <el-table-column prop="address" label="详细地址" min-width="200" />
+            <el-table-column prop="industry" label="客户行业" min-width="140">
               <template slot-scope="scope">
                 {{industryfunction(scope.row.industry)}}
               </template>
             </el-table-column>
-            <el-table-column prop="level" label="客户级别" width="130">
+            <el-table-column prop="level" label="客户级别" min-width="130">
               <template slot-scope="scope">
                 {{levelfunction(scope.row.level)}}
               </template>
@@ -162,7 +162,7 @@
     </el-dialog>
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
     <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" @goto="gotopool" />
     <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" @gotoclue="gotoclue" />
@@ -349,15 +349,18 @@ export default {
   //   // this.rowDrop(); //声明表格拖动排序方法
   // },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   beforeDestroy() {
     window.onresize = null
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     // 获取数据字典数据
     getDictionaryType() {
       getDictionaryType().then(res => {

@@ -35,11 +35,11 @@
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
             </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -47,21 +47,21 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-            <el-table-column prop="number" label="回款编码" min-width="160" />
+            <el-table-column prop="receivablesNo" label="回款编号" min-width="160" />
             <el-table-column prop="customerName" label="客户名称" min-width="160" />
-            <el-table-column prop="contractNum" label="合同编号" min-width="160" />
-            <el-table-column prop="returnTime" label="回款日期" min-width="160" />
-            <el-table-column prop="money" label="回款金额" min-width="140" />
-            <el-table-column prop="returnType" label="回款方式" min-width="140">
+            <el-table-column prop="contractNo" label="合同编号" min-width="160" />
+            <el-table-column prop="receivablesData" label="回款日期" min-width="160" />
+            <el-table-column prop="receivablesMoney" label="回款金额" min-width="140" />
+            <el-table-column prop="receivablesType" label="回款方式" min-width="140">
               <template slot-scope="scope">
-                {{returnTypeVisitForm(scope.row.returnType)}}
+                {{returnTypeVisitForm(scope.row.receivablesType)}}
               </template>
             </el-table-column>
-            <el-table-column prop="checkStatus" label="审核状态" min-width="120">
+            <!-- <el-table-column prop="checkStatus" label="审核状态" min-width="120">
               <template slot-scope="scope">
                 {{receivedStatusForm(scope.row.checkStatus)}}
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="contractMoney" label="合同金额" min-width="140" />
             <el-table-column prop="ownerUserName" label="负责人" min-width="120" />
             <el-table-column prop="remark" label="备注" min-width="200" />
@@ -94,13 +94,13 @@
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
+import { deletecrmReceivables, getcrmReceivableslist } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -123,7 +123,7 @@ export default {
       payList: [],
       superQueryJson: [
         {
-          prop: 'number',
+          prop: 'receivablesNo',
           label: "回款编码",
           type: 'input'
         },
@@ -133,12 +133,12 @@ export default {
           type: 'input'
         },
         {
-          prop: 'contractNum',
+          prop: 'contractNo',
           label: "合同编号",
           type: 'input'
         },
         { // 日期选择器（区间）
-          prop: 'returnDate',
+          prop: 'receivablesData',
           label: '回款日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
@@ -147,12 +147,12 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'money',
+          prop: 'receivablesMoney',
           label: "回款金额",
           type: 'input'
         },
         { // 下拉选
-          prop: 'returnType',
+          prop: 'receivablesType',
           label: '回款方式',
           type: 'select',
           options: []
@@ -238,12 +238,15 @@ export default {
     window.onresize = null
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     receivedStatusForm(val) {
       let _data = this.receivedStatusList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
@@ -269,7 +272,7 @@ export default {
                 getDictionaryDataList(id, obj).then(response => {
                   this.payList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'returnType') {
+                    if (item.prop == 'receivablesType') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -286,7 +289,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deletecrmReturnVisit(id).then(res => {
+        deletecrmReceivables(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -345,7 +348,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getcrmReturnVisit(this.listQuery).then(res => {
+      getcrmReceivableslist(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

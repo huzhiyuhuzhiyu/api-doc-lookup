@@ -7,8 +7,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号"
-                  clearable />
+                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -52,8 +51,8 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <!-- <topOpts @add="addSupplier('', 'add')"> -->
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+            <el-button type="primary" size="mini" icon="el-icon-download"
+              @click="exportForm('dataTable')">导出</el-button>
             <!-- </topOpts> -->
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -73,7 +72,7 @@
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -85,7 +84,7 @@
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
-           
+
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
@@ -102,14 +101,14 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
+                  @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">查看详情</el-button>
 
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
+            <!-- <div class="text"><span>合计数量:{{ totalNum }}</span></div> -->
           </pagination>
 
         </div>
@@ -133,7 +132,7 @@ import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from '../../../salesManagement/orderManagement/orderList/Form'
+import Form from './Form'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -165,7 +164,7 @@ export default {
         deliveryStartTime: "",
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
-        receiptQueryFlag:1,
+        receiptQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -616,8 +615,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType:  '1003',
-        exportName:  '延期发货预警',
+        exportType: '1003',
+        exportName: '延期发货预警',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -650,13 +649,15 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding: 8px!important;
+  padding: 8px !important;
 
   margin-bottom: 5px;
 }
-.JNPF-common-head{
+
+.JNPF-common-head {
   padding: 8px;
 }
+
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 0px !important;
 }
@@ -692,7 +693,8 @@ export default {
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
 }
-.btnBox{
+
+.btnBox {
   padding: 7px 10px;
 }
 </style>

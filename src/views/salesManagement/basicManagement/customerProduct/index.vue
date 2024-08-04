@@ -14,7 +14,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入客户料号" clearable
+                    <el-input v-model.trim="listQuery.customerProductNo" placeholder="请输入客户料号" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
@@ -59,7 +59,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
+              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :key="Math.random()"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
@@ -94,7 +94,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listQuery.customerProductDrawingNo" placeholder="请输入客户料号" clearable
+                    <el-input v-model.trim="listQuery.customerProductNo" placeholder="请输入客户料号" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>

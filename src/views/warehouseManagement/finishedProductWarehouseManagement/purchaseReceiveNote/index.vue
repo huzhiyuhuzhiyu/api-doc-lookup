@@ -39,10 +39,10 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
+              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
                 取消退货
-              </el-button> -->
+              </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -73,7 +73,7 @@
             </el-table-column>
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-            <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
+            <el-table-column prop="partnerName" label="操作员" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
 
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
@@ -90,7 +90,8 @@
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">
                   编辑
                 </el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope.row.id)">
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.documentStatus == 'draft' || scope.row.deliveryStatus == 'canceled' ? false : true
+                  " @click="handleDel(scope.row.id)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>
@@ -137,17 +138,12 @@ import {
   mergelist,
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
+import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
-import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import {
-  getpurPurchaseReceiptReturnGoodsdetail,
-  addpurPurchaseReceiptReturnGoods,
-  editpurPurchaseReceiptReturnGoods,
-  deletepurPurchaseReceiptReturnGoods
-} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -229,7 +225,7 @@ export default {
         productCode: '',
         productDrawingNo: '',
         productName: '',
-        receiptReturnType: 'back',
+        receiptReturnType: 'receipt',
         receivingStatus: '',
         salesman: '',
         startTime: '',
@@ -556,8 +552,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: '1072',
-        exportName:  '采购退货单',
+        exportType: this.exportTableRef === '1061',
+        exportName: this.exportTableRef === '发货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

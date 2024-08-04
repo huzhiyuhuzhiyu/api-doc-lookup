@@ -447,8 +447,8 @@ export default {
         { label: "已检验", value: "inspected" },
       ],
       deliveryStatusList: [
-        { label: "未完成", value: "undelivered" },
-        { label: "已完成", value: "delivered" },
+        { label: "未完成", value: "not_finished" },
+        { label: "已完成", value: "finished" },
         { label: "已取消", value: "canceled" }
       ],
       documentStatusList: [
@@ -1429,6 +1429,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
+              classAttribute:item.classAttribute,
+              productsId:item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1449,6 +1451,8 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
+                classAttribute:item.classAttribute,
+                productsId:item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',
@@ -1479,6 +1483,8 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
+                classAttribute:item.classAttribute,
+                productsId:item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',

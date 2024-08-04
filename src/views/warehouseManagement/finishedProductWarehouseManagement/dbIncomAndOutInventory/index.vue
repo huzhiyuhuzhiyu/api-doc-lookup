@@ -23,7 +23,7 @@
           :expand-on-click-node="false" node-key="type" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-              <span class="text" :title="data.fullName">{{ data.fullName }} ({{data.number }})</span>
+            <span class="text" :title="data.fullName">{{ data.fullName }} ({{ data.number }})</span>
 
           </span>
         </el-tree>
@@ -57,21 +57,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="getTabdataList()">{{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="getTabdataList()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="incomAndOutInventFun()" :addText="categoryType=='delivery'?'出库':'入库'">
-          </topOpts>
+          <div></div>
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top"  >
+            <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="advancedQueryFun" />
             </el-tooltip>
@@ -91,7 +90,8 @@
           v-if="categoryType == 'delivery'">
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', 'FHREFForm',fhFormVisible=true)">{{ scope.row.orderNo
+              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
+                scope.row.orderNo
                 }}</el-link>
             </template>
           </el-table-column>
@@ -141,7 +141,9 @@
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="viewFun(scope.row.id, 'look', 'FHREFForm',fhFormVisible=true)">查看详情</el-button>
+              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row,'add')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -151,16 +153,16 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <FHForm v-if="fhFormVisible" ref="FHREFForm" @close="closeForm"/>
+    <FHForm v-if="fhFormVisible" ref="FHREFForm" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-      
+
   </div>
 </template>
 
 <script>
-import { getQuotationdatasendlist } from '@/api/salesManagement'
+import { getQuotationdatasendlist,getStockMovelist } from '@/api/salesManagement/index'
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
 import { Release } from '@/api/onlineDev/visualDev'
@@ -171,10 +173,10 @@ import FHForm from "../../../salesManagement/shippingnotice/saleMetalworking/For
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery,FHForm },
+  components: { Form, SuperQuery, FHForm },
   data() {
     return {
-      fhFormVisible:false,
+      fhFormVisible: false,
       fhcolumnList: ["partnerName", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       fhDateArr: [],//发货通知单 查询条件 发货日期
       fhSelectList: [],//发货多选数据
@@ -227,56 +229,56 @@ export default {
           childrenList: [],
           fullName: "销售待发货",
           type: "delivery",
-          number:0,
+          number: 0,
         },
 
         {
           childrenList: [],
           fullName: "销售待退货",
           type: "back",
-          number:0,
+          number: 0,
         },
         {
           childrenList: [],
           fullName: "采购待收货",
           type: "111",
-          number:0,
+          number: 0,
         },
         {
           childrenList: [],
           fullName: "采购待退货",
           type: "222",
-          number:0,
+          number: 0,
         },
         {
           childrenList: [],
           fullName: "外协待发料",
           type: "333",
-          number:0,
+          number: 0,
         },
 
         {
           childrenList: [],
           fullName: "外协待退料",
           type: "444",
-          number:0,
+          number: 0,
         }, {
           childrenList: [],
           fullName: "外协待收货",
           type: "555",
-          number:0,
+          number: 0,
         },
         {
           childrenList: [],
           fullName: "外协待退货",
           type: "666",
-          number:0,
+          number: 0,
         },
         {
           childrenList: [],
           fullName: "生产待入库",
           type: "777",
-          number:0,
+          number: 0,
         },
       ],
       appTreeData: [],
@@ -299,13 +301,21 @@ export default {
     this.$refs.treeBox.setCurrentKey(this.treeData[0].type) // 默认选中节点第一个
     // 进入页面  默认查询销售发货通知单数据
 
-    this.getTabdataList()
+    // this.getTabdataList()
+    this.getStockMovelistFun()
   },
   methods: {
+    getStockMovelistFun(){
+      getStockMovelist().then(res=>{
+        console.log("左侧分类数据",res);
+      })
+    },
     // 点击出库/入库按钮
-    incomAndOutInventFun() {
+    incomAndOutInventFun(data,btnType) {
       if (this.categoryType == 'delivery') {
-        if (!this.fhSelectList.length) return this.$message.error("请先选择要出库的数据!")
+        this.formVisible = true
+        this.$refs[ref].init(id, btnType,'delivery')
+
       }
     },
     // 根据左侧分类  点击不同的分类  请求不同的数据
@@ -316,7 +326,7 @@ export default {
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.fhTableList = res.data.records
           this.fhTotal = res.data.total
-          this.treeData[0].number=res.data.total
+          this.treeData[0].number = res.data.total
           this.listLoading = false
         }).catch(error => {
           this.listLoading = false
@@ -417,14 +427,14 @@ export default {
 
 
     // 查看详情
-    viewFun(id,btnType,ref,visible){
-      console.log(id,btnType,ref,visible);
+    viewFun(id, btnType, ref, visible) {
+      console.log(id, btnType, ref, visible);
       this.$nextTick(() => {
         this.$refs[ref].init(id, btnType)
       })
     },
- // 关闭新建编辑页面
- closeForm(isRefresh) {
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
       this.fhFormVisible = false
       if (isRefresh) {
         this.getTabdataList()
@@ -568,10 +578,14 @@ export default {
   align-items: center;
 }
 
-::v-deep .el-scrollbar__view{
+::v-deep .el-scrollbar__view {
   height: calc(100% - 10px);
 }
-.JNPF-common-layout .JNPF-common-layout-left .JNPF-common-el-tree{
+
+.JNPF-common-layout .JNPF-common-layout-left .JNPF-common-el-tree {
   height: 100%;
+}
+.JNPF-common-head {
+  padding: 10px;
 }
 </style>

@@ -115,6 +115,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import JNPFForm from './Form'
 import moment from 'moment'
+import { excelExport  } from '@/api/basicData/index'
 export default {
   name: 'salefinAccount',
   components: { JNPFForm, ExportForm, SuperQuery },
@@ -280,8 +281,8 @@ export default {
         let query = this.listQuery
         let _data = {
           ...query,
-          exportType: '1201',
-          exportName: '销售订单对账',
+          exportType: '1204',
+          exportName: '出入库对账',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
         }

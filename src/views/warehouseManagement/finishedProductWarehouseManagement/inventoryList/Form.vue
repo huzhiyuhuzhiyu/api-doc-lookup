@@ -22,7 +22,7 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="订单编号" prop="orderNo" v-if="dataForm.businessType">
+                        <el-form-item label="单号" prop="orderNo" v-if="dataForm.businessType">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                             maxlength="300" />
@@ -130,13 +130,13 @@
                         <span class="required">*</span>批次号
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'" 
+                        <el-input v-model="scope.row.batchNumber" readonly :disabled="btnType == 'look'"
                           @focus="openSeleceBatchNumberDialog(scope.row, scope.$index)" placeholder="批次号">
                           {{ scope.row.batchNumber }}
                         </el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="shelfSpaceName" label="货位" width="120" :key="10112" v-if="allocationFlag">
+                    <el-table-column prop="shelfSpaceName" label="货位" width="140" :key="10112" v-if="allocationFlag">
                       <template slot="header"
                         v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_purchase'">
                         <span class="required">*</span>货位
@@ -163,7 +163,7 @@
                           v-model="scope.row.num" placeholder="数量"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110"></el-table-column>
+                    <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
                     <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
@@ -541,10 +541,7 @@ export default {
         this.orderForm.deliveryEndTime = ""
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      if (this.dataForm.businessType == 'outbound_sale_send') {
-        // 销售发货
-        this.orderForm.deliverQueryFlag = 1
-      } else if (this.dataForm.businessType == 'inbound_sale_return') {
+      if (this.dataForm.businessType == 'inbound_sale_return') {
         this.orderForm.returnQueryFlag = 1
       }
       // { label: "销售发货", value: "outbound_sale_send" },
@@ -725,6 +722,7 @@ export default {
       productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
 
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
+      productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].taxAmount]), 6)
       console.log("productArr", productArr);
       this.productData = productArr
     },
@@ -921,148 +919,145 @@ export default {
       }
     },
     async handleConfirm(submitModel) {
-      this.btnLoading = true
-      let submitFlag = true // 自动聚焦是否可用
 
-
-
-      // 判断子表是否有效
-      if (!this.productData.length && submitFlag) {
-        submitFlag = false
-        this.$message.error('请至少选择一个产品')
-      }
-      if (this.allocationFlag && this.jyFlag) {
-        this.productData.forEach((item, index) => {
-          if (!item.shelfSpaceId) {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          this.btnLoading = true
+          let submitFlag = true // 自动聚焦是否可用
+          // 判断子表是否有效
+          if (!this.productData.length && submitFlag) {
             submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
+            this.$message.error('请至少选择一个产品')
           }
-        })
-      }
-
-      if (this.productData.length) {
-        let totals = {};
-        let totalNum = {};
-        for (let index = 0; index < this.productData.length; index++) {
-          const item = this.productData[index];
-          if (!item.num) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
-            break
+          if (this.allocationFlag && this.jyFlag) {
+            this.productData.forEach((item, index) => {
+              if (!item.shelfSpaceId) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
+              }
+            })
           }
 
-          //   { label: "销售发货", value: "outbound_sale_send" },
-          // { label: "销售退货", value: "inbound_sale_return" },
-          // { label: "采购收货", value: "inbound_purchase" },
-          // { label: "采购退货", value: "outbound_purchase" },
-          // { label: "生产领料", value: "outbound_pick_out" },
-          // { label: "生产退料", value: "inbound_return_materials" },
-          // { label: "外协发料", value: "outbound_external_send" },
-          // { label: "外协退料", value: "inbound_external_return" },
-          // { label: "外协收货", value: "inbound_external" },
-          // { label: "外协退货", value: "outbound_external" },
+          if (this.productData.length) {
+            let totals = {};
+            let totalNum = {};
+            for (let index = 0; index < this.productData.length; index++) {
+              const item = this.productData[index];
+              if (!item.num) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                break
+              }
 
-          if (item.num > item.ordersNum) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
-            break
-          }
+              //   { label: "销售发货", value: "outbound_sale_send" },
+              // { label: "销售退货", value: "inbound_sale_return" },
+              // { label: "采购收货", value: "inbound_purchase" },
+              // { label: "采购退货", value: "outbound_purchase" },
+              // { label: "生产领料", value: "outbound_pick_out" },
+              // { label: "生产退料", value: "inbound_return_materials" },
+              // { label: "外协发料", value: "outbound_external_send" },
+              // { label: "外协退料", value: "inbound_external_return" },
+              // { label: "外协收货", value: "inbound_external" },
+              // { label: "外协退货", value: "outbound_external" },
 
-          if (item.num > item.availableBatchNumber) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
-            break
-          }
-          if (!totals[item.ordersLineId]) {
-            totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-          }
-          if (!totalNum[item.ordersLineId]) {
-            totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-          }
-          totals[item.ordersLineId].totalNum += Number(item.num)
-          totalNum[item.ordersLineId].totalNum += Number(item.num);
-        }
-        for (let id in totals) {
-          if (totals[id].totalNum > totals[id].ordersNum) {
-            console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-            submitFlag = false
-            this.$message.error("同产品的总数量不能超过订单数量")
-            break
-          }
-        }
-        if (this.dataForm.businessType == 'outbound_sale_send') {
-          for (let id in totalNum) {
-            if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-              submitFlag = false
-              this.$message.error("同产品的总数量不能批次可用数量")
-              break
+              if (item.num > item.ordersNum) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                break
+              }
+
+              if (item.num > item.availableBatchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+                break
+              }
+              if (!totals[item.ordersLineId]) {
+                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
+              }
+              if (!totalNum[item.ordersLineId]) {
+                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              }
+              totals[item.ordersLineId].totalNum += Number(item.num)
+              totalNum[item.ordersLineId].totalNum += Number(item.num);
+            }
+            for (let id in totals) {
+              if (totals[id].totalNum > totals[id].ordersNum) {
+                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
+                submitFlag = false
+                this.$message.error("同产品的总数量不能超过订单数量")
+                break
+              }
+            }
+            if (this.dataForm.businessType == 'outbound_sale_send') {
+              for (let id in totalNum) {
+                if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
+                  submitFlag = false
+                  this.$message.error("同产品的总数量不能批次可用数量")
+                  break
+                }
+              }
             }
           }
-        }
-      }
 
 
 
 
-      // 自动聚焦未使用则提交
-      if (submitFlag) {
-        if (this.jyFlag) {
-          this.dataForm.documentType = "inbound"
-        } else {
-          this.dataForm.documentType = "outbound"
+          // 自动聚焦未使用则提交
+          if (submitFlag) {
+            if (this.jyFlag) {
+              this.dataForm.documentType = "inbound"
+            } else {
+              this.dataForm.documentType = "outbound"
 
-        }
-        this.dataForm.documentStatus = submitModel
-        this.productData.forEach(item => item.id = "")
-        // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
-        const formMethod = addWarehouseData
-        // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
+            }
+            this.dataForm.documentStatus = submitModel
+            this.productData.forEach(item => item.id = "")
+            // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
+            const formMethod = addWarehouseData
+            // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
-        this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-        this.copyLinesData.forEach(element => {
-          element.warehouseType = this.dataForm.warehouseType
-        });
-        this.dataForm.classAttribute = "finish_product"
-        this.dataForm.sourceType = 'order'
-        let dataObj = {
-          stockMove: this.dataForm,
-          lines: this.productData,
-          spaceLines: this.copyLinesData
-        }
-        console.log("this.dataForm", this.dataForm);
-        // 提交确认
-        if (submitModel === 'submit') {
-          let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
-          if (!flag) {
-            console.log(dataObj)
-            return this.btnLoading = false
-          }
-        }
+            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
+            this.copyLinesData.forEach(element => {
+              element.warehouseType = this.dataForm.warehouseType
+            });
+            this.dataForm.classAttribute = "finish_product"
+            this.dataForm.sourceType = 'order'
+            let dataObj = {
+              stockMove: this.dataForm,
+              lines: this.productData,
+              spaceLines: this.copyLinesData
+            }
+            console.log("this.dataForm", this.dataForm);
+           
+            console.log(this.productData);
+            formMethod(dataObj).then(res => {
+              let msg = res.msg
+              if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+              if (submitModel == "draft") {
+                this.submitmethodsTitle = "保存成功"
+              } else {
+                this.submitmethodsTitle = "提交成功"
+
+              }
+              if (this.btnType == 'edit') {
+                this.btnText = "继续修改"
+              } else if (this.btnType == 'add' || this.btnType == 'copy') {
+                this.btnText = "继续新增"
+              }
+              this.tipsvisible = true
 
 
-        formMethod(dataObj).then(res => {
-          let msg = res.msg
-          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-          if (submitModel == "draft") {
-            this.submitmethodsTitle = "保存成功"
+            }).catch(() => {
+              this.btnLoading = false
+            })
           } else {
-            this.submitmethodsTitle = "提交成功"
-
+            this.btnLoading = false
           }
-          if (this.btnType == 'edit') {
-            this.btnText = "继续修改"
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            this.btnText = "继续新增"
-          }
-          this.tipsvisible = true
+        }
+      })
 
 
-        }).catch(() => {
-          this.btnLoading = false
-        })
-      } else {
-        this.btnLoading = false
-      }
+
     },
 
 
@@ -1105,8 +1100,8 @@ export default {
   padding-left: 5px;
 }
 
-.JNPF-dialog.JNPF-dialog_center ::v-deep.el-dialog .el-dialog__body {
-  padding: 0;
+::v-deep.JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 !important;
 }
 
 .JNPF-preview-main .main {
@@ -1165,6 +1160,14 @@ export default {
   display: inline-block;
 }
 
+.JNPF-common-search-box {
+  margin-bottom: 5px;
+}
+
 // .orderInfo ::v-deep .el-collapse-item__wrap {
 //   border-bottom: none !important
-// }</style>
+// }
+.JNPF-common-table {
+  border: 1px solid #ebeef5 !important;
+}
+</style>

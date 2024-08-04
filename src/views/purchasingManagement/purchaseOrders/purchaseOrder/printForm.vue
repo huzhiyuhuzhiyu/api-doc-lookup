@@ -4,21 +4,21 @@
       <template >
         <div class="orderHeader" style="width: 100%;display: flex;height: 80px;">
           <div class="headerItem" style="flex:1;display: flex;
-          flex-direction: column;
+          flex-direction: column;margin-left: -50px;
           justify-content: center;align-items:center">
-            <img src="@/assets/images/eslog.png" style="transform: scale(0.7);" />
+            <img src="@/assets/images/jxLogo.png" style="transform: scale(0.7);height: 150px;width: 300px;" />
           </div>
           <div class="headerItem" style="flex:3;display: flex;
-          flex-direction: column;
+          flex-direction: column;margin-left: -90px;
           justify-content: space-around;">
             <div class="hTitle" style=" font-size: 30px;
             letter-spacing: 2px;
             color: #191f25;
             text-align: center;
-            line-height: 1.5vw;">宁波怡盛液压技术有限公司</div>
+            line-height: 1.5vw;">宁波聚轩信息科技有限公司</div>
             <div class="hTitle hTitle2" style=" font-size: 18px;letter-spacing: 0;color: #191f25;
             text-align: center;
-            line-height: 1.5vw;font-family:Microsoft YaHei">Ningbo YiSheng Hydraulic Technical Co.,Ltd.</div>
+            line-height: 1.5vw;font-family:Microsoft YaHei">Ningbo JUXUAN Technology Co.,Ltd.</div>
           </div>
           <div class="headerItem" style="flex:1;display: flex;
           flex-direction: column;
@@ -50,12 +50,12 @@
           justify-content: space-between;">
             <div class="parterright-item" style="flex-direction:column;display: flex;">
               <span style=" text-indent: 0.5em; font-size: 16px">发货地址：</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">宁波怡盛液压技术有限公司</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">宁波镇海区蛟川街道金达路259号</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">开户行:宁波银行北仑支行</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">电话:(0574)56190760</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">传真:(0574)56190762</span>
-              <span style=" text-indent: 0.5em; font-size: 16px">联系:庄海燕</span>
+              <span style=" text-indent: 0.5em; font-size: 16px"></span>
+              <span style=" text-indent: 0.5em; font-size: 16px"></span>
+              <span style=" text-indent: 0.5em; font-size: 16px">开户行:</span>
+              <span style=" text-indent: 0.5em; font-size: 16px">电话:</span>
+              <span style=" text-indent: 0.5em; font-size: 16px">传真:</span>
+              <span style=" text-indent: 0.5em; font-size: 16px">联系:</span>
             </div>
             <div class="parterright-item" style="width: 28%;">
               <span style=" font-size: 16px">{{ dataValue.submitDate.split(' ')[0] }}</span>
@@ -133,7 +133,7 @@
         border-right: 2px solid #191f258a;
         box-sizing: border-box;font-size:20px">
             <div style="flex:1;border-right: 1px solid #191f25;padding: 2px; flex-direction: column;">
-              <p>需方：宁波怡盛液压技术有限公司</p>
+              <p>需方：宁波聚轩信息科技有限公司</p>
               <p>盖章：</p>
               <p>日期：{{ jnpf.getToday() }}</p>
             </div>

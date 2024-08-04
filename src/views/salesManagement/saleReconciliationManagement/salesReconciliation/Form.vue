@@ -655,6 +655,8 @@ export default {
           mainUnit: item.mainUnit,
           ordersLineId: item.ordersLineId,
           ordersId: item.ordersId,
+          moveId: item.moveId,
+          moveLineId: item.id,
           productsId: item.productsId,
           productName: item.productName,
           productCode: item.productCode,

@@ -2093,11 +2093,10 @@ export default {
     submitAllProduct() {
       this.allProVisible = false
       this.selectArr.forEach(item => {
-        item.productName = item.name,
-          item.productCode = item.code,
-          item.price = item.purchasePrice,
-          item.productsId = item.id
-        
+        item.productName = item.name
+        item.productCode = item.code
+        item.productsId = item.id
+
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.purchasePrice) / (1 + (Number(item.taxRate)) / 100), 6)
 
@@ -2116,8 +2115,8 @@ export default {
         if (index !== -1) {
           // 使用 splice 插入 newDataArray
           this.productData.splice(index, 0, ...this.selectArr);
-        }else{
-          this.productData=[...this.productData,...this.selectArr]
+        } else {
+          this.productData = [...this.productData, ...this.selectArr]
         }
       }
 
@@ -2906,7 +2905,7 @@ export default {
 
 
             }
-            obj.orderLineList=this.productData
+            obj.orderLineList = this.productData
           }
           if (submitFlag === false) return
           this.btnLoading = true

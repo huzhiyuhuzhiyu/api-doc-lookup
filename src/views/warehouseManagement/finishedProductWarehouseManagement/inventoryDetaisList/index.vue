@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.sourceType" placeholder="业务类型" style="width: 100%;">
+              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;">
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -19,7 +19,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="规格型号"
+              <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
                 clearable />
             </el-form-item>
           </el-col>
@@ -36,7 +36,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :addIcon="'el-icon-download'" @add="exportForm()" :addText="'导出'"></topOpts>
+          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier()">
+            <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">导出</el-button>
+          </topOpts>
 
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -48,39 +51,56 @@
           </div>
         </div>
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
-          border :setColumnDisplayList="columnList" show-summary :summary-method="getSummaries" :fixedNO="true"
-          @sort-change="sortChange" custom-column>
-          <el-table-column prop="orderNo" label="出入库单号" sortable="custom" min-width="160">
-           
-          </el-table-column>
-          <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
+          border :setColumnDisplayList="columnList"  :fixedNO="true" @sort-change="sortChange"
+          custom-column>
+          <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
-              <div v-if="scope.row.sourceType == 'send_return'">发退货单</div>
-              <div v-if="scope.row.sourceType == 'picking_return'">领退料单</div>
-              <div v-if="scope.row.sourceType == 'purchase_delivery_return'">采购收退货单</div>
-              <div v-if="scope.row.sourceType == 'outside_delivery_return'">外协收退货单</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="partnerName" label="合作伙伴名称" sortable="custom" min-width="160" >
-            <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.moveId, 'look')">{{
-                scope.row.partnerName
+              <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look')">{{
+                scope.row.orderNo
               }}</el-link>
             </template>
           </el-table-column>
+          <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.sourceType == 'outbound_sale_send'">销售发货</div>
+              <div v-if="scope.row.sourceType == 'inbound_sale_return'">销售退货</div>
+              <div v-if="scope.row.sourceType == 'inbound_purchase'">采购收货</div>
+              <div v-if="scope.row.sourceType == 'outbound_purchase'">采购退货</div>
+              <div v-if="scope.row.sourceType == 'outbound_pick_out'">生产领料</div>
+              <div v-if="scope.row.sourceType == 'inbound_return_materials'">生产退料</div>
+              <div v-if="scope.row.sourceType == 'outbound_external_send'">外协发料</div>
+              <div v-if="scope.row.sourceType == 'inbound_external_return'">外协退料</div>
+              <div v-if="scope.row.sourceType == 'inbound_external'">外协收货</div>
+              <div v-if="scope.row.sourceType == 'outbound_external'">外协退货</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
+
+          </el-table-column>
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180">
+
+          </el-table-column>
+          <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="180" />
-          <el-table-column prop="drawingNo" label="规格型号" sortable="custom" min-width="120" />
-          <el-table-column prop="processName" label="工序名称" sortable="custom" min-width="180" />
-          <el-table-column prop="mainUnit" label="单位（主）" min-width="140" />
-          <el-table-column prop="num" label="数量（主）" sortable="custom" min-width="140" />
-          <el-table-column prop="deputyUnit" label="单位（副）" min-width="140" />
-          <el-table-column prop="deputyNum" label="数量（副）" sortable="custom" min-width="140" />
+          <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
+          <el-table-column prop="num" label="数量(主)" sortable="custom" min-width="140" />
           <el-table-column prop="costPrice" label="单价（含税）" sortable="custom" min-width="160" />
+          <el-table-column prop="totalAmount" label="总金额（含税）" sortable="custom" min-width="180" />
+          <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" />
+          <el-table-column prop="deputyNum" label="数量(副)" min-width="140" />
           <el-table-column prop="taxRate" label="税率（%）" sortable="custom" min-width="140" />
           <el-table-column prop="excludingTaxCostPrice" label="单价（不含税）" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="totalAmount" label="总金额（含税）" sortable="custom" min-width="180" />
+          <el-table-column prop="excludingTaxAmount" label="总金额（不含税）" sortable="custom" min-width="180" />
+          <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
+          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
+          <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
+          <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
+          <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
+          <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column>
+          <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+          <el-table-column prop="processName" label="工序" width="120" :key="101"></el-table-column>
           <el-table-column prop="documentStatus" label="单据状态" min-width="120" fixed="right">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -92,12 +112,33 @@
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.moveId, 'look')">查看详情</el-button>
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
+                :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
+                @edit="editFun(scope.row.moveId, 'edit')" @del="handleDel(scope.row.moveId)">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look')">查看详情</el-dropdown-item>
+
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData">
+          <div class="text">
+            <span>合计：</span>
+            <span style="margin-left: 10px">数量(主):{{ num }}</span>
+            <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
+            <span style="margin-left: 10px">总金额(含税):{{ totalAmount }}</span>
+            <span style="margin-left: 10px">总金额(不含税):{{ excludingTaxTotalAmount }}</span>
+          </div>
         </pagination>
       </div>
     </div>
@@ -114,11 +155,15 @@ import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouse
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../inventoryList/Form.vue'
 export default {
-  name: 'myCustomer',
+  name: 'inventoryDetaisList',
   components: { Form, ExportForm },
   data() {
     return {
-      columnList: ["partnerName", "productName", "taxRate", "excludingTaxCostPrice", "documentStatus", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "productName", "deputyUnit", "deputyNum", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      num: 0,
+      taxAmount: 0,
+      totalAmount: 0,
+      excludingTaxTotalAmount: 0,
       exportFormVisible: false,
       recordFormVisible: false,
       title: "更多查询",
@@ -126,10 +171,16 @@ export default {
       tableData: [],
       listLoading: false,
       list: [
-        { label: "发退货单", value: "send_return" },
-        { label: "领退料单", value: "picking_return" },
-        { label: "采购收退货单", value: "purchase_delivery_return" },
-        { label: "外协收退货单", value: "outside_delivery_return" },
+        { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" },
       ],
 
       initListQuery: {
@@ -159,33 +210,25 @@ export default {
     this.getInventorySummaryDataFun()
   },
   methods: {
-    // 合计处理
-    getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        const values = this.totalList.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-        } else {
-          sums[index] = null;
-        }
-      });
-      return sums;
-
+    viewFun(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
+      })
     },
+    editFun(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
+      })
+    },
+    addSupplier() {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init("", 'add')
+      })
+    },
+
     getInventorySummaryDataFun() {
       this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {
@@ -193,13 +236,18 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.totalList = []
-      this.listQuery.pageNum = 1 
+      this.listQuery.pageNum = 1
       getInventorySummaryData(this.listQuery).then(res => {
 
-        this.tableData =res.data.page.records
-        console.log("tableData",this.tableData);
+        this.tableData = res.data.page.records
+        console.log("tableData", this.tableData);
         // res.data.total ? this.totalList.push(res.data.total) : ''
-        // this.total = res.data.page ? res.data.page.total : 0
+        this.total = res.data.page ? res.data.page.total : 0
+        this.num = res.data.total ? res.data.total.num : 0
+        this.taxAmount = res.data.total ? res.data.total.taxAmount : 0
+        this.totalAmount = res.data.total ? res.data.total.totalAmount : 0
+        this.excludingTaxTotalAmount = res.data.total ? res.data.total.excludingTaxTotalAmount : 0
+
         this.listLoading = false
         this.visible = false
       }).catch(() => {
@@ -286,12 +334,12 @@ export default {
     },
 
     addOrUpdateHandle(id, btntype) {
-      this.formVisible=true
+      this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, true)
       })
     },
-   
+
     // 写记录
     handleRecord(row) {
       this.recordFormVisible = true

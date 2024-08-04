@@ -89,11 +89,11 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="ordersNo" label="发退货通知单号" min-width="180" show-overflow-tooltip>
+                      <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'stockMoveOrderNo'">
                             <div class="viewData">
-                              <span>{{ scope.row.ordersNo }}</span>
+                              <span>{{ scope.row.stockMoveOrderNo }}</span>
                             </div>
                           </el-form-item>
                         </template>
@@ -113,7 +113,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                             <div class="viewData">
-                              <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
+                              <span>{{ scope.row.productName ? scope.row.productName :scope.row.drawingNo?'': "调价" }}</span>
                             </div>
                           </el-form-item>
                         </template>

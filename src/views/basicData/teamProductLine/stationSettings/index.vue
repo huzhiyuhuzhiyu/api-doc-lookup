@@ -48,17 +48,16 @@
             新建
           </el-button> -->
           <topOpts @add="addSupplier('add')">
-            <el-button
-              :disabled="tableDataList.length > 0 ? false : true"
-              size="mini"
-              type="primary"
-              icon="el-icon-download"
-              @click="exportForm"
-              >
+            <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
               导出
-            </el-button>  
+            </el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -67,8 +66,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="工位编码"  min-width="180" sortable="custom" />
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
+          custom-column :setColumnDisplayList="columnList">
+          <el-table-column prop="code" label="工位编码" min-width="180" sortable="custom" />
           <el-table-column prop="name" label="工位名称" min-width="180" sortable="custom" />
           <el-table-column prop="state" label="状态" sortable="custom">
             <template slot-scope="scope">
@@ -85,17 +85,17 @@
                 @del="handleDel(scope.row.id, scope.row.parentId)">
 
                 <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </tableOpts>
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
               <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
@@ -123,20 +123,75 @@
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
-  
+
 <script>
 import { deleteBimWorkstation, bimWorkstationList } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'stationSetting',
-  components: { DepForm,ExportForm },
+  components: { DepForm, ExportForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: '工位编码',
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: '工位名称',
+          type: 'input'
+        },
+
+        {
+          prop: 'state',
+          label: '状态',
+          type: 'select',
+          options: [
+            {
+              label: '启用',
+              value: 'enable'
+            },
+            {
+              label: '停用',
+              value: 'disabled'
+            }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ],
       depFormVisible: false,
       exportFormVisible: false,
       background: true,//分页器背景颜色
@@ -157,9 +212,6 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "createTime"
         }],
         code: "",
         name: "",
@@ -168,7 +220,7 @@ export default {
 
       total: 0,
       formVisible: false,
-      columnList: ['remark','createByName']
+      columnList: ['remark', 'createByName']
     }
   },
   created() {
@@ -176,29 +228,34 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    superQuerySearch(query) {
+      this.tableQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/Name$/, '');
-      this.tableQuery.orderItems[0].asc = order !== 'descending' 
-      this.tableQuery.orderItems[0].column =  order === null ? "" : newProp
+      this.tableQuery.orderItems[0].asc = order !== 'descending'
+      this.tableQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
     },
-     // 导出
-     exportForm() {
+    // 导出
+    exportForm() {
       this.exportFormVisible = true
       let columnList = this.$refs.tableForm.columnList.filter((item) => !!item.label && !!item.prop)
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
-      console.log(columnList,'columnList')
+      console.log(columnList, 'columnList')
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
     },
     download(data) {
-        console.log(data,'data')
+      console.log(data, 'data')
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
@@ -218,7 +275,7 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     // 关闭新建、编辑页面
@@ -348,4 +405,3 @@ export default {
   padding-left: 0;
 }
 </style>
-  

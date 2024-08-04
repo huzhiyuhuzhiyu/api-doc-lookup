@@ -47,6 +47,15 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="类别属性" prop="classAttribute">
+                        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
                           :disabled="btnType == 'look'"></el-input>
@@ -167,7 +176,6 @@
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
                     <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-
 
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
@@ -379,8 +387,11 @@ import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  getpurPurchaseReceiptReturnGoodsdetail,
+  getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import {
+  getclassAttributeList
+} from '@/api/masterDataManagement/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -394,6 +405,7 @@ export default {
       productTotal: 0,
       codeConfig: {},
       datafilelist: [],
+      classAttributeList: [],
       provinces: [],
       orderForm: {
         cooperativePartnerId: '',
@@ -402,7 +414,7 @@ export default {
         partnerName: '', // customerProductNo: "",
         deliveryStartTime: '',
         deliveryEndTime: '',
-
+        receiptReturnType: 'back',
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -656,6 +668,7 @@ export default {
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
+    this.getClassAttribute()
   },
   mounted() {
     this.init()
@@ -685,7 +698,7 @@ export default {
           let flag = false
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].deliveryQuantity)
-          let num_2 = Number(list[index].purchaseQuantity) 
+          let num_2 = Number(list[index].purchaseQuantity)
           if (!(num_1 <= num_2)) {
             flag = true
           }
@@ -1023,6 +1036,23 @@ export default {
         this.attributeLines = res.data
       })
     },
+    // 获取类别属性字段 编排属性
+    getClassAttribute() {
+      let obj = {
+
+        pageNum: 1,
+        pageSize: -1
+      }
+      getclassAttributeList(obj).then((res) => {
+        this.classAttributeList = res.data.records.map(item => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+
+        })
+      })
+    },
 
     // 选完所属采购，带出所属部门
     hangleSelectSales(e, r) {
@@ -1055,21 +1085,20 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-
-                ; (this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  // orderCategory: "assembly",
-                  receiptReturnType: 'back',
-                  // notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  logisticsNumber: '',
-                  cooperativePartnerId: '',
-                  remark: '',
-                  orderNo: this.codeConfig.number
-                }),
-                  (this.dataFormTwo.productData = [])
+              this.dataForm = {
+                exchangeGoodsFlag: false,
+                // orderCategory: "assembly",
+                receiptReturnType: 'back',
+                // notifyType: 'sale',
+                logisticsCompany: '',
+                ordersId: '',
+                deliverDate: '',
+                logisticsNumber: '',
+                cooperativePartnerId: '',
+                remark: '',
+                orderNo: this.codeConfig.number
+              }
+              this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
               this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1087,7 +1116,7 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          ; (this.dataForm = {
+          this.dataForm = {
             exchangeGoodsFlag: false,
             // orderCategory: "assembly",
             receiptReturnType: 'back',
@@ -1099,8 +1128,8 @@ export default {
             logisticsNumber: '',
             cooperativePartnerId: '',
             remark: ''
-          }),
-            (this.dataFormTwo.productData = [])
+          }
+          this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id
           this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1303,6 +1332,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
+            console.log(item, 'it')
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
               deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
@@ -1311,9 +1341,10 @@ export default {
               ordersId: item.ordersId,
               notificationType: 'procure',
               id: item.id ? item.id : '',
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
+              classAttribute: item.classAttribute ? item.classAttribute : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId :'',
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1330,9 +1361,10 @@ export default {
               ordersId: item.ordersId,
               notificationType: 'procure',
               id: item.id ? item.id : '',
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
+              classAttribute: item.classAttribute ? item.classAttribute : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId : '',
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
@@ -1351,44 +1383,46 @@ export default {
 
           // obj.returnGoods.deliveryStatus = 'not_returned'
           console.log(obj, 'obj')
-          addpurPurchaseReceiptReturnGoods(obj).then(res => {
-            let msg = "";
-            if (value == 'draft') {
-              msg = "保存成功"
-            } else if (value == 'submit') {
-              msg = '提交成功'
-            }
-
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                // this.visible = false
-                this.btnLoading = false
-                this.dataFormTwo.productData = []
-                this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  inspectionStatus: '',
-                  receiptReturnType: 'back',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  partnerName: '',
-                  orderNo: '',
-                  logisticsNumber: '',
-
-                  cooperativePartnerId: '',
-                  remark: ''
-                }
-                this.$refs.dataForm.resetFields();
-                this.init()
+          addpurPurchaseReceiptReturnGoods(obj)
+            .then((res) => {
+              let msg = ''
+              if (value == 'draft') {
+                msg = '保存成功'
+              } else if (value == 'submit') {
+                msg = '提交成功'
               }
+
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  // this.visible = false
+                  this.btnLoading = false
+                  this.dataFormTwo.productData = []
+                  this.dataForm = {
+                    exchangeGoodsFlag: false,
+                    inspectionStatus: '',
+                    receiptReturnType: 'back',
+                    notifyType: 'sale',
+                    logisticsCompany: '',
+                    ordersId: '',
+                    deliverDate: '',
+                    partnerName: '',
+                    orderNo: '',
+                    logisticsNumber: '',
+
+                    cooperativePartnerId: '',
+                    remark: ''
+                  }
+                  this.$refs.dataForm.resetFields()
+                  this.init()
+                }
+              })
             })
-          }).catch(() => {
-            this.btnLoading = false
-          })
+            .catch(() => {
+              this.btnLoading = false
+            })
         }
       })
     }

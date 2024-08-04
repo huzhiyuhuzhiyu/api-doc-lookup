@@ -138,11 +138,12 @@ import {
   mergelist,
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
-import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -503,7 +504,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          deleteQuotationsendlist(id).then((res) => {
+          deletepurPurchaseReceiptReturnGoods(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

@@ -134,9 +134,7 @@
                   size="mini"
                   type="text"
                   class="JNPF-table-delBtn"
-                  :disabled="
-                    scope.row.documentStatus == 'draft' || scope.row.deliveryStatus == 'canceled' ? false : true
-                  "
+                 
                   @click="handleDel(scope.row.id)"
                 >
                   删除
@@ -198,6 +196,7 @@ import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -558,7 +557,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          deleteQuotationsendlist(id).then((res) => {
+          deletepurPurchaseReceiptReturnGoods(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

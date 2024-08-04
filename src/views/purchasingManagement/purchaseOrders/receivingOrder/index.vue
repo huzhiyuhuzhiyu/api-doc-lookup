@@ -68,7 +68,7 @@
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -97,7 +97,7 @@
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
+                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   查看详情
                 </el-button>
               </template>
@@ -105,9 +105,9 @@
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <div class="text">
+            <!-- <div class="text">
               <span>合计数量:{{ totalNum }}</span>
-            </div>
+            </div> -->
           </pagination>
         </div>
       </div>
@@ -135,7 +135,7 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from '../../../salesManagement/orderManagement/orderList/Form'
+import Form from './Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'

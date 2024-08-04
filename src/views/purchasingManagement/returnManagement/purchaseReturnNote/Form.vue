@@ -123,28 +123,23 @@
                     @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
                       key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
-
-                    <el-table-column prop="productCode" label="客户料号" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="productCode" label="品名规格" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="productCode" label="单位" min-width="160" show-overflow-tooltip>
-                    </el-table-column>
-
-                    <el-table-column prop="deliveryQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                    <el-table-column prop="mainUnit" label="单位" width="160" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
+                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                    <el-table-column prop="deliveryQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
-                        <span class="required">*</span>退货数量
+                        <span class="required">*</span>
+                        收货数量
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
-                          :rules='productRules.deliveryQuantity'>
-                          <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入退货数量"
+                          :rules="productRules.deliveryQuantity">
+                          <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入收货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
                             {{ scope.row.deliveryQuantity }}
@@ -158,6 +153,16 @@
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
+                    <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
+                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
+                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
+                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                    <el-table-column prop="remark" label="备注" width="160" />
+                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -356,6 +361,11 @@ import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分�
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
 import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
+import {
+  addpurPurchaseReceiptReturnGoods,
+  editpurPurchaseReceiptReturnGoods,
+  getpurPurchaseReceiptReturnGoodsdetail
+} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -371,24 +381,27 @@ export default {
       datafilelist: [],
       provinces: [],
       orderForm: {
-        cooperativePartnerId: "",
-        customerProductDrawingNo: "",
-        returnQueryFlag: 1,
-        partnerName: "",        // customerProductNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
-
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        deliveryEndDate: '',
+        deliveryStartDate: '',
+        endTime: '',
+        orderNo: '',
+        orderType: 'procure',
+        orderItems: [
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-        receivingStatus: 'receiving'
+        startTime: '',
+        productCode: '',
+        productName: '',
 
+        receivingStatus: 'received'
       },
       // orderList: [
       //   { label: "外协通知", value: "external" },
@@ -1246,18 +1259,18 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.orderNo = data.number
-        this.$set(this.dataForm,'orderNo',data.number)
-        console.log("dataForm",this.dataForm);
+        this.$set(this.dataForm, 'orderNo', data.number)
+        console.log("dataForm", this.dataForm);
       } catch (error) {
       }
     },
     init(id, btnType) {
-      console.log("id",id,btnType);
+      console.log("id", id, btnType);
       this.dataForm.id = id || ''
-      
+
       this.btnType = btnType
       if (this.dataForm.id) {
-        getQuotationsendlist(this.dataForm.id).then(res => {
+        getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then(res => {
           this.dataForm = res.data.notice
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
@@ -1290,26 +1303,34 @@ export default {
             //       }
             //     })
             //   })
-             
+
             // })
             res.data.noticeLineList.forEach(item => {
               item.deliveryQuantity = ''
             });
-             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach(item => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach(item => {
+              item.drawingNo = item.productDrawingNo
+            })
           }
         })
+
+        console.log(this.dataFormTwo.productData, 'data')
       }
       if (btnType == 'add' || btnType == 'copy') {
         console.log(55555);
-        this.formLoading=true
+        this.formLoading = true
         setTimeout(() => {
-          this.formLoading=false
+          this.formLoading = false
           this.fetchData("SRDH")
-          
+
         }, 500);
       }
       if (this.btnType == 'edit') {
@@ -1425,7 +1446,8 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              notifyType: 'sale',
+
+              // notifyType: 'sale',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1462,40 +1484,41 @@ export default {
           })
           this.btnLoading = true
           let formMethod = null;
-          if (this.btnType == 'edit') {
-            formMethod = editQuotationMsendlist
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            obj.notice.deliveryStatus = 'not_returned'
-            formMethod = addQuotationsendlist
-          }
-          formMethod(obj).then(res => {
-            // let msg = "";
-            // if (formMethod == addQuotationsendlist) {
-            //   msg = "新建成功"
-            // } else if (value == 'draft') {
-            //   msg = "保存成功"
-            // } else if (value == 'submit') {
-            //   msg = '提交成功'
-            // }
-            if (value == 'draft') {
-              this.submitmethodsTitle = "保存成功"
-            } else if (value == 'submit') {
-              this.submitmethodsTitle = "提交成功"
-            }
-            this.tipsvisible = true
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
-          }).catch(() => {
-            this.btnLoading = false
-          })
+          console.log(obj, 'obj')
+          // if (this.btnType == 'edit') {
+          //   formMethod = editpurPurchaseReceiptReturnGoods
+          // } else if (this.btnType == 'add' || this.btnType == 'copy') {
+          //   obj.notice.deliveryStatus = 'not_returned'
+          //   formMethod = addpurPurchaseReceiptReturnGoods
+          // }
+          // formMethod(obj).then(res => {
+          //   // let msg = "";
+          //   // if (formMethod == addQuotationsendlist) {
+          //   //   msg = "新建成功"
+          //   // } else if (value == 'draft') {
+          //   //   msg = "保存成功"
+          //   // } else if (value == 'submit') {
+          //   //   msg = '提交成功'
+          //   // }
+          //   if (value == 'draft') {
+          //     this.submitmethodsTitle = "保存成功"
+          //   } else if (value == 'submit') {
+          //     this.submitmethodsTitle = "提交成功"
+          //   }
+          //   this.tipsvisible = true
+          //   // this.$message({
+          //   //   message: msg,
+          //   //   type: 'success',
+          //   //   duration: 1500,
+          //   //   onClose: () => {
+          //   //     this.visible = false
+          //   //     this.btnLoading = false
+          //   //     this.$emit('close', true)
+          //   //   }
+          //   // })
+          // }).catch(() => {
+          //   this.btnLoading = false
+          // })
 
         }
       })

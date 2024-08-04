@@ -70,7 +70,7 @@
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -137,7 +137,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="addSupplier(scope.row.returnDeliveryNoticeId, 'copy')">
@@ -170,6 +170,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { purPurchaseReceiptReturnGoodsDetailList} from '@/api/purchasingManagement/purchaseInquirySheet'
 export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
@@ -232,30 +233,51 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       initOrderForm: {
-        notifyType: 'sale',
-        returnDeliveryType: 'back',
-        orderNo: "",
-        partnerCode: "",
-        partnerName: "",
-        rdsDate: '',
-        rdeDate: '',
-        inspectionStatus: '',
-        documentStatus: '',
-        createByName: '',
         approvalStatus: '',
-        startTime: '',
+        createByName: '',
+        deliverDate: '',
+        deliverDateEnd: '',
+        deliverDateStart: '',
+        documentStatus: '',
         endTime: '',
+        endUpdateTime: '',
+        inspectionStatus: '',
+        keyword: '',
+        notificationType: 'procure',
+        notificationTypeList: [],
+        orderItems: [
+          {
+            asc: true,
+            column: ''
+          }
+        ],
+        orderNo: '',
+        packingStatus: '',
         pageNum: 1,
         pageSize: 20,
-        superQuery: {},
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        partnerCode: '',
+        partnerName: '',
+        productCode: '',
+        productDrawingNo: '',
+        productName: '',
+        receiptReturnType: 'back',
+        receivingStatus: '',
+        salesman: '',
+        startTime: '',
+        startUpdateTime: '',
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        },
+        totalRowFlag: false
       },
+      
 
       detailTotal: 0,
       salespersonList: [],
@@ -491,7 +513,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getQuotationdatasenddatalist(this.orderForm).then(res => {
+      purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

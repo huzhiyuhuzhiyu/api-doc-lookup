@@ -339,7 +339,7 @@ export default {
         if (tc.prop === 'mainUnit' || tc.prop === 'deputyUnit') {
           let obj = {
             pageNum: 1,
-            pageSize: 100
+            pageSize: -1
           }
           getUnitData(obj).then((res) => {
             tc.options = res.data.records.map((item) => {

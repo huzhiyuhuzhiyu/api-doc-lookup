@@ -138,7 +138,7 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <!-- <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" /> -->
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
@@ -532,7 +532,6 @@ export default {
         approvalStatus: '',
         startTime: '',
         endTime: '',
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -690,7 +689,7 @@ export default {
           let flag = false
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
+          let num_2 = Number(list[index].receiptQuantity)
           console.log(num_1, '1')
           console.log(num_2, '2')
           if (!(num_1 <= num_2)) {
@@ -1347,6 +1346,9 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
           }
@@ -1448,6 +1450,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
+            console.log(item,'iiii')
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
@@ -1501,7 +1504,7 @@ export default {
               packagingMethod: item.packagingMethod,
               packingQuantity: item.packingQuantity,
               processId: item.processId,
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
               purchaseOrderId: item.purchaseOrderId,
               purchaseQuantity: item.purchaseQuantity,
               purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
@@ -1537,6 +1540,8 @@ export default {
               ordersId: item.ordersId,
               classAttribute: 'finish_product',
               id: item.id ? item.id : '',
+              receiptQuantity: item.receiptQuantity,
+              productsId: item.productsId ? item.productsId : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',

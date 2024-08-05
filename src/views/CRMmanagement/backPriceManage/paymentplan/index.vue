@@ -72,7 +72,7 @@
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.receivablesStatus=='payment'">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -90,6 +90,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+            计划回款总金额：{{totalplanReceivablesMoney}}元 / 实际回款总金额：{{totalpracticeMoney}}元 / 未回款总金额：{{totalunreceivedMoney}}元
           </pagination>
         </div>
       </div>
@@ -194,9 +195,9 @@ export default {
           label: '回款状态',
           type: 'select',
           options: [
-            { label: '待回款', value: '1' },
-            { label: '逾期', value: '2' },
-            { label: '回款完成', value: '3' }
+            { label: '待回款', value: 'unpayment' },
+            // { label: '逾期', value: '2' },
+            { label: '回款完成', value: 'payment' }
           ]
         },
         {
@@ -249,6 +250,27 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
+    },
+    totalplanReceivablesMoney: function () {
+      var totalplanReceivablesMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalplanReceivablesMoneyNum = this.jnpf.math('add', [totalplanReceivablesMoneyNum, this.tableData[i].planReceivablesMoney * 1])
+      }
+      return totalplanReceivablesMoneyNum
+    },
+    totalpracticeMoney: function () {
+      var totalpracticeMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalpracticeMoneyNum = this.jnpf.math('add', [totalpracticeMoneyNum, this.tableData[i].practiceMoney * 1])
+      }
+      return totalpracticeMoneyNum
+    },
+    totalunreceivedMoney: function () {
+      var totalunreceivedMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalunreceivedMoneyNum = this.jnpf.math('add', [totalunreceivedMoneyNum, this.tableData[i].unreceivedMoney * 1])
+      }
+      return totalunreceivedMoneyNum
     }
   },
   created() {

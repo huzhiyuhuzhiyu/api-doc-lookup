@@ -77,6 +77,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+            商机金额：{{totalmoney}}元
           </pagination>
         </div>
       </div>
@@ -194,7 +195,14 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    }
+    },
+    totalmoney: function () {
+      var totalmoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalmoneyNum = this.jnpf.math('add', [totalmoneyNum, this.tableData[i].money * 1])
+      }
+      return totalmoneyNum
+    },
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))

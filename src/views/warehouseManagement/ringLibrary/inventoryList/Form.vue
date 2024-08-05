@@ -409,7 +409,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -580,7 +580,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -612,7 +612,7 @@ export default {
           item.num = ""
 
         }
-        item.classAttribute = "semi_finished"
+        item.classAttribute = "finish_product"
         item.ordersId = item.ordersId
         item.ordersLineId = item.id
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
@@ -777,7 +777,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -1019,7 +1019,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = "semi_finished"
+            this.dataForm.classAttribute = "finish_product"
             this.dataForm.sourceType = 'order'
             let dataObj = {
               stockMove: this.dataForm,

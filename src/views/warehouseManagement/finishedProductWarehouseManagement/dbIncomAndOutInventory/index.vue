@@ -88,9 +88,10 @@
             </el-tooltip>
           </div>
         </div>
-        <!-- 发货通知单列表 --> 
-        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="fhTableList" v-if="categoryType == 'outbound_sale_send'"
-          custom-column ref="fhtabForm" :fixedNo="true" :setColumnDisplayList="fhcolumnList">
+        <!-- 发货通知单列表 -->
+        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="fhTableList"
+          v-if="categoryType == 'outbound_sale_send'" custom-column ref="fhtabForm" :fixedNo="true"
+          :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -145,15 +146,17 @@
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row, 'add', 'Form','outbound_sale_send')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_sale_send')">出库</el-button>
               <el-button size="mini" type="text"
                 @click="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
         <!-- 退货货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="thTableList" v-if="categoryType == 'inbound_sale_return'"
-          custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
+        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="thTableList"
+          v-if="categoryType == 'inbound_sale_return'" custom-column ref="thtabForm" :fixedNo="true"
+          :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -181,14 +184,15 @@
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row, 'add', 'Form','inbound_sale_return')">入库</el-button>
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'inbound_sale_return')">入库</el-button>
               <el-button size="mini" type="text"
                 @click="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
         <pagination :total="fhTotal" :page.sync="fhForm.pageNum" :limit.sync="fhForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'outbound_sale_send'||categoryType=='inbound_sale_return'">
+          @pagination="getTabdataList" v-if="categoryType == 'outbound_sale_send' || categoryType == 'inbound_sale_return'">
         </pagination>
       </div>
     </div>
@@ -218,7 +222,7 @@ export default {
     return {
       fhFormVisible: false,
       fhcolumnList: ['partnerCode', "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
-      thcolumnList: ["partnerCode","createByName"],
+      thcolumnList: ["partnerCode", "createByName"],
       fhDateArr: [],//发货通知单 查询条件 发货日期
       fhSelectList: [],//发货多选数据
       fhTableList: [],//发货列表数据
@@ -517,6 +521,7 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.getTabdataList()
+        this.getStockMovelistFun()
       }
     },
 
@@ -532,7 +537,7 @@ export default {
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
       this.categoryType = node.data.businessType
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.getTabdataList()
       })
 

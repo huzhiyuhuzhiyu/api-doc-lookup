@@ -605,6 +605,7 @@ export default {
         item.noticeId = item.returnDeliveryNoticeId
         item.noticeLineId = item.id
         item.sourceNo = this.dataForm.sourceNo
+        item.moveId = this.dataForm.id
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         console.log(" item.excludingTaxCostPrice", item.excludingTaxCostPrice, item.ordersNum);
@@ -872,6 +873,7 @@ export default {
             item.noticeId = item.returnDeliveryNoticeId
             item.noticeLineId = item.id
             item.sourceNo = this.dataForm.sourceNo
+            item.moveId = this.dataForm.id
           });
         }
         this.productData = filteredArray
@@ -1004,7 +1006,6 @@ export default {
 
         }
         this.dataForm.documentStatus = submitModel
-        this.productData.forEach(item => item.id = "")
         // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
         const formMethod = addWarehouseData
         // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
@@ -1030,7 +1031,6 @@ export default {
           }
         }
         console.log("this.productData", this.productData);
-        return
         formMethod(dataObj).then(res => {
           let msg = res.msg
           if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }

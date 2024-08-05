@@ -22,7 +22,7 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="单号" prop="orderNo"  >
+                        <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                             maxlength="300" />
@@ -37,16 +37,27 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="客户" prop="cooperativePartnerId" >
+                      <!-- { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" }, -->
+                      <el-col :sm="6" :xs="24"
+                        v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
+                        <el-form-item label="客户" prop="cooperativePartnerId">
                           <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" readonly @focus="openDialog"
                             :disabled="btnType == 'look' ? true : false">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="供应商" prop="cooperativePartnerId"
-                          v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external' || dataForm.businessType == 'inbound_external'">
+                      <el-col :sm="6" :xs="24"
+                        v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external' || dataForm.businessType == 'inbound_external'">
+                        <el-form-item label="供应商" prop="cooperativePartnerId">
                           <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                             :disabled="btnType == 'look' ? true : false">
                           </el-input>
@@ -451,7 +462,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-
+      customerType: "",
     }
   },
   created() {
@@ -603,8 +614,12 @@ export default {
       arr.forEach(item => {
         item.ordersNum = JSON.parse(JSON.stringify(item.num))
         item.costPrice = item.price
+        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         if (this.dataForm.businessType == 'outbound_sale_send') {
           item.num = item.undeliveredQuantity
+          item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+          console.log("item.taxAmount", item.taxAmount);
         }
         if (this.dataForm.businessType == 'inbound_sale_return') {
 
@@ -615,8 +630,7 @@ export default {
         item.classAttribute = "finish_product"
         item.ordersId = item.ordersId
         item.ordersLineId = item.id
-        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+
         console.log(" item.excludingTaxCostPrice", item.excludingTaxCostPrice, item.ordersNum);
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
@@ -770,6 +784,13 @@ export default {
         this.fetchData("CKDH")
 
       }
+      if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
+        this.customerType = 'customer'
+      }
+      if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_external' || this.dataForm.businessType == 'inbound_external') {
+
+        this.customerType = 'supplier'
+      }
       this.$forceUpdate()
       this.orderForm = { //获取产品数据
         cooperativePartnerId: "",
@@ -796,7 +817,7 @@ export default {
     openDialog() {
       this.CustomerForm = true
       this.$nextTick(() => {
-        this.$refs.CustomerForms.init()
+        this.$refs.CustomerForms.init(this.customerType,this.dataForm.businessType)
       })
     },
     // 所选择的客户数据
@@ -959,7 +980,10 @@ export default {
               // { label: "外协收货", value: "inbound_external" },
               // { label: "外协退货", value: "outbound_external" },
 
-              if (item.num > item.ordersNum) {
+              if (Number(item.num) > Number(item.ordersNum)) {
+                console.log(Number(item.num));
+                console.log(Number(item.ordersNum));
+                console.log(Number(item.num) > Number(item.ordersNum));
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
                 break
@@ -1027,7 +1051,7 @@ export default {
               spaceLines: this.copyLinesData
             }
             console.log("this.dataForm", this.dataForm);
-           
+
             console.log(this.productData);
             formMethod(dataObj).then(res => {
               let msg = res.msg

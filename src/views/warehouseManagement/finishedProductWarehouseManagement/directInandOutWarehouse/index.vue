@@ -78,8 +78,11 @@
                     <el-table-column type="selection" width="55" fixed="left" :key="2">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
-                    </el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+                      v-if="dataForm.documentType == 'outbound'" />
+
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"
+                      v-if="dataForm.documentType == 'inbound'"> </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
                       v-if="dataForm.documentType == 'outbound'">
@@ -115,8 +118,30 @@
                           v-model="scope.row.num" placeholder="数量"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
+                    <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110">
+                      <template slot="header">
+                        <span class="required">*</span>单价(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.costPrice" :disabled="btnType == 'look' ? true : false"
+                          @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
+                          @blur="checkPrice(scope.row, scope.$index)">{{
+                            scope.row.costPrice }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                      <template slot="header">
+                        <span class="required">*</span>税率(%)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                          @change="changeTaxRate(scope.row, scope.$index)">
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                            :value="item.taxRate"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
                     <el-table-column prop="originalBatchNumber" label="原产品批次号" width="140" :key="1255"
@@ -235,27 +260,40 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-
-                <el-col :span="6">
+                <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                   <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
-                  <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="请输入产品名称" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
+                <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                   <el-form-item>
                     <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6" v-if="dataForm.documentType == 'outbound'">
                   <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="请输入批次号" clearable />
+                    <el-input v-model="orderForm.batchNumber" placeholder="请输入批次号" clearable />
                   </el-form-item>
                 </el-col>
+
+                <el-col :span="6"  v-if="dataForm.documentType == 'inbound'">
+                  <el-form-item>
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
+                  <el-form-item>
+                    <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
+                  <el-form-item>
+                    <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+            
+               
+              
 
 
                 <el-col :span="6">
@@ -273,12 +311,18 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" v-if="documentType=='outbound'"/>
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"   v-if="dataForm.documentType == 'inbound'"/>
-                <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom" v-if="documentType=='outbound'"/>
-                <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom" v-if="documentType=='inbound'"/>
-                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom"  v-if="documentType=='outbound'"/>
-                <el-table-column prop="code" label="产品编码" min-width="160" sortable="custom"  v-if="documentType=='inbound'"/>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'outbound'" />
+                <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'inbound'" />
+                <el-table-column prop="productName" label="产品名称" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'outbound'" />
+                <el-table-column prop="name" label="产品名称" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'inbound'" />
+                <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'outbound'" />
+                <el-table-column prop="code" label="产品编码" min-width="160" sortable="custom"
+                  v-if="dataForm.documentType == 'inbound'" />
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom"
                   v-if="dataForm.documentType == 'outbound'" />
                 <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom"
@@ -327,8 +371,7 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
+          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
         </span>
       </el-dialog>
       <!-- 选货位 -->
@@ -469,8 +512,9 @@ export default {
       list8: [],
       taxRateList: [],
       listQuery: {
-        code: '',
-        name: '',
+        productName: '',
+        productCode: '',
+        productDrawingNo: '', // 图号
         orderItems: [
           {
             asc: false,
@@ -483,19 +527,13 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        drawingNo: '', // 图号
-        productSource: '', // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
         classAttribute: 'finish_product'
       },
     }
   },
   created() {
     this.getWarehouseConfig()
+    this.getProductClassFun()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -505,6 +543,13 @@ export default {
     }
   },
   methods: {
+    changeTaxRate(row, index) {
+      console.log(row, index);
+      let productArr = [...this.productData]
+      productArr[index].excludingTaxCostPrice = this.jnpf.numberFormat(row.costPrice / (1 + (row.taxRate * 1 / 100)), 4)
+      productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat((row.excludingTaxCostPrice * row.num), 4)
+      this.productData = productArr
+    },
     // 打开选择批次号弹框
     openSeleceBatchNumberDialog(data, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
@@ -581,6 +626,7 @@ export default {
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         getProductList(this.listQuery)
           .then((res) => {
+            console.log("res.",res);
             this.productList = res.data.records
             this.total = res.data.total
             this.listLoading = false
@@ -595,6 +641,7 @@ export default {
     },
     // 选择产品 (销售发货——多选)
     handleSelectionChangeAllPruduct(val) {
+      console.log("val",val);
       this.selectSaleProductArr = val
     },
     // 销售发货选择产品——重置
@@ -615,7 +662,24 @@ export default {
           column: "t1.create_time"
         }],
       },
-
+      this.listQuery= {
+        productName: '',
+        productCode: '',
+        productDrawingNo: '', // 图号
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        classAttribute: 'finish_product'
+      },
         this.searchProductFun()
 
     },
@@ -635,22 +699,25 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      arr.forEach(item => { 
+      console.log("arr",arr);
+      arr.forEach(item => {
 
         item.classAttribute = "finish_product"
         item.ordersId = ""
         item.ordersLineId = ""
-        item.noticeId=""
-        item.num=''
-        item.costPrice=""
-        item.excludingTaxCostPrice=""
-        item.excludingTaxTotalAmount=""
+        item.noticeId = ""
+        item.num = ''
+        item.costPrice = ""
+        item.excludingTaxCostPrice = ""
+        item.excludingTaxTotalAmount = ""
         item.noticeLineId = ""
-        item.ordersLineId = ""
-        item.taxAmount=""
-        item.totalAmount=""
-        item.taxAmount=""
-        item.taxRate = "13"
+        item.ordersLineId = "" 
+        item.totalAmount = ""
+        item.taxAmount = ""
+        item.taxRate = 13
+        if(this.dataForm.documentType=='inbound'){
+          item.productsId=item.id
+        }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
         this.productData.push(item)
@@ -680,6 +747,90 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
+    // 含税价格输入失去焦点 检验不能为  0
+    checkPrice(row, index) {
+      if (!row.costPrice) {
+        this.$message({
+          message: "请填写第" + (index + 1) + "行产品的单价(含税)",
+          type: 'error',
+          duration: 1500,
+        })
+      } else if (Number(row.costPrice) == 0) {
+        this.$message({
+          message: "第" + (index + 1) + "行产品的单价(含税)必须大于0",
+          type: 'error',
+          duration: 1500,
+        })
+
+      }
+    },
+    // 监听含税价格输入
+    watchPrice(row, index) {
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      row.costPrice = row.costPrice.replace(/[^\d.]/g, '');
+      let productArr = [...this.productData]
+
+      if (row.costPrice.length == 1 && row.costPrice == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.costPrice = '';
+        row.assistantNum = '';
+      } else if (row.costPrice.length == 2 && row.costPrice[0] == '0' && row.costPrice[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.costPrice = row.costPrice.slice(0, 1) + '.' + row.costPrice.slice(1);
+      } else if (row.costPrice.length > 2 && row.costPrice[0] == '0' && row.costPrice[1] != '.') {
+        row.costPrice = row.costPrice.substring(1, row.costPrice.length)
+      }
+
+
+      if (row.costPrice.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+
+        for (let i = 0; i < row.costPrice.length; i++) {
+          const char = row.costPrice[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+
+        row.costPrice = result;
+        let arr = row.costPrice.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 4) {
+          arr[1] = arr[1].substring(0, 4)
+        }
+        row.costPrice = arr[0] + '.' + arr[1]
+      } else {
+        if (row.costPrice.length > 8) {
+          row.costPrice = row.costPrice.substring(0, 8);
+        }
+      }
+      productArr[index].excludingTaxCostPrice = this.jnpf.numberFormat(row.costPrice / (1 + (row.taxRate * 1 / 100)), 4)
+      productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat((row.excludingTaxCostPrice * row.num), 4)
+      productArr[index].totalAmount = this.jnpf.numberFormat((row.costPrice * row.num), 4)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
+
+      this.productData = productArr
+    },
+
+
+
+
+
+
+
+
 
     // 主数量输入失去焦点 检验不能为  0
     checkNum(row, index) {
@@ -749,11 +900,11 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
-      console.log("row.excludingTaxPrice", row.excludingTaxPrice);
-      console.log("row.price", row.price);
-      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.price]), 6)
+      console.log("row.excludingTaxCostPrice", row.excludingTaxCostPrice);
+      console.log("row.costPrice", row.costPrice);
+      productArr[index].totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, row.costPrice]), 6)
 
-      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.price, row.excludingTaxPrice]), 6)]), 6)
+      productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [productArr[index].totalAmount, productArr[index].taxAmount]), 6)
       console.log("productArr", productArr);
       this.productData = productArr
@@ -866,16 +1017,9 @@ export default {
 
 
       }
-    },
-    // 继续修改
-    continueEdit() {
-      this.init(this.oldId, this.oldType)
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
+    }, 
     // 继续新增
-    continueAdd() {
-      this.init('', 'add')
+    continueAdd() { 
       this.tipsvisible = false
       this.btnLoading = false
       this.dataForm = {  //表单信息
@@ -890,8 +1034,7 @@ export default {
         inspectionResults: "",
       }
       this.productData = []
-      this.$refs.dataForm.resetFields()
-      this.init('', 'add')
+      this.$refs.dataForm.resetFields() 
     },
     async fetchData(code) {
       try {
@@ -963,7 +1106,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = "finish_product" 
+            this.dataForm.classAttribute = "finish_product"
             let dataObj = {
               stockMove: this.dataForm,
               lines: this.productData,
@@ -1018,7 +1161,7 @@ export default {
           },
         ],
       };
-      getbimProductAttributesList(obj1).then(res => {
+      getbimProductAttributesList(obj0).then(res => {
         this.list8 = res.data.records
       })
       let obj1 = {

@@ -388,7 +388,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                   
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -408,7 +408,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-                    
+
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
@@ -469,11 +469,10 @@
                       <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">{{
                         $t('common.reset') }}
                       </el-button>
-                      <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+                      <el-button size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
                     </el-form-item>
                   </el-col>
-                  <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                    icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
+
                 </el-form>
               </el-row>
               <JNPF-table v-loading="formLoading" :data="scheduleData" custom-column ref="scheduleRef"
@@ -583,44 +582,7 @@
               <pagination :total="total" :page.sync="scheduleForm.pageNum" :background="background"
                 :limit.sync="scheduleForm.pageSize" @pagination="searchDetail" />
               <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-              <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false"
-                :modal-append-to-body="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
-                width="1000px">
-                <el-row :gutter="20">
-                  <el-form ref="diaForm" :model="scheduleForm" label-width="120px" label-position="top">
-                    <el-col :span="12">
-                      <el-form-item label="客户料号">
-                        <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
-                          @keyup.enter.native="searchDetail()" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="产品编码">
-                        <el-input v-model.trim="scheduleForm.productsCode" placeholder="请输入产品编码" clearable
-                          @keyup.enter.native="searchDetail()" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="产品名称">
-                        <el-input v-model.trim="scheduleForm.productsName" placeholder="请输入产品名称" clearable
-                          @keyup.enter.native="searchDetail()" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="品名规格">
-                        <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
-                          @keyup.enter.native="searchDetail()" />
-                      </el-form-item>
-                    </el-col>
-                  </el-form>
-                </el-row>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-                  <el-button type="primary" @click="searchDetail()">
-                    {{ $t('common.search') }}
-                  </el-button>
-                </span>
-              </el-dialog>
+
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
@@ -765,7 +727,7 @@
                         {{ $t('common.search') }}</el-button>
                       <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
                         $t('common.reset')
-                      }}
+                        }}
                       </el-button>
                     </el-form-item>
                   </el-col>
@@ -2953,6 +2915,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
+  margin-bottom: 0
 }
 
 
@@ -3061,7 +3024,7 @@ export default {
   display: inline-block;
 }
 
-.orderInfo ::v-deep .el-collapse-item__wrap {
+.orderInfo ::v-deep .el-collapse-item__wrap{
   border-bottom: none !important
 }
 </style>

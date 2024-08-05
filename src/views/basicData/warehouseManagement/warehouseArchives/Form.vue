@@ -16,26 +16,18 @@
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
             <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
-            >
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
               <h5>基本信息</h5>
             </div>
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
           </el-tab-pane>
           <el-tab-pane label="权限信息" name="sleeve" id="sleeve">
             <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
-            >
+              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
               <h5>权限信息</h5>
             </div>
-            <JNPF-col-table
-              v-model="stockLimitsAuthorities"
-              ref="sleeveForm"
-              :tableItems="sleeveItems"
-              :openMode="openMode"
-              @addth="addSleeveList"
-              @deleteth="deleteth"
-            />
+            <JNPF-col-table v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+              :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -145,6 +137,12 @@ export default {
                       tc.options = [{ label: '报废', value: 'scrap' }]
                     }
                   })
+                } else if (this.dataForm.type == 'virtually') {
+                  this.tabs[0].tabContent.forEach((tc) => {
+                    if (tc.prop == 'type') {
+                      tc.options = [{ label: '虚拟仓库', value: 'virtually' }]
+                    }
+                  })
                 } else {
                   this.tabs[0].tabContent.forEach((tc) => {
                     if (tc.prop == 'type') {
@@ -152,7 +150,7 @@ export default {
                         { label: '正常仓库', value: 'normal' },
                         { label: '中转仓库', value: 'temp' },
                         { label: '不良品仓库', value: 'unqualified' },
-                        { label: '报废', value: 'scrap' }
+                        { label: '报废', value: 'scrap' },
                       ]
                     }
                   })
@@ -283,13 +281,19 @@ export default {
                 tc.options = [{ label: '报废', value: 'scrap' }]
               }
             })
+          } else if (this.dataForm.type == 'virtually') {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (tc.prop == 'type') {
+                tc.options = [{ label: '虚拟仓库', value: 'virtually' }]
+              }
+            })
           } else {
             this.tabs[0].tabContent.forEach((tc) => {
               if (tc.prop == 'type') {
                 tc.options = [
                   { label: '正常仓库', value: 'normal' },
                   { label: '中转仓库', value: 'temp' },
-                  { label: '不良品仓库', value: 'unqualified' }
+                  { label: '不良品仓库', value: 'unqualified' },
                 ]
               }
             })

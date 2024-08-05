@@ -420,7 +420,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'accessories',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -915,6 +915,7 @@ export default {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
+
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })
@@ -1365,7 +1366,7 @@ export default {
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('CPCGSH')
+          this.fetchData('PJCGSH')
         }, 500)
       }
       if (this.btnType == 'edit') {
@@ -1434,7 +1435,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'finish_product'
+          this.dataForm.classAttribute = 'accessories'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1520,7 +1521,7 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'accessories',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1538,7 +1539,7 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'accessories',
               id: item.id ? item.id : '',
               purchaseQuantity: item.purchaseQuantity,
               productsId: item.productsId ? item.productsId : '',

@@ -915,6 +915,7 @@ export default {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
+
         this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })

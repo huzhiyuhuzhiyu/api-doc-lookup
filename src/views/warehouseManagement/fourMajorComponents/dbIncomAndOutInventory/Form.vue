@@ -22,14 +22,14 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="单号" prop="orderNo">
+                        <el-form-item label="单号" prop="orderNo" >
                           <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="业务单号" prop="sourceNo">
+                        <el-form-item label="业务单号" prop="sourceNo" >
                           <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
                         </el-form-item>
                       </el-col>
@@ -183,7 +183,7 @@
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
-
+                  
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
                       <template slot-scope="scope">
@@ -271,7 +271,7 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_sale_send' || dataForm.businessType != 'inbound_sale_return'" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-
+                
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -312,7 +312,7 @@
 </template>
 
 <script>
-import { getQuotationdatasenddatalist } from '@/api/salesManagement'
+import {  getQuotationdatasenddatalist} from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getcategoryTree, getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
@@ -343,7 +343,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         warehouseId: "",
-        sourceNo: "",
+        sourceNo:"",
       },
       btnText: "",
       submitmethodsTitle: "",
@@ -403,7 +403,7 @@ export default {
         customerProductDrawingNo: "",
         rdsDate: "",
         rdeDate: "",
-        classAttribute: "finish_product",
+        classAttribute: "raw_material",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -445,7 +445,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-
+      
     }
   },
   created() {
@@ -498,9 +498,9 @@ export default {
       this.$set(this.productData[index], 'goodsShelvesId', data.goodsShelvesId)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.id)
-    },
+    }, 
 
-
+ 
     // 产品信息列表复制功能
     copyFun(row, index) {
       let data = JSON.parse(JSON.stringify(row))
@@ -527,9 +527,9 @@ export default {
       if (this.dataForm.businessType == 'inbound_sale_return') {
         this.orderForm.returnQueryFlag = 1
       }
-      if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_sale_send') {
+      if(this.dataForm.businessType == 'inbound_sale_return'||this.dataForm.businessType == 'outbound_sale_send'){
         this.orderForm.notifyType = this.productData[0].notifyType
-
+        
       }
       // { label: "销售发货", value: "outbound_sale_send" },
       //   { label: "销售退货", value: "inbound_sale_return" },
@@ -568,7 +568,7 @@ export default {
         customerProductDrawingNo: "",
         rdsDate: "",
         rdeDate: "",
-        classAttribute: "finish_product",
+        classAttribute: "raw_material",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -600,11 +600,11 @@ export default {
           item.num = ""
 
         }
-        item.classAttribute = "finish_product"
-
-        item.noticeId = item.returnDeliveryNoticeId
-        item.noticeLineId = item.id
-        item.sourceNo = this.dataForm.sourceNo
+        item.classAttribute = "raw_material"
+         
+        item.noticeId=item.returnDeliveryNoticeId
+        item.noticeLineId=item.id
+        item.sourceNo=this.dataForm.sourceNo
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         console.log(" item.excludingTaxCostPrice", item.excludingTaxCostPrice, item.ordersNum);
@@ -754,7 +754,7 @@ export default {
         customerProductDrawingNo: "",
         rdsDate: "",
         rdeDate: "",
-        classAttribute: "finish_product",
+        classAttribute: "raw_material",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -816,7 +816,7 @@ export default {
     init(data, btnType, businessType) {
       console.log("11", data, btnType, businessType);
       // this.visible = true
-      this.dataForm.businessType = businessType
+      this.dataForm.businessType=businessType
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       console.log("btnty", btnType);
@@ -827,20 +827,20 @@ export default {
         this.dataForm.cooperativePartnerId = data.cooperativePartnerId
         this.dataForm.partnerName = data.partnerName
         this.selectcustomerObj.type = 'customer'
-        this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
-        this.$set(this.dataForm, 'sourceNo', data.orderNo)
+        this.$set(this.orderForm,'deliveryStatus','not_finished')
+        this.$set(this.dataForm,'sourceNo',data.orderNo)
 
-      }
+      } 
       if (businessType == 'inbound_sale_return') {
         this.title = '新建销售待退货入库单'
         this.jyFlag = false
         this.dataForm.cooperativePartnerId = data.cooperativePartnerId
         this.dataForm.partnerName = data.partnerName
         this.selectcustomerObj.type = 'customer'
-        this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
-        this.$set(this.dataForm, 'sourceNo', data.orderNo)
+        this.$set(this.orderForm,'deliveryStatus','not_finished')
+        this.$set(this.dataForm,'sourceNo',data.orderNo)
       }
-
+      
 
       if (this.dataForm.businessType == 'inbound_sale_return' ||
         this.dataForm.businessType == 'inbound_purchase' ||
@@ -866,21 +866,14 @@ export default {
       // 获取详情
       getQuotationsendlist(data.id).then(res => {
         console.log("详情", res);
-        let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
-        if (filteredArray.length) {
-          filteredArray.forEach(item => {
-            item.noticeId = item.returnDeliveryNoticeId
-            item.noticeLineId = item.id
-            item.sourceNo = this.dataForm.sourceNo
-          });
-        }
-        this.productData = filteredArray
-        this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+        let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "raw_material");
+        this.productData=filteredArray
+        this.dataForm.id=this.productData[0].returnDeliveryNoticeId
         this.formLoading = false
       }).catch(() => { this.formLoading = false })
 
     },
-
+   
     // 继续修改
     continueEdit() {
       this.init(this.oldId, this.oldType)
@@ -1013,7 +1006,7 @@ export default {
         this.copyLinesData.forEach(element => {
           element.warehouseType = this.dataForm.warehouseType
         });
-        this.dataForm.classAttribute = "finish_product"
+        this.dataForm.classAttribute = "raw_material"
         this.dataForm.sourceType = 'notice'
         let dataObj = {
           stockMove: this.dataForm,
@@ -1029,8 +1022,8 @@ export default {
             return this.btnLoading = false
           }
         }
-        console.log("this.productData", this.productData);
-        return
+        console.log("this.productData",this.productData);
+
         formMethod(dataObj).then(res => {
           let msg = res.msg
           if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }

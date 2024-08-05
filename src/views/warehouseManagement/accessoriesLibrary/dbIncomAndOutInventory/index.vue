@@ -290,7 +290,7 @@ export default {
   },
   methods: {
     getStockMovelistFun() {
-      getStockMovelist('finish_product').then(res => {
+      getStockMovelist('accessories').then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {

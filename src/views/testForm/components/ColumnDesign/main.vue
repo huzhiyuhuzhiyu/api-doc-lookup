@@ -653,10 +653,11 @@ export default {
     }
     console.log(this.columnData, 'column');
     // 列字段和查询字段 不从表单数据取 
-    this.customField = this.columnData.customField
     this.columnOptions = this.columnData.columnOptions
-    this.searchOptions = this.columnData.searchOptions
     this.columnLineOptions = this.columnData.columnLineOptions
+    this.searchOptions = this.columnData.searchOptions
+    this.customField = this.columnOptions
+    this.customFieldLine = this.columnLineOptions
     this.setBtnValue(this.columnData.btnsList, this.btnsOption)
     this.setBtnValue(this.columnData.columnBtnsList, this.columnBtnsOption)
     this.btnsList = this.columnData.btnsList.map(o => o.value)

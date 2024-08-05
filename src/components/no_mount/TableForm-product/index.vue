@@ -117,7 +117,7 @@ export default {
       tableVisible: true,
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
-      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "material" } }, // 产品选择弹出框树状列表
+      ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
       ProductListRequestObj: {
         classAttributeList: ["raw_material", "semi_finished", "finish_product", "accessories"],
         productCategoryId: "",
@@ -137,14 +137,14 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '图号' },
-        { prop: 'spec', label: '规格型号' },
+        { prop: 'drawingNo', label: '品名规格' },
+        // { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input' },
         { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
     }
   },

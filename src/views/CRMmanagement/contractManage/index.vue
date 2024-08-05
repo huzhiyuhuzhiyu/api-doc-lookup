@@ -62,10 +62,10 @@
                 {{contractTypefunction(scope.row.contractType)}}
               </template>
             </el-table-column>
-            <!-- <el-table-column prop="checkStatus" label="审核状态" min-width="160" />
-            <el-table-column prop="receivedMoney" label="已收款金额" min-width="160" />
+            <!-- <el-table-column prop="checkStatus" label="审核状态" min-width="160" /> -->
+            <el-table-column prop="receivablesMoney" label="已收款金额" min-width="160" />
             <el-table-column prop="unreceivedMoney" label="未收款金额" min-width="160" />
-            <el-table-column prop="invoicedMoney" label="开票金额" min-width="160" /> -->
+            <el-table-column prop="invoicedMoney" label="开票金额" min-width="160" />
             <el-table-column prop="ownerUserName" label="负责人" min-width="160" />
             <!-- <el-table-column prop="contractStatus" label="合同状态" min-width="160" /> -->
             <el-table-column prop="remark" label="备注" min-width="160" />
@@ -91,6 +91,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+            合同总金额：{{totalmoney}}元 / 已回款金额：{{totalreceivablesMoney}}元 / 未回款金额：{{totalunreceivedMoney}}元
           </pagination>
         </div>
       </div>
@@ -249,6 +250,27 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
+    },
+    totalmoney: function () {
+      var totalmoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalmoneyNum = this.jnpf.math('add', [totalmoneyNum, this.tableData[i].money * 1])
+      }
+      return totalmoneyNum
+    },
+    totalreceivablesMoney: function () {
+      var totalreceivablesMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalreceivablesMoneyNum = this.jnpf.math('add', [totalreceivablesMoneyNum, this.tableData[i].receivablesMoney * 1])
+      }
+      return totalreceivablesMoneyNum
+    },
+    totalunreceivedMoney: function () {
+      var totalunreceivedMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalunreceivedMoneyNum = this.jnpf.math('add', [totalunreceivedMoneyNum, this.tableData[i].unreceivedMoney * 1])
+      }
+      return totalunreceivedMoneyNum
     }
   },
   mounted() {

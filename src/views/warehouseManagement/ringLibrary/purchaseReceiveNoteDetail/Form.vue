@@ -138,8 +138,9 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <!-- <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                      sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -382,6 +383,7 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { mapGetters } from "vuex"
 export default {
@@ -417,7 +419,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'semi_finished',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -532,7 +534,6 @@ export default {
         approvalStatus: '',
         startTime: '',
         endTime: '',
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -1347,14 +1348,20 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           }
         })
 
-        this.dataFormTwo.productData.forEach((item) => {
-          item.drawingNo = item.productDrawingNo
-        })
+        // this.dataFormTwo.productData.forEach((item) => {
+        //   item.drawingNo = item.productDrawingNo
+        // })
         console.log(this.dataFormTwo.productData, 'data')
       }
       if (btnType == 'add' || btnType == 'copy') {
@@ -1432,7 +1439,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'finish_product'
+          this.dataForm.classAttribute = 'semi_finished'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1448,6 +1455,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
+            console.log(item, 'iiii')
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
@@ -1501,13 +1509,13 @@ export default {
               packagingMethod: item.packagingMethod,
               packingQuantity: item.packingQuantity,
               processId: item.processId,
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
               purchaseOrderId: item.purchaseOrderId,
               purchaseQuantity: item.purchaseQuantity,
               purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
               qualifiedQuantity: item.qualifiedQuantity,
               ratio: item.ratio,
-              receiptQuantity: item.receiptQuantity,
+              waitReceiptNum: item.waitReceiptNum,
               receivedQuantity: item.receivedQuantity,
               receivingStatus: item.receivingStatus,
               remark: item.remark,
@@ -1517,7 +1525,7 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'semi_finished',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1535,8 +1543,11 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'semi_finished',
               id: item.id ? item.id : '',
+              purchaseQuantity: item.purchaseQuantity,
+              productsId: item.productsId ? item.productsId : '',
+              waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',

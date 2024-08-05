@@ -263,3 +263,57 @@ export function updatecrmVisit(data) {
     data
   })
 }
+//发票管理
+//发票管理-列表
+export function getcrmInvoicelist(data) {
+  return request({
+    url: `/api/zgt/crmInvoice/list`,
+    method: 'POST',
+    data
+  })
+}
+// 发票管理 新增
+export function addcrmInvoice(data) {
+  return request({
+    url: `/api/zgt/crmInvoice/add`,
+    method: 'POST',
+    data
+  })
+}
+// 发票管理 详情
+export function detailcrmInvoice(id) {
+  return request({
+    url: `/api/zgt/crmInvoice/detail/${id}`,
+    method: 'GET'
+  })
+}
+//发票管理-删除
+export function deletecrmInvoice(id) {
+  return request({
+    url: `/api/zgt/crmInvoice/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 发票管理 编辑
+export function updatecrmInvoice(data) {
+  return request({
+    url: `/api/zgt/crmInvoice/update`,
+    method: 'PUT',
+    data
+  })
+}
+// 发票信息 新增
+export function addcrmInvoiceInfo(data) {
+  return request({
+    url: `/api/zgt/crmInvoiceInfo/add`,
+    method: 'POST',
+    data
+  })
+}
+// 发票信息 详情
+export function detailcrmInvoiceInfo(id) {
+  return request({
+    url: `/api/zgt/crmInvoiceInfo/detail/${id}`,
+    method: 'GET'
+  })
+}

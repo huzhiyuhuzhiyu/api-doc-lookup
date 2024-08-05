@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <div class="pageTitle">新建销售退货通知单</div>
+        <div class="pageTitle">退货单创建</div>
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button>
@@ -1016,7 +1016,7 @@ export default {
               notifyType: 'sale',
               logisticsCompany: '',
               ordersId: '',
-              deliverDate: '',
+              deliverDate: this.dataForm.deliverDate,
               logisticsNumber: '',
               cooperativePartnerId: '',
               remark: '',
@@ -1047,7 +1047,7 @@ export default {
             logisticsCompany: '',
             ordersId: '',
             orderNo: this.codeConfig.number,
-            deliverDate: '',
+            deliverDate: this.dataForm.deliverDate,
             logisticsNumber: '',
             cooperativePartnerId: '',
             remark: ''

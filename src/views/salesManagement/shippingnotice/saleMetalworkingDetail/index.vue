@@ -78,7 +78,7 @@
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
+            <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="deliveryQuantity" label="发货数量" width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
@@ -87,7 +87,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-            <el-table-column prop="remark" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
             <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
                 <template slot-scope="scope">
                   <div v-if="scope.row.exchangeGoodsFlag">
@@ -100,11 +100,11 @@
             </el-table-column>
             <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'undelivered'">
+                <div v-if="scope.row.deliveryStatus == 'not_finished'">
                   <el-tag type="primary">未完成</el-tag>
                 </div>
-                <div v-else-if="scope.row.deliveryStatus == 'delivered'">
-                  <el-tag type="success">已完成</el-tag>
+                <div v-else-if="scope.row.deliveryStatus  == 'finished'">
+                  <el-tag type="success">已完成 </el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
                   <el-tag type="danger">已取消</el-tag>
@@ -229,17 +229,29 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
+        notifyType: 'sale',
+        returnDeliveryType: 'delivery',
         orderNo: "",
+        partnerCode: "",
         partnerName: "",
-        customerDrawingNumber: "",
-        productDrawingNo: "",
+        rdsDate: '',
+        rdeDate: '',
+        inspectionStatus: '',
+        documentStatus: '',
+        createByName: '',
+        approvalStatus: '',
+        startTime: '',
+        endTime: '',
         pageNum: 1,
         pageSize: 20,
+        superQuery: {},
         orderItems: [{
           asc: false,
           column: ""
+        }, {
+          asc: false,
+          column: "create_time"
         }],
-        superQuery: {},
       },
       linesQuery: {},
 
@@ -387,7 +399,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getQuotationdatasendlist(this.orderForm).then(res => {
+      getQuotationdatasenddatalist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false 

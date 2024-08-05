@@ -1,44 +1,30 @@
 <template>
-  <el-drawer
-    @closed="cancelFun"
-    :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="visible"
-    lock-scroll
-    width="500px"
-    class="JNPF-common-drawer"
-  >
-  <template slot="title">
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建类别属性' : '编辑类别属性'" :close-on-click-modal="false"
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="500px" class="JNPF-common-drawer">
+    <template slot="title">
       <div class="custom_title">
         {{ title }}
       </div>
     </template>
     <div style="padding:10px">
-      <el-form
-      ref="dataForm"
-      v-loading="formLoading"
-      :model="dataForm"
-      :rules="dataRule"
-      label-position="top"
-      label-width="120px"
-    >
-      <el-form-item label="类别编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
-      </el-form-item>
-      <el-form-item label="类别名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
-      </el-form-item>
-    </el-form>
-    <span style="display:flex;justify-content: flex-end;">
-      <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-      <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-        提交
-      </el-button>
-    </span>
+      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
+        label-width="120px">
+        <el-form-item label="类别编码" prop="code">
+          <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="类别名称" prop="name">
+          <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <span style="display:flex;justify-content: flex-end;">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+          提交
+        </el-button>
+      </span>
     </div>
   </el-drawer>
 </template>
@@ -64,7 +50,7 @@ export default {
         remark: '',
         code: ''
       },
-      title:'',
+      title: '',
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
@@ -127,7 +113,7 @@ export default {
           code: ''
         }
         this.title = '新建类别属性'
-      } else if (btntype == 'edit'){
+      } else if (btntype == 'edit') {
         getClassAttributeInfo(id).then((res) => {
           this.dataForm.code = res.data.code
           this.autoCode = res.data.code
@@ -135,9 +121,9 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.dataForm.id = res.data.id
-          this.title ='编辑类别属性'
+          this.title = '编辑类别属性'
         })
-      }else if (btntype == 'copy'){
+      } else if (btntype == 'copy') {
         getClassAttributeInfo(id).then((res) => {
           this.dataForm.code = res.data.code
           this.autoCode = res.data.code

@@ -22,7 +22,7 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="单号" prop="orderNo" v-if="dataForm.businessType">
+                        <el-form-item label="单号" prop="orderNo"  >
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                             maxlength="300" />
@@ -38,8 +38,7 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="客户" prop="cooperativePartnerId"
-                          v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
+                        <el-form-item label="客户" prop="cooperativePartnerId" >
                           <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" readonly @focus="openDialog"
                             :disabled="btnType == 'look' ? true : false">
                           </el-input>

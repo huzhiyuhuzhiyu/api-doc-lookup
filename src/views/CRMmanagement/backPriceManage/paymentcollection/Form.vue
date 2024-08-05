@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
-        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑回款计划' : btntype == 'add' ? '新建回款计划' : '查看回款计划'" />
+        <el-page-header @back="goBack" :content="btntype == 'edit' ? ' 编辑回款' : btntype == 'add' ? '新建回款' : '查看回款'" />
         <div class="options" v-if="btntype !== 'look'">
           <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
             提交</el-button>
@@ -17,6 +17,11 @@
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
+                      <el-form-item label="回款编号" prop="receivablesNo">
+                        <el-input v-model="dataForm.receivablesNo" placeholder="请输入回款编号" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
@@ -24,23 +29,23 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回款日期" prop="returnTime">
-                        <el-date-picker v-model="dataForm.returnTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择回款日期" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="回款日期" prop="receivablesData">
+                        <el-date-picker v-model="dataForm.receivablesData" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择回款日期" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回款金额" prop="money">
-                        <el-input v-model="dataForm.money" placeholder="请输入回款金额" :disabled="btntype == 'look'" />
+                      <el-form-item label="回款金额" prop="receivablesMoney">
+                        <el-input v-model="dataForm.receivablesMoney" placeholder="请输入回款金额" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回款方式" prop="returnType">
-                        <el-select v-model="dataForm.returnType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="回款方式" prop="receivablesType">
+                        <el-select v-model="dataForm.receivablesType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
@@ -62,17 +67,17 @@
                   <el-table class="TableForm table" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
-                    <el-table-column prop="no" label="合同编号" width="160" show-overflow-tooltip />
+                    <el-table-column prop="contractNo" label="合同编号" width="160" show-overflow-tooltip />
                     <el-table-column prop="contractName" label="合同名称" width="160" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="money" label="合同金额" width="140" show-overflow-tooltip />
+                    <el-table-column prop="contractMoney" label="合同金额" width="140" show-overflow-tooltip />
                     <el-table-column prop="unreceivedMoney" label="未回款金额" width="160" show-overflow-tooltip />
-                    <el-table-column prop="currReceivablesMoney" label="本次回款金额" width="160">
+                    <el-table-column prop="thisReceivablesMoney" label="本次回款金额" width="160">
                       <template slot="header">
                         <span class="required">*</span>本次回款金额
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'currReceivablesMoney'" :rules='productRules.currReceivablesMoney'>
-                          <el-input v-model="scope.row.currReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'thisReceivablesMoney'" :rules='productRules.thisReceivablesMoney'>
+                          <el-input v-model="scope.row.thisReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -80,7 +85,7 @@
                     <el-table-column prop="num" label="回款计划期数" width="180">
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-select v-model="scope.row.num" placeholder="请选择回款计划期数" style="width: 100%;" :disabled="btntype == 'look'" @change="changeTaxRate(scope.row, scope.$index)" @focus="focusnum(scope.row)">
+                          <el-select v-model="scope.row.num" placeholder="请选择回款计划期数" style="width: 100%;" :disabled="btntype == 'look'" @change="changeTaxRate" @focus="focusnum(scope.row,scope.$index)">
                             <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                           </el-select>
                         </el-form-item>
@@ -109,13 +114,16 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
-import { getcrmReturnVisit, addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
+import { getcrmReceivablesPlanlist, updatecrmReceivables, detailcrmReceivables, getcrmContractlist, addcrmReceivables } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
+      _index: '',
       taxRateList: [],
       productVisible: false,
       selectRows: [],
@@ -190,19 +198,21 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        receivablesNo: '',
         id: '',
         ownerUserId: '',
         ownerUserName: '',
         customerName: '',
         customerId: '',
-        returnTime: '',
-        money: '',
-        returnType: '',
+        receivablesData: '',
+        receivablesMoney: '',
+        receivablesType: '',
         remark: ''
       },
       btntype: false,
       productRules: {
-        currReceivablesMoney: [
+        thisReceivablesMoney: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["回款金额不能为空", (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: ['blur'] },
           { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('回款金额：' + errMsg) }] }), trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', '', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' }
@@ -212,14 +222,14 @@ export default {
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
-        money: [
-          { required: true, message: '请输入计划回款金额', trigger: 'blur' },
+        receivablesMoney: [
+          { required: true, message: '请输入回款金额', trigger: 'blur' },
         ],
-        returnDate: [
-          { required: true, message: '请选择计划回款日期', trigger: 'blur' },
+        receivablesData: [
+          { required: true, message: '请选择回款日期', trigger: 'blur' },
         ],
         customerName: [
-          { required: true, message: '请选择客户', trigger: 'blur' },
+          { required: true, message: '请选择客户名称', trigger: 'blur' },
         ]
       },
     }
@@ -228,36 +238,50 @@ export default {
     returnmoney: function () {
       var totalMoney = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalMoney = this.jnpf.math('add', [totalMoney, this.dataFormTwo.lines[i].currReceivablesMoney * 1])
+        totalMoney = this.jnpf.math('add', [totalMoney, this.dataFormTwo.lines[i].thisReceivablesMoney * 1])
       }
       return totalMoney
-    }
+    },
+    ...mapGetters(['userInfo']),
   },
   created() {
     this.getDictionaryType()
+    this.dataForm.ownerUserId = this.userInfo.userId
   },
   watch: {
     returnmoney: {
       deep: true,
       handler(newVal, oldVal) {
-        this.dataForm.money = newVal
+        this.dataForm.receivablesMoney = newVal
       }
     }
   },
   methods: {
-    changeTaxRate() {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.receivablesNo = data.number
 
+      } catch (error) {
+      }
     },
-    focusnum(val) {
+    changeTaxRate(val) {
+      let a = this.taxRateList.filter(item => item.enCode == val)
+      this.dataFormTwo.lines[this._index].thisReceivablesMoney = a[0].thisReceivablesMoney * 1
+      this.dataFormTwo.lines[this._index].receivablesPlanId = a[0].receivablesPlanId
+    },
+    focusnum(val, index) {
       let obj = {
-        no: val.no,
+        no: val.contractNo,
         pageNum: 1,
         pageSize: -1,
       }
+      this._index = index
       this.taxRateList = []
-      getcrmReturnVisit(obj).then(res => {
+      getcrmReceivablesPlanlist(obj).then(res => {
         this.taxRateList = res.data.records.map(item => {
-          return { fullName: item.num, enCode: item.id }
+          return { fullName: item.num, enCode: item.num, thisReceivablesMoney: item.planReceivablesMoney, receivablesPlanId: item.id }
         })
       })
     },
@@ -293,20 +317,21 @@ export default {
       if (data && data.length) {
         data.forEach(item => {
           let a = {
-            no: item.all.no,
+            contractNo: item.all.no,
             contractName: item.all.contractName,
-            money: item.all.money,
+            contractMoney: item.all.money,
             unreceivedMoney: item.all.unreceivedMoney,
-            currReceivablesMoney: '',
+            receivablesPlanId: item.all.id,
+            thisReceivablesMoney: '',
             num: '',
             remark: '',
-            noid: item.all.id,
+            contractId: item.all.id,
           }
           this.dataFormTwo.lines.push(a)
         })
       }
     },
-    // 获取客户满意度、回款计划形式数据
+    // 获取回款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -358,31 +383,60 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
+      if (this.btntype === 'add') this.fetchData('HKBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          detailcrmReturnVisit(this.dataForm.id).then(res => {
-            this.dataForm = res.data.Paymentcollection
+          detailcrmReceivables(this.dataForm.id).then(res => {
+            this.dataForm = res.data.receivables
             this.dataFormTwo.lines = res.data.lines
+            this.formLoading = false
           })
         } else {
           this.formLoading = false
         }
       })
     },
-    dataFormSubmit() {
+    async dataFormSubmit() {
+      let submitFlag = true
+      const form_1 = this.$refs.dataForm
+      const valid_1 = await form_1.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        let formItems = form_1.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
+      const form_2 = this.$refs.productForm
+      const valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        submitFlag = false
+        let formItems = form_2.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
       // 校验子表
       if (!this.dataFormTwo.lines.length) {
-        this.$message.error('请添加产品')
+        this.$message.error('请选择合同')
         return
       }
-      Promise.all([this.$refs['dataForm'].validate(), this.$refs['productForm'].validate()]).then(() => {
+      if (submitFlag) {
         this.btnLoading = true;
         let obj = {
-          Paymentcollection: this.dataForm,
+          receivables: this.dataForm,
           lines: this.dataFormTwo.lines
         }
-        let formMethod = this.dataForm.id ? updatecrmReturnVisit(obj) : addcrmReturnVisit(obj);
+        let formMethod = this.dataForm.id ? updatecrmReceivables(obj) : addcrmReceivables(obj);
         formMethod.then(res => {
           let msg = ""
           if (this.btntype == "edit") {
@@ -403,7 +457,7 @@ export default {
         }).catch(() => {
           this.btnLoading = false
         })
-      })
+      }
     }
   }
 }

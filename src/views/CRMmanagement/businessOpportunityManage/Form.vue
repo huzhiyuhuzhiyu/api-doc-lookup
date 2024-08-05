@@ -103,9 +103,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="totalcostPrice" label="成本价合计" width="160" show-overflow-tooltip>
+                    <el-table-column prop="costPriceSum" label="成本价合计" width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="costPriceSum" label="合计" width="160" show-overflow-tooltip>
+                    <el-table-column prop="priceSum" label="合计" width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="remark" label="备注" min-width="230">
                       <template slot-scope="scope">
@@ -120,7 +120,7 @@
                   </el-table>
                 </el-form>
                 <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;display:flex;justify-content: space-between;" class="text">
-                  <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderdiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
+                  <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderDiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
                   <div>
                     <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额：{{ totalAmount }}</span>
@@ -137,6 +137,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
 import { getCategoryTrees } from '@/api/basicData/index'
@@ -244,6 +245,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        orderDiscount: null,
         businessName: '',
         remark: '',
         ownerUserId: '',
@@ -271,20 +273,24 @@ export default {
     totalNum: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.lines.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num*1])
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.lines[i].num * 1])
       }
       return totalNum
     },
-    totalAmount:function(){
+    totalAmount: function () {
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
         let item = this.dataFormTwo.lines[a]
-        totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum*1])
+        totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum * 1])
       }
-      totalPrice = this.jnpf.numberFormat(totalPrice * (1 - (this.dataForm.orderdiscount * 1 / 100)), 4)
+      totalPrice = this.jnpf.numberFormat(totalPrice * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
       this.dataForm.money = totalPrice
       return totalPrice
-    }
+    },
+    ...mapGetters(['userInfo']),
+  },
+  created() {
+    this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
     // 客户分类节点点击
@@ -322,22 +328,22 @@ export default {
       // let c = 0
       // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
       //   let item = this.dataFormTwo.lines[a]
-      //   c = this.jnpf.math('add', [c, item.costPriceSum])
+      //   c = this.jnpf.math('add', [c, item.priceSum])
       // }
-      // this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderdiscount * 1 / 100)), 4)
+      // this.totalAmount = this.jnpf.numberFormat(c * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
       // this.dataForm.money = this.totalAmount
     },
     changeTaxRate(row, index) {
       let productArr = [...this.dataFormTwo.lines]
       productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.price * (1 - (row.discount * 1 / 100)), 4)
-      productArr[index].costPriceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
-      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum), 4)
+      productArr[index].priceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
+      productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum), 4)
       this.dataFormTwo.lines = productArr
       // var totalPrice = 0;
       // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
       //   let item = this.dataFormTwo.lines[a]
       //   console.log("item", item.amounts);
-      //   totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       // }
       // this.totalAmount = totalPrice
       // this.dataForm.money = this.totalAmount
@@ -407,19 +413,19 @@ export default {
       // }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
-        row.costPriceSum = c ? c : ''
+        row.priceSum = c ? c : ''
       } else {
-        row.costPriceSum = ''
+        row.priceSum = ''
       }
-      if (row.costPriceSum && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum * 1), 6)
+      if (row.priceSum && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
       // var totalPrice = 0;
       // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
       //   let item = this.dataFormTwo.lines[a]
 
-      //   totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       // }
       // this.totalAmount = totalPrice
       // this.dataForm.money = this.totalAmount
@@ -484,24 +490,24 @@ export default {
       }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
-        row.costPriceSum = c ? c : ''
+        row.priceSum = c ? c : ''
       } else {
-        row.costPriceSum = ''
+        row.priceSum = ''
       }
-      if (row.costPriceSum && row.amounts) { // 税额计算
-        let d = this.jnpf.numberFormat((row.amounts * 1 - row.costPriceSum * 1), 6)
+      if (row.priceSum && row.amounts) { // 税额计算
+        let d = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum * 1), 6)
         row.totalTaxAmount = d ? d : 0
       }
       if (row.costPrice && row.num) {
         let c = this.jnpf.numberFormat((row.costPrice * row.num), 6)
-        row.totalcostPrice = c ? c : ''
+        row.costPriceSum = c ? c : ''
       } else {
-        row.totalcostPrice = ''
+        row.costPriceSum = ''
       }
       // var totalPrice = 0;
       // for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
       //   let item = this.dataFormTwo.lines[a]
-      //   totalPrice = this.jnpf.math('add', [totalPrice, item.costPriceSum])
+      //   totalPrice = this.jnpf.math('add', [totalPrice, item.priceSum])
       // }
       // this.totalAmount = totalPrice
       // this.dataForm.money = this.totalAmount
@@ -521,8 +527,8 @@ export default {
           num: '',
           price: '',
           discount: '',
-          totalcostPrice: '',
           costPriceSum: '',
+          priceSum: '',
           remark: '',
         })
       });
@@ -564,9 +570,36 @@ export default {
         }
       })
     },
-    dataFormSubmit() {
+    async dataFormSubmit() {
+      let submitFlag = true
+      const form_1 = this.$refs.dataForm
+      const valid_1 = await form_1.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        let formItems = form_1.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
+      const form_2 = this.$refs.productForm
+      const valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        submitFlag = false
+        let formItems = form_2.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
       // 校验子表
-      Promise.all([this.$refs['dataForm'].validate(), this.$refs['productForm'].validate()]).then(() => {
+      if (submitFlag) {
         this.btnLoading = true;
         let obj = {
           business: this.dataForm,
@@ -592,9 +625,7 @@ export default {
         }).catch(() => {
           this.btnLoading = false
         })
-      }).catch((error) => {
-
-      })
+      }
     }
   }
 }

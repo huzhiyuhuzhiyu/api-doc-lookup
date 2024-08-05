@@ -289,7 +289,7 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow">
+            <!-- <el-tab-pane label="流程信息" name="approvalFlow">
               <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
                 ref="workflowRef" />
               <div class="noDataTip" v-if="!workVisible">
@@ -357,11 +357,11 @@
                     <div class="el-empty__description">
                       <p>暂无流程信息</p>
                     </div>
-                    <!---->
+            
                   </div>
                 </span>
               </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane v-if="type == 'look'" label="流转记录" name="transferList">
               <el-table v-loading="formLoading" :data="transferData">
                 <el-table-column prop="businessName" label="审批业务名称" min-width="160" />

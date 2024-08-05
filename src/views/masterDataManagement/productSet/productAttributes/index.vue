@@ -20,9 +20,10 @@
             </el-dropdown>
           </span>
         </div>
-        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
-            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
-          </el-input></div>
+        <div v-if="!leftFlag">
+          <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+            suffix-icon="el-icon-search" clearable></el-input>
+        </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
@@ -30,16 +31,15 @@
           :expand-on-click-node="false" node-key="enCode" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-
             <span class="text" :title="data.fullName">{{ data.fullName }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
       </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute" >
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -56,26 +56,27 @@
             </el-form-item>
           </el-col>
 
-
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t("common.search") }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                {{ $t('common.search') }}
               </el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding: 10px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
-         
+
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun()" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -89,7 +90,7 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                @edit="addOrUpdateHandle(scope.row.id,)" @del="handleDel(scope.row.id)">
+                @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
                 复制
               </el-button> -->
@@ -102,6 +103,9 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -113,22 +117,34 @@ import {
   addBimProductAttributes,
   getbimProductAttributesList,
   getbimProductAttributes
-} from "@/api/masterDataManagement/index";
-import Form from "./Form";
-import moment from "moment";
+} from '@/api/masterDataManagement/index'
+import Form from './Form'
+import moment from 'moment'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 
 export default {
-  name: "supplierProfile",
-  components: { Form },
+  name: 'supplierProfile',
+  components: { Form, SuperQuery },
   data() {
     return {
-      title: "更多查询",
-      background: true, //分页器背景颜色
-      activeName: "supplierPage",
-      visible: false,
-      treeData: [
-
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '名称',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
       ],
+      title: '更多查询',
+      background: true, //分页器背景颜色
+      activeName: 'supplierPage',
+      visible: false,
+      treeData: [],
       leftFlag: false,
       tableData: [],
       treeLoading: false,
@@ -137,64 +153,64 @@ export default {
       userRelationListVisible: false,
       organizeIdTree: [],
       form: {
-        code: "",
-        name: "",
+        code: '',
+        name: '',
         pageNum: 1,
         pageSize: 20,
-        typeCode: "",
+        typeCode: '',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
+            column: 'code'
+          }
+        ]
       },
 
       gradeList: [],
       defaultProps: {
-        children: "childrenList",
-        label: "fullName",
+        children: 'childrenList',
+        label: 'fullName'
       },
       rules: {
-        code: [
-          {}
-        ]
+        code: [{}]
       },
       total: 0,
       diagramVisible: false,
       formVisible: false,
       expands: true,
       refreshTree: true,
-      filterText: "",
-   
-    };
+      filterText: ''
+    }
   },
   watch: {
     filterText(val) {
-      this.$refs.treeBox.filter(val);
-    },
+      this.$refs.treeBox.filter(val)
+    }
   },
   created() {
     this.getbimProductAttributesFun()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    superQuerySearch(query) {
+      this.form.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
-     
     },
-    columnSetFun(){ 
-      console.log("this.$refs.dataTable",this.$refs.dataTable);
+    columnSetFun() {
+      console.log('this.$refs.dataTable', this.$refs.dataTable)
       this.$refs.dataTable.showDrawer()
     },
     // 获取左侧属性分类
     getbimProductAttributesFun() {
-      getbimProductAttributes('575966014227880773').then(res => {
-
+      getbimProductAttributes('575966014227880773').then((res) => {
         this.treeData = res.data.list
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
@@ -204,121 +220,118 @@ export default {
       })
     },
 
-
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
-      this.formVisible = false;
+      this.formVisible = false
       if (isRefresh) {
-        this.keyword = "";
-        this.initData();
+        this.keyword = ''
+        this.initData()
       }
     },
 
     filterNode(value, data) {
-      if (!value) return true;
-      return data.fullName.indexOf(value) !== -1;
+      if (!value) return true
+      return data.fullName.indexOf(value) !== -1
     },
-
 
     initData() {
-      console.log(this.form);
-      this.listLoading = true;
+      console.log(this.form)
+      this.listLoading = true
       getbimProductAttributesList(this.form)
         .then((res) => {
-          console.log("res++", res);
-          this.tableData = res.data.records;
-          this.total = res.data.total;
-          this.listLoading = false;
-          this.visible = false;
+          console.log('res++', res)
+          this.tableData = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+          this.visible = false
         })
         .catch(() => {
-          this.listLoading = false;
-        });
+          this.listLoading = false
+        })
     },
     search() {
-
-      this.form.pageNum = 1;
-      this.initData();
+      this.form.pageNum = 1
+      this.initData()
     },
     reset() {
-      this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.form = {
         code: '',
-        name: "",
+        name: '',
         typeCode: this.treeData[0].enCode,
         pageNum: 1,
         pageSize: 20,
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
       // this.search()
     },
     handleNodeClick(data, node) {
-      console.log("请选择节点", node);
+      console.log('请选择节点', node)
       this.form.typeCode = node.data.enCode
-      this.search();
+      this.search()
     },
 
     addSupplier() {
-      this.formVisible = true;
+      this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.form.typeCode, 'add');
-      });
+        this.$refs.Form.init(this.form.typeCode, 'add')
+      })
     },
     addOrUpdateHandle(id) {
-      this.formVisible = true;
+      this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'edit');
-        });
+          this.$refs.Form.init(id, 'edit')
+        })
         // }, 600);
       }
     },
     copyHandle(id) {
-      this.formVisible = true;
+      this.formVisible = true
       if (id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.Form.init(id, 'copy');
-        });
+          this.$refs.Form.init(id, 'copy')
+        })
         // }, 600);
       }
     },
     handleDel(id) {
-      this.$confirm(this.$t("common.delTip"), this.$t("common.tipTitle"), {
-        type: "warning",
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
       })
         .then(() => {
           delBimProductAttributes(id).then((res) => {
-            this.initData();
+            this.initData()
             this.$message({
-              type: "success",
-              message: "删除成功",
-              duration: 1500,
-            });
-          });
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
+          })
         })
-        .catch(() => { });
+        .catch(() => { })
     },
     handleUserRelation(id, parentId, btnType) {
-      this.formVisible = true;
+      this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, parentId, btnType);
-      });
-    },
-  },
-};
+        this.$refs.Form.init(id, parentId, btnType)
+      })
+    }
+  }
+}
 </script>
 <style scoped>
 .JNPF-common-layout-left {
@@ -371,7 +384,7 @@ export default {
 }
 </style>
 <style scoped>
-  .title_box {
+.title_box {
   width: 100%;
   display: flex;
   border-bottom: 1px solid #ebeef5;

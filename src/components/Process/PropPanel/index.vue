@@ -6,7 +6,7 @@
     <!-- 标题 -->
     <header slot="title" class="header"
       v-if="value && (value.type=='condition'|| value.type=='approver' || value.type=='subFlow' || value.type=='start' )">
-      <el-input size="mini" v-model="properties.title" style="z-index:9;max-width: 200px;"
+      <el-input size="mini" v-model="properties.title" style="z-index:9;max-width: 200px; font-size: 16px;"
         placeholder="请输入">
       </el-input>
     </header>
@@ -356,6 +356,7 @@
 
     <!-- 发起人 -->
     <section class="approver-pane" v-if="value && isStartNode()">
+      <el-scrollbar class="config-scrollbar" style="height:100%">
       <el-tabs style="height:100%;">
         <el-tab-pane label="基础设置">
           <el-scrollbar class="config-scrollbar">
@@ -1148,10 +1149,12 @@
           </el-scrollbar>
         </el-tab-pane>
       </el-tabs>
+    </el-scrollbar>
     </section>
     <!-- 审批人 -->
     <section class="approver-pane" v-if="value && isApproverNode()">
-      <el-tabs v-model="activeName" style="height:100%;">
+      <el-scrollbar class="config-scrollbar" style="height:100%">
+        <el-tabs v-model="activeName" style="height:100%;">
         <el-tab-pane label="基础设置" name="config">
           <el-scrollbar class="config-scrollbar">
             <el-form label-position="top" :model="approverForm" class="pd-10-20">
@@ -2032,7 +2035,9 @@
             </el-form>
           </el-scrollbar>
         </el-tab-pane> -->
-      </el-tabs>
+        </el-tabs>
+      </el-scrollbar>
+
     </section>
     <div class="actions">
       <el-button size="small" @click="cancel">取消</el-button>

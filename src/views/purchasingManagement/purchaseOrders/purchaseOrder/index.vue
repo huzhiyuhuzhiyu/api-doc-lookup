@@ -39,8 +39,18 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
-            <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
+            <div>
+              <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
+                导出
+              </el-button>
+            </div>
+
             <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                   @click="columnSetFun()" />
@@ -74,7 +84,8 @@
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
-                  <el-tag>未完成</el-tag> </div>
+                  <el-tag>未完成</el-tag>
+                </div>
                 <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'"><el-tag
                     type="success">已完成</el-tag></div>
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
@@ -121,7 +132,7 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="download(scope.row.id)">
+                    <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
                       下载订货单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
@@ -209,81 +220,13 @@
       </span>
     </el-dialog>
 
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="detailVisible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
 
-        <el-form ref="diaForm" :model="listsQuery" label-width="120px" label-position="top">
-
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入采购单号" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="供应商名称">
-              <el-input v-model.trim="listsQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model.trim="listsQuery.productCode" placeholder="请输入产品编码" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="listsQuery.receivingStatus" placeholder="订单状态" style="width: 100%;">
-                <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="detailVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="searchDetail()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -296,11 +239,91 @@ import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'
 import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
 import PrintForm from './printForm'
+import { excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm },
+  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery },
   data() {
     return {
+      exportFormVisible: false,
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '采购单号',
+          type: 'input'
+        },
+        {
+          prop: 'cooperativePartnerCode',
+          label: '供应商编码',
+          type: 'input'
+        },
+
+
+        {
+          prop: 'cooperativePartnerName',
+          label: '供应商名称',
+          type: 'input'
+        },
+        {
+          prop: 'deliveryDate',
+          label: '交货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'excludingTaxTotalAmount',
+          label: '总金额(不含税)',
+          type: 'input'
+        },
+        {
+          prop: 'taxAmount',
+          label: '税额',
+          type: 'input'
+        },
+        {
+          prop: 'totalAmount',
+          label: '总金额(含税)',
+          type: 'input'
+        },
+        {
+          prop: 'receivingStatus',
+          label: '收货状态',
+          type: 'select',
+          options: [
+            { label: '待退货', value: 'receiving' },
+            { label: '已退货', value: 'received' },
+            { label: '已取消', value: 'stopped' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
       printVisible: false,
       title: "更多查询",
       background: true,//分页器背景颜色
@@ -344,37 +367,11 @@ export default {
         startTime: "",
         orderItems: [{
           asc: false,
-          column: ""
-        }, {
-          asc: false,
           column: "create_time"
         }],
         receivingStatus: 'receiving',
       },
-      // 明细参数
-      listsQuery: {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        createByName: "",
-        deliveryEndDate: "",
-        deliveryStartDate: "",
-        endTime: "",
-        orderNo: "",
-        orderType: "procure",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: "",
-        productCode: "",
-        productName: "",
-        receivingStatus: 'receiving',
-      },
+  
       total: 0,
       formVisible: false,
       createRequirementDate: [],
@@ -432,6 +429,43 @@ export default {
     this.initData()
   },
   methods: {
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+      }
+      const targetListQuery = this.listQuery
+      let _data = {
+        ...targetListQuery,
+        exportType: '1002',
+        exportName: '订单列表',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then((res) => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
+      })
+    },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     checkSelectable(row) {
       return !row.disabled
     },
@@ -533,24 +567,7 @@ export default {
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
-    sortChangeDetail({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      if (newProp === 'cooperative_partner_code') {
-        newProp = 'cooperativePartnerCode'
-      }
-      if (newProp === 'cooperative_partner_name') {
-        newProp = 'cooperativePartnerName'
-      }
-      if (newProp === 'product_name') {
-        newProp = 'productName'
-      }
-      if (newProp === 'create_time') {
-        newProp = 'createTime'
-      }
-      this.listsQuery.orderItems[0].asc = order !== 'descending'
-      this.listsQuery.orderItems[0].column = order === null ? "" : newProp
-      this.detailData()
-    },
+
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -596,36 +613,7 @@ export default {
       })
     },
 
-    detailData() {
-      this.listLoading = true
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listsQuery.startTime = this.createRequirementDate[0] + " 00:00:00"
-        this.listsQuery.endTime = this.createRequirementDate[1] + " 23:59:59"
-      } else {
-        this.listsQuery.startTime = ''
-        this.listsQuery.endTime = ''
-      }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listsQuery.deliveryStartTime = this.deliveryDate[0] + " 00:00:00"
-        this.listsQuery.deliveryEndTime = this.deliveryDate[1] + " 23:59:59"
-      } else {
-        this.listsQuery.deliveryStartTime = ''
-        this.listsQuery.deliveryEndTime = ''
-      }
-      detailpurchaseOrderList(this.listsQuery).then(res => {
-        console.log(res, '明细列表');
-        this.detailTableData = res.data.records
-        console.log(this.detailTableData);
-        this.detailTableData.forEach(item => {
-          item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
-        })
-        this.total = res.data.total
-        this.listLoading = false
-        this.detailVisible = false
-      }).catch(() => {
-        this.listLoading = false
-      })
-    },
+ 
     search() {
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
@@ -634,15 +622,7 @@ export default {
       this.listQuery.pageNum = 1
       this.initData()
     },
-    // 搜索明细
-    searchDetail() {
-      Object.keys(this.listsQuery).forEach(key => {
-        let item = this.listsQuery[key]
-        this.listsQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listsQuery.pageNum = 1
-      this.detailData()
-    },
+
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
@@ -673,35 +653,7 @@ export default {
       this.deliveryDate = []
       this.search()
     },
-    // 重置明细
-    resetDetail() {
-      this.$refs['detailTableData'].$refs.JNPFTable.clearSort()
-      this.listsQuery = {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        createByName: "",
-        deliveryEndDate: "",
-        deliveryStartDate: "",
-        endTime: "",
-        orderNo: "",
-        orderType: "procure",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: "",
-        productCode: "",
-        productName: "",
-      }
-      this.createRequirementDate = []
-      this.deliveryDate = []
-      this.searchDetail()
-    },
+ 
     // addSupplier(id, type) {
     //   this.formVisible = true
     //   this.$nextTick(() => {
@@ -716,7 +668,7 @@ export default {
       })
     },
     // 导出订货单
-    download(id) {
+    orderFormDownload(id) {
       purPurchaseOrderExport(id).then(res => {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })

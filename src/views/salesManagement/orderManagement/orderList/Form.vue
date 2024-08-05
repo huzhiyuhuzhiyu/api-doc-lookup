@@ -388,9 +388,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>油脂量
-                      </template> -->
+                   
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -410,9 +408,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>包装方式
-                      </template> -->
+                    
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list7" :key="index" :label="item.name"

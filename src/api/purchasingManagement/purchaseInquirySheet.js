@@ -206,6 +206,15 @@ export function purPurchaseReceiptReturnGoodsList(data) {
   })
 }
 
+// 采购和外协收退货通知单-明细列表
+export function purPurchaseReceiptReturnGoodsDetailList(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/line/list`,
+    method: 'post',
+    data
+  })
+}
+
 // 新增
 export function addpurPurchaseReceiptReturnGoods(data) {
   return request({

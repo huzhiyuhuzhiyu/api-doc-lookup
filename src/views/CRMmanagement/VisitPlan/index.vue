@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.visitPlanName" placeholder="请输入拜访计划名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.visitName" placeholder="请输入拜访计划名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -35,11 +35,11 @@
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
             </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -47,14 +47,14 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="visitPlanName" label="拜访计划名称" min-width="160" />
+            <el-table-column prop="visitName" label="拜访计划名称" min-width="160" />
             <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contactsName" label="联系人" min-width="180" />
             <el-table-column prop="businessName" label="商机名称" min-width="180" />
-            <el-table-column prop="visitGoal" label="拜访目的" min-width="180">
+            <el-table-column prop="visitAim" label="拜访目的" min-width="180">
               <template slot-scope="scope">
-                {{visitGoalfaction(scope.row.visitGoal)}}
+                {{visitGoalfaction(scope.row.visitAim)}}
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="180" />
@@ -94,13 +94,13 @@
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
+import { deletecrmVisit, getcrmVisitlist } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -118,7 +118,7 @@ export default {
       datalist:[],
       superQueryJson: [
         {
-          prop: 'visitPlanName',
+          prop: 'visitName',
           label: "拜访计划名称",
           type: 'input'
         },
@@ -147,7 +147,7 @@ export default {
           type: 'input'
         },
         { // 下拉选
-          prop: 'visitGoal',
+          prop: 'visitAim',
           label: '拜访目的',
           type: 'select',
           options: []
@@ -249,12 +249,15 @@ export default {
     window.onresize = null
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     visitGoalfaction(val) {
       let _data = this.visitGoalList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
@@ -276,7 +279,7 @@ export default {
                 getDictionaryDataList(id, obj).then(response => {
                   this.visitGoalList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'visitGoal') {
+                    if (item.prop == 'visitAim') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -293,7 +296,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deletecrmReturnVisit(id).then(res => {
+        deletecrmVisit(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -352,7 +355,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getcrmReturnVisit(this.listQuery).then(res => {
+      getcrmVisitlist(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

@@ -18,7 +18,7 @@
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                  start-placeholder="退货开始日期" end-placeholder="退货结束日期" clearable></el-date-picker>
+                  start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -39,10 +39,10 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
+              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
-                取消退货
-              </el-button>
+                取消收货
+              </el-button> -->
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -73,8 +73,8 @@
             </el-table-column>
             <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-            <el-table-column prop="partnerName" label="操作员" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
+            <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom"></el-table-column>
 
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -138,7 +138,12 @@ import {
   mergelist,
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
-import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, deletepurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+import {
+  getpurPurchaseReceiptReturnGoodsdetail,
+  addpurPurchaseReceiptReturnGoods,
+  editpurPurchaseReceiptReturnGoods,
+  deletepurPurchaseReceiptReturnGoods
+} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { UserListAll } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
@@ -209,6 +214,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
+        classAttribute: 'finish_product',
         notificationTypeList: [],
         orderItems: [
           {
@@ -265,53 +271,27 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '订单号',
+          label: '单号',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerCode',
-          label: '客户编码',
+          label: '供应商编码',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-
-        {
-          prop: 'orderType',
-          label: '订单类型',
-          type: 'select',
-
-          options: [
-            { label: '正常订单', value: 'normal' },
-            { label: '预测订单', value: 'prediction' },
-            { label: '样品订单', value: 'sample' },
-            { label: '备货订单', value: 'stock_up' },
-            { label: '急件订单', value: 'urgent' }
-          ]
-        },
-        {
-          prop: 'departmentName',
-          label: '所属部门',
-          type: 'custom',
-          component: 'com-select'
-        },
-        {
-          prop: 'salesName',
-          label: '所属销售人员',
-          type: 'custom',
-          component: 'user-select'
-        },
-        {
-          prop: 'workOrderNo',
-          label: '工作令号',
+          label: '供应商名称',
           type: 'input'
         },
         {
-          prop: 'orderDate',
-          label: '订单日期',
+          prop: 'salesman',
+          label: '操作员',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '收货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
@@ -319,29 +299,30 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'contractNo',
-          label: '客户合同号',
-          type: 'input'
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+
+          options: [
+            { label: '草稿', value: 'draft' },
+            { label: '提交', value: 'submit' },
+
+          ]
         },
         {
-          prop: 'deliveryDate',
-          label: '交货日期',
+          prop: 'createTime',
+          label: '创建时间',
           type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'orderState',
-          label: '订单状态',
-          type: 'select',
-          options: [
-            { label: '未完成', value: 'not_finish' },
-            { label: '已完成', value: 'finish' },
-            { label: '部分完成', value: 'part_finish' }
-          ]
-        }
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
       ]
     }
   },

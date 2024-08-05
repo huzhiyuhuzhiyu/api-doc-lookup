@@ -39,10 +39,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
-                :loading="qxbtnLoading">
-                取消退货
-              </el-button> -->
+
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
                 导出
               </el-button>
@@ -132,8 +129,7 @@ import {
   purPurchaseReceiptReturnGoodsList,
   deleteQuotationsendlist,
   getQuotationdatasenddatalist,
-  Cancelshipmentlist,
-  Cancelshipmentlinelist,
+
   mergelist,
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
@@ -325,7 +321,7 @@ export default {
           label: '备注',
           type: 'input'
         },
-    
+
       ]
     }
   },
@@ -341,19 +337,7 @@ export default {
     }
   },
   methods: {
-    //明细列表取消发货
-    Cancelshipmentline(id) {
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          Cancelshipmentlinelist(id).then((res) => {
-            this.$message.success('取消成功')
-            this.initData()
-          })
-        })
-        .catch(() => { })
-    },
+
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
@@ -363,34 +347,7 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-    //批量取消发货
-    Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error('请先选择数据')
-      let hasItemList = []
-      this.selectArr.map((i) => {
-        if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
-      })
-      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          let a = this.selectArr.map((item) => {
-            return item.id
-          })
-          this.qxbtnLoading = true
-          Cancelshipmentlist(a)
-            .then((res) => {
-              this.qxbtnLoading = false
-              this.$message.success('取消成功')
-              this.initData()
-            })
-            .catch(() => {
-              this.qxbtnLoading = false
-            })
-        })
-        .catch(() => { })
-    },
+
 
     handleClick(e) {
       this.activeName = e.name

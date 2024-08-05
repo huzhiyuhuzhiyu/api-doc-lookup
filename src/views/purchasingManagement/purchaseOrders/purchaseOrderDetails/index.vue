@@ -121,7 +121,7 @@
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="download(scope.row.purchaseOrderId)">
+                    <el-dropdown-item @click.native="orderFormDownload(scope.row.purchaseOrderId)">
                       下载订货单
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="printPurchaseOrder(scope.row.purchaseOrderId)">
@@ -1190,7 +1190,7 @@ export default {
       })
     },
     // 导出订货单
-    download(id) {
+    orderFormDownload(id) {
       purPurchaseOrderExport(id).then((res) => {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })

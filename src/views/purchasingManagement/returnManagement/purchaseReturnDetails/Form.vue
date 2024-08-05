@@ -1125,19 +1125,19 @@ export default {
                 message: '切换成功'
               })
 
-              this.dataForm = {
-                exchangeGoodsFlag: false,
-                // orderCategory: "assembly",
-                receiptReturnType: 'back',
-                notificationType: 'procure',
-                logisticsCompany: '',
-                ordersId: '',
-                deliverDate: '',
-                logisticsNumber: '',
-                cooperativePartnerId: '',
-                remark: '',
-                orderNo: this.codeConfig.number
-              }
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   receiptReturnType: 'back',
+              //   notificationType: 'procure',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
               this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
@@ -1156,19 +1156,19 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          this.dataForm = {
-            exchangeGoodsFlag: false,
-            // orderCategory: "assembly",
-            receiptReturnType: 'back',
-            notificationType: 'procure',
-            logisticsCompany: '',
-            ordersId: '',
-            orderNo: this.codeConfig.number,
-            deliverDate: '',
-            logisticsNumber: '',
-            cooperativePartnerId: '',
-            remark: ''
-          }
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   receiptReturnType: 'back',
+          //   notificationType: 'procure',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
           this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id

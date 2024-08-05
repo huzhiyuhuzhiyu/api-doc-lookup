@@ -392,6 +392,7 @@ import {
 import {
   getclassAttributeList
 } from '@/api/masterDataManagement/index'
+import { mapGetters } from "vuex"
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -659,7 +660,8 @@ export default {
         totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
       }
       return totalNum
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   watch: {
     filterText(val) {
@@ -1087,20 +1089,20 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-              this.dataForm = {
-                exchangeGoodsFlag: false,
-                // orderCategory: "assembly",
-                receiptReturnType: 'back',
-                notificationType: 'procure',
-                // notifyType: 'sale',
-                logisticsCompany: '',
-                ordersId: '',
-                deliverDate: '',
-                logisticsNumber: '',
-                cooperativePartnerId: '',
-                remark: '',
-                orderNo: this.codeConfig.number
-              }
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   receiptReturnType: 'back',
+              //   notificationType: 'procure',
+              //   // notifyType: 'sale',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
               this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
@@ -1119,20 +1121,20 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          this.dataForm = {
-            exchangeGoodsFlag: false,
-            // orderCategory: "assembly",
-            receiptReturnType: 'back',
-            notificationType: 'procure',
-            // notifyType: 'sale',
-            logisticsCompany: '',
-            ordersId: '',
-            orderNo: this.codeConfig.number,
-            deliverDate: '',
-            logisticsNumber: '',
-            cooperativePartnerId: '',
-            remark: ''
-          }
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   receiptReturnType: 'back',
+          //   notificationType: 'procure',
+          //   // notifyType: 'sale',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
           this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id
@@ -1263,6 +1265,7 @@ export default {
     init() {
       this.fetchData('CGTHDH')
       console.log(666)
+      this.dataForm.salesman = this.userInfo.userName
     },
     goBack() {
       this.$emit('close', true)

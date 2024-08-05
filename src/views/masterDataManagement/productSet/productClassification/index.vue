@@ -3,10 +3,15 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
+          <!-- <el-col :span="6">
             <el-form-item :label="$t('common.keyword')">
               <el-input v-model="listQuery.keyword" :placeholder="$t('common.enterKeyword')" clearable
                 @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col> -->
+          <el-col :span="6">
+            <el-form-item label="">
+              <el-input v-model="listQuery.name" placeholder="请输入分类名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -154,7 +159,7 @@ export default {
       columnList: ['classAttribute', 'classType'],
       superQueryVisible: false,
       superQueryJson: [
-      {
+        {
           prop: 'name',
           label: '分类名称',
           type: 'input'

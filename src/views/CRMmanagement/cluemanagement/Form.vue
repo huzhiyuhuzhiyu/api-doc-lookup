@@ -120,6 +120,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -187,6 +188,10 @@ export default {
     getbimProductAttributes('585430056520656645').then(res => {
       this.industryList = res.data.list.length ? res.data.list : []
     })
+    this.dataForm.ownerUserId = this.userInfo.userId
+  },
+  computed:{
+    ...mapGetters(['userInfo']),
   },
   methods: {
     actiompro(value) {

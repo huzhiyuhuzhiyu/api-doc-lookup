@@ -110,7 +110,7 @@
             <el-tab-pane label="主表字段" name="indexField">
               <el-divider v-if="currentFieldTab === 'indexField'">主表字段</el-divider>
               <el-table v-if="currentFieldTab === 'indexField'" :data="columnOptions" class="JNPF-common-table"
-                @selection-change="columnSelectionChange" ref="columnTable" height="100%">
+                @selection-change="columnSelectionChange" ref="columnTable" height="100%" :row-key="row => row.prop">
                 <el-table-column prop="label" label="列表字段" />
                 <el-table-column type="selection" width="55" align="center" />
               </el-table>
@@ -309,8 +309,7 @@
                 <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text" @click="addFieldItem">
                   添加选项
                 </el-button>
-                <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text"
-                  @click="saveFieldItem">
+                <el-button style="padding-bottom: 0" icon="el-icon-circle-check" type="text" @click="saveFieldItem">
                   保存选项
                 </el-button>
               </div>
@@ -321,7 +320,8 @@
               </el-form-item>
 
               <el-divider v-if="columnData.type == 5 || columnData.type == 6">子列自定义字段</el-divider>
-              <draggable :list="customFieldLine" :animation="340" group="selectItem" handle=".option-drag" v-if="columnData.type == 5 || columnData.type == 6">
+              <draggable :list="customFieldLine" :animation="340" group="selectItem" handle=".option-drag"
+                v-if="columnData.type == 5 || columnData.type == 6">
                 <div v-for="(item, index) in customFieldLine" :key="index" class="select-item">
                   <div class="select-line-icon option-drag">
                     <i class="icon-ym icon-ym-darg" />
@@ -334,11 +334,11 @@
                 </div>
               </draggable>
               <div style="margin-left: 29px;" v-if="columnData.type == 5 || columnData.type == 6">
-                <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text" @click="addFieldItem">
+                <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text"
+                  @click="addLineFieldItem">
                   添加选项
                 </el-button>
-                <el-button style="padding-bottom: 0" icon="el-icon-circle-plus-outline" type="text"
-                  @click="saveFieldItemLine">
+                <el-button style="padding-bottom: 0" icon="el-icon-circle-check" type="text" @click="saveFieldItemLine">
                   保存选项
                 </el-button>
               </div>
@@ -419,7 +419,7 @@ const defaultColumnData = {
   searchList: [], // 查询字段
   hasSuperQuery: true, // 高级查询
   customField: [],
-  customFieldLine:[],
+  customFieldLine: [],
   searchOptions: [],
   // 增加master 和 slave 
   master: {
@@ -563,8 +563,11 @@ export default {
       currentRow: {},
       currentSearchRow: {},
       customField: [],
-      customFieldLine:[],
-      rowSelectFlag:false  // 禁止开关
+      customFieldLine: [],
+      rowSelectFlag: false,  // 禁止开关
+      selectedField: [],     // 保留选中的数据
+      selectedFieldLine: [],     // 保留选中的数据
+      selectedSearch: [],     // 保留选中的数据
     }
   },
   filters: {
@@ -650,10 +653,11 @@ export default {
     }
     console.log(this.columnData, 'column');
     // 列字段和查询字段 不从表单数据取 
-    this.customField = this.columnData.customField
     this.columnOptions = this.columnData.columnOptions
-    this.searchOptions = this.columnData.searchOptions
     this.columnLineOptions = this.columnData.columnLineOptions
+    this.searchOptions = this.columnData.searchOptions
+    this.customField = this.columnOptions
+    this.customFieldLine = this.columnLineOptions
     this.setBtnValue(this.columnData.btnsList, this.btnsOption)
     this.setBtnValue(this.columnData.columnBtnsList, this.columnBtnsOption)
     this.btnsList = this.columnData.btnsList.map(o => o.value)
@@ -665,13 +669,22 @@ export default {
     this.setSort()
     this.$nextTick(() => {
       console.log(this.searchList);
-        let searchList =  JSON.parse(JSON.stringify(this.columnData.searchList))
-        let columnList =  JSON.parse(JSON.stringify(this.columnData.columnList))
-        let columnLineList =  JSON.parse(JSON.stringify(this.columnData.columnLineList))
-        this.columnOptions.forEach(item => this.$refs['columnTable'].toggleRowSelection(item, columnList.some(item2=>item.prop === item2.prop)))
-        this.searchOptions.forEach(item =>this.$refs['searchTable'].toggleRowSelection(item, searchList.some(item2=>item.prop === item2.prop)))
-        this.columnLineOptions.forEach(item =>this.$refs['columnLineTable'].toggleRowSelection(item, columnLineList.some(item2=>item.prop === item2.prop)))
-     
+      let searchList = JSON.parse(JSON.stringify(this.columnData.searchList))
+      let columnList = JSON.parse(JSON.stringify(this.columnData.columnList))
+      let columnLineList = JSON.parse(JSON.stringify(this.columnData.columnLineList))
+
+      if (searchList.length){
+        this.searchOptions.forEach(item => this.$refs['searchTable'].toggleRowSelection(item, searchList.some(item2 => item.prop === item2.prop)))
+        this.selectedSearch = searchList.map(item => item.prop)
+      }
+      if (columnList.length){
+        this.columnOptions.forEach(item => this.$refs['columnTable'].toggleRowSelection(item, columnList.some(item2 => item.prop === item2.prop)))
+        this.selectedField = columnList.map(item => item.prop)
+      }
+      if (columnLineList.length){
+        this.columnLineOptions.forEach(item => this.$refs['columnLineTable'].toggleRowSelection(item, columnLineList.some(item2 => item.prop === item2.prop)))
+        this.selectedFieldLine = columnLineList.map(item => item.prop)
+      }
     })
   },
   methods: {
@@ -687,14 +700,42 @@ export default {
         formatter: '',
       })
     },
-    saveFieldItem() {
-      this.columnOptions = this.customField
-      this.searchOptions = this.customField.map(item => {
-        return {
-          ...item,
-          searchType: 1,
-        }
+    // 子列
+    addLineFieldItem() {
+      this.customFieldLine.push({
+        label: '',
+        prop: '',
+        align: 'left',
+        jnpfKey: '',
+        sortable: false,
+        width: null,
+        formatter: '',
       })
+    },
+    saveFieldItem() {
+      let flag = this.customField.every(item => item.label && item.prop)
+      if (flag) {
+        this.columnOptions = this.customField
+ 
+        console.log(this.columnOptions, 'this.columnOptions');
+        this.searchOptions = this.customField.map(item => {
+          return {
+            ...item,
+            searchType: 1,
+          }
+        })
+        this.$message.success('保存成功')
+          this.$nextTick(() => {
+            this.columnOptions.forEach(item => this.$refs['columnTable'].toggleRowSelection(item, this.selectedField.some(item2 => item2 === item.prop)))
+            this.searchOptions.forEach(item => this.$refs['searchTable'].toggleRowSelection(item, this.selectedSearch.some(item2 => item2 === item.prop)))
+          })
+
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请填写完整的列名称和字段名'
+        })
+      }
     },
     // 子列
     addFieldItemLine() {
@@ -709,7 +750,19 @@ export default {
       })
     },
     saveFieldItemLine() {
-      this.columnLineOptions = this.customFieldLine
+      let flag = this.customFieldLine.every(item => item.label && item.prop)
+      if (flag) {
+        this.columnLineOptions = this.customFieldLine
+        this.$message.success('保存成功')
+        this.$nextTick(() => {
+            this.columnLineOptions.forEach(item => this.$refs['columnLineTable'].toggleRowSelection(item, this.selectedFieldLine.some(item2 => item2 === item.prop)))
+          })
+      } else {
+        this.$message({
+          type: 'error',
+          message: '请填写完整的列名称和字段名'
+        })
+      }
     },
     addSelectItem() {
       this.currentSearchRow.options.push({
@@ -786,6 +839,7 @@ export default {
     // },
     // 列属性 内容选择事件
     handleCurrentChange(val) {
+      console.log(111);
       if (!val) return
       this.currentRow = val
       this.currentTab = 'culumnSet'
@@ -793,7 +847,6 @@ export default {
     },
     // 查询属性 内容选择事件
     handleSeachChange(val) {
-      console.log(111);
       if (!val) return
       this.currentSearchRow = val
       console.log(this.currentSearchRow, ' this.currentSearchRow');
@@ -890,9 +943,12 @@ export default {
     },
     searchSelectionChange(val) {
       this.$set(this.columnData, 'searchList', val)
+      // if (this.columnData.searchList.length)  this.selectedSearch = this.columnData.searchList.map(item => item.prop)
     },
     columnSelectionChange(val) {
+      console.log(val, '2222');
       this.$set(this.columnData, 'columnList', val)
+      // if (this.columnData.columnList.length) this.selectedField = this.columnData.columnList.map(item => item.prop)
     },
     columnLIneSelectionChange(val) {
       this.$set(this.columnData, 'columnLineList', val)

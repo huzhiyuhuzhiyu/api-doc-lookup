@@ -35,11 +35,11 @@
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
             </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -98,7 +98,7 @@
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
@@ -252,10 +252,7 @@ export default {
     }
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   created() {
     this.getDictionaryType()
@@ -266,6 +263,12 @@ export default {
     window.onresize = null
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     // 获取合同类型数据
     getDictionaryType() {
       getDictionaryType().then(res => {

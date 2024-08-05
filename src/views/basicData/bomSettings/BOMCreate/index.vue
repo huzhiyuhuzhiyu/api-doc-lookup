@@ -2,7 +2,8 @@
    <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form" ref="main">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <el-page-header @back="goBack" content="BOM创建" />
+        <!-- <el-page-header @back="goBack" content="BOM创建" /> -->
+        <div style="font-size: 20px;">BOM创建</div>
         <div class="options" v-if="btnType !== 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
@@ -205,7 +206,7 @@ export default {
           prop: "pickingWay", label: "领料方式", value: "", type: "select", options: [{ label: "按生产订单领料", value: "production_order" }, { label: "按派工单领料", value: "dispatch_list" }],
           itemRules: [{ required: true, trigger: "change" }], sm: 12
         },
-        { prop: "drawNo", label: "产品图号", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
+        { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
         { prop: "remark", label: "备注", value: "", type: 'textarea' }
       ],
       linesList: [],
@@ -213,7 +214,7 @@ export default {
       linesListItems: [
         { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 160 },
         { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
-        { prop: "drawingNo", label: "产品图号", value: "", type: 'view', minWidth: 340 },
+        { prop: "drawingNo", label: "品名规格", value: "", type: 'view', minWidth: 340 },
         { prop: "qty", label: "数量", value: "1", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
         { prop: "mainUnit", label: "单位", value: "", type: "view", minWidth: 120 },
         { prop: "lossRate", label: "损耗率(%)", value: "0", type: "input", placeholder: "请输入损耗率", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error('损耗率：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
@@ -245,14 +246,14 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input', },
         { prop: "name", label: "产品名称", type: 'input', },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段
       approvalBusinessId: '',

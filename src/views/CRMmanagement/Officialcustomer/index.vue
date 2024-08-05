@@ -71,12 +71,12 @@
                 icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -144,7 +144,7 @@
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
      <!-- 高级查询 -->
      <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
@@ -306,10 +306,7 @@ export default {
     window.onresize = null
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
@@ -317,6 +314,12 @@ export default {
     this.getcategoryTree()
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     submit() {
       this.UploadProduct(this.file)
     },

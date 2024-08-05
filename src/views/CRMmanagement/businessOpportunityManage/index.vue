@@ -35,11 +35,11 @@
             <topOpts @add="addOrUpdateHandle('', 'add')">
             </topOpts>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -49,7 +49,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="businessName" label="商机名称" min-width="160" />
             <el-table-column prop="customerName" label="客户名称" min-width="160" />
-            <el-table-column prop="code" label="客户编码" min-width="160" />
+            <el-table-column prop="customerCode" label="客户编码" min-width="160" />
             <el-table-column prop="money" label="商机金额" min-width="140" />
             <el-table-column prop="dealDate" label="预计成交日期" min-width="160" />
             <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
@@ -84,7 +84,7 @@
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
@@ -112,7 +112,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'code',
+          prop: 'customerCode',
           label: "客户编码",
           type: 'input'
         },
@@ -204,12 +204,15 @@ export default {
     window.onresize = null
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

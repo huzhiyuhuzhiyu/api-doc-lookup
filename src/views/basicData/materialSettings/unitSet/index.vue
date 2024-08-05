@@ -29,49 +29,37 @@
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
         <div class="tableBox">
-          <JNPF-table
-            v-loading="listLoading"
-            :data="list"
-            @sort-change="sortChange"
-            highlight-current-row
-            @current-change="handleCurrentChange"
-            class="dataTable"
-            border
-            ref="listTable"
-            custom-column
-          >
+          <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
+            @current-change="handleCurrentChange" class="dataTable" border ref="listTable" custom-column>
             <!-- <el-table-column prop="unitCode" label="单位编码" min-width="120" sortable="custom" /> -->
             <el-table-column prop="name" label="单位名称" min-width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="updateHandle(scope.row,'edit')">编辑</el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  class="JNPF-table-delBtn"
-                  @click="handleDel(scope.$index, scope.row.id)"
-                >
+                <el-button size="mini" type="text" @click="updateHandle(scope.row, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                  @click="handleDel(scope.$index, scope.row.id)">
                   删除
                 </el-button>
                 <!-- <el-button size="mini" type="text" @click="updateHandle(scope.row,'copy')">复制</el-button> -->
               </template>
             </el-table-column>
           </JNPF-table>
-          <JNPF-table
-            v-loading="detailLoading"
-            :data="dataDetail"
-            class="dataTable"
-            border
-            :partentOrChild="'child'"
-            custom-column
-          >
+          <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border :partentOrChild="'child'"
+            custom-column>
             <el-table-column prop="sourceName" min-width="120" label="主单位" />
             <el-table-column prop="ratio" min-width="120" label="转换系数" />
             <el-table-column prop="calculationDirection" min-width="120" label="计算方向">
@@ -87,28 +75,40 @@
             <el-table-column prop="targetName" min-width="120" label="副单位" />
           </JNPF-table>
         </div>
-        <pagination
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :limit.sync="listQuery.pageSize"
-          @pagination="initData"
-          class="pagination"
-          style="text-align: left; padding-left: 20px;"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" class="pagination" style="text-align: left; padding-left: 20px;" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import JNPFForm from './Form'
 import { getUnitData, detailUnitData, deleteUnitData } from '@/api/basicData/materialSettings'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 
 export default {
-  components: { JNPFForm },
+  components: { JNPFForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '单位名称',
+          type: 'input'
+        },
+
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ],
       list: [],
       listLoading: true,
       total: 0,
@@ -163,6 +163,14 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.listTable.showDrawer()
+    },
     // 内容选择事件
     handleCurrentChange(val) {
       if (!val || this.selectedUnitId == val.id) return
@@ -192,7 +200,7 @@ export default {
           detailUnitData(this.list[0].name).then((res) => {
             this.dataDetail = res.data.unitRelList || []
             this.detailLoading = false
-      })
+          })
         })
       })
     },
@@ -211,7 +219,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     // 新增数据
     addOrUpdateHandle() {
@@ -221,10 +229,10 @@ export default {
       })
     },
     // 编辑数据
-    updateHandle(rowData,btntype) {
+    updateHandle(rowData, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(JSON.stringify(rowData),btntype)
+        this.$refs.JNPFForm.init(JSON.stringify(rowData), btntype)
       })
     },
     search() {
@@ -270,12 +278,12 @@ export default {
 
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
-  > .dataTable:first-child {
+  >.dataTable:first-child {
     flex: 3;
     margin: 0 3px 0 0;
   }
 
-  > .dataTable:last-child {
+  >.dataTable:last-child {
     flex: 2;
   }
 }

@@ -146,3 +146,120 @@ export function updatecrmContract(data) {
     data
   })
 }
+//回款计划
+//回款计划-列表
+export function getcrmReceivablesPlanlist(data) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/list`,
+    method: 'POST',
+    data
+  })
+}
+// 回款计划 新增
+export function addcrmReceivablesPlan(data) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/add`,
+    method: 'POST',
+    data
+  })
+}
+// 回款计划 详情
+export function detailcrmReceivablesPlan(id) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/detail/${id}`,
+    method: 'GET'
+  })
+}
+//回款计划-删除
+export function deletecrmReceivablesPlan(id) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 回款计划 编辑
+export function updatecrmReceivablesPlan(data) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/update`,
+    method: 'PUT',
+    data
+  })
+}
+//回款管理
+//回款管理-列表
+export function getcrmReceivableslist(data) {
+  return request({
+    url: `/api/zgt/crmReceivables/list`,
+    method: 'POST',
+    data
+  })
+}
+// 回款管理 新增
+export function addcrmReceivables(data) {
+  return request({
+    url: `/api/zgt/crmReceivables/add`,
+    method: 'POST',
+    data
+  })
+}
+// 回款管理 详情
+export function detailcrmReceivables(id) {
+  return request({
+    url: `/api/zgt/crmReceivables/detail/${id}`,
+    method: 'GET'
+  })
+}
+//回款管理-删除
+export function deletecrmReceivables(id) {
+  return request({
+    url: `/api/zgt/crmReceivables/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 回款管理 编辑
+export function updatecrmReceivables(data) {
+  return request({
+    url: `/api/zgt/crmReceivables/update`,
+    method: 'PUT',
+    data
+  })
+}
+//拜访计划
+//拜访计划-列表
+export function getcrmVisitlist(data) {
+  return request({
+    url: `/api/zgt/crmVisit/list`,
+    method: 'POST',
+    data
+  })
+}
+// 拜访计划 新增
+export function addcrmVisit(data) {
+  return request({
+    url: `/api/zgt/crmVisit/add`,
+    method: 'POST',
+    data
+  })
+}
+// 拜访计划 详情
+export function detailcrmVisit(id) {
+  return request({
+    url: `/api/zgt/crmVisit/detail/${id}`,
+    method: 'GET'
+  })
+}
+//拜访计划-删除
+export function deletecrmVisit(id) {
+  return request({
+    url: `/api/zgt/crmVisit/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 拜访计划 编辑
+export function updatecrmVisit(data) {
+  return request({
+    url: `/api/zgt/crmVisit/update`,
+    method: 'PUT',
+    data
+  })
+}

@@ -40,12 +40,19 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip>
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" ref="dataTable"
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column>
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
@@ -69,8 +76,8 @@
               <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
                 style=" color: #ff3a3a">删除</el-button> -->
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)"/>
-            
+                @del="handleDel(scope.row.id, scope.row.parentId)" />
+
             </template>
           </el-table-column>
         </JNPF-table>
@@ -79,19 +86,53 @@
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
     <CheckUser v-if="checkUserFormVisible" ref="checkUserForm" @close="checkUserFormVisible = false" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import { getOrganizeList, delOrganize } from '@/api/permission/organize'
-import { getcategoryTree, deleteCategory,editCategory } from '@/api/basicData/index'
+import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/index'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'supplierCategory',
-  components: { DepForm, CheckUser },
+  components: { DepForm, CheckUser, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '名称',
+          type: 'input'
+        },
+        {
+          prop: 'parentName',
+          label: '上级分类',
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
       listQuery: {
         keyword: '',
         type: "supplier",
@@ -110,10 +151,262 @@ export default {
       checkUserFormVisible: false
     }
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   created() {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj1).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+
+      getbimProductAttributesList(obj2).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+
+
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     switchShow(row) {
       let obj = row
       delete obj.burdenSortCode
@@ -218,13 +511,13 @@ export default {
             duration: 1500,
           })
         }).catch((error) => {
-          if(error=="Error: 当前标签分类存在子标签分类"){
+          if (error == "Error: 当前标签分类存在子标签分类") {
             this.$message({
-              message:"当前供应商分类存在档案数据，不允许删除！",
-              type:"error"
+              message: "当前供应商分类存在档案数据，不允许删除！",
+              type: "error"
             })
           }
-      })
+        })
       }).catch((error) => {
         console.log(error);
       })

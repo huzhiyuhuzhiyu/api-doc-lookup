@@ -70,12 +70,12 @@
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-              </el-tooltip>
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                   @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -90,7 +90,7 @@
                   }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="code" label="客户编码" sortable="custom" width="160" />
+            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
 
             <el-table-column prop="contacts" label="联系人" sortable="custom" width="120" />
             <el-table-column prop="phone" label="电话" sortable="custom" width="120" />
@@ -139,7 +139,7 @@
       </span>
     </el-dialog>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -279,10 +279,7 @@ export default {
     window.onresize = null
   },
   mounted() {
-    getAdvancedQueryList(this.currMenuId).then(row => {
-      this.datalist = row.data.list
-      this.switchStyle()
-    })
+    this.getAdvancedQuery()
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
@@ -290,6 +287,12 @@ export default {
     // this.initData()
   },
   methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     submit() {
       this.UploadProduct(this.file)
     },

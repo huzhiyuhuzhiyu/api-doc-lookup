@@ -5,21 +5,19 @@
         <el-form @submit.native.prevent>
           <el-col :span="6">
             <el-form-item label="分类名称">
-              <el-input v-model="listQuery.name" placeholder="请输入分类名称"
-                clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="请输入分类名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="分类编码">
-              <el-input v-model="listQuery.code" placeholder="请输入分类编码"
-                clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.code" placeholder="请输入分类编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()"  class="commonBox">
-                {{$t('common.search')}}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()"  class="commonBox">{{$t('common.reset')}} 
+              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+                {{ $t('common.search') }}</el-button>
+              <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{ $t('common.reset') }}
               </el-button>
             </el-form-item>
           </el-col>
@@ -27,35 +25,24 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle()" >
-            <el-button
-              :disabled="treeList.length > 0 ? false : true"
-              size="mini"
-              type="primary"
-              icon="el-icon-download"
-              @click="exportForm"
-            >
+          <topOpts @add="addOrUpdateHandle()">
+            <el-button :disabled="treeList.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
+              @click="exportForm">
               导出
             </el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" content="展开" placement="top">
-              <el-link
-                v-show="!expands"
-                type="text"
-                icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
-                :underline="false"
-                @click="toggleExpand()"
-              />
+            <!-- <el-tooltip effect="dark" content="展开" placement="top">
+              <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
+                :underline="false" @click="toggleExpand()" />
             </el-tooltip>
             <el-tooltip effect="dark" content="折叠" placement="top">
-              <el-link
-                v-show="expands"
-                type="text"
-                icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
-                :underline="false"
-                @click="toggleExpand()"
-              />
+              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
+                :underline="false" @click="toggleExpand()" />
+            </el-tooltip> -->
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -65,27 +52,16 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table
-          v-loading="listLoading"
-          :data="treeList"
-          row-key="id"
-          v-if="refreshTable"
-          fixedNO
-          :setColumnDisplayList="columnList"
-          :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }"
-          ref="dataTable"
-          custom-column
-        >
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" fixedNO
+          :setColumnDisplayList="columnList" :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable" custom-column>
           <el-table-column prop="name" label="分类名称" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <i
-                :class="[
-                  scope.row.childrenList.length >= 1
-                    ? 'icon-ym icon-ym-tree-organization3'
-                    : 'icon-ym icon-ym-systemForm'
-                ]"
-              ></i>
+              <i :class="[
+                scope.row.childrenList.length >= 1
+                  ? 'icon-ym icon-ym-tree-organization3'
+                  : 'icon-ym icon-ym-systemForm'
+              ]"></i>
               {{ scope.row.name }}
             </template>
           </el-table-column>
@@ -102,10 +78,8 @@
           </el-table-column> -->
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)"
-              >
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
+                @del="handleDel(scope.row.id, scope.row.parentId)">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.plmSyncFlag" @click="PLMchange(scope.row.id)">
                   同步PLM
                 </el-button> -->
@@ -118,6 +92,9 @@
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -126,10 +103,46 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getcategoryTree, deleteCategory, productPlmSync } from '@/api/basicData/materialSettings'
 import DepForm from './depForm'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
-  components: { DepForm,ExportForm },
+  components: { DepForm, ExportForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '分类名称',
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: '分类编码',
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
       exportFormVisible: false,
       listQuery: {
         classAttribute: 'process',
@@ -155,10 +168,259 @@ export default {
       columnList: ['createByName']
     }
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   created() {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj1).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+
+      getbimProductAttributesList(obj2).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+
+
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+
+    },
     sortChange({ prop, order }) {
       let newProp = ""
       if (prop == 'steelBall' || prop == "outerCircle" || prop == "innerCircle" || prop == "createByName") {
@@ -182,7 +444,7 @@ export default {
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
-      console.log(columnList,'columnList')
+      console.log(columnList, 'columnList')
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -207,7 +469,7 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     initData() {
@@ -317,7 +579,7 @@ export default {
             }
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     }
   }
 }

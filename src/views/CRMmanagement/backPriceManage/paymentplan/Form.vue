@@ -28,29 +28,29 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="合同编号" prop="contractNum">
-                        <ComSelect-page v-model="dataForm.contractNum" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
+                      <el-form-item label="合同编号" prop="contractNo">
+                        <ComSelect-page v-model="dataForm.contractNo" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="计划回款金额" prop="money">
-                        <el-input v-model="dataForm.money" placeholder="请输入计划回款金额" :disabled="btntype == 'look'" />
+                      <el-form-item label="计划回款金额" prop="planReceivablesMoney">
+                        <el-input v-model="dataForm.planReceivablesMoney" placeholder="请输入计划回款金额" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="计划回款日期" prop="returnDate">
-                        <el-date-picker v-model="dataForm.returnDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择计划回款日期" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="计划回款日期" prop="planReceivablesData">
+                        <el-date-picker v-model="dataForm.planReceivablesData" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择计划回款日期" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="前几天提醒" prop="remind">
-                        <el-input v-model="dataForm.remind" placeholder="请输入前几天提醒" :disabled="btntype == 'look'" />
+                      <el-form-item label="前几天提醒" prop="remindInAdvance">
+                        <el-input v-model="dataForm.remindInAdvance" placeholder="请输入前几天提醒" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="回款方式" prop="returnType">
-                        <el-select v-model="dataForm.returnType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                      <el-form-item label="回款方式" prop="receivablesType">
+                        <el-select v-model="dataForm.receivablesType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
@@ -72,10 +72,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
-import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
+import { addcrmReceivablesPlan, detailcrmReceivablesPlan, updatecrmReceivablesPlan, getcrmContractlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -152,11 +153,12 @@ export default {
         ownerUserName: '',
         customerName: '',
         customerId: '',
-        contractNum: '',
-        money: '',
-        returnDate: '',
-        remind: '',
-        returnType: '',
+        contractNo: '',
+        contractId: '',
+        planReceivablesMoney: '',
+        planReceivablesData: '',
+        remindInAdvance: '',
+        receivablesType: '',
         remark: ''
       },
       btntype: false,
@@ -164,23 +166,27 @@ export default {
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
-        money: [
+        planReceivablesMoney: [
           { required: true, message: '请输入计划回款金额', trigger: 'blur' },
         ],
-        returnDate: [
+        planReceivablesData: [
           { required: true, message: '请选择计划回款日期', trigger: 'blur' },
         ],
         customerName: [
           { required: true, message: '请选择客户', trigger: 'blur' },
         ],
-        contractNum: [
+        contractNo: [
           { required: true, message: '请选择合同编号', trigger: 'blur' },
         ]
       },
     }
   },
+  computed:{
+    ...mapGetters(['userInfo']),
+  },
   created() {
     this.getDictionaryType()
+    this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
     //负责人
@@ -190,12 +196,14 @@ export default {
     //合同选框传值
     contractChange(val, data) {
       if (data && data.length) {
-        this.dataForm.contractNum = data[0].all.no
+        this.dataForm.contractNo = data[0].all.no
+        this.dataForm.contractId = data[0].all.id
       } else { // 不选择任何内容，置空绑定的值
-        this.dataForm.contractNum = ""
+        this.dataForm.contractNo = ""
+        this.dataForm.contractId = ""
       }
     },
-    // 获取客户满意度、回款计划形式数据
+    // 获取回款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -230,12 +238,14 @@ export default {
       if (data && data.length) { // 数据有效，进行更新
         this.dataForm.customerName = data[0].all.name
         this.dataForm.customerId = data[0].all.id
-        this.dataForm.contractNum = ""
+        this.dataForm.contractNo = ""
+        this.dataForm.contractId = ""
         this.contractRequestObj.customerName = this.dataForm.customerName
       } else { // 不选择任何内容，置空绑定的值
         this.dataForm.customerId = ""
         this.dataForm.customerName = ""
-        this.dataForm.contractNum = ""
+        this.dataForm.contractNo = ""
+        this.dataForm.contractId = ""
       }
     },
     goBack() {
@@ -249,8 +259,9 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-          detailcrmReturnVisit(this.dataForm.id).then(res => {
+          detailcrmReceivablesPlan(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            this.formLoading = false
           })
         } else {
           this.formLoading = false
@@ -264,7 +275,7 @@ export default {
           let obj = {
             ...this.dataForm
           }
-          let formMethod = this.dataForm.id ? updatecrmReturnVisit(obj) : addcrmReturnVisit(obj);
+          let formMethod = this.dataForm.id ? updatecrmReceivablesPlan(obj) : addcrmReceivablesPlan(obj);
           formMethod.then(res => {
             let msg = ""
             if (this.btntype == "edit") {

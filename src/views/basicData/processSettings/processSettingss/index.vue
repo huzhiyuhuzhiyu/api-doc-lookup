@@ -5,24 +5,14 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input
-                v-model="listQuery.code"
-                @keyup.enter.native="search()"
-                placeholder="请输入工艺路线编码"
-                clearable
-                maxlength="20"
-              ></el-input>
+              <el-input v-model="listQuery.code" @keyup.enter.native="search()" placeholder="请输入工艺路线编码" clearable
+                maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input
-                v-model="listQuery.name"
-                @keyup.enter.native="search()"
-                placeholder="请输入工艺路线名称"
-                clearable
-                maxlength="20"
-              ></el-input>
+              <el-input v-model="listQuery.name" @keyup.enter.native="search()" placeholder="请输入工艺路线名称" clearable
+                maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <!-- <el-col :span="4">
@@ -54,17 +44,16 @@
             <el-button type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle('', 'add')" size="mini">
               新建
             </el-button>
-            <el-button
-              :disabled="list.length > 0 ? false : true"
-              size="mini"
-              type="primary"
-              icon="el-icon-download"
-              @click="exportForm"
-            >
+            <el-button :disabled="list.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
+              @click="exportForm">
               导出
             </el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -74,18 +63,8 @@
           </div>
         </div>
         <div class="tableBox">
-          <JNPF-table
-            v-loading="listLoading"
-            :data="list"
-            @sort-change="sortChange"
-            highlight-current-row
-            :fixedNO="true"
-            class="dataTable"
-            border
-            ref="listTable"
-            custom-column
-            :setColumnDisplayList="columnList"
-          >
+          <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
+            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="updateHandle(scope.row, 'look')">{{ scope.row.code }}</el-link>
@@ -121,13 +100,9 @@
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
                 <el-button size="mini" type="text" @click="updateHandle(scope.row, 'edit')">编辑</el-button>
-                <el-button
-                  size="mini"
-                  type="text"
-                  class="JNPF-table-delBtn"
+                <el-button size="mini" type="text" class="JNPF-table-delBtn"
                   :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'"
-                  @click="handleDel(scope.$index, scope.row.id)"
-                >
+                  @click="handleDel(scope.$index, scope.row.id)">
                   删除
                 </el-button>
                 <el-dropdown hide-on-click>
@@ -147,25 +122,13 @@
             </el-table-column>
           </JNPF-table>
         </div>
-        <pagination
-          :total="total"
-          :page.sync="listQuery.pageNum"
-          :limit.sync="listQuery.pageSize"
-          @pagination="initData"
-          class="pagination"
-        />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" class="pagination" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog
-      :title="title"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :visible.sync="visible"
-      lock-scroll
-      class="JNPF-dialog JNPF-dialog_center"
-      width="1000px"
-    >
+    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
           <el-col :span="12">
@@ -181,24 +144,16 @@
           <el-col :span="12">
             <el-form-item label="工艺状态">
               <el-select v-model="listQuery.state" placeholder="工艺状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in stateList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="单据状态">
               <el-select v-model="listQuery.documentStatus" placeholder="单据状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in documentStatusList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -206,12 +161,8 @@
           <el-col :span="12">
             <el-form-item label="审批状态">
               <el-select v-model="listQuery.approvalStatus" placeholder="审批状态" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in statusList"
-                  :key="index"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
+                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -221,17 +172,10 @@
                 value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%;" :default-time="['00:00:00', '23:59:59']"
                 start-placeholder="开始时间" end-placeholder="结束时间" clearable :picker-options="global.timePickerOptions">
               </el-date-picker> -->
-              <el-date-picker
-                v-model="customerRecognitionTime"
-                type="datetimerange"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                style="width: 100%;"
-                start-placeholder="请选择开始时间"
-                end-placeholder="请选择结束时间"
-                :picker-options="global.timePickerOptions"
-                :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+              <el-date-picker v-model="customerRecognitionTime" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
+                style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
+                :picker-options="global.timePickerOptions" :default-time="['00:00:00', '23:59:59']"
+                clearable></el-date-picker>
             </el-form-item>
           </el-col>
         </el-form>
@@ -245,6 +189,9 @@
       </span>
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -253,10 +200,63 @@ import JNPFForm from './Form'
 import { getProcessList, detailProcess, deleteProcess } from '@/api/basicData/processSettingss'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
-  components: { JNPFForm, ExportForm },
+  components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: '工艺路线编码',
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: '工艺路线名称',
+          type: 'input'
+        },
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
       exportFormVisible: false,
       title: '更多查询',
       list: [],
@@ -360,10 +360,259 @@ export default {
       columnList: ['reasonRejection', 'remark', 'createByName']
     }
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   created() {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj1).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+
+      getbimProductAttributesList(obj2).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+
+
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+
+    },
     moreQueries() {
       this.visible = true
     },
@@ -436,7 +685,7 @@ export default {
             if (!res.data.url) return
             this.jnpf.downloadFile(res.data.url)
           })
-          .catch(() => {})
+          .catch(() => { })
       }
     },
     initData() {
@@ -474,7 +723,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     // 新增数据
     addOrUpdateHandle(id, type) {
@@ -502,28 +751,28 @@ export default {
     },
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort()
-      ;(this.listQuery = {
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        code: '',
-        name: '',
-        state: '',
-        approvalStatus: '',
-        documentStatus: '',
-        createEndTime: '',
-        createStartTime: ''
-      }),
-        (this.customerRecognitionTime = [])
+        ; (this.listQuery = {
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'createTime'
+            }
+          ],
+          pageNum: 1,
+          pageSize: 20,
+          code: '',
+          name: '',
+          state: '',
+          approvalStatus: '',
+          documentStatus: '',
+          createEndTime: '',
+          createStartTime: ''
+        }),
+          (this.customerRecognitionTime = [])
       this.search()
     }
   }
@@ -537,12 +786,12 @@ export default {
 
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
-  > .dataTable:first-child {
+  >.dataTable:first-child {
     flex: 3;
     margin: 0 3px 0 0;
   }
 
-  > .dataTable:last-child {
+  >.dataTable:last-child {
     flex: 2;
   }
 }

@@ -170,7 +170,7 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      columnList: [ 'createByName'],
+      columnList: ['createByName'],
       linesTotal: 0,
       linesTableData: [],
       createTimeArrfahuo: [],
@@ -223,6 +223,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
+        classAttribute: 'finish_product',
         notificationTypeList: [],
         orderItems: [
           {
@@ -239,7 +240,7 @@ export default {
         productCode: '',
         productDrawingNo: '',
         productName: '',
-        receiptReturnType: 'back',
+        receiptReturnType: 'receipt',
         receivingStatus: '',
         salesman: '',
         startTime: '',

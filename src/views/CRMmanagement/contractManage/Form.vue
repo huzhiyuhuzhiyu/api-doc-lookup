@@ -17,6 +17,11 @@
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
+                      <el-form-item label="合同编号" prop="no">
+                        <el-input v-model="dataForm.no" placeholder="请输入合同编号" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
@@ -52,7 +57,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="合同金额" prop="money">
-                        <el-input v-model="dataForm.money" placeholder="请输入合同金额" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                        <el-input v-model="dataForm.money" placeholder="请输入合同金额" maxlength="20" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -76,7 +81,7 @@
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="合同类型" prop="contractType">
                         <el-select v-model="dataForm.contractType" placeholder="请选择合同类型" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in typecontractList" :key="index" :label="item.label" :value="item.value"></el-option>
+                          <el-option v-for="(item, index) in typecontractList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -180,6 +185,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
@@ -189,6 +195,7 @@ import { addcrmContract, updatecrmContract, detailcrmContract, detailcrmBusiness
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       getcrmBusinessList,
       datafilelist: [],
       isattachmentswitch: '1',
@@ -313,6 +320,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        no: '',
         orderDiscount: null,
         ownerUserId: '',
         contractName: '',
@@ -367,12 +375,23 @@ export default {
       totalPrice = this.jnpf.numberFormat(totalPrice * (1 - (this.dataForm.orderDiscount * 1 / 100)), 4)
       this.dataForm.money = totalPrice
       return totalPrice
-    }
+    },
+    ...mapGetters(['userInfo']),
   },
   created() {
     this.getDictionaryType()
+    this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.no = data.number
+
+      } catch (error) {
+      }
+    },
     // 获取合同类型数据
     getDictionaryType() {
       getDictionaryType().then(res => {
@@ -690,6 +709,7 @@ export default {
       this.dataForm.id = id || ''
       this.formLoading = true
       this.productVisible = true
+      if (this.btntype === 'add') this.fetchData('HTBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
@@ -725,13 +745,40 @@ export default {
         }
       })
     },
-    dataFormSubmit() {
+    async dataFormSubmit() {
+      let submitFlag = true
+      const form_1 = this.$refs.dataForm
+      const valid_1 = await form_1.validate().catch(err => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        let formItems = form_1.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
+      const form_2 = this.$refs.productForm
+      const valid_2 = await form_2.validate().catch(err => false)
+      if (!valid_2 && submitFlag) {
+        submitFlag = false
+        let formItems = form_2.fields
+        formItems.some(formItem => {
+          if (formItem.validateState === 'error') {
+            this.jnpf.focusItem(formItem.$children[1].$el)
+            this.$nextTick(() => { this.jnpf.formItemValidate(formItem) });
+            return true
+          }
+        })
+      }
       // 校验子表
       if (!this.dataFormTwo.lines.length) {
         this.$message.error('请添加产品')
         return
       }
-      Promise.all([this.$refs['dataForm'].validate(), this.$refs['productForm'].validate()]).then(() => {
+      if (submitFlag) {
         this.btnLoading = true;
         if (this.datafilelist.length) {
           this.datafilelist.map((item, index) => {
@@ -768,9 +815,7 @@ export default {
         }).catch(() => {
           this.btnLoading = false
         })
-      }).catch((error) => {
-
-      })
+      }
     }
   }
 }

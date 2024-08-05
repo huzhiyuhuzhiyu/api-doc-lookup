@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建采购收货通知单'
-            : btnType == 'edit'
-              ? '编辑采购收货通知单'
-              : btnType == 'copy'
-                ? '新建采购收货通知单'
-                : '查看采购收货通知单'
+          ? '新建采购收货通知单'
+          : btnType == 'edit'
+            ? '编辑采购收货通知单'
+            : btnType == 'copy'
+              ? '新建采购收货通知单'
+              : '查看采购收货通知单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -138,21 +138,21 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
-                    <el-table-column prop="deliveryQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
+                    <!-- <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
                         收货数量
                       </template>
                       <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'deliveryQuantity'"
-                          :rules="productRules.deliveryQuantity">
-                          <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入收货数量"
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
+                          :rules="productRules.receivedQuantity">
+                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
-                            {{ scope.row.deliveryQuantity }}
+                            {{ scope.row.receivedQuantity }}
                           </el-input>
                         </el-form-item>
                       </template>
@@ -383,6 +383,7 @@ import {
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -416,7 +417,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'raw_material',
+        classAttribute: 'finish_product',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -460,7 +461,7 @@ export default {
         { label: '急件订单', value: 'urgent' }
       ],
       productRules: {
-        deliveryQuantity: [
+        receivedQuantity: [
           { required: true, trigger: 'blur' },
           { validator: this.calcValidate(), trigger: 'blur' },
           { validator: this.calcValidatenum(), trigger: 'blur' }
@@ -531,7 +532,6 @@ export default {
         approvalStatus: '',
         startTime: '',
         endTime: '',
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -601,7 +601,8 @@ export default {
         inspectionStatus: '',
         // orderCategory: "assembly",
         returnDeliveryType: 'back',
-        notifyType: 'sale',
+        notificationType: 'procure',
+        salesman: '',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -627,6 +628,7 @@ export default {
         }
       },
       dataRule: {
+        salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
@@ -644,10 +646,11 @@ export default {
     totalDeliveryQuantity: function () {
       var totalNum = 0
       for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].deliveryQuantity])
+        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
       }
       return totalNum
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   watch: {
     filterText(val) {
@@ -685,8 +688,8 @@ export default {
         } else {
           let flag = false
           let list = this.dataFormTwo.productData
-          let num_1 = Number(list[index].deliveryQuantity)
-          let num_2 = Number(list[index].waitReceiptNum)
+          let num_1 = Number(list[index].receivedQuantity)
+          let num_2 = Number(list[index].receiptQuantity)
           console.log(num_1, '1')
           console.log(num_2, '2')
           if (!(num_1 <= num_2)) {
@@ -913,6 +916,7 @@ export default {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
+        console.log(item,'item')
         item.ordersNum = item.num
         this.dataFormTwo.productData.push(item)
       })
@@ -959,25 +963,25 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-      if (!row.deliveryQuantity) {
+      if (!row.receivedQuantity) {
         return
       }
-      row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '')
+      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '')
 
-      if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
+      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
         // 如果第一位是小数点，则清空输入框
-        row.deliveryQuantity = ''
-      } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        row.receivedQuantity = ''
+      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
         // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
-        row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1)
-      } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
-        row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
+        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1)
+      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
+        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
       }
-      if (row.deliveryQuantity.includes('.')) {
+      if (row.receivedQuantity.includes('.')) {
         let dotCount = 0 // 小数点的数量
         let result = '' // 处理后的结果
-        for (let i = 0; i < row.deliveryQuantity.length; i++) {
-          const char = row.deliveryQuantity[i]
+        for (let i = 0; i < row.receivedQuantity.length; i++) {
+          const char = row.receivedQuantity[i]
           if (char === '.') {
             if (dotCount === 0) {
               // 第一个小数点保留
@@ -988,18 +992,18 @@ export default {
             result += char
           }
         }
-        row.deliveryQuantity = result
-        let arr = row.deliveryQuantity.split('.')
+        row.receivedQuantity = result
+        let arr = row.receivedQuantity.split('.')
         if (arr[0].length > 8) {
           arr[0] = arr[0].substring(0, 8)
         }
         if (arr[1].length > 2) {
           arr[1] = arr[1].substring(0, 2)
         }
-        row.deliveryQuantity = arr[0] + '.' + arr[1]
+        row.receivedQuantity = arr[0] + '.' + arr[1]
       } else {
-        if (row.deliveryQuantity.length > 8) {
-          row.deliveryQuantity = row.deliveryQuantity.substring(0, 8)
+        if (row.receivedQuantity.length > 8) {
+          row.receivedQuantity = row.receivedQuantity.substring(0, 8)
         }
       }
       if (!row.receivedQuantity) {
@@ -1049,42 +1053,42 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.orderDateArr = []
-        ; (this.ProductListRequestObj = {
-          // neOrderState: 'finish',
-          orderNo: '',
-          cooperativePartnerName: '',
-          orderType: '',
-          salesName: '',
-          workOrderNo: '',
-          sourceOrderNo: '',
-          orderStartDate: '',
-          orderEndDate: '',
-          contractNo: '',
-          deliveryStartDate: '',
-          deliveryEndDate: '',
-          distributeStatus: 'distributed',
-          // orderCategory: "assembly",
-          shipmentStatus: '',
-          orderState: '',
-          productionStatus: '',
-          documentStatus: '',
-          approvalStatus: '',
-          startTime: '',
-          endTime: '',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ]
-        }),
-          this.searchAllProduct()
+      this.ProductListRequestObj = {
+        // neOrderState: 'finish',
+        orderNo: '',
+        cooperativePartnerName: '',
+        orderType: '',
+        salesName: '',
+        workOrderNo: '',
+        sourceOrderNo: '',
+        orderStartDate: '',
+        orderEndDate: '',
+        contractNo: '',
+        deliveryStartDate: '',
+        deliveryEndDate: '',
+        distributeStatus: 'distributed',
+        // orderCategory: "assembly",
+        shipmentStatus: '',
+        orderState: '',
+        productionStatus: '',
+        documentStatus: '',
+        approvalStatus: '',
+        startTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      }
+      this.searchAllProduct()
     },
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
@@ -1127,20 +1131,20 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-                ; (this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  // orderCategory: "assembly",
-                  returnDeliveryType: 'back',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  logisticsNumber: '',
-                  cooperativePartnerId: '',
-                  remark: '',
-                  orderNo: this.codeConfig.number
-                }),
-                  (this.dataFormTwo.productData = [])
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   returnDeliveryType: 'back',
+              //   notificationType: 'procure',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
+              this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
               this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1158,20 +1162,20 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          ; (this.dataForm = {
-            exchangeGoodsFlag: false,
-            // orderCategory: "assembly",
-            returnDeliveryType: 'back',
-            notifyType: 'sale',
-            logisticsCompany: '',
-            ordersId: '',
-            orderNo: this.codeConfig.number,
-            deliverDate: '',
-            logisticsNumber: '',
-            cooperativePartnerId: '',
-            remark: ''
-          }),
-            (this.dataFormTwo.productData = [])
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   returnDeliveryType: 'back',
+          //   notificationType: 'procure',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
+          this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id
           this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1337,19 +1341,28 @@ export default {
             //   })
 
             // })
-            res.data.lines.forEach((item) => {
-              item.deliveryQuantity = ''
+            res.data.noticeLineList.forEach((item) => {
+              item.receivedQuantity = ''
             })
-            this.dataFormTwo.productData = res.data.lines
+            this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
-            this.dataFormTwo.productData = res.data.lines
+            this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
-            this.dataFormTwo.productData = res.data.lines
+            this.dataFormTwo.productData = res.data.noticeLineList
           }
         })
+
+        this.dataFormTwo.productData.forEach((item) => {
+          item.drawingNo = item.productDrawingNo
+        })
+        console.log(this.dataFormTwo.productData, 'data')
       }
       if (btnType == 'add' || btnType == 'copy') {
-        console.log(55555)
+        console.log(this.userInfo, 'this.userInfo')
+        this.dataForm.salesman = this.userInfo.userName
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
@@ -1379,7 +1392,7 @@ export default {
         inspectionStatus: '',
         // orderCategory: "assembly",
         // returnDeliveryType: 'back',
-        // notifyType: 'sale',
+        // notificationType: 'procure',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -1422,7 +1435,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'raw_material'
+          this.dataForm.classAttribute = 'finish_product'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1438,7 +1451,8 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-            if (!item.deliveryQuantity) {
+            console.log(item, 'iiii')
+            if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
                 message: this.dataForm.exchangeGoodsFlag
@@ -1449,7 +1463,7 @@ export default {
               })
             } else if (
               item.outboundQuantity &&
-              item.deliveryQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
+              item.receivedQuantity * 1 > item.outboundQuantity * 1 - item.returnQuantity * 1
             ) {
               this.iszhi = true
               this.$message({
@@ -1457,7 +1471,7 @@ export default {
                 type: 'error',
                 duration: 1500
               })
-            } else if (item.deliveryQuantity == 0) {
+            } else if (item.receivedQuantity == 0) {
               this.iszhi = true
               this.$message({
                 message: this.dataForm.exchangeGoodsFlag
@@ -1481,16 +1495,17 @@ export default {
               customColumn: item.customColumn,
               deputyUnit: item.deputyUnit,
               // id: 0,
+              notificationType: 'procure',
               inspectionResults: item.inspectionResults,
               mainUnit: item.mainUnit,
-              notificationType: item.notificationType,
+              // notificationType: item.notificationType,
               oil: item.oil,
               oilQuantity: item.oilQuantity,
               ordersLineId: item.ordersLineId,
               packagingMethod: item.packagingMethod,
               packingQuantity: item.packingQuantity,
               processId: item.processId,
-              productsId: item.id,
+              productsId: item.productsId ? item.productsId : '',
               purchaseOrderId: item.purchaseOrderId,
               purchaseQuantity: item.purchaseQuantity,
               purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
@@ -1506,33 +1521,35 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'raw_material',
-              id: item.id ? item.id : ''
+              classAttribute: 'finish_product',
+              id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              // ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              // ratio: item.ratio ? item.ratio : '',
-              // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              // remark: item.remark ? item.remark : '',
-              // // returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-              // receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+              ratio: item.ratio ? item.ratio : '',
+              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+              remark: item.remark ? item.remark : '',
+              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
-              deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
+              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              classAttribute: 'raw_material',
+              classAttribute: 'finish_product',
               id: item.id ? item.id : '',
+              receiptQuantity: item.receiptQuantity,
+              productsId: item.productsId ? item.productsId : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               remark: item.remark ? item.remark : '',
-              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {

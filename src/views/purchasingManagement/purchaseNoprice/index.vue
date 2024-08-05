@@ -65,7 +65,7 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
 
-          <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" />
+          <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productType" label="物料分类" min-width="100" sortable="custom">
             <template slot-scope="scope">
               <div>{{ productType.getType(scope.row.productType) }}</div>

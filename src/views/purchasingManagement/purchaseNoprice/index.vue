@@ -27,10 +27,10 @@
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-              <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              <!-- <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
-              </el-button>
+              </el-button> -->
             </el-form-item>
           </el-col>
         </el-form>

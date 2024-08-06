@@ -102,11 +102,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="deliveryStatus" label="退货状态" width="120" sortable="custom" align="center">
-                <template slot-scope="scope">
+              <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
                   <el-tag type="primary">未完成</el-tag>
                 </div>
-                <div v-else-if="scope.row.deliveryStatus  == 'finished'">
+                <div v-else-if="scope.row.deliveryStatus == 'finished'">
                   <el-tag type="success">已完成 </el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
@@ -376,8 +376,9 @@ export default {
           prop: 'deliveryStatus',
           label: "退货状态",
           type: 'select',
-          options: [{ label: "待退货", value: "not_returned" }, { label: "已退货", value: "returned" }, { label: "已取消", value: "canceled" }]
+          options: [{ label: "未完成", value: "not_finished" }, { label: "已完成", value: "finished" }, { label: "已取消", value: "canceled" }]
         },
+
         {
           prop: 'documentStatus',
           label: "单据状态",

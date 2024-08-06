@@ -214,7 +214,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
-        classAttribute: 'finish_product',
+        classAttribute: 'raw_material',
         notificationTypeList: [],
         orderItems: [
           {

@@ -88,11 +88,11 @@
             </el-table-column>
             <el-table-column prop="deliveryStatus" label="退货状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'not_returned'">
-                  <el-tag type="primary">待退货</el-tag>
+                <div v-if="scope.row.deliveryStatus == 'not_finished'">
+                  <el-tag type="primary">未完成</el-tag>
                 </div>
-                <div v-else-if="scope.row.deliveryStatus == 'returned'">
-                  <el-tag type="success">已退货 </el-tag>
+                <div v-else-if="scope.row.deliveryStatus  == 'finished'">
+                  <el-tag type="success">已完成 </el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
                   <el-tag type="danger">已取消</el-tag>

@@ -95,16 +95,7 @@
 
                   </el-form>
                 </el-collapse-item>
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
+
 
 
                 <el-collapse-item title="产品信息" name="productInfo">
@@ -209,7 +200,8 @@
 
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
+              <el-form @submit.native.prevent
+                v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
 
                 <el-col :span="6">
                   <el-form-item>
@@ -222,13 +214,67 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label="发货日期">
+                  <el-form-item>
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                      style="width: 100%;"
+                      :start-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货开始日期' : '退货开始日期'"
+                      :end-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货结束日期' : '退货结束日期'" clearable>
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
+                <!-- { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" }, -->
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                      $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
 
+              </el-form>
+              <el-form @submit.native.prevent
+                v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'">
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.orderNo"
+                      :placeholder="dataForm.businessType == 'inbound_purchase' ? '收货单号' : '退货单号'" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;"
+                      :start-placeholder="dataForm.businessType == 'inbound_purchase' ? '收货开始日期' : '退货开始日期'"
+                      :end-placeholder="dataForm.businessType == 'inbound_purchase' ? '收货结束日期' : '退货结束日期'" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <!-- { label: "销售发货", value: "outbound_sale_send" },
+{ label: "销售退货", value: "inbound_sale_return" },
+{ label: "采购收货", value: "inbound_purchase" },
+{ label: "采购退货", value: "outbound_purchase" },
+{ label: "生产领料", value: "outbound_pick_out" },
+{ label: "生产退料", value: "inbound_return_materials" },
+{ label: "外协发料", value: "outbound_external_send" },
+{ label: "外协退料", value: "inbound_external_return" },
+{ label: "外协收货", value: "inbound_external" },
+{ label: "外协退货", value: "outbound_external" }, -->
                 <el-col :span="6">
                   <el-form-item>
                     <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
@@ -244,16 +290,32 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
-                <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="deliveryDate" label="发货日期" width="160" sortable="custom" />
-                <el-table-column prop="deliveryDate" label="订单号" width="160" sortable="custom" />
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
+                <el-table-column prop="orderNo" label="发货单号" width="180" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_sale_send'"></el-table-column>
+                <el-table-column prop="orderNo" label="收货单号" width="180" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_purchase'"></el-table-column>
+                <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
+                <el-table-column prop="deliverDate"
+                  :label="dataForm.businessType == 'outbound_sale_send' ? '发货日期' : dataForm.businessType == 'inbound_purchase' ? '收货日期' : dataForm.businessType == 'outbound_purchase' ? '退货日期' : ''"
+                  width="160" sortable="custom" />
+                <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
+                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-                <el-table-column prop="ordersNum" label="数量" width="120" sortable="custom" />
-                <el-table-column prop="undeliveredQuantity" label="待出库数量" width="160" sortable="custom"
-                  v-if="dataForm.businessType == 'outbound_sale_send'" />
+                <el-table-column prop="ordersNum" label="数量" width="120" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'inbound_purchase'" />
+                <el-table-column prop="undeliveredQuantity"
+                  :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+                <el-table-column prop="requiredReceivedQuantity"
+                  :label="dataForm.businessType == 'inbound_purchase' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
+                <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -271,8 +333,11 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_sale_send' || dataForm.businessType != 'inbound_sale_return'" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
 
-                <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
+                <el-table-column prop="remark" label="备注" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -316,6 +381,7 @@ import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
 import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getcategoryTree, getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
+import { purchaseOrderList, detailpurchaseOrderList, deleteProcessOrder, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
@@ -323,6 +389,8 @@ import { detailByBarCodes } from '@/api/warehouseManagement/packingList'
 import { getLocationList } from '@/api/warehouseManagement/inventory' // 库位分类和列表
 import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
+import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import BatchNumberForm from './batchNumberForm.vue'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm },
@@ -397,23 +465,7 @@ export default {
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
       },
-      orderForm: { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        rdsDate: "",
-        rdeDate: "",
-        classAttribute: "finish_product",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-      },
+
       productList: [],
       productTotal: 0,
       deliveryDateArr: [],
@@ -445,7 +497,7 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-
+      orderForm: {}
     }
   },
   created() {
@@ -516,20 +568,83 @@ export default {
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
-      if (this.deliveryDateArr.length) {
-        this.orderForm.rdsDate = this.deliveryDateArr[0]
-        this.orderForm.rdeDate = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.rdsDate = ""
-        this.orderForm.rdeDate = ""
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      if (this.dataForm.businessType == 'inbound_sale_return') {
-        this.orderForm.returnQueryFlag = 1
-      }
-      if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_sale_send') {
-        this.orderForm.notifyType = this.productData[0].notifyType
+      this.deliveryDateArr = []
+      if (this.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
+        this.orderForm = { //获取产品数据
+          cooperativePartnerId: "",
+          drawingNo: "",        // customerProductNo: "",
+          customerProductDrawingNo: "",
+          rdsDate: "",
+          rdeDate: "",
+          classAttribute: "finish_product",
+          pageNum: 1,
+          pageSize: 20,
+          orderNo: this.dataForm.sourceNo,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }],
+        }
+        if (this.deliveryDateArr.length) {
+          this.orderForm.rdsDate = this.deliveryDateArr[0]
+          this.orderForm.rdeDate = this.deliveryDateArr[1]
+        } else {
+          this.orderForm.rdsDate = ""
+          this.orderForm.rdeDate = ""
+        }
+        this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+        if (this.dataForm.businessType == 'inbound_sale_return') {
+          this.orderForm.returnQueryFlag = 1
+        }
+        if (this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_sale_send') {
+          this.orderForm.notifyType = this.productData[0].notifyType
 
+        }
+        getQuotationdatasenddatalist(this.orderForm).then(res => {
+          console.log("产品", res);
+          res.data.records.forEach(item => {
+            item.undeliveredQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.ordersNum, item.outboundQuantity]), 6)
+          });
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+          this.listLoading = false
+        }).catch(() => {
+          this.listLoading = false
+        })
+      }
+      if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
+        this.orderForm = { //获取产品数据
+          cooperativePartnerId: "",
+          drawingNo: "",        // customerProductNo: "",
+          customerProductDrawingNo: "",
+          deliveryEndDate: "",
+          deliveryStartDate: "",
+          classAttribute: "finish_product",
+          pageNum: 1,
+          pageSize: 20,
+          orderNo: this.dataForm.sourceNo,
+          receivingStatus: "not_finished",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: ""
+          }],
+        }
+        if (this.deliveryDateArr.length) {
+          this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+          this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+        } else {
+          this.orderForm.deliveryStartDate = ""
+          this.orderForm.deliveryEndDate = ""
+        }
+        purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
+          console.log("采购明细",);
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+          this.listLoading = false
+        })
       }
       // { label: "销售发货", value: "outbound_sale_send" },
       //   { label: "销售退货", value: "inbound_sale_return" },
@@ -542,17 +657,7 @@ export default {
       //   { label: "外协收货", value: "inbound_external" },
       //   { label: "外协退货", value: "outbound_external" },  
 
-      getQuotationdatasenddatalist(this.orderForm).then(res => {
-        console.log("产品", res);
-        res.data.records.forEach(item => {
-          item.undeliveredQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.ordersNum, item.outboundQuantity]), 6)
-        });
-        this.productList = res.data.records
-        this.productTotal = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+
 
     },
     // 选择产品 (销售发货——多选)
@@ -562,25 +667,7 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.deliveryDateArr = []
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        rdsDate: "",
-        rdeDate: "",
-        classAttribute: "finish_product",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-      },
-
-        this.searchProductFun()
+      this.searchProductFun()
 
     },
     // 选完产品后  渲染在产品信息列表
@@ -588,8 +675,17 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
+      let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+      item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
       arr.forEach(item => {
-        item.ordersNum = JSON.parse(JSON.stringify(item.num))
+        if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
+          item.ordersNum = JSON.parse(JSON.stringify(item.num))
+
+        }
+        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
+
+          item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+        }
         item.costPrice = item.price
         if (this.dataForm.businessType == 'outbound_sale_send') {
           item.num = item.undeliveredQuantity
@@ -598,18 +694,33 @@ export default {
 
           item.totalAmount = ""
           item.num = ""
-
         }
+
+        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
+          item.ordersNum = JSON.parse(JSON.stringify(item.receiptQuantity))
+        }
+        if (this.dataForm.businessType == 'inbound_purchase') {
+          this.$set(item, 'num', item.receiptQuantity)
+          item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+          item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
+          item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+        }
+        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
+          item.ordersId = item.purchaseOrderId
+          item.noticeId = item.purchaseReceiptReturnGoodsId
+          item.noticeLineId = item.id
+        }
+
+
         item.classAttribute = "finish_product"
 
-        item.noticeId = item.returnDeliveryNoticeId
-        item.noticeLineId = item.id
+        if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
+          item.noticeId = item.returnDeliveryNoticeId
+          item.noticeLineId = item.id
+        }
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
-        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-        console.log(" item.excludingTaxCostPrice", item.excludingTaxCostPrice, item.ordersNum);
-        // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
+
 
         this.productData.push(item)
       });
@@ -749,23 +860,7 @@ export default {
       }
 
       this.$forceUpdate()
-      this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
-        customerProductDrawingNo: "",
-        rdsDate: "",
-        rdeDate: "",
-        classAttribute: "finish_product",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
-      }
+
 
     },
 
@@ -841,8 +936,24 @@ export default {
         this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
         this.$set(this.dataForm, 'sourceNo', data.orderNo)
       }
-
-
+      if (businessType == 'inbound_purchase') {
+        this.title = '新建采购待收货入库单'
+        this.jyFlag = false
+        this.dataForm.cooperativePartnerId = data.cooperativePartnerId
+        this.dataForm.partnerName = data.partnerName
+        this.selectcustomerObj.type = 'supplier'
+        this.$set(this.orderForm, 'receivingStatus', 'not_finished')
+        this.$set(this.dataForm, 'sourceNo', data.orderNo)
+      }
+      if (businessType == 'outbound_purchase') {
+        this.title = '新建采购待退货出库单'
+        this.jyFlag = false
+        this.dataForm.cooperativePartnerId = data.cooperativePartnerId
+        this.dataForm.partnerName = data.partnerName
+        this.selectcustomerObj.type = 'supplier'
+        this.$set(this.orderForm, 'receivingStatus', 'not_finished')
+        this.$set(this.dataForm, 'sourceNo', data.orderNo)
+      }
       if (this.dataForm.businessType == 'inbound_sale_return' ||
         this.dataForm.businessType == 'inbound_purchase' ||
         this.dataForm.businessType == 'inbound_return_materials' ||
@@ -858,29 +969,51 @@ export default {
       }
       if (this.dataForm.businessType == "outbound_sale_send" || this.dataForm.businessType == "inbound_sale_return") {
         this.selectcustomerObj.type = 'customer'
-      } else if (this.dataForm.businessType == "purchase_delivery_return" || this.dataForm.businessType == "outside_delivery_return") {
+      } else if (this.dataForm.businessType == "inbound_purchase" || this.dataForm.businessType == "outbound_purchase") {
         this.selectcustomerObj.type = 'supplier'
-
+        //   { label: "采购收货", value: "inbound_purchase" },
+        //   { label: "采购退货", value: "outbound_purchase" },
       } else {
         this.customerInfo = {}
       }
       // 获取详情
-      getQuotationsendlist(data.id).then(res => {
-        console.log("详情", res);
-        let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
-        if (filteredArray.length) {
-          filteredArray.forEach(item => {
-            item.noticeId = item.returnDeliveryNoticeId
-            item.noticeLineId = item.id
-            item.sourceNo = this.dataForm.sourceNo
-            item.moveId = this.dataForm.id
-          });
-        }
-        this.productData = filteredArray
-        this.dataForm.id = this.productData[0].returnDeliveryNoticeId
-        this.formLoading = false
-      }).catch(() => { this.formLoading = false })
+      if (businessType == 'outbound_sale_send' || businessType == 'inbound_sale_return') {
+        getQuotationsendlist(data.id).then(res => {
+          console.log("详情", res);
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
+          if (filteredArray.length) {
+            filteredArray.forEach(item => {
+              item.noticeId = item.returnDeliveryNoticeId
+              item.noticeLineId = item.id
+              item.sourceNo = this.dataForm.sourceNo
+              item.moveId = this.dataForm.id
+            });
+          }
+          this.productData = filteredArray
+          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+          this.formLoading = false
+        }).catch(() => { this.formLoading = false })
 
+      }
+      if (businessType == 'inbound_purchase' || businessType == 'outbound_purchase') {
+        getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
+          console.log("详情", res);
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
+          if (filteredArray.length) {
+            filteredArray.forEach(item => {
+              item.sourceNo = this.dataForm.sourceNo
+              item.moveId = this.dataForm.id
+              item.num = item.purchaseQuantity
+              item.ordersId = item.purchaseOrderId
+              item.noticeId = item.purchaseReceiptReturnGoodsId
+              item.noticeLineId = item.id
+            });
+          }
+          this.productData = filteredArray
+          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+          this.formLoading = false
+        }).catch(() => { this.formLoading = false })
+      }
     },
 
     // 继续修改

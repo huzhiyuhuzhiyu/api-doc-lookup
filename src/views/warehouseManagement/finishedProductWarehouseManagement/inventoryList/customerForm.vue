@@ -117,12 +117,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
+                <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
+                <el-input v-model="form.name" placeholder="请输入供应商名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -209,6 +209,7 @@ export default {
       total: 0,
       tableDataCustomer: [],
       expands: true,
+      customerType:"",
     }
   },
   methods: {

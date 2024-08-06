@@ -276,7 +276,7 @@
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="6"  v-if="dataForm.documentType == 'inbound'">
+                <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                   <el-form-item>
                     <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
@@ -291,9 +291,9 @@
                     <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
-            
-               
-              
+
+
+
 
 
                 <el-col :span="6">
@@ -626,7 +626,7 @@ export default {
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
         getProductList(this.listQuery)
           .then((res) => {
-            console.log("res.",res);
+            console.log("res.", res);
             this.productList = res.data.records
             this.total = res.data.total
             this.listLoading = false
@@ -641,7 +641,7 @@ export default {
     },
     // 选择产品 (销售发货——多选)
     handleSelectionChangeAllPruduct(val) {
-      console.log("val",val);
+      console.log("val", val);
       this.selectSaleProductArr = val
     },
     // 销售发货选择产品——重置
@@ -662,24 +662,24 @@ export default {
           column: "t1.create_time"
         }],
       },
-      this.listQuery= {
-        productName: '',
-        productCode: '',
-        productDrawingNo: '', // 图号
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        classAttribute: 'finish_product'
-      },
+        this.listQuery = {
+          productName: '',
+          productCode: '',
+          productDrawingNo: '', // 图号
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ],
+          pageNum: 1,
+          pageSize: 20,
+          classAttribute: 'finish_product'
+        },
         this.searchProductFun()
 
     },
@@ -699,7 +699,7 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      console.log("arr",arr);
+      console.log("arr", arr);
       arr.forEach(item => {
 
         item.classAttribute = "finish_product"
@@ -711,12 +711,12 @@ export default {
         item.excludingTaxCostPrice = ""
         item.excludingTaxTotalAmount = ""
         item.noticeLineId = ""
-        item.ordersLineId = "" 
+        item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
         item.taxRate = 13
-        if(this.dataForm.documentType=='inbound'){
-          item.productsId=item.id
+        if (this.dataForm.documentType == 'inbound') {
+          item.productsId = item.id
         }
         // item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
 
@@ -1017,9 +1017,9 @@ export default {
 
 
       }
-    }, 
+    },
     // 继续新增
-    continueAdd() { 
+    continueAdd() {
       this.tipsvisible = false
       this.btnLoading = false
       this.dataForm = {  //表单信息
@@ -1034,7 +1034,7 @@ export default {
         inspectionResults: "",
       }
       this.productData = []
-      this.$refs.dataForm.resetFields() 
+      this.$refs.dataForm.resetFields()
     },
     async fetchData(code) {
       try {

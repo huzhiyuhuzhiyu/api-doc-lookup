@@ -193,7 +193,7 @@ export default {
           label: '计价类型',
           type: 'input'
         },
-  
+
         {
           prop: 'processingType',
           label: '加工类型',

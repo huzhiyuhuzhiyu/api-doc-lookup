@@ -13,22 +13,22 @@
       <div class="main" v-loading="formLoading">
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
-        <!-- 普通属性 -->
-        <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-        <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
-          <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
-            <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
-          </el-collapse-item>
-          <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
-            <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-          </el-collapse-item>
-          <el-collapse-item title="其他信息" name="basicInfo">
-            <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
-          </el-collapse-item>
-        </el-collapse>
-        </el-tab-pane>
+          <!-- 普通属性 -->
+          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
+            <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
+              <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
+                <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
+              </el-collapse-item>
+              <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
+              <el-collapse-item title="其他信息" name="basicInfo">
+                <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
         </el-tabs>
-        
+
       </div>
     </div>
   </transition>
@@ -187,7 +187,7 @@ export default {
           options: [{ label: '是', value: true }, { label: '否', value: false }],
           clearable: false,
           itemRules: [{ required: true, trigger: 'change' }],
-          itemDisabled:false
+          itemDisabled: false
         }
       ]
     }
@@ -546,7 +546,7 @@ export default {
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = true
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     init(id, btnType = false) {
       this.visible = true
@@ -715,6 +715,7 @@ export default {
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -740,6 +741,7 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
@@ -756,6 +758,7 @@ export default {
   color: red;
   margin-right: 4px;
 }
+
 .orderInfo ::v-deep .el-collapse-item__wrap {
   // margin-bottom: 10px;
   border-bottom: none !important;

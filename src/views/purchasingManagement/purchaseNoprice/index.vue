@@ -61,18 +61,19 @@
         </div>
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
+
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
 
           <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
-          <el-table-column prop="productType" label="物料分类" min-width="100" sortable="custom">
+          <el-table-column prop="productType" label="物料分类" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <div>{{ productType.getType(scope.row.productType) }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-          <el-table-column prop="createByName" label="创建人" width="90" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" sortable="custom" />
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <el-button type="text" size="mini" @click.native="add(scope.row)">

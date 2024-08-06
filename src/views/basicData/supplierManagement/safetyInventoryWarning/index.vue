@@ -99,7 +99,6 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
           custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
-
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="100"></el-table-column>
@@ -210,6 +209,7 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'safetyInventoryWarning',
@@ -220,7 +220,7 @@ export default {
         'deputyUnit',
         'deputyAvailableQuantity',
         'deputyInventoryQuantity',
-        'deputyOccupancyQuantity',
+        'deputyOccupancyQuantity'
       ],
       exportFormVisible: false,
       title: '更多查询',
@@ -344,13 +344,10 @@ export default {
           prop: 'deputyOccupancyQuantity',
           label: '占用数量(副)',
           type: 'input'
-        },
+        }
       ],
       uploadVisib: false
     }
-  },
-  mounted() {
-    this.getProductClassFun()
   },
   created() {
     this.getcategoryTree()

@@ -66,23 +66,20 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+<!-- 
                   <el-table-column prop="productName" label="产品名称" min-width="200" fixed="left" show-overflow-tooltip key="productName">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
                         :rules='productRules.productName'>
-                        <!-- <el-input :title="scope.row.productName" v-model="scope.row.productName" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="物料名称">{{
-                                scope.row.productName }}
-                            </el-input> -->
+                      
                         <div class="viewData">
                           <span>{{ scope.row.productName }}</span>
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
-                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" fixed="left"
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" fixed="left"
                     show-overflow-tooltip key="productDrawingNo">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
@@ -374,7 +371,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '产品图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'spec', label: '规格型号' },
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
@@ -384,7 +381,7 @@ export default {
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input' },
         { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段
       approvalBusinessId: '',
@@ -448,7 +445,7 @@ export default {
             productsId: item.id,                 // 产品id
             productName: item.name,              // 产品名称
             productCode: item.code,                // 产品编码
-            productDrawingNo: item.drawingNo,             // 产品图号
+            productDrawingNo: item.drawingNo,             // 品名规格
             ratio: item.ratio,                     // 转换系数
             calculationDirection: item.calculationDirection,  // 计算方向
             mainUnit: item.mainUnit,                   // 主单位

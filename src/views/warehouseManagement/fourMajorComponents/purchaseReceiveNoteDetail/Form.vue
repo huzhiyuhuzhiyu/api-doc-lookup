@@ -38,15 +38,16 @@
                           "></el-input>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="收货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
+
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="仓库" prop="warehouseId">
+                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable >
+                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col> -->
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -138,8 +139,9 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <!-- <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" /> -->
+                    <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                      sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -382,6 +384,7 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import { getWarehouseList } from '@/api/basicData/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { mapGetters } from "vuex"
 export default {
@@ -417,7 +420,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'raw_material',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -532,7 +535,6 @@ export default {
         approvalStatus: '',
         startTime: '',
         endTime: '',
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -639,7 +641,8 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      warehouseIdList: []
     }
   },
   computed: {
@@ -662,6 +665,7 @@ export default {
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
+    this.getWarehouseList()
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -669,6 +673,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getWarehouseList() {
+      let obj = {
+        type: 'virtually',
+        category: "warehouse",
+      }
+      getWarehouseList(obj).then(res => {
+        this.warehouseIdList = res.data
+      })
+    },
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {
@@ -691,8 +704,7 @@ export default {
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
           let num_2 = Number(list[index].waitReceiptNum)
-          console.log(num_1, '1')
-          console.log(num_2, '2')
+
           if (!(num_1 <= num_2)) {
             flag = true
           }
@@ -705,21 +717,7 @@ export default {
         }
       }
     },
-    // 选完客户订单数据后 渲染在列表上
-    // submitAllProduct() {
-    //   this.allProVisible = false
-    //   console.log(" this.selectArr", this.selectArr);
-    //   this.selectArr.forEach(item => {
-    //     console.log('订单...', item);
-    //     this.dataFormTwo.productData = []
-    //     getOrderDetail(item.id).then(res => {
-    //       console.log('订单详情', res);
-    //       res.data.orderLines.map((item) => {
-    //         this.dataFormTwo.productData.push(item)
-    //       })
-    //     })
-    //   });
-    // },
+
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -872,7 +870,7 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-          console.log('产品', res)
+
           this.productList = res.data.records
           this.productTotal = res.data.total
           this.listLoading = false
@@ -917,12 +915,13 @@ export default {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
-        item.ordersNum = item.num
+
+        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
       let idSet = new Set()
-      console.log(this.dataFormTwo.productData, 'data')
+
       this.dataFormTwo.productData.forEach((item) => {
         if (!idSet.has(item.id)) {
           uniqueArr.push(item)
@@ -930,7 +929,7 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-      console.log('this.dataFormTwo', this.dataFormTwo.productData)
+
     },
     // },
     // 获取所有订单列表数据
@@ -1299,11 +1298,11 @@ export default {
         this.codeConfig = data
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
-        console.log('dataForm', this.dataForm)
+
       } catch (error) { }
     },
     init(id, btnType) {
-      console.log('id', id, btnType)
+
       this.dataForm.id = id || ''
 
       this.btnType = btnType
@@ -1347,18 +1346,22 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           }
         })
 
-        this.dataFormTwo.productData.forEach((item) => {
-          item.drawingNo = item.productDrawingNo
-        })
-        console.log(this.dataFormTwo.productData, 'data')
+
+
       }
       if (btnType == 'add' || btnType == 'copy') {
-        console.log(this.userInfo, 'this.userInfo')
+
         this.dataForm.salesman = this.userInfo.userName
         this.formLoading = true
         setTimeout(() => {
@@ -1432,7 +1435,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'finish_product'
+          this.dataForm.classAttribute = 'raw_material'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1448,6 +1451,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
+
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
@@ -1501,13 +1505,13 @@ export default {
               packagingMethod: item.packagingMethod,
               packingQuantity: item.packingQuantity,
               processId: item.processId,
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
               purchaseOrderId: item.purchaseOrderId,
               purchaseQuantity: item.purchaseQuantity,
               purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
               qualifiedQuantity: item.qualifiedQuantity,
               ratio: item.ratio,
-              receiptQuantity: item.receiptQuantity,
+              waitReceiptNum: item.waitReceiptNum,
               receivedQuantity: item.receivedQuantity,
               receivingStatus: item.receivingStatus,
               remark: item.remark,
@@ -1517,7 +1521,7 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'raw_material',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1535,8 +1539,11 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'raw_material',
               id: item.id ? item.id : '',
+              purchaseQuantity: item.purchaseQuantity,
+              productsId: item.productsId ? item.productsId : '',
+              waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1554,7 +1561,7 @@ export default {
           })
           this.btnLoading = true
           let formMethod = null
-          console.log(obj, 'obj')
+
           if (this.btnType == 'edit') {
             formMethod = editpurPurchaseReceiptReturnGoods
           } else if (this.btnType == 'add' || this.btnType == 'copy') {

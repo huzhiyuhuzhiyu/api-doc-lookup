@@ -27,10 +27,10 @@
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
-              <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
+              <!-- <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
-              </el-button>
+              </el-button> -->
             </el-form-item>
           </el-col>
         </el-form>
@@ -65,7 +65,7 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
 
-          <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" />
+          <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productType" label="物料分类" min-width="100" sortable="custom">
             <template slot-scope="scope">
               <div>{{ productType.getType(scope.row.productType) }}</div>

@@ -64,12 +64,16 @@
             <el-table-column prop="cancelRemark" label="取消备注" min-width="180" />
             <el-table-column prop="activityName" label="跟进记录内容" min-width="180" />
             <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
-            <el-table-column prop="visitStatus" label="状态" min-width="180" />
+            <el-table-column prop="status" label="状态" min-width="180">
+              <template slot-scope="scope">
+                {{visitStatusfaction(scope.row.status)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="!!scope.row.activityName">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -77,6 +81,15 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="completetheplan(scope.row.id)" v-if="!scope.row.activityName">
+                        完成计划
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="delayplan(scope.row.id)" v-if="!scope.row.activityName">
+                        延迟计划
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="cancelplan(scope.row.id)" v-if="!scope.row.activityName">
+                        取消计划
+                      </el-dropdown-item>
                       <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                         查看详情
                       </el-dropdown-item>
@@ -92,6 +105,9 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <complete v-if="completeVisible" ref="complete" @close="closeForm" />
+    <delay v-if="delayVisible" ref="delay" @close="closeForm" />
+    <cancel v-if="cancelVisible" ref="cancel" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
@@ -101,6 +117,9 @@
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { deletecrmVisit, getcrmVisitlist } from '@/api/CRMmanagement/index'
+import complete from './complete'
+import delay from './delay'
+import cancel from './cancel'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -110,12 +129,23 @@ export default {
   components: {
     SuperQuery,
     programme,
-    Form
+    Form,
+    complete,
+    delay,
+    cancel
   },
   data() {
     return {
-      visitGoalList:[],
-      datalist:[],
+      visitStatusList: [
+        { label: '已完成', value: 'complete' },
+        { label: '未完成', value: 'uncomplete' },
+        { label: '已取消', value: 'cancel' },
+      ],
+      delayVisible: false,
+      cancelVisible: false,
+      completeVisible: false,
+      visitGoalList: [],
+      datalist: [],
       superQueryJson: [
         {
           prop: 'visitName',
@@ -191,7 +221,11 @@ export default {
           prop: 'visitStatus',
           label: '状态',
           type: 'select',
-          options: []
+          options: [
+            { label: '已完成', value: 'complete' },
+            { label: '未完成', value: 'uncomplete' },
+            { label: '已取消', value: 'cancel' },
+          ]
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -252,6 +286,10 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    visitStatusfaction(val) {
+      let _data = this.visitStatusList.filter(item => item.value == val)[0]
+      return _data ? _data.label : val
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -305,6 +343,24 @@ export default {
           })
         })
       }).catch(() => { })
+    },
+    delayplan(id) {
+      this.delayVisible = true
+      this.$nextTick(() => {
+        this.$refs.delay.init(id)
+      })
+    },
+    cancelplan(id) {
+      this.cancelVisible = true
+      this.$nextTick(() => {
+        this.$refs.cancel.init(id)
+      })
+    },
+    completetheplan(id) {
+      this.completeVisible = true
+      this.$nextTick(() => {
+        this.$refs.complete.init(id)
+      })
     },
     addOrUpdateHandle(id, type) {
       this.formVisible = true
@@ -377,6 +433,7 @@ export default {
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      this.completeVisible = false
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''

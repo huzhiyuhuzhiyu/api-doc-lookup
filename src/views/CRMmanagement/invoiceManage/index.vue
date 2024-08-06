@@ -47,55 +47,57 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-            <el-table-column prop="invoiceApplyNumber" label="发票申请编号" min-width="160" />
+            <el-table-column prop="invoiceNo" label="发票申请编号" min-width="160" />
             <el-table-column prop="customerName" label="客户名称" min-width="160" />
-            <el-table-column prop="contractNum" label="合同编号" min-width="160" />
-            <el-table-column prop="receivablesNum" label="回款编号" min-width="160" />
+            <el-table-column prop="contractNo" label="合同编号" min-width="160" />
+            <el-table-column prop="receivablesNo" label="回款编号" min-width="160" />
             <el-table-column prop="invoiceMoney" label="开票金额" min-width="160" />
             <el-table-column prop="contractMoney" label="合同金额" min-width="160" />
             <el-table-column prop="invoiceDate" label="开票日期" min-width="160" />
-            <el-table-column prop="invoiceType" label="开票类型" min-width="160" >
+            <el-table-column prop="invoiceType" label="开票类型" min-width="160">
               <template slot-scope="scope">
-                {{returnTypeVisitForm(scope.row.returnType)}}
+                {{returnTypeVisitForm(scope.row.invoiceType)}}
               </template>
             </el-table-column>
             <el-table-column prop="ownerUserName" label="负责人" min-width="120" />
-            <el-table-column prop="invoiceStatus" label="审核状态" min-width="120">
+            <!-- <el-table-column prop="invoiceStatus" label="审核状态" min-width="120">
               <template slot-scope="scope">
                 {{receivedStatusForm(scope.row.checkStatus)}}
               </template>
-            </el-table-column>
-            <el-table-column prop="contactsName" label="发票号码" min-width="120" />
+            </el-table-column> -->
+            <el-table-column prop="invoiceNumber" label="发票号码" min-width="160" />
             <el-table-column prop="realInvoiceDate" label="实际开票日期" min-width="120" />
-            <el-table-column prop="settingName" label="物流单号" min-width="120" />
+            <el-table-column prop="logisticsNumber" label="物流单号" min-width="160" />
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="210" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
-                </tableOpts>
+                <el-button size="mini" type="text" @click="invoice(scope.row.id)" :disabled="!!scope.row.realInvoiceDate">标记为开票</el-button>
+                <el-button class="JNPF-table-delBtn" size="mini" type="text" @click="handleDel(scope.row.id, 'edit')">删除</el-button>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+            合同总金额：{{totalcontractMoney}}元 / 发票金额：{{totalinvoiceMoney}}元
           </pagination>
         </div>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <invoice v-if="invoiceVisible" ref="invoice" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
@@ -104,8 +106,9 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReturnVisit, getcrmReturnVisit } from '@/api/CRMmanagement/index'
+import { deletecrmInvoice, getcrmInvoicelist } from '@/api/CRMmanagement/index'
 import Form from './Form'
+import invoice from './invoice'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
@@ -114,10 +117,12 @@ export default {
   components: {
     SuperQuery,
     programme,
-    Form
+    Form,
+    invoice
   },
   data() {
     return {
+      invoiceVisible:false,
       receivedStatusList: [
         { fullName: '未通过', enCode: '1' },
         { fullName: '待审核', enCode: '2' },
@@ -127,8 +132,8 @@ export default {
       payList: [],
       superQueryJson: [
         {
-          prop: 'number',
-          label: "回款编码",
+          prop: 'invoiceNo',
+          label: "发票申请编号",
           type: 'input'
         },
         {
@@ -137,48 +142,72 @@ export default {
           type: 'input'
         },
         {
-          prop: 'contractNum',
+          prop: 'contractNo',
           label: "合同编号",
           type: 'input'
         },
-        { // 日期选择器（区间）
-          prop: 'returnDate',
-          label: '回款日期',
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
-          startPlaceholder: '回款开始日期',
-          endPlaceholder: '回款结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
         {
-          prop: 'money',
-          label: "回款金额",
+          prop: 'receivablesNo',
+          label: "回款编号",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'returnType',
-          label: '回款方式',
-          type: 'select',
-          options: []
-        },
-        { // 下拉选
-          prop: 'checkStatus',
-          label: '审核状态',
-          type: 'select',
-          options: [
-            { label: '未通过', value: '1' },
-            { label: '待审核', value: '2' },
-            { label: '通过', value: '3' }
-          ]
+        {
+          prop: 'invoiceMoney',
+          label: "开票金额",
+          type: 'input'
         },
         {
           prop: 'contractMoney',
           label: "合同金额",
           type: 'input'
         },
+        { // 日期选择器（区间）
+          prop: 'invoiceDate',
+          label: '开票日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开票开始日期',
+          endPlaceholder: '开票结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        { // 下拉选
+          prop: 'invoiceType',
+          label: '开票类型',
+          type: 'select',
+          options: []
+        },
         {
           prop: 'ownerUserName',
           label: "负责人",
+          type: 'input'
+        },
+        // { // 下拉选
+        //   prop: 'checkStatus',
+        //   label: '审核状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '未通过', value: '1' },
+        //     { label: '待审核', value: '2' },
+        //     { label: '通过', value: '3' }
+        //   ]
+        // },
+        {
+          prop: 'invoiceNumber',
+          label: "发票号码",
+          type: 'input'
+        },
+        { // 日期选择器（区间）
+          prop: 'realInvoiceDate',
+          label: '实际开票日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '实际开票开始日期',
+          endPlaceholder: '实际开票结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'logisticsNumber',
+          label: "物流单号",
           type: 'input'
         },
         {
@@ -231,6 +260,20 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
+    },
+    totalcontractMoney: function () {
+      var totalcontractMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalcontractMoneyNum = this.jnpf.math('add', [totalcontractMoneyNum, this.tableData[i].contractMoney * 1])
+      }
+      return totalcontractMoneyNum
+    },
+    totalinvoiceMoney: function () {
+      var totalinvoiceMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalinvoiceMoneyNum = this.jnpf.math('add', [totalinvoiceMoneyNum, this.tableData[i].invoiceMoney * 1])
+      }
+      return totalinvoiceMoneyNum
     }
   },
   created() {
@@ -245,6 +288,12 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    invoice(id){
+      this.invoiceVisible = true
+      this.$nextTick(() => {
+        this.$refs.invoice.init(id)
+      })
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -259,15 +308,15 @@ export default {
       let _data = this.payList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
     },
-    // 获取付款方式数据
+    // 获取开票类型数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
         data.forEach(item => {
-          if (item.enCode == "partnerArchives") {
+          if (item.enCode == "CWGL") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "paymentMethod") {
+              if (resp.enCode == "billingType") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',
@@ -276,7 +325,7 @@ export default {
                 getDictionaryDataList(id, obj).then(response => {
                   this.payList = response.data.list
                   this.superQueryJson.forEach(item => {
-                    if (item.prop == 'returnType') {
+                    if (item.prop == 'invoiceType') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -293,7 +342,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deletecrmReturnVisit(id).then(res => {
+        deletecrmInvoice(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',
@@ -352,7 +401,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      getcrmReturnVisit(this.listQuery).then(res => {
+      getcrmInvoicelist(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false

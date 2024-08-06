@@ -126,7 +126,7 @@ export default {
         keyword: '',
         type: ""
       },
-      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" }],
+      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" },{ label: "虚拟仓库", value: "virtually" }],
       treeList: [],
       expands: true,
       refreshTable: true,

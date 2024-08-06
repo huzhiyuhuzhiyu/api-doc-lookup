@@ -61,26 +61,26 @@
           :checkSelectable="checkSelectable">
 
 
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
 
-          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="90">
+          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="120" />
+          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="130" sortable="custom" />
           <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
             <template slot-scope="scope">
               <div v-if="scope.row.hasPrice">有</div>
               <div v-else>无</div>
             </template>
           </el-table-column> -->
-          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="120" />
+          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />

@@ -430,8 +430,9 @@
     </transition>
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
     <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
-      dialogTitle="选择产品" :listMethod="getcooperativeProduct" :listRequestObj="ProductListRequestObjs"
-      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
+      dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObjs"
+      :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
+      :multiple="true" :renderTree="false" />
   </div>
 </template>
 <script>
@@ -440,6 +441,7 @@ import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purch
 import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
+import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -468,17 +470,14 @@ export default {
   },
   data() {
     return {
+      purProcurementDemandPoolList,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       // 选择客户产品参数
       ProductListRequestObjs: {
-        contractId: null,
-        customerProductNo: '',
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        productStatus: 'enable',
-        partnerType: 'customer',
+
+        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
           {
             asc: false,
@@ -493,17 +492,21 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
-        { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
-        { prop: 'productCode', label: '产品编码' },
-        { prop: 'productName', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'mainUnit', label: '单位(主)' }
+        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+
+        { prop: 'productName', label: '产品名称', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
+
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
+        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: 'customerProductNo', label: '客户料号', type: 'input' },
-        { prop: 'productName', label: '产品名称', type: 'input' },
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productName', label: '产品名称', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ],
       getcooperativeProduct,
@@ -828,6 +831,17 @@ export default {
     }
   },
   methods: {
+    listDataFormatting(res) {
+      console.log(res);
+      res.data.records.forEach((item, index) => {
+        if (item.immediatelyBuyFlag) {
+          item.immediatelyBuyFlag = '是'
+        } else {
+          item.immediatelyBuyFlag = '否'
+        }
+      })
+      return res.data.records
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       let obj0 = {
@@ -1008,84 +1022,12 @@ export default {
     },
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
-      if (this.dataForm.cooperativePartnerId) {
-        // this.productVisible = true
-        // this.getcooperativeProduct()
-        this.$refs['comSelect-page'].openDialog()
-      } else {
-        this.$message({
-          message: '请先选择供应商',
-          type: 'error',
-          duration: 1500
-        })
-      }
-      // if (this.dataForm.orderType == 'normal' || this.dataForm.orderType == 'urgent') {
-      //   if (this.dataForm.cooperativePartnerId) {
-
-      //     // this.productVisible = true
-      //     // this.getcooperativeProduct()
-      //     this.$refs["comSelect-page"].openDialog()
-      //   } else {
-      //     this.$message({
-      //       message: "请先选择客户",
-      //       type: 'error',
-      //       duration: 1500,
-      //     })
-      //   }
-      // } else {
-      //   this.allProVisible = true
-      //   let arr = [];
-      //   this.ProductListRequestObj = {
-      //     classAttributeList: [],
-      //     classAttribute: "",
-      //     productDrawingNo: "",
-      //     queryType: 2,
-      //     productStatus: 'enable',
-
-      //     productCategoryId: "",
-      //     code: "",
-      //     name: "",
-      //     orderItems: [{
-      //       "asc": false,
-      //       "column": ""
-      //     }, {
-      //       "asc": false,
-      //       "column": "create_time"
-      //     }],
-      //     pageNum: 1,
-      //     pageSize: 20,
-      //   }
-      //   this.allproductData = []
-      //   let successTotal = 0;
-      //   let tempTreeData = [...this.ProductMethodArr]
-      //   this.ProductMethodArr.forEach((item, index) => {
-      //     item.method(item.requeseObj).then(res => {
-      //       if (Array.isArray(res.data)) {
-      //         tempTreeData[index] = {
-      //           id: item.label,
-      //           name: item.label,
-      //           classAttribute: item.classAttribute,
-      //           childrenList: res.data
-      //         }
-      //       } else {
-      //         tempTreeData[index] = {
-      //           id: item.label,
-      //           name: item.label,
-      //           classAttribute: item.classAttribute,
-      //           childrenList: res.data.records
-      //         }
-      //       }
-      //       if ((++successTotal) === this.ProductMethodArr.length) {
-      //         this.ProductTreeData = tempTreeData
-      //         this.initData2()
-      //       }
-      //     })
-      //   });
-      // }
+      this.$refs['comSelect-page'].openDialog()
     },
     // 选完客户产品数据后 渲染在列表上
     submitCustomerProduct(val, data, paramsObj) {
       this.productVisible = false
+      data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
       data.forEach((i) => {
         const item = i.all
 

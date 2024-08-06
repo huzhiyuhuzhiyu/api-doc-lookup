@@ -2,15 +2,18 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `采购对账单`" />
-          <!-- <div class="options" v-if="type != 'look'">
+        <div class="JNPF-common-page-header">
+          <el-page-header @back="goBack" content="生成采购对账单" />
+          <div class="options">
+            <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
+              保存草稿</el-button> -->
             <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
               提交</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
-          </div> -->
+          </div>
         </div>
-        <div class="main">
+
+        <div class="main" v-loading="listLoading">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo">
               <div
@@ -20,136 +23,99 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="对账单号" prop="orderNo" ref="orderNo">
-                      <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号"
-                        :disabled="type == 'look' ? true : false">
+                  <el-col :span="6">
+                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                      <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称">
                       </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="供应商名称" prop="supplierName" ref="supplierName">
-                      <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入供应商名称"
-                        :disabled="type == 'look' ? true : false">
-                      </el-input>
-                    </el-form-item>
-                  </el-col>
-
-
-
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="对账日期" prop="reconciliationDate" ref="reconciliationDate">
-                      <!-- <el-input v-model="dataForm.reconciliationDate" placeholder="请选择报价有效期" clearable
-                        :style='{ "width": "100%" }' maxlength="20" :disabled="type == 'look'"></el-input> -->
-
+                  <el-col :span="6">
+                    <el-form-item label="对账日期" prop="reconciliationDate">
                       <el-date-picker v-model="dataForm.reconciliationDate" type="date" value-format="yyyy-MM-dd"
-                        style="width: 100%;" placeholder="请选择对账日期" :disabled="type == 'look' ? true : false">
+                        style="width: 100%;" placeholder="请选择对账日期">
                       </el-date-picker>
                     </el-form-item>
                   </el-col>
-
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="订单金额" prop="includingTaxAmount" ref="includingTaxAmount">
-                      <el-input v-model="dataForm.includingTaxAmount" placeholder="请输入订单金额"
-                        :disabled="type == 'look' ? true : false">
+                  <el-col :span="6">
+                    <el-form-item label="订单金额" prop="includingTaxAmount">
+                      <el-input disabled v-model="includingTaxAmount" placeholder="订单金额">
                       </el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
-                    <el-form-item label="对账金额" prop="totalReconciliationAmount" ref="totalReconciliationAmount">
-                      <el-input v-model="dataForm.totalReconciliationAmount" placeholder="请输入对账金额"
-                        :disabled="type == 'look' ? true : false">
+                  <el-col :span="6">
+                    <el-form-item label="对账金额" prop="totalReconciliationAmount">
+                      <el-input disabled v-model="dataForm.includingTaxAmount" placeholder="请输入对账金额">
                       </el-input>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="24">
                     <el-form-item label="备注" prop="remark" ref="remark">
-                      <el-input :disabled="type == 'look' ? true : false" type="textarea" :rows="3" maxlength="200"
-                        v-model="dataForm.remark" placeholder="请输入备注">
+                      <el-input type="textarea" :rows="3" maxlength="200" v-model="dataForm.remark" placeholder="请输入备注">
                       </el-input>
                     </el-form-item>
                   </el-col>
-
                 </el-form>
               </el-row>
               <div
                 style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-                <h5>对账信息</h5>
+                <h5>产品信息</h5>
+              </div>
+              <div v-if="type !== 'look'">
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" @click="addAdjustmentBtn()">增加调价行</el-button>
+                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                      icon="el-icon-delete" @click="batchDelete">批量删除</el-button>| -->
               </div>
 
-              <div>
-                <el-button type="text" class="topButton" icon="el-icon-download" @click="download">导出对账信息</el-button>
-              </div>
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <el-table style="border: 1px solid #e3e7ee;" hasC hasNO fixedNO v-bind="dataFormTwo.data"
+                <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
                   :data="dataFormTwo.data" id="table">
-                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                  <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-
-                  <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
-                        <div class="viewData">
-                          <span>{{ scope.row.ordersNo }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="confirmReceiptRecordsOrderNo" label="收退货通知单号" min-width="180"
-                    show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'confirmReceiptRecordsOrderNo'">
-                        <div class="viewData">
-                          <span>{{ scope.row.confirmReceiptRecordsOrderNo }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-
-
-                  <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
                         <div class="viewData">
-                          <span>{{ scope.row.productCode?scope.row.productCode:"调价" }}</span>
+                          <span>{{ scope.row.productCode }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                         <div class="viewData">
-                          <span>{{ scope.row.productName?scope.row.productName:"调价" }}</span>
+                          <span>{{ scope.row.productName }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="160" show-overflow-tooltip>
+
+   
+
+                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
                         <div class="viewData">
-                          <span>{{ scope.row.drawingNo?scope.row.drawingNo:"调价" }}</span>
+                          <span>{{ scope.row.productDrawingNo }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="receiptReturnType" label="收/退货类型" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'spec'">
-
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
                         <div class="viewData">
-                          <span>{{ scope.row.spec }}</span>
+                          <span>{{ scope.row.receiptReturnType === 'receipt' ? '收货' : scope.row.receiptReturnType ===
+                            'back' ?
+                            '退货' : '' }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="140">
+                  <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="200">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
 
@@ -160,86 +126,173 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位(主)" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="mainUnit" label="单位(主)" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-
+                        <!-- <el-input v-model="scope.row.mainUnit" readonly maxlength="20" placeholder="请输入主单位">{{
+                              scope.row.mainUnit }}
+                            </el-input> -->
                         <div class="viewData">
                           <span>{{ scope.row.mainUnit }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="excludingTaxAmount" label="不含税金额" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
 
-                        <div :class="['viewData', scope.row.excludingTaxAmount < 0 ? 'red' : 'green']">
-                          <span>{{ scope.row.excludingTaxAmount < 0 ? scope.row.excludingTaxAmount : '+' +
-                            scope.row.excludingTaxAmount }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="taxAmount" label="税额" min-width="160">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
 
-                        <div :class="['viewData', scope.row.taxAmount < 0 ? 'red' : 'green']">
-                          <span>{{ scope.row.taxAmount < 0 ? scope.row.taxAmount : '+' + scope.row.taxAmount }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="includingTaxAmount" label="含税金额" min-width="160">
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'">
-                        <div :class="['viewData', scope.row.includingTaxAmount < 0 ? 'red' : 'green']">
-                          <span>{{ scope.row.includingTaxAmount < 0 ? scope.row.includingTaxAmount : '+' +
-                            scope.row.includingTaxAmount }}</span>
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
+                        <!-- <el-input v-model="scope.row.deputyUnit" readonly maxlength="20" placeholder="请输入副单位">{{
+                              scope.row.deputyUnit }}
+                            </el-input> -->
+                        <div class="viewData">
+                          <span>{{ scope.row.deputyUnit }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-
-
-
-
-                  <el-table-column prop="remark" label="备注" min-width="220">
+                  <el-table-column prop="price" label="单价" min-width="180">
                     <template slot-scope="scope">
-                      <el-input v-model="scope.row.remark" :disabled="type === 'look'" maxlength="20"
-                        placeholder="请输入备注">{{
-                          scope.row.remark }}
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
+
+                        <div class="viewData">
+                          <span>{{ scope.row.price }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="taxRate" label="税率%" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
+
+                        <div class="viewData">
+                          <span>{{ scope.row.taxRate }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+
+
+
+
+                  <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
+                        <div class="viewData">
+                          <span>{{ scope.row.excludingTaxPrice }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="120" fixed="right">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
+                        :rules="productFormRules.excludingTaxAmount">
+                        <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20" placeholder="请输入不含税总金额">
+                        </el-input> -->
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
+                          <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.excludingTaxAmount
+                          }}</span>
+                          <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.excludingTaxAmount
+                          }}</span>
+
+                        </div> 
+                        <el-input v-if="!scope.row.receiptReturnType" disabled v-model="scope.row.excludingTaxAmount">{{
+                          scope.row.excludingTaxAmount
+                        }}</el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+
+                  <el-table-column prop="taxAmount" label="税额" min-width="120" fixed="right">
+
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'"
+                        :rules="productFormRules.taxAmount">
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
+                          <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.taxAmount }}</span>
+                          <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.taxAmount }}</span>
+
+                        </div>
+                        <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.taxAmount" disabled>{{
+                          scope.row.taxAmount
+                        }}</el-input>
+
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="120" fixed="right">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
+                        :rules="productFormRules.includingTaxAmount">
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
+                          <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.includingTaxAmount
+                          }}</span>
+                          <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.includingTaxAmount
+                          }}</span>
+                        </div>
+                        <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">{{
+                          scope.row.includingTaxAmount }}</el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+
+
+                  <!-- <el-table-column prop="totalAmount" label="价税合计" min-width="160">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
+                        <div class="viewData">
+                          <span>{{ scope.row.totalAmount }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column> -->
+
+                  <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip fixed="right">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.remark" maxlength="20" placeholder="请输入备注">{{
+                        scope.row.remark }}
                       </el-input>
                     </template>
                   </el-table-column>
-                  <!-- 
-                  <el-table-column label="操作" width="180" fixed="right">
+
+                  <el-table-column label="操作" width="120" fixed="right" v-if="dataFormTwo.data.length > 1">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
-                        @click="delequipment_process_relList(scope.$index)">删除</el-button>
+                      <el-button type="text" class="JNPF-table-delBtn" @click="delequipment_process_relList(scope.$index)"
+                        :disabled="newArr.length <= 1 && (scope.row.productCode ? true : false)">删除</el-button>
 
                     </template>
-                  </el-table-column> -->
+                  </el-table-column>
                 </el-table>
               </el-form>
-
               <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
-                <span style="font-weight:500;margin-right:10px">不含税金额：
-                  <span :class="dataForm.excludingTaxAmount > 0 ? 'green' : 'red'">{{ dataForm.excludingTaxAmount > 0 ?
-                    '+' + dataForm.excludingTaxAmount : dataForm.excludingTaxAmount
-                  }}</span></span>
-                <span style="font-weight:500;margin-right:10px">订单税额：
-                  <span :class="dataForm.taxAmount > 0 ? 'green' : 'red'">{{ dataForm.taxAmount > 0 ?
-                    '+' + dataForm.taxAmount : dataForm.taxAmount
-                  }}</span></span>
-             <span style="font-weight:500;margin-right:10px">含税金额：
-                  <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">{{ dataForm.totalReconciliationAmount > 0 ?
-                    '+' + dataForm.totalReconciliationAmount : dataForm.totalReconciliationAmount
-                  }}</span></span>
-
+                <span style="font-weight:500;margin-right:10px">退货合计金额：<span class="red">{{
+                  backComputedValue }}</span></span>
+                <span style="font-weight:500;margin-right:10px">收货合计金额：<span
+                    :class="receiptComputedValue > 0 ? 'green' : 'red'">+{{ receiptComputedValue }}</span></span>
+                <span style="font-weight:500;margin-right:10px">不含税金额：<span
+                    :class="computedValue > 0 ? 'green' : 'red'">{{ computedValue > 0 ? '+' + computedValue :
+                      computedValue
+                    }}</span></span>
+                <span style="font-weight:500;margin-right:10px">税额：<span
+                    :class="computedValue2 > 0 ? 'green' : 'red'">{{ computedValue2 > 0 ? '+' + computedValue2 :
+                      computedValue2 }}</span></span>
+                <!-- <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue3 }}</span> -->
+                <span style="font-weight:500;margin-right:10px">合计金额：<span
+                    :class="brComputedValue > 0 ? 'green' : 'red'">{{ brComputedValue > 0 ? '+' + brComputedValue :
+                      brComputedValue }}</span></span>
               </div>
+
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow">
               <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
@@ -324,11 +377,11 @@
         </div>
       </div>
     </transition>
-
   </div>
 </template>
 <script>
-import { getfinAccountList, getfinAccountDetail, exportFinAccountsReceivableReconciliation } from '@/api/ReconciliaRePayments/index'
+
+import { addfinAccount } from '@/api/ReconciliaRePayments/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
@@ -341,35 +394,65 @@ export default {
       activeName: 'jcInfo',
       dialogTitle: '',
       loading: false,
+      listLoading: true,
       btnLoading: false,
       index: null,
-
       dataFormTwo: {
         data: []
       },
       dataForm: {
-        id: "",
-        orderNo: "",        // 单号
-        cooperativePartnerName: '',
-        reconciliationEndDate: '',
-        excludingTaxAmount: '',
-        includingTaxAmount: '',
-        taxAmount: '',
+        cooperativePartnerId: '',
+        cooperativePartnerName: '',      //供应商名称
+        reconciliationDate: '',                //交货日期.
+        reconciliationType: 'payable',
+        reasonRejection: '',
+        id: null,
+        documentStatus: 'submit',
+        orderNo: "",
+        remark: '',
         submitDate: '',
-        createTime: '',
-        createByName: '',
-        remark: "",
-        totalReconciliationAmount: '',
-
+        excludingTaxAmount: '',              //订单 不含税总金额
+        includingTaxAmount: '',                    //   含税总金额
+        totalReconciliationAmount: '',       // 对账总金额
+        taxAmount: '',                     // 税额
+        backAmount: '',                      // 退货总金额
+        receiptAmount: '',                   // 收货总金额
+        brTotalAmount: '',                   // 收/退货总金额
       },
+
       type: "",
+      dataFormArr: [],
       rules: {
+        reconciliationDate: [{ required: true, message: '请选择对账日期', trigger: ['change'] }],
+        totalReconciliationAmount: [
+          { required: true, message: '请输入对账金额', trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal2', params: [10, 2, "",] }), trigger: 'blur' },
+        ],
+      },
+      productFormRules: {
+        excludingTaxAmount: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["请输入不含税总金额", (errMsg) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+          { required: true, message: '请输入不含税总金额', trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 6, "", (errMsg) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+        ],
+
+        includingTaxAmount: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["请输入含税总金额", (errMsg) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+          { required: true, message: '请输入含税总金额', trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal2', params: [20, 6, "", (errMsg, index) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
+        ],
       },
       productRules: {
+
       },
-      productArr: [],
-       // 审批流需要字段
-       approvalBusinessId: '',
+      defaultProps: {
+        children: 'children',
+        label: 'fullName'
+      },
+      newArr: [],
+      includingTaxAmount: 0,
+      // 审批流需要字段
+      approvalBusinessId: '',
       workVisible: false,
       busNodeConfig: {
         nodeName: "发起人",
@@ -409,16 +492,159 @@ export default {
         startTime: ""
       },
       transferData: [],
-      formLoading:false,
+      formLoading: false,
     }
-  },
-  computed:{
-    ...mapGetters(['userInfo']),
   },
   created() {
   },
-  methods: {
+  computed: {
+    ...mapGetters(['userInfo']),
+    computedValue() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      let num = 0
+      let num2 = 0
+      this.dataFormTwo.data.forEach(item => {
+        count += item.excludingTaxAmount * 1
+      })
+      this.dataForm.excludingTaxAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.excludingTaxAmount
+    },
+    computedValue2() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      let num = 0
+      let num2 = 0
+      this.dataFormTwo.data.forEach(item => {
+        count += item.taxAmount * 1
+      })
 
+      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.taxAmount
+    },
+
+    // computedValue3() {
+    //   // 在这里计算第三个输入框的值
+    //   let count = 0
+    //   this.dataFormTwo.data.forEach(item=>{
+    //     count += item.totalAmount*1
+    //   })
+    //   this.dataForm.totalAmount = count
+
+    //   return this.dataForm.totalAmount
+    // },
+    backComputedValue() {
+      let count = 0
+      this.dataFormTwo.data.forEach(item => {
+        if (item.receiptReturnType == 'back') {
+          count += item.includingTaxAmount * 1
+        }
+      })
+      this.dataForm.backAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.backAmount
+    },
+    // computedValue不含税金额：
+    //       computedValue2 合计金额：
+    //       brComputedValue 合计金额：
+    receiptComputedValue() {
+      let count = 0
+      this.dataFormTwo.data.forEach(item => {
+        if (item.receiptReturnType === 'receipt') {
+          count += item.includingTaxAmount * 1
+        }
+      })
+      this.dataForm.receiptAmount = this.jnpf.numberFormat(count)
+      console.log(this.dataForm.receiptAmount, 'this.dataForm.receiptAmount');
+      return this.dataForm.receiptAmount
+    },
+    brComputedValue() {
+      let count = 0
+      if (this.dataForm.excludingTaxAmount !== '' && this.dataForm.taxAmount !== '') {
+        count = this.dataForm.excludingTaxAmount * 1 + this.dataForm.taxAmount * 1
+      }
+      this.dataForm.includingTaxAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.includingTaxAmount
+    },
+
+
+  },
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        console.log(111, newVal);
+        newVal.forEach(item => {
+          if (item.receiptReturnType === 'receipt') {
+            if (item.includingTaxAmount) {
+              if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
+                item.excludingTaxAmount = item.excludingTaxAmount
+
+              }else{
+                item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
+              }
+            }
+          } else if (item.receiptReturnType === 'back') {
+            if (item.includingTaxAmount) {
+              if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
+                item.excludingTaxAmount = item.excludingTaxAmount
+
+              }else{
+                item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
+              }
+            }
+          } else {                                                                                                                          
+            if (item.includingTaxAmount) {
+              item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
+            }
+          }
+
+        })
+      },
+      deep: true,
+    },
+    
+    'dataForm.includingTaxAmount': {
+      handler: function (newVal, oldVal) {
+        console.log(newVal, '// immediate:true,');
+        this.dataForm.totalReconciliationAmount = newVal
+      },
+      immediate: true,
+    },
+  },
+  methods: {
+    addAdjustmentBtn() {
+      this.dataFormTwo.data.push({
+        accountsReceivableId: "",
+        calculationDirection: "",
+        confirmReceiptRecordsId: "",
+        confirmReceiptRecordsLineId: "",
+        deputyUnit: "",
+        id: null,
+        includingTaxAmount: '',
+        receiptReturnType: "",
+        mainUnit: "",
+        ordersLineId: "",
+        ordersId: "",
+        productsId: "",
+        productName: "调价",
+        productCode: "调价",
+        productDrawingNo: "调价",
+        ratio: "",
+        reconciliationUnitPrice: "",
+        remark: "",
+        excludingTaxPrice: "",
+        excludingTaxAmount: "",
+        taxAmount: "",
+        taxRate: "",
+        price: "",
+        adjustmentLineFlag: true,
+      })
+      this.newArr = this.dataFormTwo.data.filter(item => item.adjustmentLineFlag === false);
+      console.log(" this.dataFormTwo.data", this.dataFormTwo.data);
+    },
     clearData() {
       this.dataForm.id = ""
       this.dataFormTwo.data = []
@@ -426,176 +652,302 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type) {
-      console.log(id, type);
-      // 此处判断用户选择新增还是编辑
-      this.dataForm.id = id || ''
-
-      this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
-      this.type = type
-      this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
-        if (!this.dataForm.id) {
-          this.clearData()
+    init(data) {
+      console.log("避免传递过来的数据", data);
+      this.dataFormTwo.data = []
+      // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
+      let _data = JSON.parse(JSON.stringify(data))
+      console.log(_data, '数据数据');
+      let excludingTaxAmount, includingTaxAmount;
+      _data.forEach(item => {
+        if (item.receiptReturnType) {
+          excludingTaxAmount = item.receiptReturnType === 'receipt' ? item.receiptQuantity * this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2) : -item.receiptQuantity * this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2)
+          includingTaxAmount = item.receiptReturnType === 'receipt' ? item.receiptQuantity * item.price : item.receiptQuantity * item.price
         } else {
-          this.loading = true
-          getfinAccountDetail(this.dataForm.id).then(res => {
-            console.log(res, '详情');
-            // return
-            this.dataForm = {
-              id: res.data.id,
-              orderNo: res.data.orderNo,
-              cooperativePartnerName: res.data.cooperativePartnerName,
-              excludingTaxAmount: res.data.excludingTaxAmount,
-              includingTaxAmount: res.data.includingTaxAmount,
-              taxAmount: res.data.taxAmount,
-              reconciliationDate: res.data.reconciliationDate,
-              totalReconciliationAmount: res.data.totalReconciliationAmount
-            }
-            this.dataFormTwo.data = res.data.reconciliationLines
-          })
-          getSaleBusDetail(this.dataForm.id).then(res => {
-            console.log(res, '业务详情');
-            if (res.data) {
-              this.firstOneNode = []
-              this.approvalForm = res.data.form
-              this.transferQuery.approvalFormId = this.approvalForm.id
-              this.firstOneNode.push({
-                name: res.data.form.createByName
-              })
-              let data = res.data.formNodeTree.childNode
-              if (data) {
-                this.addNodeTypeAndNodeName(data)
+          console.log(1341234);
+          excludingTaxAmount = item.excludingTaxAmount
+          includingTaxAmount = item.includingTaxAmount
+        }
+        this.dataFormTwo.data.push({
+          accountsReceivableId: '',
+          calculationDirection: item.calculationDirection,
+          confirmReceiptRecordsId: item.purchaseReceiptReturnGoodsId,
+          confirmReceiptRecordsLineId: item.id,
 
-                this.busNodeConfig.childNode = data
-                this.workVisible = true
-                // this.$nextTick(() => {
-                //   this.$refs.workflowRef.initData('busing', this.btnType)
-                // })
-              }
-              if (this.type == 'look') {
-                console.log(this.approvalForm, '++++++++++');
-                this.transferQuery.documentId = this.dataForm.id
-                approvalTransferList(this.transferQuery).then(res => {
-                  console.log(res, '流转记录');
-                  this.transferData = res.data.records
-                })
-              }
-            } else {
-              this.busNodeConfig.childNode = null
+          deputyUnit: item.deputyUnit,
+          id: null,
+          includingTaxAmount: includingTaxAmount,
+          receiptReturnType: item.receiptReturnType,
+          mainUnit: item.mainUnit,
+          ordersLineId: item.ordersLineId,
+          ordersId: item.orderId,
+          productsId: item.productsId,
+          productName: item.productName,
+          productCode: item.productCode,
+          productDrawingNo: item.productDrawingNo,
+          ratio: item.ratio,
+          reconciliationUnitPrice: item.receiptQuantity,
+          remark: item.remark,
+          excludingTaxPrice: this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2),
+          excludingTaxAmount: excludingTaxAmount,
+          taxAmount: this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
+          taxRate: item.taxRate,
+          price: item.price,
+          adjustmentLineFlag: false,
+          // totalAmount: this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.receiptQuantity * item.excludingTaxAmount),
+        })
+
+
+      })
+
+      this.listLoading = false
+
+      this.dataFormTwo.data.forEach((item, index) => {
+        if (item.receiptReturnType === 'receipt') {
+          item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount)
+        } else {
+          item.includingTaxAmount = -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+          this.includingTaxAmount += -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
+        }
+
+      })
+      this.dataForm.cooperativePartnerName = data[0].cooperativePartnerName
+      this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
+      // 获取当前日期
+      const currentDate = new Date();
+
+      // 获取年份
+      const year = currentDate.getFullYear();
+
+      // 获取月份（注意月份从0开始，所以要加1）
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+
+      // 获取日期
+      const date = String(currentDate.getDate()).padStart(2, '0');
+
+      // 拼接为YYYY-MM-DD格式
+      const formattedDate = `${year}-${month}-${date}`;
+      this.dataForm.reconciliationDate = formattedDate
+      // 审批
+      // this.$nextTick(() => { this.getApproverData() })
+    },
+    // 表单提交
+    dataFormSubmit() {
+      this.request()
+    },
+
+    async request() {
+      this.btnLoading = true
+      let submitFlag = true
+      // 审批条件参数列表
+      let nodeCondList = []
+      // 审批抄送人列表
+      let ccList = []
+      let ccLists = []
+      let nodeJudg = []
+      // 业务审批单流程节点列表
+      let formNodeList = []
+      // 业务审批单
+      let form = {}
+      let templateLineList = []
+      if (this.busNodeConfig.childNode) {
+        let data = JSON.parse(JSON.stringify(this.busNodeConfig))
+        let flattenedNodes = this.flattenNodes(data);
+        flattenedNodes.splice(0, 1)
+        flattenedNodes = flattenedNodes.map(item => {
+          return {
+            ...item,
+            nodeUserList: item.nodeUserList ? item.nodeUserList : []
+          }
+        })
+        templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
+        // 抄送人节点数组 ccList
+        ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
+
+        for (var i = 0; i < ccList.length; i++) {
+          var nodeUserList = ccList[i].nodeUserList;
+          ccLists = ccLists.concat(nodeUserList);
+        }
+
+        if (templateLineList.length) {
+          submitFlag = templateLineList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('审核人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        if (ccList.length) {
+          submitFlag = ccList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('抄送人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        // 条件节点数组 nodeJudgmentList
+        nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
+        // 业务审批单流程节点参数
+        formNodeList = flattenedNodes.map((item, index) => {
+          return {
+            ...item,
+            approvalStatus: item.name == '审核人' ? 'no' : '',
+            adminId: '',
+            id: '',
+            previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
+            name: item.nodeName,
+            designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
+          }
+        })
+        // 抄送人
+        ccLists = ccLists.map(item => {
+          return {
+            ...item,
+            approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
+            ccToId: item.targetId,
+            approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
+            id: '',
+            defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
+          }
+        })
+        // 条件列表
+        if (nodeCondList.length) {
+          nodeJudg = nodeCondList.map(item => {
+            return {
+              ...item,
+              approvalFormNodeCode: item.code,
+              businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
+              code: item.conditionList[0].tjCode,
+              dataType: item.conditionList[0].dataType,
+              id: item.conditionList[0].id ? item.conditionList[0].id : ''
             }
           })
         }
+        // 业务审批单
+        form = {
+          ...this.approvalForm,
+          approvalTemplateId: this.approvalForm.id,
+          documentStatus: 'submit',
+          documentId: '',
+          id: ''
+        }
+      }
+      if (this.dataForm.approvalFlag) {
+        if (!this.busNodeConfig.childNode) {
+          submitFlag = false
+          this.btnLoading = false
+          this.$message.error('未找到匹配的审批流程，请联系管理员！')
+        }
+        if (formNodeList.length) {
+          formNodeList.forEach(item => {
+            if (item.approvalType === 'option') {
+              if (!item.designatedMembersId) {
+                submitFlag = false
+                this.btnLoading = false
+                this.activeName = "approvalFlow"
+                this.$message.error('未配置发起人自选！')
+              }
+            }
+          })
+        }
+      }
+      let form_2 = this.$refs['productForm']
+      let valid_2 = await form_2.validate().catch(err => false)
+      console.log(this.dataForm, '参数');
+      console.log(valid_2, '11111111111111111');
+      // return
+      this.$refs['elForm'].validate((valid) => {
+        if (valid) {
+          if (!valid_2) {
+            console.log(1, this.dataFormTwo.data);
+            this.btnLoading = false
+            if (this.dataFormTwo.data.length > 0) {
+              console.log(66767);
+              for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+                const item = this.dataFormTwo.data[index];
+                console.log("item,", item);
+                if (!item.adjustmentLineFlag) {
+                  console.log("32123123", item);
+                  if (item.excludingTaxAmount == "") {
+                    console.log(22222);
+                    this.$message.error("请填写" + (index + 1) + "含税总金额、不含税总金额")
+                    this.btnLoading = false
+                    flag = false
+                    break
+                  }
+                }
+              }
+            }
+          } else {
+            let flag = null;
+            // if (this.dataFormTwo.data.length > 0) {
+            //   for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+            //     const item = this.dataFormTwo.data[index];
+            //     if (item.adjustmentLineFlag == false) {
+            //       if (!item.excludingTaxAmount || !item.includingTaxAmount) {
+            //         this.$message.error("请填写含税总金额、不含税总金额")
+            //         this.btnLoading = false
+            //         flag = false
+            //         break
+            //       }
+            //     }
+            //   }
+            // }
+            let totalExcludingTaxAmount = 0;
+            let totalTaxAmount = 0;
+            let totalIncludingTaxAmount = 0;
+
+            this.dataFormTwo.data.forEach(item => {
+              if (item.productsId === "") {
+                totalExcludingTaxAmount += parseInt(item.excludingTaxAmount);
+                totalTaxAmount += parseInt(item.taxAmount);
+                totalIncludingTaxAmount += parseInt(item.includingTaxAmount);
+              }
+            });
+            this.dataForm.adjustExcludingTaxAmount=totalExcludingTaxAmount
+            this.dataForm.adjustIncludingTaxAmount=totalIncludingTaxAmount
+            this.dataForm.adjustTaxAmount= totalTaxAmount
+            this.btnLoading = true
+            let _data = {
+              reconciliation: JSON.parse(JSON.stringify(this.dataForm)),
+              reconciliationLine: JSON.parse(JSON.stringify(this.dataFormTwo.data)),
+              form,
+              formNodeList,
+              nodeCondList: nodeJudg,
+              ccList: ccLists,
+            }
+            _data.reconciliation.includingTaxAmount = this.includingTaxAmount
+
+            console.log("提交参数", _data);
+            if (flag === false) return
+            if (submitFlag) {
+              addfinAccount(_data).then(res => {
+                if (res.msg === 'Success') res.msg = '保存成功'
+                this.$message({
+                  message: res.msg,
+                  type: 'success',
+                  duration: 1000,
+                  onClose: () => {
+                    this.btnLoading = false
+                    this.$emit('close', true)
+                  }
+                })
+              }).catch(() => {
+                this.btnLoading = false
+              })
+            } else {
+              this.btnLoading = false
+            }
+          }
+
+        } else {
+          this.btnLoading = false
+        }
+
       })
+
     },
-    // 表单提交
-    // dataFormSubmit() {
-    //   this.request()
-    // },
-
-    // async request() {
-    //   let _data
-    //   this.btnLoading = true
-    //   if (this.type == 'add') {
-    //     _data = {
-    //       buyInquirySheet: this.dataForm,
-    //       buyInquirySheetLineList: this.dataFormTwo.data
-    //     }
-    //   }
-    //   if (this.type === 'edit' || this.type === 'look') {
-    //     this.dataFormTwo.data.forEach((item, index) => {
-    //       this.dataFormTwo.data[index].inquirySheetId = this.dataForm.id
-    //     })
-    //     _data = {
-    //       buyInquirySheet: this.dataForm,
-    //       buyInquirySheetLineList: this.dataFormTwo.data
-    //     }
-    //   }
-    //   console.log(_data, '参数')
-
-    //   let form_2 = this.$refs['productForm']
-    //   let valid_2 = await form_2.validate().catch(err => false)
-    //   // if (!valid_2) {
-    //   //   console.log(1);
-    //   //   this.btnLoading = false
-    //   //   return
-    //   // } else {
-    //   //   this.btnLoading = true
-    //   // }
-    //   this.$refs['elForm'].validate((valid) => {
-    //     if (valid ) {
-    //       if (this.dataFormTwo.data.length === 0) {
-    //         this.$message.error('请至少选择一项产品')
-    //         this.btnLoading = false
-    //       } else {
-    //         if (!valid_2) {
-    //           this.btnLoading = false
-    //             for (let i = 0; i < this.dataFormTwo.data.length; i++) {
-    //               const item = this.dataFormTwo.data[i]
-    //               if (!item.materialPrice) {
-    //                 this.$message({
-    //                   type: 'error',
-    //                   message: '请输入第' + (i + 1) + '行的产品价格',
-    //                   duration: 1500,
-    //                 })
-    //                 break
-    //               } 
-    //               if (!item.taxRate) {
-    //                 this.$message({
-    //                   type: 'error',
-    //                   message: '请输入第' + (i + 1) + '行的税率',
-    //                   duration: 1500,
-    //                 })
-    //                 break
-    //               }           
-
-    //             }
-    //             return
-    //         } else{
-    //           this.btnLoading = true
-    //           if (!this.dataForm.id) {
-    //             addbuyInquirySheet(_data).then(res => {
-    //               if (res.msg === 'Success') res.msg = '提交成功'
-    //               this.$message({
-    //                 message: res.msg,
-    //                 type: 'success',
-    //                 duration: 1000,
-    //                 onClose: () => {
-
-    //                   this.btnLoading = false
-    //                   this.$emit('close', true)
-    //                 }
-    //               })
-
-    //             }).catch(() => {
-    //               this.btnLoading = false
-    //             })
-    //           } else {
-    //             editbuyInquirySheet(_data).then((res) => {
-    //               if (res.msg === 'Success') res.msg = '提交成功'
-    //               this.$message({
-    //                 message: res.msg,
-    //                 type: 'success',
-    //                 duration: 1000,
-    //                 onClose: () => {
-
-    //                   this.btnLoading = false
-    //                   this.$emit('close', true)
-
-    //                 }
-    //               })
-    //             }).catch(() => {
-    //               this.btnLoading = false
-    //             })
-    //           }
-    //         }
-    //       }
-    //     } else {
-    //       this.btnLoading = false
-    //     }
-
-    //   })
-    // },
 
     // 删除项
     delequipment_process_relList(index) {
@@ -604,35 +956,16 @@ export default {
     //  选择产品弹框传递的数据
     productsSubmit(data) {
       if (this.dataFormTwo.data.length) {
-        // this.dataFormTwo.data = this.dataFormTwo.data.filter(item => {
-        //   return !data.some(element => element.productsId === item.productsId);
-        // });
-        const deletedArray = [];
-        data = data.filter(item1 => {
-          const index = this.dataFormTwo.data.findIndex(item2 => item2.productsId === item1.productsId);
-          if (index !== -1) {
-            deletedArray.push(item1.productsName);
-            if (deletedArray.length) {
-              this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
-            }
-            return false;
-          }
-          return true;
+        this.dataFormTwo.data = this.dataFormTwo.data.filter(item => {
+          return !data.some(element => element.productsId === item.productsId);
         });
-        console.log(data, '删除后的数据');
-        console.log(deletedArray, '被删掉的数据');
       }
+      console.log(data, '传递数据1111');
       this.dataFormTwo.data = [...this.dataFormTwo.data, ...data,]
       console.log(this.dataFormTwo.data, '传递数据');
     },
-    download(){
-      console.log(this);
-      exportFinAccountsReceivableReconciliation(this.dataForm.id).then(res=>{
-        this.jnpf.downloadFile(res.data.url, res.data.name)
-      })
-    },
-       // 获取审批流参数递归处理
-       addNodeTypeAndNodeName(obj) {
+    // 获取审批流参数递归处理
+    addNodeTypeAndNodeName(obj) {
       console.log(obj);
       if (obj) {
         if (obj.name === "审核人") {
@@ -692,6 +1025,148 @@ export default {
         }
       }
     },
+    // // 审批 提交参数递归处理
+    flattenNodes(node, flattenedNodes = [], previousCode = '') {
+      if (node) {
+        console.log(node, '提交数1');
+        if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
+        if (node.type === 'node') {
+
+          if (node.childNode) {
+            node.previousCode = previousCode
+            this.flattenNodes(node.childNode, flattenedNodes, node.code);
+          }
+          // delete node.childNode;
+        } else if (node.type === 'condition' && node.name === '路由') {
+          if (node.conditionNodes) {
+            for (let i = 0; i < node.conditionNodes.length; i++) {
+
+              // let previousCode = node.conditionNodes[i].code
+              node.conditionNodes[i].previousCode = previousCode
+              this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code);
+            }
+          }
+          // if (node.childNode) {
+          //   this.flattenNodes(node.childNode, flattenedNodes,node.code);
+          // }
+        } else if (node.nodeType == 3) {
+          if (node.childNode) {
+            node.previousCode = previousCode
+            this.flattenNodes(node.childNode, flattenedNodes, node.code);
+          }
+        }
+      }
+      return flattenedNodes;
+    },
+    // // 获取审批模版
+    getApproverData() {
+      this.firstOneNode = []
+      let condArr = ['>', '<', '>=', '<=', '=']
+      let state = ''
+      let condExpress = ''
+      let foundSymbol = ''  // 条件符号
+      let result = null     // 判断条件是否成立
+      let condList = []
+      getBusDetail('b012').then(res => {
+        console.log(res);
+        state = res.data.business.state
+        condExpress = res.data.business.condExpress
+        // if (res.data.businessConditionList.length) {
+        //   res.data.businessConditionList.forEach(item => {
+        //     condList.push({
+        //       code: item.code,
+        //       val: item.code === 'numCode' ? this.totalNum : this.totalPrice
+        //     })
+        //   })
+        // }
+        if (state === 'condition') {
+          this.dataForm.approvalFlag = 1
+          for (var i = 0; i < condArr.length; i++) {
+            if (condExpress.includes(condArr[i])) {
+              foundSymbol = condArr[i];
+              break;
+            }
+          }
+          // 找到符号并进行采购报价业务判断
+          if (foundSymbol) {
+            const parts = condExpress.split(foundSymbol); // 使用 ">" 符号拆分字符串
+            const leftValue = parts[0]; // 提取 ">" 符号左边的值
+            const rightValue = parts[1]; // 提取 ">" 符号右边的值
+            console.log(leftValue);
+            console.log(rightValue);
+            // if (leftValue == 'numCode') {
+            //   const condition = `${this.totalNum} ${foundSymbol} ${this.totalPrice}`; // 构建条件表达式
+            //   result = eval(condition); // 执行条件判断
+            // } else {
+            //   const condition = `${this.totalPrice} ${foundSymbol} ${this.totalNum}`; // 构建条件表达式
+            //   result = eval(condition); // 执行条件判断
+            // }
+            if (result) {
+              let query = {
+                businessCode: "b012",
+                condList,
+              }
+              busApprovalFlowTree(query).then(res => {
+                console.log(res, '树详情');
+                if (res.data) {
+                  this.firstOneNode = []
+                  this.approvalForm = res.data.template
+                  this.firstOneNode.push({
+                    name: this.userInfo.userName
+                  })
+                  let data = res.data.tempLineTree.childNode
+                  if (data) {
+                    this.addNodeTypeAndNodeName(data)
+                    this.busNodeConfig.childNode = data
+                    this.workVisible = true
+                    this.$nextTick(() => {
+                      this.$refs.workflowRef.initData('busing', this.type)
+                    })
+                  }
+                } else {
+                  this.busNodeConfig.childNode = null
+                }
+              })
+            } else {
+              this.busNodeConfig.childNode = null
+            }
+          }
+        }
+        if (state === 'enable') {
+          this.dataForm.approvalFlag = 1
+          let query = {
+            businessCode: "b012",
+            condList,
+          }
+          busApprovalFlowTree(query).then(res => {
+            console.log(res, '树详情');
+            if (res.data) {
+              this.firstOneNode = []
+              this.approvalForm = res.data.template
+              this.firstOneNode.push({
+                name: this.userInfo.userName
+              })
+              let data = res.data.tempLineTree.childNode
+              if (data) {
+                this.addNodeTypeAndNodeName(data)
+                this.busNodeConfig.childNode = data
+                this.workVisible = true
+                this.$nextTick(() => {
+                  this.$refs.workflowRef.initData('busing', this.type)
+                })
+              }
+            } else {
+              this.busNodeConfig.childNode = null
+            }
+          })
+        }
+        if (state === 'disabled') {
+          this.dataForm.approvalFlag = 0
+          this.busNodeConfig.childNode = null
+        }
+      })
+
+    },
 
   },
 }
@@ -707,7 +1182,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  padding: 10px 30px;
 }
 
 .required {
@@ -720,12 +1195,13 @@ export default {
 }
 
 ::v-deep .el-tabs {
-  height: 100%!important;
+  height: 100% !important;
 }
+
 ::v-deep .el-tabs__content {
   /* height: auto !important; */
   height: calc(100% - 47px) !important;
-  overflow:auto!important;
+  overflow: auto !important;
   padding: 0 20px;
 }
 
@@ -744,6 +1220,11 @@ export default {
   border: none !important;
 }
 
+::v-deep .el-date-table .today span {
+  font-weight: 700;
+  color: #C0C4CC !important;
+}
+
 .viewData {
   width: 100%;
   overflow: hidden;
@@ -758,6 +1239,7 @@ export default {
 .green {
   color: #67C23A;
 }
+
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
 }

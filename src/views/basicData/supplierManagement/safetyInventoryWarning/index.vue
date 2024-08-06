@@ -103,15 +103,15 @@
           <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="100"></el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="100" sortable="custom" />
-          <el-table-column prop="mainUnit" label="主单位" min-width="120" />
+          <el-table-column prop="mainUnit" label="单位" min-width="120" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
-          <el-table-column prop="availableQuantity" label="可用库存(主)" min-width="130" sortable="custom" />
-          <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom" />
+          <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
+          <!-- <el-table-column prop="inventoryQuantity" label="库存数量(主)" min-width="130" sortable="custom" />
           <el-table-column prop="occupancyQuantity" label="占用数量(主)" min-width="130" sortable="custom" />
           <el-table-column prop="deputyUnit" label="副单位" min-width="130" />
           <el-table-column prop="deputyAvailableQuantity" label="可用库存(副)" min-width="130" sortable="custom" />
           <el-table-column prop="deputyInventoryQuantity" label="库存数量(副)" min-width="130" sortable="custom" />
-          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom" />
+          <el-table-column prop="deputyOccupancyQuantity" label="占用数量(副)" min-width="130" sortable="custom" /> -->
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
           :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -216,11 +216,12 @@ export default {
   data() {
     return {
       columnList: [
-        'code',
-        'deputyUnit',
-        'deputyAvailableQuantity',
-        'deputyInventoryQuantity',
-        'deputyOccupancyQuantity'
+        // 'code',
+        'productCategoryName',
+        // 'deputyUnit',
+        // 'deputyAvailableQuantity',
+        // 'deputyInventoryQuantity',
+        // 'deputyOccupancyQuantity'
       ],
       exportFormVisible: false,
       title: '更多查询',
@@ -238,6 +239,7 @@ export default {
         code: '',
         name: '',
         safeInventoryWarnFlag: 1,
+        productSource: 'purchase',
         orderItems: [
           {
             asc: false,
@@ -274,13 +276,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-      columnList: [
-        'code',
-        'deputyUnit',
-        'deputyAvailableQuantity',
-        'deputyInventoryQuantity',
-        'deputyOccupancyQuantity'
-      ],
+   
       superQueryVisible: false,
       superQueryJson: [
         {

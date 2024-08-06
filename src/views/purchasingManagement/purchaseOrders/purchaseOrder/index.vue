@@ -467,7 +467,8 @@ export default {
       this.search()
     },
     checkSelectable(row) {
-      return !row.disabled
+      console.log(row.disabled,'disa')
+      return row.disabled
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleFinshData(val) {

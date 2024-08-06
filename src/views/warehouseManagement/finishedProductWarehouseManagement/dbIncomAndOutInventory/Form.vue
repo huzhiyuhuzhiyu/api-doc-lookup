@@ -308,11 +308,9 @@
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'inbound_purchase'" />
-                <el-table-column prop="undeliveredQuantity"
-                  :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                <el-table-column prop="undeliveredQuantity" :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                <el-table-column prop="requiredReceivedQuantity"
-                  :label="dataForm.businessType == 'inbound_purchase' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                <el-table-column prop="requiredReceivedQuantity" :label="dataForm.businessType == 'inbound_purchase' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />

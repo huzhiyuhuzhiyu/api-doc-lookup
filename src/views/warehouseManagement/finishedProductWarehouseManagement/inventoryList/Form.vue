@@ -563,6 +563,8 @@ export default {
         this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
         if (this.dataForm.businessType == 'inbound_sale_return') {
           this.orderForm.returnQueryFlag = 1
+        }else{
+          this.orderForm.shipmentStatus='not_finish'
         }
 
         getsaleOrderDetailList(this.orderForm).then(res => {

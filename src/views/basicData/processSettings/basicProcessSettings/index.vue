@@ -686,6 +686,7 @@ export default {
         pageSize: 20,
         productCategoryId: '',
       }
+      this.$refs.SuperQuery.conditionList = []
       this.getcategoryTree()
       // this.initData()
     },

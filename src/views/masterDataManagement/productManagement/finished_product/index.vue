@@ -130,6 +130,9 @@
               <template v-else-if="row.productSource == 'out'">
                 外协
               </template>
+              <template v-else-if="row.productSource == 'out'">
+                外协
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
@@ -1141,6 +1144,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.initData()
     },
 

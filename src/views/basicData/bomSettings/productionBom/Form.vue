@@ -190,12 +190,12 @@ export default {
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
         // { prop: "name", label: "BOM名称", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }], sm: 12 },
-        { prop: "productName", label: "产品名称", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }], sm: 12, readOnly: true },
+        { prop: "drawNo", label: "品名规格", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }], sm: 12, readOnly: true },
         {
           prop: "pickingWay", label: "领料方式", value: "", type: "select", options: [{ label: "按生产订单领料", value: "production_order" }, { label: "按派工单领料", value: "dispatch_list" }],
           itemRules: [{ required: true, trigger: "change" }], sm: 12
         },
-        { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
+        // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
         { prop: "remark", label: "备注", value: "", type: 'textarea' }
       ],
       linesList: [],

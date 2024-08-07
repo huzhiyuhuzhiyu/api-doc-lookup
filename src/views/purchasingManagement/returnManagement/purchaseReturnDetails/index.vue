@@ -69,7 +69,7 @@
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" hasC>
+            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
@@ -170,7 +170,7 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      columnList: [ 'createByName'],
+      columnList: ['createByName'],
       linesTotal: 0,
       linesTableData: [],
       createTimeArrfahuo: [],
@@ -387,7 +387,7 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ]
     }
   },
@@ -527,7 +527,7 @@ export default {
       this.createTimeArr = []
       this.orderDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
-
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, btntype) {

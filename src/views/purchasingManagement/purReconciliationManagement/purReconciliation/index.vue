@@ -129,7 +129,8 @@
               <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing'"
                 @click.native="withdrawnHandle(scope.row.id, 'withdrawn')"> 审批撤回</el-button>
 
-              <el-dropdown hide-on-click v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'||scope.row.approvalStatus === 'ing'">
+              <el-dropdown hide-on-click
+                v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn' || scope.row.approvalStatus === 'ing'">
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
                     {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -141,7 +142,8 @@
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              <el-button v-else type="text" size="mini"  @click.native="handleUserRelation(scope.row.id, 'look')"> 查看详情</el-button>
+              <el-button v-else type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">
+                查看详情</el-button>
               <!-- </tableOpts> -->
 
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
@@ -414,9 +416,10 @@ export default {
           asc: false,
           column: "create_time"
         }],
-      },
-        this.reconciliationDate = []
+      }
+      this.reconciliationDate = []
       this.createRequirementDate = []
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, type) {

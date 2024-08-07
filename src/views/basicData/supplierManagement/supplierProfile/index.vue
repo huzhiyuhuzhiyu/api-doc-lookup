@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -952,9 +952,10 @@ export default {
           }
         ]
       }
+      this.$refs.SuperQuery.conditionList = []
       this.getcategoryTree(true)
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       console.log('请选择节点', node)

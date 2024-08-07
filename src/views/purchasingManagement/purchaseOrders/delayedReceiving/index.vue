@@ -750,7 +750,7 @@ export default {
 
         superQuery: {}
       }
-
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
 

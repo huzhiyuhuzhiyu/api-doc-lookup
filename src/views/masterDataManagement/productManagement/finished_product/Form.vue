@@ -585,7 +585,8 @@ export default {
                 'steelBallManufacturer',
                 'oil',
                 'noise',
-                'holder'
+                'holder',
+                'productSource'
               ].includes(tc.prop)
             ) {
               tc.itemDisabled = true

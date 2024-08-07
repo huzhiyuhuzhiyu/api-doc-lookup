@@ -300,7 +300,8 @@
                   :label="dataForm.businessType == 'outbound_sale_send' ? '发货日期' : dataForm.businessType == 'inbound_purchase' ? '收货日期' : dataForm.businessType == 'outbound_purchase' ? '退货日期' : ''"
                   width="160" sortable="custom" />
                 <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
@@ -308,9 +309,12 @@
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'inbound_purchase'" />
-                <el-table-column prop="undeliveredQuantity" :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                <el-table-column prop="undeliveredQuantity"
+                  :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : '待出库数量'" width="160"
+                  sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                <el-table-column prop="requiredReceivedQuantity" :label="dataForm.businessType == 'inbound_purchase' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
+                <el-table-column prop="requiredReceivedQuantity"
+                  :label="dataForm.businessType == 'inbound_purchase' ? '待入库数量' : '待出库数量'" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
@@ -673,9 +677,10 @@ export default {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
-      let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-      item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+
       arr.forEach(item => {
+        let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+        item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
         if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
           item.ordersNum = JSON.parse(JSON.stringify(item.num))
 
@@ -694,11 +699,9 @@ export default {
           item.num = ""
         }
 
-        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
-          item.ordersNum = JSON.parse(JSON.stringify(item.receiptQuantity))
-        }
+      
         if (this.dataForm.businessType == 'inbound_purchase') {
-          this.$set(item, 'num', item.receiptQuantity)
+          this.$set(item, 'num', item.purchaseQuantity)
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
           item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
@@ -981,10 +984,17 @@ export default {
           let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "semi_finished");
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              item.classAttribute = "semi_finished"
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
+              item.ordersNum = JSON.parse(JSON.stringify(item.num))
+              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
             });
           }
           this.productData = filteredArray
@@ -999,14 +1009,23 @@ export default {
           let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "semi_finished");
           if (filteredArray.length) {
             filteredArray.forEach(item => {
+              item.classAttribute = "semi_finished"
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.purchaseQuantity
               item.ordersId = item.purchaseOrderId
               item.noticeId = item.purchaseReceiptReturnGoodsId
               item.noticeLineId = item.id
+              item.costPrice = item.price
+              item.ordersNum = JSON.parse(JSON.stringify(item.purchaseQuantity))
+              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
             });
           }
+ 
           this.productData = filteredArray
           this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false
@@ -1051,6 +1070,7 @@ export default {
       }
     },
     async handleConfirm(submitModel) {
+      console.log(this.productData);
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 

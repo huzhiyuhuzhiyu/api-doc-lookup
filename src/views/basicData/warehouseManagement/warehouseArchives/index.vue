@@ -142,10 +142,7 @@ export default {
         category:"warehouse",
         orderItems: [{
           asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
       }
     }
@@ -178,7 +175,7 @@ export default {
     },
     search() {
       this.initData()
-      this.buildQRCode()
+      // this.buildQRCode()
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {

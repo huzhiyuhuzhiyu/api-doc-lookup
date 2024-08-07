@@ -613,7 +613,7 @@ export default {
         ordersId: "",
         productsId: "",
         productName: "调价",
-        productCode: "调价",
+        productCode: "",
         productDrawingNo: "调价",
         ratio: "",
         reconciliationUnitPrice: "",

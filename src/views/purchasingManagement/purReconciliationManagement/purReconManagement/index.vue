@@ -64,15 +64,15 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :setColumnDisplayList="columnList" :checkSelectable="checkSelectable">
           <el-table-column prop="orderNo" label="出入库单号" min-width="240" sortable="custom" />
-          <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
-          <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="180" sortable="custom" />
+          <el-table-column prop="partnerCode" label="供应商编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="businessType" label="发/退货类型" min-width="180" sortable="custom">
+          <el-table-column prop="businessType" label="收/退货类型" min-width="180" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_sale_send'">发货</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'">退货</div>
+              <div v-if="scope.row.businessType == 'outbound_purchase'">退货</div>
+              <div v-else-if="scope.row.businessType == 'inbound_purchase'">收货</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="180" />
@@ -81,9 +81,9 @@
           <el-table-column prop="taxRate" label="税率(%)" min-width="140" />
           <el-table-column prop="totalAmount" label="金额" min-width="140">
             <template slot-scope="scope">
-              <div v-if="scope.row.businessType == 'outbound_sale_send'" style="color: #67C23A">+{{
+              <div v-if="scope.row.businessType == 'outbound_purchase'" style="color: #67C23A">+{{
                 scope.row.totalAmount }}</div>
-              <div v-else-if="scope.row.businessType == 'inbound_sale_return'" style="color:red">-{{
+              <div v-else-if="scope.row.businessType == 'inbound_purchase'" style="color:red">-{{
                 scope.row.totalAmount
                 }}</div>
             </template>
@@ -152,12 +152,12 @@ export default {
       },
       receiptReturnTypeList: [
         {
-          label: '发货',
-          value: 'outbound_sale_send'
+          label: '退货',
+          value: 'outbound_purchase'
         },
         {
-          label: '退货',
-          value: 'inbound_sale_return'
+          label: '收货',
+          value: 'inbound_purchase'
         },
       ],
       createRequirementDate: [],

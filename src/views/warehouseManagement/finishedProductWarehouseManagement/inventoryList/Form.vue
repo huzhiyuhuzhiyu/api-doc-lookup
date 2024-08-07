@@ -666,7 +666,7 @@ export default {
           item.num = item.undeliveredQuantity
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         }
-        if (this.dataForm.businessType == 'inbound_purchase') {
+        if (this.dataForm.businessType == 'inbound_purchase'|| this.dataForm.businessType == 'outbound_purchase') {
           this.$set(item, 'num', item.purchaseQuantity)
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
@@ -990,20 +990,22 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
-          if (this.allocationFlag && this.jyFlag) {
-            this.productData.forEach((item, index) => {
-              if (!item.shelfSpaceId) {
-                submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
-              }
-            })
-          }
-
+     
           if (this.productData.length) {
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
+              if(!this.jyFlag&&item.batchNumber){
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行批次不能为空")
+                break
+              }
+              if(this.allocationFlag &&this.jyFlag&&!item.goodsShelvesId){
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
+                break
+              }
               if (!item.num) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")

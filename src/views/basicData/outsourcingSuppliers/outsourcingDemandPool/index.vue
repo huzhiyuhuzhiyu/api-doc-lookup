@@ -38,7 +38,7 @@
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
-            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购订单</el-button>
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协订单</el-button>
             <!-- <el-button size="mini" type="primary" @click="batchQuiry()">批量询价</el-button>
             <el-button size="mini" type="primary" @click="batchFixed()">批量定价</el-button> -->
           </div>
@@ -66,7 +66,7 @@
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
 
-          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="120" sortable="custom">
+          <el-table-column prop="immediatelyBuyFlag" label="立即外协" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>
@@ -115,7 +115,7 @@
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" :disabled="type === 'look'" @click="addOrUpdateHandle(scope.row.id, 'edit')">生成采购订单</el-button>
+              <el-button size="mini" type="text" :disabled="type === 'look'" @click="addOrUpdateHandle(scope.row.id, 'edit')">生成外协订单</el-button>
               <el-dropdown hide-on-click>
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
@@ -200,8 +200,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="立即采购">
-              <el-select v-model="listQuery.immediatelyBuyFlag" placeholder="请选择是否立即采购" clearable style="width: 100%;">
+            <el-form-item label="立即外协">
+              <el-select v-model="listQuery.immediatelyBuyFlag" placeholder="请选择是否立即外协" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in [{ label: '是', value: true }, { label: '否', value: false }]"
                   :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -292,7 +292,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
+        poolType: 'external', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
@@ -509,7 +509,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
+        poolType: 'procure', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
@@ -527,11 +527,11 @@ export default {
     //     this.$refs.JNPFForm.init(id, type)
     //   })
     // },
-    // 生成采购订单 将选中的数据传递过去
+    // 生成外协订单 将选中的数据传递过去
     addOrUpdateHandle() {
       if (this.selectData.length === 0) {
         this.$message({
-          message: '请选择你要生成的采购订单',
+          message: '请选择你要生成的外协订单',
           type: 'error',
           duration: 1500
         })
@@ -604,7 +604,7 @@ export default {
           let quiryData = []
           this.selectData.forEach((item, index) => {
             quiryData.push({
-              productSource: item.productSource, // 产品来源 采购
+              productSource: item.productSource, // 产品来源 外协
               productsId: item.productsId, // 产品id
               productsName: item.productName, // 产品名称
               productCode: item.productCode, // 产品编码
@@ -667,7 +667,7 @@ export default {
           let quiryData = []
           this.selectData.forEach((item, index) => {
             quiryData.push({
-              productSource: item.productSource, // 产品来源 采购
+              productSource: item.productSource, // 产品来源 外协
               productsId: item.productsId, // 产品id
               productsName: item.productName, // 产品名称
               productsCode: item.productCode,

@@ -282,7 +282,7 @@ export default {
         ]
       }
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       this.form.typeCode = node.data.enCode

@@ -401,6 +401,10 @@ export default {
   padding: 1;
 }
 
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
 }

@@ -60,7 +60,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table @selection-change="handeleFinshData" hasC v-loading="listLoading" highlight-current-row
+          <JNPF-table @selection-change="handeleFinshData"  v-loading="listLoading" highlight-current-row
             :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">

@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购收货通知单'
-          : btnType == 'edit'
-            ? '编辑采购收货通知单'
-            : btnType == 'copy'
-              ? '新建采购收货通知单'
-              : '查看采购收货通知单'
+            ? '新建采购收货通知单'
+            : btnType == 'edit'
+              ? '编辑采购收货通知单'
+              : btnType == 'copy'
+                ? '新建采购收货通知单'
+                : '查看采购收货通知单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -42,7 +42,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseId">
                         <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false" clearable >
+                          :disabled="btnType == 'look' ? true : false" clearable>
                           <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
                             :value="item.id"></el-option>
                         </el-select>
@@ -139,7 +139,7 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -173,8 +173,8 @@
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="remark" label="备注" width="160" />
-                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="processName" label="工序" width="160" />
+                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -281,19 +281,19 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
+                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
-                  <el-form-item label="交货日期">
+                  <el-form-item label="">
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>
+                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
                   </el-form-item>
                 </el-col>
 
@@ -313,11 +313,13 @@
               <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
+                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -325,6 +327,7 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -386,7 +389,7 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -676,9 +679,9 @@ export default {
     getWarehouseList() {
       let obj = {
         type: 'virtually',
-        category: "warehouse",
+        category: 'warehouse'
       }
-      getWarehouseList(obj).then(res => {
+      getWarehouseList(obj).then((res) => {
         this.warehouseIdList = res.data
       })
     },
@@ -870,7 +873,6 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-
           this.productList = res.data.records
           this.productTotal = res.data.total
           this.listLoading = false
@@ -928,7 +930,6 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-
     },
     // },
     // 获取所有订单列表数据
@@ -1297,11 +1298,9 @@ export default {
         this.codeConfig = data
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
-
       } catch (error) { }
     },
     init(id, btnType) {
-
       this.dataForm.id = id || ''
 
       this.btnType = btnType
@@ -1355,12 +1354,8 @@ export default {
             })
           }
         })
-
-
-
       }
       if (btnType == 'add' || btnType == 'copy') {
-
         this.dataForm.salesman = this.userInfo.userName
         this.formLoading = true
         setTimeout(() => {
@@ -1450,7 +1445,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({

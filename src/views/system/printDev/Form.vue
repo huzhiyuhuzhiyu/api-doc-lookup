@@ -47,6 +47,16 @@
                   v-for="item in categoryList" />
               </el-select>
             </el-form-item>
+            <el-form-item label="分页类型" prop="pageType">
+              <el-select v-model="dataForm.pageType" placeholder="选择分类">
+                <el-option :key="item.value" :label="item.label" :value="item.value"
+                  v-for="item in pageTypeList" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="分页条数" prop="pageSize" v-if="dataForm.pageType === 'custom'">
+              <el-input v-model="dataForm.pageSize" placeholder="分页条数" maxlength="50">
+              </el-input>
+            </el-form-item>
             <el-form-item label="模板类型" prop="type">
               <el-radio-group v-model="dataForm.type">
                 <el-radio :label="1">流程表单</el-radio>
@@ -84,6 +94,9 @@
                 <el-col :span="20">
                   <el-input v-model="item.sql" placeholder="请输入SQL查询语句&存储过程语句" type="textarea"
                     :autosize="{ minRows: 3, maxRows: 10}" />
+                </el-col>
+                <el-col :span="20" style="margin-top:5px">
+                  <el-switch inactive-text="未开启分页" active-text="开启分页" @change="changePage(item)" v-model="item.isPage"></el-switch>
                 </el-col>
                 <el-col :span="3" :offset="1" class="delBtn">
                   <el-button type="danger" icon="el-icon-close" @click="delSql(i)">
@@ -128,7 +141,9 @@ export default {
         sqlTemplate: '',
         leftFields: '',
         printTemplate: '',
-        description: ''
+        description: '',
+        pageSize:'',
+        pageType:'auto',
       },
       dataRule: {
         fullName: [
@@ -140,6 +155,12 @@ export default {
         ],
         category: [
           { required: true, message: '模板分类不能为空', trigger: 'change' },
+        ],
+        pageType: [
+          { required: true, message: '分页类型不能为空', trigger: 'change' },
+        ],
+        pageSize: [
+          { required: true, message: '分页条数不能为空', trigger: 'blur' },
         ],
         dbLinkId: [
           { required: true, message: '数据连接不能为空', trigger: 'change' },
@@ -153,7 +174,17 @@ export default {
       sqlTemplate: [],
       categoryList: [],
       treeData: [],
-      dbOptions: []
+      dbOptions: [],
+      pageTypeList:[
+        {
+          label:'自动分页',
+          value:'auto'
+        },
+        {
+          label:'自定义分页',
+          value:'custom'
+        },
+      ]
     }
   },computed: {
     ...mapState({
@@ -206,7 +237,7 @@ export default {
       this.sqlTemplate.splice(i, 1)
     },
     addSql() {
-      let item = { sql: "" }
+      let item = { sql: "",isPage:false }
       this.sqlTemplate.push(item)
     },
     exist() {
@@ -242,7 +273,12 @@ export default {
               sqlTemplate: this.dataForm.sqlTemplate
             }
             getFields(query).then(res => {
-              this.treeData = res.data
+              this.treeData = res.data.map((item,index)=>{
+                return {
+                  ...item,
+                  hasPage:this.sqlTemplate[index].isPage
+                }
+              })
               this.activeStep += 1
               this.nextBtnLoading = false
             }).catch(() => {

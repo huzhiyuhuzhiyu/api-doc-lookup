@@ -239,7 +239,6 @@ export default {
         code: '',
         name: '',
         safeInventoryWarnFlag: 1,
-        productSource: 'purchase',
         orderItems: [
           {
             asc: false,
@@ -253,7 +252,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         drawingNo: '', // 图号
-        productSource: '', // 产品来源
+        productSource: 'purchase', // 产品来源
         startAndEndTime: [], // 创建时间
         productCategoryId: '', // 类型id
         productStatus: '', // 产品状态
@@ -348,6 +347,7 @@ export default {
   created() {
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    console.log(this.listQuery,'qiery')
     this.initData()
   },
   computed: {

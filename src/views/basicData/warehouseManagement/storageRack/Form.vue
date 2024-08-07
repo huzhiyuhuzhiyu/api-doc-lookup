@@ -14,8 +14,7 @@
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
           <div
-            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
-          >
+            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
             <h5>基本信息</h5>
           </div>
           <!-- 普通属性 -->
@@ -23,22 +22,10 @@
             <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
           </el-tab-pane>
 
-          <JNPF-col-table
-            v-if="tableFlag"
-            v-model="stockLimitsAuthorities"
-            ref="sleeveForm"
-            :tableItems="sleeveItems"
-            :openMode="openMode"
-            @addth="addSleeveList"
-            @deleteth="deleteth"
-          />
-          <JNPF-col-table
-            v-else
-            v-model="stockLimitsAuthorities"
-            ref="sleeveForm"
-            :tableItems="sleeveItems"
-            :openMode="openMode"
-          />
+          <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+            :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
+          <!-- <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+            :openMode="openMode" /> -->
         </el-tabs>
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
@@ -101,7 +88,7 @@ export default {
                           callback()
                         }
                       })
-                      .catch((error) => {})
+                      .catch((error) => { })
                   } else {
                     checWarehouseCode(value, '')
                       .then((res) => {
@@ -112,7 +99,7 @@ export default {
                           callback()
                         }
                       })
-                      .catch((error) => {})
+                      .catch((error) => { })
                   }
                 }
               },
@@ -187,8 +174,8 @@ export default {
       return this.title === '新建库区' || '新建货架' || '新建货位'
         ? '新建'
         : this.title === '编辑库区'
-        ? '编辑'
-        : '只读'
+          ? '编辑'
+          : '只读'
     }
   },
   methods: {
@@ -384,7 +371,7 @@ export default {
                                 callback()
                               }
                             })
-                            .catch((error) => {})
+                            .catch((error) => { })
                         } else {
                           checWarehouseCode(value, '')
                             .then((res) => {
@@ -395,7 +382,7 @@ export default {
                                 callback()
                               }
                             })
-                            .catch((error) => {})
+                            .catch((error) => { })
                         }
                       }
                     },
@@ -433,7 +420,7 @@ export default {
                                 callback()
                               }
                             })
-                            .catch((error) => {})
+                            .catch((error) => { })
                         } else {
                           checWarehouseCode(value, '')
                             .then((res) => {
@@ -444,7 +431,7 @@ export default {
                                 callback()
                               }
                             })
-                            .catch((error) => {})
+                            .catch((error) => { })
                         }
                       }
                     },
@@ -478,7 +465,7 @@ export default {
                               callback()
                             }
                           })
-                          .catch((error) => {})
+                          .catch((error) => { })
                       } else {
                         checWarehouseCode(value, '')
                           .then((res) => {
@@ -489,7 +476,7 @@ export default {
                               callback()
                             }
                           })
-                          .catch((error) => {})
+                          .catch((error) => { })
                       }
                     },
                     trigger: 'blur'
@@ -522,7 +509,7 @@ export default {
                               callback()
                             }
                           })
-                          .catch((error) => {})
+                          .catch((error) => { })
                       } else {
                         checWarehouseCode(value, '')
                           .then((res) => {
@@ -533,7 +520,7 @@ export default {
                               callback()
                             }
                           })
-                          .catch((error) => {})
+                          .catch((error) => { })
                       }
                     },
                     trigger: 'blur'

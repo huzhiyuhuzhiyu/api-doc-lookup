@@ -87,6 +87,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
+            回款金额：{{totalreceivablesMoney}}元
           </pagination>
         </div>
       </div>
@@ -227,7 +228,14 @@ export default {
   computed: {
     currMenuId() {
       return (this.$route.meta.modelId || '') + this.partentOrChild
-    }
+    },
+    totalreceivablesMoney: function () {
+      var totalreceivablesMoneyNum = 0;
+      for (var i = 0; i < this.tableData.length; i++) {
+        totalreceivablesMoneyNum = this.jnpf.math('add', [totalreceivablesMoneyNum, this.tableData[i].receivablesMoney * 1])
+      }
+      return totalreceivablesMoneyNum
+    },
   },
   created() {
     this.getDictionaryType()

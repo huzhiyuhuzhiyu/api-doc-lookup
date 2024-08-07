@@ -38,15 +38,16 @@
                           "></el-input>
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="6" :xs="24">
-                      <el-form-item label="收货标识" prop="exchangeGoodsFlag">
-                        <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                          :disabled="btnType == 'look' ? true : false">
-                          <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
+
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="仓库" prop="warehouseId">
+                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable>
+                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
-                    </el-col> -->
+                    </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
@@ -139,7 +140,8 @@
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
-                    <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                      sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -171,8 +173,8 @@
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="remark" label="备注" width="160" />
-                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="processName" label="工序" width="160" />
+                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -279,19 +281,19 @@
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable />
+                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
+                    <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="6">
-                  <el-form-item label="交货日期">
+                  <el-form-item label="">
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable></el-date-picker>
+                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
                   </el-form-item>
                 </el-col>
 
@@ -311,11 +313,13 @@
               <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="num" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
+                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -323,6 +327,7 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                 <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
                 <el-table-column prop="remark" label="备注" width="160" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
@@ -380,9 +385,11 @@ import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/in
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
-  getpurPurchaseReceiptReturnGoodsdetail,
+  getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import { getWarehouseList } from '@/api/basicData/index'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -531,7 +538,6 @@ export default {
         approvalStatus: '',
         startTime: '',
         endTime: '',
-
         pageNum: 1,
         pageSize: 20,
         orderItems: [
@@ -601,7 +607,8 @@ export default {
         inspectionStatus: '',
         // orderCategory: "assembly",
         returnDeliveryType: 'back',
-        notifyType: 'sale',
+        notificationType: 'procure',
+        salesman: '',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -627,6 +634,7 @@ export default {
         }
       },
       dataRule: {
+        salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
         partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
@@ -636,7 +644,8 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      warehouseIdList: []
     }
   },
   computed: {
@@ -647,7 +656,8 @@ export default {
         totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
       }
       return totalNum
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   watch: {
     filterText(val) {
@@ -658,6 +668,7 @@ export default {
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
+    this.getWarehouseList()
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -665,6 +676,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getWarehouseList() {
+      let obj = {
+        type: 'virtually',
+        category: 'warehouse'
+      }
+      getWarehouseList(obj).then((res) => {
+        this.warehouseIdList = res.data
+      })
+    },
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {
@@ -687,8 +707,7 @@ export default {
           let list = this.dataFormTwo.productData
           let num_1 = Number(list[index].receivedQuantity)
           let num_2 = Number(list[index].waitReceiptNum)
-          console.log(num_1, '1')
-          console.log(num_2, '2')
+
           if (!(num_1 <= num_2)) {
             flag = true
           }
@@ -701,21 +720,7 @@ export default {
         }
       }
     },
-    // 选完客户订单数据后 渲染在列表上
-    // submitAllProduct() {
-    //   this.allProVisible = false
-    //   console.log(" this.selectArr", this.selectArr);
-    //   this.selectArr.forEach(item => {
-    //     console.log('订单...', item);
-    //     this.dataFormTwo.productData = []
-    //     getOrderDetail(item.id).then(res => {
-    //       console.log('订单详情', res);
-    //       res.data.orderLines.map((item) => {
-    //         this.dataFormTwo.productData.push(item)
-    //       })
-    //     })
-    //   });
-    // },
+
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -868,7 +873,6 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-          console.log('产品', res)
           this.productList = res.data.records
           this.productTotal = res.data.total
           this.listLoading = false
@@ -913,12 +917,12 @@ export default {
       if (!this.selectArr.length) return this.$message.error('请选择产品！')
       this.productVisible = false
       this.selectArr.forEach((item) => {
-        item.ordersNum = item.num
+        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
         this.dataFormTwo.productData.push(item)
       })
       let uniqueArr = []
       let idSet = new Set()
-      console.log(this.dataFormTwo.productData, 'data')
+
       this.dataFormTwo.productData.forEach((item) => {
         if (!idSet.has(item.id)) {
           uniqueArr.push(item)
@@ -926,7 +930,6 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-      console.log('this.dataFormTwo', this.dataFormTwo.productData)
     },
     // },
     // 获取所有订单列表数据
@@ -1049,42 +1052,42 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.orderDateArr = []
-        ; (this.ProductListRequestObj = {
-          // neOrderState: 'finish',
-          orderNo: '',
-          cooperativePartnerName: '',
-          orderType: '',
-          salesName: '',
-          workOrderNo: '',
-          sourceOrderNo: '',
-          orderStartDate: '',
-          orderEndDate: '',
-          contractNo: '',
-          deliveryStartDate: '',
-          deliveryEndDate: '',
-          distributeStatus: 'distributed',
-          // orderCategory: "assembly",
-          shipmentStatus: '',
-          orderState: '',
-          productionStatus: '',
-          documentStatus: '',
-          approvalStatus: '',
-          startTime: '',
-          endTime: '',
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ]
-        }),
-          this.searchAllProduct()
+      this.ProductListRequestObj = {
+        // neOrderState: 'finish',
+        orderNo: '',
+        cooperativePartnerName: '',
+        orderType: '',
+        salesName: '',
+        workOrderNo: '',
+        sourceOrderNo: '',
+        orderStartDate: '',
+        orderEndDate: '',
+        contractNo: '',
+        deliveryStartDate: '',
+        deliveryEndDate: '',
+        distributeStatus: 'distributed',
+        // orderCategory: "assembly",
+        shipmentStatus: '',
+        orderState: '',
+        productionStatus: '',
+        documentStatus: '',
+        approvalStatus: '',
+        startTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ]
+      }
+      this.searchAllProduct()
     },
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
@@ -1127,20 +1130,20 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-                ; (this.dataForm = {
-                  exchangeGoodsFlag: false,
-                  // orderCategory: "assembly",
-                  returnDeliveryType: 'back',
-                  notifyType: 'sale',
-                  logisticsCompany: '',
-                  ordersId: '',
-                  deliverDate: '',
-                  logisticsNumber: '',
-                  cooperativePartnerId: '',
-                  remark: '',
-                  orderNo: this.codeConfig.number
-                }),
-                  (this.dataFormTwo.productData = [])
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   returnDeliveryType: 'back',
+              //   notificationType: 'procure',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
+              this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
               this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1158,20 +1161,20 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          ; (this.dataForm = {
-            exchangeGoodsFlag: false,
-            // orderCategory: "assembly",
-            returnDeliveryType: 'back',
-            notifyType: 'sale',
-            logisticsCompany: '',
-            ordersId: '',
-            orderNo: this.codeConfig.number,
-            deliverDate: '',
-            logisticsNumber: '',
-            cooperativePartnerId: '',
-            remark: ''
-          }),
-            (this.dataFormTwo.productData = [])
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   returnDeliveryType: 'back',
+          //   notificationType: 'procure',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
+          this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id
           this.ProductListRequestObj.cooperativePartnerCode = e.code
@@ -1295,11 +1298,9 @@ export default {
         this.codeConfig = data
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
-        console.log('dataForm', this.dataForm)
       } catch (error) { }
     },
     init(id, btnType) {
-      console.log('id', id, btnType)
       this.dataForm.id = id || ''
 
       this.btnType = btnType
@@ -1343,18 +1344,19 @@ export default {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           } else {
             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData.forEach((item) => {
+              item.drawingNo = item.productDrawingNo
+            })
           }
         })
-   
-        this.dataFormTwo.productData.forEach(item=>{
-          item.drawingNo = item.productDrawingNo
-        })
-        console.log(this.dataFormTwo.productData,'data')
       }
       if (btnType == 'add' || btnType == 'copy') {
-        console.log(55555)
+        this.dataForm.salesman = this.userInfo.userName
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
@@ -1384,7 +1386,7 @@ export default {
         inspectionStatus: '',
         // orderCategory: "assembly",
         // returnDeliveryType: 'back',
-        // notifyType: 'sale',
+        // notificationType: 'procure',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -1486,22 +1488,23 @@ export default {
               customColumn: item.customColumn,
               deputyUnit: item.deputyUnit,
               // id: 0,
+              notificationType: 'procure',
               inspectionResults: item.inspectionResults,
               mainUnit: item.mainUnit,
-              notificationType: item.notificationType,
+              // notificationType: item.notificationType,
               oil: item.oil,
               oilQuantity: item.oilQuantity,
               ordersLineId: item.ordersLineId,
               packagingMethod: item.packagingMethod,
               packingQuantity: item.packingQuantity,
               processId: item.processId,
-              productsId: item.productsId,
+              productsId: item.productsId ? item.productsId : '',
               purchaseOrderId: item.purchaseOrderId,
               purchaseQuantity: item.purchaseQuantity,
               purchaseReceiptReturnGoodsId: item.purchaseReceiptReturnGoodsId,
               qualifiedQuantity: item.qualifiedQuantity,
               ratio: item.ratio,
-              receiptQuantity: item.receiptQuantity,
+              waitReceiptNum: item.waitReceiptNum,
               receivedQuantity: item.receivedQuantity,
               receivingStatus: item.receivingStatus,
               remark: item.remark,
@@ -1512,15 +1515,15 @@ export default {
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
               classAttribute: 'finish_product',
-              id: item.id ? item.id : ''
+              id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
-              // ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
+              ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               // pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
-              // ratio: item.ratio ? item.ratio : '',
-              // receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
-              // remark: item.remark ? item.remark : '',
-              // // returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
-              // receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
+              ratio: item.ratio ? item.ratio : '',
+              receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
+              remark: item.remark ? item.remark : '',
+              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+              receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
@@ -1531,13 +1534,16 @@ export default {
               ordersId: item.ordersId,
               classAttribute: 'finish_product',
               id: item.id ? item.id : '',
+              purchaseQuantity: item.purchaseQuantity,
+              productsId: item.productsId ? item.productsId : '',
+              waitReceiptNum: item.waitReceiptNum ? item.waitReceiptNum : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               remark: item.remark ? item.remark : '',
-              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
+              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {
@@ -1548,43 +1554,43 @@ export default {
           })
           this.btnLoading = true
           let formMethod = null
-          console.log(obj, 'obj')
-          // if (this.btnType == 'edit') {
-          //   formMethod = editpurPurchaseReceiptReturnGoods
-          // } else if (this.btnType == 'add' || this.btnType == 'copy') {
-          //   // obj.notice.deliveryStatus = 'not_returned'
-          //   formMethod = addpurPurchaseReceiptReturnGoods
-          // }
-          // formMethod(obj)
-          //   .then((res) => {
-          //     // let msg = "";
-          //     // if (formMethod == addpurPurchaseReceiptReturnGoods) {
-          //     //   msg = "新建成功"
-          //     // } else if (value == 'draft') {
-          //     //   msg = "保存成功"
-          //     // } else if (value == 'submit') {
-          //     //   msg = '提交成功'
-          //     // }
-          //     if (value == 'draft') {
-          //       this.submitmethodsTitle = '保存成功'
-          //     } else if (value == 'submit') {
-          //       this.submitmethodsTitle = '提交成功'
-          //     }
-          //     this.tipsvisible = true
-          //     // this.$message({
-          //     //   message: msg,
-          //     //   type: 'success',
-          //     //   duration: 1500,
-          //     //   onClose: () => {
-          //     //     this.visible = false
-          //     //     this.btnLoading = false
-          //     //     this.$emit('close', true)
-          //     //   }
-          //     // })
-          //   })
-          //   .catch(() => {
-          //     this.btnLoading = false
-          //   })
+
+          if (this.btnType == 'edit') {
+            formMethod = editpurPurchaseReceiptReturnGoods
+          } else if (this.btnType == 'add' || this.btnType == 'copy') {
+            // obj.notice.deliveryStatus = 'not_returned'
+            formMethod = addpurPurchaseReceiptReturnGoods
+          }
+          formMethod(obj)
+            .then((res) => {
+              // let msg = "";
+              // if (formMethod == addpurPurchaseReceiptReturnGoods) {
+              //   msg = "新建成功"
+              // } else if (value == 'draft') {
+              //   msg = "保存成功"
+              // } else if (value == 'submit') {
+              //   msg = '提交成功'
+              // }
+              if (value == 'draft') {
+                this.submitmethodsTitle = '保存成功'
+              } else if (value == 'submit') {
+                this.submitmethodsTitle = '提交成功'
+              }
+              this.tipsvisible = true
+              // this.$message({
+              //   message: msg,
+              //   type: 'success',
+              //   duration: 1500,
+              //   onClose: () => {
+              //     this.visible = false
+              //     this.btnLoading = false
+              //     this.$emit('close', true)
+              //   }
+              // })
+            })
+            .catch(() => {
+              this.btnLoading = false
+            })
         }
       })
     }

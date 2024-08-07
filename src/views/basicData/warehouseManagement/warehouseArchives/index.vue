@@ -126,7 +126,7 @@ export default {
         keyword: '',
         type: ""
       },
-      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" }],
+      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" },{ label: "虚拟仓库", value: "virtually" }],
       treeList: [],
       expands: true,
       refreshTable: true,
@@ -142,10 +142,7 @@ export default {
         category:"warehouse",
         orderItems: [{
           asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
       }
     }
@@ -178,7 +175,7 @@ export default {
     },
     search() {
       this.initData()
-      this.buildQRCode()
+      // this.buildQRCode()
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {

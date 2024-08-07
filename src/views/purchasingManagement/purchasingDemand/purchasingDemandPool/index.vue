@@ -5,24 +5,20 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.source" placeholder="请选择来源" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in sourceList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.sourceOrderNo" placeholder="请输入来源单号" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.hasPrice" placeholder="请选择有无价格" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '有价格', value: true }, { label: '无价格', value: false }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <el-input v-model.trim="listQuery.productName" placeholder="请输入产品名称" clearable
+                @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item>
+              <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                style="width: 100%" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
             </el-form-item>
           </el-col>
 
@@ -65,26 +61,26 @@
           :checkSelectable="checkSelectable">
 
 
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
 
-          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="90">
+          <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <div style="color:red;" v-if="scope.row.immediatelyBuyFlag">是</div>
               <div v-else>否</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="120" />
+          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="130" sortable="custom" />
           <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
             <template slot-scope="scope">
               <div v-if="scope.row.hasPrice">有</div>
               <div v-else>无</div>
             </template>
           </el-table-column> -->
-          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="120" />
+          <el-table-column prop="orderedQuantity" label="已下单数量" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
@@ -101,8 +97,8 @@
                 MRP下发
               </el-link>
               <el-link type="primary" @click.native="getPoolSourceList(scope.row.id)"
-                v-if="scope.row.source == 'order_distribute'">
-                订单分配
+                v-if="scope.row.source == 'plan'">
+                计划下达
               </el-link>
             </template>
           </el-table-column>
@@ -261,6 +257,7 @@ export default {
         'source',
         'createByName',
       ],
+      deliveryDateArr: [],
       sourceDialog: false,
       sourceList: [],
       title: '更多查询',
@@ -328,8 +325,8 @@ export default {
           value: 'mrp'
         },
         {
-          label: '订单分配',
-          value: 'order_distribute'
+          label: '计划下达',
+          value: 'plan'
         }
       ],
       // demandStatusList:[
@@ -453,9 +450,9 @@ export default {
         this.listQuery.createStartTime = ''
         this.listQuery.createEndTime = ''
       }
-      if (this.deliveryDate && this.deliveryDate.length > 0) {
-        this.listQuery.deliveryStartTime = this.deliveryDate[0] + ' 00:00:00'
-        this.listQuery.deliveryEndTime = this.deliveryDate[1] + ' 23:59:59'
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.listQuery.deliveryStartTime = this.deliveryDateArr[0] + ' 00:00:00'
+        this.listQuery.deliveryEndTime = this.deliveryDateArr[1] + ' 23:59:59'
       } else {
         this.listQuery.deliveryStartTime = ''
         this.listQuery.deliveryEndTime = ''
@@ -489,38 +486,38 @@ export default {
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-
-        ; (this.listQuery = {
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ],
-          createByName: '',
-          createEndTime: '',
-          createRequirementDate: '', //创建日期
-          createStartTime: '',
-          deliveryDate: '', //交期
-          deliveryEndTime: '',
-          deliveryStartTime: '',
-          endTime: '',
-          pageNum: 1,
-          pageSize: 20,
-          demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-          poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
-          productCode: '', //产品编码
-          productName: '', //产品名称
-          productDrawingNo: '', //品名规格
-          source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
-          sourceOrderNo: '', //来源单号
-          startTime: ''
-        }),
-          (this.createRequirementDate = [])
+      this.deliveryDateArr = []
+      this.listQuery = {
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        createByName: '',
+        createEndTime: '',
+        createRequirementDate: '', //创建日期
+        createStartTime: '',
+        deliveryDate: '', //交期
+        deliveryEndTime: '',
+        deliveryStartTime: '',
+        endTime: '',
+        pageNum: 1,
+        pageSize: 20,
+        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
+        productCode: '', //产品编码
+        productName: '', //产品名称
+        productDrawingNo: '', //品名规格
+        source: '', //来源    需求来源 请购单 procure、MRP下发 mrp、外协工序 external_process,可用值:external_process,mrp,procure
+        sourceOrderNo: '', //来源单号
+        startTime: ''
+      }
+      this.createRequirementDate = []
       this.deliveryDate = []
       this.search()
     },

@@ -393,8 +393,8 @@ export default {
         { label: "检验中", value: "inspecting" }
       ],
       deliveryStatusList: [
-        { label: "未完成", value: "not_returned" },
-        { label: "已完成", value: "returned" },
+        { label: "未完成", value: "not_finished" },
+        { label: "已完成", value: "finished" },
         { label: "已取消", value: "canceled" }
       ],
       documentStatusList: [
@@ -1420,6 +1420,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
+              classAttribute:item.classAttribute,
+              productsId:item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1438,6 +1440,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
+              classAttribute:item.classAttribute,
+              productsId:item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1461,6 +1465,7 @@ export default {
             obj.notice.deliveryStatus = 'not_returned'
             formMethod = addQuotationsendlist
           }
+          console.log(obj);
           formMethod(obj).then(res => {
             // let msg = "";
             // if (formMethod == addQuotationsendlist) {

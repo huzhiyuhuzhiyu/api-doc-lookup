@@ -41,13 +41,14 @@
           </topOpts>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
             </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+         
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -56,28 +57,35 @@
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
           border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="160">
-          </el-table-column>
-          <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
-            <template slot-scope="scope">
-              <div v-if="scope.row.sourceType == 'send_return'">发退货单</div>
-              <div v-if="scope.row.sourceType == 'picking_return'">领退料单</div>
-              <div v-if="scope.row.sourceType == 'purchase_delivery_return'">采购收退货单</div>
-              <div v-if="scope.row.sourceType == 'outside_delivery_return'">外协收退货单</div>
-            </template>
-          </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
-                scope.row.partnerName
+                scope.row.orderNo
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="160" />
+          <el-table-column prop="businessType" label="业务类型" sortable="custom" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.businessType == 'outbound_sale_send'">销售发货</div>
+              <div v-if="scope.row.businessType == 'inbound_sale_return'">销售退货</div>
+              <div v-if="scope.row.businessType == 'inbound_purchase'">采购收货</div>
+              <div v-if="scope.row.businessType == 'outbound_purchase'">采购退货</div>
+              <div v-if="scope.row.businessType == 'outbound_pick_out'">生产领料</div>
+              <div v-if="scope.row.businessType == 'inbound_return_materials'">生产退料</div>
+              <div v-if="scope.row.businessType == 'outbound_external_send'">外协发料</div>
+              <div v-if="scope.row.businessType == 'inbound_external_return'">外协退料</div>
+              <div v-if="scope.row.businessType == 'inbound_external'">外协收货</div>
+              <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
+            
+          </el-table-column>
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="160" ></el-table-column>
           <el-table-column prop="inspectionResults" label="检验标志" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-tag type="warning" v-if="scope.row.documentStatus == 'qualified'">合格</el-tag>
-              <el-tag type="success" v-else-if="scope.row.documentStatus == 'unqualified'">不合格</el-tag>
-              <el-tag type="success" v-else-if="scope.row.documentStatus == 'unInspect'">待检验</el-tag>
+              <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
+              <el-tag type="danger" v-else-if="scope.row.inspectionResults == 'unqualified'">不合格</el-tag>
+              <el-tag v-else-if="scope.row.inspectionResults == 'unInspect'">待检验</el-tag>
             </template>
 
           </el-table-column>
@@ -145,22 +153,24 @@ export default {
       visible: false,
       tableData: [],
       listLoading: false,
+
       list: [
-        { label: "销售发货", value: "outbound" },
-        { label: "销售退货", value: "inbound_return" },
+        { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
         { label: "采购退货", value: "outbound_purchase" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external" },
-        { label: "外协退料", value: "inbound_external" },
-        { label: "外协收货", value: "inbound_outsourcing" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
       ],
       superQueryVisible: false,
 
       initListQuery: {
         sourceType: "",
-        orderNo: "",
+          classAttribute: "semi_finished",
+          orderNo: "",
         pageNum: 1,
         partnerName: "",
         pageSize: 20,
@@ -194,9 +204,10 @@ export default {
             { label: "采购退货", value: "outbound_purchase" },
             { label: "生产领料", value: "outbound_pick_out" },
             { label: "生产退料", value: "inbound_return_materials" },
-            { label: "外协发料", value: "outbound_external" },
+            { label: "外协发货", value: "outbound_sale_send" },
             { label: "外协退料", value: "inbound_external" },
             { label: "外协收货", value: "inbound_outsourcing" },
+            { label: "外协退货", value: "outbound_external" },
           ],
         },
         {
@@ -227,7 +238,7 @@ export default {
             { label: "草稿", value: "draft" },
             { label: "提交", value: "submit" }
           ]
-        }, 
+        },
         {
           prop: 'createByName',
           label: "创建人",
@@ -263,19 +274,19 @@ export default {
     viewFun(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, true)
+        this.$refs.Form.init(id, type)
       })
     },
     editFun(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, false)
+        this.$refs.Form.init(id, type)
       })
     },
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init("", false)
+        this.$refs.Form.init("", 'add')
       })
     },
     // 合计处理
@@ -341,85 +352,10 @@ export default {
         }).catch(() => { })
       }
     },
-    // 下载模板
-    downLoadTemplate() {
-      const a = document.createElement('a')
-      a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/出入库导入模板.xlsx')
-      a.click()
-    },
+ 
 
 
-
-    importFun() {
-
-      this.$refs.UploadProduct.$el.querySelector('input').click()
-    },
-    // 上传产品
-    UploadProduct(data) {
-      this.loadingText = '正在导入数据'
-      this.formLoading = true
-      var formData = new FormData()
-      formData.append("file", data.file)
-      formData.append("customerSea", "high_seas")
-      //调用上传文件接口
-      uploadProduct(formData).then(res => {
-        if (!res.data) {
-          this.$message.success(`导入成功`)
-          this.initData()
-          this.formLoading = false
-          this.loadingText = ''
-        } else {
-          this.handleMessage(res.data)
-        }
-
-      }).catch(err => {
-        this.$message.error(`文件上传失败`)
-        this.formLoading = false
-        this.loadingText = ''
-      })
-    },
-    // 提示
-    handleMessage(data) {
-      const h = this.$createElement
-      this.$message({
-        type: "error",
-        duration: 0,
-        showClose: true,
-        customClass: 'my-message', // 自定义类名，用于设置样式
-        message: h('div',
-          {
-            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
-          },
-          [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在出入库数据错误！'),
-            h('el-button', {
-              props: {
-                type: 'text',
-                size: "mini",
-                icon: 'el-icon-download'
-              },
-              on: {
-                click: () => {
-                  this.downNoProduct(data)
-                }
-              },
-              style: {
-                border: "none",
-                textAlign: "center",
-                // width:"20%",
-                margin: "0 5px 0 5px ",
-              },
-            }, '下载导入错误数据')
-          ]
-        ),
-      })
-      return
-    },
-    // 导入产品  下载导入错误数据
-    downNoProduct(res) {
-      this.jnpf.downloadFile(res.url, res.name)
-    },
+ 
 
 
 

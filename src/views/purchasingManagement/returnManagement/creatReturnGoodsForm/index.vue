@@ -41,6 +41,15 @@
                       </el-form-item>
                     </el-col> -->
                     <el-col :sm="6" :xs="24">
+                      <el-form-item label="仓库" prop="warehouseId">
+                        <el-select v-model="dataForm.warehouseId" placeholder="请选择仓库" style="width: 100%;"
+                          :disabled="btnType == 'look' ? true : false" clearable>
+                          <el-option v-for="(item, index) in warehouseIdList" :key="index" :label="item.name"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
                         <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
                           :disabled="btnType == 'look'"></el-input>
@@ -140,8 +149,8 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
-                    <!-- <el-table-column prop="requiredReceivedQuantity" label="待入库数量" width="160" sortable="custom" /> -->
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -392,6 +401,8 @@ import {
 import {
   getclassAttributeList
 } from '@/api/masterDataManagement/index'
+import { getWarehouseList } from '@/api/basicData/index'
+import { mapGetters } from "vuex"
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -648,7 +659,8 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      warehouseIdList: []
     }
   },
   computed: {
@@ -659,7 +671,8 @@ export default {
         totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
       }
       return totalNum
-    }
+    },
+    ...mapGetters(['userInfo'])
   },
   watch: {
     filterText(val) {
@@ -671,6 +684,7 @@ export default {
     // this.getProvinceList()
     this.getAttributeline()
     this.getClassAttribute()
+    this.getWarehouseList()
   },
   mounted() {
     this.init()
@@ -679,6 +693,15 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getWarehouseList() {
+      let obj = {
+        type: 'virtually',
+        category: "warehouse",
+      }
+      getWarehouseList(obj).then(res => {
+        this.warehouseIdList = res.data
+      })
+    },
     //发货数量不能为0
     calcValidatenum() {
       return (rule, value, callback) => {
@@ -1087,20 +1110,20 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-              this.dataForm = {
-                exchangeGoodsFlag: false,
-                // orderCategory: "assembly",
-                receiptReturnType: 'back',
-                notificationType: 'procure',
-                // notifyType: 'sale',
-                logisticsCompany: '',
-                ordersId: '',
-                deliverDate: '',
-                logisticsNumber: '',
-                cooperativePartnerId: '',
-                remark: '',
-                orderNo: this.codeConfig.number
-              }
+              // this.dataForm = {
+              //   exchangeGoodsFlag: false,
+              //   // orderCategory: "assembly",
+              //   receiptReturnType: 'back',
+              //   notificationType: 'procure',
+              //   // notifyType: 'sale',
+              //   logisticsCompany: '',
+              //   ordersId: '',
+              //   deliverDate: '',
+              //   logisticsNumber: '',
+              //   cooperativePartnerId: '',
+              //   remark: '',
+              //   orderNo: this.codeConfig.number
+              // }
               this.dataFormTwo.productData = []
               this.customerData = e
               this.dataForm.cooperativePartnerId = e.id
@@ -1119,20 +1142,20 @@ export default {
             })
         } else {
           // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          this.dataForm = {
-            exchangeGoodsFlag: false,
-            // orderCategory: "assembly",
-            receiptReturnType: 'back',
-            notificationType: 'procure',
-            // notifyType: 'sale',
-            logisticsCompany: '',
-            ordersId: '',
-            orderNo: this.codeConfig.number,
-            deliverDate: '',
-            logisticsNumber: '',
-            cooperativePartnerId: '',
-            remark: ''
-          }
+          // this.dataForm = {
+          //   exchangeGoodsFlag: false,
+          //   // orderCategory: "assembly",
+          //   receiptReturnType: 'back',
+          //   notificationType: 'procure',
+          //   // notifyType: 'sale',
+          //   logisticsCompany: '',
+          //   ordersId: '',
+          //   orderNo: this.codeConfig.number,
+          //   deliverDate: '',
+          //   logisticsNumber: '',
+          //   cooperativePartnerId: '',
+          //   remark: ''
+          // }
           this.dataFormTwo.productData = []
           this.customerData = e
           this.dataForm.cooperativePartnerId = e.id
@@ -1263,6 +1286,7 @@ export default {
     init() {
       this.fetchData('CGTHDH')
       console.log(666)
+      this.dataForm.salesman = this.userInfo.userName
     },
     goBack() {
       this.$emit('close', true)
@@ -1339,6 +1363,7 @@ export default {
             console.log(item, 'it')
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+              purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
               receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
@@ -1360,6 +1385,7 @@ export default {
             let dep1 = {
               billStatus: item.billStatus ? item.billStatus : '',
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
+              purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
               receiptQuantity: item.receiptQuantity ? item.receiptQuantity : '',
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',

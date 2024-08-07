@@ -233,6 +233,13 @@ export default {
     },
 
     initData() {
+      if (this.createTimeArr && this.createTimeArr.length > 0) {
+        this.form.startTime = this.createTimeArr[0] + ' 00:00:00'
+        this.form.endTime = this.createTimeArr[1] + ' 23:59:59'
+      } else {
+        this.form.startTime = ''
+        this.form.endTime = ''
+      }
       this.listLoading = true
       getclassAttributeList(this.form)
         .then((res) => {
@@ -246,13 +253,7 @@ export default {
         })
     },
     search() {
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.form.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.form.endTime = this.createTimeArr[1] + ' 23:59:59'
-      } else {
-        this.form.startTime = ''
-        this.form.endTime = ''
-      }
+
       Object.keys(this.form).forEach((key) => {
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
@@ -262,7 +263,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-
+      this.createTimeArr = []
       this.form = {
         code: '',
         name: '',
@@ -281,7 +282,7 @@ export default {
         ]
       }
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       this.form.typeCode = node.data.enCode

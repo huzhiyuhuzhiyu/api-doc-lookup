@@ -20,10 +20,10 @@
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="type" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
+          :expand-on-click-node="false" node-key="businessType" @node-click="handleNodeClick"
+          class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-            <span class="text" :title="data.fullName">{{ data.fullName }} ({{ data.number }})</span>
+            <span class="text" :title="data.fullName">{{ data.fullName }} ({{ data.todoNum }})</span>
 
           </span>
         </el-tree>
@@ -37,8 +37,9 @@
     </div>
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
-        <!-- 销售待发货查询条件 -->
-        <el-form @submit.native.prevent v-if="categoryType == 'delivery'">
+        <!-- 销售待发/退货查询条件 -->
+        <el-form @submit.native.prevent
+          v-if="categoryType == 'outbound_sale_send' || categoryType == 'inbound_sale_return'">
           <el-col :span="4">
             <el-form-item>
               <el-input v-model="fhForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
@@ -52,7 +53,37 @@
           <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="fhDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="发货开始日期" end-placeholder="发货结束日期" clearable>
+                :start-placeholder="categoryType == 'outbound_sale_send' ? '发货开始日期' : '退货开始日期'"
+                :end-placeholder="categoryType == 'outbound_sale_send' ? '发货结束日期' : '退货结束日期'" clearable>
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="getTabdataList()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+        <!-- 采购退货查询条件 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="cgForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="cgForm.partnerName" placeholder="请输入供应商名称" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-date-picker v-model="cgDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                :start-placeholder="categoryType == 'outbound_purchase' ? '退货开始日期' : '收货开始日期'"
+                :end-placeholder="categoryType == 'outbound_purchase' ? '退货结束日期' : '收货结束日期'" clearable>
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -76,7 +107,11 @@
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                @click="columnSetFun('fhtabForm')" />
+                v-if="categoryType == 'outbound_sale_send'" @click="columnSetFun('fhtabForm')" />
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'inbound_sale_return'" @click="columnSetFun('thtabForm')" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'" @click="columnSetFun('cgthtabForm')" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
@@ -85,13 +120,14 @@
           </div>
         </div>
         <!-- 发货通知单列表 -->
-        <JNPF-table v-loading="listLoading" hasC @selection-change="FHhandleSelectionChange" :data="fhTableList"
-          custom-column ref="fhtabForm" :fixedNo="true" :setColumnDisplayList="fhcolumnList"
-          v-if="categoryType == 'delivery'">
+        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="fhTableList"
+          v-if="categoryType == 'outbound_sale_send'" custom-column ref="fhtabForm" :fixedNo="true"
+          :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
-                scope.row.orderNo
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
+                  scope.row.orderNo
                 }}</el-link>
             </template>
           </el-table-column>
@@ -101,21 +137,21 @@
           <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
 
-          <el-table-column prop="delivery" label="发货方式" width="160">
+          <el-table-column prop="outbound_sale_send" label="发货方式" width="160">
             <template slot-scope="scope">
-              <div v-if="scope.row.delivery == 'deliver_goods'">
+              <div v-if="scope.row.outbound_sale_send == 'deliver_goods'">
                 <span>送货</span>
               </div>
-              <div v-else-if="scope.row.delivery == 'self_pickup'">
+              <div v-else-if="scope.row.outbound_sale_send == 'self_pickup'">
                 <span>自提</span>
               </div>
-              <div v-else-if="scope.row.delivery == 'express_delivery'">
+              <div v-else-if="scope.row.outbound_sale_send == 'express_delivery'">
                 <span>快递</span>
               </div>
-              <div v-else-if="scope.row.delivery == 'freight_transport'">
+              <div v-else-if="scope.row.outbound_sale_send == 'freight_transport'">
                 <span>货运</span>
               </div>
-              <div v-else-if="scope.row.delivery == 'collect_payment'">
+              <div v-else-if="scope.row.outbound_sale_send == 'collect_payment'">
                 <span>到付</span>
               </div>
             </template>
@@ -141,19 +177,113 @@
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="incomAndOutInventFun(scope.row,'add')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_sale_send')">出库</el-button>
               <el-button size="mini" type="text"
                 @click="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
+        <!-- 退货货通知单列表 -->
+        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="thTableList"
+          v-if="categoryType == 'inbound_sale_return'" custom-column ref="thtabForm" :fixedNo="true"
+          :setColumnDisplayList="thcolumnList">
+          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.id, 'look', 'THREFForm', thFormVisible = true)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
+          <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
+          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
+            <template slot-scope="scope">
+              <div v-if="scope.row.exchangeGoodsFlag">
+                换货
+              </div>
+              <div v-else>
+                发货
+              </div>
+            </template>
+          </el-table-column>
+
+
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'inbound_sale_return')">入库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewFun(scope.row.id, 'look', 'THREFForm', thFormVisible = true)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <!-- { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
+        { label: "外协退货", value: "outbound_external" }, -->
+
+        <!-- 采购收/退货 -->
+        <JNPF-table v-loading="listLoading" :key="Math.random()" :data="cgTableList"
+          v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'" custom-column ref="cgthtabForm"
+          :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
+          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
+                @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
+                  scope.row.orderNo
+                }}</el-link>
+              <el-link type="primary" v-if="categoryType == 'inbound_purchase'"
+                @click.native="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+          <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
+          <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
+          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="remark" label="备注" width="180"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'outbound_purchase')">出库</el-button>
+              <el-button size="mini" type="text" v-if="categoryType == 'inbound_purchase'"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'inbound_purchase')">入库</el-button>
+              <el-button size="mini" type="text" v-if="categoryType == 'outbound_purchase'"
+                @click="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">查看详情</el-button>
+              <el-button size="mini" type="text"  v-if="categoryType == 'inbound_purchase'"
+                @click="viewFun(scope.row.id, 'look', 'CGSHREFForm', cgshFormVisible = true)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
         <pagination :total="fhTotal" :page.sync="fhForm.pageNum" :limit.sync="fhForm.pageSize"
-          @pagination="getTabdataList" v-if="categoryType == 'delivery'">
+          @pagination="getTabdataList"
+          v-if="categoryType == 'outbound_sale_send' || categoryType == 'inbound_sale_return'">
+        </pagination>
+        <pagination :total="cgTotal" :page.sync="cgForm.pageNum" :limit.sync="cgForm.pageSize"
+          @pagination="getTabdataList"
+          v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'">
         </pagination>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <FHForm v-if="fhFormVisible" ref="FHREFForm" @close="closeForm" />
+    <THForm v-if="thFormVisible" ref="THREFForm" @close="closeForm" />
+    <CGTHREFForm v-if="cgthFormVisible" ref="CGTHREFForm" @close="closeForm" />
+    <CGSHREFForm v-if="cgshFormVisible" ref="CGSHREFForm" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -162,24 +292,52 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist,getStockMovelist } from '@/api/salesManagement/index'
+import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
+import {purPurchaseReceiptReturnGoodsList} from "@/api/purchasingAndOutsourcingOrders/index"
+ 
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
 import { Release } from '@/api/onlineDev/visualDev'
 import { getVisualDevList, Delete, Copy, exportData } from '@/api/onlineDev/visualDev'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import FHForm from "../../../salesManagement/shippingnotice/saleMetalworking/Form.vue"
-
+import THForm from "../../../salesManagement/shippingnotice/returnSalesmemo/Form.vue"
+import CGTHREFForm from "../../../purchasingManagement/returnManagement/purchaseReturnNote/Form.vue"
+import CGSHREFForm from "../../../warehouseManagement/finishedProductWarehouseManagement/purchaseReceiveNote/Form.vue"
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery, FHForm },
+  components: { Form, SuperQuery,THForm, FHForm,CGSHREFForm,CGTHREFForm },
   data() {
     return {
+      thFormVisible:false,
       fhFormVisible: false,
-      fhcolumnList: ["partnerName", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
+      cgthFormVisible: false,
+      cgshFormVisible:false,
+      fhcolumnList: ['partnerCode', "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
+      thcolumnList: ["partnerCode", "createByName"],
+      cgthcolumnList: ["partnerCode", "createByName", 'remark'],
       fhDateArr: [],//发货通知单 查询条件 发货日期
-      fhSelectList: [],//发货多选数据
+      cgDateArr: [],
+      cgTotal:0,
+      cgForm: {
+        documentStatus: "sibmit",
+        deliverDateStart: "",
+        deliverDateEnd: "",
+        notificationType: "procure",
+        receivingStatus: "not_finished",
+        receiptReturnType:"",
+        orderNo: "",
+        partnerName: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {},
+      },
       fhTableList: [],//发货列表数据
       fhTotal: 0,//发货 列表总条数
       // 发货列表请求条件
@@ -188,7 +346,9 @@ export default {
         partnerName: "",
         pageNum: 1,
         pageSize: 20,
-        returnDeliveryType: 'delivery',
+        returnDeliveryType: '',
+        deliveryStatus: "not_finished",
+        documentStatus: "sibmit",
         rdeDate: "",
         rdsDate: "",
         orderItems: [{
@@ -205,14 +365,14 @@ export default {
       listLoading: false,
       superQueryVisible: false,
       superQueryJson: [],
-
-
+      formVisible: false,
+      thTableList: [],
 
 
 
 
       defaultProps: {
-        children: "childrenList",
+        children: "",
         label: "fullName",
       },
       listQuery: {
@@ -224,71 +384,15 @@ export default {
       filterText: "",
 
 
-      treeData: [
-        {
-          childrenList: [],
-          fullName: "销售待发货",
-          type: "delivery",
-          number: 0,
-        },
-
-        {
-          childrenList: [],
-          fullName: "销售待退货",
-          type: "back",
-          number: 0,
-        },
-        {
-          childrenList: [],
-          fullName: "采购待收货",
-          type: "111",
-          number: 0,
-        },
-        {
-          childrenList: [],
-          fullName: "采购待退货",
-          type: "222",
-          number: 0,
-        },
-        {
-          childrenList: [],
-          fullName: "外协待发料",
-          type: "333",
-          number: 0,
-        },
-
-        {
-          childrenList: [],
-          fullName: "外协待退料",
-          type: "444",
-          number: 0,
-        }, {
-          childrenList: [],
-          fullName: "外协待收货",
-          type: "555",
-          number: 0,
-        },
-        {
-          childrenList: [],
-          fullName: "外协待退货",
-          type: "666",
-          number: 0,
-        },
-        {
-          childrenList: [],
-          fullName: "生产待入库",
-          type: "777",
-          number: 0,
-        },
-      ],
+      treeData: [],
       appTreeData: [],
       refreshTree: true,
       leftFlag: false,
       expands: true,
       treeLoading: false,
-      categoryType: "delivery",
+      categoryType: "outbound_sale_send",
       // 销售发通通知单查询条件
-
+      cgTableList:[],
     }
   },
   watch: {
@@ -297,36 +401,96 @@ export default {
     },
   },
   mounted() {
-    this.initData()
-    this.$refs.treeBox.setCurrentKey(this.treeData[0].type) // 默认选中节点第一个
     // 进入页面  默认查询销售发货通知单数据
 
-    // this.getTabdataList()
     this.getStockMovelistFun()
   },
   methods: {
-    getStockMovelistFun(){
-      getStockMovelist().then(res=>{
-        console.log("左侧分类数据",res);
+    getStockMovelistFun() {
+      getStockMovelist('finish_product').then(res => {
+        console.log("左侧分类数据", res);
+        if (res.data.length) {
+          res.data.forEach(item => {
+            if (item.businessType == 'outbound_sale_send') {
+              this.$set(item, 'fullName', '销售待发货')
+            }
+            if (item.businessType == 'inbound_sale_return') {
+              item.fullName = '销售待退货'
+            }
+            if (item.businessType == 'inbound_purchase') {
+              item.fullName = '采购待收货'
+            }
+            if (item.businessType == 'outbound_purchase') {
+              item.fullName = '采购待退货'
+            }
+
+          });
+        }
+        this.$nextTick(() => {
+          this.treeData = res.data
+          console.log("this", this.treeData);
+          this.$refs.treeBox.setCurrentKey(this.treeData[0].businessType) // 默认选中节点第一个
+          this.categoryType = this.treeData[0].businessType
+          this.getTabdataList()
+        })
+
       })
     },
     // 点击出库/入库按钮
-    incomAndOutInventFun(data,btnType) {
-      if (this.categoryType == 'delivery') {
+    incomAndOutInventFun(data, btnType, ref) {
+      if (this.categoryType) {
         this.formVisible = true
-        this.$refs[ref].init(id, btnType,'delivery')
+        this.$nextTick(() => {
+          this.$refs[ref].init(data, btnType, this.categoryType)
+        })
 
       }
     },
     // 根据左侧分类  点击不同的分类  请求不同的数据
     getTabdataList() {
       // 发货通知单
-      if (this.categoryType == 'delivery') {
+      if (this.categoryType == 'outbound_sale_send') {
         this.listLoading = true
+        this.fhForm.returnDeliveryType = 'delivery'
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.fhTableList = res.data.records
           this.fhTotal = res.data.total
-          this.treeData[0].number = res.data.total
+          this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
+      // 退货通知单列表数据
+      if (this.categoryType == 'inbound_sale_return') {
+        this.listLoading = true
+        this.fhForm.returnDeliveryType = 'back'
+        getQuotationdatasendlist(this.fhForm).then(res => {
+          this.thTableList = res.data.records
+          this.fhTotal = res.data.total
+          this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
+      // 采购收货
+      if (this.categoryType == 'inbound_purchase') {
+        this.listLoading = true
+        this.cgForm.receiptReturnType = 'receipt'
+        purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+          this.cgTableList = res.data.records
+          this.cgTotal = res.data.total
+          this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
+      // 采购退货
+      if (this.categoryType == 'outbound_purchase') {
+        this.listLoading = true
+        this.cgForm.receiptReturnType = 'back'
+        purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
+          this.cgTableList = res.data.records
+          this.cgTotal = res.data.total
           this.listLoading = false
         }).catch(error => {
           this.listLoading = false
@@ -334,7 +498,7 @@ export default {
       }
     },
     advancedQueryFun() {
-      if (this.categoryType == 'delivery') {
+      if (this.categoryType == 'outbound_sale_send') {
         this.superQueryJson = [
           {
             prop: 'orderNo',
@@ -371,7 +535,7 @@ export default {
             type: 'input'
           },
           {
-            prop: 'delivery',
+            prop: 'outbound_sale_send',
             label: "发货方式",
             type: 'select',
 
@@ -410,20 +574,75 @@ export default {
 
         ]
       }
+      if (this.categoryType == "inbound_sale_return") {
+        this.superQueryJson = [
+          {
+            prop: 'orderNo',
+            label: "单号",
+            type: 'input'
+          },
+          {
+            prop: 'partnerName',
+            label: "客户名称",
+            type: 'input'
+          },
+          {
+            prop: 'partnerCode',
+            label: "客户编码",
+            type: 'input'
+          },
+
+          {
+            prop: 'deliverDate',
+            label: '退货日期',
+            type: 'daterange',
+            valueFormat: "yyyy-MM-dd",
+            startPlaceholder: '开始日期',
+            endPlaceholder: '结束日期',
+            pickerOptions: this.global.timePickerOptions
+          },
+
+
+          {
+            prop: 'exchangeGoodsFlag',
+            label: "退货标识",
+            type: 'select',
+
+            options: [
+              { label: "退货", value: false },
+              { label: "换货", value: true }
+            ]
+
+          },
+          {
+            prop: 'createTime',
+            label: '创建时间',
+            type: 'datetimerange',
+            valueFormat: "yyyy-MM-dd HH:mm:ss",
+            startPlaceholder: '创建开始时间',
+            endPlaceholder: '创建结束时间',
+            pickerOptions: this.global.timePickerOptions
+          }, {
+            prop: 'createByName',
+            label: "创建人",
+            type: 'input',
+          },
+
+
+
+        ]
+      }
     },
     superQuerySearch(query) {
       this.superQueryVisible = false
-      if (this.categoryType == 'delivery') {
+      if (this.categoryType == 'outbound_sale_send') {
         this.fhForm.superQuery = query
 
       }
       this.getTabdataList()
     },
 
-    // 发货列表多选
-    FHhandleSelectionChange(val) {
-      this.fhSelectList = val
-    },
+
 
 
     // 查看详情
@@ -436,8 +655,13 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.fhFormVisible = false
+      this.thFormVisible=false
+      this.formVisible = false
+      this.cgshFormVisible=false
+      this.cgthFormVisible=false
       if (isRefresh) {
         this.getTabdataList()
+        this.getStockMovelistFun()
       }
     },
 
@@ -452,8 +676,11 @@ export default {
     },
     handleNodeClick(data, node) {
       console.log("请选择节点", node);
-      this.categoryType = node.data.type
-      this.search();
+      this.categoryType = node.data.businessType
+      this.$nextTick(() => {
+        this.getTabdataList()
+      })
+
     },
 
 
@@ -585,7 +812,8 @@ export default {
 .JNPF-common-layout .JNPF-common-layout-left .JNPF-common-el-tree {
   height: 100%;
 }
+
 .JNPF-common-head {
-  padding: 10px;
+  padding:11px  10px;
 }
 </style>

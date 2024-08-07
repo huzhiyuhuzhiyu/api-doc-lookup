@@ -380,23 +380,16 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "create_time"
+          column: "createTime"
         }],
-        createByName: "",
         endTime: "",
-        keyword: "",
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
-        partnerCode: "",
         partnerName: "",
-        productCode: "",
-        productDrawingNo: "",
-        productName: "",
-        rdeDate: "",
         startTime: "",
-        returnDeliveryType: "",
-        rdsDate: "",
+        businessType: 'send_return',
+        superQuery: {},
       },
         this.createRequirementDate = []
       this.deliveryDate = []

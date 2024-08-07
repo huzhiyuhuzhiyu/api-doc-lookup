@@ -6,7 +6,7 @@
           <div class="headerItem" style="flex:1;display: flex;
           flex-direction: column;margin-left: -50px;
           justify-content: center;align-items:center">
-            <img src="@/assets/images/jxLogo.png" style="transform: scale(0.7);height: 150px;width: 300px;" />
+            <img name="imgBox" src="@/assets/images/jxLogo.png" style="transform: scale(0.7);height: 150px;width: 300px;" />
           </div>
           <div class="headerItem" style="flex:3;display: flex;
           flex-direction: column;margin-left: -90px;
@@ -180,11 +180,37 @@ export default {
   watch: {
     value(newValue) {
       this.list = newValue;
+      let imgBox= document.getElementsByName("imgBox");
+      this.compressImage(imgBox, 0.7, 800)
     },
+    
     // dataValue(newValue) {
     //   this.dataForm = newValue;
     // },
   },
+  methods:{
+    compressImage(img, quality, maxWidth) {
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        img.src = dataUrl
+      }
+    }
+  }
 }
 
 </script>

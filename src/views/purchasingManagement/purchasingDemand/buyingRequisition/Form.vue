@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle"/>
+          <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle" />
           <div style="font-size:18px" v-else>新建请购单</div>
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
@@ -23,7 +23,16 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="单号" prop="orderNo">
+                      <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
+                        "></el-input>
+                    </el-form-item>
+                  </el-col>
                   <el-col :span="24">
                     <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                       <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
@@ -47,12 +56,13 @@
               </div>
 
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC hasNO fixedNO
-                  v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC hasNO
+                  fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type !== 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                  <el-table-column prop="productCode" label="产品编码" min-width="200" fixed="left" show-overflow-tooltip key="productCode">
+                  <el-table-column prop="productCode" label="产品编码" min-width="200" fixed="left" show-overflow-tooltip
+                    key="productCode">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'"
                         :rules='productRules.productCode'>
@@ -66,23 +76,20 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
+                  <!-- 
                   <el-table-column prop="productName" label="产品名称" min-width="200" fixed="left" show-overflow-tooltip key="productName">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
                         :rules='productRules.productName'>
-                        <!-- <el-input :title="scope.row.productName" v-model="scope.row.productName" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="物料名称">{{
-                                scope.row.productName }}
-                            </el-input> -->
+                      
                         <div class="viewData">
                           <span>{{ scope.row.productName }}</span>
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
-                  <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" fixed="left"
+                  <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" fixed="left"
                     show-overflow-tooltip key="productDrawingNo">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
@@ -146,7 +153,8 @@
 
 
 
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip key="deputyUnit">
+                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip
+                    key="deputyUnit">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
                         <!-- <el-input v-model="scope.row.deputyUnit" :disabled="type === 'look'" readonly maxlength="20"
@@ -241,7 +249,8 @@
                                   points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
                               </g>
                               <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                height="36"></rect>
+                                height="36">
+                              </rect>
                               <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
                                 <mask id="mask-4-48" fill="white">
                                   <use xlink:href="#path-3-48"></use>
@@ -374,7 +383,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '产品图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'spec', label: '规格型号' },
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
@@ -384,7 +393,7 @@ export default {
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input' },
         { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段
       approvalBusinessId: '',
@@ -428,14 +437,25 @@ export default {
       },
       transferData: [],
       formLoading: false,
+      codeConfig: {}
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   created() {
+    this.fetchData('QGD')
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        this.dataForm.orderNo = data.number
+        this.$set(this.dataForm, 'orderNo', data.number)
+        console.log('dataForm', this.dataForm)
+      } catch (error) { }
+    },
     // 产品组件回调
     addth(id, data) {
       console.log(data);
@@ -448,7 +468,7 @@ export default {
             productsId: item.id,                 // 产品id
             productName: item.name,              // 产品名称
             productCode: item.code,                // 产品编码
-            productDrawingNo: item.drawingNo,             // 产品图号
+            productDrawingNo: item.drawingNo,             // 品名规格
             ratio: item.ratio,                     // 转换系数
             calculationDirection: item.calculationDirection,  // 计算方向
             mainUnit: item.mainUnit,                   // 主单位
@@ -477,7 +497,7 @@ export default {
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr,]
         // 审批
-        this.$nextTick(() => { this.getApproverData() })
+        // this.$nextTick(() => { this.getApproverData() })
       }
     },
 
@@ -551,6 +571,7 @@ export default {
     },
     init(id, type) {
       console.log(id, type);
+      // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
 
@@ -590,7 +611,7 @@ export default {
               })
             })
             // 审批
-            this.$nextTick(() => { this.getApproverData() })
+            // this.$nextTick(() => { this.getApproverData() })
           })
         } else {
           this.loading = true
@@ -929,16 +950,16 @@ export default {
                 if (this.type === 'add') {
                   addpurProcurementRequire(_data).then(res => {
                     if (res.msg === 'Success') res.msg = '新建成功'
-                    if(!this.dialogTitle){
+                    if (!this.dialogTitle) {
                       this.$message({
                         message: msg,
                         type: 'success',
                         duration: 1000,
                         onClose: () => {
                           this.btnLoading = false
-                          this.datafilelist=[]
-                          this.dataFormTwo.data=[]
-                          this.dataForm={
+                          this.datafilelist = []
+                          this.dataFormTwo.data = []
+                          this.dataForm = {
                             applicationReason: "",
                             approvalCompletionDate: "",
                             // approvalStatus: "",
@@ -948,7 +969,7 @@ export default {
                             reasonRejection: "",
                             submitDate: ""
                           }
-                          this.workVisible=false
+                          this.workVisible = false
                         }
                       })
                       return

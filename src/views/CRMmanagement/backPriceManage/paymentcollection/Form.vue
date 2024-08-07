@@ -198,6 +198,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        contractId:'',
         receivablesNo: '',
         id: '',
         ownerUserId: '',
@@ -317,15 +318,15 @@ export default {
       if (data && data.length) {
         data.forEach(item => {
           let a = {
+            contractId:item.all.id,
             contractNo: item.all.no,
             contractName: item.all.contractName,
             contractMoney: item.all.money,
             unreceivedMoney: item.all.unreceivedMoney,
-            receivablesPlanId: item.all.id,
+            receivablesPlanId: '',
             thisReceivablesMoney: '',
             num: '',
             remark: '',
-            contractId: item.all.id,
           }
           this.dataFormTwo.lines.push(a)
         })
@@ -430,8 +431,13 @@ export default {
         this.$message.error('请选择合同')
         return
       }
+      if (this.dataFormTwo.lines.length>1) {
+        this.$message.error('当前只能选择一份合同')
+        return
+      }
       if (submitFlag) {
         this.btnLoading = true;
+        this.dataForm.contractId = this.dataFormTwo.lines[0].contractId
         let obj = {
           receivables: this.dataForm,
           lines: this.dataFormTwo.lines

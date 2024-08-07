@@ -66,10 +66,7 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">
-            更多查询
-          </el-button>
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -188,57 +185,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="品名规格">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品来源">
-              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
-                <el-option v-for="item in productSourceList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品状态">
-              <el-select v-model="listQuery.productStatus" placeholder="请选择产品状态" clearable style="width: 100%;">
-                <el-option v-for="item in productStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
@@ -295,7 +242,7 @@ export default {
       getbimProductsModelList, // 型号管理属性列表
       title: '更多查询',
       background: true, //分页器背景颜色
-      visible: false,
+
       aiformVisible: false,
       treeData: [],
       tableData: [],
@@ -1153,9 +1100,7 @@ export default {
       this.listQuery.productCategoryCode = data.code
       this.search()
     },
-    moreQueries() {
-      this.visible = true
-    },
+
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.listQuery.orderItems[0].asc = order === 'ascending'
@@ -1184,7 +1129,7 @@ export default {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
-          this.visible = false
+
         })
         .catch(() => {
           this.listLoading = false

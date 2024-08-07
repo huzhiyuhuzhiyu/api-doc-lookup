@@ -211,6 +211,7 @@ export default {
     // 获取左侧属性分类
     getbimProductAttributesFun() {
       getbimProductAttributes('575966014227880773').then((res) => {
+        console.log(res,'iii')
         this.treeData = res.data.list
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个

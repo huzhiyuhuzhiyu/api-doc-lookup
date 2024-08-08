@@ -172,7 +172,7 @@ export default {
             },
             trigger: 'blur'
           })
-          tc.itemDisabled = true
+          // tc.itemDisabled = true
         }
 
         if (tc.prop === 'mainUnit' || tc.prop === 'deputyUnit') {

@@ -5,7 +5,7 @@
         <el-page-header @back="goBack" :content="btnType ? `查看${productName}档案` : title" />
         <div class="options" v-if="!btnType">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">{{ $t('common.submitButton')
-          }}</el-button>
+            }}</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -37,24 +37,24 @@
 </template>
 
 <script>
-import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist,  } from "@/api/masterDataManagement/productManage"
-import { getByCode} from '@/api/basicData/index'
-import { getcategoryTree,getUnitData,detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { detailProduct, addProduct, updateProductData, checkCodeExist, checkDrawExist, } from "@/api/masterDataManagement/productManage"
+import { getByCode } from '@/api/basicData/index'
+import { getcategoryTree, getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getbimProductAttributesList, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import tabs from './params'
 export default {
-  props:{
-    productName:{
-      type:String,
-      default:""
+  props: {
+    productName: {
+      type: String,
+      default: ""
     },
-    classAttribute:{
-       type:String,
-       default:"raw_material"
+    classAttribute: {
+      type: String,
+      default: "raw_material"
     },
-    busSetId:{
-      type:String,
-      default:""
+    busSetId: {
+      type: String,
+      default: ""
     }
   },
   data() {
@@ -77,7 +77,7 @@ export default {
       dataForm: {
         classAttribute: this.classAttribute,
       },
-      businessType:'', //  参数设置  自动  还是 手输
+      businessType: '', //  参数设置  自动  还是 手输
       otherItems: [
         {
           prop: 'saleFlag',
@@ -104,8 +104,8 @@ export default {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach(tc => {
         this.dataForm[tc.prop] = tc.value || ""; // 设置默认value
-        if (this.classAttribute !== 'semi_finished'){
-          if (tc.prop === 'saleFlag' || tc.prop === 'tradeFlag'){
+        if (this.classAttribute !== 'semi_finished') {
+          if (tc.prop === 'saleFlag' || tc.prop === 'tradeFlag') {
             tc.render = false
           }
         }
@@ -123,11 +123,11 @@ export default {
               this.dataForm['productCategoryId'] = data[0].id
               this.dataForm['productCategoryName'] = data[0].name
             }
-            tc.requestObj = { classAttribute: this.classAttribute}
+            tc.requestObj = { classAttribute: this.classAttribute }
             tc.dialogTitle = '选择产品分类'
           } else { console.warn(tc.prop + "不在判断条件内") }
         }
-           // 若干需要选择的产品
+        // 若干需要选择的产品
         if (tc.prop === 'brand') {
           let data = []
           getbimProductAttributesList({ typeCode: tc.typeCode }).then((res) => {
@@ -138,7 +138,7 @@ export default {
           })
 
           tc.clearable = true
-  
+
         }
         // 添加校验编码和图号唯一性的规则
         if (tc.prop === 'code') {
@@ -164,7 +164,7 @@ export default {
               else if (this.dataForm.drawingNo === this.autoDrawingNo) { callback() }
               else {
                 // this.jnpf.specialCodeUrl 对浏览器无法解析的url字符进行手动转码
-                checkDrawExist({id:this.dataForm.id,drawingNo:this.jnpf.specialCodeUrl(this.dataForm.drawingNo)}).then((res) => {
+                checkDrawExist({ id: this.dataForm.id, drawingNo: this.jnpf.specialCodeUrl(this.dataForm.drawingNo) }).then((res) => {
                   if (!res.data) { callback() }
                   else { callback(new Error('此品名规格已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })
@@ -172,6 +172,7 @@ export default {
             },
             trigger: 'blur'
           })
+          tc.itemDisabled = true
         }
 
         if (tc.prop === 'mainUnit' || tc.prop === 'deputyUnit') {
@@ -304,9 +305,9 @@ export default {
           this.dataForm.code = data.number
           let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
           target.itemDisabled = true
-          
+
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     init(id, btnType = false) {
       this.visible = true
@@ -325,15 +326,34 @@ export default {
           let detailObj = res.data
           for (const key in detailObj) { this.dataForm[key] = detailObj[key] }
           this.jnpf.getBillRuleConfigFun(this.busSetId).then((res) => {
-              if (!res.modifyFlag) {
-                let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
-                target.itemDisabled = true
-              }
-            })
+            if (!res.modifyFlag) {
+              let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
+              target.itemDisabled = true
+            }
+          })
         })
       } else {
         this.title = `新建${this.productName}档案`
         this.fetchData(this.busSetId)
+      }
+      if (this.title == '编辑') {
+        this.tabs[0].tabContent.forEach(tc => {
+          if (
+            [
+              'code',
+              'sealingCoverStructure',
+              'structureType',
+              'clearance',
+              'steelBallManufacturer',
+              'oil',
+              'noise',
+              'holder',
+              'productSource'
+            ].includes(tc.prop)
+          ) {
+            tc.itemDisabled = true
+          }
+        })
       }
       this.formLoading = false
     },
@@ -355,7 +375,7 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        this.dataForm.documentStatus="submit"
+        this.dataForm.documentStatus = "submit"
         const formMethod = this.dataForm.id ? updateProductData : addProduct
         formMethod(this.dataForm).then(res => {
           let msg = res.msg
@@ -408,6 +428,7 @@ export default {
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -450,6 +471,7 @@ export default {
   color: red;
   margin-right: 4px;
 }
+
 .orderInfo ::v-deep .el-collapse-item__wrap {
   // margin-bottom: 10px;
   border-bottom: none !important;

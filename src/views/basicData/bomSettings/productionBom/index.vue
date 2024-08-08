@@ -102,7 +102,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO hasC @selection-change="selectionChange" :element-loading-text="loadingText"
+          fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">

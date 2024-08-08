@@ -102,18 +102,19 @@ export default {
         pageSize: 20,
       },
       ProductTableItems: [
+        { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '产品图号', minWidth: 0 },
         { prop: 'mainUnit', label: '主单位', minWidth: 0 },
-        { prop: 'productType', label: '产品类别', minWidth: 0 },
-        { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
+        // { prop: 'productType', label: '产品类别', minWidth: 0 },
+        // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
       ],
       // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
+        { prop: "drawingNo", label: "品名规格", type: 'input' },
         { prop: "code", label: "产品编码", type: 'input', },
         { prop: "name", label: "产品名称", type: 'input', },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        
       ],
       ProductMethodArr: [
         { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
@@ -213,8 +214,9 @@ export default {
       this.$nextTick(() => { this.$refs['sleeveForm'].$children[0].validateField(prop) })
       if (!data || !data.length) return
       let index = paramsObj.scope.$index
+      console.log(data,'uuuu')
       this.sleeveList[index].innerCircleId = data[0].id
-      this.sleeveList[index].innerCircle = data[0].name
+      this.sleeveList[index].innerCircle = data[0].all.drawingNo
     },
     sleeveNameChange2(val, data, paramsObj) {
       let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
@@ -222,7 +224,7 @@ export default {
       if (!data || !data.length) return
       let index = paramsObj.scope.$index
       this.sleeveList[index].outerCircleId = data[0].id
-      this.sleeveList[index].outerCircle = data[0].name
+      this.sleeveList[index].outerCircle = data[0].all.drawingNo
     },
     sleeveNameChange3(val, data, paramsObj) {
       let prop = this.$refs['sleeveForm'].$children[0].fields[paramsObj.scope.$index * this.sleeveItems.length].labelFor
@@ -230,7 +232,7 @@ export default {
       if (!data || !data.length) return
       let index = paramsObj.scope.$index
       this.sleeveList[index].steelBallId = data[0].id
-      this.sleeveList[index].steelBall = data[0].name
+      this.sleeveList[index].steelBall = data[0].all.drawingNo
     },
     init(data, type) {
       this.btnType = type

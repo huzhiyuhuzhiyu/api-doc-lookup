@@ -196,11 +196,14 @@ export default {
         this.total = res.data.total
         this.listLoading = false
         this.$nextTick(() => {
-          this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]) // 自动选择第一项
-          detailUnitData(this.list[0].name).then((res) => {
-            this.dataDetail = res.data.unitRelList || []
-            this.detailLoading = false
-          })
+          this.$refs.listTable.$refs.JNPFTable.setCurrentRow(this.list[0]) // 自动选择第一项、
+
+          if (this.list.length !== 0) {
+            detailUnitData(this.list[0].name).then((res) => {
+              this.dataDetail = res.data.unitRelList || []
+              this.detailLoading = false
+            })
+          }
         })
       })
     },
@@ -265,6 +268,7 @@ export default {
         pageNum: 1,
         pageSize: 20
       }
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     }
   }

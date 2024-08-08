@@ -211,7 +211,7 @@ export default {
     // 获取左侧属性分类
     getbimProductAttributesFun() {
       getbimProductAttributes('575966014227880773').then((res) => {
-        console.log(res,'iii')
+        console.log(res, 'iii')
         this.treeData = res.data.list
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
@@ -255,6 +255,7 @@ export default {
       this.initData()
     },
     reset() {
+
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.form = {
@@ -274,8 +275,9 @@ export default {
           }
         ]
       }
+      this.$refs.SuperQuery.conditionList = []
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       console.log('请选择节点', node)

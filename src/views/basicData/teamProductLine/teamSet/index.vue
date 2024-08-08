@@ -540,6 +540,7 @@ export default {
                 code: '',
                 name: ''
             }
+            this.$refs.SuperQuery.conditionList = []
             this.search()
         },
         addSupplier(type) {

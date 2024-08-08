@@ -85,7 +85,7 @@
                 scope.row.totalAmount }}</div>
               <div v-else-if="scope.row.businessType == 'inbound_purchase'" style="color:red">-{{
                 scope.row.totalAmount
-                }}</div>
+              }}</div>
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
@@ -391,9 +391,10 @@ export default {
         startTime: "",
         businessType: 'purchase_delivery_return',
         superQuery: {},
-      },
-        this.createRequirementDate = []
+      }
+      this.createRequirementDate = []
       this.deliveryDate = []
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     // addSupplier(id, type) {

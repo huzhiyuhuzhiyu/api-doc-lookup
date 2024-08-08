@@ -319,8 +319,9 @@ export default {
         code: "",
         name: "",
         state: "enable"
-      },
-        this.search()
+      }
+      this.$refs.SuperQuery.conditionList = []
+      this.search()
     },
     addSupplier(type) {
 

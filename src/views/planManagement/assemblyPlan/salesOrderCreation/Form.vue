@@ -1,0 +1,710 @@
+<template>
+  <transition name="el-zoom-in-center">
+    <div>
+      <div class="JNPF-preview-main org-form">
+        <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+          <el-page-header @back="goBack"
+            :content="btnType == 'add' ? '新建计划' : btnType == 'edit' ? '编辑计划' : btnType == 'look' ? '查看计划' : '新建计划'" />
+          <div class="options">
+            <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('draft')">
+              保存草稿</el-button>
+            <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('submit')">
+              保存并提交</el-button>
+            <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+          </div>
+        </div>
+        <div class="main" v-loading="formLoading">
+
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="基础信息" name="orderInfo">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="计划单号" prop="orderNo">
+                          <el-input v-model="planForm.orderNo" placeholder="请输入计划单号"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                            maxlength="300" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="计划类型" prop="planType">
+                          <el-select v-model="planForm.planType" placeholder="请选择计划类型" clearable style="width: 100%;"
+                            disabled>
+                            <el-option v-for="(item, index) in planTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="品名规格" prop="drawingNo">
+                          <el-input v-model="planForm.drawingNo" placeholder="请输入品名规格" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="产品名称" prop="productName">
+                          <el-input v-model="planForm.productName" placeholder="请输入产品名称" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="产品编码" prop="productCode">
+                          <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="是否有BOM" prop="bomId">
+
+                          <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
+                          </el-input>
+                          <el-tooltip class="item" effect="dark" :content="planForm.drawingNo" placement="top-start" v-else>
+                            <div v- style="color: #3fb9f8;" class="drawingNo">{{ planForm.drawingNo }}</div>
+                          </el-tooltip>
+                          
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="计划日期" prop="planDate">
+                          <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
+                            :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
+                            end-placeholder="结束日期" clearable>
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
+
+
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="单位" prop="mainUnit">
+
+                          <el-input v-model="planForm.mainUnit" placeholder="请输入单位" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="可用库存数量" prop="availableQuantity">
+
+                          <el-input v-model="planForm.availableQuantity" placeholder="请输入可用库存数量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="计划数量" prop="planNum">
+
+                          <el-input v-model="planForm.planNum" placeholder="请输入计划数量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="合格率" prop="qualificationRate">
+                          <el-input v-model="planForm.qualificationRate" placeholder="请输入合格率"
+                            :disabled='btnType == "look"' oninput="value=value.replace(/^(0+)|[^\d]+/g,'')"
+                            @blur="watchRate">
+                            <template slot="append">
+                              <div>%</div>
+                            </template>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="宽放计划数量" prop="relaxQuantity">
+
+                          <el-input v-model="planForm.relaxQuantity" placeholder="请输入宽放计划数量"
+                            :disabled='btnType == "look"' @blur="watchkF"
+                            oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="安排采购数量" prop="purchaseQuantity">
+
+                          <el-input v-model="planForm.purchaseQuantity" @blur="watchcg" placeholder="请输入安排采购数量"
+                            :disabled='btnType == "look"'>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="利用库存数量" prop="utilizationQuantity">
+
+                          <el-input v-model="planForm.utilizationQuantity" @blur="watchly" placeholder="请输入利用库存数量"
+                            :disabled='btnType == "look"'>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="最终计划数量" prop="finalPlanQuantity">
+
+                          <el-input v-model="planForm.finalPlanQuantity" placeholder="请输入最终计划数量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="planForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+
+                  </el-form>
+                </el-collapse-item>
+
+
+
+                <el-collapse-item title="产品信息" name="productInfo">
+                  <div style="height:530px;display:flex;" ref="boxresiz">
+                    <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
+                      style="width: 100%;height:100%">
+                      <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                      <el-table-column prop="orderNo" label="订单号" width="160" :key="1212"></el-table-column>
+                      <el-table-column prop="drawcooperativePartnerNameingNo" label="客户名称" min-width="320" :key="6">
+                      </el-table-column>
+                      <el-table-column prop="drawingNo" label="品名规格" width="140" :key="4" show-overflow-tooltip />
+                      <el-table-column prop="deliveryDate" label="交货日期" width="150" :key="8" />
+                      <el-table-column prop="mainUnit" label="单位" width="100" :key="121"></el-table-column>
+                      <el-table-column prop="num" label="订单数量" width="100" :key="7"> </el-table-column>
+                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
+                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"> </el-table-column>
+                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
+                      <el-table-column prop="oil" label="油脂" width="120" :key="61"> </el-table-column>
+                      <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
+                      <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column>
+                      <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
+                    </el-table>
+                  </div>
+                </el-collapse-item>
+              </el-collapse>
+            </el-tab-pane>
+            <el-tab-pane label="附件" name="annex">
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </div>
+      <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
+    </div>
+  </transition>
+</template>
+
+<script>
+// import productForm from "./productForm"
+import { excelExport } from '@/api/basicData/index'
+import { getProductInventory } from '@/api/plan/index.js'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import {
+  getProvinceList,
+} from '@/api/system/province'
+import { getbomOrderDetail } from '@/api/salesManagement/assemblyOrders'
+import { mapGetters, mapState } from 'vuex'
+import { BillNumber } from '@/api/system/billRule'
+import { addPlanList, updatePlanList } from '@/api/calculationList/calculationList.js'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
+
+export default {
+
+  components: {
+    ExportForm
+  },
+  data() {
+    return {
+
+      planTypeList: [
+        { label: "订单生成计划", value: "order_plan" },
+        { label: "直接创建计划", value: "add_plan " },
+        { label: "安全库存创建计划", value: "safety_stock_plan" },
+      ],
+      planForm: {
+        orderNo: "",
+        planType: "order_plan",
+        drawingNo: "",
+        productName: "",
+        productCode: "",
+        bomId: "",
+        bomText: "",
+        planDate: [],
+        planStartDate: "",
+        planEndDate: "",
+        mainUnit: "",
+        availableQuantity: "",
+        planNum: "",
+        qualificationRate: 100,
+        relaxQuantity: 0,
+        purchaseQuantity: 0,
+        utilizationQuantity: "",
+        finalPlanQuantity: "",
+        remark: "",
+      },
+      codeConfig: {},//单据规则配置
+      activeName: "orderInfo",
+      btnText: "",
+      activeNames: ["productInfo", "basicInfo"],
+      btnType: undefined,
+      productData: [],
+
+      datafilelist: [],
+
+
+
+      validateNumber: (rule, value, callback) => {
+        const regex = /^\d{0,10}(\.\d{0,2})?$/; // 正则表达式，限制整数最多6位，小数最多4位
+        if (!value || regex.test(value)) {
+          callback(); // 验证通过
+        } else {
+          callback(new Error('请输入最多6位整数和最多4位小数')); // 验证失败
+        }
+      },
+
+
+
+
+
+
+
+      bimVehicle: [],
+      areaList: [],
+      provinces: [],
+      cities: [],
+      area: [],
+      deliveryAddressList: [],
+      countryList: [],
+      listQuery: {
+        keyword: ''
+      },
+      salesList: [],
+      nodeId: -1,
+      isdisabled: false,
+      visible: false,
+      btnLoading: false,
+      formLoading: false,
+      createOrderType: 'normal',
+
+      defaultAddress: "",
+      parentId: '',
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
+      dataRule: {
+        planDate: [
+          { required: true, message: '计划日期不能为空', trigger: 'change' }
+        ],
+        qualificationRate: [
+          { required: true, message: '合格率不能为空', trigger: 'blur' }
+        ],
+        departmentId: [
+          { required: true, message: '部门不能为空', trigger: 'no' }
+
+        ],
+        salesName: [
+          { required: true, message: '所属销售不能为空', trigger: 'change' }
+        ],
+        workOrderNo: [{ required: true, message: "请输入工作令号", trigger: 'blur' }],
+        orderNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
+        orderDate: [{ required: true, message: '订单日期不能为空', trigger: 'change' }],
+        deliveryDate: [{ required: true, message: '交货日期不能为空', trigger: 'change' }],
+        // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
+        // paymentCycle: [{ required: true, message: '付款周期不能为空', trigger: 'change' }],
+      },
+
+
+    }
+  },
+
+
+  created() {
+  },
+  mounted() {
+
+  },
+  beforeDestroy() {
+  },
+  methods: {
+    // 合格率
+    // relaxQuantity 宽放 
+    // purchaseQuantity 采购
+    // utilizationQuantity 利用
+    // finalPlanQuantity最终
+    // 宽放=计划/合格率  向上取整
+    // 最终=宽放-采购-利用
+    watchRate(val) {
+      console.log(val);
+      if (Number(val) > 100) {
+        this.$message.error("合格率最大只能输入100")
+        this.planForm.qualificationRate = 100
+        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6))
+
+        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      } else if (1 <= Number(val) <= 100) {
+        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6))
+
+        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      }
+
+    },
+
+    watchkF(val) {
+      if (Number(val) < Number(this.planForm.planNum)) {
+        this.planForm.relaxQuantity = this.planForm.planNum
+      }
+      this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+
+    }, watchcg(val) {
+
+    }, watchly(val) {
+
+    },
+
+
+
+    validateInput(value) {
+      // 使用正则表达式来匹配正整数  
+      const reg = /^\d*$/; // 或者用 /^\d+$/ 来匹配至少一位数字  
+      if (value === '' || reg.test(value)) {
+        this.inputValue = value; // 只有当输入符合条件时才更新  
+      } else {
+        this.inputValue = this.inputValue; // 保持原值不变  
+      }
+    },
+
+
+    // 切换table
+    handleClick(tab, event) {
+      console.log("tab", tab);
+      if (tab.index == 0) {
+        this.$nextTick(() => {
+        })
+      } else if (tab.name == "schedule") {
+        this.switchStyleheight()
+        this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
+        this.resetDetail()
+      }
+    },
+
+    resetDetail() {
+      this.scheduleForm = JSON.parse(JSON.stringify(this.scheduleForm1))
+      this.scheduleForm.pageNum = 1
+      this.searchDetail()
+    },
+    switchStyleheight() {
+      const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
+      const mainHeight = mainRegion.clientHeight;
+      const TableFormTitle = mainRegion.querySelector('.TableForm_title') // 获取TableForm头部操作栏
+      const TableFormTitleHeight = TableFormTitle ? TableFormTitle.clientHeight : 0
+      let maxHeight = mainHeight - TableFormTitleHeight - 65 - 154
+      maxHeight = maxHeight > 500 ? maxHeight : 500
+      this.customStyleData = maxHeight
+      // 附带防抖的监听适配模式屏幕缩放
+      window.onresize = () => {
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          this.switchStyleheight()
+        }, 100);
+      };
+    },
+
+
+
+
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.planForm.orderNo = data.number
+
+      } catch (error) {
+      }
+    },
+
+    init(id, btnType, productData, planType) {
+      console.log("传递过来的数据", id, btnType, productData, planType);
+      this.planForm.id = id || ''
+      this.btnType = btnType
+      this.productData = productData
+      this.planForm.planType = planType
+      if (this.btnType == 'add') {
+        this.fetchData("JHDH")
+      }
+      let obj = {
+        productsId: productData[0].productsId,
+        accuracyLevel: productData[0].accuracyLevel,
+        clearance: productData[0].clearance,
+        oil: productData[0].oil,
+        productDrawingNo: productData[0].productDrawingNo,
+        sealingCoverTyping: productData[0].sealingCoverTyping,
+        vibrationLevel: productData[0].vibrationLevel,
+
+      };
+      this.planForm.bomId = productData[0].bomId
+      if (productData[0].bomId) {
+        this.planForm.bomText = productData[0].drawingNo
+      } else {
+        this.planForm.bomText = "无BOM"
+
+      }
+
+      this.planForm.planNum = productData.reduce((acc, item) => {
+        return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+      }, 0);
+
+      this.planForm.drawingNo = productData[0].drawingNo
+      this.planForm.productName = productData[0].productName
+      this.planForm.productCode = productData[0].productCode
+      this.planForm.mainUnit = productData[0].mainUnit
+      this.planForm.productName = productData[0].productName
+      console.log(obj);
+      getProductInventory(obj).then(res => {
+        console.log("产品库存", res);
+        this.planForm.availableQuantity = res.data.availableQuantity
+        this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6)
+
+        if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
+          this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
+        } else {
+          this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
+        }
+
+        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+      })
+    },
+
+    goBack() {
+      this.$emit('close', true)
+    },
+
+
+
+    handleConfirm(value) {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+
+          let submitFlag = null;
+
+
+          this.planForm.documentStatus = value
+          let obj = {
+            planLineList: [],
+            plan: {},
+          }
+          let arr = []
+          this.productData.forEach(item => {
+            let objs = {
+              cooperativePartnerId: item.cooperativePartnerId,
+              ordersId: item.ordersId,
+              ordersLineId: item.id,
+              productsId: item.productsId,
+            }
+            arr.push(objs)
+          });
+          obj.planLineList = arr
+
+          obj.plan.documentStatus = value
+          obj.plan.finalPlanQuantity = this.planForm.finalPlanQuantity
+          obj.plan.planNo = this.planForm.orderNo
+          obj.plan.planQuantity = this.planForm.planNum
+          obj.plan.planState = "not_finished"
+          obj.plan.planType = this.planForm.planType
+          obj.plan.purchaseQuantity = this.planForm.purchaseQuantity
+          obj.plan.qualificationRate = this.planForm.qualificationRate
+          obj.plan.relaxQuantity = this.planForm.relaxQuantity
+          obj.plan.remark = this.planForm.remark
+          obj.plan.utilizationQuantity = this.planForm.utilizationQuantity
+          obj.plan.sealingCoverTyping = this.productData[0].sealingCoverTyping
+          obj.plan.vibrationLevel = this.productData[0].vibrationLevel
+          obj.plan.ratio = this.productData[0].ratio
+          obj.plan.productSource = this.productData[0].productSource
+          obj.plan.productsId = this.productData[0].productsId
+          obj.plan.packagingMethod = this.productData[0].packagingMethod
+          obj.plan.planStartDate = this.planForm.planDate[0]
+          obj.plan.planEndDate = this.planForm.planDate[1]
+          obj.plan.oilQuantity = this.productData[0].oilQuantity
+          obj.plan.oil = this.productData[0].oil
+          obj.plan.accuracyLevel = this.productData[0].accuracyLevel
+          obj.plan.bomId = this.productData[0].bomId
+          obj.plan.calculationDirection = this.productData[0].calculationDirection
+          obj.plan.classAttribute = this.productData[0].classAttribute
+          obj.plan.clearance = this.productData[0].clearance
+          obj.plan.deputyUnit = this.productData[0].deputyUnit
+          console.log(obj);
+
+
+          this.btnLoading = true
+          let formMethod = null;
+          formMethod = this.btnType == 'add' ? addPlanList : updatePlanList
+          formMethod(obj).then(res => {
+            let msg = "";
+            if (value == "draft") {
+              msg = "保存成功"
+            } else {
+              msg = "新建成功"
+
+            }
+            this.$message({
+              message: msg,
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
+              }
+            })
+          }).catch(() => {
+            this.btnLoading = false
+          })
+
+        }
+      })
+    },
+
+  }
+}
+</script>
+<style lang="scss" scoped>
+// .main {
+//   padding: 10px 30px 0;
+// }
+::v-deep .handle-mr {
+  display: block !important;
+}
+
+::v-deep .el-tabs__header {
+  padding: 0 !important;
+  margin-bottom: 10px
+}
+
+
+
+//.el-button--small {
+// padding: 1;
+//}</style>
+<style scoped>
+::v-deep .el-tabs__content {
+  height: auto !important;
+  padding: 0;
+}
+
+::v-deep .JNPF-common-page-header.noButtons {
+  padding: 9px 10px;
+}
+</style>
+<style scoped lang="scss">
+.required {
+  color: red;
+  margin-right: 4px;
+}
+
+.el-dialog .el-dialog__body {
+  padding: 20px 0px 2px !important;
+}
+
+::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
+  padding: 0 5px 0 10px !important;
+}
+
+.el-button span {
+  font-size: 14px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+}
+
+
+
+.el-table__footer {
+  display: none;
+}
+
+::v-deep.el-input-group__append {
+  padding: 0;
+  border: none;
+  background-color: #fff;
+}
+
+::v-deep.has-gutter {
+  display: none;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  // background: #dcdfe6;
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  // border-bottom:none;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
+}
+
+.orderInfo ::v-deep .el-collapse-item__wrap {
+  border-bottom: none !important
+}
+
+
+.drawingNo {
+  color: rgb(63, 185, 248);
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-top: 7px
+}
+</style>

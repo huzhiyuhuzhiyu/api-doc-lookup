@@ -48,7 +48,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
             <el-table-column prop="invoiceNo" label="发票申请编号" min-width="160" />
-            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contractNo" label="合同编号" min-width="160" />
             <el-table-column prop="receivablesNo" label="回款编号" min-width="160" />
             <el-table-column prop="invoiceMoney" label="开票金额" min-width="160" />

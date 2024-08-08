@@ -317,3 +317,42 @@ export function detailcrmInvoiceInfo(id) {
     method: 'GET'
   })
 }
+//crm产品管理
+//crm产品管理-列表
+export function getcrmProductlist(data) {
+  return request({
+    url: `/api/zgt/crmProduct/list`,
+    method: 'POST',
+    data
+  })
+}
+// crm产品管理 新增
+export function addcrmProduct(data) {
+  return request({
+    url: `/api/zgt/crmProduct/add`,
+    method: 'POST',
+    data
+  })
+}
+// crm产品管理 详情
+export function detailcrmProduct(id) {
+  return request({
+    url: `/api/zgt/crmProduct/detail/${id}`,
+    method: 'GET'
+  })
+}
+//crm产品管理-删除
+export function deletecrmProduct(id) {
+  return request({
+    url: `/api/zgt/crmProduct/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// crm产品管理 编辑
+export function updatecrmProduct(data) {
+  return request({
+    url: `/api/zgt/crmProduct/update`,
+    method: 'PUT',
+    data
+  })
+}

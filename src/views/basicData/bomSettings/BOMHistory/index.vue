@@ -1,9 +1,9 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" v-if="!leftFlag">
+      <div class="JNPF-common-title"  v-if="!leftFlag">
         <h2>产品分类</h2>
-        <span class="options" v-if="!leftFlag">
+        <span class="options"  v-if="!leftFlag">
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
@@ -74,7 +74,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-        
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -103,8 +103,9 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
-          fixedNO hasC @selection-change="selectionChange" :element-loading-text="loadingText"
+          fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
           :setColumnDisplayList="columnList">
+          <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.productId, 'look')">
@@ -113,7 +114,6 @@
             </template>
           </el-table-column>
           <el-table-column prop="productName" label="产品名称" min-width="200" sortable="custom" />
-          <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="pickingWay" label="领料方式" min-width="180">
             <template slot-scope="{ row }">
               <template v-if="row.pickingWay == 'production_order'">
@@ -240,7 +240,7 @@ export default {
       ],
       formVisible: false,
       exportFormVisible: false,
-      leftFlag:false,
+      leftFlag: false,
       tableData: [],
 
       listLoading: false,
@@ -320,7 +320,7 @@ export default {
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
- 
+
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -378,7 +378,7 @@ export default {
         })
     },
     search() {
-    
+
       Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item

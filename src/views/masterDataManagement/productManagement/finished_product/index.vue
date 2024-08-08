@@ -130,8 +130,8 @@
               <template v-else-if="row.productSource == 'out'">
                 外协
               </template>
-              <template v-else-if="row.productSource == 'out'">
-                外协
+              <template v-else-if="row.productSource == 'assemble'">
+                组装
               </template>
             </template>
           </el-table-column>

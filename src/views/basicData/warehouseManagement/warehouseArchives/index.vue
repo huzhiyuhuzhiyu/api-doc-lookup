@@ -58,7 +58,7 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :fixedNO="true"
           custom-column :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }">
-          <el-table-column prop="name" label="仓库名称" fixed="left" min-width="200" />
+          <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">{{

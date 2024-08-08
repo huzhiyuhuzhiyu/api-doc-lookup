@@ -5,7 +5,7 @@
 
       <!-- 输入框 -->
       <template v-if="item.type === 'input' || item.jnpfKey === 'comInput'">
-        <el-input v-if="!item.remote" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" :readonly="item.readonly" :disabled="item.disabled"
+        <el-input v-if="!item.remote" v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" :readonly="item.readonly" :disabled="item.disabled||readOnly"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event) : ''" :key="1">
@@ -204,6 +204,7 @@ export default {
           }
         }
       }
+      console.log("readOnly",readOnly);
       return readOnly
     },
     rowOptions() {

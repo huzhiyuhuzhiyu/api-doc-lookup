@@ -12,14 +12,14 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货开始日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
                 -
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货结束日期" clearable></el-date-picker>
+                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -828,7 +828,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1003',
-        exportName: '延期发货预警',
+        exportName: '延期收货预警',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

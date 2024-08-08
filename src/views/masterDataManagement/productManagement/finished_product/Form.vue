@@ -574,10 +574,13 @@ export default {
           for (const key in detailObj) {
             this.dataForm[key] = detailObj[key]
           }
+          console.log(this.btnType, 'btnType')
           // 编辑时，如果已经品名规格那些，不允许修改
           this.tabs[0].tabContent.forEach((tc) => {
             if (
               [
+                'code',
+                'drawingNo',
                 'model',
                 'sealingCoverStructure',
                 'structureType',
@@ -618,6 +621,23 @@ export default {
           getbimProductsModelList(obj).then((res) => {
             this.modelForm = res.data.records[0]
           })
+          // this.modelItems.forEach(tc => {
+          //   if (
+          //     [
+          //       // 'model',
+          //       'innerCircle',
+          //       // 'outerCircle',
+          //       // 'steelBall',
+          //       // 'steelBallNum',
+          //       // 'oilNum',
+          //       // 'holderNum',
+                
+          //     ].includes(tc.prop)
+          //   ) {
+          //     tc.itemDisabled = true
+          //   }
+          // })
+          console.log(this.modelItems,'this.modelItems')
           let target = this.modelItems.find((tc) => tc.prop === 'model')
           target.itemDisabled = true
 

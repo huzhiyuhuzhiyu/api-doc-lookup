@@ -49,7 +49,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="no" label="合同编号" min-width="160" />
             <el-table-column prop="contractName" label="合同名称" min-width="180" />
-            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="businessName" label="商机名称" min-width="160" />
             <el-table-column prop="money" label="合同金额" min-width="160" />
             <el-table-column prop="orderTime" label="下单日期" min-width="180" />

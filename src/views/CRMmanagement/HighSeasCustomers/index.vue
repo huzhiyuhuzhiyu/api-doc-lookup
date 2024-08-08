@@ -4,21 +4,25 @@
       <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
           <h2>客户分类</h2>
-          <!-- <span class="options" v-if="!leftFlag">
+          <span class="options" v-if="!leftFlag">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
               </el-dropdown-menu>
             </el-dropdown>
-          </span> -->
+          </span>
         </div>
         <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="true" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ node }">
             <i class="el-icon-notebook-2" />
             <span class="text">{{ node.label }}</span>
@@ -83,7 +87,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column hasC @selection-change="selectCustomerFun">
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="160">
+            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
                   scope.row.name
@@ -261,6 +265,8 @@ export default {
       total: 0,
       formVisible: false,
       selectArr: [],
+      expands: true,
+      refreshTree: true,
     }
   },
   watch: {
@@ -285,8 +291,32 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
     this.getcategoryTree()
     // this.initData()
+    if (localStorage.getItem("HighFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('HighFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
   },
   methods: {
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("HighFlag", expands)
+      })
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list

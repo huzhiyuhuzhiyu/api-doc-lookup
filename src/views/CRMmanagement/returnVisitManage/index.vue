@@ -54,7 +54,7 @@
                 {{VisitForm(scope.row.returnVisitForm)}}
               </template>
             </el-table-column>
-            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contactsName" label="联系人" min-width="120" />
             <el-table-column prop="contractNo" label="合同编号" min-width="140" />
             <el-table-column prop="customerSatisfaction" label="客户满意度" min-width="140">

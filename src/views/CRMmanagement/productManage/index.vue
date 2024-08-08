@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -31,10 +31,10 @@
           </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head">
-            <topOpts @add="addOrUpdateHandle('', 'add')">
+          <div class="JNPF-common-head" style="display:block;line-height:34px">
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
             </topOpts>
-            <div class="JNPF-common-head-right">
+            <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
@@ -46,15 +46,29 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180" />
-            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
-            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-            <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <el-table-column label="操作" width="180">
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+            <el-table-column prop="name" label="产品名称" min-width="180" />
+            <el-table-column prop="code" label="产品编码" min-width="170" />
+            <el-table-column prop="type" label="产品类型" min-width="160" />
+            <el-table-column prop="unit" label="产品单位" min-width="120">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                {{returnTypeVisitForm(scope.row.unit)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="价格(元)" min-width="140" />
+            <el-table-column prop="describe" label="产品描述" min-width="300" />
+            <el-table-column prop="costPrice" label="成本价(元)" min-width="140" />
+            <el-table-column prop="stackingFlag" label="是否上下架" min-width="100">
+              <template slot-scope="scope">
+                <div v-if="scope.row.stackingFlag == '0'">否</div>
+                <div v-if="scope.row.stackingFlag == '1'">是</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" />
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.receivablesStatus=='payment'">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -84,32 +98,68 @@
 </template>
 
 <script>
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { deletecrmProduct, getcrmProductlist } from '@/api/CRMmanagement/index'
+import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
-import Form from './Form'
 export default {
-  name: 'serviceRecords',
-  components: { Form, programme, SuperQuery },
+  name: 'myContacts',
+  components: {
+    SuperQuery,
+    programme,
+    Form
+  },
   data() {
     return {
-      datalist:[],
+      datalist: [],
+      unitList: [],
       superQueryJson: [
         {
           prop: 'name',
-          label: "客户名称",
+          label: "产品名称",
           type: 'input'
+        },
+        {
+          prop: 'type',
+          label: "产品类型",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'unit',
+          label: '产品单位',
+          type: 'select',
+          options: []
         },
         {
           prop: 'code',
-          label: "客户编码",
+          label: "产品编码",
           type: 'input'
         },
         {
-          prop: 'serviceDescription',
-          label: "服务记录",
+          prop: 'price',
+          label: "价格",
           type: 'input'
+        },
+        {
+          prop: 'describe',
+          label: "产品描述",
+          type: 'input'
+        },
+        {
+          prop: 'costPrice',
+          label: "成本价",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'stackingFlag',
+          label: '是否上下架',
+          type: 'select',
+          options: [
+            { label: '是', value: '1' },
+            { label: '否', value: '0' }
+          ]
         },
         { // 日期时间选择器（区间）
           prop: 'createTime',
@@ -137,19 +187,9 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        createByName: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
+        name: '',
         pageNum: 1,
         pageSize: 20,
-        serviceDescription: "",
-        startTime: "",
-        startUpdateTime: "",
-        totalRowFlag: false,
-        createTimeArr: [],
         orderItems: [{
           asc: false,
           column: ""
@@ -169,6 +209,7 @@ export default {
     }
   },
   created() {
+    this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -183,6 +224,60 @@ export default {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
         this.switchStyle()
+      })
+    },
+    returnTypeVisitForm(val) {
+      let _data = this.unitList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    // 获取付款方式数据
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == "partnerArchives") {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "ProductUnit") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.unitList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'unit') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      })
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deletecrmProduct(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    addOrUpdateHandle(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
       })
     },
     superQuerySearch(query) {
@@ -228,8 +323,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getServiceRecordList(this.listQuery).then(res => {
+      getcrmProductlist(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -238,17 +332,6 @@ export default {
         this.listLoading = false
       })
     },
-    sortChange({ prop, order }) {
-      let newProp
-      if (['cooperativePartnerCode', 'cooperativePartnerName'].includes(prop)) { newProp = prop }
-      else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      }
-      this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
-    },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
@@ -266,26 +349,6 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.programmetitle = ''
       this.initData()
-    },
-    addOrUpdateHandle(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deleteServiceRecord(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
     },
   }
 }

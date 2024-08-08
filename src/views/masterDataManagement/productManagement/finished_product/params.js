@@ -16,7 +16,7 @@ export default () => [
       { prop: "productCategoryName", label: "产品分类", value: "", type: 'custom', customComponent: "ComSelect-list", itemRules: [{ required: true, message: "请选择产品分类", trigger: "no" }] },
       { prop: "code", label: "产品编码", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate('enCode'), trigger: 'blur' }], render: true,  },
       { prop: "drawingNo", label: "品名规格", value: "", type: "input", maxlength: "1000",  },
-      { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100, },
+      { prop: "name", label: "产品名称", value: "", type: 'input', maxlength: 100,itemDisabled:true },
       { prop: "mainUnit", label: "主单位", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }], options: [] },
       { prop: "deputyUnit", label: "副单位", value: "", type: 'select', itemRules: [{ required: true, trigger: "blur" }], options: [] },
       { prop: "ratio", label: "转换系数", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate({ type: 'decimal', params: [10, 6] }), trigger: 'blur' }, { validator: formValidate('positiveNumber'), trigger: "blur" }] },

@@ -1283,4 +1283,7 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+::v-deep .selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
+    padding: 0 0px !important;
+}
 </style>

@@ -89,7 +89,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
                               :rules="productRules.productName">
-                              <el-input v-model="scope.row.productName" placeholder="请输入含税单价" />
+                              <el-input v-model="scope.row.productName" placeholder="请输入产品名称" />
                             </el-form-item>
                           </template>
                         </el-table-column>

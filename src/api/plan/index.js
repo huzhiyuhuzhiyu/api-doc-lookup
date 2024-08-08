@@ -8,3 +8,20 @@ export function getProductInventory(data) {
     data
   })
 }
+//计划管理 齐套查询
+export function getTreeByDrawNo(data) {
+  return request({
+    url: `/api/mrp/material/demand/kit/treeByDrawNo`,
+    method: 'get',
+    data
+  })
+}
+// 直接创建计划 批量新增
+
+export function batchAddPlan(data) {
+  return request({
+    url: `/api/mrp/plan/add/batch`,
+    method: 'post',
+    data
+  })
+}

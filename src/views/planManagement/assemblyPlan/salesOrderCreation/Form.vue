@@ -24,8 +24,8 @@
                   <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划单号" prop="orderNo">
-                          <el-input v-model="planForm.orderNo" placeholder="请输入计划单号"
+                        <el-form-item label="计划单号" prop="planNo">
+                          <el-input v-model="planForm.planNo" placeholder="请输入计划单号"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                             maxlength="300" />
                         </el-form-item>
@@ -40,8 +40,8 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="品名规格" prop="drawingNo">
-                          <el-input v-model="planForm.drawingNo" placeholder="请输入品名规格" disabled>
+                        <el-form-item label="品名规格" prop="productDrawingNo">
+                          <el-input v-model="planForm.productDrawingNo" placeholder="请输入品名规格" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -63,10 +63,11 @@
 
                           <el-input v-model="planForm.bomText" placeholder="请输入是否有BOM" disabled v-if="!planForm.bomId">
                           </el-input>
-                          <el-tooltip class="item" effect="dark" :content="planForm.drawingNo" placement="top-start" v-else>
-                            <div v- style="color: #3fb9f8;" class="drawingNo">{{ planForm.drawingNo }}</div>
+                          <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
+                            placement="top-start" v-else>
+                            <div v- style="color: #3fb9f8;" class="drawingNo">{{ planForm.productDrawingNo }}</div>
                           </el-tooltip>
-                          
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
@@ -88,7 +89,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="6" :xs="24" v-if="btnType!='look'">
                         <el-form-item label="可用库存数量" prop="availableQuantity">
 
                           <el-input v-model="planForm.availableQuantity" placeholder="请输入可用库存数量" disabled>
@@ -96,9 +97,9 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="计划数量" prop="planNum">
+                        <el-form-item label="计划数量" prop="planQuantity">
 
-                          <el-input v-model="planForm.planNum" placeholder="请输入计划数量" disabled>
+                          <el-input v-model="planForm.planQuantity" placeholder="请输入计划数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -164,10 +165,11 @@
                     <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
                       style="width: 100%;height:100%">
                       <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
-                      <el-table-column prop="orderNo" label="订单号" width="160" :key="1212"></el-table-column>
-                      <el-table-column prop="drawcooperativePartnerNameingNo" label="客户名称" min-width="320" :key="6">
+                      <el-table-column prop="ordersNo" label="订单号" width="160" :key="1212"></el-table-column>
+                      <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" :key="6">
                       </el-table-column>
-                      <el-table-column prop="drawingNo" label="品名规格" width="140" :key="4" show-overflow-tooltip />
+                      <el-table-column prop="productDrawingNo" label="品名规格" min-width="360" :key="4"
+                        show-overflow-tooltip />
                       <el-table-column prop="deliveryDate" label="交货日期" width="150" :key="8" />
                       <el-table-column prop="mainUnit" label="单位" width="100" :key="121"></el-table-column>
                       <el-table-column prop="num" label="订单数量" width="100" :key="7"> </el-table-column>
@@ -225,9 +227,9 @@ export default {
         { label: "安全库存创建计划", value: "safety_stock_plan" },
       ],
       planForm: {
-        orderNo: "",
+        planNo: "",
         planType: "order_plan",
-        drawingNo: "",
+        productDrawingNo: "",
         productName: "",
         productCode: "",
         bomId: "",
@@ -237,13 +239,14 @@ export default {
         planEndDate: "",
         mainUnit: "",
         availableQuantity: "",
-        planNum: "",
+        planQuantity: "",
         qualificationRate: 100,
         relaxQuantity: 0,
         purchaseQuantity: 0,
         utilizationQuantity: "",
         finalPlanQuantity: "",
         remark: "",
+        id: "",
       },
       codeConfig: {},//单据规则配置
       activeName: "orderInfo",
@@ -310,8 +313,8 @@ export default {
         salesName: [
           { required: true, message: '所属销售不能为空', trigger: 'change' }
         ],
-        workOrderNo: [{ required: true, message: "请输入工作令号", trigger: 'blur' }],
-        orderNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
+        workplanNo: [{ required: true, message: "请输入工作令号", trigger: 'blur' }],
+        planNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
         orderDate: [{ required: true, message: '订单日期不能为空', trigger: 'change' }],
         deliveryDate: [{ required: true, message: '交货日期不能为空', trigger: 'change' }],
         // paymentMethod: [{ required: true, message: '付款方式不能为空', trigger: 'change' }],
@@ -335,7 +338,7 @@ export default {
     // relaxQuantity 宽放 
     // purchaseQuantity 采购
     // utilizationQuantity 利用
-    // finalPlanQuantity最终
+    // finalPlanQuantity 最终
     // 宽放=计划/合格率  向上取整
     // 最终=宽放-采购-利用
     watchRate(val) {
@@ -343,27 +346,35 @@ export default {
       if (Number(val) > 100) {
         this.$message.error("合格率最大只能输入100")
         this.planForm.qualificationRate = 100
-        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6))
+        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
 
         this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
       } else if (1 <= Number(val) <= 100) {
-        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6))
+        this.planForm.relaxQuantity = Math.ceil(this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6))
 
         this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
       }
 
     },
-
+    // 宽放数量  监听
     watchkF(val) {
-      if (Number(val) < Number(this.planForm.planNum)) {
-        this.planForm.relaxQuantity = this.planForm.planNum
-      }
+      
       this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
 
-    }, watchcg(val) {
-
-    }, watchly(val) {
-
+    }, 
+    // 采购数量监听
+    watchcg(val) {
+      if(Number(val)>Number(this.planForm.relaxQuantity)){
+        this.$message.error("利用库存数量不能超过宽放数量")
+        return
+      }
+    }, 
+    // 利用数量监听
+    watchly(val) {
+      if(Number(val)>Number(this.planForm.relaxQuantity)){
+        this.$message.error("利用库存数量不能超过宽放数量")
+        return
+      }
     },
 
 
@@ -421,7 +432,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.planForm.orderNo = data.number
+        this.planForm.planNo = data.number
 
       } catch (error) {
       }
@@ -431,52 +442,115 @@ export default {
       console.log("传递过来的数据", id, btnType, productData, planType);
       this.planForm.id = id || ''
       this.btnType = btnType
-      this.productData = productData
       this.planForm.planType = planType
       if (this.btnType == 'add') {
+       
         this.fetchData("JHDH")
-      }
-      let obj = {
-        productsId: productData[0].productsId,
-        accuracyLevel: productData[0].accuracyLevel,
-        clearance: productData[0].clearance,
-        oil: productData[0].oil,
-        productDrawingNo: productData[0].productDrawingNo,
-        sealingCoverTyping: productData[0].sealingCoverTyping,
-        vibrationLevel: productData[0].vibrationLevel,
+        let obj = {
+          productsId: productData[0].productsId,
+          accuracyLevel: productData[0].accuracyLevel,
+          clearance: productData[0].clearance,
+          oil: productData[0].oil,
+          productDrawingNo: productData[0].drawingNo,
+          sealingCoverTyping: productData[0].sealingCoverTyping,
+          vibrationLevel: productData[0].vibrationLevel,
 
-      };
-      this.planForm.bomId = productData[0].bomId
-      if (productData[0].bomId) {
-        this.planForm.bomText = productData[0].drawingNo
-      } else {
-        this.planForm.bomText = "无BOM"
-
-      }
-
-      this.planForm.planNum = productData.reduce((acc, item) => {
-        return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
-      }, 0);
-
-      this.planForm.drawingNo = productData[0].drawingNo
-      this.planForm.productName = productData[0].productName
-      this.planForm.productCode = productData[0].productCode
-      this.planForm.mainUnit = productData[0].mainUnit
-      this.planForm.productName = productData[0].productName
-      console.log(obj);
-      getProductInventory(obj).then(res => {
-        console.log("产品库存", res);
-        this.planForm.availableQuantity = res.data.availableQuantity
-        this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planNum, this.planForm.qualificationRate]), 6)]), 6)
-
-        if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
-          this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
+        };
+        this.planForm.bomId = productData[0].bomId
+        if (productData[0].bomId) {
+          this.planForm.bomText = productData[0].drawingNo
         } else {
-          this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
+          this.planForm.bomText = "无BOM"
+
         }
 
-        this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
-      })
+        this.planForm.planQuantity = productData.reduce((acc, item) => {
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
+        }, 0);
+
+        this.planForm.productDrawingNo = productData[0].drawingNo
+        this.planForm.productName = productData[0].productName
+        this.planForm.productCode = productData[0].productCode
+        this.planForm.mainUnit = productData[0].mainUnit
+        this.planForm.productName = productData[0].productName
+        productData.forEach(item => {
+          item.productDrawingNo=item.drawingNo
+          item.ordersNo=item.orderNo
+        });
+        console.log(obj);
+        this.productData = productData
+        getProductInventory(obj).then(res => {
+          console.log("产品库存", res);
+          this.planForm.availableQuantity = res.data.availableQuantity
+          this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+
+          if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
+            this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
+          } else {
+            this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
+          }
+
+          this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+        })
+      }
+      if (btnType == 'edit' || btnType == 'look') {
+        this.planForm.planQuantity = productData.planLineList.reduce((acc, item) => {
+          return acc + Number(item.ordersNum); // 使用 Number() 将字符串转换为数字  
+        }, 0);
+        this.planForm = productData.plan
+        this.$set(this.planForm, 'planDate', [])
+        this.planForm.planDate.push(productData.plan.planStartDate)
+        this.planForm.planDate.push(productData.plan.planEndDate)
+        if (productData.plan.bomId) {
+          this.planForm.bomText = productData.plan.productDrawingNo
+        } else {
+          this.planForm.bomText = "无BOM"
+
+        }
+
+
+        productData.planLineList.forEach(item => {
+          item.accuracyLevel = productData.plan.accuracyLevel
+          item.clearance = productData.plan.clearance
+          item.oil = productData.plan.oil
+          item.productDrawingNo = productData.plan.productDrawingNo
+          item.sealingCoverTyping = productData.plan.sealingCoverTyping
+          item.vibrationLevel = productData.plan.vibrationLevel
+          item.mainUnit = productData.plan.mainUnit
+          item.num = item.ordersNum
+          item.cooperativePartnerName=item.partnerName
+        })
+        this.productData = productData.planLineList
+
+
+        let obj = {
+          productsId: productData.plan.productsId,
+          accuracyLevel: productData.plan.accuracyLevel,
+          clearance: productData.plan.clearance,
+          oil: productData.plan.oil,
+          productDrawingNo: productData.plan.productDrawingNo,
+          sealingCoverTyping: productData.plan.sealingCoverTyping,
+          vibrationLevel: productData.plan.vibrationLevel,
+
+        };
+        console.log(obj);
+        if (this.btnType == 'edit') {
+          getProductInventory(obj).then(res => {
+            console.log("产品库存", res);
+            this.planForm.availableQuantity = res.data.availableQuantity
+            this.planForm.relaxQuantity = this.jnpf.numberFormat(this.jnpf.math('multiply', [100, this.jnpf.numberFormat(this.jnpf.math('divide', [this.planForm.planQuantity, this.planForm.qualificationRate]), 6)]), 6)
+
+            if (this.planForm.availableQuantity > this.planForm.relaxQuantity) {
+              this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.relaxQuantity))
+            } else {
+              this.planForm.utilizationQuantity = JSON.parse(JSON.stringify(this.planForm.availableQuantity))
+            }
+
+            this.planForm.finalPlanQuantity = this.jnpf.numberFormat(this.jnpf.math('subtract', [this.planForm.relaxQuantity, this.planForm.purchaseQuantity, this.planForm.utilizationQuantity]), 6)
+          })
+        }
+        
+      }
     },
 
     goBack() {
@@ -504,38 +578,47 @@ export default {
               ordersId: item.ordersId,
               ordersLineId: item.id,
               productsId: item.productsId,
+              planId: item.planId || null,
+            }
+            if (this.btnType != 'look') {
+              objs.id = item.id
             }
             arr.push(objs)
           });
           obj.planLineList = arr
 
-          obj.plan.documentStatus = value
-          obj.plan.finalPlanQuantity = this.planForm.finalPlanQuantity
-          obj.plan.planNo = this.planForm.orderNo
-          obj.plan.planQuantity = this.planForm.planNum
-          obj.plan.planState = "not_finished"
-          obj.plan.planType = this.planForm.planType
-          obj.plan.purchaseQuantity = this.planForm.purchaseQuantity
-          obj.plan.qualificationRate = this.planForm.qualificationRate
-          obj.plan.relaxQuantity = this.planForm.relaxQuantity
-          obj.plan.remark = this.planForm.remark
-          obj.plan.utilizationQuantity = this.planForm.utilizationQuantity
-          obj.plan.sealingCoverTyping = this.productData[0].sealingCoverTyping
-          obj.plan.vibrationLevel = this.productData[0].vibrationLevel
-          obj.plan.ratio = this.productData[0].ratio
-          obj.plan.productSource = this.productData[0].productSource
-          obj.plan.productsId = this.productData[0].productsId
-          obj.plan.packagingMethod = this.productData[0].packagingMethod
-          obj.plan.planStartDate = this.planForm.planDate[0]
-          obj.plan.planEndDate = this.planForm.planDate[1]
-          obj.plan.oilQuantity = this.productData[0].oilQuantity
-          obj.plan.oil = this.productData[0].oil
-          obj.plan.accuracyLevel = this.productData[0].accuracyLevel
-          obj.plan.bomId = this.productData[0].bomId
-          obj.plan.calculationDirection = this.productData[0].calculationDirection
-          obj.plan.classAttribute = this.productData[0].classAttribute
-          obj.plan.clearance = this.productData[0].clearance
-          obj.plan.deputyUnit = this.productData[0].deputyUnit
+          if (this.btnType == 'add') {
+            obj.plan.documentStatus = value
+            obj.plan.finalPlanQuantity = this.planForm.finalPlanQuantity
+            obj.plan.planNo = this.planForm.planNo
+            obj.plan.planQuantity = this.planForm.planQuantity
+            obj.plan.planState = "not_finished"
+            obj.plan.planType = this.planForm.planType
+            obj.plan.purchaseQuantity = this.planForm.purchaseQuantity
+            obj.plan.qualificationRate = this.planForm.qualificationRate
+            obj.plan.relaxQuantity = this.planForm.relaxQuantity
+            obj.plan.remark = this.planForm.remark
+            obj.plan.id = this.planForm.id
+            obj.plan.utilizationQuantity = this.planForm.utilizationQuantity
+            obj.plan.sealingCoverTyping = this.productData[0].sealingCoverTyping
+            obj.plan.vibrationLevel = this.productData[0].vibrationLevel
+            obj.plan.ratio = this.productData[0].ratio
+            obj.plan.productSource = this.productData[0].productSource
+            obj.plan.productsId = this.productData[0].productsId
+            obj.plan.packagingMethod = this.productData[0].packagingMethod
+            obj.plan.planStartDate = this.planForm.planDate[0]
+            obj.plan.planEndDate = this.planForm.planDate[1]
+            obj.plan.oilQuantity = this.productData[0].oilQuantity
+            obj.plan.oil = this.productData[0].oil
+            obj.plan.accuracyLevel = this.productData[0].accuracyLevel
+            obj.plan.bomId = this.productData[0].bomId
+            obj.plan.calculationDirection = this.productData[0].calculationDirection
+            obj.plan.classAttribute = this.productData[0].classAttribute
+            obj.plan.clearance = this.productData[0].clearance
+            obj.plan.deputyUnit = this.productData[0].deputyUnit
+          } else {
+            obj.plan = this.planForm
+          }
           console.log(obj);
 
 

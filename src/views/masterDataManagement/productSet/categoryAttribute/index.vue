@@ -253,7 +253,6 @@ export default {
         })
     },
     search() {
-
       Object.keys(this.form).forEach((key) => {
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
@@ -281,8 +280,9 @@ export default {
           }
         ]
       }
+      this.$refs.SuperQuery.conditionList = []
 
-      // this.search()
+      this.search()
     },
     handleNodeClick(data, node) {
       this.form.typeCode = node.data.enCode
@@ -573,11 +573,6 @@ export default {
 }
 </script>
 <style scoped>
-.JNPF-common-layout-left {
-  /* margin-right: 0; */
-  /* border-right: 1px solid #cacaca; */
-}
-
 ::v-deep .el-tabs__content {
   height: calc(100vh - 163px);
 }

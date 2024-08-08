@@ -275,7 +275,7 @@ export default {
         children: 'childrenList',
         label: 'name'
       },
-   
+
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -347,7 +347,7 @@ export default {
   created() {
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    console.log(this.listQuery,'qiery')
+    console.log(this.listQuery, 'qiery')
     this.initData()
   },
   computed: {
@@ -482,6 +482,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.initData()
     },
 

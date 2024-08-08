@@ -60,8 +60,8 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table @selection-change="handeleFinshData" hasC v-loading="listLoading" highlight-current-row
-            :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
+          <JNPF-table @selection-change="handeleFinshData" v-loading="listLoading" highlight-current-row :fixedNO="true"
+            ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
@@ -1114,34 +1114,35 @@ export default {
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-        ; (this.listQuery = {
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'create_time'
-            }
-          ],
-          approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
-          cooperativePartnerCode: '', //供应商编码
-          cooperativePartnerName: '', // 	供应商名称
-          createByName: '',
-          delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
-          deliveryEndDate: '', //交货结束日期
-          deliveryStartDate: '',
-          deliveryDate: '',
-          endTime: '',
-          orderNo: '', //订单号
-          orderType: 'procure', //	订单类型 采购 procure、外协 external
-          startTime: ''
-        }),
-          (this.createRequirementDate = [])
+      this.listQuery = {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //供应商编码
+        cooperativePartnerName: '', // 	供应商名称
+        createByName: '',
+        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
+        deliveryEndDate: '', //交货结束日期
+        deliveryStartDate: '',
+        deliveryDate: '',
+        endTime: '',
+        orderNo: '', //订单号
+        orderType: 'procure', //	订单类型 采购 procure、外协 external
+        startTime: ''
+      }
+      this.createRequirementDate = []
       this.deliveryDate = []
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     // 重置明细

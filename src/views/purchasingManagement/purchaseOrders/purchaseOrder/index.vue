@@ -4,7 +4,6 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
@@ -26,9 +25,10 @@
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                  $t('common.reset') }}
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                  {{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
             </el-col>
@@ -62,13 +62,12 @@
           </div>
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-            custom-column :checkSelectable="checkSelectable"  :setColumnDisplayList="columnList">
-
+            custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                  {{ scope.row.orderNo }}
+                </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
@@ -81,13 +80,12 @@
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
             <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
-            <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
+            <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
+                <div v-if="scope.row.receivingStatus == 'not_finished'">
                   <el-tag>未完成</el-tag>
                 </div>
-                <div v-if="scope.row.receivingStatus == 'received' || scope.row.receivingStatus == 'returned'"><el-tag
-                    type="success">已完成</el-tag></div>
+                <div v-if="scope.row.receivingStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
@@ -116,7 +114,8 @@
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
@@ -142,7 +141,6 @@
                 </el-dropdown>
               </template>
             </el-table-column>
-
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData" />
@@ -153,9 +151,7 @@
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
       <el-row :gutter="20">
-
         <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-
           <el-col :span="12">
             <el-form-item label="采购单号">
               <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
@@ -195,8 +191,8 @@
           <el-col :span="12">
             <el-form-item label="交货日期">
               <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
+                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"
+                :picker-options="pickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
 
@@ -204,11 +200,9 @@
             <el-form-item label="创建时间">
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker>
+                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
-
         </el-form>
       </el-row>
 
@@ -219,7 +213,6 @@
         </el-button>
       </span>
     </el-dialog>
-
 
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
@@ -232,7 +225,14 @@
 
 <script>
 // import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import { purchaseOrderList, detailpurchaseOrderList, purPurchaseOrderExport, purPurchaseOrderdetail, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
+import {
+  purchaseOrderList,
+  detailpurchaseOrderList,
+  purPurchaseOrderExport,
+  purPurchaseOrderdetail,
+  purPurchaseBatch,
+  purPurchaseBatchLine
+} from '@/api/purchasingAndOutsourcingOrders/index'
 import JNPFForm from './Form'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
@@ -242,9 +242,7 @@ import PrintForm from './printForm'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'purchaseOrder',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery },
@@ -263,7 +261,6 @@ export default {
           label: '供应商编码',
           type: 'input'
         },
-
 
         {
           prop: 'cooperativePartnerName',
@@ -322,56 +319,60 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ],
       printVisible: false,
-      title: "更多查询",
-      background: true,//分页器背景颜色
+      title: '更多查询',
+      background: true, //分页器背景颜色
       visible: false,
       btnLoading: false,
       detailVisible: false,
       withdrawnVisible: false,
-      tableDataList: [
-      ],
+      tableDataList: [],
       detailTableData: [],
       flag: true,
-      activeName: "orderList",
+      activeName: 'orderList',
       formVisible: false,
       listLoading: false,
-      statusList: [{
-        label: "审批中",
-        value: "ing"
-      }, {
-        label: "审批通过",
-        value: "ok"
-      }, {
-        label: "审批拒绝",
-        value: "rebut"
-      },
-      { label: "审批撤回", value: "withdrawn" },
+      statusList: [
+        {
+          label: '审批中',
+          value: 'ing'
+        },
+        {
+          label: '审批通过',
+          value: 'ok'
+        },
+        {
+          label: '审批拒绝',
+          value: 'rebut'
+        },
+        { label: '审批撤回', value: 'withdrawn' }
       ],
       listQuery: {
-        approvalStatus: "",             //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
-        cooperativePartnerCode: "",     //供应商编码
-        cooperativePartnerName: "",     // 	供应商名称
-        createByName: "",
-        delivery: "",                   //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
-        deliveryEndDate: "",            //交货结束日期
-        deliveryStartDate: "",
+        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //供应商编码
+        cooperativePartnerName: '', // 	供应商名称
+        createByName: '',
+        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
+        deliveryEndDate: '', //交货结束日期
+        deliveryStartDate: '',
         deliveryDate: '',
-        endTime: "",
-        orderNo: "",                    //订单号
-        orderType: "procure",                  //	订单类型 采购 procure、外协 external
+        endTime: '',
+        orderNo: '', //订单号
+        orderType: 'procure', //	订单类型 采购 procure、外协 external
         pageNum: 1,
         pageSize: 20,
-        startTime: "",
-        orderItems: [{
-          asc: false,
-          column: "create_time"
-        }],
-        receivingStatus: 'receiving',
+        startTime: '',
+        orderItems: [
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        receivingStatus: 'receiving'
       },
-  
+
       total: 0,
       formVisible: false,
       createRequirementDate: [],
@@ -380,49 +381,44 @@ export default {
         // disabledDate(time) {
         //   return time.getTime() > Date.now()
         // },
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '上个月',
+            onClick(picker) {
+              const end = new Date(moment(new Date().getTime()).format('YYYY-MM-01 00:00:00'))
+              const start = new Date()
+              end.setTime(end.getTime() - 3600 * 1000 * 24)
+              start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '上个月',
-          onClick(picker) {
-            const end = new Date(moment((new Date().getTime())).format('YYYY-MM-01 00:00:00'))
-            const start = new Date()
-            end.setTime(end.getTime() - 3600 * 1000 * 24)
-            start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }]
+        ]
       },
       selectData: [],
-      pages: 0,      // 总页数
+      pages: 0, // 总页数
       printData: [], // 表格数据
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
-      receiptReturnType: [
-        { label: "未完成", value: "receiving" },
-        { label: "已完成", value: "received" }
-      ],
-      columnList: [
-        'cooperativePartnerCode',
-        'excludingTaxTotalAmount',
-        'taxAmount',
-        'receivingStatus',
-        'createByName'
-      ],
+      receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
+      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName']
     }
   },
   created() {
@@ -467,8 +463,7 @@ export default {
       this.search()
     },
     checkSelectable(row) {
-      console.log(row.disabled,'disa')
-      return row.disabled
+      return row.receivingStatus == 'not_finished'
     },
     // 选中列表的数据 将其带到生成订单下面表单表格中
     handeleFinshData(val) {
@@ -476,7 +471,7 @@ export default {
     },
     // 批量完成
     handleBatch() {
-      console.log(this.selectData, '选择的数据');
+      console.log(this.selectData, '选择的数据')
       if (!this.selectData.length) {
         this.$message.error('请先选择您要完成的数据')
       } else {
@@ -485,29 +480,36 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          let data = this.selectData.map(item => item.id)
-          purPurchaseBatch(data).then(res => {
-            console.log(res, '1111');
-            if (res.msg == 'Success') {
-              this.$message({
-                message: '完成成功',
-                type: 'success',
-                duration: 1000,
-                onClose: () => {
-                  this.btnLoading = false
-                  this.initData()
+        })
+          .then(() => {
+            let data = this.selectData.map((item) => item.id)
+            purPurchaseBatch(data)
+              .then((res) => {
+                console.log(res, '1111')
+                if (res.msg == 'Success') {
+                  this.$message({
+                    message: '完成成功',
+                    type: 'success',
+                    duration: 1000,
+                    onClose: () => {
+                      this.btnLoading = false
+                      this.initData()
+                    }
+                  })
                 }
               })
-            }
-          }).catch(() => { this.btnLoading = false })
-        }).catch(() => { this.btnLoading = false })
-
+              .catch(() => {
+                this.btnLoading = false
+              })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       }
     },
     // 明细列表 批量停止
     handleBatchStop() {
-      console.log(this.selectData, '选择的数据');
+      console.log(this.selectData, '选择的数据')
       if (!this.selectData.length) {
         this.$message.error('请先选择您要停止的数据')
       } else {
@@ -516,29 +518,36 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          let data = this.selectData.map(item => item.id)
-          purPurchaseBatchLine(data).then(res => {
-            console.log(res, '1111');
-            if (res.msg == 'Success') {
-              this.$message({
-                message: '停止成功',
-                type: 'success',
-                duration: 1000,
-                onClose: () => {
-                  this.btnLoading = false
-                  this.detailData()
+        })
+          .then(() => {
+            let data = this.selectData.map((item) => item.id)
+            purPurchaseBatchLine(data)
+              .then((res) => {
+                console.log(res, '1111')
+                if (res.msg == 'Success') {
+                  this.$message({
+                    message: '停止成功',
+                    type: 'success',
+                    duration: 1000,
+                    onClose: () => {
+                      this.btnLoading = false
+                      this.detailData()
+                    }
+                  })
                 }
               })
-            }
-          }).catch(() => { this.btnLoading = false })
-        }).catch(() => { this.btnLoading = false })
-
+              .catch(() => {
+                this.btnLoading = false
+              })
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
       }
     },
     // 点击切换明细
     handleClick(e) {
-      console.log(e);
+      console.log(e)
       if (e.index == '0') {
         this.initData()
       } else {
@@ -550,14 +559,13 @@ export default {
       this.visible = true
     },
     moreQueriesDetail() {
-
       this.detailVisible = true
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       if (newProp === 'cooperative_partner_code') {
         newProp = 'cooperativePartnerCode'
       }
@@ -565,7 +573,7 @@ export default {
         newProp = 'cooperativePartnerName'
       }
       this.listQuery.orderItems[0].asc = order !== 'descending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
 
@@ -583,12 +591,11 @@ export default {
       this.reset()
     },
 
-
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.startTime = this.createRequirementDate[0] + " 00:00:00"
-        this.listQuery.endTime = this.createRequirementDate[1] + " 23:59:59"
+        this.listQuery.startTime = this.createRequirementDate[0] + ' 00:00:00'
+        this.listQuery.endTime = this.createRequirementDate[1] + ' 23:59:59'
       } else {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
@@ -600,23 +607,22 @@ export default {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
-      purchaseOrderList(this.listQuery).then(res => {
-        console.log(res, '采购订单列表');
-        this.tableDataList = res.data.records
-        this.tableDataList.forEach(item => {
-          item.disabled = item.receivingStatus == 'receiving' && item.approvalStatus == 'ok' ? false : true
+      purchaseOrderList(this.listQuery)
+        .then((res) => {
+          console.log(res, '采购订单列表')
+          this.tableDataList = res.data.records
+
+          this.total = res.data.total
+          this.listLoading = false
+          this.visible = false
         })
-        this.total = res.data.total
-        this.listLoading = false
-        this.visible = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
 
- 
     search() {
-      Object.keys(this.listQuery).forEach(key => {
+      Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -629,32 +635,35 @@ export default {
       this.listQuery = {
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        approvalStatus: "",             //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
-        cooperativePartnerCode: "",     //供应商编码
-        cooperativePartnerName: "",     // 	供应商名称
-        createByName: "",
-        delivery: "",                   //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
-        deliveryEndDate: "",            //交货结束日期
-        deliveryStartDate: "",
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        approvalStatus: '', //审批状态:审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //供应商编码
+        cooperativePartnerName: '', // 	供应商名称
+        createByName: '',
+        delivery: '', //发货方式(外协) 送货 deliver_goods、自提 self_pickup、快递 express_delivery、货运 freight_transport、到付 collect_payment
+        deliveryEndDate: '', //交货结束日期
+        deliveryStartDate: '',
         deliveryDate: '',
-        endTime: "",
-        orderNo: "",                    //订单号
-        orderType: "procure",           //	订单类型 采购 procure、外协 external
-        startTime: "",
-
-      },
-        this.createRequirementDate = []
+        endTime: '',
+        orderNo: '', //订单号
+        orderType: 'procure', //	订单类型 采购 procure、外协 external
+        startTime: ''
+      }
+      this.createRequirementDate = []
       this.deliveryDate = []
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
- 
+
     // addSupplier(id, type) {
     //   this.formVisible = true
     //   this.$nextTick(() => {
@@ -670,7 +679,7 @@ export default {
     },
     // 导出订货单
     orderFormDownload(id) {
-      purPurchaseOrderExport(id).then(res => {
+      purPurchaseOrderExport(id).then((res) => {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
@@ -680,92 +689,93 @@ export default {
       }
       this.$confirm('此操作将撤回审批单，是否继续？', this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        withdrawn(_data).then(res => {
-          this.$message({
-            type: 'success',
-            message: "撤回成功",
-            duration: 1500,
-            onClose: () => {
-              this.initData()
-            }
+      })
+        .then(() => {
+          withdrawn(_data).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '撤回成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
           })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     // 重新生成外协订单 将选中的数据传递过去
     withdrawnAddHandle(id, type) {
       let row = {}
-      purPurchaseOrderdetail(id).then(res => {
-        console.log(res, 'asdada');
+      purPurchaseOrderdetail(id).then((res) => {
+        console.log(res, 'asdada')
         row = {
           attachmentList: [],
-          cooperativePartnerName: res.data.cooperativePartnerName,      //供应商名称
-          cooperativePartnerCode: res.data.cooperativePartnerCode,      //供应商名称
-          cooperativePartnerId: res.data.cooperativePartnerId,      //供应商名称
-          deliveryDate: res.data.deliveryDate,                //交货日期.
+          cooperativePartnerName: res.data.cooperativePartnerName, //供应商名称
+          cooperativePartnerCode: res.data.cooperativePartnerCode, //供应商名称
+          cooperativePartnerId: res.data.cooperativePartnerId, //供应商名称
+          deliveryDate: res.data.deliveryDate, //交货日期.
           orderType: 'procure',
-          purchaseOrderLines: res.data.purchaseOrderLineVOList.map(item => {
+          purchaseOrderLines: res.data.purchaseOrderLineVOList.map((item) => {
             return {
               ...item,
-              orderQuantity: item.planDemandQuantity - (item.procurementDemandPoolVO ? item.procurementDemandPoolVO.orderedQuantity : 0),
-              id: '',
+              orderQuantity:
+                item.planDemandQuantity -
+                (item.procurementDemandPoolVO ? item.procurementDemandPoolVO.orderedQuantity : 0),
+              id: ''
             }
           }),
-          excludingTaxTotalAmount: res.data.excludingTaxTotalAmount,       //订单 不含税总金额
-          totalAmount: res.data.totalAmount,                    //   含税总金额
-          taxAmount: res.data.taxAmount,                     // 税额
+          excludingTaxTotalAmount: res.data.excludingTaxTotalAmount, //订单 不含税总金额
+          totalAmount: res.data.totalAmount, //   含税总金额
+          taxAmount: res.data.taxAmount // 税额
         }
         this.withdrawnVisible = true
         this.$nextTick(() => {
           this.$refs.withdrawnForm.init(row)
         })
       })
-
     },
     // 打印
     printPurchaseOrder(id) {
       this.printData = []
       this.printForm = {}
-      purPurchaseOrderdetail(id).then(res => {
+      purPurchaseOrderdetail(id).then((res) => {
         // this.printVisible = true
 
         this.printData = res.data.purchaseOrderLineVOList
         this.printForm = res.data
         // 复制数据测试 打印分页
         // for (var i = 0; i < 4; i++) {
-        //   this.printData = this.printData.concat(this.printData); 
+        //   this.printData = this.printData.concat(this.printData);
         // }
         // console.log(Math.ceil(this.printData.length/20));
         this.pages = Math.ceil(this.printData.length / 20)
-        console.log(this.printPageDataFn(this.printData, 20));
+        console.log(this.printPageDataFn(this.printData, 20))
         this.printData = this.printPageDataFn(this.printData, 20)
         this.$nextTick(() => {
-          console.log(this.$refs.PrintForm);
-          console.log(this.$refs.PrintForm.$el);
-          let oldStr = window.document.body.innerHTML;
-          let newStr = this.$refs.PrintForm.$el.innerHTML;
+          console.log(this.$refs.PrintForm)
+          console.log(this.$refs.PrintForm.$el)
+          let oldStr = window.document.body.innerHTML
+          let newStr = this.$refs.PrintForm.$el.innerHTML
 
-          const iframe = document.createElement('iframe');
-          iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;');
-          document.body.appendChild(iframe);
-          const doc = iframe.contentWindow.document;
-          // 4. 写入内容// 
-          doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>');
-          doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`);
-          doc.write(newStr);
-          const link = doc.getElementsByTagName('link')[0];
-          link.onload = () => { // 样式文件加载完毕后打印// 5.执行打印
-            iframe.contentWindow.print();
+          const iframe = document.createElement('iframe')
+          iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;')
+          document.body.appendChild(iframe)
+          const doc = iframe.contentWindow.document
+          // 4. 写入内容//
+          doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>')
+          doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`)
+          doc.write(newStr)
+          const link = doc.getElementsByTagName('link')[0]
+          link.onload = () => {
+            // 样式文件加载完毕后打印// 5.执行打印
+            iframe.contentWindow.print()
             iframe.contentWindow.location.reload(true)
             // 6.重置工作
-            document.body.removeChild(iframe);
-            this.$refs.PrintForm.$el.removeAttribute('style');
+            document.body.removeChild(iframe)
+            this.$refs.PrintForm.$el.removeAttribute('style')
           }
-        });
-
-
-
+        })
       })
     },
     // 处理分页
@@ -783,7 +793,9 @@ export default {
           if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
             printTable.push({
               total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0),
-              UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)),
+              UpperMoney: this.digitUppercase(
+                pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)
+              ),
               pagedata: pagedata
             })
             pagedata = []
@@ -793,7 +805,9 @@ export default {
         if (pageSize > data.length && pagedata && pagedata.length > 0) {
           printTable.push({
             total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount, 0),
-            UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)),
+            UpperMoney: this.digitUppercase(
+              pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)
+            ),
             pagedata: pagedata
           })
         }
@@ -802,35 +816,33 @@ export default {
     },
     // 处理金额
     digitUppercase(n) {
-      var fraction = ['角', '分'];
-      var digit = [
-        '零', '壹', '贰', '叁', '肆',
-        '伍', '陆', '柒', '捌', '玖'
-      ];
-      var unit = [
-        ['元', '万', '亿'],
-        ['', '拾', '佰', '仟']
-      ];
-      var head = n < 0 ? '欠' : '';
-      n = Math.abs(n);
-      var s = '';
+      var fraction = ['角', '分']
+      var digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
+      var unit = [['元', '万', '亿'], ['', '拾', '佰', '仟']]
+      var head = n < 0 ? '欠' : ''
+      n = Math.abs(n)
+      var s = ''
       for (var i = 0; i < fraction.length; i++) {
-        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '')
       }
-      s = s || '整';
-      n = Math.floor(n);
+      s = s || '整'
+      n = Math.floor(n)
       for (var i = 0; i < unit[0].length && n > 0; i++) {
-        var p = '';
+        var p = ''
         for (var j = 0; j < unit[1].length && n > 0; j++) {
-          p = digit[n % 10] + unit[1][j] + p;
-          n = Math.floor(n / 10);
+          p = digit[n % 10] + unit[1][j] + p
+          n = Math.floor(n / 10)
         }
-        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s
       }
-      return head + s.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零').replace(/^整$/, '零元整');
-    },
-
-
+      return (
+        head +
+        s
+          .replace(/(零.)*零元/, '元')
+          .replace(/(零.)+/g, '零')
+          .replace(/^整$/, '零元整')
+      )
+    }
   }
 }
 </script>

@@ -82,15 +82,15 @@
                     </template>
 </el-table-column> -->
 
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                        <div class="viewData">
-                          <span>{{ scope.row.productName }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
+                      <el-table-column prop="orderNo" label="出入库单号" min-width="200" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'orderNo'">
+                            <div class="viewData">
+                              <span>{{ scope.row.orderNo }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
 
 
@@ -187,7 +187,7 @@
                     </template>
                   </el-table-column> -->
 
-                      <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140" fixed="right">
+                      <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="140" >
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                             :rules="productFormRules.excludingTaxAmount">
@@ -214,7 +214,7 @@
 
 
 
-                      <el-table-column prop="taxAmount" label="税额" min-width="140" fixed="right">
+                      <el-table-column prop="taxAmount" label="税额" min-width="140" >
 
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'"
@@ -234,7 +234,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="140" fixed="right">
+                      <el-table-column prop="includingTaxAmount" label="含税总金额" min-width="140" >
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
                             :rules="productFormRules.includingTaxAmount">
@@ -253,7 +253,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip fixed="right">
+                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip >
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" maxlength="20" placeholder="请输入备注">{{
                             scope.row.remark }}
@@ -655,6 +655,7 @@ export default {
           mainUnit: item.mainUnit,
           ordersLineId: item.ordersLineId,
           ordersId: item.ordersId,
+          orderNo:item.orderNo,
           moveId: item.moveId,
           moveLineId: item.id,
           productsId: item.productsId,

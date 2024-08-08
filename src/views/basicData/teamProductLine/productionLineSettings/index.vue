@@ -296,24 +296,25 @@ export default {
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-        ; (this.tableQuery = {
-          pageNum: 1,
-          pageSize: 20,
-          orderItems: [
-            {
-              asc: false,
-              column: ''
-            },
-            {
-              asc: false,
-              column: 'createTime'
-            }
-          ],
-          code: '',
-          name: '',
-          state: ''
-        }),
-          this.search()
+      this.tableQuery = {
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        code: '',
+        name: '',
+        state: ''
+      }
+      this.$refs.SuperQuery.conditionList = []
+      this.search()
     },
     addSupplier(type) {
       this.depFormVisible = true

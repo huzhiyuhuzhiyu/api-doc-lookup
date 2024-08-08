@@ -1,7 +1,6 @@
 <template>
-  <el-dialog v-bind="$attrs" :close-on-click-modal="false" :modal-append-to-body="false"
-    v-on="$listeners" @open="onOpen" fullscreen lock-scroll class="JNPF-full-dialog"
-    :show-close="false" :modal="false" append-to-body>
+  <el-dialog v-bind="$attrs" :close-on-click-modal="false" :modal-append-to-body="false" v-on="$listeners" @open="onOpen"
+    fullscreen lock-scroll class="JNPF-full-dialog" :show-close="false" :modal="false" append-to-body>
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
         <img src="@/assets/images/jnpf2.png" class="header-logo" />
@@ -10,11 +9,20 @@
       <div class="options">
         <el-button type="primary" size="small" @click="word">下载</el-button>
         <el-button type="primary" size="small" @click="print">打印</el-button>
-        <el-button @click="closeDialog()">{{$t('common.cancelButton')}}</el-button>
+        <el-button @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
       </div>
     </div>
     <div class="main" v-loading="loading">
-      <div ref="tsPrint" class="print-content" v-html="printTemplate" />
+      <div ref="tsPrint" class="print-content">
+        <template v-if="data.pageType === 'custom'">
+          <div v-for="(item, index) in data.T1" :key="index" v-html="printTemplate" :ref="'tsPrintItem' + index"
+            style="page-break-after: always;font-family: simsun, 宋体, sans-serif; ">
+          </div>
+        </template>
+        <template v-else>
+          <div v-html="printTemplate" style="font-family: simsun, 宋体, sans-serif; " />
+        </template>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -49,26 +57,92 @@ export default {
         if (!res.data) return
         this.printTemplate = res.data.printTemplate
         this.data = res.data.printData
+        // 复制数据测试 打印分页
+        for (var i = 0; i < 5; i++) {
+          this.data.T1 = this.data.T1.concat(this.data.T1).map((item, index) => {
+            return {
+              ...item,
+              index: index + 1
+            }
+          })
+        }
+        if (this.data.pageType === 'custom') {
+          this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1)
+        }
+        console.log(this.data.T1, 'this.data.T1');
+
         this.recordList = res.data.operatorRecordList || []
         this.$nextTick(() => {
-          const tableList = this.$refs.tsPrint.getElementsByTagName('table')
-          if (tableList.length) {
-            for (let j = 0; j < tableList.length; j++) {
-              const tableObj = tableList[j];
-              let tds = []
-              let newTable = []
-              for (let i = 0; i < tableObj.rows.length; i++) {
-                tds = tableObj.rows[i]
-                const dataTag = this.isChildTable(tds.cells)
-                if (dataTag) {
-                  this.retrieveData(dataTag, tableObj, tds, newTable)
-                } else {
-                  newTable.push(tds)
+          console.log(this.$refs.tsPrint, 'this.$refs.tsPrint');
+          if (this.data.pageType === 'custom') {
+            for (let t = 0; t < this.data.T1.length; t++) {
+              const tableList = this.$refs['tsPrintItem' + t][0].getElementsByTagName('table')
+              if (tableList.length) {
+                for (let j = 0; j < tableList.length; j++) {
+                  const tableObj = tableList[j];
+                  let tds = []
+                  let newTable = []
+                  for (let i = 0; i < tableObj.rows.length; i++) {
+                    tds = tableObj.rows[i]
+                    tds.style.height = '22px'
+                    const dataTag = this.isChildTable(tds.cells)
+                    if (dataTag) {
+                      this.retrieveData(dataTag, tableObj, tds, newTable, t)
+                    } else {
+                      newTable.push(tds)
+                    }
+                  }
+                  tableObj.getElementsByTagName('tbody')[0].innerHTML = ''
+                  for (let i = 0; i < newTable.length; i++) {
+                    tableObj.getElementsByTagName('tbody')[0].appendChild(newTable[i])
+                  }
                 }
               }
-              tableObj.getElementsByTagName('tbody')[0].innerHTML = ''
-              for (let i = 0; i < newTable.length; i++) {
-                tableObj.getElementsByTagName('tbody')[0].appendChild(newTable[i])
+            }
+          } else {
+            const tableList = this.$refs.tsPrint.getElementsByTagName('table')
+            if (tableList.length) {
+              for (let j = 0; j < tableList.length; j++) {
+                const tableObj = tableList[j];
+                let tds = []
+                let newTable = []
+                for (let i = 0; i < tableObj.rows.length; i++) {
+                  tds = tableObj.rows[i]
+                  tds.style.height = '22px'
+                  const dataTag = this.isChildTable(tds.cells)
+                  if (dataTag) {
+                    this.retrieveDataTwo(dataTag, tableObj, tds, newTable)
+                  } else {
+                    newTable.push(tds)
+                  }
+                }
+                tableObj.getElementsByTagName('tbody')[0].innerHTML = ''
+                for (let i = 0; i < newTable.length; i++) {
+                  tableObj.getElementsByTagName('tbody')[0].appendChild(newTable[i])
+                }
+              }
+            }
+          }
+          // if (this.$refs.tsPrint.querySelectorAll('img').length){
+          //   this.$refs.tsPrint.querySelectorAll('img').forEach(item => {
+          //     item.crossOrigin = 'anonymous'
+          //     this.compressImage(item, 0.7, 800)
+          //   })
+          // }
+
+          if (this.$refs.tsPrint && this.data.pageType === 'custom') {
+            let upperMoneyList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.UpperMoney"]')
+            let totalList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.total"]')
+            let pageNumList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageNum.pageNum"]')
+            let pageSizeList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageSize.pageSize"]')
+            if (upperMoneyList.length) {
+              if (this.data.T1.length) {
+                this.data.T1.forEach((e, i) => {
+                  pageSizeList[i].innerHTML = this.data.T1.length
+                  upperMoneyList[i].innerHTML = e.UpperMoney
+                  totalList[i].innerHTML = e.total
+                  pageNumList[i].innerHTML = i + 1
+                })
               }
             }
           }
@@ -82,6 +156,7 @@ export default {
       let tableName = ''
       outer: for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
+        cell.style.height = '22px'
         let spanList = cells[j].getElementsByTagName('span')
         if (!spanList.length) break outer;
         let hasChildTable = false
@@ -104,6 +179,7 @@ export default {
     shengchengtable(data, tds) {
       for (let key in data) {
         for (let j = 0; j < tds.cells.length; j++) {
+          tds.cells[j].style.height = '22px'
           let spanList = tds.cells[j].getElementsByTagName('span')
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {
@@ -114,7 +190,19 @@ export default {
       }
       return tds
     },
-    retrieveData(dataTag, tableObj, tds, newTable) {
+    // 固定头尾分页使用
+    retrieveData(dataTag, tableObj, tds, newTable, j) {
+      if (dataTag == 'T1') {
+        inner: for (let c = 0; c < this.data.T1[j].pagedata.length; c++) {
+          newTable.push(this.shengchengtable(this.data.T1[j].pagedata[c], tds.cloneNode(true)))
+          if (c === this.data.T1[j].pagedata.length - 1) {
+            newTable = []
+          }
+        }
+      }
+    },
+    // 不固定 自动下一页使用
+    retrieveDataTwo(dataTag, tableObj, tds, newTable) {
       for (let key in this.data) {
         if (key == dataTag) {
           for (let j = 0; j < this.data[key].length; j++) {
@@ -206,11 +294,125 @@ export default {
     },
     print() {
       let print = this.$refs.tsPrint.innerHTML
-      let newWindow = window.open('_blank')
-      newWindow.document.body.innerHTML = print
-      newWindow.print()
-      newWindow.close()
+      this.$nextTick(() => {
+        let newStr = print
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;');
+        document.body.appendChild(iframe);
+        const doc = iframe.contentWindow.document;
+        // 4. 写入内容// 
+        doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>');
+        doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`);
+        doc.write(newStr);
+        const link = doc.getElementsByTagName('link')[0];
+        link.onload = () => { // 样式文件加载完毕后打印// 5.执行打印
+          iframe.contentWindow.print();
+          iframe.contentWindow.location.reload(true)
+          // 6.重置工作
+          document.body.removeChild(iframe);
+          this.$refs.tsPrint.removeAttribute('style');
+        }
+      })
+      // let newWindow = window.open('_blank')
+      // console.log(newWindow.document);
+
+      // newWindow.document.body.innerHTML = print
+      // newWindow.print()
+      // newWindow.close()
     },
+    // 处理分页
+    printPageDataFn(data, pageSize = 20) {
+      const printTable = []
+      if (data && data.length > 0) {
+        let remainderLength = Math.floor(data.length / pageSize) * pageSize
+        let pagedata = []
+        let pageNum = 0
+        for (let i = 0; i < data.length; i++) {
+          // 在将数据推入 pagedata 时，新增 index 字段
+          pagedata.push(data[i])
+          pageNum++
+          if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
+
+            printTable.push({
+              total: pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue.total_amount * 1, 0),
+              UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.total_amount * 1, 0).toFixed(2)),
+              pagedata: pagedata
+            })
+            pagedata = []
+            pageNum = 0
+          }
+        }
+        if (pageSize > data.length && pagedata && pagedata.length > 0) {
+          printTable.push({
+            total: pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue.total_amount * 1, 0),
+            UpperMoney: this.digitUppercase(pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.total_amount * 1, 0).toFixed(2)),
+            pagedata: pagedata
+          })
+        }
+
+      }
+      return printTable
+    },
+    // 处理金额
+    digitUppercase(n) {
+      var fraction = ['角', '分'];
+      var digit = [
+        '零', '壹', '贰', '叁', '肆',
+        '伍', '陆', '柒', '捌', '玖'
+      ];
+      var unit = [
+        ['元', '万', '亿'],
+        ['', '拾', '佰', '仟']
+      ];
+      var head = n < 0 ? '欠' : '';
+      n = Math.abs(n);
+      var s = '';
+      for (var i = 0; i < fraction.length; i++) {
+        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+      }
+      s = s || '整';
+      n = Math.floor(n);
+      for (var i = 0; i < unit[0].length && n > 0; i++) {
+        var p = '';
+        for (var j = 0; j < unit[1].length && n > 0; j++) {
+          p = digit[n % 10] + unit[1][j] + p;
+          n = Math.floor(n / 10);
+        }
+        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+      }
+      return head + s.replace(/(零.)*零元/, '元').replace(/(零.)+/g, '零').replace(/^整$/, '零元整');
+    },
+    getBase64(image) {
+      var canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      var context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, image.width, image.height);
+      // 将canvas的内容转换为base64编码的字符串
+      var base64 = canvas.toDataURL("image/png");// 可以根据需要更改为其他格式，如'image/jpeg'等
+      return base64;
+    },
+    compressImage(img, quality, maxWidth) {
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        img.src = dataUrl
+      }
+    }
   }
 }
 </script>
@@ -223,5 +425,14 @@ export default {
   width: 776px;
   height: 100%;
   overflow: auto;
+}
+</style>
+<style lang="scss" scoped>
+@media print {
+  @page {
+    // size: portrait !important; // 纵向
+    size: auto; // 纵向
+    margin: 3mm;
+  }
 }
 </style>

@@ -23,8 +23,9 @@
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -47,24 +48,20 @@
             <el-form-item>
               <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
             </el-form-item>
-
           </el-col>
-
-
 
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                {{ $t('common.search') }}
               </el-button>
-
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
-
           </el-col>
           <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
-
+            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">
+            更多查询
+          </el-button>
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -81,6 +78,13 @@
                   </el-button>
                 </div> -->
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -88,17 +92,16 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
           @sort-change="sortChange" custom-column>
-          <el-table-column prop="code" label="外协供应商编码" width="160"  sortable="custom">
+          <el-table-column prop="code" label="外协供应商编码" width="160" sortable="custom">
             <template slot-scope="scope">
-
               <el-link type="primary"
-                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">{{
-                  scope.row.code
-                }}</el-link>
+                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
+                {{ scope.row.code }}
+              </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="taxId" label="税号" min-width="200" />
-          <el-table-column prop="name" label="名称" min-width="120"  sortable="custom" />
+          <el-table-column prop="name" label="名称" min-width="120" sortable="custom" />
           <el-table-column prop="regionCodeText" label="地区" min-width="100" />
           <el-table-column prop="countryText" label="国家" min-width="150" />
           <el-table-column prop="provinceText" label="省" min-width="160" />
@@ -129,7 +132,8 @@
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
@@ -149,8 +153,6 @@
     </div>
     <!-- </div> -->
 
-
-
     <!-- </el-tab-pane> -->
     <!-- <el-tab-pane label="供应商表格" name="supplierTable">
 
@@ -162,7 +164,6 @@
     <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
-
         <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
           <el-col :span="12">
             <el-form-item label="编码">
@@ -178,19 +179,16 @@
             <el-form-item label="税号">
               <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
             </el-form-item>
-
           </el-col>
           <el-col :span="12">
             <el-form-item label="负责人">
               <el-input v-model="form.personResponsible" placeholder="请输入负责人" clearable />
             </el-form-item>
-
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人">
               <el-input v-model="form.contacts" placeholder="请输入联系人" clearable />
             </el-form-item>
-
           </el-col>
           <el-col :span="12">
             <el-form-item label="电话">
@@ -216,42 +214,174 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-
             <el-form-item label="认定日期">
               <el-date-picker v-model="form.customerRecognitionTime" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
+                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
+                :picker-options="pickerOptions"></el-date-picker>
             </el-form-item>
           </el-col>
-
-
         </el-form>
       </el-row>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" @click="dataFormSubmit()">
-          搜索</el-button>
+          搜索
+        </el-button>
       </span>
     </el-dialog>
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
-
 import { getcategoryTree, getCooperativeData, deleteCooperative } from '@/api/basicData/index'
 import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'outsourcingSuppliersProfile',
-  components: { Form, UserRelationList, },
+  components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
-      title: "更多查询",
-      background: true,//分页器背景颜色
-      activeName: "supplierPage",
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: '编码',
+          type: 'input'
+        },
+        {
+          prop: 'taxId',
+          label: '税号',
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: '名称',
+          type: 'input'
+        },
+        {
+          prop: 'regionCodeText',
+          label: '地区',
+          type: 'input'
+        },
+        {
+          prop: 'countryText',
+          label: '国家',
+          type: 'input'
+        },
+        {
+          prop: 'provinceText',
+          label: '省',
+          type: 'input'
+        },
+        {
+          prop: 'cityText',
+          label: '市',
+          type: 'input'
+        },
+        {
+          prop: 'areaText',
+          label: '区',
+          type: 'input'
+        },
+        {
+          prop: 'address',
+          label: '地址',
+          type: 'input'
+        },
+        {
+          prop: 'billingTypeText',
+          label: '开票类型',
+          type: 'input'
+        },
+        {
+          prop: 'taxRate',
+          label: '税率%',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'contacts',
+          label: '联系人',
+          type: 'input'
+        },
+        {
+          prop: 'phone',
+          label: '电话',
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: '手机号',
+          type: 'input'
+        },
+        {
+          prop: 'email',
+          label: '邮箱',
+          type: 'input'
+        },
+        {
+          prop: 'bank',
+          label: '开户银行',
+          type: 'input'
+        },
+        {
+          prop: 'bankInfo',
+          label: '银行账号',
+          type: 'input'
+        },
+        {
+          prop: 'gradeText',
+          label: '等级',
+          type: 'input'
+        },
+        {
+          prop: 'reconciliationStartDate',
+          label: '对账开始日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'reconciliationEndDate',
+          label: '对账结束日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
+      ],
+      columnSetFun() {
+        this.$refs.dataTable.showDrawer()
+      },
+      title: '更多查询',
+      background: true, //分页器背景颜色
+      activeName: 'supplierPage',
       visible: false,
       treeData: [],
       tableData: [],
@@ -259,62 +389,69 @@ export default {
       listLoading: false,
       authorizeFormVisible: false,
       userRelationListVisible: false,
-      organizeIdTree: [], 
+      organizeIdTree: [],
       form: {
-        code: "",
-        taxId: "",
-        name: "",
+        code: '',
+        taxId: '',
+        name: '',
         customerRecognitionTime: [],
-        customerRecognitionStartTime: "",
-        customerRecognitionEndTime: "",
-        personResponsible: "",
-        contacts: "",
-        phone: "",
-        mobliePhone: "",
+        customerRecognitionStartTime: '',
+        customerRecognitionEndTime: '',
+        personResponsible: '',
+        contacts: '',
+        phone: '',
+        mobliePhone: '',
         email: '',
-        grade: "",
-        type: "outsourcing_suppliers",
-        partnerCategoryId: "",
+        grade: '',
+        type: 'outsourcing_suppliers',
+        partnerCategoryId: '',
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ]
       },
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
         },
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
+        shortcuts: [
+          {
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          },
+          {
+            text: '上个月',
+            onClick(picker) {
+              const end = new Date(moment(new Date().getTime()).format('YYYY-MM-01 00:00:00'))
+              const start = new Date()
+              end.setTime(end.getTime() - 3600 * 1000 * 24)
+              start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
           }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '上个月',
-          onClick(picker) {
-            const end = new Date(moment((new Date().getTime())).format('YYYY-MM-01 00:00:00'))
-            const start = new Date()
-            end.setTime(end.getTime() - 3600 * 1000 * 24)
-            start.setTime(end.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }]
+        ]
       },
       gradeList: [],
       defaultProps: {
@@ -341,54 +478,53 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    handleClick() {
-
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
     },
+    handleClick() { },
     moreQueries() {
       this.visible = true
     },
     dataFormSubmit() {
-      this.form.pageNum=1
+      this.form.pageNum = 1
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
         this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
         this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
       } else {
-        this.form.customerRecognitionStartTime = ""
-        this.form.customerRecognitionEndTime = ""
+        this.form.customerRecognitionStartTime = ''
+        this.form.customerRecognitionEndTime = ''
       }
       this.initData()
-
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      this.form.orderItems[0].asc = order === "ascending"
+      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      this.form.orderItems[0].asc = order === 'ascending'
       this.form.orderItems[0].column = newProp
       this.initData()
     },
     // 获取数据字典——等级
     getDictionaryType() {
-      getDictionaryType().then(res => {
-       
+      getDictionaryType().then((res) => {
         let data = res.data.list
-        data.forEach(item => {
-          if (item.enCode == "partnerArchives") {
+        data.forEach((item) => {
+          if (item.enCode == 'partnerArchives') {
             let children = item.children
-            children.forEach(resp => {
-              if (resp.enCode == "grade") {
-                let id = resp.id;
+            children.forEach((resp) => {
+              if (resp.enCode == 'grade') {
+                let id = resp.id
                 let obj = {
                   keyword: '',
                   isTree: 0
                 }
-                getDictionaryDataList(id, obj).then(response => {
-                
+                getDictionaryDataList(id, obj).then((response) => {
                   this.gradeList = response.data.list
                 })
               }
-            });
-
+            })
           }
-        });
+        })
       })
     },
     // 关闭新建、编辑页面
@@ -410,83 +546,86 @@ export default {
       })
     },
     filterNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
     },
     getcategoryTree(isInit) {
       this.treeLoading = true
       let listQuery = {
         keyword: '',
-        type: "outsourcing_suppliers"
-      };
-      getcategoryTree(listQuery).then(res => {
-        
-        this.treeData = res.data
-        this.$nextTick(() => {
-          this.treeLoading = false
-          if (isInit) this.initData()
+        type: 'outsourcing_suppliers'
+      }
+      getcategoryTree(listQuery)
+        .then((res) => {
+          this.treeData = res.data
+          this.$nextTick(() => {
+            this.treeLoading = false
+            if (isInit) this.initData()
+          })
         })
-      }).catch(() => {
-        this.treeLoading = false
-      })
+        .catch(() => {
+          this.treeLoading = false
+        })
     },
     initData() {
       this.listLoading = true
-      getCooperativeData(this.form).then(res => {
-        
-        this.tableData = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-        this.visible = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      getCooperativeData(this.form)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+          this.visible = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
     search() {
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
         this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
         this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
-      } 
-      this.form.pageNum=1
+      }
+      this.form.pageNum = 1
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.form.pageNum=1
+      this.form.pageNum = 1
       this.form = {
-        code: "",
-        taxId: "",
-        name: "",
+        code: '',
+        taxId: '',
+        name: '',
         customerRecognitionTime: [],
-        customerRecognitionStartTime: "",
-        customerRecognitionEndTime: "",
-        personResponsible: "",
-        contacts: "",
-        phone: "",
-        mobliePhone: "",
+        customerRecognitionStartTime: '',
+        customerRecognitionEndTime: '',
+        personResponsible: '',
+        contacts: '',
+        phone: '',
+        mobliePhone: '',
         email: '',
-        grade: "",
-        type: "outsourcing_suppliers",
-        partnerCategoryId: "",
+        grade: '',
+        type: 'outsourcing_suppliers',
+        partnerCategoryId: '',
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ]
       }
-    this.getcategoryTree(true)
-
+      this.getcategoryTree(true)
     },
     handleNodeClick(data, node) {
-      
       if (this.form.partnerCategoryId === data.id) return
       this.form.partnerCategoryId = data.id
       const nodePath = this.getNodePath(node)
-      this.organizeIdTree = nodePath.map(o => o.id)
+      this.organizeIdTree = nodePath.map((o) => o.id)
       this.search()
     },
     getNodePath(node) {
@@ -505,7 +644,6 @@ export default {
       })
     },
     addOrUpdateHandle(id, parentId) {
-      
       this.formVisible = true
       if (id) {
         // setTimeout(() => {
@@ -514,8 +652,6 @@ export default {
         })
         // }, 600);
       }
-
-
     },
     removeUserRelationList(isRefresh) {
       this.userRelationListVisible = false
@@ -534,16 +670,18 @@ export default {
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        deleteCooperative(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
+      })
+        .then(() => {
+          deleteCooperative(id).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
           })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     handleUserRelation(id, parentId, btnType) {
       this.formVisible = true

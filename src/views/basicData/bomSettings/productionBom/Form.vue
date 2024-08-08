@@ -1,7 +1,6 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form" ref="main">
-
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="title" />
         <div class="options" v-if="btnType !== 'look'">
@@ -32,11 +31,14 @@
                 :expand-on-click-node="false" node-key="productId" @node-click="handleNodeClick"
                 class="JNPF-common-el-tree" v-if="refreshTree">
                 <span
-                  :class="[(data.childrenList && data.childrenList.length > 0) ? 'custom-tree-node' : 'disabled-span']"
-                  slot-scope="{ data }" :title="data.name">
-                  <i
-                    :class="[(data.childrenList && data.childrenList.length > 0) ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-                  <span class="text" :title="data.productName">{{ data.productName }}</span>
+                  :class="[data.childrenList && data.childrenList.length > 0 ? 'custom-tree-node' : 'disabled-span']"
+                  slot-scope="{ data }" :title="data.productDrawingNo">
+                  <i :class="[
+                    data.childrenList && data.childrenList.length > 0
+                      ? 'icon-ym icon-ym-tree-organization3'
+                      : 'icon-ym icon-ym-systemForm'
+                  ]" />
+                  <span class="text" :title="data.productDrawingNo">{{ data.productDrawingNo }}</span>
                 </span>
               </el-tree>
             </el-scrollbar>
@@ -46,19 +48,16 @@
               <el-tabs v-model="activeName">
                 <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
                   <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
-                </el-collapse-item>
+                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                      <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
+                    </el-collapse-item>
 
-
-
-                <el-collapse-item title="产品信息" name="productInfo">
-                  <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
-                    :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                    @deleteth="addOrDelLinesItem" customStyle />
-                </el-collapse-item>
-
-              </el-collapse>
+                    <el-collapse-item title="产品信息" name="productInfo">
+                      <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
+                        :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
+                        @deleteth="addOrDelLinesItem" customStyle />
+                    </el-collapse-item>
+                  </el-collapse>
                 </el-tab-pane>
                 <el-tab-pane label="附件" name="annex">
                   <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'">
@@ -70,8 +69,9 @@
                   <div class="noDataTip" v-if="!workVisible">
                     <span class="el-table__empty-text">
                       <div data-v-4d190d64="" class="el-empty">
-                        <div class="el-empty__image" style="width: 120px;"><svg viewBox="0 0 79 86" version="1.1"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <div class="el-empty__image" style="width: 120px;">
+                          <svg viewBox="0 0 79 86" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
                             <defs>
                               <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%"
                                 y2="100%">
@@ -126,10 +126,12 @@
                                 </g>
                               </g>
                             </g>
-                          </svg></div>
+                          </svg>
+                        </div>
                         <div class="el-empty__description">
                           <p>暂无流程信息</p>
-                        </div><!---->
+                        </div>
+                        <!---->
                       </div>
                     </span>
                   </div>
@@ -154,83 +156,205 @@
 </template>
 
 <script>
-import { addBomData, updateBomData, detailBomData, checkBomCodeExist, getBomByProductId, checkLoopBug, getBomTree } from "@/api/basicData/index"
+import {
+  addBomData,
+  updateBomData,
+  detailBomData,
+  checkBomCodeExist,
+  getBomByProductId,
+  checkLoopBug,
+  getBomTree
+} from '@/api/basicData/index'
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import TableFormProduct from '@/components/no_mount/TableForm-product/index' // 产品选择组件
 import workFlow from '@/components/WorkFlow/settingBus.vue'
-import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
+import {
+  getApprovalTemplate,
+  getApprovalDetailTree,
+  busApprovalFlowTree,
+  getSaleBusDetail,
+  getBusDetail,
+  approvalTransferList
+} from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 export default {
   components: { TableFormProduct, workFlow },
   data() {
     return {
-      activeNames: ["productInfo", "basicInfo"],
+      activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
-      activeName: "jcInfo",
+      activeName: 'jcInfo',
       btnType: 'add',
       visible: true,
       btnLoading: false,
       treeLoading: true,
       formLoading: true,
-      title: "",
+      title: '',
       autoCode: undefined,
       refreshTree: true,
       treeData: [],
-      selectedNodeKey: "",
+      selectedNodeKey: '',
       defaultProps: {
         children: 'childrenList',
-        label: 'name',
+        label: 'name'
       },
       expands: true,
-      firstId: "",
+      firstId: '',
       dataForm: {},
-      documentStatus: "",
+      documentStatus: '',
       dataFormItems: [
         // { prop: "code", label: "BOM编码", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate('enCode'), trigger: 'blur' }], sm: 12 },
         // { prop: "name", label: "BOM名称", value: "", type: "input", itemRules: [{ required: true, trigger: "blur" }], sm: 12 },
-        { prop: "productName", label: "产品名称", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }], sm: 12, readOnly: true },
         {
-          prop: "pickingWay", label: "领料方式", value: "", type: "select", options: [{ label: "按生产订单领料", value: "production_order" }, { label: "按派工单领料", value: "dispatch_list" }],
-          itemRules: [{ required: true, trigger: "change" }], sm: 12
+          prop: 'drawNo',
+          label: '品名规格',
+          value: '',
+          type: 'custom',
+          customComponent: 'ComSelect-page',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12,
+          readOnly: true
         },
-        { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
-        { prop: "remark", label: "备注", value: "", type: 'textarea' }
+        {
+          prop: 'pickingWay',
+          label: '领料方式',
+          value: '',
+          type: 'select',
+          options: [
+            { label: '按生产订单领料', value: 'production_order' },
+            { label: '按派工单领料', value: 'dispatch_list' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12
+        },
+        // { prop: "drawNo", label: "品名规格", value: "", type: 'input', itemDisabled: true, sm: 24, placeholder: ' ' },
+        { prop: 'remark', label: '备注', value: '', type: 'textarea' }
       ],
       linesList: [],
 
       linesListItems: [
-        { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 160 },
-        { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
-        { prop: "drawingNo", label: "品名规格", value: "", type: 'view', minWidth: 340 },
-        { prop: "qty", label: "数量", value: "1", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
-        { prop: "mainUnit", label: "单位", value: "", type: "view", minWidth: 120 },
-        { prop: "lossRate", label: "损耗率(%)", value: "0", type: "input", placeholder: "请输入损耗率", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error('损耗率：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
-        { prop: "fixedLoss", label: "固定损耗", value: "0", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [10, 2, "", (errMsg) => { this.$message.error('固定损耗：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
-        { prop: "reduceType", label: "扣减料方式", value: "picking", type: "select", options: [{ label: "生成领料单", value: "picking" }, { label: "自动扣减料", value: "auto" }, { label: "都不是", value: "none" }], itemRules: [{ required: true, trigger: "change" }], minWidth: 160 },
-        { prop: "remark", label: "备注", value: "", type: 'input', maxlength: 200, minWidth: 160 },
+        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+        { prop: 'productName', label: '产品名称', value: '', type: 'view', minWidth: 160 },
+        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+        {
+          prop: 'qty',
+          label: '数量',
+          value: '1',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  20,
+                  4,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('数量：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+        {
+          prop: 'lossRate',
+          label: '损耗率(%)',
+          value: '0',
+          type: 'input',
+          placeholder: '请输入损耗率',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('损耗率：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'fixedLoss',
+          label: '固定损耗',
+          value: '0',
+          type: 'input',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'decimal',
+                params: [
+                  10,
+                  2,
+                  '',
+                  (errMsg) => {
+                    this.$message.error('固定损耗：' + errMsg)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ],
+          minWidth: 120
+        },
+        {
+          prop: 'reduceType',
+          label: '扣减料方式',
+          value: 'picking',
+          type: 'select',
+          options: [
+            { label: '生成领料单', value: 'picking' },
+            { label: '自动扣减料', value: 'auto' },
+            { label: '都不是', value: 'none' }
+          ],
+          itemRules: [{ required: true, trigger: 'change' }],
+          minWidth: 160
+        },
+        { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
       ],
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: "物料分类", classAttribute: "material", method: getcategoryTree, requestObj: { classAttribute: "material" } },
+        {
+          label: '物料分类',
+          classAttribute: 'material',
+          method: getcategoryTree,
+          requestObj: { classAttribute: 'material' }
+        }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttribute: "",
-        classAttributeList: ["raw_material", "accessories", "semi_finished", "finish_product"],
-        productCategoryId: "",
-        code: "",
-        name: "",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
-        productStatus: "enable",
+        classAttribute: '',
+        classAttributeList: ['raw_material', 'accessories', 'semi_finished', 'finish_product'],
+        productCategoryId: '',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productStatus: 'enable',
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 20
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
@@ -240,26 +364,26 @@ export default {
         { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input', },
-        { prop: "name", label: "产品名称", type: 'input', },
-        { prop: "drawingNo", label: "品名规格", type: 'input' }
+        { prop: 'code', label: '产品编码', type: 'input' },
+        { prop: 'name', label: '产品名称', type: 'input' },
+        { prop: 'drawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段
       approvalBusinessId: '',
       workVisible: false,
       busNodeConfig: {
-        nodeName: "发起人",
+        nodeName: '发起人',
         nodeType: 0,
         type: 'node',
-        priorityLevel: "",
-        approvalType: "appoint",
-        selectMode: "",
-        selectRange: "",
-        directorLevel: "",
-        examineMode: "",
-        whenEmpty: "",
-        examineEndDirectorLevel: "",
-        ccSelfSelectFlag: "",
+        priorityLevel: '',
+        approvalType: 'appoint',
+        selectMode: '',
+        selectRange: '',
+        directorLevel: '',
+        examineMode: '',
+        whenEmpty: '',
+        examineEndDirectorLevel: '',
+        ccSelfSelectFlag: '',
         conditionList: [],
         nodeUserList: [],
         childNode: null,
@@ -270,35 +394,35 @@ export default {
       // 审批 转审记录参数
       transferQuery: {
         approvalFormId: '',
-        createByName: "",
+        createByName: '',
         documentId: '',
-        endTime: "",
-        keyword: "",
+        endTime: '',
+        keyword: '',
         orderItems: [
           {
-            "asc": true,
-            "column": ""
+            asc: true,
+            column: ''
           }
         ],
         pageNum: 1,
         pageSize: 20,
-        startTime: ""
+        startTime: ''
       },
       transferData: [],
       formLoading: false,
-      isDoubleFlag:false,
-      approvalStatus:'',
-      statusFlag:false,
+      isDoubleFlag: false,
+      approvalStatus: '',
+      statusFlag: false
     }
   },
   computed: {
-    ...mapGetters(['userInfo']),
+    ...mapGetters(['userInfo'])
   },
   created() {
-    this.dataFormItems.forEach(tc => {
-      this.dataForm[tc.prop] = tc.value || ""; // 设置默认value
+    this.dataFormItems.forEach((tc) => {
+      this.dataForm[tc.prop] = tc.value || '' // 设置默认value
       // 添加自定义表单元素方法和参数
-      if (tc.type == "custom") {
+      if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'productName') {
           tc.dialogTitle = '选择产品'
@@ -323,21 +447,33 @@ export default {
           //   },
           //   trigger: 'change'
           // })
+        } else {
+          console.warn(tc.prop + '不在判断条件内')
         }
-        else { console.warn(tc.prop + "不在判断条件内") }
       }
       // 添加校验编码唯一性的规则
       if (tc.prop === 'code') {
-        if (!tc.itemRules) { tc.itemRules = [] }
+        if (!tc.itemRules) {
+          tc.itemRules = []
+        }
         tc.itemRules.push({
           validator: (rule, value, callback) => {
-            if (!value) { callback() }
-            else if (this.dataForm.code === this.autoCode) { callback() }
-            else {
-              checkBomCodeExist(this.dataForm.code).then((res) => {
-                if (!res.data) { callback() }
-                else { callback(new Error('此BOM编码已存在')) }
-              }).catch((err) => { callback(new Error(" ")) })
+            if (!value) {
+              callback()
+            } else if (this.dataForm.code === this.autoCode) {
+              callback()
+            } else {
+              checkBomCodeExist(this.dataForm.code)
+                .then((res) => {
+                  if (!res.data) {
+                    callback()
+                  } else {
+                    callback(new Error('此BOM编码已存在'))
+                  }
+                })
+                .catch((err) => {
+                  callback(new Error(' '))
+                })
             }
           },
           trigger: 'blur'
@@ -346,13 +482,16 @@ export default {
     })
   },
   methods: {
-    async init(productId, btnType, approvalStatus,nodeData) {
-      console.log(approvalStatus,'approvalStatus')
+    async init(productId, btnType, approvalStatus, nodeData) {
+      console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
-      this.approvalStatus = approvalStatus ?  approvalStatus.approvalStatus : ''
-      this.statusFlag = this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing' ? true : false
+      this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
+      this.statusFlag =
+        this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing'
+          ? true
+          : false
       let loadTotal = 0
       if (productId && this.btnType != 'add' && !this.statusFlag) {
         console.log('12121212')
@@ -360,227 +499,237 @@ export default {
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         // 获取详情
         let bomId = (await getBomByProductId(productId)).data
-        detailBomData(bomId).then(res => {
-          this.autoCode = res.data.bom.code
-          this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          // btnType !== 'look' ? this.getApproverData() : ''
-          this.documentStatus = res.data.bom.documentStatus
-          this.linesList = res.data.lines.map(line => {
-            return {
-              ...line,
-              drawingNo: line.drawingNo ? line.drawingNo : line.drawNo
+        detailBomData(bomId)
+          .then((res) => {
+            this.autoCode = res.data.bom.code
+            this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
+            // btnType !== 'look' ? this.getApproverData() : ''
+            this.documentStatus = res.data.bom.documentStatus
+            this.linesList = res.data.lines.map((line) => {
+              return {
+                ...line,
+                drawingNo: line.drawingNo ? line.drawingNo : line.drawNo
+              }
+            })
+            if (++loadTotal === 2) {
+              this.formLoading = false
+              this.treeLoading = false
             }
-          })
-          if (++loadTotal === 2) {
-            this.formLoading = false
-            this.treeLoading = false
-          }
 
-          // 整理BOM树
-          // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
-          // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
-          // if (!nodeData) {
-          //   this.selectedNodeKey = this.firstId
-          //   this.treeData = [tempObj]
-          // }
-          // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
+            // 整理BOM树
+            // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
+            // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
+            // if (!nodeData) {
+            //   this.selectedNodeKey = this.firstId
+            //   this.treeData = [tempObj]
+            // }
+            // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
 
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
                   name: item.document.fullName,
                   fileSize: item.document.fileSize,
                   filename: item.document.filePath,
                   id: item.document.id,
                   url: item.url
-                }
-              )
-            })
-          }
-        }).catch(() => { this.btnLoading = false })
-        getSaleBusDetail(bomId).then(res => {
-              console.log(res, '业务详情');
-              if (res.data) {
-                this.firstOneNode = []
-                this.approvalForm = res.data.form
-                this.transferQuery.approvalFormId = this.approvalForm.id
-                this.firstOneNode.push({
-                  name: res.data.form.createByName
                 })
-                let data = res.data.formNodeTree.childNode
-                if (data) {
-                  this.addNodeTypeAndNodeName(data)
-
-                  this.busNodeConfig.childNode = data
-                  this.workVisible = true
-                  // this.$nextTick(() => {
-                  //   this.$refs.workflowRef.initData('busing', this.btnType)
-                  // })
-                }
-                if (this.btnType == 'look') {
-                  console.log(this.approvalForm, '++++++++++');
-                  this.transferQuery.documentId = bomId
-                  approvalTransferList(this.transferQuery).then(res => {
-                    console.log(res, '流转记录');
-                    this.transferData = res.data.records
-                  })
-                }
-              } else {
-                this.busNodeConfig.childNode = null
-              }
+              })
+            }
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
+        getSaleBusDetail(bomId).then((res) => {
+          console.log(res, '业务详情')
+          if (res.data) {
+            this.firstOneNode = []
+            this.approvalForm = res.data.form
+            this.transferQuery.approvalFormId = this.approvalForm.id
+            this.firstOneNode.push({
+              name: res.data.form.createByName
             })
+            let data = res.data.formNodeTree.childNode
+            if (data) {
+              this.addNodeTypeAndNodeName(data)
+
+              this.busNodeConfig.childNode = data
+              this.workVisible = true
+              // this.$nextTick(() => {
+              //   this.$refs.workflowRef.initData('busing', this.btnType)
+              // })
+            }
+            if (this.btnType == 'look') {
+              console.log(this.approvalForm, '++++++++++')
+              this.transferQuery.documentId = bomId
+              approvalTransferList(this.transferQuery).then((res) => {
+                console.log(res, '流转记录')
+                this.transferData = res.data.records
+              })
+            }
+          } else {
+            this.busNodeConfig.childNode = null
+          }
+        })
         // 获取bom树
         if (!this.treeData.length) {
-          getBomTree(bomId).then(res => {
+          getBomTree(bomId).then((res) => {
             this.treeData = res.data
             if (!nodeData) this.selectedNodeKey = this.firstId
             if (++loadTotal === 2) {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => { this.toggleExpand(true) })
+            this.$nextTick(() => {
+              this.toggleExpand(true)
+            })
           })
         } else {
           this.formLoading = false
         }
-      }else  if (productId && this.btnType != 'add' && this.statusFlag) {
+      } else if (productId && this.btnType != 'add' && this.statusFlag) {
         this.firstId = this.firstId ? this.firstId : productId
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
-        detailBomData(approvalStatus.id).then(res => {
-          this.autoCode = res.data.bom.code
-          this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          // btnType !== 'look' ? this.getApproverData() : ''
-          this.documentStatus = res.data.bom.documentStatus
-          this.linesList = res.data.lines.map(line => {
-            return {
-              ...line,
-              drawingNo: line.drawingNo ? line.drawingNo : line.drawNo
+        detailBomData(approvalStatus.id)
+          .then((res) => {
+            this.autoCode = res.data.bom.code
+            this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
+            // btnType !== 'look' ? this.getApproverData() : ''
+            this.documentStatus = res.data.bom.documentStatus
+            this.linesList = res.data.lines.map((line) => {
+              return {
+                ...line,
+                drawingNo: line.drawingNo ? line.drawingNo : line.drawNo
+              }
+            })
+            if (++loadTotal === 2) {
+              this.formLoading = false
+              this.treeLoading = false
             }
-          })
-          if (++loadTotal === 2) {
             this.formLoading = false
             this.treeLoading = false
-          }
-          this.formLoading = false
-          this.treeLoading = false
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
                   name: item.document.fullName,
                   fileSize: item.document.fileSize,
                   filename: item.document.filePath,
                   id: item.document.id,
                   url: item.url
-                }
-              )
-            })
-          }
-        }).catch(() => { this.btnLoading = false })
-        getSaleBusDetail(approvalStatus.id).then(res => {
-              console.log(res, '业务详情');
-              if (res.data) {
-                this.firstOneNode = []
-                this.approvalForm = res.data.form
-                this.transferQuery.approvalFormId = this.approvalForm.id
-                this.firstOneNode.push({
-                  name: res.data.form.createByName
                 })
-                let data = res.data.formNodeTree.childNode
-                if (data) {
-                  this.addNodeTypeAndNodeName(data)
-
-                  this.busNodeConfig.childNode = data
-                  this.workVisible = true
-                  // this.$nextTick(() => {
-                  //   this.$refs.workflowRef.initData('busing', this.btnType)
-                  // })
-                }
-                if (this.btnType == 'look') {
-                  console.log(this.approvalForm, '++++++++++');
-                  this.transferQuery.documentId = approvalStatus.id
-                  approvalTransferList(this.transferQuery).then(res => {
-                    console.log(res, '流转记录');
-                    this.transferData = res.data.records
-                  })
-                }
-              } else {
-                this.busNodeConfig.childNode = null
-              }
+              })
+            }
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
+        getSaleBusDetail(approvalStatus.id).then((res) => {
+          console.log(res, '业务详情')
+          if (res.data) {
+            this.firstOneNode = []
+            this.approvalForm = res.data.form
+            this.transferQuery.approvalFormId = this.approvalForm.id
+            this.firstOneNode.push({
+              name: res.data.form.createByName
             })
-      }else if (productId && this.btnType == 'add') {
+            let data = res.data.formNodeTree.childNode
+            if (data) {
+              this.addNodeTypeAndNodeName(data)
+
+              this.busNodeConfig.childNode = data
+              this.workVisible = true
+              // this.$nextTick(() => {
+              //   this.$refs.workflowRef.initData('busing', this.btnType)
+              // })
+            }
+            if (this.btnType == 'look') {
+              console.log(this.approvalForm, '++++++++++')
+              this.transferQuery.documentId = approvalStatus.id
+              approvalTransferList(this.transferQuery).then((res) => {
+                console.log(res, '流转记录')
+                this.transferData = res.data.records
+              })
+            }
+          } else {
+            this.busNodeConfig.childNode = null
+          }
+        })
+      } else if (productId && this.btnType == 'add') {
         this.firstId = this.firstId ? this.firstId : productId
         this.title = '新建BOM'
         this.isDoubleFlag = true
         // 获取详情
         // let bomId = (await getBomByProductId(productId)).data
-        detailBomData(approvalStatus.id).then(res => {
-          this.autoCode = res.data.bom.code
-          this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
-          // this.getApproverData()
-          this.documentStatus = res.data.bom.documentStatus
-          this.linesList = res.data.lines.map(line => {
-            return {
-              ...line,
-              drawingNo: line.drawingNo ? line.drawingNo : line.drawNo,
-              id:''
+        detailBomData(approvalStatus.id)
+          .then((res) => {
+            this.autoCode = res.data.bom.code
+            this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
+            // this.getApproverData()
+            this.documentStatus = res.data.bom.documentStatus
+            this.linesList = res.data.lines.map((line) => {
+              return {
+                ...line,
+                drawingNo: line.drawingNo ? line.drawingNo : line.drawNo,
+                id: ''
+              }
+            })
+            if (++loadTotal === 2) {
+              this.formLoading = false
+              this.treeLoading = false
             }
-          })
-          if (++loadTotal === 2) {
-            this.formLoading = false
-            this.treeLoading = false
-          }
-          this.dataForm.approvalStatus = ''
-          this.dataForm.submitDate = ''
-          this.dataForm.approvalCompletionDate = ''
-          this.dataForm.id = ''
-          this.dataForm.documentStatus = ''
+            this.dataForm.approvalStatus = ''
+            this.dataForm.submitDate = ''
+            this.dataForm.approvalCompletionDate = ''
+            this.dataForm.id = ''
+            this.dataForm.documentStatus = ''
 
-          // 整理BOM树
-          // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
-          // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
-          // if (!nodeData) {
-          //   this.selectedNodeKey = this.firstId
-          //   this.treeData = [tempObj]
-          // }
-          // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
+            // 整理BOM树
+            // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
+            // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
+            // if (!nodeData) {
+            //   this.selectedNodeKey = this.firstId
+            //   this.treeData = [tempObj]
+            // }
+            // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
 
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push({
                   name: item.document.fullName,
                   fileSize: item.document.fileSize,
                   filename: item.document.filePath,
                   id: item.document.id,
                   url: item.url
-                }
-              )
-            })
-          }
-        }).catch(() => { this.btnLoading = false })
+                })
+              })
+            }
+          })
+          .catch(() => {
+            this.btnLoading = false
+          })
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
         // 获取bom树
         if (!this.treeData.length) {
-          getBomTree(approvalStatus.id).then(res => {
+          getBomTree(approvalStatus.id).then((res) => {
             this.treeData = res.data
             if (!nodeData) this.selectedNodeKey = this.firstId
             if (++loadTotal === 2) {
               this.formLoading = false
               this.treeLoading = false
             }
-            this.$nextTick(() => { this.toggleExpand(true) })
+            this.$nextTick(() => {
+              this.toggleExpand(true)
+            })
           })
         } else {
           this.formLoading = false
         }
-      }else {
+      } else {
         this.title = '新建BOM'
         this.treeLoading = false
         this.formLoading = false
-         // 审批
+        // 审批
         //  this.$nextTick(() => { this.getApproverData() })
       }
     },
@@ -602,41 +751,41 @@ export default {
       if (this.btnType === 'add') {
         if (this.busNodeConfig.childNode) {
           let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
+          let flattenedNodes = this.flattenNodes(data)
           flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item=>{
+          flattenedNodes = flattenedNodes.map((item) => {
             return {
               ...item,
-              nodeUserList:item.nodeUserList ? item.nodeUserList : []
+              nodeUserList: item.nodeUserList ? item.nodeUserList : []
             }
           })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
+          templateLineList = flattenedNodes.filter((item) => item.nodeName === '审核人')
           // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
+          ccList = flattenedNodes.filter((item) => item.nodeName === '抄送人')
 
           for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
+            var nodeUserList = ccList[i].nodeUserList
+            ccLists = ccLists.concat(nodeUserList)
           }
 
           if (templateLineList.length && submitModel === 'submit') {
-            submitFlag = templateLineList.every(item=>item.nodeUserList.length)
-            if (!submitFlag) { 
+            submitFlag = templateLineList.every((item) => item.nodeUserList.length)
+            if (!submitFlag) {
               this.$message.error('审核人不能为空！')
               this.btnLoading = false
               return
             }
           }
           if (ccList.length && submitModel === 'submit') {
-            submitFlag = ccList.every(item=>item.nodeUserList.length)
-            if (!submitFlag) { 
+            submitFlag = ccList.every((item) => item.nodeUserList.length)
+            if (!submitFlag) {
               this.$message.error('抄送人不能为空！')
               this.btnLoading = false
               return
             }
-          } 
+          }
           // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
+          nodeCondList = flattenedNodes.filter((item) => item.type === 'condition')
           // 业务审批单流程节点参数
           formNodeList = flattenedNodes.map((item, index) => {
             return {
@@ -644,25 +793,30 @@ export default {
               approvalStatus: item.name == '审核人' ? 'no' : '',
               adminId: '',
               id: '',
-              previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
+              previousCode:
+                item.type === 'condition' ? item.previousCode : index === 0 ? '' : flattenedNodes[index - 1].code,
               name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
+              designatedMembersId: item.designatedMembersId
+                ? item.designatedMembersId
+                : item.nodeUserList.length
+                  ? item.nodeUserList[0].targetId
+                  : ''
             }
           })
           // 抄送人
-          ccLists = ccLists.map(item => {
+          ccLists = ccLists.map((item) => {
             return {
               ...item,
               approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
               ccToId: item.targetId,
               approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
               id: '',
-              defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
+              defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1
             }
           })
           // 条件列表
           if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
+            nodeJudg = nodeCondList.map((item) => {
               return {
                 ...item,
                 approvalFormNodeCode: item.code,
@@ -682,56 +836,59 @@ export default {
             id: ''
           }
         }
-
       }
       if (this.btnType === 'edit' || this.btnType === 'look') {
         if (this.busNodeConfig.childNode) {
           let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
+          let flattenedNodes = this.flattenNodes(data)
           flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item=>{
+          flattenedNodes = flattenedNodes.map((item) => {
             return {
               ...item,
-              nodeUserList:item.nodeUserList ? item.nodeUserList : []
+              nodeUserList: item.nodeUserList ? item.nodeUserList : []
             }
           })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
+          templateLineList = flattenedNodes.filter((item) => item.nodeName === '审核人')
           // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
+          ccList = flattenedNodes.filter((item) => item.nodeName === '抄送人')
           for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
+            var nodeUserList = ccList[i].nodeUserList
+            ccLists = ccLists.concat(nodeUserList)
           }
           if (templateLineList.length && submitModel === 'submit') {
-            submitFlag = templateLineList.every(item=>item.nodeUserList.length)
-            if (!submitFlag) { 
+            submitFlag = templateLineList.every((item) => item.nodeUserList.length)
+            if (!submitFlag) {
               this.$message.error('审核人不能为空！')
               this.btnLoading = false
               return
             }
           }
           if (ccList.length && submitModel === 'submit') {
-            submitFlag = ccList.every(item=>item.nodeUserList.length)
-            if (!submitFlag) { 
+            submitFlag = ccList.every((item) => item.nodeUserList.length)
+            if (!submitFlag) {
               this.$message.error('抄送人不能为空！')
               this.btnLoading = false
               return
             }
-          } 
+          }
           // return
           // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
+          nodeCondList = flattenedNodes.filter((item) => item.type === 'condition')
           // 业务审批单流程节点参数
           formNodeList = flattenedNodes.map((item, index) => {
             return {
               ...item,
               // previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
               // name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
+              designatedMembersId: item.designatedMembersId
+                ? item.designatedMembersId
+                : item.nodeUserList.length
+                  ? item.nodeUserList[0].targetId
+                  : ''
             }
           })
           // 抄送人
-          ccLists = ccLists.map(item => {
+          ccLists = ccLists.map((item) => {
             return {
               ...item,
               approvalFormId: item.approvalFormId ? item.approvalFormId : this.approvalForm.id,
@@ -742,7 +899,7 @@ export default {
           })
           // 条件列表
           if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
+            nodeJudg = nodeCondList.map((item) => {
               return {
                 ...item,
                 approvalFormNodeCode: item.code,
@@ -757,7 +914,7 @@ export default {
           form = {
             ...this.approvalForm,
             approvalTemplateId: this.approvalForm.id,
-            documentStatus: submitModel,
+            documentStatus: submitModel
           }
         }
       }
@@ -768,7 +925,7 @@ export default {
           this.$message.error('未找到匹配的审批流程，请联系管理员！')
         }
         if (formNodeList.length) {
-          formNodeList.forEach(item => {
+          formNodeList.forEach((item) => {
             if (item.approvalType === 'option') {
               if (!item.designatedMembersId) {
                 submitFlag = false
@@ -780,7 +937,6 @@ export default {
         }
       }
 
-
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
       let valid_1 = await form_1.validate().catch(() => false)
@@ -791,7 +947,7 @@ export default {
 
       // 校验表单表格（子数据列表）
       let form_2 = this.$refs['tableForm'].$refs.main
-      let valid_2 = await form_2.validate().catch(err => false)
+      let valid_2 = await form_2.validate().catch((err) => false)
       if (!valid_2 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_2.fields)
@@ -801,13 +957,13 @@ export default {
       if (!this.linesList.length && submitFlag) {
         submitFlag = false
         this.$message.error('请至少添加一个子产品')
-      } else if ((!this.linesList.some(item => item.reduceType === "picking") && submitFlag)) {
+      } else if (!this.linesList.some((item) => item.reduceType === 'picking') && submitFlag) {
         submitFlag = false
         this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
       }
 
       if (submitFlag) {
-        let index = this.linesList.findIndex(line => line.productId === this.dataForm.productId)
+        let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
         if (index !== -1) {
           this.$message.error(`产品信息第${index + 1}行：子产品不能与父产品相同`)
           submitFlag = false
@@ -839,52 +995,56 @@ export default {
           formNodeList,
           nodeCondList: nodeJudg,
           ccList: ccLists,
-          doubleSubmitFlag:this.isDoubleFlag
+          doubleSubmitFlag: this.isDoubleFlag
         }
         // 检查是否有循环问题
-        let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
-        if (!loopBugRes) { this.btnLoading = false }
-        else if (loopBugRes.data.length) {
+        let loopBugRes = await checkLoopBug(dataObj).catch((err) => { })
+        if (!loopBugRes) {
+          this.btnLoading = false
+        } else if (loopBugRes.data.length) {
           let loopArr = []
-          loopBugRes.data.forEach(item => {
-            let temp = this.linesList.find(o => o.productId === item)
-            temp ? loopArr.push(temp.name) : ""
+          loopBugRes.data.forEach((item) => {
+            let temp = this.linesList.find((o) => o.productId === item)
+            temp ? loopArr.push(temp.name) : ''
           })
-          this.$message.error("子件与BOM树产生冲突：" + loopArr.join('、'))
+          this.$message.error('子件与BOM树产生冲突：' + loopArr.join('、'))
           this.btnLoading = false
         } else {
-          formMethod(dataObj).then(res => {
-            let msg = res.msg
-            if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-            this.$message({
-              message: msg,
-              type: 'success',
-              duration: 1500,
-              onClose: () => {
-                this.visible = false
-                this.btnLoading = false
-                this.$emit('close', true)
+          formMethod(dataObj)
+            .then((res) => {
+              let msg = res.msg
+              if (res.msg === 'Success') {
+                msg = submitModel == 'submit' ? '提交成功' : '保存成功'
               }
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.visible = false
+                  this.btnLoading = false
+                  this.$emit('close', true)
+                }
+              })
             })
-          }).catch(() => {
-            this.btnLoading = false
-          })
+            .catch(() => {
+              this.btnLoading = false
+            })
         }
       } else {
         this.btnLoading = false
       }
-
     },
     handleNodeClick(nodeData, node) {
-      const msgArr = ["选择节点"]
+      const msgArr = ['选择节点']
       if (nodeData.productId === this.selectedNodeKey) {
-        msgArr.push("和现节点相同")
+        msgArr.push('和现节点相同')
       } else if (nodeData.childrenList.length || nodeData.productId === this.firstId) {
-        msgArr.push("切换节点")
+        msgArr.push('切换节点')
         this.selectedNodeKey = nodeData.productId
         this.init(nodeData.productId, this.btnType, nodeData)
       } else {
-        msgArr.push("点击的节点没有BOM")
+        msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
       // console.log(msgArr.join(' - '));
@@ -896,36 +1056,42 @@ export default {
       this.$nextTick(() => {
         this.refreshTree = true
         this.$nextTick(() => {
-          this.$refs.treeBox ? this.$refs.treeBox.setCurrentKey(this.selectedNodeKey) : ""
+          this.$refs.treeBox ? this.$refs.treeBox.setCurrentKey(this.selectedNodeKey) : ''
         })
       })
     },
     // 对应子数据新增或删除行
     addOrDelLinesItem(data) {
       let type = Array.isArray(data) ? 'Array' : 'Object'
-      if (type === 'Object') { this.linesList.splice(data.$index, 1) }
-      else {
+      if (type === 'Object') {
+        this.linesList.splice(data.$index, 1)
+      } else {
         let tempList = JSON.parse(JSON.stringify(this.linesList))
         let hasItemList = []
         for (let i = 0; i < data.length; i++) {
-          let item = data[i];
+          let item = data[i]
           item.productCode = item.code
-          item.remark = ""
-          const hasFlag = this.linesList.some(i => item.productId === i.productId)
-          if (hasFlag) { hasItemList.push(item.productName) }
-          else { tempList.push(item) }
+          item.remark = ''
+          const hasFlag = this.linesList.some((i) => item.productId === i.productId)
+          if (hasFlag) {
+            hasItemList.push(item.productName)
+          } else {
+            tempList.push(item)
+          }
           if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
         }
         this.linesList = JSON.parse(JSON.stringify(tempList))
-        this.$nextTick(() => { 
-          this.$refs.tableForm.setDefaultValue() 
+        this.$nextTick(() => {
+          this.$refs.tableForm.setDefaultValue()
           // 审批
           // this.getApproverData()
-        });
+        })
       }
     },
     ProductChange(val, data, paramsObj) {
-      this.$nextTick(() => { this.$refs['dataForm'].$children[0].validateField(paramsObj.prop) })
+      this.$nextTick(() => {
+        this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
+      })
       if (!data || !data.length) return
       this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
       this.dataForm[paramsObj.prop] = data[0].name
@@ -943,23 +1109,23 @@ export default {
     },
     // 获取审批流参数递归处理
     addNodeTypeAndNodeName(obj) {
-      console.log(obj);
+      console.log(obj)
       if (obj) {
-        if (obj.name === "审核人") {
-          obj.nodeType = 1;
-          obj.nodeName = obj.name;
-          obj.directorLevel = obj.approvalType == "manager" ? obj.levelSupervisor : ''
-          obj.examineEndDirectorLevel = obj.approvalType == "multilevel" ? obj.levelSupervisor : ''
+        if (obj.name === '审核人') {
+          obj.nodeType = 1
+          obj.nodeName = obj.name
+          obj.directorLevel = obj.approvalType == 'manager' ? obj.levelSupervisor : ''
+          obj.examineEndDirectorLevel = obj.approvalType == 'multilevel' ? obj.levelSupervisor : ''
         }
-        if (obj.name === "路由") {
-          obj.nodeType = 4;
+        if (obj.name === '路由') {
+          obj.nodeType = 4
         }
-        if (obj.name === "抄送人") {
-          obj.nodeType = 2;
-          obj.nodeName = obj.name;
+        if (obj.name === '抄送人') {
+          obj.nodeType = 2
+          obj.nodeName = obj.name
         }
         if (obj.childNode) {
-          this.addNodeTypeAndNodeName(obj.childNode);
+          this.addNodeTypeAndNodeName(obj.childNode)
         } else {
           if (obj.conditionNodes) {
             for (let i = 0; i < obj.conditionNodes.length; i++) {
@@ -967,19 +1133,19 @@ export default {
               obj.conditionNodes[i].showName = obj.conditionNodes[i].name
               obj.conditionNodes[i].nodeName = obj.conditionNodes[i].name
               obj.conditionNodes[i].nodeType = 3
-              obj.conditionNodes[i].conditionList = obj.conditionNodes[i].conditionList.map(item => {
+              obj.conditionNodes[i].conditionList = obj.conditionNodes[i].conditionList.map((item) => {
                 // this.approvalBusinessId = item.approvalBusinessId
                 if (item.optionNames && item.optionValues) {
-                  var optionNames = item.optionNames.split(','); // 如果习惯使用英文逗号，这里可以用 ','
-                  var optionValues = item.optionValues.split(',');
-                  var resultArr = [];
+                  var optionNames = item.optionNames.split(',') // 如果习惯使用英文逗号，这里可以用 ','
+                  var optionValues = item.optionValues.split(',')
+                  var resultArr = []
                   if (optionNames.length === optionValues.length) {
                     for (var i = 0; i < optionNames.length; i++) {
                       var option = {
                         label: optionNames[i],
                         value: optionValues[i]
-                      };
-                      resultArr.push(option);
+                      }
+                      resultArr.push(option)
                     }
                   }
                 }
@@ -992,11 +1158,23 @@ export default {
                   zdy1: item.comparisonValue,
                   columnId: item.approvalBusinessId,
                   options: resultArr,
-                  optType: item.dataType == 'number' ? (item.operationalFormula == 'lt' ? '1' : item.operationalFormula == 'gt' ? '2' : item.operationalFormula == 'eq' ? '4' : item.operationalFormula == 'ge' ? '5' : item.operationalFormula == 'le' ? '3' : '') : ''
-
+                  optType:
+                    item.dataType == 'number'
+                      ? item.operationalFormula == 'lt'
+                        ? '1'
+                        : item.operationalFormula == 'gt'
+                          ? '2'
+                          : item.operationalFormula == 'eq'
+                            ? '4'
+                            : item.operationalFormula == 'ge'
+                              ? '5'
+                              : item.operationalFormula == 'le'
+                                ? '3'
+                                : ''
+                      : ''
                 }
               })
-              this.addNodeTypeAndNodeName(obj.conditionNodes[i].childNode);
+              this.addNodeTypeAndNodeName(obj.conditionNodes[i].childNode)
             }
           }
         }
@@ -1005,22 +1183,20 @@ export default {
     // // 审批 提交参数递归处理
     flattenNodes(node, flattenedNodes = [], previousCode = '') {
       if (node) {
-        console.log(node, '提交数1');
-        if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
+        console.log(node, '提交数1')
+        if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null })
         if (node.type === 'node') {
-
           if (node.childNode) {
             node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
+            this.flattenNodes(node.childNode, flattenedNodes, node.code)
           }
           // delete node.childNode;
         } else if (node.type === 'condition' && node.name === '路由') {
           if (node.conditionNodes) {
             for (let i = 0; i < node.conditionNodes.length; i++) {
-
               // let previousCode = node.conditionNodes[i].code
               node.conditionNodes[i].previousCode = previousCode
-              this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code);
+              this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code)
             }
           }
           // if (node.childNode) {
@@ -1029,11 +1205,11 @@ export default {
         } else if (node.nodeType == 3) {
           if (node.childNode) {
             node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
+            this.flattenNodes(node.childNode, flattenedNodes, node.code)
           }
         }
       }
-      return flattenedNodes;
+      return flattenedNodes
     },
     // // 获取审批模版
     getApproverData() {
@@ -1041,11 +1217,11 @@ export default {
       let condArr = ['>', '<', '>=', '<=', '=']
       let state = ''
       let condExpress = ''
-      let foundSymbol = ''  // 条件符号
-      let result = null     // 判断条件是否成立
+      let foundSymbol = '' // 条件符号
+      let result = null // 判断条件是否成立
       let condList = []
-      getBusDetail('b018').then(res => {
-        console.log(res);
+      getBusDetail('b018').then((res) => {
+        console.log(res)
         state = res.data.business.state
         condExpress = res.data.business.condExpress
         // if (res.data.businessConditionList.length) {
@@ -1060,17 +1236,17 @@ export default {
           this.dataForm.approvalFlag = 1
           for (var i = 0; i < condArr.length; i++) {
             if (condExpress.includes(condArr[i])) {
-              foundSymbol = condArr[i];
-              break;
+              foundSymbol = condArr[i]
+              break
             }
           }
           // 找到符号并进行销售报价业务判断
           if (foundSymbol) {
-            const parts = condExpress.split(foundSymbol); // 使用 ">" 符号拆分字符串
-            const leftValue = parts[0]; // 提取 ">" 符号左边的值
-            const rightValue = parts[1]; // 提取 ">" 符号右边的值
-            console.log(leftValue);
-            console.log(rightValue);
+            const parts = condExpress.split(foundSymbol) // 使用 ">" 符号拆分字符串
+            const leftValue = parts[0] // 提取 ">" 符号左边的值
+            const rightValue = parts[1] // 提取 ">" 符号右边的值
+            console.log(leftValue)
+            console.log(rightValue)
             // if (leftValue == 'numCode') {
             //   const condition = `${this.totalNum} ${foundSymbol} ${this.totalPrice}`; // 构建条件表达式
             //   result = eval(condition); // 执行条件判断
@@ -1080,11 +1256,11 @@ export default {
             // }
             if (result) {
               let query = {
-                businessCode: "b018",
-                condList,
+                businessCode: 'b018',
+                condList
               }
-              busApprovalFlowTree(query).then(res => {
-                console.log(res, '树详情');
+              busApprovalFlowTree(query).then((res) => {
+                console.log(res, '树详情')
                 if (res.data) {
                   this.firstOneNode = []
                   this.approvalForm = res.data.template
@@ -1112,11 +1288,11 @@ export default {
         if (state === 'enable') {
           this.dataForm.approvalFlag = 1
           let query = {
-            businessCode: "b018",
-            condList,
+            businessCode: 'b018',
+            condList
           }
-          busApprovalFlowTree(query).then(res => {
-            console.log(res, '树详情');
+          busApprovalFlowTree(query).then((res) => {
+            console.log(res, '树详情')
             if (res.data) {
               this.firstOneNode = []
               this.approvalForm = res.data.template
@@ -1142,8 +1318,7 @@ export default {
           this.busNodeConfig.childNode = null
         }
       })
-
-    },
+    }
   }
 }
 </script>
@@ -1169,13 +1344,16 @@ export default {
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
+
 ::v-deep .el-tabs {
-  height: 100%!important;
+  height: 100% !important;
 }
+
 ::v-deep .el-tabs__content {
   height: calc(100% - 47px) !important;
-  overflow:auto!important;
+  overflow: auto !important;
 }
+
 .required {
   color: red;
   margin-right: 4px;
@@ -1199,6 +1377,7 @@ export default {
   background-color: #f5f5f7 !important;
   color: #576a95;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1218,11 +1397,9 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
-
 </style>

@@ -523,7 +523,7 @@ export default {
         pageNum: 1,
         pageSize: 20
       }
-
+      this.$refs.SuperQuery.conditionList = []
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {

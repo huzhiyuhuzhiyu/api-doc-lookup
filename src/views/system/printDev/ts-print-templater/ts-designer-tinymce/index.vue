@@ -9,7 +9,8 @@ import Editor from '@tinymce/tinymce-vue'
 
 import plugins from './plugins'
 import toolbar from './toolbar'
-
+import request from "@/utils/request";
+import { uploaderWithCode } from '@/api/equipment'
 let unique = 0
 
 export default {
@@ -101,6 +102,20 @@ export default {
         nonbreaking_force_tab: true,
         convert_urls: false,
         toolbar_mode: 'sliding',
+        file_picker_types: 'image',
+        // 此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
+        // 如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
+        images_upload_url: "api/extend/Document/uploader/with/code", //指定上传图片的后端处理程序的URL。
+        // images_upload_base_path: "/demo",
+        images_upload_handler: async (blobInfo, success, failure) => {
+          const formData = new FormData();
+          formData.append("file", blobInfo.blob());
+          uploaderWithCode(formData).then((res) => {
+            console.log(res);
+            success(this.define.APIURl + res.data.url); //将图片展示到编辑器中
+          });
+          // this.handleImgUpload(blobInfo, success, failure)
+        },
         ...this.init
       }
 

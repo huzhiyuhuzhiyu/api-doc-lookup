@@ -17,7 +17,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-date-picker v-model="rdeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                   start-placeholder="退货开始日期" end-placeholder="退货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
@@ -60,7 +60,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC>
+            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
@@ -129,7 +129,6 @@ import {
   purPurchaseReceiptReturnGoodsList,
   deleteQuotationsendlist,
   getQuotationdatasenddatalist,
-
   mergelist,
   splitlist
 } from '@/api/purchasingAndOutsourcingOrders'
@@ -151,7 +150,6 @@ export default {
     return {
       superQueryVisible: false,
       columnList: ['partnerCode', 'createByName'],
-      rdeDateArr: [],
       exportFormVisible: false,
       qxbtnLoading: false,
       hbbtnLoading: false,
@@ -297,10 +295,7 @@ export default {
           label: '单据状态',
           type: 'select',
 
-          options: [
-            { label: '草稿', value: 'draft' },
-            { label: '提交', value: 'submit' },
-          ]
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
         },
         {
           prop: 'createTime',
@@ -320,8 +315,7 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
-
+        }
       ]
     }
   },
@@ -337,7 +331,6 @@ export default {
     }
   },
   methods: {
-
     //禁用复选框
     checkSelectable(row) {
       if (row.outboundQuantity > 0 || row.documentStatus == 'draft' || row.deliveryStatus == 'canceled') return false
@@ -347,7 +340,6 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-
 
     handleClick(e) {
       this.activeName = e.name
@@ -396,9 +388,9 @@ export default {
       this.search()
     },
     search() {
-      if (this.rdeDateArr.length > 0) {
-        this.orderForm.rdsDate = this.rdeDateArr[0]
-        this.orderForm.rdeDate = this.rdeDateArr[1]
+      if (this.orderDateArr.length > 0) {
+        this.orderForm.rdsDate = this.orderDateArr[0]
+        this.orderForm.rdeDate = this.orderDateArr[1]
       } else {
         this.orderForm.rdsDate = ''
         this.orderForm.rdeDate = ''
@@ -419,7 +411,7 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, btntype) {

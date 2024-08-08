@@ -180,11 +180,36 @@ export default {
   watch: {
     value(newValue) {
       this.list = newValue;
+      let imgBox= document.getElementsByName("imgBox");
+      this.compressImage(imgBox, 0.7, 800)
     },
     // dataValue(newValue) {
     //   this.dataForm = newValue;
     // },
   },
+  methods:{
+    compressImage(img, quality, maxWidth) {
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = width;
+        canvas.height = height;
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        img.src = dataUrl
+      }
+    }
+  }
 }
 
 </script>

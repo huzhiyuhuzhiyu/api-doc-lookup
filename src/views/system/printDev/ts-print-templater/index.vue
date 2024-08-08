@@ -6,18 +6,25 @@
           <div class="JNPF-common-title">
             <h2>表单字段</h2>
           </div>
-          <el-tree :data="newData" default-expand-all :props="defaultProps"
-            @node-click="handleNodeClick"></el-tree>
+          <el-tree :data="newData" default-expand-all :props="defaultProps" @node-click="handleNodeClick">
+            <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+              <span class="text" :title="data.fullName">{{ data.children && data.children.length ? data.fullName : data.id
+                + '(' + data.comment + ')' }}</span>
+            </span>
+          </el-tree>
+          <div class="JNPF-common-title">
+            <h2>分页字段</h2>
+          </div>
+          <el-tree :data="newIndexData" default-expand-all :props="defaultProps" @node-click="handleNodeClick"></el-tree>
           <div class="JNPF-common-title sys-title">
             <h2>系统字段</h2>
           </div>
-          <el-tree :data="newSysData" default-expand-all :props="defaultProps"
-            @node-click="handleNodeClick"></el-tree>
+          <el-tree :data="newSysData" default-expand-all :props="defaultProps" @node-click="handleNodeClick"></el-tree>
         </el-scrollbar>
       </div>
       <div class="system-view-content">
-        <ts-designer-tinymce v-model="content" ref="createTinymce" :height="richHeight"
-          :init="getEditConfig()" class="rich-txt" />
+        <ts-designer-tinymce v-model="content" ref="createTinymce" :height="richHeight" :init="getEditConfig()"
+          class="rich-txt" />
       </div>
     </div>
   </div>
@@ -59,6 +66,27 @@ export default {
           id: 'systemApprovalContent',
         }
       ],
+      newIndexData: [
+        {
+          id: 'index',
+          fullName: '序号',
+          hasChildren: false,
+          children: [],
+          parentId:''
+        },
+        {
+          id: 'pageNum',
+          fullName: '页码',
+          hasChildren: false,
+          children: []
+        },
+        {
+          id: 'pageSize',
+          fullName: '总页数',
+          hasChildren: false,
+          children: []
+        },
+      ],
       defaultProps: {
         children: 'children',
         label: 'fullName'
@@ -84,6 +112,9 @@ export default {
       return this.$refs.createTinymce.editor
     },
     newData() {
+      console.log(this.treeData, 'newData');
+      let hasPageRow = this.treeData.find(item=>item.hasPage)
+      this.newIndexData[0].parentId = hasPageRow.id
       return this.treeData
     },
     newSysData() {
@@ -100,6 +131,9 @@ export default {
         return
       }
       const tableParent = this.getCurrentParentByTag('table[data-wk-table-tag="table"]')
+      console.log(item);
+      console.log(node);
+      
       if (!tableParent) {
         this.editor.insertContent(this.getSpanNode(item, node))
         this.content = this.editor.getContent({ format: 'html' })
@@ -274,13 +308,18 @@ export default {
       return this.editor.dom.getParent(this.editor.selection.getNode(), tag)
     },
     getSpanNode(item, node) {
-      const parent = (node.parent.data != null && node.parent.data.id != null) ? node.parent.data.id : 'null'
+      let parent = (node.parent.data != null && node.parent.data.id != null) ? node.parent.data.id : 'null'
+      parent = item.id === 'index' ? item.parentId : parent
+      parent = item.id === 'UpperMoney' ? item.parentId : parent
+      parent = item.id === 'total' ? item.parentId : parent
+      parent = item.id === 'pageSize' ? item.id : parent
+      parent = item.id === 'pageNum' ? item.id : parent
       return `<span data-tag="${parent}.${item.id}" class="wk-print-tag-wukong ${this.getSpanColorClass()}" contenteditable="false">{${item.id}}</span>`
     },
     getSpanColorClass() {
       const color = ['customer', 'contacts', 'business', 'contract', 'receivables', 'product'].includes(this.activeTab) ? this.activeTab : 'common'
       return `wk-tiny-color--${color}`
-    }
+    },
   }
 }
 </script>
@@ -297,6 +336,7 @@ export default {
     overflow: hidden;
   }
 }
+
 .system-view-nav {
   width: 300px;
   position: relative;
@@ -304,19 +344,24 @@ export default {
   margin-right: 10px;
   border-radius: 4px;
   overflow: hidden;
+
   .left-scrollbar {
     height: 100%;
+
     ::v-deep .el-scrollbar__wrap {
       overflow-x: hidden;
     }
   }
+
   .JNPF-common-title {
     padding: 0 10px;
     margin-bottom: 10px;
     height: 39px;
+
     &.sys-title {
       margin-top: 30px;
     }
+
     h2 {
       font-size: 14px;
       line-height: 39px;
@@ -325,6 +370,7 @@ export default {
     }
   }
 }
+
 .system-view-content {
   flex: 1;
   background: #fff;
@@ -332,10 +378,12 @@ export default {
   flex-direction: column;
   overflow-x: auto;
   border-radius: 4px;
+
   ::v-deep .tox-tinymce {
     border: none;
   }
 }
+
 .xr-reminder {
   ::v-deep .reminder-body {
     align-items: stretch;

@@ -143,10 +143,12 @@
           <span class="filter-tag">本人及下属</span>
           <span class="filter-tag">本月</span>
           <div class="el-select">
-            
+
           </div>
         </div>
-        <div v-if="true" class="forgettreminder"></div>
+        <div v-if="true" class="forgettreminder">
+          <forget></forget>
+        </div>
         <div v-else></div>
       </div>
     </div>
@@ -154,6 +156,7 @@
 </template>
  
 <script>
+import forget from "./forget.vue";
 import datasummary from "./datasummary.vue";
 import moneychart from "./moneychart.vue";
 import salesfunnelchart from "./salesfunnelchart.vue";
@@ -163,7 +166,8 @@ export default {
     moneychart,
     salesfunnelchart,
     datasummary,
-    performancechart
+    performancechart,
+    forget
   },
   props: {
     type: {
@@ -252,7 +256,7 @@ export default {
         grid: {
           top: '8%',
           left: '1%',
-          right: '4%',
+          right: '1%',
           bottom: '15%',
           containLabel: true
         },
@@ -291,9 +295,9 @@ export default {
           }
         },
         grid: {
-          top: '8%',
+          top: '10%',
           left: '1%',
-          right: '4%',
+          right: '1%',
           bottom: '15%',
           containLabel: true
         },
@@ -304,7 +308,6 @@ export default {
         },
         xAxis: [{
           type: 'category',
-          name: '元',
           data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           axisTick: {
             show: false
@@ -312,6 +315,7 @@ export default {
         }],
         yAxis: [{
           type: 'value',
+          name: '元',
           axisLine: {
             show: false
           }
@@ -334,9 +338,9 @@ export default {
           }
         },
         grid: {
-          top: '8%',
+          top: '10%',
           left: '1%',
-          right: '4%',
+          right: '1%',
           bottom: '15%',
           containLabel: true
         },
@@ -357,14 +361,15 @@ export default {
         ],
         yAxis: [
           {
+            name: '元',
             type: 'value'
           }
         ],
         series: [
           {
+            barWidth: '30%',
             name: '实际完成金额',
             type: 'bar',
-            barWidth: '60%',
             data: [10, 52, 200, 334, 390, 330, 220]
           }
         ]
@@ -434,11 +439,9 @@ export default {
   height: 260px;
   margin-top: 10px;
 }
-//需删除
-.forgettreminder{
+.forgettreminder {
   width: 100%;
-  height: 206px;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 .sale-statistics-content {
   width: 100%;

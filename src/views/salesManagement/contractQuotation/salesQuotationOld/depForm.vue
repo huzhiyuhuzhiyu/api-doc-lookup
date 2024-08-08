@@ -891,11 +891,12 @@ export default {
     // 继续修改
     continueEdit() {
       this.init(this.oldId, this.oldType)
+      this.btnLoading = false
     },
     // 继续新增
     continueAdd() {
       this.init('', 'add')
-
+      this.btnLoading = false
       this.tipsvisible = false
     },
     submit() {

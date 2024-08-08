@@ -58,7 +58,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="orderNo" label="订单号" min-width="140" sortable="custom"> </el-table-column>
+            <el-table-column prop="orderNo" label="订单号" min-width="160" sortable="custom"> </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="客户名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="客户编码" min-width="160" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
@@ -834,7 +834,7 @@ export default {
 }
 
 .pagination-container {
-  background-color: #ebeef5;
+  background-color: #f5f5f5;
   margin-top: 0px;
   padding-right: 10px;
   padding-top: 2px;

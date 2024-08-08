@@ -47,8 +47,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="businessName" label="商机名称" min-width="160" />
-            <el-table-column prop="customerName" label="客户名称" min-width="160" />
+            <el-table-column prop="businessName" label="商机名称" min-width="180" />
+            <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="customerCode" label="客户编码" min-width="160" />
             <el-table-column prop="money" label="商机金额" min-width="140" />
             <el-table-column prop="dealDate" label="预计成交日期" min-width="160" />

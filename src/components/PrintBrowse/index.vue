@@ -123,12 +123,13 @@ export default {
               }
             }
           }
-          // if (this.$refs.tsPrint.querySelectorAll('img').length){
-          //   this.$refs.tsPrint.querySelectorAll('img').forEach(item => {
-          //     item.crossOrigin = 'anonymous'
-          //     this.compressImage(item, 0.7, 800)
-          //   })
-          // }
+          if (this.$refs.tsPrint.querySelectorAll('img').length){
+            this.$refs.tsPrint.querySelectorAll('img').forEach(item => {
+              item.crossOrigin = 'anonymous'
+              const imgType = item.src.substring(item.src.lastIndexOf('.') + 1);
+              this.compressImage(item, 0.7, 800,imgType)
+            })
+          }
 
           if (this.$refs.tsPrint && this.data.pageType === 'custom') {
             let upperMoneyList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.UpperMoney"]')
@@ -294,6 +295,7 @@ export default {
     },
     print() {
       let print = this.$refs.tsPrint.innerHTML
+      // return
       this.$nextTick(() => {
         let newStr = print
         const iframe = document.createElement('iframe');
@@ -312,13 +314,14 @@ export default {
           document.body.removeChild(iframe);
           this.$refs.tsPrint.removeAttribute('style');
         }
-      })
-      // let newWindow = window.open('_blank')
-      // console.log(newWindow.document);
 
-      // newWindow.document.body.innerHTML = print
-      // newWindow.print()
-      // newWindow.close()
+
+        // let newWindow = window.open('_blank')
+        // newWindow.document.innerHTML = print
+        // newWindow.print()
+        // newWindow.close()
+
+      })
     },
     // 处理分页
     printPageDataFn(data, pageSize = 20) {
@@ -392,7 +395,7 @@ export default {
       var base64 = canvas.toDataURL("image/png");// 可以根据需要更改为其他格式，如'image/jpeg'等
       return base64;
     },
-    compressImage(img, quality, maxWidth) {
+    compressImage(img, quality, maxWidth,imgType) {
       img.onload = () => {
         let width = img.width;
         let height = img.height;
@@ -409,7 +412,7 @@ export default {
 
         ctx.drawImage(img, 0, 0, width, height);
 
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        const dataUrl = canvas.toDataURL(`image/${imgType}`, quality);
         img.src = dataUrl
       }
     }

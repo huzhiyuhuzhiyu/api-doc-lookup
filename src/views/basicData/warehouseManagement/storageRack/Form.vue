@@ -24,8 +24,8 @@
 
           <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
             :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-          <!-- <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-            :openMode="openMode" /> -->
+          <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+            :openMode="openMode" />
         </el-tabs>
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>

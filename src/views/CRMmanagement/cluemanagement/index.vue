@@ -93,7 +93,7 @@
               {{ scope.$index+1 }}
             </template>
           </el-table-column> -->
-            <el-table-column prop="clueName" label="线索名称" min-width="160" />
+            <el-table-column prop="clueName" label="线索名称" min-width="180" />
             <el-table-column prop="nextTime" label="下次联系时间" width="180" />
             <el-table-column prop="source" label="线索来源" min-width="150">
               <template slot-scope="scope">

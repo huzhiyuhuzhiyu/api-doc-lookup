@@ -6,12 +6,12 @@
         <span class="titletext">销售简报</span>
       </div>
       <div class="brief-box">
-        <div class="brief-item" v-for="item in 8" :key="item">
+        <div class="brief-item" v-for="item in datalist" :key="item.id">
           <div class="brief-item__body">
             <div class="info">
-              <div class="title text">新增联系人</div>
+              <div class="title text">{{item.name}}</div>
               <div class="number">1
-                <span style="margin-left: 4px;font-size:14px">人</span>
+                <span style="margin-left: 4px;font-size:14px">{{item.unit}}</span>
               </div>
               <div class="des">
                 <span class="text">较上月</span>
@@ -22,7 +22,7 @@
           </div>
           <div class="brief-item__others">
             <div ref="echartsline" style="width: 100%;height:80px;margin-top:20px">
-              <chart id="lxr" :option="chartption"></chart>
+              <chart :id="item.id" :option="chartption"></chart>
             </div>
           </div>
         </div>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import { getsaleskitList } from "@/api/CRMmanagement/instrumentPanel/index";
 import chart from '../chart.vue'
 export default {
   components: {
@@ -40,7 +41,16 @@ export default {
   },
   data() {
     return {
-      datalist: [],
+      datalist: [
+        {name:'新增客户',unit:'个',id:'xzkh'},
+        {name:'新增联系人',unit:'个',id:'xzlxr'},
+        {name:'新增商机',unit:'个',id:'xzsj'},
+        {name:'新增合同',unit:'个',id:'xzht'},
+        {name:'合同金额',unit:'元',id:'htje'},
+        {name:'商机金额',unit:'元',id:'sjje'},
+        {name:'回款金额',unit:'元',id:'hkje'},
+        {name:'新增跟进记录',unit:'条',id:'gjjl'},
+      ],
       chartption: {
         xAxis: {
           type: 'category',
@@ -65,12 +75,18 @@ export default {
         ]
       }
     }
+  },
+  created() {
+    getsaleskitList({userIds:['admin']}).then(res => {
+      console.log(res,'6666666+');
+    })
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .crm-workbench {
+  position: relative;
   border-radius: 3px;
   border: 1px solid #dfe1e6;
   background-color: #fff;

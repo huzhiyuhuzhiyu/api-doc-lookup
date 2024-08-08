@@ -1,7 +1,30 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <flexbox></flexbox>
+      <div class="crm-workbench__hd">
+        <div class="el-dropdown">
+          CRM仪表盘
+        </div>
+      </div>
+      <div class="crm-head">
+        <div class="vux-flexbox head__body vux-flex-row">
+          <div>
+            <el-select v-model="value" placeholder="请选择">
+              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+          <div style="margin-left: 8px;">
+            <el-select v-model="value1" placeholder="请选择">
+              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+      <div style="padding-top:16px;">
+        <flexbox></flexbox>
+      </div>
       <div class="vux-flex-row section vux-flexbox1">
         <div class="left">
           <draggable v-model="list" @start="drag=true" @end="drag=false" group="arr">
@@ -29,6 +52,24 @@ export default {
   },
   data() {
     return {
+      value: '选项1',
+      value1: '选项1',
+      options: [
+        {
+          value: '选项1',
+          label: '仅本人'
+        },
+        {
+          value: '选项2',
+          label: '本人及下属'
+        }
+      ],
+      options1: [
+        {
+          value: '选项1',
+          label: '本月'
+        }
+      ],
       list: [
         { name: '合同金额目标及完成情况', id: '1', typechart: 'contractamount' },
         { name: '排行榜', id: '2', typechart: 'rankinglist' },
@@ -51,6 +92,18 @@ export default {
 <style lang="scss" scoped>
 .JNPF-common-layout-center {
   overflow: initial;
+}
+.crm-workbench__hd {
+  padding-top: 10px;
+  .el-dropdown {
+    font-size: 24px;
+    display: inline-block;
+    position: relative;
+  }
+}
+.crm-head {
+  position: relative;
+  margin-top: 15px;
 }
 .vux-flex-row {
   -webkit-box-direction: normal;

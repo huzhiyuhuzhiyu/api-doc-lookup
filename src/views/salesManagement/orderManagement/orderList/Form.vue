@@ -92,12 +92,12 @@
 
 
 
-                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="发货单号" prop="deliveryNoteNumber">
                           <el-input v-model="dataForm.deliveryNoteNumber" placeholder="请输入发货单号"
                             :disabled="btnType == 'look' ? true : false" maxlength="300" />
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
 
 
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
@@ -131,12 +131,12 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="变更次数" prop="changesCount">
                           <el-input v-model="dataForm.changesCount" placeholder="请输入变更次数"
                             :disabled="btnType == 'look' ? true : false" maxlength="4" />
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -184,12 +184,12 @@
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                      <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
+                      <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
                         <template slot-scope="scope">
                           <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
 
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="num" label="数量" width="100" :key="7">
 
@@ -273,12 +273,12 @@
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
+                    <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
                       <template slot-scope="scope">
                         <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
 
                       </template>
-                    </el-table-column>
+                    </el-table-column> -->
 
                     <el-table-column prop="num" label="数量" width="100" :key="7">
                       <template slot="header">
@@ -432,7 +432,7 @@
                     </el-table-column>
                   </el-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
-                    <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
+                    <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
                     <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>

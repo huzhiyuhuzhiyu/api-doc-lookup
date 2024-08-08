@@ -60,7 +60,7 @@
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.salesQuotationId, 'look')">{{
                   scope.row.quotationNo
                 }}</el-link>
               </template>
@@ -117,7 +117,7 @@
                 <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"
                   :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
                 <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                  @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
+                  @click="handleDel(scope.row.salesQuotationId,)" class="JNPF-table-delBtn">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -131,13 +131,13 @@
                       重新提交
                     </el-dropdown-item> -->
                     <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                      @click.native="withdrawnHandle(scope.row.salesQuotationId, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.salesQuotationId, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="downloadOrder(scope.row.id)">
+                    <el-dropdown-item @click.native="downloadOrder(scope.row.salesQuotationId)">
                       下载报价单
                     </el-dropdown-item>
                   </el-dropdown-menu>

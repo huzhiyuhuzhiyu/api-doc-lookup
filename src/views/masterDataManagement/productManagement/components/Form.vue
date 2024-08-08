@@ -325,6 +325,28 @@ export default {
           // 处理普通属性
           let detailObj = res.data
           for (const key in detailObj) { this.dataForm[key] = detailObj[key] }
+          this.tabs[0].tabContent.forEach(tc => {
+            if (
+              [
+                'productCategoryName',
+                'code',
+                'drawingNo',
+                'name',
+                'model',
+                'sealingCoverStructure',
+                'structureType',
+                'sealingCoverTyping',
+                'clearance',
+                'steelBallManufacturer',
+                'oil',
+                'noise',
+                'holder',
+                'productSource'
+              ].includes(tc.prop)
+            ) {
+              tc.itemDisabled = true
+            }
+          })
           this.jnpf.getBillRuleConfigFun(this.busSetId).then((res) => {
             if (!res.modifyFlag) {
               let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
@@ -335,25 +357,6 @@ export default {
       } else {
         this.title = `新建${this.productName}档案`
         this.fetchData(this.busSetId)
-      }
-      if (this.title == '编辑') {
-        this.tabs[0].tabContent.forEach(tc => {
-          if (
-            [
-              'code',
-              'sealingCoverStructure',
-              'structureType',
-              'clearance',
-              'steelBallManufacturer',
-              'oil',
-              'noise',
-              'holder',
-              'productSource'
-            ].includes(tc.prop)
-          ) {
-            tc.itemDisabled = true
-          }
-        })
       }
       this.formLoading = false
     },

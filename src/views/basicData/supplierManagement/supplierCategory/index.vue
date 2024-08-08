@@ -456,6 +456,7 @@ export default {
     },
     reset() {
       this.listQuery.keyword = ''
+      this.$refs.SuperQuery.conditionList = []
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {

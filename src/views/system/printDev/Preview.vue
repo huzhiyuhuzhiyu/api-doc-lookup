@@ -4,7 +4,7 @@
     :show-close="false" :modal="false">
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
-        <img src="@/assets/images/jnpf2.png" class="header-logo" />
+        <img src="@/assets/images/jnpf.png" class="header-logo" />
         <p class="header-txt"> · 打印预览</p>
       </div>
       <div class="options">
@@ -33,6 +33,8 @@
         this.loading = true
         getPrintDevInfo(this.id).then(res => {
           this.data = res.data.printTemplate
+          console.log(this.data,'打印数据');
+          
           this.loading = false
         })
       },

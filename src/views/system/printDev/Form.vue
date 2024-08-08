@@ -18,7 +18,7 @@
         <el-step title="基础设置" @click.native="stepChick(0)" />
         <el-step title="打印设计" @click.native="stepChick(1)" />
       </el-steps>
-      <div class="options">
+      <div class="options" style="width:auto">
         <el-button size="mini" @click="prev" :disabled="activeStep<=0">{{$t('common.prev')}}</el-button>
         <el-button size="mini" @click="next" :disabled="activeStep>=1 || loading" :loading="nextBtnLoading">
           {{$t('common.next')}}

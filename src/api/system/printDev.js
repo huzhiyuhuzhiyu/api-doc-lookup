@@ -15,6 +15,13 @@ export function getPrintDevInfo(id) {
     method: 'get'
   })
 }
+// 获取打印模版详情
+export function getPrintBusInfo(enCode) {
+  return request({
+    url: `/api/system/printDev/detailByCode?printBus=${enCode}`,
+    method: 'get'
+  })
+}
 // 删除
 export function Delete(id) {
   return request({

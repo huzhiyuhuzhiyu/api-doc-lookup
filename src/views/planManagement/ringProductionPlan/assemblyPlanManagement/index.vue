@@ -88,7 +88,23 @@
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="addOrUpdateHandle(scope.row, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="handleDel(scope.row.id)">删除</el-button>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -131,6 +147,7 @@ export default {
   components: { Form, ExportForm, SuperQuery, OrderForm },
   data() {
     return {
+      CreateFormVisible: false,
       columnList: ["productCode", 'planState'],
       orderFormVisible: false,
       superQueryVisible: false,
@@ -138,11 +155,11 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         productName: "",
         productDrawingNo: "",
         planNo: "",
-        planState: "finished",
+        planState: "not_finished",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -619,6 +636,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFormVisible = false
+      this.CreateFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -645,11 +663,11 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
       this.orderForm = {
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         productName: "",
         productDrawingNo: "",
         planNo: "",
-        planState: "finished",
+        planState: "not_finished",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -668,14 +686,17 @@ export default {
 
 
 
-    getCopyOrders(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-
+     
+    addOrUpdateHandle(data, btnType) {
+        // 订单创建计划
+        detailPlanList(data.id).then(res => {
+          console.log("订单计划详情", res);
+          this.orderFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+          })
+        })
     },
-  
 
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -694,17 +715,13 @@ export default {
     handleUserRelation(data, btnType) {
       console.log(data, btnType);
       // 订单创建计划
-          this.orderFormVisible = true
-          if (data.planType == 'order_plan') {
-        detailPlanList(data.id).then(res => {
-          console.log("订单计划详情", res);
-          this.$nextTick(() => {
-            this.$refs.orderForm.init(data.id, btnType, res.data, 'order_plan')
-          })
+      detailPlanList(data.id).then(res => {
+        console.log("订单计划详情", res);
+        this.orderFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
         })
-        // init(id, btnType, productData, planType)
-
-      }
+      })
 
     },
     // 导出

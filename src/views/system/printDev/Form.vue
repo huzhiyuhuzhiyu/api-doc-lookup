@@ -47,6 +47,12 @@
                   v-for="item in categoryList" />
               </el-select>
             </el-form-item>
+            <el-form-item label="打印业务" prop="printBus">
+              <el-select v-model="dataForm.printBus" placeholder="选择打印业务">
+                <el-option :key="item.id" :label="item.fullName" :value="item.enCode"
+                  v-for="item in printBusList" />
+              </el-select>
+            </el-form-item>
             <el-form-item label="分页类型" prop="pageType">
               <el-select v-model="dataForm.pageType" placeholder="选择分类">
                 <el-option :key="item.value" :label="item.label" :value="item.value"
@@ -120,7 +126,7 @@ import { getPrintDevInfo, Update, Create, getFields } from '@/api/system/printDe
 import { getDataSourceListAll } from '@/api/systemData/dataSource'
 import PrintTemplater from './ts-print-templater'
 import { mapState } from 'vuex'
-
+import { getbimProductAttributes } from "@/api/masterDataManagement/index";
 export default {
   components: { PrintTemplater },
   data() {
@@ -156,6 +162,9 @@ export default {
         category: [
           { required: true, message: '模板分类不能为空', trigger: 'change' },
         ],
+        printBus: [
+          { required: true, message: '打印业务不能为空', trigger: 'change' },
+        ],
         pageType: [
           { required: true, message: '分页类型不能为空', trigger: 'change' },
         ],
@@ -173,6 +182,7 @@ export default {
       btnLoading: false,
       sqlTemplate: [],
       categoryList: [],
+      printBusList:[],
       treeData: [],
       dbOptions: [],
       pageTypeList:[
@@ -199,7 +209,17 @@ export default {
       return this.$store.state.settings.systemVO
     },
   },
+  created(){
+    this.getPrintType()
+  },
   methods: {
+    getPrintType() {
+      getbimProductAttributes('591551111345768581').then(res => {
+        console.log(res,'打印业务');
+        
+        this.printBusList = res.data.list
+      })
+    },
     init(categoryList, id) {
       this.categoryList = categoryList
       this.activeStep = 0

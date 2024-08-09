@@ -138,7 +138,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         productName: "",
         productDrawingNo: "",
         planNo: "",
@@ -645,7 +645,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
       this.orderForm = {
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         productName: "",
         productDrawingNo: "",
         planNo: "",

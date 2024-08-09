@@ -89,7 +89,7 @@
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                  @click="addOrUpdateHandle(scope.row, 'edit')">编辑</el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
                   :disabled="scope.row.documentStatus == 'draft' ? false : true"
                   @click="handleDel(scope.row.id)">删除</el-button>
@@ -147,6 +147,7 @@ export default {
   components: { Form, ExportForm, SuperQuery, OrderForm },
   data() {
     return {
+      CreateFormVisible: false,
       columnList: ["productCode", 'planState'],
       orderFormVisible: false,
       superQueryVisible: false,
@@ -154,6 +155,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
+        classAttribute: "finish_product",
         productName: "",
         productDrawingNo: "",
         planNo: "",
@@ -634,6 +636,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFormVisible = false
+      this.CreateFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -660,6 +663,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.deliveryDateArr = []
       this.orderForm = {
+        classAttribute: "finish_product",
         productName: "",
         productDrawingNo: "",
         planNo: "",
@@ -682,22 +686,16 @@ export default {
 
 
 
-    getCopyOrders(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-
-    },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
+     
+    addOrUpdateHandle(data, btnType) {
+        // 订单创建计划
+        detailPlanList(data.id).then(res => {
+          console.log("订单计划详情", res);
+          this.orderFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+          })
         })
-        // }, 600);
-      }
     },
 
     handleDel(id) {
@@ -717,17 +715,13 @@ export default {
     handleUserRelation(data, btnType) {
       console.log(data, btnType);
       // 订单创建计划
-      if (data.planType == 'order_plan') {
-        detailPlanList(data.id).then(res => {
-          console.log("订单计划详情", res);
+      detailPlanList(data.id).then(res => {
+        console.log("订单计划详情", res);
         this.orderFormVisible = true
         this.$nextTick(() => {
-            this.$refs.orderForm.init(data.id, btnType,res.data,'order_plan')
-          })
+          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
         })
-        // init(id, btnType, productData, planType)
-
-      }
+      })
 
     },
     // 导出

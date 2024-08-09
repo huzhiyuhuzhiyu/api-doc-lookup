@@ -24,7 +24,7 @@
           </div>
         </div>
         <div v-if="true" class="sale-statistics">
-          <moneychart :option="optionmoney"></moneychart>
+          <moneychart :option="optionmoneyzz"></moneychart>
         </div>
         <div v-else></div>
       </div>
@@ -47,17 +47,17 @@
         </div>
         <div v-if="true" class="ranking-table">
           <div style="height: 320px;">
-            <JNPF-table ref="tabForm" :data="tableList" custom-column row-key="id" :hasNO="false" :setColumnDisplayList="columnList">
+            <JNPF-table ref="tabForm" :border="false" :data="tableList" custom-column row-key="id" :hasNO="false" :setColumnDisplayList="columnList">
               <el-table-column prop="clueName" label="排名" min-width="100" />
               <el-table-column prop="nextTime" label="姓名" width="120" />
-              <el-table-column prop="mobile6" label="回款金额（元）" min-width="140" v-if="rankingForm.titleType=='hkje'" />
-              <el-table-column prop="telephone" label="回款目标完成率（%）" min-width="170" v-if="rankingForm.titleType=='hkje'" />
-              <el-table-column prop="mobile" label="合同金额（元）" min-width="140" v-if="rankingForm.titleType=='htje'" />
-              <el-table-column prop="telephone5" label="合同目标完成率（%）" min-width="160" v-if="rankingForm.titleType=='htje'" />
-              <el-table-column prop="email1" label="合同数（个）" min-width="130" v-if="rankingForm.titleType=='hts'" />
-              <el-table-column prop="email2" label="新增客户数（个）" min-width="160" v-if="rankingForm.titleType=='xzkhs'" />
-              <el-table-column prop="email3" label="新增联系人（个）" min-width="160" v-if="rankingForm.titleType=='xzlxr'" />
-              <el-table-column prop="email4" label="新增跟进记录数（条）" min-width="170" v-if="rankingForm.titleType=='xzgjjls'" />
+              <el-table-column prop="mobile6" label="回款金额(元)" min-width="140" v-if="rankingForm.titleType=='hkje'" />
+              <el-table-column prop="telephone" label="回款目标完成率(%)" min-width="170" v-if="rankingForm.titleType=='hkje'" />
+              <el-table-column prop="mobile" label="合同金额(元)" min-width="140" v-if="rankingForm.titleType=='htje'" />
+              <el-table-column prop="telephone5" label="合同目标完成率(%)" min-width="160" v-if="rankingForm.titleType=='htje'" />
+              <el-table-column prop="email1" label="合同数(个)" min-width="130" v-if="rankingForm.titleType=='hts'" />
+              <el-table-column prop="email2" label="新增客户数(个)" min-width="160" v-if="rankingForm.titleType=='xzkhs'" />
+              <el-table-column prop="email3" label="新增联系人(个)" min-width="160" v-if="rankingForm.titleType=='xzlxr'" />
+              <el-table-column prop="email4" label="新增跟进记录数(条)" min-width="170" v-if="rankingForm.titleType=='xzgjjls'" />
             </JNPF-table>
           </div>
           <!-- <div class="my-ranking"></div> -->
@@ -81,11 +81,6 @@
         <div class="filter-bar vux-flexbox vux-flex-row">
           <span class="filter-tag">本人及下属</span>
           <span class="filter-tag">本月</span>
-          <!-- <div class="el-select">
-            <el-select v-model="dataForm.titleType" placeholder="请选择" style="width: 100%;">
-              <el-option v-for="(item, index) in [{fullName:'合同金额',enCode:'dw'},{fullName:'回款金额',enCode:'gr'}]" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-            </el-select>
-          </div> -->
         </div>
         <div v-if="true" class="sale-statistics">
           <salesfunnelchart :option="optionsales"></salesfunnelchart>

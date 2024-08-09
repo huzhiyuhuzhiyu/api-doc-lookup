@@ -208,11 +208,6 @@ export default {
         border-radius: 3px;
         margin-right: 8px;
       }
-      .el-select {
-      }
-      &.statistics-card {
-        // height: auto !important;
-      }
     }
   }
   &.vux-flexbox {

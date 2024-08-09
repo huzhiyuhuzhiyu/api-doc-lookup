@@ -2,36 +2,32 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="10">
+        <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="3">
+            <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号" clearable />
+                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货开始日期" clearable></el-date-picker>
-                -
+                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryEndDate" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="收货结束日期" clearable></el-date-picker>
+                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
+                  @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item>
-                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
-              </el-form-item>
-            </el-col>
-
             <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
                   {{ $t('common.search') }}
@@ -45,11 +41,17 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <!-- <topOpts @add="addSupplier('', 'add')"> -->
-            <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
-              导出
-            </el-button>
-            <!-- </topOpts> -->
+            <div>
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+                新建
+              </el-button>
+              <!-- <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
+                取消退货
+              </el-button> -->
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                导出
+              </el-button>
+            </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -64,60 +66,79 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
+            @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
+            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" >
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
+                <el-link type="primary"
+                  @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
-            <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
-            <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" sortable="custom" />
-            <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="120" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="160" />
+            <el-table-column prop="receivedQuantity" label="退货数量" width="160" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
+                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
-                  查看详情
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="addOrUpdateHandle(scope.row.purchaseReceiptReturnGoodsId, 'edit')">
+                  编辑
                 </el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="scope.row.documentStatus == 'draft' || scope.row.deliveryStatus == 'canceled' ? false : true
+                  " @click="handleDel(scope.row.purchaseReceiptReturnGoodsId)">
+                  删除
+                </el-button>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      @click.native="handleUserRelation(scope.row.purchaseReceiptReturnGoodsId, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="addSupplier(scope.row.purchaseReceiptReturnGoodsId, 'copy')">
+                      复制通知单
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData">
-            <!-- <div class="text">
-              <span>合计数量:{{ totalNum }}</span>
-            </div> -->
-          </pagination>
+            @pagination="initData" />
         </div>
       </div>
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -125,97 +146,159 @@
 </template>
 
 <script>
-import { UserListAll } from '@/api/permission/user'
-import { excelExport } from '@/api/basicData/index'
 import {
-  getsaleOrderList,
-  getsaleOrderDetailList,
-  deleteOrders,
-  getAttributeline,
-  getSaleordersTotal,
-  getOrderLineReport
-} from '@/api/salesManagement/assemblyOrders'
-import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from './Form.vue'
-import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
-import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import moment from 'moment'
+  getQuotationdatasendlist,
+  deleteQuotationsendlist,
+  getQuotationdatasenddatalist,
+  Cancelshipmentlist,
+  Cancelshipmentlinelist
+} from '@/api/salesManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import Form from './Form.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import {
+  getpurPurchaseReceiptReturnGoodsdetail,
+  addpurPurchaseReceiptReturnGoods,
+  editpurPurchaseReceiptReturnGoods,
+  deletepurPurchaseReceiptReturnGoods
+} from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import { excelExport } from '@/api/basicData/index'
 export default {
-  name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
+  name:'outsourceReceivingDetails',
+  components: { Form, ExportForm, SuperQuery },
   data() {
     return {
-      columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
-      deliveryDateArr: [],
-      orderFollowVisible: false,
       superQueryVisible: false,
-      productFormVisible: false,
+      columnList: ['createByName'],
+      linesTotal: 0,
+      linesTableData: [],
+      createTimeArrfahuo: [],
       exportFormVisible: false,
-      customList: [], // 列表中显示的自定义属性
+      deliveryDatefahuo: [],
+      visible: false,
+      detailVisible: false,
+      treeData: [],
       tableData: [],
+      detailTableData: [],
       treeLoading: false,
       listLoading: false,
+      authorizeFormVisible: false,
+      userRelationListVisible: false,
+      organizeIdTree: [],
+      activeName: 'orderList',
+      salespersonList: [],
       detailFlag: false,
+      exchangeList: [{ label: '退货', value: false }, { label: '换货', value: true }],
+      shipmentsStateList: [{ label: '待发货', value: 'undelivered' }, { label: '已发货', value: 'delivered' }],
+      orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
+      isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
+      documentStateList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
 
-      orderForm: {
-        orderType: 'external',
-        deliveryEndDate: '',
-        deliveryStartTime: '',
-        pageNum: 1,
-        pageSize: 20,
+      approvalStateList: [
+        { label: '审批中', value: 'ing' },
+        { label: ' 审批通过', value: 'ok' },
+        { label: '审批拒绝', value: 'rebut' }
+      ],
+
+      departMentList: [
+        { lebel: '送货', value: 'deliver_goods' },
+        { lebel: '自提', value: 'self_pickup' },
+        { lebel: '快递', value: 'express_delivery' },
+        { lebel: '货运', value: 'freight_transport' },
+        { lebel: '到付', value: 'collect_payment' }
+      ],
+      paymentMethodList: [],
+      paymentCycleList: [],
+      orderForm: {},
+      initOrderForm: {
+        approvalStatus: '',
+        createByName: '',
+        deliverDate: '',
+        deliverDateEnd: '',
+        deliverDateStart: '',
+        documentStatus: '',
+        endTime: '',
+        endUpdateTime: '',
+        inspectionStatus: '',
+        keyword: '',
+        notificationType: 'external',
+        classAttribute: 'finish_product',
+        notificationTypeList: [],
         orderItems: [
           {
-            asc: false,
+            asc: true,
             column: ''
           }
         ],
-
-        superQuery: {}
+        orderNo: '',
+        packingStatus: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCode: '',
+        partnerName: '',
+        productCode: '',
+        productDrawingNo: '',
+        productName: '',
+        receiptReturnType: 'receipt',
+        receivingStatus: '',
+        salesman: '',
+        startTime: '',
+        startUpdateTime: '',
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        },
+        totalRowFlag: false
       },
 
       detailTotal: 0,
-
-      gradeList: [],
-      defaultProps: {
-        children: 'childrenList',
-        label: 'name'
+      salespersonList: [],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        }
       },
+      createTimeArr: [],
+      // deliveryDateArr: [],
+      orderDateArr: [],
       total: 0,
       diagramVisible: false,
       formVisible: false,
-      totalNum: 0,
-      filterText: '',
-      totalDataForm: {},
-      dateRange: [null, new Date()], //
+      btnLoading: false,
+      selectArr: [],
+
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: '订单号',
+          label: '单号',
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
-          type: 'input'
-        },
-        {
-          prop: 'cooperativePartnerName',
+          prop: 'partnerName',
           label: '客户名称',
           type: 'input'
         },
-
         {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
+          prop: 'deliverDate',
+          label: '退货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
         },
 
         {
-          prop: 'productName',
-          label: '产品名称',
+          prop: 'productDrawingNo',
+          label: '品名规格',
           type: 'input'
         },
         {
@@ -229,48 +312,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'purchaseQuantity',
-          label: '数量',
-          type: 'input'
-        },
-        {
-          prop: 'waitReceiptNum',
-          label: '待收货数量',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '单位(副)',
-          type: 'input'
-        },
-        {
-          prop: 'purchaseQuantity2',
-          label: '数量(副)',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '交货日期',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
-          type: 'input'
-        },
-        {
-          prop: 'deliveryDate',
-          label: '交货日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-
-        {
-          prop: 'standardValue',
-          label: '规值',
+          prop: 'deliveryQuantity',
+          label: '退货数量',
           type: 'input'
         },
         {
@@ -317,6 +360,18 @@ export default {
           options: []
         },
         {
+          prop: 'ordersNo',
+          label: '订单号',
+          type: 'input'
+        },
+
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
           prop: 'createTime',
           label: '创建时间',
           type: 'daterange',
@@ -334,91 +389,23 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        }
+        },
       ]
     }
   },
+  created() {
+    this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+    this.search()
+  },
   watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val)
+    activeName() {
+      this.search()
     }
   },
-
   mounted() {
     this.getProductClassFun()
   },
-  created() {
-    // 默认设置为近3天
-    const end = new Date()
-    const start = new Date()
-    end.setDate(end.getDate() + 3)
-    this.deliveryDateArr = ['', end]
-    this.orderForm.deliveryStartTime = ''
-    this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
-    this.dataFormSubmit()
-    // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
-  },
   methods: {
-    // 获取合计数据
-    getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then((res) => {
-        this.totalNum = res.data.total ? res.data.total.num : 0
-      })
-    },
-    dateFun(dateStr) {
-      const date = new Date(dateStr)
-
-      // 获取年份、月份和日期
-      const year = date.getFullYear() // 获取年份
-      const month = String(date.getMonth() + 1).padStart(2, '0') // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)
-      const day = String(date.getDate()).padStart(2, '0') // 获取日期，并补齐两位数
-
-      // 拼接成年月日格式
-      const formattedDate = `${year}-${month}-${day}`
-
-      return formattedDate
-    },
-    btnsearch1() {
-      let end = new Date()
-      let start = new Date()
-      this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
-      this.dataFormSubmit()
-    },
-    // 为近3天
-    btnsearch2() {
-      const end = new Date()
-      const start = new Date()
-      end.setDate(end.getDate() + 3)
-      this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
-    // 为近7天
-    btnsearch3() {
-      let end = new Date()
-      let start = new Date()
-
-      end.setDate(end.getDate() + 7)
-
-      this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
-    // 为近30天
-    btnsearch4() {
-      let end = new Date()
-      let start = new Date()
-      end.setDate(end.getDate() + 30)
-
-      this.deliveryDateArr = ['', end]
-      this.orderForm.deliveryStartTime = ''
-      this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -428,120 +415,124 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
-    //
-    filterateLabel(row, column, cellValue) {
-      if (!cellValue) return ''
-      if (cellValue.includes(':')) {
-        return cellValue.replace(/:(.*?)(,|$)/g, '$2')
-      } else {
-        return cellValue
-      }
+    //禁用复选框
+    checkSelectable(row) {
+      if (
+        row.documentStatus == 'submit' &&
+        row.deliveryStatus == 'not_returned' &&
+        row.receivedQuantity == 0 &&
+        row.inspectionStatus !== 'inspected'
+      )
+        return true
+      return false
     },
-
+    // 选中得数据
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
+    //批量取消退货
+    Cancelshipment() {
+      if (!this.selectArr.length) return this.$message.error('请先选择数据')
+      this.$confirm('您确认取消选中的退货通知单吗？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          let a = this.selectArr.map((item) => {
+            return item.id
+          })
+          Cancelshipmentlist(a).then((res) => {
+            this.$message.success('取消成功')
+            this.initData()
+          })
+        })
+        .catch(() => { })
+    },
+    handleClick(e) {
+      this.activeName = e.name
+    },
+    //   sortChange({ prop, order }) {
+    //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+    //   this.listQuery.orderItems[0].asc = order !== 'descending'
+    //   this.listQuery.orderItems[0].column = order === null ? "" : newProp
+    //   this.initData()
+    // },
+    //排序
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
-        newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
+      if (
+        prop === 'partnerCode' ||
+        prop === 'partnerName' ||
+        prop === 'createByName' ||
+        prop === 'productCode' ||
+        prop === 'productName' ||
+        prop === 'productDrawingNo'
+      ) {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      if (prop == 'createByName') {
-        newProp = 'create_by'
-      }
-      this.orderForm.orderItems[0].asc = order === 'ascending'
-      this.orderForm.orderItems[0].column = order === null ? '' : newProp
-      this.initData()
-    },
-
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach((key) => {
-        // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
+      this.orderForm.orderItems[0].asc = order !== 'descending'
 
       this.initData()
     },
-
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.orderFollowVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.initData()
+        this.search()
       }
     },
     initData() {
       this.listLoading = true
-      purchaseOrderReport(this.orderForm)
+      purPurchaseReceiptReturnGoodsDetailList(this.orderForm)
         .then((res) => {
-          this.tableData = res.data.page.records
-          this.getOrderLineReportFun()
-          this.total = res.data.page.total
+          this.tableData = res.data.records
+          this.total = res.data.total
           this.listLoading = false
+          this.visible = false
         })
         .catch(() => {
           this.listLoading = false
         })
     },
-
     search() {
-      this.dataFormSubmit()
-    },
+      if (this.orderDateArr && this.orderDateArr.length > 0) {
+        this.orderForm.rdsDate = this.orderDateArr[0]
+        this.orderForm.rdeDate = this.orderDateArr[1]
+      } else {
+        this.orderForm.rdsDate = ''
+        this.orderForm.rdeDate = ''
+      }
+      if (this.createTimeArr && this.createTimeArr.length > 0) {
+        this.orderForm.startTime = this.createTimeArr[0].replace(/ 0(?!0)/g, ' ')
+        this.orderForm.endTime = this.createTimeArr[1].replace(/ 0(?!0)/g, ' ')
+      } else {
+        this.orderForm.startTime = ''
+        this.orderForm.endTime = ''
+      }
+      Object.keys(this.orderForm).forEach((key) => {
+        // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.orderForm.pageNum = 1 // 重置页码
 
+      this.initData()
+    },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      // 默认设置为近3天
-      const end = new Date()
-      const start = new Date()
+      this.createTimeArr = []
+      this.orderDateArr = []
+      this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
 
-      end.setDate(end.getDate() + 3)
-      this.deliveryDateArr = [start, end]
-      this.orderForm = {
-        approvalStatus: 'ok',
-        documentStatus: 'submit',
-        orderState: 'not_finish',
-        deliveryEndDate: this.dateFun(this.deliveryDateArr[1]),
-        deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
-        extensionFlag: 1,
-        deliverQueryFlag: 1,
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ],
-
-        superQuery: {}
-      }
-      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
-
-    // 订单跟踪
-    orderFollow(id) {
-      this.orderFollowVisible = true
-      this.$nextTick(() => {
-        this.$refs.orderFollow.init(id)
-      })
-    },
     addSupplier(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-    },
-    getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype)
@@ -550,6 +541,7 @@ export default {
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
+        console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
           this.$refs.Form.init(id, btntype)
@@ -557,13 +549,12 @@ export default {
         // }, 600);
       }
     },
-
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       })
         .then(() => {
-          deleteOrders(id).then((res) => {
+          deletepurPurchaseReceiptReturnGoods(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',
@@ -601,8 +592,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: '1003',
-        exportName: '待收货订单',
+        exportType: '1073',
+        exportName: '退货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -847,70 +838,9 @@ export default {
   }
 }
 </script>
-<style scoped>
-.el-tab-pane {
-  height: calc(100% - 10px);
-}
-
-::v-deep .el-tabs__content {
-  height: calc(100% - 40px);
-}
-
-.el-tabs {
-  height: 100%;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 10px;
-}
-
-.JNPF-common-search-box {
-  padding: 8px !important;
-
-  margin-bottom: 5px;
-}
-
-.JNPF-common-head {
-  padding: 8px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.main {
-  padding: 10px 30px 0;
-}
-
-.aaa ::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0;
-  padding-left: 10px !important;
-  background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
-}
-
-::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding-bottom: 0;
-}
-
-.btnBox {
-  padding: 7px 10px;
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+:v-deep .el-table__body-wrapper {
+  height: auto !important;
 }
 </style>

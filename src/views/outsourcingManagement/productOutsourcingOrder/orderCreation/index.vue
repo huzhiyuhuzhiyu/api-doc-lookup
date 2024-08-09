@@ -33,6 +33,25 @@
                             "></el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                          <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
+                      </el-input> -->
+                          <!-- 供应商选择弹窗  -->
+                          <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
+                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
+                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="交货日期" prop="deliveryDate">
+                          <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                        </el-form-item>
+                      </el-col>
                       <el-col :span="24">
                         <el-form-item label="申请理由" prop="applicationReason" ref="applicationReason">
                           <el-input type="textarea" :row="3" v-model="dataForm.applicationReason" placeholder="请输入申请理由"
@@ -166,7 +185,7 @@
                                 v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                :value="item.id"></el-option>
+                                :value="item.taxRate"></el-option>
                             </el-select>
                           </el-form-item>
                         </template>
@@ -226,90 +245,6 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="standardValue" label="规值" width="120" :key="211">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.standardValue" placeholder="请选择" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list0" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
-                        <!-- <template slot="header">
-                        <span class="required">*</span>打字内容
-                      </template> -->
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                        <!-- <template slot="header">
-                        <span class="required">*</span>精度等级
-                      </template> -->
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="oilQuantity" label="油脂量" width="160" :key="51">
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-                        <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
-                          <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="processId" label="工序" width="120" :key="102">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                              :value="item.id"></el-option>
-                          </el-select>
-                        </template>
-                      </el-table-column>
-
                       <el-table-column prop="remark" label="备注" min-width="220" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-input :title="scope.row.remark" v-model="scope.row.remark" maxlength="20"
@@ -329,6 +264,11 @@
                       </el-table-column>
                     </el-table>
                   </el-form>
+                  <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
+                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
+                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
+                    <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                  </div>
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
@@ -429,7 +369,7 @@
 </template>
 <script>
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+
 import {
   getpurProcurementRequireDetail,
   addpurProcurementRequire,
@@ -446,7 +386,11 @@ import {
   approvalTransferList
 } from '@/api/basicData/approvalAdministrator'
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
+import { getCooperativeData } from '@/api/basicData/index'
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { mapGetters, mapState } from 'vuex'
+
 export default {
   components: {
     workFlow
@@ -457,6 +401,32 @@ export default {
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo'],
       dialogTitle: '',
+      getCooperativeData,
+      getcategoryTree,
+      //  供应商 树请求
+      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
+      // 供应商 列表
+      PartnerTableItems: [
+        { prop: 'code', label: '供应商编码' },
+        { prop: 'name', label: '供应商名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      PartnerTableSearchList: [
+        { prop: 'code', label: '供应商编码', type: 'input' },
+        { prop: 'name', label: '供应商名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      PartnerListRequestObj: {
+        code: '',
+        name: '',
+        taxId: '',
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: '',
+        type: 'outsourcing_suppliers'
+      },
       loading: false,
       btnLoading: false,
       index: null,
@@ -560,15 +530,12 @@ export default {
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' }
-
-        // { prop: 'spec', label: '规格型号' },
-        // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
-        // { prop: 'processName', label: '工序名称' },
-        // { prop: 'classAttributeText', label: '产品分类' },
-        // { prop: "mainUnit", label: "主单位" }
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
@@ -617,16 +584,237 @@ export default {
       },
       transferData: [],
       formLoading: false,
-      codeConfig: {}
+      codeConfig: {},
+      oldData: [],
+      rules: {
+        // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
+        cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+      },
+      productRules: {
+        productDrawingNo: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
+        productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
+        purchaseQuantity: [
+          // 主数量
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
+              this.$message.error(`产品信息第${index + 1}行：数量(主)${errMsg}`)
+            }),
+            trigger: 'blur'
+          },
+          { required: true, trigger: ['blur'] }
+        ],
+        purchaseQuantity2: [
+          // 副数量
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate('positiveNumber', false, (errMsg, index) => {
+              this.$message.error(`产品信息第${index + 1}行：数量(副)${errMsg}`)
+            }),
+            trigger: 'blur'
+          },
+          { required: true, trigger: ['blur'] }
+        ],
+        taxRate: [
+          // 税率
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：税率${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate('noZero', '', (errMsg, index) => {
+              this.$message.error(`产品信息第${index + 1}行：税率${errMsg}`)
+            }),
+            trigger: 'blur'
+          },
+          { required: true, trigger: ['blur'] }
+        ],
+        price: [
+          // 含税单价
+          {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：含税单价${errMsg}`)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          },
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                6,
+                '',
+                (errMsg, index) => {
+                  this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+                }
+              ]
+            }),
+            trigger: 'blur'
+          },
+          // {
+          //   validator: this.formValidate({
+          //     type: 'calc',
+          //     params: [
+          //       (rowIndex, value) =>
+          //         Number(this.dataFormTwo.data[rowIndex].price) <= Number(this.dataFormTwo.data[rowIndex].fixedPrice),
+          //       '不能超过对应定价',
+          //       (errMsg, index) => {
+          //         this.$message.error(`产品信息第${index + 1}行：${errMsg}`)
+          //       }
+          //     ]
+          //   }),
+          //   trigger: 'blur'
+          // },
+          { required: true, trigger: ['blur'] }
+        ],
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
+      },
+
+      taxRateList: []
     }
   },
   computed: {
-    ...mapGetters(['userInfo'])
+    ...mapGetters(['userInfo']),
+    computedValue() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.excludingTaxAmount * 1
+      })
+      this.dataForm.excludingTaxTotalAmount = this.jnpf.numberFormat(count)
+
+      return this.dataForm.excludingTaxTotalAmount
+    },
+    computedValue3() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.totalAmount * 1
+      })
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+
+      return this.dataForm.totalAmount
+    },
+    computedValue2() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.purchaseQuantity * 1
+      })
+      this.dataForm.purchaseQuantity = this.jnpf.numberFormat(count)
+
+      return this.dataForm.purchaseQuantity
+    },
+
+  },
+  watch: {
+    'dataFormTwo.data': {
+      // immediate:true,
+      handler: function (newVal, oldVal) {
+        newVal.forEach((item) => {
+          if (item.price && item.taxRate) {
+            item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
+          }
+          if (item.purchaseQuantity && item.excludingTaxPrice) {
+            item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
+          }
+          if (item.price && item.purchaseQuantity && item.excludingTaxAmount) {
+            item.taxAmount = this.jnpf.numberFormat(item.price * item.purchaseQuantity - item.excludingTaxAmount)
+          }
+          if (item.excludingTaxAmount && item.taxAmount) {
+            item.totalAmount = this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          }
+          // if (!item.price) {
+          //   this.$message.error('未找到供应商单价')
+          // }
+        })
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.getProductClassFun()
   },
   created() {
     this.fetchData('WXDH')
   },
   methods: {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+      // 获取税率(数据字典)
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log(this.taxRateList, 'loisi')
+      })
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
@@ -645,7 +833,7 @@ export default {
         list.forEach((item, index) => {
           selectArr.push({
             productSource: item.productSource, // 产品来源 采购
-            classAttribute:item.classAttribute,
+            classAttribute: item.classAttribute,
             productsId: item.id, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
@@ -653,6 +841,13 @@ export default {
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
+            purchaseQuantity: item.purchaseQuantity, // 数量
+            price: item.price, // 含税单价
+            totalAmount: item.totalAmount, // 金额(含税)
+            taxRate: item.taxRate, // 税率
+            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
+            taxAmount: item.taxAmount, // 税额
+            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
             deputyUnit: item.deputyUnit, // 副单位
             planQuantity: '', //计划数量主
             planQuantity2: '', //计划数量副
@@ -679,6 +874,68 @@ export default {
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
+      }
+    },
+
+    // 弹窗节点的点击
+    treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    // 切换供应商后给的提示
+    async beforeSubmit(data, paramsObj) {
+      let flag = true
+      if (paramsObj.oldData.length) {
+        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '更换成功!'
+            })
+            this.$refs['productForm'].resetFields()
+            return true
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            return false
+          })
+      }
+      return flag
+    },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['elForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.cooperativePartnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.dataForm.cooperativePartnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        let productIdList = []
+        this.dataFormTwo.data.forEach((item) => {
+          productIdList.push(item.productsId)
+        })
+        let _data = {
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          productIdList
+        }
       }
     },
 
@@ -752,6 +1009,45 @@ export default {
     // 选中的产品信息
     handeleProductInfoData(val) {
       this.productArr = val
+    },
+
+    // 去除系数后两位的小数位
+    numberFormat(number) {
+      var formatted = parseFloat(number)
+        .toFixed(2)
+        .replace(/\.?0+$/, '')
+      if (isNaN(formatted)) {
+        return 0
+      } else {
+        return formatted
+      }
+    },
+    //下单数量输入事件
+    changePurchaseQuantity(index, val) {
+      // this.dataFormTwo.data[index].purchaseQuantity = val
+      this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
+
+      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
+        this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
+          this.dataFormTwo.data[index].purchaseQuantity * this.dataFormTwo.data[index].ratio
+        )
+      } else {
+        this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
+          this.dataFormTwo.data[index].purchaseQuantity / this.dataFormTwo.data[index].ratio
+        )
+      }
+    },
+    // 副数量输入事件
+    changePlanQuantity2(index, val) {
+      if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
+        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
+          this.dataFormTwo.data[index].purchaseQuantity2 / this.dataFormTwo.data[index].ratio
+        )
+      } else {
+        this.dataFormTwo.data[index].purchaseQuantity = this.numberFormat(
+          this.dataFormTwo.data[index].purchaseQuantity2 * this.dataFormTwo.data[index].ratio
+        )
+      }
     },
     clearData() {
       this.dataForm.id = ''
@@ -1074,8 +1370,14 @@ export default {
           }
         })
       }
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.taxAmount * 1
+      })
+      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       if (this.type == 'add') {
         _data = {
+          ...this.dataForm,
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
@@ -1091,6 +1393,7 @@ export default {
         //   this.dataFormTwo.data[index].inquirySheetId = this.dataForm.id
         // })
         _data = {
+          ...this.dataForm,
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,

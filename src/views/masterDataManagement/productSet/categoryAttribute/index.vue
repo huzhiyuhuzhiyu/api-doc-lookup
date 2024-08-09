@@ -81,7 +81,7 @@
 import {
   getBimProductAttributesInfo,
   updataBimProductAttributes,
-  delBimProductAttributes,
+  delClassAttribute,
   addBimProductAttributes,
   getclassAttributeList
 } from '@/api/masterDataManagement/index'
@@ -320,7 +320,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delBimProductAttributes(id).then((res) => {
+          delClassAttribute(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

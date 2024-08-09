@@ -166,6 +166,7 @@ export default {
         // approvalStatus: 'ok',
         // documentStatus: 'submit',
         // orderState: 'not_finish',
+        orderType:'procure',
         deliveryEndDate: '',
         deliveryStartTime: '',
         // extensionFlag: 1,

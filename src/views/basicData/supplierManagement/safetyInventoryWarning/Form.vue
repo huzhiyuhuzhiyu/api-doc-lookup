@@ -166,7 +166,7 @@
                                 v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                  :value="item.id"></el-option>
+                                  :value="item.taxRate"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>

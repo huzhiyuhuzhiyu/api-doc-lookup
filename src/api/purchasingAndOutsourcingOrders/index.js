@@ -138,3 +138,12 @@ export function insertOutOrder(data) {
       data
     })
   }
+
+  // 采购和外协订单明细-发料清单报表
+  export function shipmentReport(data) {
+    return request({
+      url: `/api/erp/purPurchaseOrderLine/shipment/report`,
+      method: 'post',
+      data
+    })
+  }

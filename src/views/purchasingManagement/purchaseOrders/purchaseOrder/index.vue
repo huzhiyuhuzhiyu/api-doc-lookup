@@ -92,23 +92,7 @@
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-            <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
-                  </template>
-                </el-table-column> -->
-            <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
-                    <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批撤回</el-tag></div>
-                  </template>
-                </el-table-column> -->
+
             <el-table-column label="操作" min-width="90" fixed="right">
               <template slot-scope="scope">
                 <el-dropdown hide-on-click>
@@ -134,7 +118,7 @@
                     <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
                       下载订货单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
+                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id,'P001')">
                       打印订货单
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -215,11 +199,13 @@
     </el-dialog>
 
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-    <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
+    <!-- <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" /> -->
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"/>
+      
   </div>
 </template>
 
@@ -243,11 +229,16 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery },
+  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery , PrintBrowse },
   data() {
     return {
+      printBrowseVisible:false,
+      prindId:'',
+      formId:'',
       exportFormVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -664,12 +655,6 @@ export default {
       this.search()
     },
 
-    // addSupplier(id, type) {
-    //   this.formVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.JNPFForm.init(id, type)
-    //   })
-    // },
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle(id, type) {
       this.formVisible = true
@@ -736,113 +721,20 @@ export default {
       })
     },
     // 打印
-    printPurchaseOrder(id) {
-      this.printData = []
-      this.printForm = {}
-      purPurchaseOrderdetail(id).then((res) => {
-        // this.printVisible = true
-
-        this.printData = res.data.purchaseOrderLineVOList
-        this.printForm = res.data
-        // 复制数据测试 打印分页
-        // for (var i = 0; i < 4; i++) {
-        //   this.printData = this.printData.concat(this.printData);
-        // }
-        // console.log(Math.ceil(this.printData.length/20));
-        this.pages = Math.ceil(this.printData.length / 20)
-        console.log(this.printPageDataFn(this.printData, 20))
-        this.printData = this.printPageDataFn(this.printData, 20)
-        this.$nextTick(() => {
-          console.log(this.$refs.PrintForm)
-          console.log(this.$refs.PrintForm.$el)
-          let oldStr = window.document.body.innerHTML
-          let newStr = this.$refs.PrintForm.$el.innerHTML
-
-          const iframe = document.createElement('iframe')
-          iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;')
-          document.body.appendChild(iframe)
-          const doc = iframe.contentWindow.document
-          // 4. 写入内容//
-          doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>')
-          doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`)
-          doc.write(newStr)
-          const link = doc.getElementsByTagName('link')[0]
-          link.onload = () => {
-            // 样式文件加载完毕后打印// 5.执行打印
-            iframe.contentWindow.print()
-            iframe.contentWindow.location.reload(true)
-            // 6.重置工作
-            document.body.removeChild(iframe)
-            this.$refs.PrintForm.$el.removeAttribute('style')
-          }
-        })
-      })
+    printPurchaseOrder(id,enCode) {
+      getPrintBusInfo(enCode).then(res=>{
+        if (res.data){
+          this.prindId = res.data.id
+          this.formId = id
+          this.printBrowseVisible = true
+        }else{
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(()=>{
+        this.printBrowseVisible = false
+      });
     },
-    // 处理分页
-    printPageDataFn(data, pageSize = 20) {
-      const printTable = []
-      if (data && data.length > 0) {
-        let remainderLength = Math.floor(data.length / pageSize) * pageSize
-        let pagedata = []
-        let pageNum = 0
-        for (let i = 0; i < data.length; i++) {
-          if (pageNum < pageSize) {
-            pagedata.push(data[i])
-          }
-          pageNum++
-          if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
-            printTable.push({
-              total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0),
-              UpperMoney: this.digitUppercase(
-                pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)
-              ),
-              pagedata: pagedata
-            })
-            pagedata = []
-            pageNum = 0
-          }
-        }
-        if (pageSize > data.length && pagedata && pagedata.length > 0) {
-          printTable.push({
-            total: pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount, 0),
-            UpperMoney: this.digitUppercase(
-              pagedata.reduce((accumulator, currentValue) => accumulator + currentValue.totalAmount * 1, 0).toFixed(2)
-            ),
-            pagedata: pagedata
-          })
-        }
-      }
-      return printTable
-    },
-    // 处理金额
-    digitUppercase(n) {
-      var fraction = ['角', '分']
-      var digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
-      var unit = [['元', '万', '亿'], ['', '拾', '佰', '仟']]
-      var head = n < 0 ? '欠' : ''
-      n = Math.abs(n)
-      var s = ''
-      for (var i = 0; i < fraction.length; i++) {
-        s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '')
-      }
-      s = s || '整'
-      n = Math.floor(n)
-      for (var i = 0; i < unit[0].length && n > 0; i++) {
-        var p = ''
-        for (var j = 0; j < unit[1].length && n > 0; j++) {
-          p = digit[n % 10] + unit[1][j] + p
-          n = Math.floor(n / 10)
-        }
-        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s
-      }
-      return (
-        head +
-        s
-          .replace(/(零.)*零元/, '元')
-          .replace(/(零.)+/g, '零')
-          .replace(/^整$/, '零元整')
-      )
-    }
+
   }
 }
 </script>

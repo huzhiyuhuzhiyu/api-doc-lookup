@@ -435,3 +435,11 @@ export function updataClassAttribute(data) {
       data: data
   })
 }
+
+// 类别属性——删除
+export function delClassAttribute(id) {
+  return request({
+      url: '/api/zgt/product/classAttribute/del/'+id,
+      method: 'delete',
+  })
+}

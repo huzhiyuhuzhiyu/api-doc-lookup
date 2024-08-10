@@ -388,6 +388,7 @@ import {
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { mapGetters, mapState } from 'vuex'
 
@@ -404,7 +405,7 @@ export default {
       getCooperativeData,
       getcategoryTree,
       //  供应商 树请求
-      PartnerMethodArr: { method: getcategoryTree, requestObj: { type: 'outsourcing_suppliers' } },
+      PartnerMethodArr: { method: getcategoryTrees, requestObj: { type: 'outsourcing_suppliers' } },
       // 供应商 列表
       PartnerTableItems: [
         { prop: 'code', label: '供应商编码' },

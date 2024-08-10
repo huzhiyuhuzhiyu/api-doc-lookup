@@ -50,6 +50,8 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
+                        <!-- <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
+                          :disabled="btnType == 'look'"></el-input> -->
                         <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -70,6 +72,7 @@
                           :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;"></el-date-picker>
                       </el-form-item>
                     </el-col>
+
 
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
@@ -118,7 +121,7 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="入库数量" width="160" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
                       sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
@@ -145,15 +148,15 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
+                    <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                     <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                     <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
                     <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
                     <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                    <el-table-column prop="remark" label="备注" width="160" />
-                    <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" /> -->
+                    <el-table-column prop="processName" label="工序" width="160" />
+                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -173,6 +176,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+
 
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
@@ -198,7 +202,7 @@
 
 <script>
 import { getProvinceList } from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
+
 import {
   editQuotationMsendlist,
   addQuotationsendlist,
@@ -206,7 +210,8 @@ import {
   editReceiptnoticelist
 } from '@/api/salesManagement/index'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
-import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
+import { getcategoryTree } from '@/api/basicData/index'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import {
   getcategoryTrees,
   getAttributeline,
@@ -222,12 +227,12 @@ import {
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { mapGetters } from "vuex"
+
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-
+      tipsvisible: false,
       getCooperativeData,
       getcategoryTree,
       //  供应商 树请求
@@ -254,7 +259,6 @@ export default {
         partnerCategoryId: '',
         type: 'outsourcing_suppliers'
       },
-      oldData: [],
 
       detailpurchaseOrderList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
@@ -282,7 +286,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'raw_material',
         receivingStatus: 'receiving'
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
@@ -302,13 +306,13 @@ export default {
         { prop: 'remark', label: '备注' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框搜索条件
+
       ProductTableSearchList: [
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'code', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
-      tipsvisible: false,
       submitmethodsTitle: '',
       btnText: '',
       productList: [],
@@ -318,32 +322,10 @@ export default {
       codeConfig: {},
       datafilelist: [],
       provinces: [],
-      orderForm: {
-        cooperativePartnerCode: '',
-        cooperativePartnerName: '',
-        createByName: '',
-        deliveryEndDate: '',
-        deliveryStartDate: '',
-        endTime: '',
-        orderNo: '',
-        orderType: 'external',
-        orderItems: [
-          {
-            asc: false,
-            column: 'createTime'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: '',
-        productCode: '',
-        productName: '',
-        classAttribute: 'finish_product',
-        receivingStatus: 'receiving'
-      },
+
       // orderList: [
       //   { label: "外协通知", value: "external" },
-      //   { label: "外协通知", value: "sale" },
+      //   { label: "采购通知", value: "sale" },
       // ],
       inspectionStatusList: [
         { label: '待检验', value: 'unInspect' },
@@ -430,42 +412,68 @@ export default {
       allProductTotal: 0,
       orderDateArr: [],
       ProductTreeData: [],
-      ProductListRequestObj: {
-        // neOrderState: 'finish',
-        orderNo: '',
-        cooperativePartnerCode: '',
-        cooperativePartnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
+      productRules: {
+        productName: [{ required: true, trigger: ['change'] }],
+        planQuantity: [
+          { required: true, trigger: ['blur'] },
           {
-            asc: false,
-            column: ''
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg) => {
+                  this.$message.error('主数量：' + errMsg)
+                }
+              ]
+            }),
+            trigger: 'blur'
           },
           {
-            asc: false,
-            column: 'create_time'
+            validator: this.formValidate('positiveNumber', false, (errMsg) => {
+              this.$message.error(`数量(主)：${errMsg}`)
+            }),
+            trigger: 'blur'
           }
-        ]
+        ],
+        planQuantity2: [
+          { required: true, trigger: ['blur'] },
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg) => {
+                  this.$message.error('副数量：' + errMsg)
+                }
+              ]
+            }),
+            trigger: 'blur'
+          },
+          {
+            validator: this.formValidate('positiveNumber', false, (errMsg) => {
+              this.$message.error(`数量(副)：${errMsg}`)
+            }),
+            trigger: 'blur'
+          }
+        ],
+        deliveryDate: [{ required: true, message: '请选择交货日期', trigger: ['change'] }]
       },
+      productArr: [],
+      defaultProps: {
+        children: 'children',
+        label: 'fullName'
+      },
+      getProductList, // 产品选择弹出框树状列表请求api
+      ProductMethodArr: [
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { type: 'supplier' } }
+        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+      ], // 产品选择弹出框树状列表
+      oldData: [],
+
       attributeLines: [],
       dataFormTwo: {
         productData: []
@@ -521,7 +529,7 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-        returnDeliveryType: 'back',
+
         notificationType: 'external',
         salesman: '',
         logisticsCompany: '',
@@ -550,7 +558,7 @@ export default {
       },
       dataRule: {
         salesman: [{ required: true, message: '操作人不能为空', trigger: 'blur' }],
-        partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
+        partnerName: [{ required: true, message: '供应商不能为空', trigger: 'change' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '收货日期不能为空', trigger: 'change' }],
@@ -591,125 +599,12 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-    // 弹窗节点的点击
-    treeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      listQuery.classAttribute = data.classAttribute
-      return listQuery
-    },
-    // 切换供应商后给的提示
-    async beforeSubmit(data, paramsObj) {
-      let flag = true
-      if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: '更换成功!'
-            })
-            this.$refs['productForm'].resetFields()
-            return true
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
-            })
-            return false
-          })
-      }
-      return flag
-    },
-    supplierdata(id, data) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('partnerName')
-      })
-      if (data.length === 0) {
-        this.dataForm.partnerName = ''
-        this.dataForm.cooperativePartnerCode = ''
-        this.dataForm.cooperativePartnerId = ''
-        this.oldData = []
-      } else {
-        if (this.oldData.length) {
-        } else {
-          this.oldData.push(data)
-        }
-        this.dataForm.partnerName = data[0].all.name
-        this.dataForm.cooperativePartnerCode = data[0].all.code
-        this.dataForm.cooperativePartnerId = data[0].all.id
-        this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
-
-      }
-    },
-
-    // 点击选择产品
-    openSeleceProductDialog() {
-      this.$refs['ComSelect-page'].openDialog()
-    },
-    // 产品组件回调
-    addth(id, data) {
-      console.log(data)
-      if (data.length) {
-        let selectArr = []
-        let list = data.map((item) => item.all)
-        list.forEach((item, index) => {
-          selectArr.push({
-            productSource: item.productSource, // 产品来源 采购
-            classAttribute: item.classAttribute,
-            productsId: item.id, // 产品id
-            productName: item.name, // 产品名称
-            productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
-            ratio: item.ratio, // 转换系数
-            calculationDirection: item.calculationDirection, // 计算方向
-            mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
-            price: item.price, // 含税单价
-            totalAmount: item.totalAmount, // 金额(含税)
-            taxRate: item.taxRate, // 税率
-            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
-            taxAmount: item.taxAmount, // 税额
-            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
-            deputyUnit: item.deputyUnit, // 副单位
-            planQuantity: '', //计划数量主
-            planQuantity2: '', //计划数量副
-            remark: item.remark,
-            deliveryDate: '' // 交期
-          })
-        })
-        if (this.dataFormTwo.data.length) {
-          const deletedArray = []
-          selectArr = selectArr.filter((item1) => {
-            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
-            if (index !== -1) {
-              deletedArray.push(item1.productName)
-              if (deletedArray.length) {
-                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
-              }
-              return false
-            }
-            return true
-          })
-          console.log(data, '删除后的数据')
-          console.log(deletedArray, '被删掉的数据')
-        }
-        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
-        // 审批
-        // this.$nextTick(() => { this.getApproverData() })
-      }
-    },
-
     getWarehouseList() {
       let obj = {
         type: 'virtually',
-        category: "warehouse",
+        category: 'warehouse'
       }
-      getWarehouseList(obj).then(res => {
+      getWarehouseList(obj).then((res) => {
         this.warehouseIdList = res.data
       })
     },
@@ -815,6 +710,114 @@ export default {
     handeleProductInfoData(val) {
       this.selectRows = val
     },
+    // 产品组件回调
+    addth(id, data) {
+      console.log(data)
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        list.forEach((item, index) => {
+          selectArr.push({
+            productSource: item.productSource, // 产品来源 采购
+            classAttribute: item.classAttribute,
+            productsId: item.id, // 产品id
+            productName: item.name, // 产品名称
+            productCode: item.code, // 产品编码
+            productDrawingNo: item.drawingNo, // 品名规格
+            ratio: item.ratio, // 转换系数
+            calculationDirection: item.calculationDirection, // 计算方向
+            mainUnit: item.mainUnit, // 主单位
+            purchaseQuantity: item.purchaseQuantity, // 数量
+            price: item.price, // 含税单价
+            totalAmount: item.totalAmount, // 金额(含税)
+            taxRate: item.taxRate, // 税率
+            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
+            taxAmount: item.taxAmount, // 税额
+            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
+            deputyUnit: item.deputyUnit, // 副单位
+            planQuantity: '', //计划数量主
+            planQuantity2: '', //计划数量副
+            remark: item.remark,
+            deliveryDate: '' // 交期
+          })
+        })
+        if (this.dataFormTwo.data.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+          console.log(data, '删除后的数据')
+          console.log(deletedArray, '被删掉的数据')
+        }
+        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
+      }
+    },
+
+    // 弹窗节点的点击
+    treeNodeClick(data, node, listQuery) {
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
+      listQuery.classAttribute = data.classAttribute
+      return listQuery
+    },
+    // 切换供应商后给的提示
+    async beforeSubmit(data, paramsObj) {
+      let flag = true
+      if (paramsObj.oldData.length) {
+        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '更换成功!'
+            })
+            this.$refs['productForm'].resetFields()
+            return true
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            return false
+          })
+      }
+      return flag
+    },
+    supplierdata(id, data) {
+      this.$nextTick(() => {
+        this.$refs['dataForm'].validateField('partnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.partnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldData = []
+      } else {
+        if (this.oldData.length) {
+        } else {
+          this.oldData.push(data)
+        }
+        this.dataForm.partnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
+
+      }
+    },
     // 批量删除
     batchDelete() {
       // 遍历选中的行的数据
@@ -850,147 +853,68 @@ export default {
         this.dataFormTwo.productData.splice(data.$index, 1)
       }
     },
-    // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct() {
-      this.productVisible = false
-    },
 
-    // 重置客户产品搜索条件
-    resetcusProduct() {
-      this.productForm = {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-    },
-    // 搜索客户产品
-    searchcusProduct() {
-      this.productForm.pageNum = 1
-      this.getcooperativeProduct()
-    },
-    // 获取客户产品数据
-    getcooperativeProduct() {
-      this.productForm.partnerId = this.dataForm.cooperativePartnerId
-      getcooperativeProduct(this.productForm).then((res) => {
-        this.cusProductData = res.data.records
-      })
-    },
 
-    // 选择产品——搜索
-    searchProductFun() {
-      if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartTime = ''
-        this.orderForm.deliveryEndTime = ''
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      detailpurchaseOrderList(this.orderForm)
-        .then((res) => {
 
-          this.productList = res.data.records
-          this.productTotal = res.data.total
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    // 选择产品——重置
-    resetProductFun() {
-      this.deliveryDateArr = []
-      this.orderForm = {
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: '',
-        returnQueryFlag: 1,
-        drawingNo: '', // customerProductNo: "",
-        deliveryStartTime: '',
-        deliveryEndTime: '',
-
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ]
-      }
-      this.searchProductFun()
-    },
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
-      this.productVisible = true
-      this.searchProductFun()
+      this.$refs['ComSelect-page'].openDialog()
     },
-    submitAllProduct() {
-      if (!this.selectArr.length) return this.$message.error('请选择产品！')
-      this.productVisible = false
-      this.selectArr.forEach((item) => {
-
-        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.dataFormTwo.productData.push(item)
-      })
-      let uniqueArr = []
-      let idSet = new Set()
-
-      this.dataFormTwo.productData.forEach((item) => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item)
-          idSet.add(item.id)
+    // 产品组件回调
+    addth(id, data) {
+      console.log(data)
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        list.forEach((item, index) => {
+          selectArr.push({
+            productSource: item.productSource, // 产品来源 采购
+            classAttribute: item.classAttribute,
+            productsId: item.id, // 产品id
+            productName: item.name, // 产品名称
+            productCode: item.code, // 产品编码
+            productDrawingNo: item.drawingNo, // 品名规格
+            ratio: item.ratio, // 转换系数
+            calculationDirection: item.calculationDirection, // 计算方向
+            mainUnit: item.mainUnit, // 主单位
+            purchaseQuantity: item.purchaseQuantity, // 数量
+            price: item.price, // 含税单价
+            totalAmount: item.totalAmount, // 金额(含税)
+            taxRate: item.taxRate, // 税率
+            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
+            taxAmount: item.taxAmount, // 税额
+            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
+            deputyUnit: item.deputyUnit, // 副单位
+            planQuantity: '', //计划数量主
+            planQuantity2: '', //计划数量副
+            remark: item.remark,
+            deliveryDate: '' // 交期
+          })
+        })
+        if (this.dataFormTwo.data.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+          console.log(data, '删除后的数据')
+          console.log(deletedArray, '被删掉的数据')
         }
-      })
-      this.dataFormTwo.productData = uniqueArr
-
-    },
-    // },
-    // 获取所有订单列表数据
-    initData2() {
-      this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
-      this.listLoading = true
-      getsaleOrderList(this.ProductListRequestObj).then((listRes) => {
-        if (Array.isArray(listRes.data)) {
-          this.allproductData = listRes.data
-        } else {
-          this.allproductData = listRes.data.records
-        }
-        this.allProductTotal = listRes.data.total
-        this.$forceUpdate()
-        this.treeLoading = false
-        this.listLoading = false
-      })
-    },
-    // 搜索所有产品 列表
-    searchAllProduct() {
-      this.ProductListRequestObj.pageNum = 1
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.ProductListRequestObj.orderStartDate = this.orderDateArr[0]
-        this.ProductListRequestObj.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.ProductListRequestObj.orderStartDate = ''
-        this.ProductListRequestObj.orderEndDate = ''
+        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
       }
-      this.initData2()
     },
+
+
     // 监听主数量输入
     watchnums(row, index) {
       if (!row.receivedQuantity) {
@@ -1080,46 +1004,7 @@ export default {
         }
       }
     },
-    // 所有产品弹框 重置搜索条件
-    resetAllProduct() {
-      this.orderDateArr = []
-      this.ProductListRequestObj = {
-        // neOrderState: 'finish',
-        orderNo: '',
-        cooperativePartnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      }
-      this.searchAllProduct()
-    },
+
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
@@ -1147,75 +1032,7 @@ export default {
       }
       this.initData()
     },
-    // 选择客户
-    seleceCustomer(e) {
-      getCooperativeInfo(e.id).then((res) => {
-        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.$message({
-                type: 'success',
-                message: '切换成功'
-              })
-              // this.dataForm = {
-              //   exchangeGoodsFlag: false,
-              //   // orderCategory: "assembly",
-              //   returnDeliveryType: 'back',
-              //   notificationType: 'procure',
-              //   logisticsCompany: '',
-              //   ordersId: '',
-              //   deliverDate: '',
-              //   logisticsNumber: '',
-              //   cooperativePartnerId: '',
-              //   remark: '',
-              //   orderNo: this.codeConfig.number
-              // }
-              this.dataFormTwo.productData = []
-              this.customerData = e
-              this.dataForm.cooperativePartnerId = e.id
-              this.ProductListRequestObj.cooperativePartnerCode = e.code
-              this.code = e.code
-              this.dataForm.partnerName = e.name
-              this.dataForm.code = e.code
-              this.customerVisible = false
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-              this.customerVisible = true
-            })
-        } else {
-          // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          // this.dataForm = {
-          //   exchangeGoodsFlag: false,
-          //   // orderCategory: "assembly",
-          //   returnDeliveryType: 'back',
-          //   notificationType: 'external',
-          //   logisticsCompany: '',
-          //   ordersId: '',
-          //   orderNo: this.codeConfig.number,
-          //   deliverDate: '',
-          //   logisticsNumber: '',
-          //   cooperativePartnerId: '',
-          //   remark: ''
-          // }
-          this.dataFormTwo.productData = []
-          this.customerData = e
-          this.dataForm.cooperativePartnerId = e.id
-          this.ProductListRequestObj.cooperativePartnerCode = e.code
-          this.code = e.code
-          this.dataForm.partnerName = e.name
-          this.dataForm.code = e.code
-          this.customerVisible = false
-        }
-      })
-    },
+
 
     search() {
       this.form.pageNum = 1
@@ -1231,7 +1048,7 @@ export default {
         partnerCategoryId: '',
         type: 'supplier'
       }
-      this.getcategoryTree()
+      // this.getcategoryTree()
     },
     initData() {
       this.listLoading = true
@@ -1270,14 +1087,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    handleNodeAllProduct(data, node) {
-      if (this.ProductListRequestObj.productCategoryId === data.id) return
-      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      const nodePath = this.getNodePathProduct(node)
-      this.organizeIdTree = nodePath.map((o) => o.id)
-      this.ProductListRequestObj.classAttribute = data.classAttribute
-      this.searchAllProduct()
-    },
+
     getNodePathProduct(node) {
       let fullPath = []
       const loop = (node) => {
@@ -1297,8 +1107,30 @@ export default {
         })
       })
     },
-
-
+    // // 获取客户数据
+    // getcategoryTree(isInit) {
+    //   this.treeLoading = true
+    //   let listQuery = {
+    //     keyword: '',
+    //     type: 'supplier'
+    //   }
+    //   getcategoryTrees(listQuery)
+    //     .then((res) => {
+    //       this.treeData = res.data
+    //       this.$nextTick(() => {
+    //         this.initData()
+    //         this.treeLoading = false
+    //       })
+    //     })
+    //     .catch(() => {
+    //       this.treeLoading = false
+    //     })
+    // },
+    // 打开选择客户弹框
+    openDialog() {
+      this.customerVisible = true
+      this.getcategoryTree()
+    },
     // 切换table
     handleClick(tab, event) { },
     async fetchData(code) {
@@ -1307,11 +1139,10 @@ export default {
         this.codeConfig = data
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
-
       } catch (error) { }
     },
     init(id, btnType) {
-
+      console.log(id, btnType, '[[]]')
       this.dataForm.id = id || ''
 
       this.btnType = btnType
@@ -1365,17 +1196,13 @@ export default {
             })
           }
         })
-
-
-
       }
       if (btnType == 'add' || btnType == 'copy') {
-
         this.dataForm.salesman = this.userInfo.userName
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('CPWXSH')
+          this.fetchData('SDJWXSH')
         }, 500)
       }
       if (this.btnType == 'edit') {
@@ -1400,7 +1227,7 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-        // returnDeliveryType: 'back',
+
         // notificationType: 'external',
         logisticsCompany: '',
         ordersId: '',
@@ -1444,7 +1271,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'finish_product'
+          this.dataForm.classAttribute = 'raw_material'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1460,7 +1287,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
@@ -1530,7 +1356,7 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'raw_material',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1548,8 +1374,7 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              notificationType: 'external',
-              classAttribute: 'finish_product',
+              classAttribute: 'raw_material',
               id: item.id ? item.id : '',
               purchaseQuantity: item.purchaseQuantity,
               productsId: item.productsId ? item.productsId : '',

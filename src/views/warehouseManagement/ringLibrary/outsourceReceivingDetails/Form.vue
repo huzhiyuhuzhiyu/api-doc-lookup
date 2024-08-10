@@ -282,7 +282,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'semi_finished',
         receivingStatus: 'receiving'
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
@@ -338,7 +338,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: 'semi_finished',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -1375,7 +1375,7 @@ export default {
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('CPWXSH')
+          this.fetchData('TQWXSH')
         }, 500)
       }
       if (this.btnType == 'edit') {
@@ -1444,7 +1444,7 @@ export default {
               }
             })
           }
-          this.dataForm.classAttribute = 'finish_product'
+          this.dataForm.classAttribute = 'semi_finished'
           this.dataForm.receiptReturnType = 'receipt'
           let obj = {
             attachmentList: this.datafilelist,
@@ -1530,7 +1530,7 @@ export default {
               vibrationLevel: item.vibrationLevel,
               warehouseId: item.warehouseId,
               ordersId: item.ordersId,
-              classAttribute: 'finish_product',
+              classAttribute: 'semi_finished',
               id: item.id ? item.id : '',
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
@@ -1549,7 +1549,7 @@ export default {
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
               notificationType: 'external',
-              classAttribute: 'finish_product',
+              classAttribute: 'semi_finished',
               id: item.id ? item.id : '',
               purchaseQuantity: item.purchaseQuantity,
               productsId: item.productsId ? item.productsId : '',

@@ -73,7 +73,7 @@
                       </el-form-item>
                     </el-col>
 
-        
+
                     <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="创建时间" prop="createTime">
                         <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
@@ -176,156 +176,8 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
-        append-to-body @close="handleClose">
-        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-          <div class="JNPF-common-layout-left">
-            <div class="JNPF-common-title">
-              <h2>供应商分类</h2>
-              <span class="options">
-                <el-dropdown>
-                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
-            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-              <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
-                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-                  <i :class="[
-                    data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-                  ]" />
-                  <span class="text" :title="data.name">{{ data.name }}</span>
-                </span>
-              </el-tree>
-            </el-scrollbar>
-          </div>
-          <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入客户编码" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入客户名称" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
-                  </el-form-item>
-                </el-col>
 
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                      {{ $t('common.search') }}
-                    </el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
-                      {{ $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="tableDataCustomer" @row-dblclick="seleceCustomer">
-                <el-table-column prop="code" label="客户编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="name" label="客户名称" />
-                <el-table-column prop="taxId" label="税号" />
-                <el-table-column label="操作" width="100">
-                  <template slot-scope="scope">
-                    <el-button type="text" @click="seleceCustomer(scope.row)" size="mini">选择</el-button>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
-              <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize" @pagination="initData" />
-            </div>
-          </div>
-        </div>
-      </el-dialog>
-      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-        append-to-body @close="productVisible = false">
-        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-          <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.productCode" placeholder="请输入产品编码" clearable />
-                  </el-form-item>
-                </el-col>
 
-                <el-col :span="6">
-                  <el-form-item label="">
-                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期"
-                      clearable></el-date-picker>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
-                      {{ $t('common.search') }}
-                    </el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">
-                      {{ $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="productList" @row-dblclick="seleceCustomer" hasC
-                @selection-change="handleSelectionChangeAllPruduct">
-                <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="160" />
-                <el-table-column prop="purchaseQuantity" label="数量" width="160" sortable="custom" />
-                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="200"></el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-                <el-table-column prop="processName" label="工序" min-width="200"></el-table-column>
-                <el-table-column prop="remark" label="备注" width="160" />
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-              </JNPF-table>
-              <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                @pagination="searchProductFun" />
-            </div>
-          </div>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="productVisible = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
-            确定
-          </el-button>
-        </span>
-      </el-dialog>
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
@@ -342,7 +194,7 @@
         </span>
       </el-dialog>
       <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-        :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
+        :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
         :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
@@ -350,7 +202,7 @@
 
 <script>
 import { getProvinceList } from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
+
 import {
   editQuotationMsendlist,
   addQuotationsendlist,
@@ -359,6 +211,7 @@ import {
 } from '@/api/salesManagement/index'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/index'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import {
   getcategoryTrees,
   getAttributeline,
@@ -374,7 +227,7 @@ import {
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+
 import { mapGetters } from 'vuex'
 export default {
   data() {
@@ -406,17 +259,15 @@ export default {
         partnerCategoryId: '',
         type: 'outsourcing_suppliers'
       },
-      submitmethodsTitle: '',
-      btnText: '',
-      productList: [],
-      deliveryDateArr: [],
-      activeNames: ['productInfo', 'basicInfo'],
-      productTotal: 0,
-      codeConfig: {},
-      datafilelist: [],
-      provinces: [],
-      orderForm: {
+
+      detailpurchaseOrderList, // 产品选择弹出框树状列表请求api
+      ProductMethodArr: [
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+      ], // 产品选择弹出框树状列表
+      ProductListRequestObj: {
         cooperativePartnerCode: '',
+        cooperativePartnerId: '',
         partnerName: '',
         createByName: '',
         deliveryEndDate: '',
@@ -437,7 +288,41 @@ export default {
         productName: '',
         classAttribute: 'finish_product',
         receivingStatus: 'receiving'
-      },
+      }, // 产品选择弹出框列表请求参数
+      ProductTableItems: [
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'productCode', label: '产品编码', sortable: 'custom' },
+        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'num', label: '数量' },
+        { prop: 'sealingCoverTyping', label: '打字内容' },
+        { prop: 'accuracyLevel', label: '精度等级' },
+        { prop: 'vibrationLevel', label: '振动等级' },
+        { prop: 'oil', label: '油脂' },
+        { prop: 'oilQuantity', label: '油脂量' },
+        { prop: 'clearance', label: '游隙' },
+        { prop: 'packagingMethod', label: '包装方式' },
+        { prop: 'remark', label: '备注' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+      ], // 产品选择弹出框搜索条件
+
+      ProductTableSearchList: [
+        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'name', label: '产品名称', type: 'input' },
+        { prop: 'code', label: '产品编码', type: 'input' }
+      ], // 产品选择弹出框搜索条件
+
+      submitmethodsTitle: '',
+      btnText: '',
+      productList: [],
+      deliveryDateArr: [],
+      activeNames: ['productInfo', 'basicInfo'],
+      productTotal: 0,
+      codeConfig: {},
+      datafilelist: [],
+      provinces: [],
+
       // orderList: [
       //   { label: "外协通知", value: "external" },
       //   { label: "采购通知", value: "sale" },
@@ -588,37 +473,7 @@ export default {
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       oldData: [],
-      ProductListRequestObj: {
-        classAttribute: '',
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
-        productCategoryId: '',
-        code: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        productStatus: 'enable',
-        productSource: 'out',
-        pageNum: 1,
-        pageSize: 20
-        // queryType: 3
-      }, // 产品选择弹出框列表请求参数
-      ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
-        { prop: 'mainUnit', label: '单位' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
-      ], // 产品选择弹出框表单展示字段
-      ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
-      ], // 产品选择弹出框搜索条件
+
       attributeLines: [],
       dataFormTwo: {
         productData: []
@@ -959,6 +814,7 @@ export default {
         this.dataForm.partnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
+        this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
 
       }
     },
@@ -997,144 +853,68 @@ export default {
         this.dataFormTwo.productData.splice(data.$index, 1)
       }
     },
-    // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct() {
-      this.productVisible = false
-    },
 
-    // 重置客户产品搜索条件
-    resetcusProduct() {
-      this.productForm = {
-        //   drawingNo: "",
-        productCode: '',
-        productName: '',
-        partnerId: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20
-      }
-    },
-    // 搜索客户产品
-    searchcusProduct() {
-      this.productForm.pageNum = 1
-      this.getcooperativeProduct()
-    },
-    // 获取客户产品数据
-    getcooperativeProduct() {
-      this.productForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      getcooperativeProduct(this.productForm).then((res) => {
-        this.cusProductData = res.data.records
-      })
-    },
 
-    // 选择产品——搜索
-    searchProductFun() {
-      if (this.deliveryDateArr.length) {
-        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
-      } else {
-        this.orderForm.deliveryStartTime = ''
-        this.orderForm.deliveryEndTime = ''
-      }
-      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      detailpurchaseOrderList(this.orderForm)
-        .then((res) => {
-          this.productList = res.data.records
-          this.productTotal = res.data.total
-          this.listLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-        })
-    },
-    // 选择产品——重置
-    resetProductFun() {
-      this.deliveryDateArr = []
-      this.orderForm = {
-        cooperativePartnerId: this.dataForm.cooperativePartnerId,
-        customerProductDrawingNo: '',
-        returnQueryFlag: 1,
-        drawingNo: '', // customerProductNo: "",
-        deliveryStartTime: '',
-        deliveryEndTime: '',
 
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
-          }
-        ]
-      }
-      this.searchProductFun()
-    },
     // 点击选择产品
     openSeleceProductDialog() {
       if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
-      this.productVisible = true
-      this.searchProductFun()
+      this.$refs['ComSelect-page'].openDialog()
     },
-    submitAllProduct() {
-      if (!this.selectArr.length) return this.$message.error('请选择产品！')
-      this.productVisible = false
-      this.selectArr.forEach((item) => {
-        this.$set(item, 'receivedQuantity', item.waitReceiptNum)
-        this.dataFormTwo.productData.push(item)
-      })
-      let uniqueArr = []
-      let idSet = new Set()
-
-      this.dataFormTwo.productData.forEach((item) => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item)
-          idSet.add(item.id)
+    // 产品组件回调
+    addth(id, data) {
+      console.log(data)
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        list.forEach((item, index) => {
+          selectArr.push({
+            productSource: item.productSource, // 产品来源 采购
+            classAttribute: item.classAttribute,
+            productsId: item.id, // 产品id
+            productName: item.name, // 产品名称
+            productCode: item.code, // 产品编码
+            productDrawingNo: item.drawingNo, // 品名规格
+            ratio: item.ratio, // 转换系数
+            calculationDirection: item.calculationDirection, // 计算方向
+            mainUnit: item.mainUnit, // 主单位
+            purchaseQuantity: item.purchaseQuantity, // 数量
+            price: item.price, // 含税单价
+            totalAmount: item.totalAmount, // 金额(含税)
+            taxRate: item.taxRate, // 税率
+            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
+            taxAmount: item.taxAmount, // 税额
+            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
+            deputyUnit: item.deputyUnit, // 副单位
+            planQuantity: '', //计划数量主
+            planQuantity2: '', //计划数量副
+            remark: item.remark,
+            deliveryDate: '' // 交期
+          })
+        })
+        if (this.dataFormTwo.data.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+          console.log(data, '删除后的数据')
+          console.log(deletedArray, '被删掉的数据')
         }
-      })
-      this.dataFormTwo.productData = uniqueArr
-    },
-    // },
-    // 获取所有订单列表数据
-    initData2() {
-      this.ProductListRequestObj.cooperativePartnerCode = this.code ? this.code : this.dataForm.partnerCode
-      this.listLoading = true
-      getsaleOrderList(this.ProductListRequestObj).then((listRes) => {
-        if (Array.isArray(listRes.data)) {
-          this.allproductData = listRes.data
-        } else {
-          this.allproductData = listRes.data.records
-        }
-        this.allProductTotal = listRes.data.total
-        this.$forceUpdate()
-        this.treeLoading = false
-        this.listLoading = false
-      })
-    },
-    // 搜索所有产品 列表
-    searchAllProduct() {
-      this.ProductListRequestObj.pageNum = 1
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.ProductListRequestObj.orderStartDate = this.orderDateArr[0]
-        this.ProductListRequestObj.orderEndDate = this.orderDateArr[1]
-      } else {
-        this.ProductListRequestObj.orderStartDate = ''
-        this.ProductListRequestObj.orderEndDate = ''
+        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
       }
-      this.initData2()
     },
+
+
     // 监听主数量输入
     watchnums(row, index) {
       if (!row.receivedQuantity) {
@@ -1224,46 +1004,7 @@ export default {
         }
       }
     },
-    // 所有产品弹框 重置搜索条件
-    resetAllProduct() {
-      this.orderDateArr = []
-      this.ProductListRequestObj = {
-        // neOrderState: 'finish',
-        orderNo: '',
-        partnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      }
-      this.searchAllProduct()
-    },
+
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
     },
@@ -1291,75 +1032,7 @@ export default {
       }
       this.initData()
     },
-    // 选择客户
-    seleceCustomer(e) {
-      getCooperativeInfo(e.id).then((res) => {
-        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          })
-            .then(() => {
-              this.$message({
-                type: 'success',
-                message: '切换成功'
-              })
-              // this.dataForm = {
-              //   exchangeGoodsFlag: false,
-              //   // orderCategory: "assembly",
 
-              //   notificationType: 'procure',
-              //   logisticsCompany: '',
-              //   ordersId: '',
-              //   deliverDate: '',
-              //   logisticsNumber: '',
-              //   cooperativePartnerId: '',
-              //   remark: '',
-              //   orderNo: this.codeConfig.number
-              // }
-              this.dataFormTwo.productData = []
-              this.customerData = e
-              this.dataForm.cooperativePartnerId = e.id
-              this.ProductListRequestObj.cooperativePartnerCode = e.code
-              this.code = e.code
-              this.dataForm.partnerName = e.name
-              this.dataForm.code = e.code
-              this.customerVisible = false
-            })
-            .catch(() => {
-              this.$message({
-                type: 'info',
-                message: '已取消'
-              })
-              this.customerVisible = true
-            })
-        } else {
-          // this.$nextTick(() => { this.$refs['dataForm'].validateField('cooperativePartnerId') })
-          // this.dataForm = {
-          //   exchangeGoodsFlag: false,
-          //   // orderCategory: "assembly",
-
-          //   notificationType: 'external',
-          //   logisticsCompany: '',
-          //   ordersId: '',
-          //   orderNo: this.codeConfig.number,
-          //   deliverDate: '',
-          //   logisticsNumber: '',
-          //   cooperativePartnerId: '',
-          //   remark: ''
-          // }
-          this.dataFormTwo.productData = []
-          this.customerData = e
-          this.dataForm.cooperativePartnerId = e.id
-          this.ProductListRequestObj.cooperativePartnerCode = e.code
-          this.code = e.code
-          this.dataForm.partnerName = e.name
-          this.dataForm.code = e.code
-          this.customerVisible = false
-        }
-      })
-    },
 
     search() {
       this.form.pageNum = 1
@@ -1414,14 +1087,7 @@ export default {
       if (!value) return true
       return data.name.indexOf(value) !== -1
     },
-    handleNodeAllProduct(data, node) {
-      if (this.ProductListRequestObj.productCategoryId === data.id) return
-      this.ProductListRequestObj.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''
-      const nodePath = this.getNodePathProduct(node)
-      this.organizeIdTree = nodePath.map((o) => o.id)
-      this.ProductListRequestObj.classAttribute = data.classAttribute
-      this.searchAllProduct()
-    },
+
     getNodePathProduct(node) {
       let fullPath = []
       const loop = (node) => {

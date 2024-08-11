@@ -101,6 +101,7 @@ export default {
 
       this.id = id
       this.cooperativePartnerId = id
+      console.log(id,'oooo9999-----')
       getAddressInfo(id).then(res => {
         console.log(res);
         this.listLoading  = false

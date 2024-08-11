@@ -5,7 +5,7 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack"
-            :content="btnType == 'add' ? '新建销售发料通知单' : btnType == 'edit' ? '编辑销售发料通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建销售发料通知单' : '查看销售发料通知单'" />
+            :content="btnType == 'add' ? '新建发料通知单' : btnType == 'edit' ? '编辑发料通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建发料通知单' : '查看发料通知单'" />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿</el-button>
@@ -41,10 +41,9 @@
 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="客户名称" prop="partnerName">
-                      
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                            v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                            v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                             @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
                             title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
                             :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
@@ -72,16 +71,16 @@
                         </el-form-item>
                       </el-col>
                       <!-- <el-col :sm="6" :xs="24">
-                    <el-form-item label="发货人" prop="shipperId">
-                      <user-select v-model="dataForm.shipperId" placeholder="请选择发货人" clearable style="width: 100%;"
+                    <el-form-item label="发料人" prop="shipperId">
+                      <user-select v-model="dataForm.shipperId" placeholder="请选择发料人" clearable style="width: 100%;"
                         :disabled="btnType == 'look' || btnType == 'qrsh'" @change="hangleSelectSales">
                       </user-select>
 
                     </el-form-item>
                   </el-col> -->
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="发货方式" prop="delivery">
-                          <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
+                        <el-form-item label="发料方式" prop="delivery">
+                          <el-select v-model="dataForm.delivery" placeholder="请选择发料方式" clearable style="width: 100%;"
                             :disabled="btnType == 'look' || btnType == 'qrsh'">
                             <el-option v-for="(item, index) in orderListfhfs" :key="index" :label="item.label"
                               @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
@@ -90,8 +89,8 @@
                       </el-col>
 
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="发货状态" prop="deliveryStatus">
-                          <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable
+                        <el-form-item label="发料状态" prop="deliveryStatus">
+                          <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发料状态" clearable
                             style="width: 100%;" :disabled="btnType == 'look' ? true : false">
                             <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
@@ -99,9 +98,9 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="发货完成时间" prop="deliveryCompletionDate">
+                        <el-form-item label="发料完成时间" prop="deliveryCompletionDate">
                           <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime"
-                            placeholder="请选择发货完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                            placeholder="请选择发料完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -159,36 +158,32 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
                       v-loading="tableloading">
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
+                      <!-- <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
+                        key="166"></el-table-column> -->
 
-
-                      <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
-                        key="166">
-                      </el-table-column>
-
-                      <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
-                      </el-table-column>
-
-                      <el-table-column prop="mainUnit" label="单位" width="290" key="13" show-overflow-tooltip>
-                      </el-table-column>
-                      <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
+                      <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
-                        show-overflow-tooltip>
-                      </el-table-column>
-                      <el-table-column prop="deliveryQuantity" label="发货数量" width="170"
+
+                      <el-table-column prop="mainUnit" label="单位" width="290" key="13"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="demandQuantity" label="订单发料数量" width="120" key="4"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="waitDeliverNum" label="待发料数量" v-if="btnType != 'look'" width="120" key="6"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="deliveryQuantity" label="发料数量" width="170"
                         v-if="!dataForm.exchangeGoodsFlag" key="21">
                         <template slot="header">
-                          <span class="required">*</span>发货数量
+                          <span class="required">*</span>
+                          发料数量
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
-                            :rules='productRules.deliveryQuantity'>
-                            <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
+                            :rules="productRules.deliveryQuantity">
+                            <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发料数量"
                               :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
-                              @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
-                            </el-input>
+                              @input="watchnums(scope.row, scope.$index)" style="width: 145px;"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -198,15 +193,9 @@
                             :disabled="btnType == 'look' ? true : false" maxlength="200" />
                         </template>
                       </el-table-column>
-                      <el-table-column prop="deliveryDate" label="交货日期" width="160" />
-                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
-                      <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
-                      <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
-                      <el-table-column prop="oil" label="油脂" width="160" />
-                      <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                      <el-table-column prop="clearance" label="游隙" width="160" />
-                      <el-table-column prop="orderNo" label="订单号" width="160" />
-                      <el-table-column prop="workOrderNo" label="工作令号" width="160" />
+
+                      <el-table-column prop="orderNo" label="订单号" width="290" key="16"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -215,9 +204,9 @@
                     </el-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
-                      <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">总待发货数量：{{
+                      <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">总待发料数量：{{
                         totalWaitDeliverNum }}</span>
-                      <span style="font-weight:500;margin:0 10px">总发货数量：{{ totalDeliveryQuantity }}</span>
+                      <span style="font-weight:500;margin:0 10px">总发料数量：{{ totalDeliveryQuantity }}</span>
                     </div>
                   </el-form>
                 </el-collapse-item>
@@ -247,7 +236,7 @@
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-      :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
+      :methodArr="ProductMethodArr" :listMethod="shipmentList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
@@ -261,14 +250,14 @@ import {
   getProvinceList,
 } from '@/api/system/province'
 // import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
-import { getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
+import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getcategoryTrees, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
+import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
 import changeAddress from "./changeAddress.vue"
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { purProcurementDemandPoolexternal, outPoolexternal, addoutReceiptGoods, getpurPurchaseReceiptReturnGoodsdetail, updateoutReceiptGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
+// import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: {
     changeAddress
@@ -304,7 +293,7 @@ export default {
       },
       oldData: [],
 
-      getProductList, // 产品选择弹出框树状列表请求api
+      shipmentList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
         { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
@@ -313,33 +302,39 @@ export default {
         classAttribute: '',
         classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
         productCategoryId: '',
+        cooperativePartnerId: '',
         code: '',
         name: '',
         orderItems: [
           {
             asc: false,
-            column: 'create_time'
+            column: ''
           }
         ],
         productStatus: 'enable',
-        productSource: 'out',
+        orderType: 'external',
         pageNum: 1,
         pageSize: 20
         // queryType: 3
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
-        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
-        { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'orderNo', label: '订单号', sortable: 'custom' },
+        { prop: 'cooperativePartnerName', label: '供应商名称', sortable: 'custom' },
+        { prop: 'drawingNo', label: '料品名规格', sortable: 'custom' },
+        { prop: 'code', label: '料产品编码', sortable: 'custom' },
+        { prop: 'processName', label: '料工序名称', sortable: 'custom' },
+
         { prop: 'mainUnit', label: '单位' },
+        { prop: 'demandQuantity', label: '订单发料数量', sortable: 'custom' },
+        { prop: 'waitDeliverNum', label: '待发料数量', sortable: 'custom' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'orderNo', label: '订单号', type: 'input' },
+        { prop: 'cooperativePartnerName', label: '供应商名称', type: 'input' },
+        { prop: 'drawingNo', label: '料品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
+
       tipsvisible: false,
       btnText: "",
       submitmethodsTitle: "",
@@ -349,21 +344,14 @@ export default {
       tableloading: false,
       deliveryDateArr: [],
       getsaleOrderList,
-      productTableItems: [
-        { prop: 'orderNo', label: '订单号' },
-        { prop: 'cooperativePartnerCode', label: '客户编码', width: 140 },
-        { prop: 'cooperativePartnerName', label: '客户名称', minWidth: 160 },
-        { prop: 'orderDate', label: '订单日期' },
-        { prop: 'orderType', label: '订单类型' },
-        { prop: 'workOrderNo', label: '工作令号' }
-      ],
+
       Flagtype: false,
       datafilelist: [],
       provinces: [],
       deliveryList: [
         { label: "全部", value: "all" },
-        { label: "未发货完成", value: "un_shipment_completed" },
-        { label: "已发货完成", value: "shipment_completed" }
+        { label: "未发料完成", value: "un_shipment_completed" },
+        { label: "已发料完成", value: "shipment_completed" }
       ],
       addressVisibled: false,
       inspectionStatusList: [
@@ -376,8 +364,8 @@ export default {
         { label: "已取消", value: "canceled" }
       ],
       documentStatusList: [
-        { label: "正常发货", value: false },
-        { label: "换货发货", value: true },
+        { label: "正常发料", value: false },
+        { label: "换货发料", value: true },
       ],
       approvalStatusList: [
         { label: "审批中", value: "ing" },
@@ -393,7 +381,7 @@ export default {
       ],
       orderListtf: [
         { label: "退货", value: "back" },
-        { label: "发货", value: "delivery" },
+        { label: "发料", value: "delivery" },
       ],
       orderListdd: [
         { label: "外贸", value: "foreign_trade" },
@@ -413,7 +401,7 @@ export default {
         { label: "已付清", value: "payed", },
       ],
       productRules: {
-        deliveryQuantity: [{ required: true, trigger: 'blur' }, { validator: this.formValidate('positiveNumber', '发货数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
+        deliveryQuantity: [{ required: true, trigger: 'blur' }, { validator: this.formValidate('positiveNumber', '发料数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
       },
       ordersLineId: '',
       orderDateArr: [],
@@ -444,45 +432,14 @@ export default {
       cusProductData: [],
       // 选择全部产品参数
       allProVisible: false,
-
+      ProductMethodArr: [
+        { label: "产品分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
+      ],
       allproductData: [],
       allProductTotal: 0,
 
       ProductTreeData: [],
-      ProductListRequestObj: {
-        // neOrderState: 'finish',
-        orderNo: "",
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        // distributeStatus: 'distributed',
-        shipmentState: "",
-        exchangeStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
-        startTime: "",
-        endTime: "",
 
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-      },
       attributeLines: [],
       // dataFormTwo.data: [],
       dataFormTwo: {
@@ -573,7 +530,7 @@ export default {
           { required: true, message: '所属客户不能为空', trigger: 'change' }
         ],
         deliverDate: [
-          { required: true, message: '发货日期不能为空', trigger: 'change' }
+          { required: true, message: '发料日期不能为空', trigger: 'change' }
         ],
         recipient: [
           { required: true, message: '收件人不能为空', trigger: 'change' }
@@ -583,8 +540,8 @@ export default {
         city: [{ required: true, message: '市不能为空', trigger: 'change' }],
         area: [{ required: true, message: '地区不能为空', trigger: 'change' }],
         address: [{ required: true, message: '地址不能为空', trigger: 'change' }],
-        delivery: [{ required: true, message: '发货方式不能为空', trigger: 'change' }],
-        // shipperId: [{ required: true, message: '发货人不能为空', trigger: 'change' }],
+        delivery: [{ required: true, message: '发料方式不能为空', trigger: 'change' }],
+        // shipperId: [{ required: true, message: '发料人不能为空', trigger: 'change' }],
         country: [{ required: true, message: '国家不能为空', trigger: 'change' }],
       },
       customerData: {},
@@ -614,7 +571,7 @@ export default {
     }
   },
   computed: {
-    // 总发货数量
+    // 总发料数量
     totalDeliveryQuantity: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.data.length; i++) {
@@ -622,7 +579,7 @@ export default {
       }
       return totalNum
     },
-    // 总代发货数量
+    // 总代发料数量
     totalWaitDeliverNum: function () {
       var totalNum = 0;
       for (var i = 0; i < this.dataFormTwo.data.length; i++) {
@@ -685,10 +642,10 @@ export default {
     },
     supplierdata(id, data) {
       this.$nextTick(() => {
-        this.$refs['dataForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('partnerName')
       })
       if (data.length === 0) {
-        this.dataForm.cooperativePartnerName = ''
+        this.dataForm.partnerName = ''
         this.dataForm.cooperativePartnerCode = ''
         this.dataForm.cooperativePartnerId = ''
         this.oldData = []
@@ -697,7 +654,7 @@ export default {
         } else {
           this.oldData.push(data)
         }
-        this.dataForm.cooperativePartnerName = data[0].all.name
+        this.dataForm.partnerName = data[0].all.name
         this.dataForm.cooperativePartnerCode = data[0].all.code
         this.dataForm.cooperativePartnerId = data[0].all.id
         let productIdList = []
@@ -714,8 +671,10 @@ export default {
 
     // 点击选择产品
     openSeleceProductDialog() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择供应商")
       this.$refs['ComSelect-page'].openDialog()
     },
+
     // 产品组件回调
     addth(id, data) {
       console.log(data)
@@ -733,7 +692,9 @@ export default {
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
-            purchaseQuantity: item.purchaseQuantity, // 数量
+            demandQuantity: item.demandQuantity, // 数量
+            waitDeliverNum: item.waitDeliverNum,
+            deliveryQuantity: item.waitDeliverNum,
             price: item.price, // 含税单价
             totalAmount: item.totalAmount, // 金额(含税)
             taxRate: item.taxRate, // 税率
@@ -768,7 +729,6 @@ export default {
         // this.$nextTick(() => { this.getApproverData() })
       }
     },
-
     changeclick(e) {
       if (this.dataFormTwo.data.length) {
         this.$confirm('切换换货标识，将清空产品数据,是否继续？', '提示', {
@@ -792,12 +752,12 @@ export default {
       }
 
     },
-    //发货数量不能为0
+    //发料数量不能为0
     calcValidate() {
       return (rule, value, callback) => {
         if (this.dataForm.exchangeGoodsFlag) {
           let index = Number(rule.field.match(/\d+/)[0])
-          let msg = `第${index + 1}行换发货数量超过最大换发货数量`
+          let msg = `第${index + 1}行换发料数量超过最大换发料数量`
           let flag = false
           let list = this.dataFormTwo.data
           let num_1 = Number(list[index].deliveryQuantity)
@@ -813,7 +773,7 @@ export default {
       };
     },
 
-    //选择发货方式
+    //选择发料方式
     changeDelivery(val) {
       if (val === 'self_pickup') {
         this.dataForm.country = ''
@@ -864,7 +824,28 @@ export default {
     //   this.parentId = s.parentId
     //   this.dataForm.userDepartmentName = s.organize
     // },
+    // 选完订单明细后 渲染在列表上
+    submitAllProduct() {
+      if (!this.selectArr.length) return this.$message.error("请选择产品！")
+      this.productVisible = false
+      this.selectArr.forEach(item => {
+        item.ordersNum = item.num
+        item.productDrawingNo = item.drawingNo
+        item.ordersLineId = item.id
+        this.dataFormTwo.data.push(item)
+      });
+      let uniqueArr = [];
+      let idSet = new Set();
 
+      this.dataFormTwo.data.forEach(item => {
+        if (!idSet.has(item.id)) {
+          uniqueArr.push(item);
+          idSet.add(item.id);
+        }
+      });
+      this.dataFormTwo.data = uniqueArr
+      console.log("this.dataFormTwo", this.dataFormTwo.data);
+    },
 
     dateFormat(dateData) {
       var date = new Date(dateData)
@@ -1012,76 +993,7 @@ export default {
         // this.dataForm.shipperId = '',
         this.dataForm.remark = ''
     },
-    // 选择客户
-    seleceCustomer(e) {
-      console.log("客户信息", e);
-      getCooperativeInfo(e.id).then(res => {
-        if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
-          this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '切换成功'
-            })
-            this.deletedata()
-            this.dataFormTwo.data = []
-            this.customerData = e
-            this.dataForm.cooperativePartnerId = e.id
-            this.ProductListRequestObj.cooperativePartnerCode = e.code
-            this.code = e.code
-            this.dataForm.partnerName = e.name
-            this.dataForm.code = e.code
-            this.customerVisible = false
 
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
-            })
-            this.customerVisible = true
-          })
-        } else {
-          this.deletedata()
-          this.dataFormTwo.data = []
-          this.customerData = e
-          this.dataForm.cooperativePartnerId = e.id
-          this.ProductListRequestObj.cooperativePartnerCode = e.code
-          this.code = e.code
-          this.dataForm.partnerName = e.name
-          this.dataForm.code = e.code
-          this.customerVisible = false
-
-        }
-      })
-      this.getAddressInfoFun(e.id)
-
-    },
-    getAddressInfoFun(id) {
-      getAddressInfo(id).then(row => {
-        let dfaddress = row.data.filter(item => { return item.defaultFlag })
-        if (dfaddress.length) {
-          this.dataForm.recipient = dfaddress[0].recipient
-          this.dataForm.phone = dfaddress[0].phone
-          this.dataForm.country = dfaddress[0].country === '中国' ? 'CN' : dfaddress[0].country
-          this.dataForm.province = dfaddress[0].province
-          this.dataForm.city = dfaddress[0].city
-          this.dataForm.area = dfaddress[0].area
-          this.dataForm.address = dfaddress[0].address
-          if (this.dataForm.country === 'CN') {
-            this.defaultAddress = dfaddress[0].countryText + dfaddress[0].provinceText + dfaddress[0].cityText + dfaddress[0].areaText + dfaddress[0].address
-          } else {
-            this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
-          }
-        }
-      })
-    },
-    // changeCountry(e) {
-    //   // console.log('国家',e);
-    //   this.dataForm.country = e
-    // },
     //明细列表id相同合并
     processingdata(a) {
       let list = a.reduce((result, obj) => {
@@ -1114,7 +1026,7 @@ export default {
         partnerCategoryId: "",
         type: "customer",
       }
- 
+
     },
     initData() {
       this.listLoading = true
@@ -1158,33 +1070,14 @@ export default {
         })
       })
     },
- 
-  
+
 
     // 切换table
     handleClick(tab, event) {
     },
     init(id, btnType, data) {
-      if (data && data.length) {
-        // this.seleceCustomer(data[0])
-        data.forEach(item => {
-          item.ordersNum = item.num
-          item.productDrawingNo = item.drawingNo
-          item.saleOrderNo = item.orderNo
-        });
-        this.getAddressInfoFun(data[0].cooperativePartnerId)
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-        this.ProductListRequestObj.cooperativePartnerCode = data[0].cooperativePartnerCode
-        this.code = data[0].cooperativePartnerCode
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.code = data[0].cooperativePartnerCode
-        this.customerVisible = false
-        this.dataFormTwo.data = data
-        getCooperativeInfo(data[0].cooperativePartnerId).then(res => {
-          console.log("res", res);
-          this.customerData = res.data.cooperativePartner
-        })
-      }
+      console.log(data,'oooooo')
+    
       this.formLoading = true
       // this.getProvinceList()
       console.log("传递数据", btnType);
@@ -1320,7 +1213,7 @@ export default {
         if (valid) {
           if (!this.dataFormTwo.data.length) {
             this.$message({
-              message: '至少有一条发货明细',
+              message: '至少有一条发料明细',
               type: 'error',
               duration: 1500,
             })
@@ -1337,7 +1230,7 @@ export default {
           // })
           // if (eve) {
           //   this.$message({
-          //     message: `发货数量需不能为'0'`,
+          //     message: `发料数量需不能为'0'`,
           //     type: 'error',
           //     duration: 1500,
           //   })
@@ -1459,7 +1352,7 @@ export default {
             return item.ordersNum && item.deliveryQuantity * 1 + item.outboundQuantity * 1 + item.undeliveredQuantity * 1 > item.ordersNum * 1
           })
           if (!this.dataForm.exchangeGoodsFlag && isQuantity) {
-            this.$confirm(`总发货数量大于订单数量,是否继续？`, '提示', {
+            this.$confirm(`总发料数量大于订单数量,是否继续？`, '提示', {
               confirmButtonText: '确定',
               cancelButtonText: '取消',
               type: 'warning'
@@ -1467,10 +1360,10 @@ export default {
               this.btnLoading = true
               let formMethod = null;
               if (this.btnType == 'edit') {
-                formMethod = updateoutReceiptGoods
+                formMethod = editQuotationMsendlist
               } else if (this.btnType == 'add' || this.btnType == 'copy') {
                 obj.notice.deliveryStatus = 'undelivered'
-                formMethod = addoutReceiptGoods
+                formMethod = addQuotationsendlist
               }
               formMethod(obj).then(res => {
                 let msg = "";
@@ -1501,10 +1394,10 @@ export default {
             this.btnLoading = true
             let formMethod = null;
             if (this.btnType == 'edit') {
-              formMethod = updateoutReceiptGoods
+              formMethod = editQuotationMsendlist
             } else if (this.btnType == 'add' || this.btnType == 'copy') {
               obj.notice.deliveryStatus = 'undelivered'
-              formMethod = addoutReceiptGoods
+              formMethod = addQuotationsendlist
             }
             formMethod(obj).then(res => {
               let msg = "";

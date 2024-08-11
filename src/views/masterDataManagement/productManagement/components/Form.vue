@@ -15,7 +15,7 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <template v-for="item in tabs">
-            <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode">
+            <!-- <el-tab-pane :label="item.tabName" :name="item.tabCode" :key="item.tabCode"> -->
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <!-- <div
@@ -28,7 +28,7 @@
                   <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
                 </el-collapse-item>
               </el-collapse>
-            </el-tab-pane>
+            <!-- </el-tab-pane> -->
           </template>
         </el-tabs>
       </div>

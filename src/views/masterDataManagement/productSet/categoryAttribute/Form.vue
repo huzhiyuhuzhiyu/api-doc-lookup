@@ -16,6 +16,9 @@
           <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
         </el-form-item>
         <el-form-item label="类别名称" prop="name">
+          <template slot="label">
+            类别名称<span class="required">*</span>
+          </template>
           <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">

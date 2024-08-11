@@ -39,20 +39,20 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>

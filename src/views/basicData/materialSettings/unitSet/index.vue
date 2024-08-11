@@ -10,7 +10,7 @@
           </el-col> -->
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入单位名称" clearable maxlength="20"></el-input>
+              <el-input v-model="listQuery.name" placeholder="单位名称" clearable maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -228,7 +228,7 @@ export default {
     addOrUpdateHandle() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init('{}')
+        this.$refs.JNPFForm.init('{}','add')
       })
     },
     // 编辑数据

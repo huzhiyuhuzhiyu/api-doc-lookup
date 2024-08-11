@@ -37,17 +37,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入工序编码" clearable />
+              <el-input v-model="listQuery.code" placeholder="工序编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入工序名称" clearable />
+              <el-input v-model="listQuery.name" placeholder="工序名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.processingType" placeholder="请选择加工类别">
+              <el-select v-model="listQuery.processingType" placeholder="加工类别">
                 <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>

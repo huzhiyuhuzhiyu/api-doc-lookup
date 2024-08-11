@@ -1249,6 +1249,13 @@ export default {
   background-color: #f5f5f7 !important;
 }
 
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
+}
 .noDataTip {
   text-align: center;
   padding: 20%;

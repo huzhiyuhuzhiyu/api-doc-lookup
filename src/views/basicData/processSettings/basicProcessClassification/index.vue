@@ -3,14 +3,14 @@
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="分类名称">
-              <el-input v-model="listQuery.name" placeholder="请输入分类名称" clearable @keyup.enter.native="search()" />
+          <el-col :span="4">
+            <el-form-item label="">
+              <el-input v-model="listQuery.name" placeholder="分类名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="分类编码">
-              <el-input v-model="listQuery.code" placeholder="请输入分类编码" clearable @keyup.enter.native="search()" />
+          <el-col :span="4">
+            <el-form-item label="">
+              <el-input v-model="listQuery.code" placeholder="分类编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">

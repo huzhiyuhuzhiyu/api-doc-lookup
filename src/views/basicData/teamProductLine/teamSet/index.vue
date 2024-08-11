@@ -5,17 +5,17 @@
                 <el-form @submit.native.prevent>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="tableQuery.code" placeholder="请输入班组编码" clearable />
+                            <el-input v-model="tableQuery.code" placeholder="班组编码" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-input v-model="tableQuery.name" placeholder="请输入班组名称" clearable />
+                            <el-input v-model="tableQuery.name" placeholder="班组名称" clearable />
                         </el-form-item>
                     </el-col>
                     <el-col :span="4">
                         <el-form-item>
-                            <el-select clearable v-model="tableQuery.state" placeholder="请选择状态" style="width: 100%;">
+                            <el-select clearable v-model="tableQuery.state" placeholder="状态" style="width: 100%;">
                                 <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
                                     :value="item.value"></el-option>
                             </el-select>

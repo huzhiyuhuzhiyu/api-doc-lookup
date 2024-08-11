@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="tableQuery.code" placeholder="请输入工位编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model.trim="tableQuery.code" placeholder="工位编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="4">
@@ -29,16 +29,11 @@
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
-                $t('common.reset') }}
+                {{ $t('common.search') }}
               </el-button>
-
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
-
           </el-col>
-
-
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -83,11 +78,11 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
-
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
@@ -120,7 +115,6 @@
       </div>
     </div>
 
-
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -136,9 +130,7 @@ import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'stationSetting',
   components: { DepForm, ExportForm, SuperQuery },
@@ -194,28 +186,32 @@ export default {
       ],
       depFormVisible: false,
       exportFormVisible: false,
-      background: true,//分页器背景颜色
+      background: true, //分页器背景颜色
       visible: false,
-      tableDataList: [
+      tableDataList: [],
+      stateList: [
+        {
+          label: '启用',
+          value: 'enable'
+        },
+        {
+          label: '停用',
+          value: 'disabled'
+        }
       ],
-      stateList: [{
-        label: "启用",
-        value: "enable"
-      }, {
-        label: "停用",
-        value: "disabled"
-      }],
       listLoading: false,
       tableQuery: {
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }],
-        code: "",
-        name: "",
-        state: "enable"
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          }
+        ],
+        code: '',
+        name: '',
+        state: 'enable'
       },
 
       total: 0,
@@ -234,9 +230,9 @@ export default {
       this.search()
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/Name$/, '');
+      const newProp = prop.replace(/Name$/, '')
       this.tableQuery.orderItems[0].asc = order !== 'descending'
-      this.tableQuery.orderItems[0].column = order === null ? "" : newProp
+      this.tableQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     columnSetFun() {
@@ -286,18 +282,19 @@ export default {
       }
     },
     initData() {
-
-      bimWorkstationList(this.tableQuery).then(res => {
-        console.log(res, '工位列表');
-        this.tableDataList = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      bimWorkstationList(this.tableQuery)
+        .then((res) => {
+          console.log(res, '工位列表')
+          this.tableDataList = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
     search() {
-      Object.keys(this.tableQuery).forEach(key => {
+      Object.keys(this.tableQuery).forEach((key) => {
         let item = this.tableQuery[key]
         this.tableQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -309,25 +306,27 @@ export default {
       this.tableQuery = {
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        code: "",
-        name: "",
-        state: "enable"
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        code: '',
+        name: '',
+        state: 'enable'
       }
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(type) {
-
       this.depFormVisible = true
       this.$nextTick(() => {
-        this.$refs.depForm.init("", type)
+        this.$refs.depForm.init('', type)
       })
     },
     addOrUpdateHandle(id, type) {
@@ -339,22 +338,22 @@ export default {
         })
         // }, 600);
       }
-
-
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        deleteBimWorkstation(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
+      })
+        .then(() => {
+          deleteBimWorkstation(id).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
           })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     handleUserRelation(id, type) {
       this.depFormVisible = true

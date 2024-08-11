@@ -5,7 +5,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.model" placeholder="请输入型号" clearable />
+              <el-input v-model="listQuery.model" placeholder="型号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="8">

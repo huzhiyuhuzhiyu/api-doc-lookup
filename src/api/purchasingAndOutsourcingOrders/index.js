@@ -147,3 +147,13 @@ export function insertOutOrder(data) {
       data
     })
   }
+
+  
+  // 采购和外协订单明细-发料清单列表
+  export function shipmentList(data) {
+    return request({
+      url: `/api/erp/purPurchaseOrderLine/shipment/list`,
+      method: 'post',
+      data
+    })
+  }

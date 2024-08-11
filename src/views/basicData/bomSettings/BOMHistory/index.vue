@@ -41,19 +41,19 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="请输入产品编码"
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码"
                 clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="请输入产品名称"
+              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称"
                 clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawNo" @keyup.enter.native="search()" placeholder="请输入品名规格" clearable />
+              <el-input v-model="listQuery.drawNo" @keyup.enter.native="search()" placeholder="品名规格" clearable />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="4">

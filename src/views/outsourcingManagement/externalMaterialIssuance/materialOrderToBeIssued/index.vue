@@ -1,6 +1,5 @@
 <template>
   <div class="JNPF-common-layout">
-
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
@@ -12,48 +11,42 @@
               </el-form-item>
             </el-col>
             <el-col :span="4">
-
               <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货开始日期" clearable>
-                </el-date-picker>-
-
-              </el-form-item>
-
-            </el-col>
-            <el-col :span="4">
-
-              <el-form-item>
-                <el-date-picker v-model="orderForm.deliveryEndTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货结束日期" clearable>
-                </el-date-picker>
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="供应商名称"
+                  clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-form-item>
-                <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="料品名规格"
+                  clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="ordeDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                  start-placeholder="产品交货开始日期" end-placeholder="产品交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
 
             <el-col :span="4">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                  {{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
             </el-col>
-
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')" :addText="'创建发货'">
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+            <topOpts @add="addSupplier('', 'add')" :addText="'创建发料'">
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                导出
+              </el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -74,88 +67,87 @@
             custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
+                  {{ scope.row.orderNo }}
+                </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerName" label="客户名称" width="160" sortable="custom" />
-            <el-table-column prop="departmentName" label="所属部门" width="160"></el-table-column>
-            <el-table-column prop="salesName" label="所属销售" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+
+            <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="料品名规格" width="160" sortable="custom" />
+            <el-table-column prop="productName" label="料产品名称" width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="料产品编码" width="160" sortable="custom" />
+
+            <el-table-column prop="processName" label="料工序名称" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="num" label="数量" width="160" sortable="custom" />
-            <el-table-column prop="waitDeliverNum" label="待发货数量" width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
-
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
-            <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
-
+            <el-table-column prop="demandQuantity" label="发料数量" width="160" sortable="custom" />
+            <el-table-column prop="waitDeliverNum" label="待发料数量" width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="产品交货日期" width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text"
-                  @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>
-
+                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.id, 'look')">
+                  查看详情
+                </el-button>
               </template>
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData">
-            <div class="text"><span>合计数量:{{ totalNum }}</span></div>
-
+            <div class="text">
+              <span>合计数量:{{ totalNum }}</span>
+            </div>
           </pagination>
-
         </div>
       </div>
-
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-    
+    <AddForm v-if="addFormVisible" ref="addForm" @refreshDataList="initData" @close="closeForm"
+      :customList="customList" />
   </div>
 </template>
 
 <script>
-import { UserListAll, } from '@/api/permission/user'
+import { UserListAll } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import {
+  getsaleOrderList,
+  getsaleOrderDetailList,
+  deleteOrders,
+  getAttributeline,
+  getSaleordersTotal,
+  getOrderLineReport
+} from '@/api/salesManagement/assemblyOrders'
 // import Form from '../../orderManagement/orderList/Form.vue'
 // import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 // import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
 import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
-import AddForm from "./Form.vue"
+import AddForm from './Form.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'materialOrderToBeIssued',
-  components: { AddForm, ExportForm,
+  components: {
+    AddForm,
+    ExportForm,
     //  OrderFollow,
-      SuperQuery },
+    SuperQuery
+  },
   data() {
     return {
-      addFormVisible:false,
+      addFormVisible: false,
       btnsearchFlag: true,
-      columnList: ["cooperativePartnerCode", "departmentName", "productName",],
+      columnList: ['cooperativePartnerCode', 'productName', 'deliveryDate', 'createByName'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -166,7 +158,7 @@ export default {
       treeLoading: false,
       listLoading: false,
       detailFlag: false,
-
+      ordeDateArr: [],
       orderForm: {
         orderType: 'external',
         deliveryEndDate: '',
@@ -200,165 +192,160 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "订单号",
+          label: '订单号',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerCode',
-          label: "客户编码",
+          label: '客户编码',
           type: 'input'
         },
         {
           prop: 'cooperativePartnerName',
-          label: "客户名称",
+          label: '客户名称',
           type: 'input'
         },
 
         {
           prop: 'departmentName',
-          label: "所属部门",
+          label: '所属部门',
           type: 'input'
         },
 
         {
           prop: 'salesName',
-          label: "所属销售人员",
+          label: '所属销售人员',
           type: 'custom',
-          component: 'user-select',
+          component: 'user-select'
         },
         {
           prop: 'customerProductNo',
-          label: "客户料号",
+          label: '客户料号',
           type: 'input'
         },
         {
           prop: 'productCode',
-          label: "产品编码",
+          label: '产品编码',
           type: 'input'
         },
         {
           prop: 'productName',
-          label: "产品名称",
+          label: '产品名称',
           type: 'input'
         },
         {
           prop: 'drawingNo',
-          label: "品名规格",
+          label: '品名规格',
           type: 'input'
         },
         {
           prop: 'mainUnit',
-          label: "单位(主)",
+          label: '单位(主)',
           type: 'input'
         },
         {
           prop: 'num',
-          label: "数量(主)",
+          label: '数量(主)',
           type: 'input'
         },
         {
-          prop: "waitDeliverNum",
-          label: "待发货数量",
-          type: "input"
+          prop: 'waitDeliverNum',
+          label: '待发料数量',
+          type: 'input'
         },
         {
           prop: 'deputyUnit',
-          label: "单位(副)",
+          label: '单位(副)',
           type: 'input'
         },
         {
           prop: 'assistantNum',
-          label: "数量(副)",
+          label: '数量(副)',
           type: 'input'
         },
         {
           prop: 'deliveryDate',
-          label: "交货日期",
+          label: '交货日期',
           type: 'input'
         },
 
         {
           prop: 'price',
-          label: "单价(含税)",
+          label: '单价(含税)',
           type: 'input'
         },
         {
           prop: 'taxRate',
-          label: "税率",
+          label: '税率',
           type: 'input'
         },
         {
           prop: 'totalAmount',
-          label: "金额(含税)",
+          label: '金额(含税)',
           type: 'input'
         },
         {
           prop: 'excludingTaxPrice',
-          label: "单价(不含税)",
+          label: '单价(不含税)',
           type: 'input'
         },
         {
           prop: 'excludingTaxAmount',
-          label: "金额(不含税)",
+          label: '金额(不含税)',
           type: 'input'
         },
         {
           prop: 'sealingCoverTyping',
-          label: "打字内容",
+          label: '打字内容',
           type: 'input'
         },
         {
           prop: 'accuracyLevel',
-          label: "精度等级",
+          label: '精度等级',
           type: 'input'
         },
         {
           prop: 'vibrationLevel',
-          label: "振动等级",
+          label: '振动等级',
           type: 'input'
         },
         {
           prop: 'oil',
-          label: "油脂",
+          label: '油脂',
           type: 'input'
         },
         {
           prop: 'oilQuantity',
-          label: "油脂量",
+          label: '油脂量',
           type: 'input'
         },
         {
           prop: 'clearance',
-          label: "游隙",
+          label: '游隙',
           type: 'input'
         },
         {
           prop: 'packagingMethod',
-          label: "包装方式",
+          label: '包装方式',
           type: 'input'
         },
         {
           prop: 'ordersRemark',
-          label: "备注",
+          label: '备注',
           type: 'input'
         },
         {
           prop: 'documentStatus',
-          label: "单据状态",
+          label: '单据状态',
           type: 'input'
         },
         {
           prop: 'createTime',
-          label: "创建时间",
+          label: '创建时间',
           type: 'input'
-        },
-
-
-
-
-
+        }
       ],
-      list: [],
+      list: []
     }
   },
   watch: {
@@ -367,15 +354,13 @@ export default {
     }
   },
 
-  mounted() {
-
-  },
+  mounted() { },
   created() {
-    // 默认设置为近3天  
-    const end = new Date();
-    const start = "";
-    end.setDate(end.getDate() + 3);
-    this.deliveryDateArr = ["", end];
+    // 默认设置为近3天
+    const end = new Date()
+    const start = ''
+    end.setDate(end.getDate() + 3)
+    this.deliveryDateArr = ['', end]
     // this.orderForm.deliveryStartTime = ""
     // this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
@@ -387,66 +372,63 @@ export default {
     },
     // 获取合计数据
     getOrderLineReportFun() {
-      getOrderLineReport(this.orderForm).then(res => {
-        console.log("合计", res);
+      getOrderLineReport(this.orderForm).then((res) => {
+        console.log('合计', res)
         this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
     dateFun(dateStr) {
-      const date = new Date(dateStr);
+      const date = new Date(dateStr)
 
-      // 获取年份、月份和日期  
-      const year = date.getFullYear(); // 获取年份  
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)  
-      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数  
+      // 获取年份、月份和日期
+      const year = date.getFullYear() // 获取年份
+      const month = String(date.getMonth() + 1).padStart(2, '0') // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)
+      const day = String(date.getDate()).padStart(2, '0') // 获取日期，并补齐两位数
 
-      // 拼接成年月日格式  
-      const formattedDate = `${year}-${month}-${day}`;
-      console.log("forma", formattedDate);
+      // 拼接成年月日格式
+      const formattedDate = `${year}-${month}-${day}`
+      console.log('forma', formattedDate)
       return formattedDate
     },
     btnsearch1() {
-      let end = new Date();
-      let start = "";
-      this.deliveryDateArr = ["", end];
-      this.orderForm.deliveryStartTime = ""
+      let end = new Date()
+      let start = ''
+      this.deliveryDateArr = ['', end]
+      this.orderForm.deliveryStartTime = ''
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.dataFormSubmit()
     },
 
-    // 为近3天  
+    // 为近3天
     btnsearch2() {
-
-      const end = new Date();
-      const start = "";
-      end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = ["", end];
-      this.orderForm.deliveryStartTime = ""
+      const end = new Date()
+      const start = ''
+      end.setDate(end.getDate() + 3)
+      this.deliveryDateArr = ['', end]
+      this.orderForm.deliveryStartTime = ''
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
-    // 为近7天  
+    // 为近7天
     btnsearch3() {
-
       let end = new Date()
-      let start =""
+      let start = ''
 
-      end.setDate(end.getDate() + 7);
+      end.setDate(end.getDate() + 7)
 
-      this.deliveryDateArr = ["", end];
-      this.orderForm.deliveryStartTime = ""
+      this.deliveryDateArr = ['', end]
+      this.orderForm.deliveryStartTime = ''
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
-    // 为近30天  
+    // 为近30天
     btnsearch4() {
-
       let end = new Date()
-      let start = ""
-      end.setDate(end.getDate() + 30);
+      let start = ''
+      end.setDate(end.getDate() + 30)
 
-      this.deliveryDateArr = ["", end];
-      this.deliveryDateArr[0] = ""
+      this.deliveryDateArr = ['', end]
+      this.deliveryDateArr[0] = ''
       this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.search()
     },
@@ -459,54 +441,48 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
-
-    // 
+    //
     filterateLabel(row, column, cellValue) {
-      if (!cellValue) return ""
-      if (cellValue.includes(":")) {
-        return cellValue.replace(/:(.*?)(,|$)/g, "$2");
+      if (!cellValue) return ''
+      if (cellValue.includes(':')) {
+        return cellValue.replace(/:(.*?)(,|$)/g, '$2')
       } else {
-        return cellValue;
+        return cellValue
       }
     },
 
-
-
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
-
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      if (prop == "createByName") {
-        newProp = "create_by"
+      if (prop == 'createByName') {
+        newProp = 'create_by'
       }
-      this.orderForm.orderItems[0].asc = order === "ascending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.orderForm.orderItems[0].asc = order === 'ascending'
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
 
-
     dataFormSubmit() {
       this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+      Object.keys(this.orderForm).forEach((key) => {
+        // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.initData()
-
     },
-
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFollowVisible = false
-      this.addFormVisible=false
+      this.addFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -514,17 +490,17 @@ export default {
     },
     initData() {
       this.listLoading = true
-      shipmentReport(this.orderForm).then(res => {
-        this.tableData = res.data.page.records
-        this.total = res.data.page.total
-        this.listLoading = false
-        this.getOrderLineReportFun()
-      }).catch(() => {
-        this.listLoading = false
-      })
-
+      shipmentReport(this.orderForm)
+        .then((res) => {
+          this.tableData = res.data.page.records
+          this.total = res.data.page.total
+          this.listLoading = false
+          this.getOrderLineReportFun()
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
-
 
     search() {
       this.dataFormSubmit()
@@ -532,32 +508,34 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      // 默认设置为近3天  
-      const end = new Date();
-      const start = new Date();
+      // 默认设置为近3天
+      const end = new Date()
+      const start = new Date()
 
-      end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = [start, end];
+      end.setDate(end.getDate() + 3)
+      this.deliveryDateArr = [start, end]
       this.orderForm = {
-
-        approvalStatus: "ok",
-        documentStatus: "submit",
-        orderState: "not_finish",
-        deliveryEndTime: "",
-        deliveryStartTime: "",
+        approvalStatus: 'ok',
+        documentStatus: 'submit',
+        orderState: 'not_finish',
+        deliveryEndTime: '',
+        deliveryStartTime: '',
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "t1.create_time"
-        }],
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 't1.create_time'
+          }
+        ],
 
-        superQuery: {},
+        superQuery: {}
       }
 
       this.search()
@@ -575,30 +553,29 @@ export default {
       // this.$nextTick(() => {
       //   this.$refs.Form.init(id, btntype)
       // })
-      if (!this.list.length) return this.$message.error("请选择您要发货的产品")
+      if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
-      if (flag) return this.$message.error("只能选择相同客户的明细订单")
-      console.log(this.list);
+      if (flag) return this.$message.error('只能选择相同客户的明细订单')
+      console.log(this.list)
       this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addForm.init("", btntype,this.list)
+        this.$refs.addForm.init('', btntype, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {
-      const codes = new Set();
+      const codes = new Set()
 
       for (const item of arr) {
-        codes.add(item.cooperativePartnerCode);
+        codes.add(item.cooperativePartnerCode)
       }
 
-      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
+      return codes.size > 1 // 如果有多个不同的代码，则返回 true
     },
     getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype)
       })
-
     },
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
@@ -614,16 +591,18 @@ export default {
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        deleteOrders(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
+      })
+        .then(() => {
+          deleteOrders(id).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
           })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -635,25 +614,29 @@ export default {
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
-      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      let columnList = this.$refs[exportTableRef].columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       this.exportFormVisible = false
       let includeFieldMap = {}
       for (let i = 0; i < data.selectKey.length; i++) {
-        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i]
       }
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
         exportType: '1005',
-        exportName: '待发货订单',
+        exportName: '待发料订单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
-      excelExport(_data).then(res => {
+      excelExport(_data).then((res) => {
         this.exportFormVisible = false
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)
@@ -679,10 +662,8 @@ export default {
   padding-left: 10px;
 }
 
-
-
 .JNPF-common-search-box {
-  padding: 8px!important;
+  padding: 8px !important;
 
   margin-bottom: 5px;
 }

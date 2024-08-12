@@ -67,7 +67,7 @@
             custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -88,7 +88,8 @@
             <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.id, 'look')">
+                <el-button size="mini" type="text"
+                  @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   查看详情
                 </el-button>
               </template>
@@ -134,7 +135,7 @@ import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import AddForm from './AddForm.vue'
-import Form from "./Form.vue";
+import Form from "../../productOutsourcingOrder/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'materialOrderToBeIssued',
@@ -375,7 +376,6 @@ export default {
     // 获取合计数据
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then((res) => {
-        console.log('合计', res)
         this.totalNum = res.data.total ? res.data.total.num : 0
       })
     },
@@ -389,7 +389,7 @@ export default {
 
       // 拼接成年月日格式
       const formattedDate = `${year}-${month}-${day}`
-      console.log('forma', formattedDate)
+
       return formattedDate
     },
     btnsearch1() {
@@ -558,7 +558,7 @@ export default {
       if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error('只能选择相同客户的明细订单')
-      console.log(this.list)
+
       this.addFormVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.init('', btntype, this.list)

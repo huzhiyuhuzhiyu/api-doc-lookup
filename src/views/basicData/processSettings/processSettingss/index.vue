@@ -3,15 +3,15 @@
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item>
-              <el-input v-model="listQuery.code" @keyup.enter.native="search()" placeholder="请输入工艺路线编码" clearable
+              <el-input v-model="listQuery.code" @keyup.enter.native="search()" placeholder="工艺路线编码" clearable
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <el-col :span="5">
             <el-form-item>
-              <el-input v-model="listQuery.name" @keyup.enter.native="search()" placeholder="请输入工艺路线名称" clearable
+              <el-input v-model="listQuery.name" @keyup.enter.native="search()" placeholder="工艺路线名称" clearable
                 maxlength="20"></el-input>
             </el-form-item>
           </el-col>
@@ -794,6 +794,13 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
   padding: 0 10px;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 
 .JNPF-common-search-box {

@@ -1,39 +1,51 @@
 <template>
-  <el-drawer :title="!dataForm.id ? '新建工位' : !btntype ? '编辑工位' : '查看工位' " :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll  width="600px">
+  <el-drawer :title="!dataForm.id ? '新建工位' : !btntype ? '编辑工位' : '查看工位'" :close-on-click-modal="false"
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="600px" class="JNPF-common-drawer">
     <template slot="title">
-          <div class="custom_title">
-            {{ title }}
-          </div>
-        </template>
+      <div class="custom_title">
+        {{ title }}
+      </div>
+    </template>
     <div style="padding:10px;">
-    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-      label-width="120px">
+      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
+        label-width="120px" hide-required-asterisk="fasle">
 
-      <el-form-item label="工位名称" prop="name">
-        <el-input v-model.trim="dataForm.name" placeholder="请输入工位名称" maxlength="20" 
-          :disabled="btntype ? true : false" />
-      </el-form-item>
-      <el-form-item label="工位编码" prop="code">
-        <el-input v-model.trim="dataForm.code" placeholder="请输入工位编码" maxlength="20" 
-        :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
-      </el-form-item>
-    
-      <el-form-item label="状态" prop="state">
-        <el-select v-model="dataForm.state" placeholder="请选择状态" style="width: 100%;" :disabled="btntype ? true : false">
-          <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" :disabled="btntype ? true : false" placeholder="请输入备注"/>
-      </el-form-item>
-    </el-form>
-    <span style="display:flex;justify-content: flex-end;" v-if="!btntype">
-      <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-      <el-button :disabled="btntype ? true : false" type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-        提交</el-button>
-    </span>
-  </div>
+        <el-form-item label="工位名称" prop="name">
+          <template slot="label">
+            工位名称<span class="required">*</span>
+          </template>
+          <el-input v-model.trim="dataForm.name" placeholder="请输入工位名称" maxlength="20"
+            :disabled="btntype ? true : false" />
+        </el-form-item>
+        <el-form-item label="工位编码" prop="code">
+          <template slot="label">
+            工位编码<span class="required">*</span>
+          </template>
+          <el-input v-model.trim="dataForm.code" placeholder="请输入工位编码" maxlength="20"
+            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+        </el-form-item>
+
+        <el-form-item label="状态" prop="state">
+          <template slot="label">
+            状态<span class="required">*</span>
+          </template>
+          <el-select v-model="dataForm.state" placeholder="请选择状态" style="width: 100%;"
+            :disabled="btntype ? true : false">
+            <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
+            :disabled="btntype ? true : false" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <span style="display:flex;justify-content: flex-end;" v-if="!btntype">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button :disabled="btntype ? true : false" type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+          提交</el-button>
+      </span>
+    </div>
   </el-drawer>
 </template>
 
@@ -43,7 +55,7 @@ import { addBimWorkstation, updateBimWorkstation, getBimWorkstation, checkBimWor
 export default {
   data() {
     return {
-      title:'',
+      title: '',
       visible: false,
       formLoading: false,
       btnLoading: false,
@@ -56,11 +68,11 @@ export default {
         value: "disabled"
       }],
       dataForm: {
-        id:'',
+        id: '',
         code: "",
         name: "",
-        state:"",
-        remark:''
+        state: "",
+        remark: ''
       },
       codeConfig: {},
       btntype: false,
@@ -85,8 +97,8 @@ export default {
         name: [
           { required: true, message: '请输入工位名称', trigger: 'blur' },
         ],
-        state:[
-          {required:true,message:"请选择状态",trigger:"change"}
+        state: [
+          { required: true, message: "请选择状态", trigger: "change" }
         ]
       },
     }
@@ -102,13 +114,13 @@ export default {
           this.dataForm.code = data.number
 
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     init(id, type) {
-      console.log(type,'type')
+      console.log(type, 'type')
       this.visible = true
       this.dataForm.id = id || ''
-     
+
       if (type == "edit" || type == "add") {
         this.btntype = false
       } else if (type == "look") {
@@ -169,6 +181,10 @@ export default {
   line-height: 24px;
   font-size: 18px;
   color: #303133;
+  margin-left: -12px;
+}
+.required {
+  color: red;
+  margin-left: 4px;
 }
 </style>
-

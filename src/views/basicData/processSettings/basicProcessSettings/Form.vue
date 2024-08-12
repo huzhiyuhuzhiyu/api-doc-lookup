@@ -5,7 +5,8 @@
         <el-page-header @back="goBack" :content="dialogTitle" />
         <div class="options" v-if="!disabled">
           <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-            提交</el-button>
+            提交
+          </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -13,75 +14,77 @@
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
             <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                  <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
-              <el-row :gutter="20" class="custom-row">
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="工序名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入工序名称" maxlength="20"
-                      :disabled="disabled"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工序编码" prop="code">
-                    <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                      placeholder="请输入工序编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工序分类" prop="productCategoryIdText">
-                    <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'process' }"
-                      :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
-                      :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="加工类型" prop="processingType">
-                    <el-select v-model="dataForm.processingType" placeholder="请选择加工类型" :disabled="disabled"
-                      style="width:100%">
-                      <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="工序类型" prop="processType">
-                    <el-select v-model="dataForm.processType" placeholder="请选择工序类型" :disabled="disabled"
-                      style="width:100%">
-                      <el-option v-for="item in process_typeList" :key="item.value" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="24">
-                  <el-form-item label="备注">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" show-word-limit
-                      type="textarea" :disabled="disabled"></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-                </el-collapse-item>
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" label-width="140px" label-position="top">
+                  <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="工序名称" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入工序名称" maxlength="20"
+                          :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="工序编码" prop="code">
+                        <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
+                          placeholder="请输入工序编码" maxlength="20"
+                          :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="工序分类" prop="productCategoryIdText">
+                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'proce  ss' }"
+                          :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
+                          :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="加工类型" prop="processingType">
+                        <el-select v-model="dataForm.processingType" placeholder="请选择加工类型" :disabled="disabled"
+                          style="width:100%">
+                          <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="工序类型" prop="processType">
+                        <el-select v-model="dataForm.processType" placeholder="请选择工序类型" :disabled="disabled"
+                          style="width:100%">
+                          <el-option v-for="item in process_typeList" :key="item.value" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                      <el-form-item label="备注">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" show-word-limit
+                          type="textarea" :disabled="disabled"></el-input>
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
 
-              </el-collapse>
-          
-            <div class="box">
-
-            </div>
+            <div class="box"></div>
           </el-tab-pane>
           <el-tab-pane label="生产资源配置" name="zypz">
             <div>
               <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch style="margin-top:-10px">
                 <div v-if="type !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" :disabled="type == 'look' ? true : false"
-                    @click="openSeleceProcessDialog(personData.length, configurationName)">选择{{
-                      actTitle }}</el-button>|
+                    @click="openSeleceProcessDialog(personData.length, configurationName)">
+                    选择{{ actTitle }}
+                  </el-button>
+                  |
                   <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete"
-                    @click="batchDelete(configurationName)">批量删除</el-button>|
-
+                    @click="batchDelete(configurationName)">
+                    批量删除
+                  </el-button>
+                  |
                 </div>
                 <el-tab-pane label="人员" name="personnel" :key="Math.random()">
                   <!-- 人员配置 -->
@@ -110,7 +113,9 @@
                     <el-table-column label="操作" width="90" v-if="type != 'look'" :key="8">
                       <template slot-scope="scope">
                         <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
-                          @click="handlerDelete(scope.$index, 'personnel')">删除</el-button>
+                          @click="handlerDelete(scope.$index, 'personnel')">
+                          删除
+                        </el-button>
                       </template>
                     </el-table-column>
                   </JNPF-table>
@@ -134,7 +139,9 @@
                     <el-table-column label="操作" width="90" v-if="type != 'look'">
                       <template slot-scope="scope">
                         <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
-                          @click="handlerDelete(scope.$index, 'work_group')">删除</el-button>
+                          @click="handlerDelete(scope.$index, 'work_group')">
+                          删除
+                        </el-button>
                       </template>
                     </el-table-column>
                   </JNPF-table>
@@ -145,7 +152,6 @@
                     style="width: 100%">
                     <el-table-column prop="resourceId" label="设备名称">
                       <template slot-scope="scope">
-
                         <!-- <ComSelect-list :isdisabled="type === 'look'" v-model="scope.row.resourceName" placeholder="请选择设备" auth
                   @change="onOrganizeChangeTwo" :title="'选择设备'" :method="editEquEquipmentAll" :requestObj="requestObj3"
                   :paramsObj="{}" /> -->
@@ -162,7 +168,9 @@
                     <el-table-column label="操作" width="90" v-if="type != 'look'">
                       <template slot-scope="scope">
                         <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
-                          @click="handlerDelete(scope.$index, 'device')">删除</el-button>
+                          @click="handlerDelete(scope.$index, 'device')">
+                          删除
+                        </el-button>
                       </template>
                     </el-table-column>
                   </JNPF-table>
@@ -181,7 +189,6 @@
                   :paramsObj="{}" /> -->
                         <el-input v-model="scope.row.resourceName" placeholder="请输入工具名称" :disabled="type === 'look'"
                           readonly />
-
                       </template>
                     </el-table-column>
                     <el-table-column prop="resourceType" label="工具编码">
@@ -193,7 +200,9 @@
                     <el-table-column label="操作" width="90" v-if="type != 'look'">
                       <template slot-scope="scope">
                         <el-button type="text" :disabled="type === 'look'" style="color:rgb(245,108,108)"
-                          @click="handlerDelete(scope.$index, 'tool')">删除</el-button>
+                          @click="handlerDelete(scope.$index, 'tool')">
+                          删除
+                        </el-button>
                       </template>
                     </el-table-column>
                   </JNPF-table>
@@ -213,13 +222,19 @@
     <ComSelect-page ref="ComSelect-page" @change="DeviceSubmit" :tableItems="DeviceTableItems" title="选择设备"
       treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="stateEquEquipment" :listRequestObj="DeviceRequestObj"
       :searchList="DeviceTableSearchList" :elementShow="false" multiple />
-    <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具" treeTitle="工具分类"
-      :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
+    <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具"
+      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
       :searchList="ToolTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
 <script>
-import { updateArrange, addArrange, detailArrange, checkArrange, checkArrangeArr } from '@/api/basicData/materialSettings'
+import {
+  updateArrange,
+  addArrange,
+  detailArrange,
+  checkArrange,
+  checkArrangeArr
+} from '@/api/basicData/materialSettings'
 import { inflateRawSync } from 'zlib'
 import { getBimProcessDetail, addBimProcess, updateBimProcess, checkBimProcessCode } from '@/api/bimProcess/index'
 
@@ -234,26 +249,25 @@ export default {
     PersonSelect
   },
   data() {
-
     return {
       process_typeList: [
-        { label: "正常工序", value: "normal" },
-        { label: "锻打工序", value: "forge" },
-        { label: "电镀工序", value: "plating" },
-        {label:"钻孔工序",value:"drill"}
+        { label: '正常工序', value: 'normal' },
+        { label: '锻打工序', value: 'forge' },
+        { label: '电镀工序', value: 'plating' },
+        { label: '钻孔工序', value: 'drill' }
       ],
       getcategoryTree,
-      configurationName: "",
+      configurationName: '',
       dialogTitle: '',
       visible: false,
       loading: false,
-      activeName: "jcInfo",
+      activeName: 'jcInfo',
       activeNames: ['jcInfo', 'basicInfo'],
-      actTitle: "",
+      actTitle: '',
       configurationName: 'personnel',
       btnLoading: false,
       dataForm: {
-        id: "", // 工序id
+        id: '', // 工序id
         name: null, //  工序名称
         code: null, // 工序编码
         processingType: null, // 工序类型
@@ -262,62 +276,73 @@ export default {
         scrapUnitPrice: null, // 废品单价
         timePrice: null, // 计价单价
         remark: null, // 备注
-        pricingType: "by_time",
+        pricingType: 'by_time',
         productCategoryIdText: '',
         productCategoryId: '',
-        processType: "normal"
+        processType: 'normal'
       },
       placeholder: '请选择工序分类',
-      pricingTypeList: [{
-        label: "计时",
-        value: "by_time",
-      }, {
-        label: "计件",
-        value: "by_piece",
-      }],
+      pricingTypeList: [
+        {
+          label: '计时',
+          value: 'by_time'
+        },
+        {
+          label: '计件',
+          value: 'by_piece'
+        }
+      ],
       disabled: false,
       rules: {
-        name: [{
-          required: true,
-          message: '请输入工序名称',
-          trigger: ['blur']
-        }],
-        code: [{
-          required: true,
-          message: '请输入工序编码',
-          trigger: ['blur']
-        }, {
-          validator: (rule, value, callback) => {
-            console.log(value, this.dataForm.id);
-            checkBimProcessCode(value, this.dataForm.id).then(res => {
-              console.log('res===>', res);
-              if (res.data) {
-                callback(new Error("工序编码重复"));
-              } else {
-                callback();
-              }
-            }).catch(error => {
-            })
-          }, trigger: 'blur'
-        },],
+        name: [
+          {
+            required: true,
+            message: '请输入工序名称',
+            trigger: ['blur']
+          }
+        ],
+        code: [
+          {
+            required: true,
+            message: '请输入工序编码',
+            trigger: ['blur']
+          },
+          {
+            validator: (rule, value, callback) => {
+              console.log(value, this.dataForm.id)
+              checkBimProcessCode(value, this.dataForm.id)
+                .then((res) => {
+                  console.log('res===>', res)
+                  if (res.data) {
+                    callback(new Error('工序编码重复'))
+                  } else {
+                    callback()
+                  }
+                })
+                .catch((error) => { })
+            },
+            trigger: 'blur'
+          }
+        ],
         productCategoryIdText: [{ required: true, message: '请选择所属分类', trigger: ['change'] }],
-        processingType: [{
-          required: true,
-          message: '请选择加工类型',
-          trigger: ['change']
-        }],
+        processingType: [
+          {
+            required: true,
+            message: '请选择加工类型',
+            trigger: ['change']
+          }
+        ]
       },
       processingTypeOptions: [
-        { label: "自制", value: "self_produced" },
-        { label: "外协", value: "external_production" },
+        { label: '自制', value: 'self_produced' },
+        { label: '外协', value: 'external_production' }
       ],
-      businessType: '',    // 业务开关获取类型
+      businessType: '', // 业务开关获取类型
 
-
-      getGroupList,   //班组
+      getGroupList, //班组
       editEquEquipmentAll, //设备
       getEquEquipmentList, //工具
-      type: "",
+      type: '',
       personnelVisibled: false,
 
       personArr: [],
@@ -328,116 +353,127 @@ export default {
       classData: [],
       equipData: [],
       toolData: [],
-      btntype:false,
+      btntype: false,
       codeConfig: {},
-      requestObj2: {    //班组参数
+      requestObj2: {
+        //班组参数
         pageNum: 1,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
-        state: "enable",
-        code: "",
-        name: ""
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        state: 'enable',
+        code: '',
+        name: ''
       },
-      requestObj3: {     //设备参数
+      requestObj3: {
+        //设备参数
         classAttribute: 'equipment'
       },
-      requestObj4: {     // 工具参数
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
-        }],
+      requestObj4: {
+        // 工具参数
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
         pageNum: 1,
         code: '',
-        classAttribute: "tool",
+        classAttribute: 'tool'
       },
       getGroupList,
       WorkgroupRequestObj: {
-        code: "",
-        name: "",
+        code: '',
+        name: '',
         pageNum: 1,
         pageSize: 20,
         state: 'enable'
       }, // 产品选择弹出框列表请求参数
       WorkgroupTableItems: [
         { prop: 'code', label: '班组编码', fixed: 'left' },
-        { prop: 'name', label: '班组名称', fixed: 'left' },
+        { prop: 'name', label: '班组名称', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       WorkgroupTableSearchList: [
-        { prop: "code", label: "班组编码", type: 'input' },
-        { prop: "name", label: "班组名称", type: 'input' }
+        { prop: 'code', label: '班组编码', type: 'input' },
+        { prop: 'name', label: '班组名称', type: 'input' }
       ], // 产品选择弹出框搜索条件
       stateEquEquipment,
       getcategoryTree,
       DeviceMethodArr: [
-        { label: "设备", classAttribute: 'tool', method: getcategoryTree, requestObj: { classAttribute: 'equipment' } },
+        { label: '设备', classAttribute: 'tool', method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }
       ], // 产品选择弹出框树状列表
       DeviceRequestObj: {
-        classAttribute: "equipment",
-        drawingNo: "",
+        classAttribute: 'equipment',
+        drawingNo: '',
 
-        code: "",
-        name: "",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20,
         state: ''
       }, // 产品选择弹出框列表请求参数
       DeviceTableItems: [
         { prop: 'code', label: '设备编码', fixed: 'left' },
-        { prop: 'name', label: '设备名称', fixed: 'left' },
-
-
+        { prop: 'name', label: '设备名称', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       DeviceTableSearchList: [
-        { prop: "code", label: "设备编码", type: 'input' },
-        { prop: "name", label: "设备名称", type: 'input' }
+        { prop: 'code', label: '设备编码', type: 'input' },
+        { prop: 'name', label: '设备名称', type: 'input' }
       ], // 产品选择弹出框搜索条件
       ToolMethodArr: [
-        { label: "工具", classAttribute: 'tool', method: getcategoryTree, requestObj: { classAttribute: 'tool' } },
+        { label: '工具', classAttribute: 'tool', method: getcategoryTree, requestObj: { classAttribute: 'tool' } }
       ], // 产品选择弹出框树状列表
       ToolRequestObj: {
-        classAttribute: "tool",
-        drawingNo: "",
+        classAttribute: 'tool',
+        drawingNo: '',
 
-        code: "",
-        name: "",
-        orderItems: [{
-          "asc": false,
-          "column": ""
-        }, {
-          "asc": false,
-          "column": "create_time"
-        }],
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20,
         state: ''
       }, // 产品选择弹出框列表请求参数
       ToolTableItems: [
         { prop: 'code', label: '工具编码', fixed: 'left' },
-        { prop: 'name', label: '工具名称', fixed: 'left' },
-
-
+        { prop: 'name', label: '工具名称', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ToolTableSearchList: [
-        { prop: "code", label: "工具编码", type: 'input' },
-        { prop: "name", label: "工具名称", type: 'input' }
+        { prop: 'code', label: '工具编码', type: 'input' },
+        { prop: 'name', label: '工具名称', type: 'input' }
       ], // 产品选择弹出框搜索条件
-      resourceList: [],
+      resourceList: []
     }
   },
   created() {
@@ -450,9 +486,8 @@ export default {
         this.codeConfig = data
         if (!data.modifyFlag && data.codeWay == 'auto') {
           this.dataForm.code = data.number
-
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     // 单个删除
     handlerDelete(index, type) {
@@ -473,15 +508,12 @@ export default {
       }
       if (this.configurationName == 'work_group') {
         this.actTitle = '班组'
-
       }
       if (this.configurationName == 'device') {
         this.actTitle = '设备'
-
       }
       if (this.configurationName == 'tool') {
         this.actTitle = '工具'
-
       }
     },
     // 可以多选
@@ -493,7 +525,6 @@ export default {
         this.$nextTick(() => {
           this.$refs['personnelRef'].openDialog()
         })
-
       }
       if (type === 'work_group') {
         this.$nextTick(() => {
@@ -510,11 +541,10 @@ export default {
           this.$refs['ComSelect-page2'].openDialog()
         })
       }
-
     },
     // 选中人员的数据
     handelepersonInfoData(val) {
-      console.log(val);
+      console.log(val)
       this.personArr = val
     },
     // 选中班组的数据
@@ -523,7 +553,7 @@ export default {
     },
     // 选中设备的数据
     handeledeviceInfoData(val) {
-      console.log(val, '选中设备');
+      console.log(val, '选中设备')
       this.equipArr = val
     },
     // 选中工具的数据
@@ -536,91 +566,93 @@ export default {
       if (type === 'personnel') {
         if (this.personArr.length === 0) {
           this.$message({
-            message: "请选择你要删除的数据",
-            type: "error",
-            duration: 1500,
+            message: '请选择你要删除的数据',
+            type: 'error',
+            duration: 1500
           })
         }
         for (let i = 0; i < this.personArr.length; i++) {
-          const row = this.personArr[i];
-          const index = this.personData.indexOf(row);
+          const row = this.personArr[i]
+          const index = this.personData.indexOf(row)
           if (index > -1) {
-            this.personData.splice(index, 1); // 从tableData中删除选中的行
+            this.personData.splice(index, 1) // 从tableData中删除选中的行
           }
         }
-        this.personArr = []  // 清空选中的行的数据
+        this.personArr = [] // 清空选中的行的数据
       }
       if (type === 'work_group') {
         if (this.classArr.length === 0) {
           this.$message({
-            message: "请选择你要删除的数据",
-            type: "error",
-            duration: 1500,
+            message: '请选择你要删除的数据',
+            type: 'error',
+            duration: 1500
           })
         }
         for (let i = 0; i < this.classArr.length; i++) {
-          const row = this.classArr[i];
-          const index = this.classData.indexOf(row);
+          const row = this.classArr[i]
+          const index = this.classData.indexOf(row)
           if (index > -1) {
-            this.classData.splice(index, 1); // 从tableData中删除选中的行
+            this.classData.splice(index, 1) // 从tableData中删除选中的行
           }
         }
-        this.classArr = []  // 清空选中的行的数据
+        this.classArr = [] // 清空选中的行的数据
       }
       if (type === 'device') {
-        console.log('设备');
-        console.log(this.equipData);
-        console.log(this.equipArr);
+        console.log('设备')
+        console.log(this.equipData)
+        console.log(this.equipArr)
         if (this.equipArr.length === 0) {
           this.$message({
-            message: "请选择你要删除的数据",
-            type: "error",
-            duration: 1500,
+            message: '请选择你要删除的数据',
+            type: 'error',
+            duration: 1500
           })
         }
         for (let i = 0; i < this.equipArr.length; i++) {
-          const row = this.equipArr[i];
-          const index = this.equipData.indexOf(row);
+          const row = this.equipArr[i]
+          const index = this.equipData.indexOf(row)
           if (index > -1) {
-            this.equipData.splice(index, 1); // 从tableData中删除选中的行
+            this.equipData.splice(index, 1) // 从tableData中删除选中的行
           }
         }
 
-        this.equipArr = []  // 清空选中的行的数据
+        this.equipArr = [] // 清空选中的行的数据
       }
       if (type === 'tool') {
         if (this.toolArr.length === 0) {
           this.$message({
-            message: "请选择你要删除的数据",
-            type: "error",
-            duration: 1500,
+            message: '请选择你要删除的数据',
+            type: 'error',
+            duration: 1500
           })
         }
         for (let i = 0; i < this.toolArr.length; i++) {
-          const row = this.toolArr[i];
-          const index = this.toolData.indexOf(row);
+          const row = this.toolArr[i]
+          const index = this.toolData.indexOf(row)
           if (index > -1) {
-            this.toolData.splice(index, 1); // 从tableData中删除选中的行
+            this.toolData.splice(index, 1) // 从tableData中删除选中的行
           }
         }
-        this.toolArr = []  // 清空选中的行的数据
+        this.toolArr = [] // 清空选中的行的数据
       }
     },
     // 人员数据
     submit(id, data) {
-      console.log(data, '生产资源弹框传递数据');
+      console.log(data, '生产资源弹框传递数据')
       // let type = Array.isArray(data) ? 'Array' : 'Object'
       // if (type === 'Object') {}
       if (data.length === 0) {
-
       } else {
         let tempList = JSON.parse(JSON.stringify(this.personData))
         let hasItemList = []
         for (let i = 0; i < data.length; i++) {
-          let item = data[i];
-          const hasFlag = this.personData.find(i => item.id === i.resourceId)
-          if (hasFlag) { hasItemList.push(item.fullName.split('/')[0]) }
-          else { tempList.push(item) }
+          let item = data[i]
+          const hasFlag = this.personData.find((i) => item.id === i.resourceId)
+          if (hasFlag) {
+            hasItemList.push(item.fullName.split('/')[0])
+          } else {
+            tempList.push(item)
+          }
           if (hasItemList.length) this.$message.error(`已经存在的人员：${hasItemList.join('、')}`)
         }
         this.personData = tempList.map((item, index) => {
@@ -629,27 +661,29 @@ export default {
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.fullName.split('/')[0],
             jobNumber: item.jobNumber,
-            resourceType: "personnel",
+            resourceType: 'personnel',
             processId: this.dataForm.id
-          };
-        });
+          }
+        })
       }
-      console.log(this.personData, '再次添加人员');
+      console.log(this.personData, '再次添加人员')
     },
     // 班组
     WorkgroupSubmit(id, data) {
-      console.log(data, '班组');
+      console.log(data, '班组')
       if (data.length === 0) {
-
       } else {
-        let list = data.map(item => item.all)
+        let list = data.map((item) => item.all)
         let tempList = JSON.parse(JSON.stringify(this.classData))
         let hasItemList = []
         for (let i = 0; i < list.length; i++) {
-          let item = list[i];
-          const hasFlag = this.classData.find(i => item.id === i.resourceId)
-          if (hasFlag) { hasItemList.push(item.name) }
-          else { tempList.push(item) }
+          let item = list[i]
+          const hasFlag = this.classData.find((i) => item.id === i.resourceId)
+          if (hasFlag) {
+            hasItemList.push(item.name)
+          } else {
+            tempList.push(item)
+          }
           if (hasItemList.length) this.$message.error(`已经存在的班组：${hasItemList.join('、')}`)
         }
         this.classData = tempList.map((item, index) => {
@@ -658,27 +692,28 @@ export default {
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,
-            resourceType: "work_group",
+            resourceType: 'work_group',
             processId: this.dataForm.id
-
-          };
-        });
+          }
+        })
       }
     },
     // 设备
     DeviceSubmit(id, data) {
-      console.log(data, '设备');
+      console.log(data, '设备')
       if (data.length === 0) {
-
       } else {
-        let list = data.map(item => item.all)
+        let list = data.map((item) => item.all)
         let tempList = JSON.parse(JSON.stringify(this.equipData))
         let hasItemList = []
         for (let i = 0; i < list.length; i++) {
-          let item = list[i];
-          const hasFlag = this.equipData.find(i => item.id === i.resourceId)
-          if (hasFlag) { hasItemList.push(item.name) }
-          else { tempList.push(item) }
+          let item = list[i]
+          const hasFlag = this.equipData.find((i) => item.id === i.resourceId)
+          if (hasFlag) {
+            hasItemList.push(item.name)
+          } else {
+            tempList.push(item)
+          }
           if (hasItemList.length) this.$message.error(`已经存在的设备：${hasItemList.join('、')}`)
         }
         this.equipData = tempList.map((item, index) => {
@@ -687,27 +722,28 @@ export default {
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,
-            resourceType: "device",
+            resourceType: 'device',
             processId: this.dataForm.id
-
-          };
-        });
+          }
+        })
       }
-      console.log(this.equipData, '设备数据');
+      console.log(this.equipData, '设备数据')
     },
     // 工具
     ToolSubmit(id, data) {
       if (data.length === 0) {
-
       } else {
-        let list = data.map(item => item.all)
+        let list = data.map((item) => item.all)
         let tempList = JSON.parse(JSON.stringify(this.toolData))
         let hasItemList = []
         for (let i = 0; i < list.length; i++) {
-          let item = list[i];
-          const hasFlag = this.toolData.find(i => item.id === i.resourceId)
-          if (hasFlag) { hasItemList.push(item.name) }
-          else { tempList.push(item) }
+          let item = list[i]
+          const hasFlag = this.toolData.find((i) => item.id === i.resourceId)
+          if (hasFlag) {
+            hasItemList.push(item.name)
+          } else {
+            tempList.push(item)
+          }
           if (hasItemList.length) this.$message.error(`已经存在的工具：${hasItemList.join('、')}`)
         }
         this.toolData = tempList.map((item, index) => {
@@ -716,41 +752,38 @@ export default {
             resourceId: item.resourceId ? item.resourceId : item.id,
             resourceName: item.resourceName ? item.resourceName : item.name,
             resourceCode: item.resourceCode ? item.resourceCode : item.code,
-            resourceType: "tool",
+            resourceType: 'tool',
             processId: this.dataForm.id
-
-          };
-        });
+          }
+        })
       }
-      console.log(this.toolData, '工具数据');
+      console.log(this.toolData, '工具数据')
     },
 
-
-
-
-    handleClick(tab, event) {
-    },
+    handleClick(tab, event) { },
     goBack() {
       this.$emit('close')
     },
     getBusinessType() {
-      getBimBusinessInfo(6).then(res => {
-        console.log(res, '业务开关详情');
+      getBimBusinessInfo(6).then((res) => {
+        console.log(res, '业务开关详情')
         this.businessType = res.data.currentValue
       })
     },
 
     changeProductCategory(val, data, params) {
-      console.log(data);
-      console.log(this.$refs.dataForm.validateField('productCategoryIdText'));
-      this.$nextTick(() => { this.$refs.dataForm.validateField('productCategoryIdText') })
+      console.log(data)
+      console.log(this.$refs.dataForm.validateField('productCategoryIdText'))
+      this.$nextTick(() => {
+        this.$refs.dataForm.validateField('productCategoryIdText')
+      })
       if (!val && data.length) return
       if (!data) return
       this.dataForm.productCategoryIdText = data[0].name
       this.dataForm.productCategoryId = data[0].id
     },
     handlepricingType(e) {
-      console.log(e);
+      console.log(e)
       if (e == 'by_piece') {
         this.dataForm = {
           id: this.dataForm.id, // 工序id
@@ -763,7 +796,7 @@ export default {
           scrapUnitPrice: this.dataForm.scrapUnitPrice, // 废品单价
           timePrice: null, // 计价单价
           remark: this.dataForm.remark, // 备注
-          pricingType: "by_piece",
+          pricingType: 'by_piece'
         }
       } else {
         this.dataForm = {
@@ -777,10 +810,9 @@ export default {
           scrapUnitPrice: null, // 废品单价
           timePrice: this.dataForm.timePrice, // 计价单价
           remark: this.dataForm.remark, // 备注
-          pricingType: "by_time",
+          pricingType: 'by_time'
         }
       }
-
     },
     validateInput(rule, value, callback) {
       const regex = /^\d+(\.\d{0,2})?$/
@@ -799,7 +831,7 @@ export default {
 
     clearData() {
       this.dataForm = {
-        id: "", // 工序id
+        id: '', // 工序id
         name: null, //  工序名称
         code: null, // 工序编码
         processingType: null, // 工序类型
@@ -808,20 +840,20 @@ export default {
         scrapUnitPrice: null, // 废品单价
         timePrice: null, // 计价单价
         remark: null, // 备注
-        pricingType: "by_time",
-        processType:"normal"
+        pricingType: 'by_time',
+        processType: 'normal'
       }
     },
     // 初始化内容
     init(id, type) {
-      console.log("----", id, type);
+      console.log('----', id, type)
       this.autoCode = []
-      this.dataForm.id = id ? id : ""
+      this.dataForm.id = id ? id : ''
       // this.disabled = type === "true"
       this.dialogTitle = id ? (type == 'edit' ? '编辑工序' : '查看工序') : '新建工序'
       this.visible = true
       this.type = type
-      console.log("this。type", this.type);
+      console.log('this。type', this.type)
       if (this.type == 'look') {
         this.disabled = true
       } else {
@@ -830,23 +862,23 @@ export default {
 
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
-        if (this.type === "add") {
+        if (this.type === 'add') {
           this.clearData()
           this.fetchData('bm_gy_gx')
         } else {
-          console.log("工序详情5555",);
+          console.log('工序详情5555')
           this.loading = true
           // 获取当前项详情
-          getBimProcessDetail(id).then(res => {
-            console.log("工序详情", res);
+          getBimProcessDetail(id).then((res) => {
+            console.log('工序详情', res)
             this.dataForm = res.data.process
             this.resourceList = res.data.resourceList
             this.loading = false
             if (type == 'add') {
               if (resourceList.length) {
-                const filteredData = this.resourceList.filter(item => item.resourceType === 'personnel')
+                const filteredData = this.resourceList.filter((item) => item.resourceType === 'personnel')
                 this.personData = filteredData
-                console.log(filteredData, 'ren');
+                console.log(filteredData, 'ren')
                 this.personData.forEach((item, index) => {
                   this.personData[index].resourceId = item.resourceId
                   this.personData[index].jobNumber = item.jobNumber
@@ -854,7 +886,7 @@ export default {
                   this.personData[index].resourceClass = item.resourceClass
                 })
 
-                const filteredData2 = this.resourceList.filter(item => item.resourceType === 'work_group')
+                const filteredData2 = this.resourceList.filter((item) => item.resourceType === 'work_group')
                 this.classData = filteredData2
                 this.classData.forEach((item, index) => {
                   this.classData[index].resourceId = item.resourceId
@@ -864,7 +896,7 @@ export default {
                   this.personData[index].resourceClass = item.resourceClass
                 })
 
-                const filteredData3 = this.resourceList.filter(item => item.resourceType === 'device')
+                const filteredData3 = this.resourceList.filter((item) => item.resourceType === 'device')
                 this.equipData = filteredData3
                 this.equipData.forEach((item, index) => {
                   this.equipData[index].resourceId = item.resourceId
@@ -874,7 +906,7 @@ export default {
                   this.personData[index].resourceClass = item.resourceClass
                 })
 
-                const filteredData4 = this.resourceList.filter(item => item.resourceType === 'tool')
+                const filteredData4 = this.resourceList.filter((item) => item.resourceType === 'tool')
                 this.toolData = filteredData4
                 this.toolData.forEach((item, index) => {
                   this.toolData[index].resourceId = item.resourceId
@@ -887,77 +919,71 @@ export default {
             }
             if (type === 'edit' || type === 'look') {
               if (this.resourceList.length) {
-                const filteredData = this.resourceList.filter(item => item.resourceType === 'personnel')
+                const filteredData = this.resourceList.filter((item) => item.resourceType === 'personnel')
                 this.personData = filteredData
-                console.log(filteredData, 'ren');
+                console.log(filteredData, 'ren')
 
-                const filteredData2 = this.resourceList.filter(item => item.resourceType === 'work_group')
+                const filteredData2 = this.resourceList.filter((item) => item.resourceType === 'work_group')
                 this.classData = filteredData2
 
-                const filteredData3 = this.resourceList.filter(item => item.resourceType === 'device')
+                const filteredData3 = this.resourceList.filter((item) => item.resourceType === 'device')
                 this.equipData = filteredData3
 
-                const filteredData4 = this.resourceList.filter(item => item.resourceType === 'tool')
+                const filteredData4 = this.resourceList.filter((item) => item.resourceType === 'tool')
                 this.toolData = filteredData4
               }
-
             }
           })
         }
-
       })
     },
     // 表单提交
     dataFormSubmit() {
       this.btnLoading = true
-      let data = [
-        ...this.personData,
-        ...this.classData,
-        ...this.equipData,
-        ...this.toolData
-      ]
-      if(data.length){
-        data.forEach(item => {
-          item.resourceClass = "process"
-          
-        });
+      let data = [...this.personData, ...this.classData, ...this.equipData, ...this.toolData]
+      if (data.length) {
+        data.forEach((item) => {
+          item.resourceClass = 'process'
+        })
       }
       let obj = {
         process: this.dataForm,
-        resourceList: data,
+        resourceList: data
       }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (this.dataForm.id) {
-            updateBimProcess(obj).then(res => {
-              this.$message({
-                message: "修改成功",
-                type: 'success',
-                duration: 1500,
+            updateBimProcess(obj)
+              .then((res) => {
+                this.$message({
+                  message: '修改成功',
+                  type: 'success',
+                  duration: 1500
+                })
+                this.onClose()
+                this.$emit('close', true)
+                this.btnLoading = false
               })
-              this.onClose()
-              this.$emit('close', true)
-              this.btnLoading = false
-            }).catch(err => {
-              this.btnLoading = false
-            })
+              .catch((err) => {
+                this.btnLoading = false
+              })
+          } else {
+            addBimProcess(obj)
+              .then((res) => {
+                this.btnLoading = false
+                this.$message.success('新建成功')
+                this.onClose()
+                this.$emit('close', true)
+              })
+              .catch((err) => {
+                this.btnLoading = false
+              })
           }
-          else {
-            addBimProcess(obj).then(res => {
-              this.btnLoading = false
-              this.$message.success('新建成功')
-              this.onClose()
-              this.$emit('close', true)
-            }).catch(err => {
-              this.btnLoading = false
-            })
-          }
-        }
-        else {
+        } else {
           this.btnLoading = false
         }
       })
-    },
+    }
   }
 }
 </script>
@@ -965,8 +991,9 @@ export default {
 ::v-deep#table .el-form-item--small.el-form-item {
   margin-bottom: 0px;
 }
+
 ::v-deep .el-tabs__nav {
-  display: block!important;;
+  display: block !important;
 }
 </style>
 <style lang="scss" scoped>
@@ -977,6 +1004,7 @@ export default {
   z-index: 99;
   background-color: #fff;
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -996,11 +1024,21 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
 </style>

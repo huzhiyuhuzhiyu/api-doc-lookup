@@ -159,13 +159,11 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        // approvalStatus: "ok",
-        // documentStatus: "submit",
-        // orderState: "not_finish",
+ 
+        orderType:'external',
         deliveryEndDate: '',
         deliveryStartTime: '',
-        // extensionFlag: 1,
-        // deliverQueryFlag: 1,
+        
         receiptQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,

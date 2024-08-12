@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="type === 'look' ? '查看采购订单' : '新建采购订单'" />
+          <el-page-header @back="goBack" :content="type === 'look' ? '查看外协订单' : '新建外协订单'" />
           <div class="options" v-if="type !== 'look'">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -22,9 +22,9 @@
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="8" v-if="type === 'look'">
-                        <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
+                        <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
                           <el-input :disabled="type != 'add' ? true : false" type="text" v-model="dataForm.orderNo"
-                            placeholder="采购单号"></el-input>
+                            placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
@@ -41,9 +41,9 @@
                         </el-form-item>
                       </el-col>
                       <el-col :span="8" v-if="type === 'look'">
-                        <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
+                        <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
                           <el-input type="text" v-model="dataForm.receivingStatus === 'receiving' ? '未完成' : '已完成'"
-                            placeholder="收货状态" :disabled="type != 'add' ? true : false"></el-input>
+                            placeholder="订单状态" :disabled="type != 'add' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -104,7 +104,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="purchaseQuantity" label="采购数量" min-width="160">
+                      <el-table-column prop="purchaseQuantity" label="订单数量" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
@@ -220,7 +220,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="receivingStatus" label="收货状态" width="130">
+                      <el-table-column prop="receivingStatus" label="订单状态" width="130">
                         <template slot-scope="scope">
                           <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag></div>
                           <div v-if="scope.row.receivingStatus == 'received'">
@@ -305,7 +305,7 @@
                 <el-table-column prop="productName" label="产品名称" min-width="160" />
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-                <el-table-column prop="purchaseQuantity" label="采购数量(主)" min-width="140">
+                <el-table-column prop="purchaseQuantity" label="订单数量(主)" min-width="140">
                   <template slot-scope="scope">
                     <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
                   </template>
@@ -320,7 +320,7 @@
                     <div>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="schedule" label="收货进度" min-width="160">
+                <el-table-column prop="schedule" label="订单进度" min-width="160">
                   <template slot-scope="scope">
                     <el-progress
                       :percentage="Number(((scope.row.receiptQuantity / scope.row.purchaseQuantity) * 100).toFixed(2))"></el-progress>
@@ -873,7 +873,7 @@ export default {
         let _data = {
           ...this.scheduleForm,
           exportType: '1104',
-          exportName: '采购订单进度跟踪',
+          exportName: '外协订单进度跟踪',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.scheduleForm.pageSize : -1
         }

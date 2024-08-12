@@ -1,14 +1,6 @@
 <template>
-  <el-dialog
-    :title="dialogTitle"
-    :close-on-click-modal="false"
-    append-to-body
-    :visible.sync="visible"
-    class="JNPF-dialog JNPF-dialog_center"
-    lock-scroll
-    width="1000px"
-    @close="$emit('refresh')"
-  >
+  <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
+    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px" @close="$emit('refresh')">
     <el-row :gutter="15" class="" v-loading="loading">
       <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
         <template>
@@ -20,36 +12,20 @@
           </el-col> -->
           <el-col :span="12">
             <el-form-item label="单位名称" prop="name" ref="name">
-              <el-input
-                v-model="dataForm.name"
-                placeholder="请输入单位名称"
-                clearable
-                :style="{ width: '100%' }"
-                maxlength="20"
-              ></el-input>
+              <el-input v-model="dataForm.name" placeholder="请输入单位名称" clearable :style="{ width: '100%' }"
+                maxlength="20"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="备注" prop="remark">
-              <el-input
-                v-model="dataForm.remark"
-                type="textarea"
-                placeholder="请输入备注"
-                :style="{ width: '100%' }"
-                maxlength="200"
-              />
+              <el-input v-model="dataForm.remark" type="textarea" placeholder="请输入备注" :style="{ width: '100%' }"
+                maxlength="200" />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label-width="0">
-              <JNPF-col-table
-                v-model="dataFormTwo"
-                ref="tableForm"
-                :tableItems="tableFormItem"
-                :openMode="openMode"
-                @addth="addequipment_process_relList"
-                @deleteth="delequipment_process_relList"
-              />
+              <JNPF-col-table v-model="dataFormTwo" ref="tableForm" :tableItems="tableFormItem" :openMode="openMode"
+                @addth="addequipment_process_relList" @deleteth="delequipment_process_relList" />
             </el-form-item>
           </el-col>
         </template>
@@ -246,17 +222,18 @@ export default {
 
       this.dataFormTwo = []
     },
-    init(rowData,btntype) {
+    init(rowData, btntype) {
       rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = Object.keys(rowData).length ? rowData.id : 0
       this.visible = true
-      
+
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
-        if (btntype=='add') {
+        if (btntype == 'add') {
+          this.dialogTitle = '新建常用单位'
           this.clearData()
-        } else if(btntype == 'edit'){
+        } else if (btntype == 'edit') {
           this.loading = true
           this.dataForm = rowData
           this.autoName = rowData.name
@@ -270,7 +247,7 @@ export default {
             this.dialogTitle = `编辑常用单位`
             this.loading = false
           })
-        }else if(btntype == 'copy'){
+        } else if (btntype == 'copy') {
           this.loading = true
           this.dataForm = rowData
           this.autoName = rowData.name
@@ -281,7 +258,7 @@ export default {
             this.dataFormTwo.forEach((item) => {
               item.index = ind++
             })
-            delete this.dataForm.id 
+            delete this.dataForm.id
             this.dialogTitle = '新建常用单位'
             this.loading = false
           })
@@ -364,7 +341,7 @@ export default {
         targetName: ''
       }
       this.dataFormTwo.push(item)
-     
+
     },
     // 删除项
     delequipment_process_relList(scope) {

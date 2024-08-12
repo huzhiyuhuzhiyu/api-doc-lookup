@@ -162,6 +162,7 @@ export default {
         // approvalStatus: "ok",
         // documentStatus: "submit",
         // orderState: "not_finish",
+        orderType:'procur',
         deliveryEndDate: '',
         deliveryStartTime: '',
         // extensionFlag: 1,

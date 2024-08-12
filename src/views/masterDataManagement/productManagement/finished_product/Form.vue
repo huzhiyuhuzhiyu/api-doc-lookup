@@ -14,7 +14,7 @@
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
-          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
+          <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
             <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
               <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
                 <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
@@ -26,7 +26,7 @@
                 <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
               </el-collapse-item>
             </el-collapse>
-          </el-tab-pane>
+          <!-- </el-tab-pane> -->
         </el-tabs>
 
       </div>

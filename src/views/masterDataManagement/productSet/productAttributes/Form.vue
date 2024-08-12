@@ -1,45 +1,34 @@
 <template>
-  <el-drawer
-    @closed="cancelFun"
-    :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'"
-    :close-on-click-modal="false"
-    :close-on-press-escape="false"
-    :visible.sync="visible"
-    lock-scroll
-    class="JNPF-common-drawer"
-    width="500px"
-  >
-  <template slot="title">
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建产品属性' : '编辑产品属性'" :close-on-click-modal="false"
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-common-drawer" width="500px">
+    <template slot="title">
       <div class="custom_title">
         {{ title }}
       </div>
     </template>
-  <div style="padding:10px">
-    <el-form
-      ref="dataForm"
-      v-loading="formLoading"
-      :model="dataForm"
-      :rules="dataRule"
-      label-position="top"
-      label-width="120px"
-    >
-      <!-- <el-form-item label="编码" prop="code">
+    <div style="padding:10px">
+      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
+        label-width="120px" hide-required-asterisk="fasle">
+        <!-- <el-form-item label="编码" prop="code">
         <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" />
       </el-form-item> -->
-      <el-form-item label="名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
-      </el-form-item>
-    </el-form>
-    <span style="display:flex;justify-content: flex-end;">
-      <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
-      <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-        提交
-      </el-button>
-    </span>
-  </div>
+        <el-form-item label="名称" prop="name">
+          <template slot="label">
+            名称<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.name" placeholder="请输入名称" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+      <span style="display:flex;justify-content: flex-end;">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+          提交
+        </el-button>
+      </span>
+    </div>
   </el-drawer>
 </template>
 
@@ -65,7 +54,7 @@ export default {
         // code: '',
         typeCode: ''
       },
-      title:'',
+      title: '',
       isdisabled: false,
       organizeIdTree: [],
       btntype: '',
@@ -120,14 +109,14 @@ export default {
   methods: {
     init(code, btntype) {
       this.visible = true
-      
+
       if (btntype == 'add') {
         this.dataForm = {
           name: '',
           remark: '',
           // code: '',
           typeCode: code,
-          id:''
+          id: ''
         }
         this.title = '新建产品属性'
       } else if (btntype == 'edit') {
@@ -148,7 +137,7 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.remark = res.data.remark
           this.title = '新建产品属性'
-         
+
         })
       }
       this.btntype = btntype
@@ -165,8 +154,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true
-          console.log(this.btntype,'btntype')
-          console.log(this.dataForm,'fprm')
+          console.log(this.btntype, 'btntype')
+          console.log(this.dataForm, 'fprm')
           let formMethod = this.btntype == 'add' ? addBimProductAttributes : updataBimProductAttributes
           console.log('formMethod', formMethod)
           if (formMethod == updataBimProductAttributes) {
@@ -215,5 +204,10 @@ export default {
   line-height: 24px;
   font-size: 18px;
   color: #303133;
+  margin-left: -12px;
+}
+.required {
+  color: red;
+  margin-left: 4px;
 }
 </style>

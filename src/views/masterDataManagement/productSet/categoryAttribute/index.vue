@@ -8,12 +8,12 @@
         <el-form @submit.native.prevent :rules="rules">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
+              <el-input v-model="form.name" placeholder="类别名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
+              <el-input v-model="form.code" placeholder="类别编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -33,7 +33,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 10px">
+        <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addSupplier()" />
 
           <div class="JNPF-common-head-right">
@@ -81,7 +81,7 @@
 import {
   getBimProductAttributesInfo,
   updataBimProductAttributes,
-  delBimProductAttributes,
+  delClassAttribute,
   addBimProductAttributes,
   getclassAttributeList
 } from '@/api/masterDataManagement/index'
@@ -320,7 +320,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          delBimProductAttributes(id).then((res) => {
+          delClassAttribute(id).then((res) => {
             this.initData()
             this.$message({
               type: 'success',

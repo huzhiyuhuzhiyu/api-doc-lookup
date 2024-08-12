@@ -9,14 +9,14 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col> -->
-          <el-col :span="6">
+          <el-col :span="4">
             <el-form-item label="">
-              <el-input v-model="listQuery.name" placeholder="请输入分类名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="分类名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="请选择产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.classAttribute" placeholder="产品来源" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -35,7 +35,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addOrUpdateHandle('', '', 'add')" :isJudgePer="true" :addPerCode="'btn_add'" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">

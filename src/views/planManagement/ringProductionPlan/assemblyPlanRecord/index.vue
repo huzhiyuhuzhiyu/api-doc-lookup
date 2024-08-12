@@ -70,13 +70,13 @@
             <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="150" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+            <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="planState" label="计划状态" width="120">
               <template slot-scope="scope">
@@ -210,48 +210,48 @@ export default {
           label: "最终计划数量",
           type: 'input'
         },
-        {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: [],
-        },
+        // {
+        //   prop: 'sealingCoverTyping',
+        //   label: "打字内容",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'accuracyLevel',
+        //   label: "精度等级",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'vibrationLevel',
+        //   label: "振动等级",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'oil',
+        //   label: "油脂",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'oilQuantity',
+        //   label: "油脂量",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'clearance',
+        //   label: "游隙",
+        //   type: 'select',
+        //   options: [],
+        // },
+        // {
+        //   prop: 'packagingMethod',
+        //   label: "包装方式",
+        //   type: 'select',
+        //   options: [],
+        // },
         {
           prop: 'remark',
           label: "备注",
@@ -293,7 +293,7 @@ export default {
 
   created() {
     this.initData()
-    this.getProductClassFun()
+    // this.getProductClassFun()
   },
   methods: {
     getProductClassFun() {

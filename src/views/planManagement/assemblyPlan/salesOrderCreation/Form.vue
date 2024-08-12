@@ -26,7 +26,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划单号" prop="planNo">
                           <el-input v-model="planForm.planNo" placeholder="请输入计划单号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>

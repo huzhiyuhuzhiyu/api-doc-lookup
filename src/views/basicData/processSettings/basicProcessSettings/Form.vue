@@ -26,17 +26,13 @@
                     <el-col :span="12">
                       <el-form-item label="工序编码" prop="code">
                         <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                          placeholder="请输入工序编码" maxlength="20" :disabled="btntype
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
-                            "></el-input>
+                          placeholder="请输入工序编码" maxlength="20"
+                          :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"></el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="工序分类" prop="productCategoryIdText">
-                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'process' }"
+                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'proce  ss' }"
                           :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
                           :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
                       </el-form-item>
@@ -76,14 +72,14 @@
             <div>
               <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch style="margin-top:-10px">
                 <div v-if="type !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" :disabled="type == 'look' ? true : false"
                     @click="openSeleceProcessDialog(personData.length, configurationName)">
                     选择{{ actTitle }}
                   </el-button>
                   |
                   <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="type == 'look' ? true : false" icon="el-icon-delete"
                     @click="batchDelete(configurationName)">
                     批量删除

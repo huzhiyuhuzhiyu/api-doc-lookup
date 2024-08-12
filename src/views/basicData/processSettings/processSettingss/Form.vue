@@ -43,7 +43,7 @@
                               clearable
                               :style="{ width: '100%' }"
                               maxlength="20"
-                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                             ></el-input>
                           </el-form-item>
                         </el-col>
@@ -137,7 +137,7 @@
                     <div v-if="type !== 'look' && dataForm.documentStatus !== 'submit'">
                       <el-button
                         type="text"
-                        style="margin-right:8px;margin-left:8px font-size:14px!important"
+                        style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus"
                         :disabled="type == 'look' ? true : false"
                         @click="openSeleceProcessDialog(dataFormTwo.length, 'add')"
@@ -148,7 +148,7 @@
                       <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                       <el-button
                         type="text"
-                        style="margin-right:8px;margin-left:8px font-size:14px!important"
+                        style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         :disabled="type == 'look' ? true : false"
                         icon="el-icon-delete"
                         @click="batchDelete"

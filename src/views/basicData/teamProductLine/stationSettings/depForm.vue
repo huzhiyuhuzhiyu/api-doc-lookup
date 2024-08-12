@@ -16,7 +16,7 @@
       </el-form-item>
       <el-form-item label="工位编码" prop="code">
         <el-input v-model.trim="dataForm.code" placeholder="请输入工位编码" maxlength="20" 
-        :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+        :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
       </el-form-item>
     
       <el-form-item label="状态" prop="state">

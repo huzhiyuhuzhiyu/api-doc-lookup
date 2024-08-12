@@ -43,7 +43,7 @@
                               clearable
                               :style="{ width: '100%' }"
                               maxlength="20"
-                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                             ></el-input>
                           </el-form-item>
                         </el-col>

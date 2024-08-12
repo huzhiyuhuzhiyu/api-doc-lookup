@@ -25,7 +25,7 @@
                 <el-col :span="12">
                   <el-form-item label="工序编码" prop="code">
                     <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                      placeholder="请输入工序编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
+                      placeholder="请输入工序编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">

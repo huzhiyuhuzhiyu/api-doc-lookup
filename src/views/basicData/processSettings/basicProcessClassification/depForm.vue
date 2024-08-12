@@ -14,7 +14,7 @@
           :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
       </el-form-item> -->
       <el-form-item label="分类编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
       </el-form-item>
       <el-form-item label="分类名称" prop="name">
         <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />

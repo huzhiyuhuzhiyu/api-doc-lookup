@@ -24,7 +24,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="报价单号" prop="quotationNo">
                         <el-input v-model="dataForm.quotationNo" placeholder="输入报价单号"
-                          :disabled="status ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                          :disabled="status ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                           maxlength="50" />
                       </el-form-item>
                     </el-col>

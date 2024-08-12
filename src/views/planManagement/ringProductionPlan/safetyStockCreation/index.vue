@@ -125,7 +125,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                  <!-- <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
                         <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -169,7 +169,7 @@
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />

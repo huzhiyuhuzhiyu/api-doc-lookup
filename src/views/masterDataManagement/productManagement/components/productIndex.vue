@@ -68,7 +68,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:10px">
+        <div class="JNPF-common-head" style="padding:8px">
           <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importForm">

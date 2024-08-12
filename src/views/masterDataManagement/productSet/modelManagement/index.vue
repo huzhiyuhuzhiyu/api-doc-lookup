@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+              <el-date-picker v-model="createTimeArr" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
                 style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
             </el-form-item>
           </el-col>
@@ -27,7 +27,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 10px;display: -webkit-box">
+        <div class="JNPF-common-head" style="padding: 8px;display: -webkit-box">
           <!-- <topOpts @add="addOrUpdateHandle('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'"> -->
           <!-- <el-dropdown>
            

@@ -72,7 +72,7 @@
             @selection-change="handleSelectionChange" hasC>
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -139,7 +139,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">
                       查看详情
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
@@ -238,7 +238,7 @@ export default {
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
-        notifyType: 'sale',
+        notifyType: 'external',
         returnDeliveryType: 'delivery',
         orderNo: "",
         partnerCode: "",

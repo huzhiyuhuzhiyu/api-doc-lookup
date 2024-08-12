@@ -67,7 +67,7 @@
             custom-column>
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.ordersId, 'look')">
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -133,12 +133,14 @@ import {
 import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
-import AddForm from './Form.vue'
+import AddForm from './AddForm.vue'
+import Form from "./Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'materialOrderToBeIssued',
   components: {
     AddForm,
+    Form,
     ExportForm,
     //  OrderFollow,
     SuperQuery

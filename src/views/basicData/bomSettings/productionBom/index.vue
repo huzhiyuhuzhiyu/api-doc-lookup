@@ -79,7 +79,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:10px">
+        <div class="JNPF-common-head" style="padding:8px">
           <topOpts @add="add()">
             <!-- <el-button icon="el-icon-s-data" type="primary" size="mini" @click="handleBatch"
               :loading="btnLoading">计算胶管长</el-button> -->

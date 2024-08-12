@@ -107,7 +107,7 @@
                     </template>
                   </el-table-column> -->
 
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                  <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
                     <template slot-scope="scope">
                       <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                         style="width: 100%;">
@@ -169,7 +169,7 @@
                           :value="item.name"></el-option>
                       </el-select>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />

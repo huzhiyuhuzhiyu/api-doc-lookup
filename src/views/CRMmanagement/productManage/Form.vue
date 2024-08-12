@@ -18,7 +18,7 @@
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="产品编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入产品编码" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+                        <el-input v-model="dataForm.code" placeholder="请输入产品编码" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">

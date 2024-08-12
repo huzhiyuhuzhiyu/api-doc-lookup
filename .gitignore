@@ -72,3 +72,4 @@ components/**/*.jsx
 .vscode/extensions.json
 .vscode/launch.json
 src/utils/define.js
+/Report

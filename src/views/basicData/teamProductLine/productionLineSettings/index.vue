@@ -32,7 +32,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <div class="JNPF-common-head" style="padding: 8px">
           <!-- <el-dropdown> -->
           <div>
             <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier('add')">

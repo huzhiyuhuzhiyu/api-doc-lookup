@@ -24,10 +24,10 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search()" class="commonBox">
                 {{ $t('common.search') }}
               </el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()" class="commonBox">
                 {{ $t('common.reset') }}
               </el-button>
             </el-form-item>
@@ -588,6 +588,15 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.JNPF-common-search-box {
+  padding: 8px 0 0 0;
+  margin-left: 0 !important;
+  margin-bottom: 5px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 8px !important;
+}
 .table-icon {
   vertical-align: bottom;
   font-size: 16px;

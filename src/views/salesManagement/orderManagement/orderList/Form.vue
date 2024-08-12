@@ -26,7 +26,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="订单编号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>

@@ -5,7 +5,7 @@
       label-width="120px">
 
       <el-form-item label="产线编码" prop="code">
-        <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+        <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
       </el-form-item>
       <el-form-item label="产线名称" prop="name">
         <el-input v-model.trim="dataForm.name" placeholder="请输入产线名称" maxlength="20" :disabled="btntype ? true : false" />

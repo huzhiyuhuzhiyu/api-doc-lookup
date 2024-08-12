@@ -727,6 +727,9 @@ export default {
           this.prindId = res.data.id
           this.formId = id
           this.printBrowseVisible = true
+          this.$nextTick(()=>{
+            // this.$refs.printForm.onOpen()
+          })
         }else{
           this.$message.warning('未找到相应打印模版')
         }

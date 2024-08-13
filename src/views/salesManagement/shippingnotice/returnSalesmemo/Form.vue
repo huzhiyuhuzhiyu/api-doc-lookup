@@ -24,7 +24,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号"
-                          :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false">
+                          :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false">
                         </el-input>
                       </el-form-item>
                     </el-col>
@@ -1234,20 +1234,23 @@ export default {
     // 切换table
     handleClick(tab, event) {
     },
-    async fetchData(code) {
+    async fetchData(code,flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
-        this.$set(this.dataForm,'orderNo',data.number)
-        console.log("dataForm",this.dataForm);
+        if (flag) {
+
+          this.dataForm.orderNo = data.number
+        }
+        this.$set(this.dataForm, 'orderNo', data.number)
+        console.log("dataForm", this.dataForm);
       } catch (error) {
       }
     },
     init(id, btnType) {
-      console.log("id",id,btnType);
+      console.log("id", id, btnType);
       this.dataForm.id = id || ''
-      
+
       this.btnType = btnType
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
@@ -1283,12 +1286,12 @@ export default {
             //       }
             //     })
             //   })
-             
+
             // })
             res.data.noticeLineList.forEach(item => {
               item.deliveryQuantity = ''
             });
-             this.dataFormTwo.productData = res.data.noticeLineList
+            this.dataFormTwo.productData = res.data.noticeLineList
           } else if (this.btnType == 'edit') {
             this.dataFormTwo.productData = res.data.noticeLineList
           } else {
@@ -1296,19 +1299,19 @@ export default {
           }
         })
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        console.log(55555);
-        this.formLoading=true
-        setTimeout(() => {
-          this.formLoading=false
-          this.fetchData("SRDH")
-          
-        }, 500);
-      }
+
       if (this.btnType == 'edit') {
         this.btnText = "继续修改"
+        this.fetchData("SRDH", false)
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = "继续新增"
+        this.formLoading = true
+        setTimeout(() => {
+          this.formLoading = false
+
+          this.fetchData("SRDH", true)
+
+        }, 500);
       }
     },
     goBack() {
@@ -1420,8 +1423,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
-              classAttribute:item.classAttribute,
-              productsId:item.productsId,
+              classAttribute: item.classAttribute,
+              productsId: item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1440,8 +1443,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
-              classAttribute:item.classAttribute,
-              productsId:item.productsId,
+              classAttribute: item.classAttribute,
+              productsId: item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',

@@ -26,7 +26,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="订单编号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
@@ -189,7 +189,7 @@
                           <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
 
                         </template>
-                      </el-table-column> -->
+</el-table-column> -->
 
                       <el-table-column prop="num" label="数量" width="100" :key="7">
 
@@ -231,10 +231,8 @@
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100">
 
                       </el-table-column>
-                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
-                      </el-table-column>
-
+                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"> </el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
 
                       <el-table-column prop="remark" label="备注" width="200" :key="128">
 
@@ -416,7 +414,14 @@
                         </el-select>
                       </template>
                     </el-table-column>
-
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128">
                       <template slot-scope="scope">
@@ -727,7 +732,7 @@
                         {{ $t('common.search') }}</el-button>
                       <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
                         $t('common.reset')
-                        }}
+                      }}
                       </el-button>
                     </el-form-item>
                   </el-col>
@@ -1123,6 +1128,7 @@ export default {
       list5: [],
       list6: [],
       list7: [],
+      list8: [],
       taxRateList: [],
       // productFormVisible: false
     }
@@ -1375,7 +1381,24 @@ export default {
       getbimProductAttributesList(obj7).then(res => {
         this.list7 = res.data.records
       })
-
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        this.list8 = res.data.records
+      })
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
@@ -2442,12 +2465,13 @@ export default {
 
 
 
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
-
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
       } catch (error) {
       }
     },
@@ -2641,9 +2665,11 @@ export default {
           this.getWorkOrderNoFun()
 
         }, 500);
-        this.fetchData("SHDD")
+        this.fetchData("SHDD", true)
       }
-
+      if (this.btnType == 'edit') {
+        this.fetchData("SHDD", false)
+      }
       if (btnType == 'add') {
         // 获取当前日期
         const currentDate = new Date();
@@ -3024,7 +3050,7 @@ export default {
   display: inline-block;
 }
 
-.orderInfo ::v-deep .el-collapse-item__wrap{
+.orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
 </style>

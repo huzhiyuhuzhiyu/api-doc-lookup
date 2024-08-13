@@ -184,7 +184,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-  name: 'purchaseOrder',
+  name: 'orderList',
   components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery },
   data() {
     return {

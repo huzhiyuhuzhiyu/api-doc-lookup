@@ -200,6 +200,7 @@
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>

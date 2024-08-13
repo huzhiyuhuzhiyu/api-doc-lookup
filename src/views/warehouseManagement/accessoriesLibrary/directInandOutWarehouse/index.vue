@@ -1,5 +1,4 @@
 <template>
-  <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
@@ -9,7 +8,6 @@
             @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
             @click="handleConfirm('submit')">保存并提交</el-button>
-          <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="contain">
@@ -24,7 +22,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入单号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                            :disabled="JSON.stringify(codeConfig)=='{}'?true:codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
@@ -381,7 +379,6 @@
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
     </div>
-  </transition>
 </template>
 
 <script>

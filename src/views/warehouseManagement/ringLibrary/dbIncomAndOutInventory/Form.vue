@@ -174,6 +174,8 @@
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"  ></el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="102"   ></el-table-column>
 
                     <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
@@ -318,10 +320,13 @@
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column prop="standardValue" label="规值" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
+                  <el-table-column prop="colour" label="颜色" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
                 <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
+           
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -335,6 +340,8 @@
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
                   v-if="dataForm.businessType != 'outbound_sale_send' || dataForm.businessType != 'inbound_sale_return'" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" width="120"  ></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120"   ></el-table-column>
                 <el-table-column prop="processName" label="工序" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
 
@@ -961,11 +968,25 @@ export default {
         this.dataForm.businessType == 'inbound_external_return' ||
         this.dataForm.businessType == 'inbound_external') {
         this.jyFlag = true
-        this.fetchData("RKDH")
+        if(this.btnType=='edit'){
+        this.fetchData("RKDH",false) 
+
+        }
+        if(this.btnType=='add'){
+        this.fetchData("RKDH",true) 
+
+        }
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
         this.jyFlag = false
-        this.fetchData("CKDH")
+        if(this.btnType=='edit'){
+        this.fetchData("CKDH",false) 
+
+        }
+        if(this.btnType=='add'){
+        this.fetchData("CKDH",true) 
+
+        }
 
       }
       if (this.dataForm.businessType == "outbound_sale_send" || this.dataForm.businessType == "inbound_sale_return") {
@@ -1060,11 +1081,13 @@ export default {
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
     },
-    async fetchData(code) {
+    async fetchData(code,flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        if(flag){
+          this.dataForm.orderNo = data.number
+        }
 
       } catch (error) {
       }

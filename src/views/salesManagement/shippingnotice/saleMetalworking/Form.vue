@@ -26,7 +26,7 @@
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -199,7 +199,9 @@
                       <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
                       <el-table-column prop="oil" label="油脂" width="160" />
                       <el-table-column prop="oilQuantity" label="油脂量" width="160" />
-                      <el-table-column prop="clearance" label="游隙" width="160" /> 
+                      <el-table-column prop="clearance" label="游隙" width="160" />
+                      <el-table-column prop="packagingMethod" label="包装方式" width="160" />
+                      <el-table-column prop="specialRequire" label="特殊要求" width="160" />
                       <el-table-column prop="orderNo" label="订单号" width="160" />
                       <el-table-column prop="workOrderNo" label="工作令号" width="160" />
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
@@ -360,6 +362,7 @@
                   <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                   <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                   <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
+                  <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
                   <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
                   <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
                 </JNPF-table>
@@ -881,7 +884,7 @@ export default {
       this.selectArr.forEach(item => {
         item.ordersNum = item.num
         item.productDrawingNo = item.drawingNo
-        item.ordersLineId=item.id
+        item.ordersLineId = item.id
         this.dataFormTwo.data.push(item)
       });
       let uniqueArr = [];
@@ -1236,7 +1239,7 @@ export default {
           this.customerData = res.data.cooperativePartner
         })
       }
-      this.formLoading=true
+      this.formLoading = true
       // this.getProvinceList()
       console.log("传递数据", btnType);
       this.dataForm.id = id || ''
@@ -1273,12 +1276,12 @@ export default {
             this.dataForm.approvalStatus = ''
             this.dataForm.fullReceiptFlag = false
             res.data.noticeLineList.forEach(item => {
-              item.deliveryQuantity=""
+              item.deliveryQuantity = ""
             });
-            this.dataFormTwo.data=res.data.noticeLineList
+            this.dataFormTwo.data = res.data.noticeLineList
 
-             
-            console.log("this.dataFormTwo.data",this.dataFormTwo.data);
+
+            console.log("this.dataFormTwo.data", this.dataFormTwo.data);
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
 
@@ -1289,39 +1292,34 @@ export default {
         })
 
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        const currentDate = new Date();
-
-        // 获取年份
-        const year = currentDate.getFullYear();
-
-        // 获取月份（注意月份从0开始，所以要加1）
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-
-        // 获取日期
-        const date = String(currentDate.getDate()).padStart(2, '0');
-
-        // 拼接为YYYY-MM-DD格式
-        const formattedDate = `${year}-${month}-${date}`;
-        this.dataForm.deliverDate = formattedDate;
-        this.fetchData("SSDH")
-
-      }
+    
       if (this.btnType == 'edit') {
+        this.fetchData("SSDH", false)
         this.btnText = "继续修改"
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = "继续新增"
+        const currentDate = new Date();
+        // 获取年份
+        const year = currentDate.getFullYear();
+        // 获取月份（注意月份从0开始，所以要加1）
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+        // 获取日期
+        const date = String(currentDate.getDate()).padStart(2, '0');
+        // 拼接为YYYY-MM-DD格式
+        const formattedDate = `${year}-${month}-${date}`;
+        this.dataForm.deliverDate = formattedDate;
+        this.fetchData("SSDH", true)
       }
-      this.formLoading=false
+      this.formLoading = false
 
     },
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        console.log("data,", data);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
-        console.log(this.dataForm);
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
       } catch (error) {
       }
     },
@@ -1336,7 +1334,7 @@ export default {
 
       this.tipsvisible = false
       this.btnLoading = false
-      this.dataForm={
+      this.dataForm = {
         exchangeGoodsFlag: false,
         partnerName: '',
         returnDeliveryType: 'delivery',
@@ -1429,8 +1427,8 @@ export default {
               ordersId: item.ordersId,
               notifyType: 'sale',
               id: item.id ? item.id : '',
-              classAttribute:item.classAttribute,
-              productsId:item.productsId,
+              classAttribute: item.classAttribute,
+              productsId: item.productsId,
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1451,8 +1449,8 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
-                classAttribute:item.classAttribute,
-                productsId:item.productsId,
+                classAttribute: item.classAttribute,
+                productsId: item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',
@@ -1483,8 +1481,8 @@ export default {
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
-                classAttribute:item.classAttribute,
-                productsId:item.productsId,
+                classAttribute: item.classAttribute,
+                productsId: item.productsId,
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',
@@ -1560,11 +1558,11 @@ export default {
             formMethod(obj).then(res => {
               let msg = "";
               if (value == 'draft') {
-                  this.submitmethodsTitle = "保存成功"
-                } else if (value == 'submit') {
-                  this.submitmethodsTitle = "提交成功"
-                }
-                this.tipsvisible = true
+                this.submitmethodsTitle = "保存成功"
+              } else if (value == 'submit') {
+                this.submitmethodsTitle = "提交成功"
+              }
+              this.tipsvisible = true
             }).catch(() => {
               this.btnLoading = false
             })

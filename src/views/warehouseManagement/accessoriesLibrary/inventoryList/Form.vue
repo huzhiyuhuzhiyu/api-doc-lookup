@@ -24,7 +24,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                             maxlength="300" />
                         </el-form-item>
                       </el-col>
@@ -232,7 +232,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item >
+                  <el-form-item>
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
                       style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
                     </el-date-picker>
@@ -255,7 +255,8 @@
               <JNPF-table v-loading="listLoading" :data="productList" hasC
                 @selection-change="handleSelectionChangeAllPruduct">
                 <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" v-if="this.dataForm.businessType=='outbound_sale_send'||this.dataForm.businessType=='inbound_sale_return'"/>
+                <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
+                  v-if="this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
@@ -266,8 +267,8 @@
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send'" />
                 <el-table-column prop="requiredReceivedQuantity" label="待入库数量" width="160" sortable="custom"
-                  v-if="dataForm.businessType == 'inbound_purchase' " />
-                <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom"  />
+                  v-if="dataForm.businessType == 'inbound_purchase'" />
+                <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -563,8 +564,8 @@ export default {
         this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
         if (this.dataForm.businessType == 'inbound_sale_return') {
           this.orderForm.returnQueryFlag = 1
-        }else{
-          this.orderForm.shipmentStatus='not_finish'
+        } else {
+          this.orderForm.shipmentStatus = 'not_finish'
         }
 
         getsaleOrderDetailList(this.orderForm).then(res => {
@@ -588,7 +589,7 @@ export default {
           classAttribute: "accessories",
           pageNum: 1,
           pageSize: 20,
-          orderType:"procure",
+          orderType: "procure",
           orderItems: [{
             asc: false,
             column: ""
@@ -597,10 +598,10 @@ export default {
             column: ""
           }],
         }
-        this.orderForm.cooperativePartnerId=this.dataForm.cooperativePartnerId
+        this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
         this.orderForm.deliverDateEnd = ""
-        this.orderForm.deliverDateStart = "" 
-        this.orderForm.productDrawingNo = "" 
+        this.orderForm.deliverDateStart = ""
+        this.orderForm.productDrawingNo = ""
         this.orderForm.orderNo = ""
         if (this.deliveryDateArr.length) {
           this.orderForm.deliverDateStart = this.deliveryDateArr[0]
@@ -609,9 +610,9 @@ export default {
           this.orderForm.deliverDateStart = ""
           this.orderForm.deliverDateEnd = ""
         }
-        if(this.dataForm.businessType=='inbound_purchase'){
-          this.orderForm.receivingStatus='not_finished'
-        }else{
+        if (this.dataForm.businessType == 'inbound_purchase') {
+          this.orderForm.receivingStatus = 'not_finished'
+        } else {
           this.orderForm.returnQueryFlag = 1
         }
         detailpurchaseOrderList(this.orderForm).then(res => {
@@ -666,7 +667,7 @@ export default {
           item.num = item.undeliveredQuantity
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         }
-        if (this.dataForm.businessType == 'inbound_purchase'|| this.dataForm.businessType == 'outbound_purchase') {
+        if (this.dataForm.businessType == 'inbound_purchase' || this.dataForm.businessType == 'outbound_purchase') {
           this.$set(item, 'num', item.purchaseQuantity)
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
@@ -834,11 +835,25 @@ export default {
         this.dataForm.businessType == 'inbound_external_return' ||
         this.dataForm.businessType == 'inbound_external') {
         this.jyFlag = true
-        this.fetchData("RKDH")
+        if (this.btnType == 'edit') {
+          this.fetchData("RKDH", false)
+
+        }
+        if (this.btnType == 'add') {
+          this.fetchData("RKDH", true)
+
+        }
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
         this.jyFlag = false
-        this.fetchData("CKDH")
+        if (this.btnType == 'edit') {
+          this.fetchData("CKDH", false)
+
+        }
+        if (this.btnType == 'add') {
+          this.fetchData("CKDH", true)
+
+        }
 
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return') {
@@ -970,12 +985,14 @@ export default {
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
     },
-    async fetchData(code) {
+    async fetchData(code,flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        if (flag) {
+          this.dataForm.orderNo = data.number
 
+        }
       } catch (error) {
       }
     },
@@ -990,19 +1007,18 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
-    
 
           if (this.productData.length) {
             let totals = {};
             let totalNum = {};
             for (let index = 0; index < this.productData.length; index++) {
               const item = this.productData[index];
-              if(!this.jyFlag&&item.batchNumber){
+              if (!this.jyFlag && item.batchNumber) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行批次不能为空")
                 break
               }
-              if(this.allocationFlag &&this.jyFlag&&!item.goodsShelvesId){
+              if (this.allocationFlag && this.jyFlag && !item.goodsShelvesId) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
                 break

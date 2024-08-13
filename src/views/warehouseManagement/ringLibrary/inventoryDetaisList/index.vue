@@ -47,7 +47,6 @@
                 @click="superQueryVisible = true" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-            
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -56,8 +55,7 @@
           </div>
         </div>
         <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
-          border :setColumnDisplayList="columnList"  :fixedNO="true" @sort-change="sortChange"
-          custom-column>
+          border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look')">{{
@@ -90,22 +88,27 @@
           <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="180" />
           <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
           <el-table-column prop="num" label="数量(主)" sortable="custom" min-width="140" />
-          <el-table-column prop="costPrice" label="单价（含税）" sortable="custom" min-width="160" />
-          <el-table-column prop="totalAmount" label="总金额（含税）" sortable="custom" min-width="180" />
+
+          <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
+          <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
           <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" />
           <el-table-column prop="deputyNum" label="数量(副)" min-width="140" />
-          <el-table-column prop="taxRate" label="税率（%）" sortable="custom" min-width="140" />
-          <el-table-column prop="excludingTaxCostPrice" label="单价（不含税）" sortable="custom" min-width="180" />
+          <el-table-column prop="taxRate" label="税率(%)" sortable="custom" min-width="140" />
+          <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="excludingTaxAmount" label="总金额（不含税）" sortable="custom" min-width="180" />
+          <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
+          <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
           <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
           <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
           <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
           <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column>
-          <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
-          <el-table-column prop="processName" label="工序" width="120" :key="101"></el-table-column>
+          <el-table-column prop="clearance" label="游隙" width="120" :key="101"></el-table-column>
+          <el-table-column prop="aperture" label="孔径" width="120" :key="102"></el-table-column>
+          <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="103"></el-table-column>
+          <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="104"></el-table-column>
+          <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
           <el-table-column prop="documentStatus" label="单据状态" min-width="120" fixed="right">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -113,6 +116,7 @@
             </template>
 
           </el-table-column>
+
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
           <el-table-column prop="createByName" label="创建人" width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
@@ -151,23 +155,23 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-<!-- 高级查询 -->
-<SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-import SuperQuery from '@/components/SuperQuery/index.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../inventoryList/Form.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'inventoryDetaisList',
-  components: { Form, ExportForm,SuperQuery },
+  components: { Form, SuperQuery, ExportForm },
   data() {
     return {
       columnList: ["partnerCode", 'productCode', "productName", "deputyUnit", "deputyNum", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
@@ -255,19 +259,15 @@ export default {
           label: "产品编码",
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+
         {
           prop: 'mainUnit',
-          label: "单位(主)",
+          label: "单位",
           type: 'input'
         },
         {
           prop: 'num',
-          label: "数量(主)",
+          label: "数量",
           type: 'input'
         },
         {
@@ -280,20 +280,12 @@ export default {
           label: "总金额(含税)",
           type: 'input'
         },
-        {
-          prop: 'deputyUnit',
-          label: "单位(副)",
-          type: 'input'
-        },
-        {
-          prop: 'deputyNum',
-          label: "数量(副)",
-          type: 'input'
-        },
+
         {
           prop: 'taxRate',
           label: "税率(%)",
-          type: 'input'
+          type: 'select',
+          options: [],
         },
         {
           prop: 'excludingTaxCostPrice',
@@ -314,6 +306,12 @@ export default {
         {
           prop: 'standardValue',
           label: "规值",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'colour',
+          label: "颜色",
           type: 'select',
           options: []
         },
@@ -355,6 +353,24 @@ export default {
           options: []
         },
         {
+          prop: 'aperture',
+          label: "孔径",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: "包装方式",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: []
+        },
+        {
           prop: 'processName',
           label: "工序",
           type: 'input',
@@ -392,6 +408,107 @@ export default {
   },
   methods: {
     getProductClassFun() {
+      // 孔径
+      let objO = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa009",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(objO).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'standardValue');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      // 颜色
+      let objT = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa010",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(objT).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'colour');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      // 特殊要求
+      
+      let objS = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(objT).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'specialRequire');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      // 规值
       let obj0 = {
         pageNum: -1,
         pageSize: 20,
@@ -407,7 +524,6 @@ export default {
           },
         ],
       };
-
       getbimProductAttributesList(obj0).then(res => {
 
         let arr = []
@@ -425,6 +541,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 打字内容
       let obj1 = {
         pageNum: -1,
         pageSize: 20,
@@ -440,7 +557,6 @@ export default {
           },
         ],
       };
-
       getbimProductAttributesList(obj1).then(res => {
 
         let arr = []
@@ -458,6 +574,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 精度等级
       let obj2 = {
         pageNum: -1,
         pageSize: 20,
@@ -473,8 +590,6 @@ export default {
           },
         ],
       };
-
-
       getbimProductAttributesList(obj2).then(res => {
         let arr = []
         res.data.records.forEach(item => {
@@ -491,6 +606,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 振动等级
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
@@ -523,6 +639,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 油脂
       let obj4 = {
         pageNum: -1,
         pageSize: 20,
@@ -557,6 +674,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 油脂量
       let obj5 = {
         pageNum: -1,
         pageSize: 20,
@@ -588,6 +706,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 游隙
       let obj6 = {
         pageNum: -1,
         pageSize: 20,
@@ -603,7 +722,6 @@ export default {
           },
         ],
       };
-
       getbimProductAttributesList(obj6).then(res => {
         let arr = []
         res.data.records.forEach(item => {
@@ -620,6 +738,7 @@ export default {
           oilObj.options = arr;
         }
       })
+      // 包装方式
       let obj7 = {
         pageNum: -1,
         pageSize: 20,
@@ -655,11 +774,20 @@ export default {
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
+        let arr = []
         res.data.list.forEach(item => {
           item.taxRate = item.enCode.replace('%', '') * 1
+          let obj = {
+            label: item.taxRate,
+            value: item.taxRate,
+          }
+          arr.push(obj)
         })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
       })
 
     },

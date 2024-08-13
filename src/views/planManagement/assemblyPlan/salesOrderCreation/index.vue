@@ -75,6 +75,7 @@
 
             <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
@@ -184,11 +185,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+        
         {
           prop: 'productCode',
           label: "产品编码",
@@ -200,8 +197,7 @@ export default {
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
+          endPlaceholder: '结束日期', 
         },
         {
           prop: 'mainUnit',
@@ -256,6 +252,13 @@ export default {
           type: 'select',
           options: [],
         },
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: [],
+        },
+        
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -561,7 +564,37 @@ export default {
       })
 
 
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'specialRequire');
 
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
 
     },
 

@@ -148,7 +148,7 @@ export default {
         pickingStartDate: "",
         pickingEndDate: "",
         documentStatus: "",
-        classAttribute: "finish_product",
+        classAttribute: "accessories",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -326,7 +326,7 @@ export default {
         pickingStartDate: "",
         pickingEndDate: "",
         documentStatus: "",
-        classAttribute: "finish_product",
+        classAttribute: "accessories",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{

@@ -990,6 +990,7 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
+     
           if (this.productData.length) {
             let totals = {};
             let totalNum = {};

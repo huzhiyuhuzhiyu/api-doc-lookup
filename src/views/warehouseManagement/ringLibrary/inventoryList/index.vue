@@ -169,11 +169,11 @@ export default {
 
       initListQuery: {
         sourceType: "",
-          classAttribute: "semi_finished",
-          orderNo: "",
+        orderNo: "",
         pageNum: 1,
         partnerName: "",
         pageSize: 20,
+        classAttribute: "semi_finished",
         orderItems: [{
           asc: false,
           column: ""

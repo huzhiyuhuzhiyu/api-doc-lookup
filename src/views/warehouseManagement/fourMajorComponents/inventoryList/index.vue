@@ -48,7 +48,7 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
-           
+         
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -169,11 +169,11 @@ export default {
 
       initListQuery: {
         sourceType: "",
-        classAttribute: "raw_material",
         orderNo: "",
         pageNum: 1,
         partnerName: "",
         pageSize: 20,
+        classAttribute: "raw_material",
         orderItems: [{
           asc: false,
           column: ""

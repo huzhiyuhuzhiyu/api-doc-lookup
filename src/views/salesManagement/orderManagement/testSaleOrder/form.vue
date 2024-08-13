@@ -44,6 +44,9 @@
                 <!-- <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" /> -->
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
               </template>
+              <template v-if="item.title === '流程信息'">
+                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              </template>
             </el-tab-pane>
           </template>
           <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
@@ -220,7 +223,7 @@
                   </el-button>
                 </span>
               </el-dialog>
-            </el-tab-pane>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
@@ -267,8 +270,9 @@ import { getcooperativeProduct, getWorkOrderNo, getOrderDetail, addOrders, editO
 import { mapGetters, mapState } from 'vuex'
 import { getscheduleList , excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import Process from '@/components/Process/Preview'
 export default {
-  components:{ ExportForm },
+  components:{ ExportForm ,Process},
   data() {
     return {
       getProducts,
@@ -490,9 +494,9 @@ export default {
         let formData = JSON.parse(res.data.formData)
         console.log(formData, 'formData');
 
-        // this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-        // console.log(this.flowTemplateJson)
-        // this.flowTemplateJson.content = this.userInfo.userName
+        this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+        console.log(this.flowTemplateJson)
+        this.flowTemplateJson.content = this.userInfo.userName
         // return
         let fields = formData.fields[0].__config__.children
         let that = this

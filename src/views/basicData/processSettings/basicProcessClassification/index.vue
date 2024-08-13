@@ -24,7 +24,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addOrUpdateHandle()">
             <el-button :disabled="treeList.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download"
               @click="exportForm">

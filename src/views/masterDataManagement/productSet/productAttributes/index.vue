@@ -67,7 +67,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding: 10px">
+        <div class="JNPF-common-head" style="padding: 8px">
           <topOpts @add="addSupplier()" :isJudgePer="true" :addPerCode="'btn_add'" />
 
           <div class="JNPF-common-head-right">

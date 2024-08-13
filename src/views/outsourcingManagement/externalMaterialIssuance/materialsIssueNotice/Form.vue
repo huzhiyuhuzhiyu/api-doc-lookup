@@ -496,7 +496,7 @@ export default {
         exchangeGoodsFlag: false,
         partnerName: '',
         returnDeliveryType: 'delivery',
-        notifyType: 'sale',
+        notifyType: 'external',
         ordersId: '',
         orderNo: '',
         deliverDate: '',
@@ -643,6 +643,13 @@ export default {
     supplierdata(id, data) {
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerName')
+        if (id) {
+          getCooperativeInfo(id).then(res => {
+
+            this.customerData = res.data.cooperativePartner
+          })
+        }
+
       })
       if (data.length === 0) {
         this.dataForm.partnerName = ''
@@ -677,7 +684,7 @@ export default {
 
     // 产品组件回调
     addth(id, data) {
-      console.log(data)
+
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -721,8 +728,7 @@ export default {
             }
             return true
           })
-          console.log(data, '删除后的数据')
-          console.log(deletedArray, '被删掉的数据')
+
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
@@ -796,6 +802,8 @@ export default {
     },
     // 更换地址
     changeAddress() {
+
+      if (!this.customerData.id) return this.$message.error('请选择客户');
       this.addressVisibled = true
 
       this.$nextTick(() => {
@@ -820,7 +828,7 @@ export default {
       }
     },
     // getuserDepartment(r, s) {
-    //   console.log(r, s);
+
     //   this.parentId = s.parentId
     //   this.dataForm.userDepartmentName = s.organize
     // },
@@ -844,7 +852,7 @@ export default {
         }
       });
       this.dataFormTwo.data = uniqueArr
-      console.log("this.dataFormTwo", this.dataFormTwo.data);
+
     },
 
     dateFormat(dateData) {
@@ -1076,15 +1084,15 @@ export default {
     handleClick(tab, event) {
     },
     init(id, btnType, data) {
-      console.log(data,'oooooo')
-    
+
       this.formLoading = true
       // this.getProvinceList()
-      console.log("传递数据", btnType);
+      console.log(JSON.stringify(id),'JSON.stringify(id)')
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
+
       if (this.dataForm.id) {
         getQuotationsendlist(this.dataForm.id).then(res => {
           if (res.data.attachmentList) {
@@ -1120,7 +1128,7 @@ export default {
             this.dataFormTwo.data = res.data.noticeLineList
 
 
-            console.log("this.dataFormTwo.data", this.dataFormTwo.data);
+
 
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
 
@@ -1146,7 +1154,7 @@ export default {
         // 拼接为YYYY-MM-DD格式
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.deliverDate = formattedDate;
-        this.fetchData("SSDH")
+        this.fetchData("FLDH")
 
       }
       if (this.btnType == 'edit') {
@@ -1160,10 +1168,10 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        console.log("data,", data);
+
         this.codeConfig = data
         this.dataForm.orderNo = data.number
-        console.log(this.dataForm);
+
       } catch (error) {
       }
     },
@@ -1182,7 +1190,7 @@ export default {
         exchangeGoodsFlag: false,
         partnerName: '',
         returnDeliveryType: 'delivery',
-        notifyType: 'sale',
+        notifyType: 'external',
         ordersId: '',
         orderNo: '',
         deliverDate: '',
@@ -1269,7 +1277,7 @@ export default {
               deputyUnit: item.deputyUnit ? item.deputyUnit : '',
               mainUnit: item.mainUnit ? item.mainUnit : '',
               ordersId: item.ordersId,
-              notifyType: 'sale',
+              notifyType: 'external',
               id: item.id ? item.id : '',
               classAttribute: item.classAttribute,
               productsId: item.productsId,
@@ -1289,7 +1297,7 @@ export default {
                 deputyUnit: item.deputyUnit ? item.deputyUnit : '',
                 mainUnit: item.mainUnit ? item.mainUnit : '',
                 ordersId: item.ordersId,
-                notifyType: 'sale',
+                notifyType: 'external',
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
@@ -1321,7 +1329,7 @@ export default {
                 deputyUnit: item.deputyUnit ? item.deputyUnit : '',
                 mainUnit: item.mainUnit ? item.mainUnit : '',
                 ordersId: item.ordersId,
-                notifyType: 'sale',
+                notifyType: 'external',
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',

@@ -2,20 +2,20 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header']">
-        <el-page-header @back="goBack"
-          :content="btnType === 'edit' ? '批量修改型号' :   '批量新建型号'" />
+        <el-page-header @back="goBack" :content="btnType === 'edit' ? '批量修改型号' : '批量新建型号'" />
         <div class="options">
-          <el-button size="mini" type="primary" :loading="btnLoading" @click="dataFormSubmit()" v-if="btnType !== 'look'">
+          <el-button size="mini" type="primary" :loading="btnLoading" @click="dataFormSubmit()"
+            v-if="btnType !== 'look'">
             提交</el-button>
           <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="main" v-loading="formLoading">
 
-        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" 
+        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode"
           v-if="btnType == 'edit'" />
-        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" 
-          v-else @deleteth="deleteFun" @addth="addFun" />
+        <JNPFColTable v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode" v-else
+          @deleteth="deleteFun" @addth="addFun" />
       </div>
     </div>
   </transition>
@@ -48,7 +48,7 @@ export default {
       sleeveList: [],
       sleeveItems: [
         {
-          prop: "model", label: "型号", value: "", type: 'input',  readOnly: true, itemRules: [{ required: true, message: '型号不能为空', trigger: "blur" }, {
+          prop: "model", label: "型号", value: "", type: 'input', readOnly: true, itemRules: [{ required: true, message: '型号不能为空', trigger: "blur" }, {
             validator: (rule, value, callback) => {
               // 没有value不进行此校验
               if (!value) { callback() }
@@ -70,12 +70,25 @@ export default {
             trigger: 'blur'
           }]
         },
-        { prop: "innerCircle", label: "内圈", value: "", type: 'custom', customComponent: "ComSelect-page",  itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "outerCircle", label: "外圈", value: "", type: 'custom', customComponent: "ComSelect-page",  itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "innerCircle", label: "内圈", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }] },
+        { prop: "outerCircle", label: "外圈", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }] },
         { prop: "steelBall", label: "钢球型号", value: "", type: 'custom', customComponent: "ComSelect-page", itemRules: [{ required: true, trigger: "blur" }] },
-        { prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', itemRules: [{ required: true, message: '钢球用量不能为空', trigger: "blur" },] },
-        { prop: "oilNum", label: "油脂用量", value: "", type: 'input',  itemRules: [{ required: true, message: '油脂用量不能为空', trigger: "blur" },] },
-        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input',  itemRules: [{ required: true, message: '保持架用量不能为空', trigger: "blur" },] },
+        {
+          prop: "steelBallNum", label: "钢球用量", value: "", type: 'input', itemRules: [{ required: true, message: '钢球用量不能为空', trigger: "blur" }, {
+            validator: this.formValidate({
+              type: 'noEmtry',
+              params: [
+                '不能为空',
+                (errMsg, index) => {
+                  this.$message.error(`基础信息第${index + 1}，钢球用量${errMsg}`)
+                }
+              ]
+            }),
+            trigger: 'blur'
+          },]
+        },
+        { prop: "oilNum", label: "油脂用量", value: "", type: 'input', itemRules: [{ required: true, message: '油脂用量不能为空', trigger: "blur" },] },
+        { prop: "holderNum", label: "保持架用量", value: 0, type: 'input', itemRules: [{ required: true, message: '保持架用量不能为空', trigger: "blur" },] },
 
 
       ],
@@ -114,7 +127,7 @@ export default {
         { prop: "drawingNo", label: "品名规格", type: 'input' },
         { prop: "code", label: "产品编码", type: 'input', },
         { prop: "name", label: "产品名称", type: 'input', },
-        
+
       ],
       ProductMethodArr: [
         { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
@@ -145,20 +158,32 @@ export default {
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
 
-
+      this.sleeveList.map((item, index) => {
+        console.log(item, 'iy')
+        if (!item.steelBallNum) {
+          submitFlag = false
+          this.$message.error(index);
+        } else if (!item.oilNum) {
+          submitFlag = false
+          this.$message.error('222');
+        } else if (!item.holderNum) {
+          submitFlag = false
+          this.$message.error('222');
+        }
+      })
 
 
       // 校验表格表单（套筒属性）
       let sleeveForm = this.$refs['sleeveForm'].$refs.main
       let valid_3 = await sleeveForm.validate().catch(err => false)
-      if(this.btnType == 'add'){
-         if (!valid_3 && submitFlag) {
-        submitFlag = false
-        this.jnpf.focusErrValidItem(sleeveForm.fields)
+      if (this.btnType == 'add') {
+        if (!valid_3 && submitFlag) {
+          submitFlag = false
+          this.jnpf.focusErrValidItem(sleeveForm.fields)
+        }
       }
-      }
-     
-      console.log(submitFlag,'submitFlag')
+
+      console.log(submitFlag, 'submitFlag')
       // 判断条件后发送请求
       if (submitFlag) {
         const formMethod = this.btnType == 'edit' ? updataBimProductsModel : addBimProductsModel
@@ -214,7 +239,7 @@ export default {
       this.$nextTick(() => { this.$refs['sleeveForm'].$children[0].validateField(prop) })
       if (!data || !data.length) return
       let index = paramsObj.scope.$index
-      console.log(data,'uuuu')
+      console.log(data, 'uuuu')
       this.sleeveList[index].innerCircleId = data[0].id
       this.sleeveList[index].innerCircle = data[0].all.drawingNo
     },
@@ -237,7 +262,7 @@ export default {
     init(data, type) {
       this.btnType = type
       this.visible = true
-      this.sleeveList=[]
+      this.sleeveList = []
       this.dialogTitle = type == 'edit' ? '批量修改产品型号' : "批量新建产品型号"
       this.sleeveList = data || []
       if (this.sleeveList.length > 0) {
@@ -245,8 +270,8 @@ export default {
         this.sleeveList.forEach((item, index) => { item.index = index; });
       } else {
         this.openMode = "新建"
-      this.sleeveList=[]
-    }
+        this.sleeveList = []
+      }
       this.sleeveItems.forEach(tc => {
         // 添加自定义表单元素方法和参数
         // 若干需要选择的产品

@@ -15,14 +15,8 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <!-- <el-tab-pane label="基础信息" name="basicInfo"> -->
-          <JNPF-col-table
-            v-model="sleeveList"
-            ref="sleeveForm"
-            :tableItems="sleeveItems"
-            :openMode="openMode"
-            @addth="addSleeveList"
-            @deleteth="deleteth"
-          />
+          <JNPF-col-table v-model="sleeveList" ref="sleeveForm" :tableItems="sleeveItems" :openMode="openMode"
+            @addth="addSleeveList" @deleteth="deleteth" />
           <!-- </el-tab-pane> -->
         </el-tabs>
       </div>
@@ -142,8 +136,8 @@ export default {
         }
       ],
       sleeveItems: [
-         // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
-         {
+        // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
+        {
           prop: 'model',
           label: '型号',
           value: '',
@@ -402,7 +396,7 @@ export default {
           ],
           itemDisabled: false
         },
-      
+
         {
           prop: 'drawingNo',
           label: '品名规格',
@@ -449,7 +443,7 @@ export default {
             }
           ],
           render: true,
-          itemDisabled:false
+          itemDisabled: false
         },
         {
           prop: 'productCategoryName',
@@ -477,7 +471,7 @@ export default {
           ],
           minWidth: 180
         },
-       
+
         {
           prop: 'name',
           label: '产品名称',
@@ -546,7 +540,7 @@ export default {
           options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }],
           itemRules: [{ required: true, trigger: 'change' }],
           minWidth: 180,
-          render:true
+          render: true
         },
 
         //  一下全部都是 custom，组件选择
@@ -564,8 +558,7 @@ export default {
           blur: this.elementBlur,
           minWidth: 180
         },
-       
-       
+
         {
           prop: 'vibrationLevel',
           label: '振动等级',
@@ -652,7 +645,8 @@ export default {
               tc.dataFormatting = (res) => res.data[0].childrenList
             }
           })
-          tc.change = (val, data) => {
+          tc.change = (val, data, paramsObj) => {
+
             // dom更新后重新校验此元素
             this.$nextTick(() => {
               this.$refs['dataForm'][0].$children[0].validateField('productCategoryName')
@@ -661,7 +655,12 @@ export default {
             if (!data || !data.length) return
             this.dataForm['productCategoryId'] = data[0].id
             this.dataForm['productCategoryName'] = data[0].name
+            let index = paramsObj.scope.$index
+
+            this.sleeveList[index].productCategoryId = data[0].id
+            this.sleeveList[index].productCategoryName = data[0].name
           }
+
           tc.dialogTitle = '选择产品分类'
         }
         //  选择型号 会带出 一部分信息
@@ -789,23 +788,22 @@ export default {
         })
       }
       if (
-        tc.prop === 'name' || 
+        tc.prop === 'name' ||
         tc.prop === 'brand' || // 品牌
-        tc.prop === 'mainUnit' || 
-        tc.prop === 'deputyUnit' || 
-        tc.prop === 'ratio' || 
-        tc.prop === 'calculationDirection' || 
-        tc.prop === 'productSource' || 
-        tc.prop === 'productStatus' || 
+        tc.prop === 'mainUnit' ||
+        tc.prop === 'deputyUnit' ||
+        tc.prop === 'ratio' ||
+        tc.prop === 'calculationDirection' ||
+        tc.prop === 'productSource' ||
+        tc.prop === 'productStatus' ||
         tc.prop === 'vibrationLevel' || // 振动等级
         tc.prop === 'accuracyLevel' || // 精度等级
         tc.prop === 'colour' || // 颜色
         tc.prop === 'aperture' || // 孔径
         tc.prop === 'remark'
-      ){
+      ) {
         tc.render = false
       }
-
     })
   },
   computed: {
@@ -823,7 +821,7 @@ export default {
           this.sleeveList[0].code = data.number
           target.itemDisabled = true
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
     modelChange(val, data, paramsObj) {
@@ -846,6 +844,9 @@ export default {
       if (data && data.length) {
         // 数据有效，进行更新
         this.dataForm[paramsObj.prop] = data[0].all.code
+        let index = paramsObj.scope.$index
+
+        this.sleeveList[index].steelBallManufacturer = data[0].name
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm[paramsObj.prop] = ''

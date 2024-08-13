@@ -70,7 +70,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head" style="padding:10px">
+        <div class="JNPF-common-head" style="padding:8px">
           <div>
             <el-dropdown style="margin-right:10px;">
               <el-button size="mini" type="primary" icon="el-icon-plus">

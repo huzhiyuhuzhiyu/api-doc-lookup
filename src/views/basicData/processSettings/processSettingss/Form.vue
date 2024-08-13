@@ -5,12 +5,8 @@
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
           <el-page-header @back="goBack" :content="dialogTitle + `工艺`" />
           <div class="options" v-if="type != 'look'">
-            <el-button
-              type="success"
-              :disabled="dataForm.documentStatus == 'submit'"
-              :loading="btnLoading"
-              @click="dataFormSubmit('draft')"
-            >
+            <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
+              @click="dataFormSubmit('draft')">
               保存草稿
             </el-button>
             <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
@@ -26,37 +22,20 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form
-                      ref="elForm"
-                      :model="dataForm"
-                      :rules="rules"
-                      size="small"
-                      label-width="100px"
-                      label-position="top"
-                    >
+                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                      label-position="top">
                       <template v-if="!loading">
                         <el-col :span="12">
                           <el-form-item label="工艺路线编码" prop="code" ref="code">
-                            <el-input
-                              v-model="dataForm.code"
-                              placeholder="请输入工艺路线编码"
-                              clearable
-                              :style="{ width: '100%' }"
-                              maxlength="20"
-                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
-                            ></el-input>
+                            <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
+                              :style="{ width: '100%' }" maxlength="20"
+                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="12">
                           <el-form-item label="工艺路线名称" prop="name" ref="name">
-                            <el-input
-                              v-model="dataForm.name"
-                              placeholder="请输入工艺路线名称"
-                              clearable
-                              :style="{ width: '100%' }"
-                              maxlength="20"
-                              :disabled="type == 'look'"
-                            ></el-input>
+                            <el-input v-model="dataForm.name" placeholder="请输入工艺路线名称" clearable
+                              :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
                         <!-- <el-col :span="12">
@@ -86,32 +65,16 @@
                                     </el-form-item>
                                 </el-col> -->
                         <el-col :span="24">
-                          <el-form-item
-                            label="驳回理由"
-                            prop="documentStatus"
-                            v-if="dataForm.status === 'review_failed'"
-                          >
-                            <el-input
-                              v-model="dataForm.reasonRejection"
-                              placeholder="请输入驳回理由"
-                              clearable
-                              type="textarea"
-                              maxlength="200"
-                              :disabled="type == 'look'"
-                            ></el-input>
+                          <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
+                            <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
+                              maxlength="200" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
 
                         <el-col :span="24">
                           <el-form-item label="备注" prop="remark">
-                            <el-input
-                              v-model="dataForm.remark"
-                              placeholder="请输入备注"
-                              clearable
-                              type="textarea"
-                              maxlength="200"
-                              :disabled="type == 'look'"
-                            ></el-input>
+                            <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
+                              maxlength="200" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
 
@@ -134,42 +97,24 @@
                           >
                             <h5>工序信息</h5>
                           </div> -->
-                    <div v-if="type !== 'look' && dataForm.documentStatus !== 'submit'">
-                      <el-button
-                        type="text"
-                        style="margin-right:8px;margin-left:8px font-size:14px!important"
-                        icon="el-icon-plus"
-                        :disabled="type == 'look' ? true : false"
-                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')"
-                      >
+                    <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
                         选择工序
                       </el-button>
                       |
                       <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                      <el-button
-                        type="text"
-                        style="margin-right:8px;margin-left:8px font-size:14px!important"
-                        :disabled="type == 'look' ? true : false"
-                        icon="el-icon-delete"
-                        @click="batchDelete"
-                      >
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                         批量删除
                       </el-button>
                       |
                     </div>
                     <!-- <el-form-item label-width="0" ref="tableForm">  -->
-                    <el-table
-                      hasC
-                      hasNO
-                      fixedNO
-                      style="border: 1px solid #e3e7ee;"
-                      ref="processRef"
-                      v-loading="responseLoading"
-                      @selection-change="handeleProductInfoData"
-                      :data="dataFormTwo"
-                      size="mini"
-                      id="table"
-                    >
+                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
+                      size="mini" id="table">
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
@@ -251,12 +196,8 @@
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="pickingFlag" ref="pickingFlag">
-                              <el-checkbox
-                                v-model="row.pickingFlag"
-                                :true-label="1"
-                                :disabled="type == 'look'"
-                                :false-label="0"
-                              ></el-checkbox>
+                              <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
+                                :false-label="0"></el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -265,12 +206,9 @@
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="firstInspection" ref="firstInspection">
-                              <el-checkbox
-                                v-model="row.firstInspection"
-                                :true-label="1"
+                              <el-checkbox v-model="row.firstInspection" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"
-                              ></el-checkbox>
+                                :false-label="0"></el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -279,12 +217,9 @@
                         <template slot-scope="{ row }">
                           <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                             <el-form-item prop="checkFlag" ref="checkFlag">
-                              <el-checkbox
-                                v-model="row.checkFlag"
-                                :true-label="1"
+                              <el-checkbox v-model="row.checkFlag" :true-label="1"
                                 :disabled="type == 'look' || row.processingType === 'external_production'"
-                                :false-label="0"
-                              ></el-checkbox>
+                                :false-label="0"></el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -293,17 +228,11 @@
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="reportFlag" ref="reportFlag">
-                              <el-checkbox
-                                v-model="scope.row.reportFlag"
-                                :true-label="1"
-                                :disabled="
-                                  scope.row.defaultReport ||
-                                    scope.row.defaultFlag ||
-                                    scope.$index === dataFormTwo.length - 1 ||
-                                    type === 'look'
-                                "
-                                :false-label="0"
-                              ></el-checkbox>
+                              <el-checkbox v-model="scope.row.reportFlag" :true-label="1" :disabled="scope.row.defaultReport ||
+                                scope.row.defaultFlag ||
+                                scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look'
+                                " :false-label="0"></el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -324,17 +253,11 @@
                         <template slot-scope="scope">
                           <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
                             <el-form-item prop="stockFlag" ref="stockFlag">
-                              <el-checkbox
-                                v-model="scope.row.stockFlag"
-                                :true-label="1"
-                                :disabled="
-                                  scope.row.defaultFlag ||
-                                    scope.$index === dataFormTwo.length - 1 ||
-                                    type === 'look' ||
-                                    scope.row.processingType === 'external_production'
-                                "
-                                :false-label="0"
-                              ></el-checkbox>
+                              <el-checkbox v-model="scope.row.stockFlag" :true-label="1" :disabled="scope.row.defaultFlag ||
+                                scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look' ||
+                                scope.row.processingType === 'external_production'
+                                " :false-label="0"></el-checkbox>
                             </el-form-item>
                           </el-form>
                         </template>
@@ -353,12 +276,9 @@
                       </el-table-column>
                       <el-table-column label="操作" min-width="180" fixed="right">
                         <template slot-scope="scope">
-                          <el-button
-                            type="text"
-                            class="JNPF-table-delBtn"
+                          <el-button type="text" class="JNPF-table-delBtn"
                             :disabled="type !== 'add' && dataForm.documentStatus == 'submit'"
-                            @click="delequipment_process_relList(scope.$index)"
-                          >
+                            @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
                           <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
@@ -388,20 +308,9 @@
     <process-dialog v-if="processVisibled" ref="processRef" @dataFormSubmit="submit"></process-dialog>
     <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
 
-    <ComSelect-page
-      ref="ComSelect-page"
-      @change="submit"
-      :tableItems="ProductTableItems"
-      title="选择工序"
-      treeTitle="工序分类"
-      :methodArr="ProductMethodArr"
-      :listMethod="getBimProcessList"
-      :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList"
-      :elementShow="false"
-      multiple
-      :listDataFormatting="listDataFormatting"
-    />
+    <ComSelect-page ref="ComSelect-page" @change="submit" :tableItems="ProductTableItems" title="选择工序" treeTitle="工序分类"
+      :methodArr="ProductMethodArr" :listMethod="getBimProcessList" :listRequestObj="ProductListRequestObj"
+      :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
   </div>
 </template>
 <script>
@@ -497,7 +406,7 @@ export default {
       // cooperativePartnerName: '',
       type: '',
       dataFormTwo: [],
-      codeConfig:{},
+      codeConfig: {},
       rules: {
         name: [
           {
@@ -522,7 +431,7 @@ export default {
                     callback()
                   }
                 })
-                .catch((error) => {})
+                .catch((error) => { })
             },
             trigger: 'blur'
           }
@@ -572,7 +481,7 @@ export default {
       responseLoading: false
     }
   },
-  created() {},
+  created() { },
   methods: {
     async fetchData(code) {
       try {
@@ -582,7 +491,7 @@ export default {
           this.dataForm.code = data.number
 
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
@@ -596,7 +505,7 @@ export default {
       return treeData
     },
 
-    handleNodeClick(value) {},
+    handleNodeClick(value) { },
 
     // 可以多选工序
     openSeleceProcessDialog(e, type) {
@@ -1445,6 +1354,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
@@ -1473,6 +1383,7 @@ export default {
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
 }
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -1497,6 +1408,7 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
 }
+
 ::v-deep .JNPF-common-page-header {
   padding: 5px 10px;
 }
@@ -1513,6 +1425,7 @@ export default {
   color: red;
   margin-right: 4px;
 }
+
 .orderInfo ::v-deep .el-collapse-item__wrap {
   // margin-bottom: 10px;
   border-bottom: none !important;

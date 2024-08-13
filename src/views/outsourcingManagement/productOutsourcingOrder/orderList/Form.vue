@@ -256,14 +256,20 @@
                     <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
                   </div>
                 </el-collapse-item>
+                <el-collapse-item title="发料清单信息" name="materialInfo">
+                  <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
+                    id="table">
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
+                    <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
+                    <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
+                  </el-table>
+                </el-collapse-item>
               </el-collapse>
-
-              <!-- <div v-if="type !== 'look'">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                  </div> -->
             </el-tab-pane>
             <el-tab-pane label="进度跟踪" name="schedule" v-if="type === 'look'">
               <el-row class="JNPF-common-search-box" :gutter="16">
@@ -454,10 +460,12 @@ import {
   approvalTransferList
 } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import TableFormProduct from '@/components/no_mount/TableForm-product/index' // 产品选择组件
 export default {
   components: {
     // ProductsDialog,
     // SupplierDialog
+    TableFormProduct,
     workFlow,
     ExportForm
   },
@@ -465,7 +473,7 @@ export default {
     return {
       datafilelist: [],
       activeName: 'jcInfo',
-      activeNames: ['productInfo', 'basicInfo'],
+      activeNames: ['productInfo', 'basicInfo', 'materialInfo'],
       dialogTitle: '',
       productVisibled: false,
       loading: false,
@@ -566,7 +574,8 @@ export default {
       },
       total: 0,
       background: true, //分页器背景颜色
-      exportFormVisible: false
+      exportFormVisible: false,
+      linesList: []
     }
   },
   created() { },
@@ -581,7 +590,6 @@ export default {
     },
     // 对比日期方法
     changeDate(d1, d2) {
-      console.log(d1, d2)
       return new Date(d1.replace((/-/g, '\/'))) > new Date(d2.replace(/-/g, '\/'))
     },
 
@@ -590,7 +598,6 @@ export default {
       this.$refs['SupplierRef'].openDialog()
     },
     supplierdata(data) {
-      console.log(data, '供应商数据')
       if (data.length === 0) {
         this.$refs['elForm'].validateField('cooperativePartnerName')
       } else {
@@ -606,7 +613,7 @@ export default {
       var formatted = parseFloat(number)
         .toFixed(2)
         .replace(/\.?0+$/, '')
-      console.log(formatted, '8888')
+
       if (isNaN(formatted)) {
         return 0
       } else {
@@ -615,10 +622,8 @@ export default {
     },
     //下单数量输入事件
     changePurchaseQuantity(index, val) {
-      // console.log(val);
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-      console.log(this.dataFormTwo.data[index].purchaseQuantity)
     },
 
     clearData() {
@@ -629,7 +634,6 @@ export default {
       this.$emit('close')
     },
     init(id, type) {
-      console.log(id, type)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
@@ -640,7 +644,6 @@ export default {
         } else {
           this.loading = true
           purPurchaseOrderdetail(this.dataForm.id).then((res) => {
-            console.log(res, '详情')
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({
@@ -664,9 +667,9 @@ export default {
               receivingStatus: res.data.receivingStatus
             }
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
+            this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
           })
           getSaleBusDetail(this.dataForm.id).then((res) => {
-            console.log(res, '业务详情')
             if (res.data) {
               this.firstOneNode = []
               this.approvalForm = res.data.form
@@ -685,10 +688,8 @@ export default {
                 // })
               }
               if (this.type == 'look') {
-                console.log(this.approvalForm, '++++++++++')
                 this.transferQuery.documentId = this.dataForm.id
                 approvalTransferList(this.transferQuery).then((res) => {
-                  console.log(res, '流转记录')
                   this.transferData = res.data.records
                   this.formLoading = false
                 })
@@ -717,13 +718,10 @@ export default {
       this.dataForm.purchaseOrderLines = this.dataFormTwo.data
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
-      console.log(this.dataForm, '参数')
-      console.log(valid_2, '11111111111111111')
 
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
           if (!valid_2) {
-            console.log(1)
             this.btnLoading = false
             for (let i = 0; i < this.dataFormTwo.data.length; i++) {
               const item = this.dataFormTwo.data[i]
@@ -774,13 +772,11 @@ export default {
           return !data.some((element) => element.productsId === item.productsId)
         })
       }
-      console.log(data, '传递数据1111')
+
       this.dataFormTwo.data = [...this.dataFormTwo.data, ...data]
-      console.log(this.dataFormTwo.data, '传递数据')
     },
     // 获取审批流参数递归处理
     addNodeTypeAndNodeName(obj) {
-      console.log(obj)
       if (obj) {
         if (obj.name === '审核人') {
           obj.nodeType = 1
@@ -863,7 +859,6 @@ export default {
       })
     },
     download(data) {
-      console.log(data, '导出')
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
@@ -897,9 +892,8 @@ export default {
     initData() {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
-      console.log(this.scheduleForm, '参数')
+
       orderSchedule(this.scheduleForm).then((res) => {
-        console.log(res, '订单跟踪')
         this.scheduleData = res.data.records
         this.total = res.data.total
         this.formLoading = false

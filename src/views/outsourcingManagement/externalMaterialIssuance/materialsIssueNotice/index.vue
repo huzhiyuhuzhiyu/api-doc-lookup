@@ -248,7 +248,8 @@ export default {
         partnerName: '',
         pageNum: 1,
         pageSize: 20,
-        orderType: 'external',
+        notifyType: 'external',
+        returnDeliveryType:'delivery',
         rdeDate: '',
         rdsDate: '',
         orderItems: [
@@ -496,7 +497,7 @@ export default {
     initData() {
       this.listLoading = true
 
-      shipmentList(this.orderForm)
+      getQuotationdatasendlist(this.orderForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -568,6 +569,7 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(id, btnType) {
+      console.log(id,'ojkjkjk')
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)

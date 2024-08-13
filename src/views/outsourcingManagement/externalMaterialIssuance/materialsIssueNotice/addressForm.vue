@@ -125,7 +125,7 @@ export default {
   },
   methods: {
     changeCountry(e) {
-      console.log(e);
+   
       this.dataForm.country
     },
     // 国家
@@ -143,7 +143,7 @@ export default {
         "pageSize": -1
       }
       getCounryData(obj).then(res => {
-        console.log("国家数据", res);
+     
         // this.countryList = res.data.records
         let a = res.data.records.filter((item) => {
           return item.name !== '中国'
@@ -151,9 +151,9 @@ export default {
         let b = res.data.records.filter((item) => {
           return item.name == '中国'
         })
-        // console.log('国家',abc);
+     
         a.unshift(b[0])
-        // console.log(res);
+      
         this.countryList = a
       })
     },
@@ -166,12 +166,12 @@ export default {
         this.dataForm.city = ""
         this.dataForm.area = ""
       }
-      console.log(this.dataForm.country);
+   
       if (this.dataForm.country != 'CN') {
         this.countryShow = false
       }
       getProvinceList(this.nodeId, this.dataForm).then(res => {
-        console.log("省份数据", res);
+  
         this.provinces = res.data.list
       }).catch(() => {
         this.listLoading = false
@@ -181,7 +181,7 @@ export default {
     },
     // 城市数据
     changeProvince(item, row) {
-      console.log("item", item);
+    
       this.area = []
 
       if (this.type === 'add' || this.type === 'edit') {
@@ -189,20 +189,19 @@ export default {
         this.dataForm.city = ""
       }
       getProvinceList(item.id).then(res => {
-        console.log(res, '市');
+
         this.cities = res.data.list
       })
     },
     // 各区的数据
     changeCity(item, row) {
-      console.log(item, row);
-      console.log("item", item);
+   
       // this.dataForm.city = ""
       if (this.type === 'add' || this.type === 'edit') {
         this.dataForm.area = ""
       }
       getProvinceList(item.id).then(res => {
-        console.log(res, '区');
+      
         this.area = res.data.list
       })
     },
@@ -210,7 +209,7 @@ export default {
     init(id, type, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
-      // console.log(id,type,parentId);
+    
       this.type = type
       this.dataForm.cooperativePartnerId = parentId
       this.organizeIdTree = []

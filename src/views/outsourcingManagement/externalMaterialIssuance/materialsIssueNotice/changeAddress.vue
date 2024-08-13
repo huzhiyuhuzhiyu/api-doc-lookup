@@ -99,7 +99,7 @@ export default {
       this.id = id
       this.cooperativePartnerId = id
       getAddressInfo(id).then(res => {
-        console.log(res,'地址列表');
+     
         // this.listLoading  = true
         this.tableData = res.data
         

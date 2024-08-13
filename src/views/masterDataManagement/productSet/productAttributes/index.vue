@@ -159,13 +159,10 @@ export default {
         pageSize: 20,
         typeCode: '',
         orderItems: [
+      
           {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
+            asc: true,
+            column: 'name'
           }
         ]
       },

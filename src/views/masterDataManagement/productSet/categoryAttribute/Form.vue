@@ -8,10 +8,10 @@
     </template>
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
-        label-width="120px" hide-required-asterisk="fasle">
-        <el-form-item label="类别编码" prop="code" >
+        label-width="120px" :hide-required-asterisk="true">
+        <el-form-item label="类别编码" prop="code">
           <template slot="label">
-            不含税价<span class="required">*</span>
+            类别编码<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
         </el-form-item>
@@ -205,6 +205,7 @@ export default {
   color: #303133;
   margin-left: -12px;
 }
+
 .required {
   color: red;
   margin-left: 4px;

@@ -3,9 +3,7 @@
         <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-
                     <el-col :span="4" v-for="item in searchList" :key="item.prop">
-
                         <el-form-item>
                             <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]"
                                 :placeholder="'请输入' + item.label" clearable />
@@ -18,26 +16,23 @@
                             <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery.paymentDateArr"
                                 type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                                 :start-placeholder="'请选择' + item.label + '开始日期'"
-                                :end-placeholder="'请选择' + item.label + '结束日期'">
-                            </el-date-picker>
+                                :end-placeholder="'请选择' + item.label + '结束日期'"></el-date-picker>
                         </el-form-item>
                     </el-col>
 
                     <el-col :span="6">
                         <el-form-item>
                             <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                                {{ $t('common.search') }}</el-button>
-                            <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
-                                }}
+                                {{ $t('common.search') }}
                             </el-button>
+                            <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset')
+                                }}</el-button>
                         </el-form-item>
                     </el-col>
-                    <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                        @click="visible = true">更多查询</el-button>
                 </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-                <div class="JNPF-common-head">
+                <div class="JNPF-common-head" style="padding: 8px;">
                     <topOpts @add="addOrUpdateHandle('', 'add')" />
                     <div class="JNPF-common-head-right">
                         <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -62,7 +57,7 @@
                             v-bind="{ sortable: item.hasOwnProperty('sortable') ? 'custom' : false }" />
                     </template>
 
-                    <el-table-column label="操作" min-width="100" fixed="right">
+                    <el-table-column label="操作" min-width="140" fixed="right">
                         <template slot-scope="scope">
                             <tableOpts :hasEdit="false"
                                 :delDisabled="scope.row.paymentAmount != scope.row.remainingAmount ? true : false"
@@ -70,7 +65,8 @@
                                 <el-dropdown hide-on-click>
                                     <span class="el-dropdown-link">
                                         <el-button type="text" size="mini">
-                                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                                            {{ $t('common.moreBtn') }}
+                                            <i class="el-icon-arrow-down el-icon--right"></i>
                                         </el-button>
                                     </span>
                                     <el-dropdown-menu slot="dropdown">
@@ -87,44 +83,10 @@
                     @pagination="initData" />
             </div>
         </div>
-        <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-            lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px" append-to-body>
-            <el-row :gutter="20">
-                <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
 
-                    <el-col :span="12" v-for="item in searchListMore" :key="item.prop">
-                        <el-form-item :label="item.label">
-                            <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]"
-                                :placeholder="'请输入' + item.label" clearable />
-
-                            <el-select v-else-if="item.type === 'select'" v-model="listQuery[item.prop]"
-                                :placeholder="'请选择' + item.label" style="width: 100%;">
-                                <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
-                                    :value="item2.value"></el-option>
-                            </el-select>
-
-                            <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery[item.prop]"
-                                type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                                :start-placeholder="'请选择' + item.showLabel + '开始日期'"
-                                :end-placeholder="'请选择' + item.showLabel + '结束日期'">
-                            </el-date-picker>
-
-                            <el-date-picker v-else-if="item.type === 'dateTime'" v-model="listQuery[item.prop]"
-                                type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;"
-                                start-placeholder="请选择创建开始时间" end-placeholder="请选择创建结束时间"
-                                :default-time="['00:00:00', '23:59:59']">
-                            </el-date-picker>
-
-                        </el-form-item>
-                    </el-col>
-                </el-form>
-            </el-row>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-                <el-button type="primary" @click="search()">搜 索</el-button>
-            </span>
-        </el-dialog>
-        <advancePayForm ref="depForm" v-if="formVisible" @close="closeForms" :reconciliationType="reconciliationType" :PartnerMethodArr="PartnerMethodArr" :PartnerTableItems="PartnerTableItems" :PartnerTableSearchList="PartnerTableSearchList" :PartnerListRequestObj="PartnerListRequestObj" />
+        <advancePayForm ref="depForm" v-if="formVisible" @close="closeForms" :reconciliationType="reconciliationType"
+            :PartnerMethodArr="PartnerMethodArr" :PartnerTableItems="PartnerTableItems"
+            :PartnerTableSearchList="PartnerTableSearchList" :PartnerListRequestObj="PartnerListRequestObj" />
     </div>
 </template>
 
@@ -142,13 +104,13 @@ export default {
             type: Array,
             default: () => []
             /* [
-                {prop:'code',label:'编码'},
-                {prop:'name',label:'名称'}
-              ] */
+                      {prop:'code',label:'编码'},
+                      {prop:'name',label:'名称'}
+                    ] */
         },
         PartnerMethodArr: {
             type: Object,
-            default: () => {}
+            default: () => { }
         },
         PartnerTableItems: {
             type: Array,
@@ -162,28 +124,28 @@ export default {
             type: Object | Function,
             required: true
             /* 
-              对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-              函数写法：(rowIndex) => {
-                let id = this.linesList[rowIndex].id
-                return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-              }
-            */
+                    对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                    函数写法：(rowIndex) => {
+                      let id = this.linesList[rowIndex].id
+                      return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                    }
+                  */
         },
         searchList: {
             type: Array,
             default: () => []
             /* [
-                {prop:'code',label:'编码'},
-                {prop:'name',label:'名称'}
-              ] */
+                      {prop:'code',label:'编码'},
+                      {prop:'name',label:'名称'}
+                    ] */
         },
         searchListMore: {
             type: Array,
             default: () => []
             /* [
-                {prop:'code',label:'编码'},
-                {prop:'name',label:'名称'}
-              ] */
+                      {prop:'code',label:'编码'},
+                      {prop:'name',label:'名称'}
+                    ] */
         },
         /* 列表数据请求方法 */
         listMethod: {
@@ -198,14 +160,13 @@ export default {
             type: Object | Function,
             required: true
             /* 
-              对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-              函数写法：(rowIndex) => {
-                let id = this.linesList[rowIndex].id
-                return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
-              }
-            */
-        },
-
+                    对象写法：{ code: "", name: "", orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                    函数写法：(rowIndex) => {
+                      let id = this.linesList[rowIndex].id
+                      return { id, orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }], pageNum: 1, pageSize: 20 }
+                    }
+                  */
+        }
     },
     data() {
         return {
@@ -221,7 +182,7 @@ export default {
             total: 0,
             formVisible: false,
             orderNo: '',
-            totalList: [],
+            totalList: []
         }
     },
 
@@ -242,49 +203,51 @@ export default {
         },
         // 合计处理
         getSummaries(param) {
-            const { columns, data } = param;
-            const sums = [];
+            const { columns, data } = param
+            const sums = []
             columns.forEach((column, index) => {
                 if (index === 0) {
-                    sums[index] = '合计';
-                    return;
+                    sums[index] = '合计'
+                    return
                 }
-                const values = this.totalList.map(item => item[column.property] ? Number(item[column.property]) : '');
-                if (!values.every(value => isNaN(value))) {
+                const values = this.totalList.map((item) => (item[column.property] ? Number(item[column.property]) : ''))
+                if (!values.every((value) => isNaN(value))) {
                     sums[index] = values.reduce((prev, curr) => {
-                        const value = Number(curr);
+                        const value = Number(curr)
                         if (!isNaN(value)) {
-                            return prev + curr;
+                            return prev + curr
                         } else {
-                            return prev;
+                            return prev
                         }
-                    });
+                    })
                     // sums[index] += '';
                 } else {
-                    sums[index] = null;
+                    sums[index] = null
                 }
-            });
-            return sums;
-
+            })
+            return sums
         },
         initData() {
             this.visible = false
             this.listLoading = true
-            Object.keys(this.listQuery).forEach(key => { // 清除搜索条件两端空格
+            Object.keys(this.listQuery).forEach((key) => {
+                // 清除搜索条件两端空格
                 let item = this.listQuery[key]
                 this.listQuery[key] = typeof item === 'string' ? item.trim() : item
             })
             this.totalList = []
             this.jnpf.searchTimeFormat(this.listQuery, 'paymentDateArr', 'paymentStartDate', 'paymentEndDate')
             this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
-            this.listMethod(this.listQuery).then(res => {
-                this.tableData = res.data.page ? res.data.page.records : []
-                res.data.total ? this.totalList.push(res.data.total) : ''
-                this.total = res.data.page ? res.data.page.total : 0
-                this.listLoading = false
-            }).catch(() => {
-                this.listLoading = false
-            })
+            this.listMethod(this.listQuery)
+                .then((res) => {
+                    this.tableData = res.data.page ? res.data.page.records : []
+                    res.data.total ? this.totalList.push(res.data.total) : ''
+                    this.total = res.data.page ? res.data.page.total : 0
+                    this.listLoading = false
+                })
+                .catch(() => {
+                    this.listLoading = false
+                })
         },
 
         search() {
@@ -302,30 +265,32 @@ export default {
             })
         },
         sortChange({ prop, order }) {
-            let newProp 
-            if (['partnerName', 'partnerCode'].includes(prop)) { newProp = prop }
-            else{
-                newProp =  prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+            let newProp
+            if (['partnerName', 'partnerCode'].includes(prop)) {
+                newProp = prop
+            } else {
+                newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
             }
-            this.listQuery.orderItems[0].asc = order === "ascending"
-            this.listQuery.orderItems[0].column = order === null ? "" : newProp
+            this.listQuery.orderItems[0].asc = order === 'ascending'
+            this.listQuery.orderItems[0].column = order === null ? '' : newProp
             this.initData()
         },
         handleDel(id) {
             this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
                 type: 'warning'
-            }).then(() => {
-                this.delMethod(id).then(res => {
-                    this.initData()
-                    this.$message({
-                        type: 'success',
-                        message: "删除成功",
-                        duration: 1500,
+            })
+                .then(() => {
+                    this.delMethod(id).then((res) => {
+                        this.initData()
+                        this.$message({
+                            type: 'success',
+                            message: '删除成功',
+                            duration: 1500
+                        })
                     })
                 })
-            }).catch(() => { })
-        },
-
+                .catch(() => { })
+        }
     }
 }
 </script>

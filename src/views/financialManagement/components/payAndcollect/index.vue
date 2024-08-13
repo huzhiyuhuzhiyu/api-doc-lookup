@@ -30,8 +30,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-            @click="visible = true">更多查询</el-button>
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -80,35 +79,7 @@
           @pagination="initData" />
       </div>
     </div>
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px" append-to-body>
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
 
-          <el-col :span="12" v-for="item in searchListMore" :key="item.prop">
-            <el-form-item :label="item.label">
-              <el-input v-if="item.type === 'input'" v-model="listQuery[item.prop]" :placeholder="'请输入' + item.label"
-                clearable />
-
-              <el-select v-else-if="item.type === 'select'" v-model="listQuery[item.prop]"
-                :placeholder="'请选择' + item.label" style="width: 100%;">
-                <el-option v-for="item2 in item.options" :key="item2.value" :label="item2.label"
-                  :value="item2.value"></el-option>
-              </el-select>
-
-              <el-date-picker v-else-if="item.type === 'date'" v-model="listQuery.reconciliationDateArr" type="daterange"
-                value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="对账开始日期" end-placeholder="对账结束日期">
-              </el-date-picker>
-
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">搜 索</el-button>
-      </span>
-    </el-dialog>
     <makeForm :reconciliationType="reconciliationType" v-if="makeVisibled" ref="makeForm" @close="closeForms" />
     <collectionForm :reconciliationType="reconciliationType" v-if="collectionVisibled" ref="collectionForm"
       @close="closeForms" />

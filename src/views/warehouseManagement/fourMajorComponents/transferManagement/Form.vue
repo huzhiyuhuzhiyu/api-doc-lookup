@@ -523,6 +523,7 @@ export default {
       if (id) {
         this.title = btnType == 'look' ? '查看调拨单' : '编辑调拨单'
         // 获取详情
+        this.fetchData("DBDH",false)
         detailTransferData(id).then(res => {
           console.log("详情",res);
           this.formLoading = false
@@ -551,17 +552,19 @@ export default {
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.pickingDate = formattedDate;
         this.title = '新建调拨单'
-        this.formLoading = false
-        this.fetchData("DBDH")
+        this.formLoading = false 
+        this.fetchData("DBDH",true)
 
 
       }
     },
-    async fetchData(code) {
+    async fetchData(code,flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        if(flag){
+          this.dataForm.orderNo = data.number
+        }
 
       } catch (error) {
       }

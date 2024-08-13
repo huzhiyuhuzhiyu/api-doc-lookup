@@ -1128,7 +1128,7 @@ export default {
       list5: [],
       list6: [],
       list7: [],
-      list8:[],
+      list8: [],
       taxRateList: [],
       // productFormVisible: false
     }
@@ -2465,12 +2465,13 @@ export default {
 
 
 
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
-
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
       } catch (error) {
       }
     },
@@ -2664,9 +2665,11 @@ export default {
           this.getWorkOrderNoFun()
 
         }, 500);
-        this.fetchData("SHDD")
+        this.fetchData("SHDD", true)
       }
-
+      if (this.btnType == 'edit') {
+        this.fetchData("SHDD", false)
+      }
       if (btnType == 'add') {
         // 获取当前日期
         const currentDate = new Date();

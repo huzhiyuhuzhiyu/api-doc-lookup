@@ -967,13 +967,26 @@ export default {
         this.dataForm.businessType == 'inbound_return_materials' ||
         this.dataForm.businessType == 'inbound_external_return' ||
         this.dataForm.businessType == 'inbound_external') {
-        this.jyFlag = true
-        this.fetchData("RKDH")
+        this.jyFlag = true 
+        if(this.btnType=='edit'){
+        this.fetchData("RKDH",false) 
+
+        }
+        if(this.btnType=='add'){
+        this.fetchData("RKDH",true) 
+
+        }
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
-        this.jyFlag = false
-        this.fetchData("CKDH")
+        this.jyFlag = false 
+        if(this.btnType=='edit'){
+        this.fetchData("CKDH",false) 
 
+        }
+        if(this.btnType=='add'){
+        this.fetchData("CKDH",true) 
+
+        }
       }
       if (this.dataForm.businessType == "outbound_sale_send" || this.dataForm.businessType == "inbound_sale_return") {
         this.selectcustomerObj.type = 'customer'
@@ -1067,11 +1080,13 @@ export default {
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
     },
-    async fetchData(code) {
+    async fetchData(code,flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        if(flag){
+          this.dataForm.orderNo = data.number
+        }
 
       } catch (error) {
       }

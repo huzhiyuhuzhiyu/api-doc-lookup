@@ -48,7 +48,7 @@
               </el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
-                取消发货
+                取消发料
               </el-button>
               <el-button type="primary" size="mini" icon="el-icon-download"
                 @click="exportForm('dataTable')">导出</el-button>
@@ -69,7 +69,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            @selection-change="handleSelectionChange" hasC>
+            @selection-change="handleSelectionChange" hasC :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
@@ -77,34 +77,17 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-            <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="deliveryQuantity" label="发货数量" width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="deliveryQuantity" label="发料数量" width="160" sortable="custom" />
             <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
-            <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
-              <template slot-scope="scope">
-                <div v-if="scope.row.exchangeGoodsFlag">
-                  换货发货
-                </div>
-                <div v-else>
-                  正常发货
-                </div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="deliveryStatus" label="发货状态" width="120" sortable="custom" align="center">
+
+            <el-table-column prop="deliveryStatus" label="发料状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
                   <el-tag type="primary">未完成</el-tag>
@@ -158,8 +141,8 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-<!-- 高级查询 -->
-<SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -167,7 +150,7 @@
 
 <script>
 import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
-import { UserListAll, } from '@/api/permission/user' 
+import { UserListAll, } from '@/api/permission/user'
 import Form from '../materialsIssueNotice/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -176,6 +159,7 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      columnList: ["recipient", "phone", "createByName"],
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -201,8 +185,8 @@ export default {
       salespersonList: [],
       detailFlag: false,
       exchangeList: [
-        { label: "正常发货", value: false },
-        { label: "换货发货", value: true }
+        { label: "正常发料", value: false },
+        { label: "换货发料", value: true }
       ],
       shipmentsStateList: [
         { label: "未完成", value: "undelivered" },
@@ -296,7 +280,7 @@ export default {
         },
         {
           prop: 'deliverDate',
-          label: '发货日期',
+          label: '发料日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
@@ -335,7 +319,7 @@ export default {
         },
         {
           prop: 'deliveryQuantity',
-          label: "发货数量",
+          label: "发料数量",
           type: 'input'
         },
         {
@@ -386,17 +370,17 @@ export default {
           type: 'input',
         }, {
           prop: 'exchangeGoodsFlag',
-          label: "发货标识",
+          label: "发料标识",
           type: 'select',
-          options: [{ label: "换货发货", value: true }, { label: "正常发货", value: false },]
+          options: [{ label: "换货发料", value: true }, { label: "正常发料", value: false },]
         },
         {
           prop: 'deliveryStatus',
-          label: "发货状态",
+          label: "发料状态",
           type: 'select',
           options: [{ label: "未完成", value: "not_finished" }, { label: "已完成", value: "finished" }, { label: "已取消", value: "canceled" }]
         },
-       
+
         {
           prop: 'documentStatus',
           label: "单据状态",
@@ -426,7 +410,7 @@ export default {
       this.search()
     }
   },
-  mounted () {
+  mounted() {
     this.getProductClassFun()
   },
   methods: {
@@ -676,9 +660,9 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    //明细列表取消发货
+    //明细列表取消发料
     Cancelshipmentline(id) {
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
+      this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
         Cancelshipmentlinelist(id).then(res => {
@@ -696,15 +680,15 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-    //批量取消发货
+    //批量取消发料
     Cancelshipment() {
       if (!this.selectArr.length) return this.$message.error("请先选择数据")
       let hasItemList = []
       this.selectArr.map(i => {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
-      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
+      if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发料`)
+      this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
         let a = this.selectArr.map(item => {
@@ -901,7 +885,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发货通知单明细',
+        exportName: this.exportTableRef === '发料通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

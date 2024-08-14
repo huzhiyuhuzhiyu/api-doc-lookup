@@ -38,7 +38,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addWarehouse('','','add')" />
+          <topOpts @add="addWarehouse('', '', 'add')" />
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
@@ -56,8 +56,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :fixedNO="true"
-          custom-column :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
+          :fixedNO="true" custom-column :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }">
           <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
@@ -86,8 +87,11 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
 
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId,'edit')"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
+                <el-button type="text" size="mini" @click="onHandle(scope.row, 'edit')">
+                  开启
+                </el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -114,7 +118,7 @@
 </template>
 
 <script>
-import { getWarehouseList, deleteWarehouse,BuildQRCode } from '@/api/basicData/index'
+import { getWarehouseList, deleteWarehouse, BuildQRCode } from '@/api/basicData/index'
 
 import Form from './Form'
 export default {
@@ -126,7 +130,7 @@ export default {
         keyword: '',
         type: ""
       },
-      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" },{ label: "不良品仓库", value: "unqualified" },{ label: "报废", value: "scrap" },{ label: "虚拟仓库", value: "virtually" }],
+      typeList: [{ label: "正常仓库", value: "normal" }, { label: "中转仓库", value: "temp" }, { label: "不良品仓库", value: "unqualified" }, { label: "报废", value: "scrap" }, { label: "虚拟仓库", value: "virtually" }],
       treeList: [],
       expands: true,
       refreshTable: true,
@@ -134,12 +138,12 @@ export default {
       listLoading: true,
       formVisible: false,
       depFormVisible: false,
- 
+
       form: {
         code: "",
         name: "",
         type: "",
-        category:"warehouse",
+        category: "warehouse",
         orderItems: [{
           asc: false,
           column: "create_time"
@@ -152,18 +156,18 @@ export default {
     // this.buildQRCode()
   },
   methods: {
-    buildQRCode(){
-      BuildQRCode().then(res=>{
-        console.log(res,'res')
+    buildQRCode() {
+      BuildQRCode().then(res => {
+        console.log(res, 'res')
       })
     },
-    columnSetFun(){ 
+    columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
     initData() {
       this.loading = true
       getWarehouseList(this.form).then(res => {
-   
+
         this.treeList = res.data
         if (this.treeList.length > 0) this.setTableIndex(this.treeList);
         this.listLoading = false
@@ -179,7 +183,7 @@ export default {
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-    
+
       arr.forEach((item, key) => {
         item.index = key + 1;
         item.image = require('../../../../assets/images/zgt.png')
@@ -195,11 +199,11 @@ export default {
       this.listQuery.keyword = ''
       this.form.name = ""
       this.form.code = ""
-      this.form.type=""
+      this.form.type = ""
       this.initData()
     },
     addOrUpdateHandle(id, parentId, type) {
-    
+
       this.formVisible = true
       if (id) {
         // setTimeout(() => {

@@ -443,3 +443,21 @@ export function delClassAttribute(id) {
       method: 'delete',
   })
 }
+
+// 修改产品类别状态
+export const enableClassAttributeState = (data) => {
+  return request({
+    url: `/api/zgt/product/classAttribute/update/state/enable`,
+    method: 'put',
+    data: data
+  })
+}
+
+// 修改产品类别状态
+export const disabledClassAttributeState = (data) => {
+  return request({
+    url: `/api/zgt/product/classAttribute/update/state/disabled`,
+    method: 'put',
+    data: data
+  })
+}

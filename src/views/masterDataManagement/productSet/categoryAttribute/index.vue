@@ -59,6 +59,12 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+                <el-button type="text" size="mini" @click="onHandle(scope.row, 'edit')">
+                  开启
+                </el-button>
+                <el-button type="text" size="mini" @click="offHandle(scope.row.id, 'edit')">
+                  警用
+                </el-button>
                 <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
                 复制
               </el-button> -->
@@ -71,6 +77,7 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <WarehouseForm v-if="warehouseFormVisible" ref="warehouseForm" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -83,15 +90,17 @@ import {
   updataBimProductAttributes,
   delClassAttribute,
   addBimProductAttributes,
-  getclassAttributeList
+  getclassAttributeList,
+  disabledClassAttributeState
 } from '@/api/masterDataManagement/index'
 import Form from './Form'
+import WarehouseForm from './WarehouseForm.vue'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierProfile',
-  components: { Form, SuperQuery },
+  components: { Form, SuperQuery, WarehouseForm },
   data() {
     return {
       superQueryVisible: false,
@@ -99,6 +108,7 @@ export default {
       background: true, //分页器背景颜色
       activeName: 'supplierPage',
       visible: false,
+      warehouseFormVisible: true,
       treeData: [],
       leftFlag: false,
       tableData: [],
@@ -304,6 +314,34 @@ export default {
         })
         // }, 600);
       }
+    },
+    onHandle(row, btn) {
+      console.log(123)
+      this.warehouseFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.warehouseForm.init(row, btn)
+      })
+    },
+    offHandle(id, btn) {
+      console.log(123)
+      let obj = {
+        id: id,
+        state: 'disabled'
+      }
+      this.$confirm(('是否确定禁用'), {
+        type: 'warning'
+      })
+        .then(() => {
+          disabledClassAttributeState(obj).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
+          })
+        })
+        .catch(() => { })
     },
     copyHandle(id) {
       this.formVisible = true

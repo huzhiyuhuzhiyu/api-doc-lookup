@@ -59,11 +59,12 @@
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <el-button type="text" size="mini" @click="onHandle(scope.row, 'edit')">
+                <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
+                  @click="onHandle(scope.row, 'edit')">
                   开启
                 </el-button>
-                <el-button type="text" size="mini" @click="offHandle(scope.row.id, 'edit')">
-                  警用
+                <el-button v-else type="text" size="mini" @click="offHandle(scope.row.id)">
+                  禁用
                 </el-button>
                 <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
                 复制
@@ -336,9 +337,10 @@ export default {
             this.initData()
             this.$message({
               type: 'success',
-              message: '删除成功',
+              message: '禁用成功',
               duration: 1500
             })
+            location.reload();
           })
         })
         .catch(() => { })

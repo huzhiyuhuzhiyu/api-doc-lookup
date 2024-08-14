@@ -5,14 +5,14 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="btnType == 'add'
-              ? '新建发料通知单'
-              : btnType == 'edit'
-                ? '编辑发料通知单'
-                : btnType == 'qrsh'
-                  ? '确认收货'
-                  : btnType == 'copy'
-                    ? '新建发料通知单'
-                    : '查看发料通知单'
+            ? '新建发料通知单'
+            : btnType == 'edit'
+              ? '编辑发料通知单'
+              : btnType == 'qrsh'
+                ? '确认收货'
+                : btnType == 'copy'
+                  ? '新建发料通知单'
+                  : '查看发料通知单'
             " />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -34,14 +34,14 @@
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" :disabled="btnType == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             " />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <!-- <el-col :sm="8" :xs="24">
                         <el-form-item label="换货标识" prop="exchangeGoodsFlag">
                           <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
                             :disabled="btnType == 'look' || Flagtype" @change="changeclick">
@@ -49,17 +49,17 @@
                               :value="item.value"></el-option>
                           </el-select>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
 
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="客户名称" prop="partnerName">
+                        <el-form-item label="供应商名称" prop="partnerName">
                           <!-- 供应商选择弹窗  -->
                           <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                             v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择客户名称'" title="选择客户"
-                            treeTitle="客户分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                            :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
-                            :searchList="PartnerTableSearchList" />
+                            @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'"
+                            title="选择供应商" treeTitle="供应商分类" :methodArr="PartnerMethodArr"
+                            :listMethod="getCooperativeData" :listRequestObj="PartnerListRequestObj"
+                            :paramsObj="{ oldData }" :searchList="PartnerTableSearchList" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -180,9 +180,10 @@
                       <!-- <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
                         key="166"></el-table-column> -->
 
-                      <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3"
+                      <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
-
+                      <el-table-column prop="processName" label="工序名称" width="290" key="5"
+                        show-overflow-tooltip></el-table-column>
                       <el-table-column prop="mainUnit" label="单位" width="290" key="13"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="demandQuantity" label="订单发料数量" width="120" key="4"
@@ -211,7 +212,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="orderNo" label="订单号" width="290" key="16"
+                      <el-table-column prop="ordersNo" label="订单号" width="290" key="16"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                         <template slot-scope="scope">
@@ -254,9 +255,9 @@
       </div>
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
-    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-      :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple />
+    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
+      :methodArr="ProductMethodArr" :listMethod="shipmentReport" :listRequestObj="ProductListRequestObj"
+      :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
 
@@ -281,10 +282,11 @@ import {
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
 import changeAddress from './changeAddress.vue'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
+import DkcComSelectPage from "./components/ComSelect-page/index.vue";
 export default {
   components: {
-    changeAddress
+    changeAddress, DkcComSelectPage
   },
   data() {
     return {
@@ -317,25 +319,25 @@ export default {
       },
       oldData: [],
 
-      detailpurchaseOrderList, // 产品选择弹出框树状列表请求api
+      shipmentReport, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
         { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
         // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
-        classAttribute: '',
-        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
-        productCategoryId: '',
-        cooperativePartnerId: '',
-        code: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          }
-        ],
-        productStatus: 'enable',
+        // classAttribute: '',
+        // classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
+        // productCategoryId: '',
+        // cooperativePartnerId: '',
+        // code: '',
+        // name: '',
+        // orderItems: [
+        //   {
+        //     asc: false,
+        //     column: ''
+        //   }
+        // ],
+        // productStatus: 'enable',
         orderType: 'external',
         pageNum: 1,
         pageSize: 20
@@ -628,6 +630,9 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    listDataFormatting(res) {
+      return res.data.page.records
+    },
     // 弹窗节点的点击
     treeNodeClick(data, node, listQuery) {
       if (listQuery.partnerCategoryId === data.id) return listQuery
@@ -669,20 +674,33 @@ export default {
           getCooperativeInfo(id).then((res) => {
             console.log(res, 'res')
             this.customerData = res.data.cooperativePartner
-            this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
-            this.dataForm.phone = res.data.deliveryAddressList[0].phone
-            this.dataForm.country = res.data.deliveryAddressList[0].country
-            if (this.dataForm.country === 'CN') {
-              this.defaultAddress =
-                res.data.deliveryAddressList[0].countryText +
-                res.data.deliveryAddressList[0].provinceText +
-                res.data.deliveryAddressList[0].cityText +
-                res.data.deliveryAddressList[0].areaText +
-                res.data.deliveryAddressList[0].address
+            if (res.data.deliveryAddressList.length !== 0) {
+              this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
+              this.dataForm.phone = res.data.deliveryAddressList[0].phone
+              this.dataForm.country = res.data.deliveryAddressList[0].country
+              this.dataForm.province = res.data.deliveryAddressList[0].province
+              this.dataForm.city = res.data.deliveryAddressList[0].city
+              this.dataForm.area = res.data.deliveryAddressList[0].area
+              this.dataForm.address = res.data.deliveryAddressList[0].address
+
+              if (this.dataForm.country === 'CN') {
+                this.defaultAddress =
+                  res.data.deliveryAddressList[0].countryText +
+                  res.data.deliveryAddressList[0].provinceText +
+                  res.data.deliveryAddressList[0].cityText +
+                  res.data.deliveryAddressList[0].areaText +
+                  res.data.deliveryAddressList[0].address
+              } else {
+                this.defaultAddress =
+                  res.data.deliveryAddressList[0].countryText + res.data.deliveryAddressList[0].address
+              }
             } else {
-              this.defaultAddress =
-                res.data.deliveryAddressList[0].countryText + res.data.deliveryAddressList[0].address
+              this.dataForm.recipient = ''
+              this.dataForm.phone = ''
+              this.dataForm.country = ''
             }
+
+
           })
         }
       })
@@ -718,24 +736,26 @@ export default {
 
     // 产品组件回调
     addth(id, data) {
+      console.log(data, 'ooo')
       if (data.length) {
         let selectArr = []
+
         let list = data.map((item) => item.all)
         list.forEach((item, index) => {
-          console.log(item, 'iye')
           selectArr.push({
             productSource: item.productSource, // 产品来源 采购
             classAttribute: item.classAttribute,
-            productsId: item.id, // 产品id
+            purchaseOrderId: item.purchaseOrderId,
+            productsId: item.productsId, // 产品id
             productName: item.name, // 产品名称
             productCode: item.code, // 产品编码
-            productDrawingNo: item.drawingNo, // 品名规格
+            drawingNo: item.drawingNo, // 品名规格
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
-            demandQuantity: item.purchaseQuantity, // 数量
-            waitDeliverNum: item.requiredReceivedQuantity,
-            deliveryQuantity: item.requiredReceivedQuantity,
+            demandQuantity: item.demandQuantity, // 数量
+            waitDeliverNum: item.waitDeliverNum,
+            deliveryQuantity: item.waitDeliverNum,
             price: item.price, // 含税单价
             totalAmount: item.totalAmount, // 金额(含税)
             taxRate: item.taxRate, // 税率
@@ -747,9 +767,11 @@ export default {
             planQuantity2: '', //计划数量副
             remark: item.remark,
             orderNo: item.orderNo,
+            id: item.id,
             deliveryDate: '' // 交期
           })
         })
+
         if (this.dataFormTwo.data.length) {
           const deletedArray = []
           selectArr = selectArr.filter((item1) => {
@@ -879,7 +901,7 @@ export default {
       this.productVisible = false
       this.selectArr.forEach((item) => {
         item.ordersNum = item.num
-        item.productDrawingNo = item.drawingNo
+        item.drawingNo = item.drawingNo
         item.ordersLineId = item.id
         this.dataFormTwo.data.push(item)
       })
@@ -944,7 +966,7 @@ export default {
         this.dataFormTwo.data.splice(data.$index, 1)
       }
       if (this.dataFormTwo.data.length == 0) {
-        this.deletedata()
+        // this.deletedata()
       }
     },
 
@@ -1018,17 +1040,17 @@ export default {
     closeproductVisible() { },
     //清空数据
     deletedata() {
-      ; (this.dataForm.ordersId = ''),
-        (this.dataForm.recipient = ''),
-        (this.dataForm.phone = ''),
-        (this.dataForm.partnerName = ''),
-        (this.dataForm.code = ''),
-        (this.dataForm.country = ''),
-        (this.dataForm.province = ''),
-        (this.dataForm.city = ''),
-        (this.dataForm.area = ''),
-        // this.dataForm.shipperId = '',
-        (this.dataForm.remark = '')
+      this.dataForm.ordersId = ''
+      this.dataForm.recipient = ''
+      this.dataForm.phone = ''
+      this.dataForm.partnerName = ''
+      this.dataForm.code = ''
+      this.dataForm.country = ''
+      this.dataForm.province = ''
+      this.dataForm.city = ''
+      this.dataForm.area = ''
+      // this.dataForm.shipperId = ''
+      this.dataForm.remark = ''
     },
 
     //明细列表id相同合并
@@ -1114,7 +1136,6 @@ export default {
     init(id, btnType, data) {
       this.formLoading = true
       // this.getProvinceList()
-      console.log(JSON.stringify(id), 'JSON.stringify(id)')
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.oldId = JSON.parse(JSON.stringify(id)) || ''
@@ -1155,9 +1176,15 @@ export default {
               item.deliveryQuantity = ''
             })
             this.dataFormTwo.data = res.data.noticeLineList
+
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
+            this.dataFormTwo.data.forEach(item => {
+              item.drawingNo = item.productDrawingNo
+              item.demandQuantity = item.ordersNum
+            })
+            console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
           }
         })
       }
@@ -1306,6 +1333,7 @@ export default {
               id: item.id ? item.id : '',
               classAttribute: item.classAttribute,
               productsId: item.productsId,
+
               // outboundQuantity: item.outboundQuantity ? item.outboundQuantity : '',
               ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
               pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
@@ -1321,7 +1349,7 @@ export default {
                 deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 deputyUnit: item.deputyUnit ? item.deputyUnit : '',
                 mainUnit: item.mainUnit ? item.mainUnit : '',
-                ordersId: item.ordersId,
+                ordersId: item.ordersId ? item.ordersId : item.purchaseOrderId,
                 notifyType: 'external',
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
@@ -1359,13 +1387,14 @@ export default {
                 deliveryQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 deputyUnit: item.deputyUnit ? item.deputyUnit : '',
                 mainUnit: item.mainUnit ? item.mainUnit : '',
-                ordersId: item.ordersId,
+                ordersId: item.ordersId ? item.ordersId : item.purchaseOrderId,
                 notifyType: 'external',
                 inspectionResults: 'qualified',
                 qualifiedQuantity: item.deliveryQuantity ? item.deliveryQuantity : '',
                 id: '',
                 classAttribute: item.classAttribute,
                 productsId: item.productsId,
+
                 ordersLineId: item.ordersLineId ? item.ordersLineId : item.id,
                 pickingQuantity: item.pickingQuantity ? item.pickingQuantity : '',
                 ratio: item.ratio ? item.ratio : '',

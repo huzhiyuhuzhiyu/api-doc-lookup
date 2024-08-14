@@ -174,6 +174,9 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype=='look'" :detailed="btntype=='look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <ComSelect-page ref="ComSelect-page" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :renderTree="false" :elementShow="false" :multiple="true" />
@@ -190,6 +193,8 @@ import { getPartnerList, getMyContactsList } from '@/api/customerManagement/inde
 export default {
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '1',
       codeConfig: {},//单据规则配置
       _index: '',
       taxRateList: [],
@@ -358,8 +363,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.invoiceNo = data.number
-
+        if (this.btntype === 'add') this.dataForm.invoiceNo = data.number
       } catch (error) {
       }
     },
@@ -475,13 +479,26 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
-      if (this.btntype === 'add') this.fetchData('FPBH')
+      if (this.btntype === 'add'||this.btntype === 'edit') this.fetchData('FPBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           detailcrmInvoice(this.dataForm.id).then(res => {
             this.dataForm = { ...res.data.invoice, ...res.data.invoiceInfo }
             this.dataFormTwo.lines = res.data.lines
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             this.dataForm.provincecityarea = []
             if (res.data.invoice.province) {
               this.dataForm.provincecityarea.push(res.data.invoice.province)
@@ -530,9 +547,20 @@ export default {
       }
       if (submitFlag) {
         this.btnLoading = true;
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'customer',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         let obj = {
           invoice: this.dataForm,
-          lines: this.dataFormTwo.lines
+          lines: this.dataFormTwo.lines,
+          attachmentList: this.datafilelist
         }
         // addcrmInvoiceInfo(obj1).then(res => { })
         let formMethod = this.dataForm.id ? updatecrmInvoice(obj) : addcrmInvoice(obj);

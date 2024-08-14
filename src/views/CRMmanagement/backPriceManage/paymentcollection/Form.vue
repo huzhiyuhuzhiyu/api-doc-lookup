@@ -106,6 +106,9 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype=='look'" :detailed="btntype=='look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
       <ComSelect-page ref="ComSelect-page" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :renderTree="false" :elementShow="false" :multiple="true" />
@@ -122,6 +125,8 @@ import { getcrmReceivablesPlanlist, updatecrmReceivables, detailcrmReceivables, 
 export default {
   data() {
     return {
+      isattachmentswitch: '1',
+      datafilelist:[],
       codeConfig: {},//单据规则配置
       _index: '',
       taxRateList: [],
@@ -198,7 +203,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        contractId:'',
+        contractId: '',
         receivablesNo: '',
         id: '',
         ownerUserId: '',
@@ -262,8 +267,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.receivablesNo = data.number
-
+        if (this.btntype === 'add') { this.dataForm.receivablesNo = data.number }
       } catch (error) {
       }
     },
@@ -318,7 +322,7 @@ export default {
       if (data && data.length) {
         data.forEach(item => {
           let a = {
-            contractId:item.all.id,
+            contractId: item.all.id,
             contractNo: item.all.no,
             contractName: item.all.contractName,
             contractMoney: item.all.money,
@@ -384,13 +388,26 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
-      if (this.btntype === 'add') this.fetchData('HKBH')
+      if (this.btntype === 'add' || this.btntype === 'edit') this.fetchData('HKBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           detailcrmReceivables(this.dataForm.id).then(res => {
             this.dataForm = res.data.receivables
             this.dataFormTwo.lines = res.data.lines
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             this.formLoading = false
           })
         } else {
@@ -431,16 +448,27 @@ export default {
         this.$message.error('请选择合同')
         return
       }
-      if (this.dataFormTwo.lines.length>1) {
+      if (this.dataFormTwo.lines.length > 1) {
         this.$message.error('当前只能选择一份合同')
         return
       }
       if (submitFlag) {
         this.btnLoading = true;
+        if (this.datafilelist.length) {
+          this.datafilelist.map((item, index) => {
+            item.bimAttachments = {
+              businessType: 'customer',
+              documentId: item.id,
+              fileFlag: '',
+              sort: index
+            }
+          })
+        }
         this.dataForm.contractId = this.dataFormTwo.lines[0].contractId
         let obj = {
           receivables: this.dataForm,
-          lines: this.dataFormTwo.lines
+          lines: this.dataFormTwo.lines,
+          attachmentList: this.datafilelist
         }
         let formMethod = this.dataForm.id ? updatecrmReceivables(obj) : addcrmReceivables(obj);
         formMethod.then(res => {

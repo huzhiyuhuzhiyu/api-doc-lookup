@@ -4,7 +4,7 @@
       <div class="vux-flexbox filtrate-content filtrate-bar vux-flex-row" style="justify-content: flex-start;">
         <div class="vux-flexbox title-box vux-flex-row" style="justify-content: flex-start;">
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
-          <div class="text-one-line">客户总量分析</div>
+          <div class="text-one-line">公海客户分析</div>
         </div>
         <div class="xr-radio-menu-wrap" style="width: 250px;">
           <selectdate @change="datechange"></selectdate>
@@ -25,13 +25,10 @@
           </div>
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-              <el-table-column prop="realName" label="员工姓名" width="120" />
-              <el-table-column prop="customerSumNum" label="当前客户数" min-width="120" />
-              <el-table-column prop="customerNum" label="新增客户数" min-width="120" />
-              <el-table-column prop="dealCustomerNum" label="成交客户数" min-width="120" />
-              <el-table-column prop="dealCustomerRate" label="客户成交率(%)" min-width="120" />
-              <el-table-column prop="contractMoney" label="合同总金额(元)" min-width="120" />
-              <el-table-column prop="receivablesMoney" label="回款金额(元)" min-width="120" />
+              <el-table-column prop="realName" label="姓名" min-width="120" />
+              <el-table-column prop="deptName" label="部门" min-width="120" />
+              <el-table-column prop="receiveNum" label="公海池领取客户数" min-width="160" />
+              <el-table-column prop="putInNum" label="进入公海客户数" min-width="160" />
             </JNPF-table>
           </div>
         </div>
@@ -42,7 +39,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getcustomerRecordStats, getcustomerRecordInfo } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -62,7 +59,7 @@ export default {
       },
       tableList: [],
       chartInstance: null,
-      option: {}
+      option: {},
     }
   },
   computed: {
@@ -108,9 +105,9 @@ export default {
       this.dataForm.userIds = data
     },
     initData() {
-      this.chartLoading = true
+      this.chartLoading = false
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getcustomerRecordStats(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'axis',
@@ -127,7 +124,7 @@ export default {
           },
           color: ['#42526e', '#0052cc'],
           legend: {
-            data: ['成交客户数', '新增客户数'],
+            data: ['进入公海客户数', '公海池领取客户数'],
             bottom: 10
           },
           xAxis: [
@@ -148,33 +145,50 @@ export default {
               axisLine: {
                 show: false
               },
-              name: '个',
-              type: 'value'
+              name: '进入公海客户数',
+              type: 'value',
+              axisLabel: {
+                formatter: '{value} 个'
+              }
+            },
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              name: '公海池领取客户数',
+              axisLabel: {
+                formatter: '{value} 次'
+              }
             }
           ],
           series: [
             {
               barWidth: '20%',
-              name: '成交客户数',
+              name: '进入公海客户数',
               type: 'bar',
-              data: res1.data.map(item => item.dealCustomerNum)
+              data: res1.data.map(item => item.putInNum)
             },
             {
               barWidth: '20%',
-              name: '新增客户数',
+              name: '公海池领取客户数',
               type: 'bar',
-              data: res1.data.map(item => item.customerNum)
+              yAxisIndex: 1,
+              data: res1.data.map(item => item.receiveNum)
             }
           ]
         }
         this.chartLoading = false
-      }).catch(() => {
+      }).catch((error) => {
         this.chartLoading = false
       })
-      gettotalCustomerTable(this.dataForm).then(res2 => {
+      getcustomerRecordInfo(this.dataForm).then(res2 => {
         this.tableList = res2.data
         this.listLoading = false
-      }).catch(() => {
+      }).catch((error) => {
         this.listLoading = false
       })
     },

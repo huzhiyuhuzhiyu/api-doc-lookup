@@ -698,8 +698,9 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.code = data.number
-
+        if (this.btnType === 'add') {
+          this.dataForm.code = data.number
+        }
       } catch (error) {
       }
     },
@@ -1118,7 +1119,7 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
-      if(this.btnType === 'add') this.fetchData('ZGTKHBM')
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('ZGTKHBM')
       // getBimBusinessInfo('460918012862529542').then(res=>{
       //   console.log("编码配置");
       //   this.businessType = res.data.configValue1

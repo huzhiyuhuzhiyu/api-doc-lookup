@@ -635,8 +635,9 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.code = data.number
-
+        if (this.btnType == 'add') {
+          this.dataForm.code = data.number
+        }
       } catch (error) {
       }
     },
@@ -1057,7 +1058,7 @@ export default {
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
       this.btnType = btnType
-      if(this.btnType === 'add') this.fetchData('ZGTKHBM')
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('ZGTKHBM')
       // getBimBusinessInfo('bm_khbm').then(res=>{
       //   this.businessType = res.data.configValue1
       // })

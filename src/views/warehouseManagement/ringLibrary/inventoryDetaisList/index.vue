@@ -36,10 +36,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier()">
+          <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
-          </topOpts>
+          </div>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -783,7 +783,7 @@ export default {
           }
           arr.push(obj)
         })
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
         if (oilObj) {
           // 将options赋值为5  
           oilObj.options = arr;

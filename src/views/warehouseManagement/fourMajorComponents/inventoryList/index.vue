@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.sourceType" placeholder="业务类型" style="width: 100%;">
+              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;">
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -75,7 +75,9 @@
               <div v-if="scope.row.businessType == 'inbound_external_return'">外协退料</div>
               <div v-if="scope.row.businessType == 'inbound_external'">外协收货</div>
               <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
-            </template>
+              <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
+              <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
+            </template> 
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
             
@@ -164,11 +166,13 @@ export default {
         { label: "外协发料", value: "outbound_external_send" },
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
+        { label: "直接入库", value: "inbound_other" },
+        { label: "直接出库", value: "outbound_other" },
       ],
       superQueryVisible: false,
 
       initListQuery: {
-        sourceType: "",
+        businessType: "",
         orderNo: "",
         pageNum: 1,
         partnerName: "",
@@ -194,7 +198,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'sourceType',
+          prop: 'businessType',
           label: "业务类型",
           type: 'select',
           options: [
@@ -208,6 +212,8 @@ export default {
             { label: "外协退料", value: "inbound_external" },
             { label: "外协收货", value: "inbound_outsourcing" },
             { label: "外协退货", value: "outbound_external" },
+            { label: "直接出库", value: "outbound_other" },
+            { label: "直接入库", value: "inbound_other" },
           ],
         },
         {

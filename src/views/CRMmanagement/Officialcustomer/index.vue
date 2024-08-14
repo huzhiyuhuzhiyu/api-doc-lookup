@@ -98,13 +98,19 @@
             </el-table-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
            
-            <el-table-column prop="taxId" label="税号" min-width="160" />
+            <el-table-column prop="taxId" label="税号" min-width="180" />
             <el-table-column prop="contacts" label="联系人" sortable="custom" min-width="100" />
             <el-table-column prop="phone" label="电话" sortable="custom" min-width="120" />
             <el-table-column prop="mobilePhone" label="手机" sortable="custom" min-width="120" />
             <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" min-width="120" />
             <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" min-width="120" />
             <el-table-column prop="internalStaffIdText" label="内勤人员" min-width="120" />
+            <el-table-column prop="dealStatus" label="成交状态" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.dealStatus=='0'">未成交</div>
+                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">

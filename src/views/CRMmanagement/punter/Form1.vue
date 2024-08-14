@@ -739,8 +739,8 @@ export default {
   },
   created() {
     this.dataForm.salespersonId = this.userInfo.userId
-    this.dataForm.departmentId = this.userInfo.departmentId,
-      this.getAttachmentswitch()
+    this.dataForm.departmentId = this.userInfo.departmentId
+    this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
   },
@@ -749,8 +749,9 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.code = data.number
-
+        if (this.btnType == 'add') {
+          this.dataForm.code = data.number
+        }
       } catch (error) {
       }
     },
@@ -1153,7 +1154,7 @@ export default {
       this.dataForm.id = id || ''
       // this.parentId = parentId || ''
       this.btnType = btnType
-      if(this.btnType === 'add') this.fetchData('ZGTKHBM')
+      if (this.btnType === 'add' || this.btnType === 'edit') this.fetchData('ZGTKHBM')
       if (this.dataForm.id) {
         if (this.btnType === 'edit') {
           for (let item in this.dataRule) {
@@ -1221,7 +1222,7 @@ export default {
             let obj = {
               id: res.data.cooperativePartner.province
             }
-            getProvinceList(res.data.cooperativePartner.province).then(res => { 
+            getProvinceList(res.data.cooperativePartner.province).then(res => {
               this.cities = res.data.list
             })
 
@@ -1231,7 +1232,7 @@ export default {
               id: res.data.cooperativePartner.city
             }
             // this.changeCity(ooo)
-            getProvinceList(res.data.cooperativePartner.city).then(res => { 
+            getProvinceList(res.data.cooperativePartner.city).then(res => {
               this.area = res.data.list
             })
           }

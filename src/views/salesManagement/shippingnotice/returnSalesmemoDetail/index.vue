@@ -90,6 +90,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
             <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
             <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -363,6 +364,12 @@ export default {
           type: 'select',
           options: []
         }, {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: []
+        },
+        {
           prop: 'ordersNo',
           label: "订单号",
           type: 'input',
@@ -827,15 +834,55 @@ export default {
           oilObj.options = arr;
         }
       })
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'specialRequire');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
 
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
+        let arr = []
         res.data.list.forEach(item => {
           item.taxRate = item.enCode.replace('%', '') * 1
+          let obj = {
+            label: item.taxRate,
+            value: item.taxRate,
+          }
+          arr.push(obj)
         })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
+        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
       })
 
     },

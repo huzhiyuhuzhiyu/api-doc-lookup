@@ -6,34 +6,28 @@
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
           <div class="text-one-line">客户总量分析</div>
         </div>
-        <div class="xr-radio-menu-wrap">
-          <el-select v-model="value" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+        <div class="xr-radio-menu-wrap" style="width: 250px;">
+          <selectdate @change="datechange"></selectdate>
         </div>
         <div class="xr-radio-menu-wrap">
-          <el-select v-model="value1" placeholder="请选择">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+          <selectdepartment @change="departmentchange"></selectdepartment>
         </div>
         <el-button type="primary" icon="el-icon-search" @click="search()">
           {{ $t('common.search') }}</el-button>
       </div>
       <div class="content-table-main">
-        <div class="axis-content">
+        <div class="axis-content" v-loading="chartLoading">
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
-        <div class="table-content">
+        <div class="table-content" v-loading="listLoading">
           <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
           </div>
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-              <el-table-column prop="realname" label="员工姓名" width="120" />
-              <el-table-column prop="customerNum" label="当前客户数" min-width="120" />
-              <el-table-column prop="customerSumNum" label="新增客户数" min-width="120" />
+              <el-table-column prop="realName" label="员工姓名" width="120" />
+              <el-table-column prop="customerSumNum" label="当前客户数" min-width="120" />
+              <el-table-column prop="customerNum" label="新增客户数" min-width="120" />
               <el-table-column prop="dealCustomerNum" label="成交客户数" min-width="120" />
               <el-table-column prop="dealCustomerRate" label="客户成交率(%)" min-width="120" />
               <el-table-column prop="contractMoney" label="合同总金额(元)" min-width="120" />
@@ -47,88 +41,36 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import selectdate from "../components/selectdate";
+import selectdepartment from "../components/selectdepartment";
 export default {
+  components: {
+    selectdate,
+    selectdepartment
+  },
   data() {
     return {
-      tableList: [
-        { realname: 'admin', customerNum: '1', customerSumNum: '1', dealCustomerNum: '1', dealCustomerRate: '100', contractMoney: '105000', receivablesMoney: '10000' }
-      ],
-      value: '选项1',
-      value1: '选项1',
-      options: [
-        {
-          value: '选项1',
-          label: '仅本人'
-        },
-        {
-          value: '选项2',
-          label: '本人及下属'
-        }
-      ],
-      options1: [
-        {
-          value: '选项1',
-          label: '本月'
-        }
-      ],
-      chartInstance: null,
-      option: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          top: '10%',
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#42526e', '#0052cc'],
-        legend: {
-          data: ['成交客户数', '新增客户数'],
-          bottom: 10
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'],
-            axisTick: {
-              alignWithLabel: true,
-              show: false
-            }
-          }
-        ],
-        yAxis: [
-          {
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            name: '个',
-            type: 'value'
-          }
-        ],
-        series: [
-          {
-            barWidth: '20%',
-            name: '成交客户数',
-            type: 'bar',
-            data: [0, 0, 0, 10, 2, 0, 20, 0, 0, 12, 30, 3]
-          },
-          {
-            barWidth: '20%',
-            name: '新增客户数',
-            type: 'bar',
-            data: [0, 0, 0, 5, 12, 0, 20, 0, 0, 12, 25, 1]
-          }
-        ]
+      chartLoading: false,
+      listLoading: false,
+      dataForm: {
+        startTime: "",
+        endTime: "",
+        type: "year",
+        userIds: []
       },
+      tableList: [],
+      chartInstance: null,
+      option: {}
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+  },
+  created() {
+    this.dataForm.userIds = [this.userInfo.userId]
+    this.initData()
   },
   mounted() {
     this.chartInstance = this.$echarts.init(document.getElementById('CustomerAnaly'));
@@ -154,6 +96,88 @@ export default {
     }
   },
   methods: {
+    search() {
+      this.initData()
+    },
+    datechange(data) {
+      this.dataForm.startTime = data.dateStart
+      this.dataForm.endTime = data.dateEnd
+      this.dataForm.type = data.value
+    },
+    departmentchange(data) {
+      this.dataForm.userIds = data
+    },
+    initData() {
+      this.chartLoading = true
+      this.listLoading = true
+      gettotalCustomerStats(this.dataForm).then(res1 => {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#42526e', '#0052cc'],
+          legend: {
+            data: ['成交客户数', '新增客户数'],
+            bottom: 10
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: res1.data.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              name: '个',
+              type: 'value'
+            }
+          ],
+          series: [
+            {
+              barWidth: '20%',
+              name: '成交客户数',
+              type: 'bar',
+              data: res1.data.map(item => item.dealCustomerNum)
+            },
+            {
+              barWidth: '20%',
+              name: '新增客户数',
+              type: 'bar',
+              data: res1.data.map(item => item.customerNum)
+            }
+          ]
+        }
+        this.chartLoading = false
+      }).catch(() => {
+        this.chartLoading = false
+      })
+      gettotalCustomerTable(this.dataForm).then(res2 => {
+        this.tableList = res2.data
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
     // 合计处理
     getSummaries(param) {
       const { columns, data } = param;
@@ -183,21 +207,6 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-//公共样式
-.vux-flex-row {
-  -webkit-box-orient: horizontal;
-  flex-direction: row;
-}
-.vux-flexbox {
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  width: 100%;
-  text-align: left;
-}
-</style>
 <style lang="scss" scoped>
 .JNPF-flex-main {
   padding: 14px 0 0 14px;

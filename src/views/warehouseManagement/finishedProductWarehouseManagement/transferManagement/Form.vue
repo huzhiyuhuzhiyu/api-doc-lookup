@@ -61,13 +61,14 @@
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
-                    <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8" v-if="btnType!='look'"/>
+                    <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
+                      v-if="btnType != 'look'" />
                     <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
                       <template slot="header">
                         <span class="required">*</span>调拨数量
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'" 
+                        <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
                           oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                         </el-input>
                       </template>
@@ -83,12 +84,12 @@
                           @change="changeWarehousex"></ComSelect-list>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="inShelfSpaceName" label="目标货位" width="160" :key="10112">
+                    <el-table-column prop="inShelfSpaceName" label="目标货位" width="160" :key="10112" v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>目标货位
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'" 
+                        <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
                           @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="货位">
                         </el-input>
                       </template>
@@ -129,7 +130,7 @@
         lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-          
+
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -174,11 +175,15 @@
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160" v-if="btnType!='look'"/>
+                <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
+                  v-if="btnType != 'look'" />
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="货位" sortable="custom" min-width="120" />
-                <el-table-column prop="standardValue" label="规值" width="120" :key="211" sortable="custom"min-width="120"> </el-table-column>
-                <el-table-column prop="colour" label="颜色" width="120" :key="1211" sortable="custom"min-width="120"> </el-table-column>
+                <el-table-column prop="standardValue" label="规值" width="120" :key="211" sortable="custom"
+                  min-width="120">
+                </el-table-column>
+                <el-table-column prop="colour" label="颜色" width="120" :key="1211" sortable="custom" min-width="120">
+                </el-table-column>
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" min-width="160"
                   :key="2111"></el-table-column>
                 <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" min-width="160"
@@ -189,10 +194,14 @@
                   min-width="160"></el-table-column>
                 <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" min-width="160"
                   :key="51"></el-table-column>
-                <el-table-column prop="clearance" label="游隙" width="120" sortable="custom" min-width="160" :key="300"></el-table-column>
-                <el-table-column prop="aperture" label="孔径" width="120" sortable="custom" min-width="160" :key="400"></el-table-column>
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" min-width="160" :key="500"></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" min-width="160" :key="600"></el-table-column>
+                <el-table-column prop="clearance" label="游隙" width="120" sortable="custom" min-width="160"
+                  :key="300"></el-table-column>
+                <el-table-column prop="aperture" label="孔径" width="120" sortable="custom" min-width="160"
+                  :key="400"></el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" min-width="160"
+                  :key="500"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" min-width="160"
+                  :key="600"></el-table-column>
                 <el-table-column prop="processName" label="工序" width="120" sortable="custom" min-width="160"
                   :key="1100"></el-table-column>
               </JNPF-table>
@@ -254,19 +263,19 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      }, 
-     
+      },
+
       dataForm: {
         orderNo: "",
         pickingDate: "",
         remark: "",
-        id:"",
-        documentStatus:"",
-        classAttribute:""
+        id: "",
+        documentStatus: "",
+        classAttribute: ""
       },
       // 选择全部产品参数
       allProVisible: false,
-   
+
       title: "",
       allproductData: [],
       allProductTotal: 0,
@@ -356,7 +365,7 @@ export default {
     handleRowClick(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
     },
-     
+
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
 
@@ -430,13 +439,13 @@ export default {
     submitAllProduct() {
       this.allProVisible = false
       this.selectArr.forEach(item => {
-        this.$set(item,'num',JSON.parse(JSON.stringify(item.inventoryQuantity)))
+        this.$set(item, 'num', JSON.parse(JSON.stringify(item.inventoryQuantity)))
       })
       this.productData = [...this.productData, ...this.selectArr]
       console.log(this.productData);
       // this.productData=[...this.productData,...this.selectArr]
     },
- 
+
 
 
     // 打开选择货位弹框
@@ -516,23 +525,22 @@ export default {
       this.formLoading = true
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
-      this.dataForm.id=id
+      this.dataForm.id = id
       this.btnType = btnType
       console.log("btnty", btnType);
       // this.refeshDataFormItems()
       if (id) {
         this.title = btnType == 'look' ? '查看调拨单' : '编辑调拨单'
         // 获取详情
-        this.fetchData("DBDH",false)
+        this.fetchData("DBDH", false)
+
         detailTransferData(id).then(res => {
-          console.log("详情",res);
+          console.log("详情", res);
           this.formLoading = false
           this.dataForm = res.data.picking
           res.data.lines.forEach(item => {
-            item.warehouseName=item.outWarehouseName
-            item.shelfSpaceName=item.outShelfSpaceName
-            this.$set(item,'inventoryQuantity',JSON.parse(JSON.stringify(item.availableQuantity)))
-            
+            item.warehouseName = item.outWarehouseName
+            item.shelfSpaceName = item.outShelfSpaceName
           });
           this.productData = res.data.lines
 
@@ -555,16 +563,17 @@ export default {
         this.dataForm.pickingDate = formattedDate;
         this.title = '新建调拨单'
         this.formLoading = false
-        this.fetchData("DBDH",true)
+        this.fetchData("DBDH", true)
+
 
 
       }
     },
-    async fetchData(code,) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if(flag){
+        if (flag) {
           this.dataForm.orderNo = data.number
         }
 
@@ -586,7 +595,7 @@ export default {
         pickingDate: "",
         remark: "",
       }
-        this.fetchData("DBDH")
+      this.fetchData("DBDH")
       this.productData = []
       this.$refs.dataForm.resetFields()
     },
@@ -619,7 +628,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
                 break
               }
-              if (!item.inShelfSpaceId) {
+              if (!item.inShelfSpaceId&&allocationFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行目标货位不能为空")
                 break
@@ -634,50 +643,50 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttribute='finish_product'
+            this.dataForm.classAttribute = 'finish_product'
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'allocate_transfer'
 
             let obj = {
-              picking:  this.dataForm,
+              picking: this.dataForm,
               lines: []
             }
-            let arr=[]
+            let arr = []
             this.productData.forEach(item => {
-              let obj={
-                accuracyLevel:item.accuracyLevel,
-                batchNumber:item.batchNumber,
-                calculationDirection:item.calculationDirection,
-                classAttribute:item.classAttribute,
-                clearance:item.clearance,
-                inAreaId:item.inAreaId,
-                inGoodsShelvesId:item.inGoodsShelvesId,
-                inShelfSpaceId:item.inShelfSpaceId,
-                inWarehouseId:item.inWarehouseId,
-                mainUnit:item.mainUnit,
-                num:item.num,
-                oil:item.oil,
-                id:this.dataForm.id?item.id:"",
-                deputyNum:item.calculationDirection=='multiplication'?this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6):this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6), 
-            deputyUnit:item.deputyUnit,
-                outAreaId:item.areaId,
-                outGoodsShelvesId:item.goodsShelvesId,
-                outShelfSpaceId:item.shelfSpaceId,
-                outWarehouseId:item.warehouseId,
-                processId:item.processId,
-                productsId:item.productsId,
-                ratio:item.ratio,
-                sealingCoverTyping:item.sealingCoverTyping,
-                standardValue:item.standardValue,
-                vibrationLevel:item.vibrationLevel,
+              let obj = {
+                accuracyLevel: item.accuracyLevel,
+                batchNumber: item.batchNumber,
+                calculationDirection: item.calculationDirection,
+                classAttribute: item.classAttribute,
+                clearance: item.clearance,
+                inAreaId: item.inAreaId,
+                inGoodsShelvesId: item.inGoodsShelvesId,
+                inShelfSpaceId: item.inShelfSpaceId,
+                inWarehouseId: item.inWarehouseId,
+                mainUnit: item.mainUnit,
+                num: item.num,
+                oil: item.oil,
+                id: this.dataForm.id ? item.id : "",
+                deputyNum: item.calculationDirection == 'multiplication' ? this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.ratio]), 6) : this.jnpf.numberFormat(this.jnpf.math('divide', [item.num, item.ratio]), 6),
+                deputyUnit: item.deputyUnit,
+                outAreaId: item.areaId,
+                outGoodsShelvesId: item.goodsShelvesId,
+                outShelfSpaceId: item.shelfSpaceId,
+                outWarehouseId: item.warehouseId,
+                processId: item.processId,
+                productsId: item.productsId,
+                ratio: item.ratio,
+                sealingCoverTyping: item.sealingCoverTyping,
+                standardValue: item.standardValue,
+                vibrationLevel: item.vibrationLevel,
               }
               arr.push(obj)
             });
-            obj.lines=arr
+            obj.lines = arr
             const formMethod = this.dataForm.id ? updateTransferData : addTransferData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
-            
+
             formMethod(obj).then(res => {
               let msg = res.msg
               if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }

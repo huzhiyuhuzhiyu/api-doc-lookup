@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="最新报价" name="latestprice">
+        <el-tab-pane label="产品价格" name="latestprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -81,7 +81,7 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="历史报价" name="historicalprice">
+        <el-tab-pane label="历史价格" name="historicalprice">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>

@@ -84,7 +84,7 @@
                           @change="changeWarehousex"></ComSelect-list>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="inShelfSpaceName" label="目标货位" width="160" :key="10112">
+                    <el-table-column prop="inShelfSpaceName" label="目标货位" width="160" :key="10112" v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>目标货位
                       </template>
@@ -628,7 +628,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
                 break
               }
-              if (!item.inShelfSpaceId) {
+              if (!item.inShelfSpaceId&&allocationFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行目标货位不能为空")
                 break

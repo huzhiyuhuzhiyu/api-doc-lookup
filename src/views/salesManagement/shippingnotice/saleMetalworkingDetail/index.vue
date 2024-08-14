@@ -705,11 +705,20 @@ export default {
       })
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
+        let arr = []
         res.data.list.forEach(item => {
           item.taxRate = item.enCode.replace('%', '') * 1
+          let obj = {
+            label: item.taxRate,
+            value: item.taxRate,
+          }
+          arr.push(obj)
         })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
+        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
       })
 
     },

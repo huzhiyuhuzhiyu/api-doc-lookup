@@ -213,7 +213,7 @@ export default {
         endUpdateTime: '',
         inspectionStatus: '',
         keyword: '',
-        notificationType: 'procure',
+        notificationType: 'external',
         classAttribute: 'semi_finished',
         notificationTypeList: [],
         orderItems: [

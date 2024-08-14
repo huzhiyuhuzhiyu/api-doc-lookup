@@ -24,7 +24,7 @@
           </div>
         </div>
         <div v-if="true" class="sale-statistics">
-          <moneychart :option="optionmoneyzz"></moneychart>
+          <moneychart :option="optionmoney"></moneychart>
         </div>
         <div v-else></div>
       </div>

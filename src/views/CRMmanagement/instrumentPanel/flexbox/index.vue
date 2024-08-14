@@ -9,13 +9,13 @@
         <div class="brief-item" v-for="item in datalist" :key="item.id">
           <div class="brief-item__body">
             <div class="info">
-              <div class="title text">{{item.name}}</div>
+              <div class="title">{{item.name}}</div>
               <div class="number">1
                 <span style="margin-left: 4px;font-size:14px">{{item.unit}}</span>
               </div>
               <div class="des">
-                <span class="text">较上月</span>
-                <span style="flex-shrink: 0;margin-left: 8px;font-size: 14px;color: #ff5630;">100%<span style="margin-left:2px;font-size:14px"><i class="el-icon-top"></i></span>
+                <span class="">较上月</span>
+                <span style="flex-shrink: 0;margin-left: 8px;color: #ff5630;font-weight: bold;">100%<span style="margin-left:2px;font-size:14px"><i class="el-icon-top"></i></span>
                 </span>
               </div>
             </div>
@@ -145,6 +145,7 @@ export default {
           overflow: hidden;
           .title {
             color: #5e6c84;
+            font-size: 14px;
           }
           .number {
             margin-top: 14px;
@@ -157,6 +158,7 @@ export default {
           .des {
             display: flex;
             margin-top: 14px;
+            font-size: 14px;
             color: #5e6c84;
           }
         }

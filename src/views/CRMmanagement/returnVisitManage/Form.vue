@@ -160,7 +160,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
-        returnVisitNo:'',
+        returnVisitNo: '',
         returnVisitTime: '',
         ownerUserId: '',
         contactsName: '',
@@ -195,7 +195,7 @@ export default {
     this.getDictionaryType()
     this.dataForm.ownerUserId = this.userInfo.userId
   },
-  computed:{
+  computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
@@ -203,8 +203,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.returnVisitNo = data.number
-
+        if (this.btntype === 'add') this.dataForm.returnVisitNo = data.number
       } catch (error) {
       }
     },
@@ -285,7 +284,7 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
-      if(this.btntype === 'add') this.fetchData('HFBH')
+      if (this.btntype === 'add' || this.btntype === 'edit') this.fetchData('HFBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {

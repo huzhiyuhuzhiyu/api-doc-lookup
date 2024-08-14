@@ -129,8 +129,7 @@ export default {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.code = data.number
-
+        if (this.btntype === 'add') this.dataForm.code = data.number
       } catch (error) {
       }
     },
@@ -165,7 +164,7 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
-      if (this.btntype === 'add') this.fetchData('CRMCPBM')
+      if (this.btntype === 'add' || this.btntype === 'edit') this.fetchData('CRMCPBM')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {

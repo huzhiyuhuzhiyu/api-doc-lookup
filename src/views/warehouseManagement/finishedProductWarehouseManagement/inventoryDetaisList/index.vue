@@ -36,10 +36,10 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier()">
+          <div>
             <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">导出</el-button>
-          </topOpts>
+          </div>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -85,7 +85,6 @@
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
-          <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="180" />
           <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
           <el-table-column prop="num" label="数量(主)" sortable="custom" min-width="140" />
 
@@ -434,7 +433,7 @@ export default {
           }
           arr.push(obj)
         });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'standardValue');
+        let oilObj = this.superQueryJson.find(item => item.prop === 'aperture');
 
         if (oilObj) {
           // 将options赋值为5  
@@ -475,7 +474,7 @@ export default {
         }
       })
       // 特殊要求
-      
+
       let objS = {
         pageNum: -1,
         pageSize: 20,
@@ -783,7 +782,7 @@ export default {
           }
           arr.push(obj)
         })
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        let oilObj = this.superQueryJson.find(item => item.prop === 'taxRate');
         if (oilObj) {
           // 将options赋值为5  
           oilObj.options = arr;

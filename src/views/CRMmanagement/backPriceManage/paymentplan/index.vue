@@ -26,9 +26,11 @@
               </el-popover>
             </div>
           </div>
-          <!-- <div style="width: 82px;">
-            <el-button style="border:none;padding: 7px 8px;" size="mini" icon="icon-ym icon-ym-filter" @click="superQueryVisible = true">高级查询</el-button>
-          </div> -->
+          <div style="min-width: 239px;">
+            <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
+            <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
+            <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
+          </div>
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="display:block;line-height:34px">
@@ -118,6 +120,7 @@ export default {
   },
   data() {
     return {
+      deliveryDateArr: [],
       receivedStatusList: [
         { fullName: '待回款', enCode: 'unpayment' },
         // { fullName: '逾期', enCode: '2' },
@@ -231,6 +234,8 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
+        planReceivablesDataEndTime: '',
+        planReceivablesDataStartTime: '',
         customerName: '',
         pageNum: 1,
         pageSize: 20,
@@ -285,6 +290,47 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    // 为近3天  
+    btnsearch2() {
+      const end = new Date();
+      const start = "";
+      end.setDate(end.getDate() + 3);
+      this.deliveryDateArr = ["", end];
+      this.listQuery.planReceivablesDataStartTime = ""
+      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.search()
+    },
+    // 为近7天  
+    btnsearch3() {
+      let end = new Date()
+      let start = ""
+      end.setDate(end.getDate() + 7);
+      this.deliveryDateArr = ["", end];
+      this.listQuery.planReceivablesDataStartTime = ""
+      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.search()
+    },
+    // 为近30天  
+    btnsearch4() {
+      let end = new Date()
+      let start = ""
+      end.setDate(end.getDate() + 30);
+      this.deliveryDateArr = ["", end];
+      this.listQuery.planReceivablesDataStartTime = ""
+      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+      this.search()
+    },
+    dateFun(dateStr) {
+      const date = new Date(dateStr);
+      // 获取年份、月份和日期  
+      const year = date.getFullYear(); // 获取年份  
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // 获取月份 (注意：月份从0开始，因此加1，并补齐两位数)  
+      const day = String(date.getDate()).padStart(2, '0'); // 获取日期，并补齐两位数  
+      // 拼接成年月日格式  
+      const formattedDate = `${year}-${month}-${day}`;
+      console.log("forma", formattedDate);
+      return formattedDate
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list

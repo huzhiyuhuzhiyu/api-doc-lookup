@@ -40,10 +40,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="mergeorderNo()"
-                :loading="hbbtnLoading">
-                合并订单
-              </el-button>
+         
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
                 取消发料
@@ -149,9 +146,7 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="splitorderNo(scope.row)">
-                      拆分
-                    </el-dropdown-item>
+                 
 
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
@@ -421,51 +416,7 @@ export default {
         })
         .catch(() => { })
     },
-    //合并订单
-    mergeorderNo() {
-      if (this.selectArr.length < 2) return this.$message.error('请先选择多条订单数据')
-      let hasItemList = []
-      this.selectArr.map((i) => {
-        if (i.stockStatus == 'finished') hasItemList.push(i.orderNo)
-      })
-      if (hasItemList.length) return this.$message.error(`已经备货的订单：${hasItemList.join('、')}不能合并`)
-      if (this.selectArr.some((item) => item.partnerCode !== this.selectArr[0].partnerCode))
-        return this.$message.error('所选订单客户不同')
-      this.$confirm('确定合并所选订单', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          let a = this.selectArr.map((item) => {
-            return item.id
-          })
-          this.hbbtnLoading = true
-          mergelist(a)
-            .then((res) => {
-              this.hbbtnLoading = false
-              this.$message.success('合并成功')
-              this.initData()
-            })
-            .catch(() => {
-              this.hbbtnLoading = false
-            })
-        })
-        .catch(() => { })
-    },
-    //拆分订单
-    splitorderNo(row) {
-      console.log('row', row)
-      if (row.stockStatus == 'finished') return this.$message.error(`该订单已经备货不能拆分`)
-      this.$confirm('确定拆分所选订单', this.$t('common.tipTitle'), {
-        type: 'warning'
-      })
-        .then(() => {
-          splitlist(row.id).then((res) => {
-            this.$message.success('拆分成功')
-            this.initData()
-          })
-        })
-        .catch(() => { })
-    },
+  
     handleClick(e) {
       this.activeName = e.name
     },

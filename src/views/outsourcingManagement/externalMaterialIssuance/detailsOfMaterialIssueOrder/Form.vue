@@ -446,7 +446,7 @@
         </span> -->
         </el-dialog>
         <!-- 选择订单 -->
-        <ComSelect-page ref="ComSelect-page" @change="seleceCustomerdd" :beforeSubmit="beforeSubmit" :maxShowSearchField="4" :dialogWidth="'80%'" :tableItems="productTableItems" dialogTitle="选择订单" :listMethod="getsaleOrderList" :listRequestObj="ProductListRequestObj" :renderTree="false" :listDataFormatting="listDataFormatting" :searchList="productTableSearchList" :elementShow="false" multiple />
+        <ComSelect-page ref="ComSelect-page" @change="seleceCustomerdd" :beforeSubmit="beforeSubmit" :maxShowSearchField="4" :dialogWidth="'80%'" :tableItems="productTableItems" dialogTitle="选择订单" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj" :renderTree="false" :listDataFormatting="listDataFormatting" :searchList="productTableSearchList" :elementShow="false" multiple />
       </div>
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
@@ -463,7 +463,7 @@ import {
 } from '@/api/system/province'
 // import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
-import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
+import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
@@ -480,7 +480,7 @@ export default {
         data: []
       },
       productTableSearchList: [],
-      getsaleOrderList,
+      detailpurchaseOrderList,
       productTableItems: [
         { prop: 'orderNo', label: '订单号' },
         { prop: 'cooperativePartnerCode', label: '客户编码', width: 140 },

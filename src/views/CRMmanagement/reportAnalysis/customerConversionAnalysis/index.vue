@@ -321,16 +321,19 @@ export default {
         }
         this.datas = res.data
         this.listLoading = false
+        this.init()
       }).catch(() => {
         this.listLoading = false
       })
     },
     init() {
       const _this = this
-      const columnObj = {}
-      columnObj.label = '日期'
-      columnObj.prop = 'title'
-      _this.columnsData.push(columnObj)
+      const columnObj1 = {}
+      _this.tableList = []
+      _this.columnsData = []
+      columnObj1.label = '日期'
+      columnObj1.prop = 'title'
+      _this.columnsData.push(columnObj1)
       _this.tableList.push({ 'title': '转化率' })
       _this.tableList.push({ 'title': '成交客户数' })
       _this.tableList.push({ 'title': '新增客户数' })

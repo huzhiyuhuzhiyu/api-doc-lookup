@@ -253,7 +253,8 @@ export default {
                 name: '成交周期',
                 axisLabel: {
                   formatter: '{value} 天'
-                }
+                },
+                minInterval: 1
               },
               {
                 axisTick: {
@@ -266,7 +267,8 @@ export default {
                 name: '成交客户数',
                 axisLabel: {
                   formatter: '{value} 个'
-                }
+                },
+                minInterval: 1
               }
             ],
             series: [
@@ -355,7 +357,8 @@ export default {
                 name: '成交周期',
                 axisLabel: {
                   formatter: '{value} 天'
-                }
+                },
+                minInterval: 1
               },
               {
                 axisTick: {
@@ -368,7 +371,8 @@ export default {
                 name: '成交客户数',
                 axisLabel: {
                   formatter: '{value} 个'
-                }
+                },
+                minInterval: 1
               }
             ],
             series: [
@@ -457,7 +461,8 @@ export default {
                 name: '成交周期',
                 axisLabel: {
                   formatter: '{value} 天'
-                }
+                },
+                minInterval: 1
               },
               {
                 axisTick: {
@@ -470,7 +475,8 @@ export default {
                 name: '成交客户数',
                 axisLabel: {
                   formatter: '{value} 个'
-                }
+                },
+                minInterval: 1
               }
             ],
             series: [

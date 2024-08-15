@@ -26,7 +26,7 @@
               </el-popover>
             </div>
           </div>
-          <div style="min-width: 239px;">
+          <div style="min-width: 233px;">
             <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
@@ -503,7 +503,7 @@ export default {
 .gjsearch {
   display: flex;
   background-color: #fff;
-  padding: 8px 10px;
+  padding: 8px;
   justify-content: space-between;
   align-items: center;
 }

@@ -219,6 +219,12 @@ export default {
                 type: 'shadow'
               }
             },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
+            },
             grid: {
               top: '15%',
               left: '1%',
@@ -323,6 +329,12 @@ export default {
                 type: 'shadow'
               }
             },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
+            },
             grid: {
               top: '15%',
               left: '1%',
@@ -426,6 +438,12 @@ export default {
               axisPointer: {
                 type: 'shadow'
               }
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
             },
             grid: {
               top: '15%',

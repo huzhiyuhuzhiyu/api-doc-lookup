@@ -89,9 +89,9 @@
                 <div v-if="scope.row.productSource == 'assemble'">配件</div>
               </template>
             </el-table-column>
-            <el-table-column prop="bomId" label="是否有BOM" min-width="160" sortable="custom">
+            <el-table-column prop="bomFlag" label="是否有BOM" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.bomId">有BOM</div>
+                <div v-if="scope.row.bomFlag">有BOM</div>
                 <div v-else>无BOM</div>
               </template>
             </el-table-column>
@@ -238,6 +238,16 @@ export default {
             {label:"配件",value:"assemble"},
           ]
         },
+        {
+          prop: 'bomFlag',
+          label: "是否有BOM",
+          type: 'select',
+          options:[
+            {label:"有",value:true},
+            {label:"无",value:false},
+          ]
+        },
+        
         {
           prop: 'deliverDate',
           label: '计划日期',

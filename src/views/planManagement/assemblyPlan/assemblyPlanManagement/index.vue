@@ -77,6 +77,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
             <el-table-column prop="remark" label="备注" width="120" />
             <el-table-column prop="planState" label="计划状态" width="120">
               <template slot-scope="scope">
@@ -270,6 +271,12 @@ export default {
           options: [],
         },
         {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: [],
+        },
+        {
           prop: 'remark',
           label: "备注",
           type: 'input'
@@ -314,6 +321,37 @@ export default {
   },
   methods: {
     getProductClassFun() {
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'specialRequire');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
       let obj0 = {
         pageNum: -1,
         pageSize: 20,

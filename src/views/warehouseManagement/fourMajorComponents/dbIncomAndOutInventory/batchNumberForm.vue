@@ -41,6 +41,8 @@
             <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120"/>
             <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120"/>
             <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120"/>
+            <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" ></el-table-column>
+            <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" ></el-table-column>
             <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope" >
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>
@@ -84,6 +86,8 @@ export default {
         clearance: "",
         accuracyLevel: "",
         productsId:"",
+        packagingMethod:"",
+        specialRequire:"",
       },
       refreshTree: true,
       listLoading: false,
@@ -107,7 +111,8 @@ export default {
       this.form.clearance=data.clearance
       this.form.accuracyLevel=data.accuracyLevel
       this.form.warehouseId=data.warehouseId
-    
+      this.form.packagingMethod=item.packagingMethod
+      this.form.specialRequire=item.specialRequire
       this.form.productsId=data.productsId
       this.getbatchNumList()
     },
@@ -147,6 +152,8 @@ export default {
         oil: "",
         clearance: "",
         accuracyLevel: "",
+        packagingMethod:"",
+        specialRequire:"",
       }
       this.init(this.cpData, this.cpIndex)
     },

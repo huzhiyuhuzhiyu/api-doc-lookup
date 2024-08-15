@@ -57,7 +57,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
             @selection-change="handleSelectionChange" hasC>
-            <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> 
+            <el-table-column prop="planNo" label="计划单号" min-width="160" sortable="custom"> 
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
                   scope.row.planNo
@@ -132,9 +132,8 @@
 
 
 
-    <PlanForm v-if="formVisible" ref="orderForm" @refreshDataList="initData" @close="closeForm" />
-    <Form v-if="mrpForm" ref="MRPForm" @refreshDataList="initData" @close="closeForm" />
-    
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -145,18 +144,17 @@
 
 <script>
 import { excelExport } from '@/api/basicData/index'
-import PlanForm from '../../assemblyPlan/salesOrderCreation/Form.vue'
+import Form from '../../assemblyPlan/assemblyPlanManagement/Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
-import Form from './Form.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
-  name: 'pendClculationPlan',
-  components: { PlanForm,Form, ExportForm, SuperQuery },
+  name: 'materialRequirements',
+  components: { Form, ExportForm, SuperQuery },
   data() {
     return { 
       columnList: ["classAttribute", "planType", "planQuantity", "qualificationRate", "relaxQuantity", 'createByName'],
@@ -183,7 +181,7 @@ export default {
 
         superQuery: {},
       },
-      mrpForm:false,
+
 
       deliveryDateArr: [],
       total: 0,
@@ -351,11 +349,7 @@ export default {
   },
   methods: {
     calculationFun() {
-      if(!this.selectList.length) return this.$message.error("请选择您要进行计算的计划数据")
-      this.mrpForm=true
-    this.$nextTick(()=>{
-        this.$refs.MRPForm.init(this.selectList)
-      })
+
     },
    
     handleSelectionChange(val) {
@@ -774,7 +768,7 @@ export default {
       // 订单创建计划
       detailPlanList(data.id).then(res => {
         console.log("订单计划详情", res);
-        this.formVisible = true
+        this.orderFormVisible = true
         this.$nextTick(() => {
           this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
         })

@@ -65,14 +65,14 @@ export default {
         { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
       ],
-      searchListMore: [
-        { prop: 'orderNo', label: '对账流水号', type: 'input' },
-        { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
-        { prop: 'cooperativePartnerCode', label: '客户编码', type: 'input' },
-        { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
-        { prop: 'paymentStatus', label: '收款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
-        { prop: 'invoiceStatus', label: '开票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
-      ],
+      // searchListMore: [
+      //   { prop: 'orderNo', label: '对账流水号', type: 'input' },
+      //   { prop: 'reconciliationDateArr', label: '对账日期', type: 'date', },
+      //   { prop: 'cooperativePartnerCode', label: '客户编码', type: 'input' },
+      //   { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
+      //   { prop: 'paymentStatus', label: '收款状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
+      //   { prop: 'invoiceStatus', label: '开票状态', type: 'select', options: [{ label: '未完成 ', value: 'not_finished', }, { label: '已完成 ', value: 'finished', }] },
+      // ],
     }
   },
   created() {

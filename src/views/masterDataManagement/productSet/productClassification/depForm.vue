@@ -43,7 +43,7 @@
           <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <span style="display:flex;justify-content: flex-end;">
+      <span class="button-bottom">
         <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           {{ $t('common.submitButton') }}
@@ -230,5 +230,10 @@ export default {
 .required {
   color: red;
   margin-left: 4px;
+}
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 </style>

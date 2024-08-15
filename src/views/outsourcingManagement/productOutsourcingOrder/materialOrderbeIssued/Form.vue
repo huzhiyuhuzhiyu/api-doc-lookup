@@ -75,7 +75,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                             <div class="viewData">
@@ -83,7 +83,7 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -298,12 +298,12 @@
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <!-- <el-col :span="4">
                     <el-form-item>
                       <el-input v-model.trim="scheduleForm.productName" placeholder="请输入产品名称" clearable
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :span="4">
                     <el-form-item>
                       <el-input v-model.trim="scheduleForm.productDrawingNo" placeholder="请输入产品图号" clearable
@@ -325,8 +325,8 @@
               <JNPF-table :partentOrChild="'child'" v-loading="formLoading" :data="scheduleData" custom-column
                 ref="scheduleRef">
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="180" />
+                <!-- <el-table-column prop="productName" label="产品名称" min-width="160" /> -->
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
                 <el-table-column prop="purchaseQuantity" label="采购数量(主)" min-width="140">
                   <template slot-scope="scope">

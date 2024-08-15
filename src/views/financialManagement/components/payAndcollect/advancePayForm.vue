@@ -355,11 +355,11 @@ export default {
   height: 100% !important;
 }
 
-::v-deep .el-tabs__content {
+/* ::v-deep .el-tabs__content {
   height: calc(100% - 47px) !important;
   overflow: auto !important;
-  /* padding: 0 20px; */
-}
+  padding: 0 20px;
+} */
 
 ::v-deep .el-tabs__header {
   /* padding-left: 10px !important; */
@@ -399,5 +399,17 @@ export default {
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 </style>

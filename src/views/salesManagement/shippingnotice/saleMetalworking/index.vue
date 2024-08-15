@@ -260,6 +260,7 @@ export default {
         orderNo: "",
         partnerName: "", 
         pageNum: 1,
+        notifyType: "sale",
         pageSize: 20,
         returnDeliveryType: 'delivery',
         rdeDate: "",

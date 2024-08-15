@@ -34,8 +34,8 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="计划日期" prop="planDate">
                         <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
-                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期" @change="changDateFun"
-                          end-placeholder="结束日期" clearable>
+                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
+                          @change="changDateFun" end-placeholder="结束日期" clearable>
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
@@ -170,6 +170,16 @@
                       </el-select>
                     </template>
                   </el-table-column>
+
+                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                        <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                          :value="item.name"></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
                   <el-table-column prop="remark" label="备注" width="200" :key="128">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
@@ -196,7 +206,7 @@
         lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
 
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-       
+
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
               <el-form @submit.native.prevent>
@@ -237,7 +247,7 @@
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
                 <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
                   <template slot-scope="scope">
-                    {{ scope.row.bomId?'有':'无' }} 
+                    {{ scope.row.bomId ? '有' : '无' }}
                   </template>
                 </el-table-column>
 
@@ -290,7 +300,7 @@ export default {
         { label: "直接创建计划", value: "add_plan" },
         { label: "安全库存创建计划", value: "safety_stock_plan" },
       ],
-      planForm: { 
+      planForm: {
         planType: "add_plan",
         planDate: [],
         planStartDate: "",
@@ -304,6 +314,7 @@ export default {
       list5: [],
       list6: [],
       list7: [],
+      list8:[],
       btnText: "",
       tipsvisible: false,
       activeNames: ["productInfo", "basicInfo"],
@@ -334,15 +345,15 @@ export default {
       background: true,
       datafilelist: [],
       allProVisible: false,
-       
+
       allproductData: [],
       allProductTotal: 0,
 
       productData: [],
       listLoading: false,
- 
+
       index: null,
-    
+
       customerVisible: false,
       btnType: undefined,
       activeName: "orderInfo",
@@ -366,7 +377,7 @@ export default {
     ...mapState('user', ['token']),
 
   },
-  
+
   created() {
   },
   mounted() {
@@ -507,7 +518,24 @@ export default {
         this.list7 = res.data.records
       })
 
-
+      let obj8 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa016",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj8).then(res => {
+        this.list8 = res.data.records
+      })
 
 
     },
@@ -589,7 +617,7 @@ export default {
 
 
 
-    
+
 
     // 根据订单类型  打开不同的选择产品弹框
     openSeleceProductDialog() {
@@ -656,11 +684,11 @@ export default {
       this.selectArr.forEach(item => {
         item.productName = item.name
         item.productsId = item.id
-        item.planType='add_plan'
+        item.planType = 'add_plan'
         if (this.planForm.planDate.length) {
-          this.$set(item,'planStartDate',this.planForm.planDate[0])
-          this.$set(item,'planEndDate',this.planForm.planDate[1])
-        
+          this.$set(item, 'planStartDate', this.planForm.planDate[0])
+          this.$set(item, 'planEndDate', this.planForm.planDate[1])
+
         }
         if (this.codeConfig.codeWay != 'auto') {
           item.planNo = ""
@@ -687,8 +715,8 @@ export default {
 
 
 
-   
-  
+
+
 
 
 
@@ -702,7 +730,7 @@ export default {
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data 
+        this.codeConfig = data
 
       } catch (error) {
       }
@@ -720,13 +748,13 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
       this.planForm = {
-          planNo: "",
+        planNo: "",
         planType: "add_plan",
         planDate: [],
         planStartDate: "",
         planEndDate: "",
       }
-      this.productData=[]
+      this.productData = []
     },
     init(id, btnType) {
       this.fetchData("JHDH")
@@ -817,7 +845,7 @@ export default {
 
           }
           this.productData.forEach(item => {
-            item.documentStatus=value
+            item.documentStatus = value
           });
           if (submitFlag === false) return
           this.btnLoading = true

@@ -25,7 +25,7 @@
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <span style="display:flex;justify-content: flex-end;">
+      <span class="button-bottom">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           提交
@@ -156,7 +156,8 @@ export default {
           this.btnLoading = true
 
           let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
-
+          this.dataForm.warehouseCode = this.dataForm.code
+          this.dataForm.warehouseName = this.dataForm.name
           if (formMethod == updataClassAttribute) {
             formMethod(this.dataForm)
               .then((response) => {
@@ -209,5 +210,11 @@ export default {
 .required {
   color: red;
   margin-left: 4px;
+}
+
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 </style>

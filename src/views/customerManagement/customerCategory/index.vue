@@ -239,6 +239,7 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style lang="scss" scoped>
 .table-icon {
   vertical-align: bottom;

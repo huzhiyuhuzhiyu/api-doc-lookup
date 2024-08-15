@@ -31,7 +31,7 @@ export function getcustomerRecordInfo(data) {
     data
   })
 }
-//报表数据-客户总量分析图
+//报表数据-客户总量分析表
 export function gettotalCustomerTable(data) {
   return request({
     url: `/api/zgt/crmBi/totalCustomerTable`,
@@ -39,10 +39,26 @@ export function gettotalCustomerTable(data) {
     data
   })
 }
-//报表数据-客户总量分析表
+//报表数据-客户总量分析图
 export function gettotalCustomerStats(data) {
   return request({
     url: `/api/zgt/crmBi/totalCustomerStats`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-公海客户分析表
+export function getpoolTable(data) {
+  return request({
+    url: `api/zgt/crmBi/poolTable`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-公海客户分析图
+export function getpoolStats(data) {
+  return request({
+    url: `api/zgt/crmBi/poolStats`,
     method: 'POST',
     data
   })

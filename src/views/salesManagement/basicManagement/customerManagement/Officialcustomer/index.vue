@@ -1,24 +1,28 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0">
+      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
-          <h2 v-if="!leftFlag">客户分类</h2>
-          <!-- <span class="options" v-if="!leftFlag">
+          <h2>客户分类</h2>
+          <span class="options" v-if="!leftFlag">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
               </el-dropdown-menu>
             </el-dropdown>
-          </span> -->
+          </span>
         </div>
-        <div v-if="!leftFlag"> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+        <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
           </el-input></div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="true" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ node }">
             <i class="el-icon-notebook-2" />
             <span class="text">{{ node.label }}</span>
@@ -78,7 +82,6 @@
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
-              
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
@@ -102,6 +105,12 @@
             <el-table-column prop="departmentIdText" label="所属部门" sortable="custom" min-width="120" />
             <el-table-column prop="salespersonIdText" label="所属销售" sortable="custom" min-width="120" />
             <el-table-column prop="internalStaffIdText" label="内勤人员" min-width="120" />
+            <el-table-column prop="dealStatus" label="成交状态" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.dealStatus=='0'">未成交</div>
+                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
@@ -145,7 +154,7 @@
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
      <!-- 高级查询 -->
      <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="initData" />
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
@@ -154,7 +163,7 @@ import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import programme from "../components/programme.vue";
 import { getPartnerList, deletePartner, uploadPartner } from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import RecordForm from '../components/RecordForm1.vue'
+import RecordForm from '@/views/CRMmanagement/punter/RecordForm1.vue'
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport, getCooperativeData, getcategoryTree } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
@@ -289,6 +298,8 @@ export default {
         //   pickerOptions: this.global.timePickerOptions
         // },
       ],
+      expands: true,
+      refreshTree: true,
     }
   },
   watch: {
@@ -306,12 +317,45 @@ export default {
   beforeDestroy() {
     window.onresize = null
   },
+  mounted() {
+    this.getAdvancedQuery()
+  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
     // this.initData()
     this.getcategoryTree()
+    if (localStorage.getItem("OfficialFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('OfficialFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
   },
   methods: {
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("OfficialFlag", expands)
+      })
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
     submit() {
       this.UploadProduct(this.file)
     },
@@ -333,7 +377,7 @@ export default {
     },
     async switchStyle() {
       await this.$nextTick();
-      const programmes = this.$refs.programmes.offsetWidth
+      const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
       if (programmes <= 100) {
         this.programmelist = []
         this.programmelist1 = this.datalist.slice(0)
@@ -624,10 +668,6 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
-      })
     },
 
 
@@ -640,6 +680,7 @@ export default {
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
       this.programmetitle = ''
+      this.filterText = ''
       this.getcategoryTree()
     },
 
@@ -692,6 +733,7 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
 .el-tab-pane {
   height: calc(100% - 10px);
@@ -790,7 +832,7 @@ export default {
 .gjsearch {
   display: flex;
   background-color: #fff;
-  padding: 8px 10px;
+  padding: 8px;
   justify-content: space-between;
   align-items: center;
 }

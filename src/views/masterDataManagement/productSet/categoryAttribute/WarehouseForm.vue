@@ -53,7 +53,7 @@
             controls-position="right" />
         </el-form-item>
       </el-form>
-      <span style="display:flex;justify-content: flex-end;">
+      <span class="button-bottom">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           提交
@@ -222,7 +222,7 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/dbIncomAndOutInventory`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/dbIncomAndOutInventory'
             },
             {
               category: 'Web',
@@ -242,7 +242,8 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/directInandOutWarehouse`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/directInandOutWarehouse'
+
             },
             {
               category: 'Web',
@@ -262,7 +263,8 @@ export default {
               sortCode: 40,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/inventoryList`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList'
+
             },
             {
               category: 'Web',
@@ -282,7 +284,8 @@ export default {
               sortCode: 50,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/inventoryDetaisList`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryDetaisList'
+
             },
             {
               category: 'Web',
@@ -302,7 +305,8 @@ export default {
               sortCode: 60,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/transferManagement`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/transferManagement'
+
             },
             {
               category: 'Web',
@@ -322,7 +326,8 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/semi_finishedInventory`
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/semi_finishedInventory'
+
             }
           ]
         }
@@ -374,5 +379,11 @@ export default {
 .required {
   color: red;
   margin-left: 4px;
+}
+
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 </style>

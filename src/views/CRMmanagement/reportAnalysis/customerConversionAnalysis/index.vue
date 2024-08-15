@@ -6,20 +6,14 @@
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
           <div class="text-one-line">客户转化率分析</div>
         </div>
-        <div class="xr-radio-menu-wrap">
-          <el-select v-model="dataForm.department" placeholder="请选择">
-            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+        <div class="xr-radio-menu-wrap" style="width: 250px;">
+          <selectdate @change="datechange"></selectdate>
         </div>
         <div class="xr-radio-menu-wrap">
-          <el-select v-model="dataForm.date" placeholder="请选择">
-            <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
+          <selectdepartment @change="departmentchange"></selectdepartment>
         </div>
         <div class="xr-radio-menu-wrap select-chart">
-          <el-select v-model="dataForm.chart" placeholder="请选择">
+          <el-select v-model="dataForm.chart" placeholder="请选择" @change="chartchange">
             <el-option v-for="item in optionschart" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
@@ -27,24 +21,19 @@
         <el-button type="primary" icon="el-icon-search" @click="search()">
           {{ $t('common.search') }}</el-button>
       </div>
-      <div class="content-table-main">
+      <div class="content-table-main" v-loading="listLoading">
         <div class="axis-content">
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content">
-          <div class="handle-bar">
-            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div>
           <div style="height: 400px;">
-            <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-              <el-table-column prop="realname" label="员工姓名" width="120" />
-              <el-table-column prop="recordNum" label="跟进次数" min-width="120" />
-              <el-table-column prop="invalidNum" label="有效跟进数" min-width="120" />
-              <el-table-column prop="validNum" label="无效跟进数" min-width="120" />
-              <el-table-column prop="outSignRecordNum" label="外勤签到次数" min-width="120" />
-              <el-table-column prop="customerNum" label="跟进客户数" min-width="120" />
-              <el-table-column prop="recordNumRate" label="客户跟进占比" min-width="120" />
-            </JNPF-table>
+            <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
+              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="120">
+                <template slot-scope="scope">
+                  {{scope.row[item.prop]}}
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
         </div>
       </div>
@@ -53,91 +42,47 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { getCustomerconversionrate } from "@/api/CRMmanagement/instrumentPanel/index";
+import selectdate from "../components/selectdate";
+import selectdepartment from "../components/selectdepartment";
 export default {
+  components: {
+    selectdate,
+    selectdepartment
+  },
   data() {
     return {
+      headerCellStyle: {
+        backgroundColor: '#f5f7fa',
+        fontWeight: 'bold'
+      },
+      datas: [],
+      listLoading: false,
       tableList: [],
       dataForm: {
-        department: '选项1',
-        date: '选项1',
+        startTime: "",
+        endTime: "",
+        type: "year",
+        userIds: [],
         chart: '3'
       },
-      options: [
-        {
-          value: '选项1',
-          label: '仅本人'
-        },
-        {
-          value: '选项2',
-          label: '本人及下属'
-        }
-      ],
-      options1: [
-        {
-          value: '选项1',
-          label: '本月'
-        }
-      ],
       optionschart: [
         { label: '线条', value: '1' },
         { label: '饼状图', value: '2' },
         { label: '柱状图', value: '3' }
       ],
       chartInstance: null,
-      option: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          top: '10%',
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#42526e', '#0052cc'],
-        legend: {
-          data: ['跟进客户数'],
-          bottom: 10
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: ['2024-01', '2024-02', '2024-03', '2024-04', '2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10', '2024-11', '2024-12'],
-            axisTick: {
-              alignWithLabel: true,
-              show: false
-            }
-          }
-        ],
-        yAxis: [
-          {
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            type: 'value',
-            max: 100,
-            splitNumber: 5,
-            axisLabel:{
-              formatter:'{value}%'
-            }
-          }
-        ],
-        series: [
-          {
-            barWidth: '20%',
-            type: 'bar',
-            data: [0, 0, 0, 40, 0, 0, 20, 0, 0, 50, 30, 0]
-          }
-        ]
-      },
+      option: {},
+      columnsData: []
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+  },
+  created() {
+    this.dataForm.userIds = [this.userInfo.userId]
+    this.initData()
   },
   mounted() {
     this.chartInstance = this.$echarts.init(document.getElementById('CustomerAnaly'));
@@ -148,6 +93,7 @@ export default {
         this.chartInstance.resize()
       }, 100);
     }
+    this.init()
   },
   beforeDestroy() {
     window.onresize = null
@@ -163,50 +109,245 @@ export default {
     }
   },
   methods: {
-    // 合计处理
-    getSummaries(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计';
-          return;
-        }
-        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
+    chartchange(val) {
+      if (val == '1') {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: '{b} : {c}%'
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc', '#42526e'],
+          legend: {
+            show: false
+          },
+          xAxis: [{
+            type: 'category',
+            show: true,
+            data: this.datas.map(item => item.type),
+            axisTick: {
+              show: false
             }
-          });
-          // sums[index] += '';
-        } else {
-          sums[index] = null;
+          }],
+          yAxis: [{
+            type: 'value',
+            max: 100,
+            splitNumber: 5,
+            axisLabel: {
+              formatter: '{value}%'
+            },
+            axisLine: {
+              show: false
+            }
+          }],
+          series: [
+            {
+              name: '客户转化率',
+              data: this.datas.map(item => item.dealCustomerRate),
+              type: 'line',
+              smooth: true
+            }
+          ]
         }
-      });
-      return sums;
+      } else if (val == '2') {
+        this.option = {
+          tooltip: {
+            trigger: 'item'
+          },
+          legend: {
+            show: true,
+            orient: 'horizontal',
+            bottom: "10",
+            type: "scroll"
+          },
+          xAxis: [{
+            show: false
+          }],
+          series: [
+            {
+              name: 'Access From',
+              type: 'pie',
+              radius: '50%',
+              data: this.datas.map(item => {
+                return {
+                  value: item.dealCustomerRate, name: item.type
+                }
+              }),
+              emphasis: {
+                itemStyle: {
+                  shadowBlur: 10,
+                  shadowOffsetX: 0,
+                  shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+              }
+            }
+          ]
+        }
+      } else {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: '{b} : {c}%'
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#42526e', '#0052cc'],
+          legend: {
+            show: false
+          },
+          xAxis: [
+            {
+              type: 'category',
+              show: true,
+              data: this.datas.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              max: 100,
+              splitNumber: 5,
+              axisLabel: {
+                formatter: '{value}%'
+              }
+            }
+          ],
+          series: [
+            {
+              name: '客户转化率',
+              barWidth: '20%',
+              type: 'bar',
+              data: this.datas.map(item => item.dealCustomerRate)
+            }
+          ]
+        }
+      }
     },
+    search() {
+      this.initData()
+    },
+    datechange(data) {
+      this.dataForm.startTime = data.dateStart
+      this.dataForm.endTime = data.dateEnd
+      this.dataForm.type = data.value
+    },
+    departmentchange(data) {
+      this.dataForm.userIds = data
+    },
+    initData() {
+      this.listLoading = true
+      getCustomerconversionrate(this.dataForm).then(res => {
+        this.option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: '{b} : {c}%'
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#42526e', '#0052cc'],
+          legend: {
+            show: false
+          },
+          xAxis: [
+            {
+              type: 'category',
+              show: true,
+              data: res.data.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              max: 100,
+              splitNumber: 5,
+              axisLabel: {
+                formatter: '{value}%'
+              }
+            }
+          ],
+          series: [
+            {
+              name: '客户转化率',
+              barWidth: '20%',
+              type: 'bar',
+              data: res.data.map(item => item.dealCustomerRate)
+            }
+          ]
+        }
+        this.datas = res.data
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+    init() {
+      const _this = this
+      const columnObj = {}
+      columnObj.label = '日期'
+      columnObj.prop = 'title'
+      _this.columnsData.push(columnObj)
+      _this.tableList.push({ 'title': '转化率' })
+      _this.tableList.push({ 'title': '成交客户数' })
+      _this.tableList.push({ 'title': '新增客户数' })
+      var props = 'prop'
+      _this.datas.forEach((item, index) => {
+        const columnObj = {}
+        columnObj.label = item.type
+        columnObj.prop = props + index
+        _this.columnsData.push(columnObj)
+        _this.$set(_this.tableList[0], columnObj.prop, item.dealCustomerRate)
+        _this.$set(_this.tableList[1], columnObj.prop, item.dealCustomerNum)
+        _this.$set(_this.tableList[2], columnObj.prop, item.customerNum)
+      })
+    }
   }
 }
 </script>
-
-<style lang="scss">
-//公共样式
-.vux-flex-row {
-  -webkit-box-orient: horizontal;
-  flex-direction: row;
-}
-.vux-flexbox {
-  display: flex;
-  -webkit-box-align: center;
-  align-items: center;
-  width: 100%;
-  text-align: left;
-}
-</style>
 <style lang="scss" scoped>
 .JNPF-flex-main {
   padding: 14px 0 0 14px;

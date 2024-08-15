@@ -2452,3 +2452,15 @@ textarea.el-textarea__inner {
 .JNPF-common-table{
   border: none!important;
 }
+//crm报表分析
+.vux-flex-row {
+  -webkit-box-orient: horizontal;
+  flex-direction: row;
+}
+.vux-flexbox {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+}

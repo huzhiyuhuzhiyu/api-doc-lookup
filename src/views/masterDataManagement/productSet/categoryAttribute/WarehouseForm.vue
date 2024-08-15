@@ -1,5 +1,5 @@
 <template>
-  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建仓库' : '编辑仓库'" :close-on-click-modal="false"
+  <el-drawer @closed="cancelFun" :title="!dataForm.id ? '新建仓库' : '开启仓库状态'" :close-on-click-modal="false"
     :close-on-press-escape="false" :visible.sync="visible" lock-scroll width="500px" class="JNPF-common-drawer">
     <template slot="title">
       <div class="custom_title">
@@ -9,19 +9,19 @@
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="仓库名称" prop="name">
+        <el-form-item label="仓库名称" prop="warehouseName">
           <template slot="label">
             仓库名称
             <span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.name" placeholder="请输入仓库名称" maxlength="20" />
+          <el-input v-model="dataForm.warehouseName" placeholder="请输入仓库名称" maxlength="20" />
         </el-form-item>
-        <el-form-item label="仓库编码" prop="code">
+        <el-form-item label="仓库编码" prop="warehouseCode">
           <template slot="label">
             仓库编码
             <span class="required">*</span>
           </template>
-          <el-input v-model="dataForm.code" placeholder="请输入仓库编码" maxlength="20" />
+          <el-input v-model="dataForm.warehouseCode" placeholder="请输入仓库编码" maxlength="20" disabled />
         </el-form-item>
 
         <el-form-item label="仓库图标">
@@ -85,9 +85,9 @@ export default {
       btnLoading: false,
       iconBoxVisible: false,
       dataForm: {
-        name: '',
+        warehouseName: '',
         remark: '',
-        code: '',
+        warehouseCode: '',
         propertyJson: {
           moduleId: '',
           iconBackgroundColor: '',
@@ -101,8 +101,8 @@ export default {
       btntype: '',
       autoCode: '',
       dataRule: {
-        code: [
-          { required: true, message: '请输入类别编码', trigger: 'blur' },
+        warehouseCode: [
+          { required: true, message: '请输入仓库编码', trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
               if (!value) {
@@ -128,7 +128,7 @@ export default {
                       if (!res.data) {
                         callback()
                       } else {
-                        callback(new Error('此类型编码已存在'))
+                        callback(new Error('此仓库编码已存在'))
                       }
                     })
                     .catch((err) => {
@@ -140,8 +140,8 @@ export default {
             trigger: 'blur'
           }
         ],
-        name: [
-          { required: true, message: '请输入类别名称', trigger: 'blur' },
+        warehouseName: [
+          { required: true, message: '请输入仓库名称', trigger: 'blur' },
           // { validator: this.formValidate('fullName', '名称不能含有特殊符号'), trigger: 'blur' },
           { max: 50, message: '名称最多为50个字符！', trigger: 'blur' }
         ],
@@ -155,33 +155,18 @@ export default {
       console.log(row, 'row')
       this.classAttribute = row
       this.visible = true
-      if (btntype == 'add') {
-        this.dataForm = {
-          name: '',
-          remark: '',
-          code: ''
-        }
-        this.title = '新建类别属性'
-      } else if (btntype == 'edit') {
+      if (btntype == 'edit') {
         // getClassAttributeInfo(id).then((res) => {
         this.dataForm.code = row.code
         this.autoCode = row.code
-
-        this.dataForm.name = row.name
+        this.dataForm.warehouseCode = row.code
+        this.dataForm.warehouseName = row.name
+        this.classAttribute.warehouseCode = this.dataForm.warehouseCode
+        this.classAttribute.warehouseName = this.dataForm.warehouseName
         this.dataForm.remark = row.remark
         this.dataForm.id = row.id
-        this.title = '编辑仓库'
+        this.title = '开启仓库状态'
         // })
-      } else if (btntype == 'copy') {
-        getClassAttributeInfo(id).then((res) => {
-          this.dataForm.code = res.data.code
-          this.autoCode = res.data.code
-
-          this.dataForm.name = res.data.name
-          this.dataForm.remark = res.data.remark
-          this.title = '新增类别属性'
-          // this.dataForm.id = res.data.id
-        })
       }
       this.btntype = btntype
     },
@@ -194,16 +179,16 @@ export default {
       })
     },
     dataFormSubmit() {
-      if (!this.dataForm.icon) return this.$message.error('仓库图标未选择');
+      if (!this.dataForm.icon) return this.$message.error('仓库图标未选择')
       this.$refs['dataForm'].validate((valid) => {
         let obj = {
           classAttribute: this.classAttribute,
           directory: {
             category: 'Web',
             description: '',
-            enCode: this.dataForm.code,
+            enCode: this.dataForm.warehouseCode,
             enabledMark: 1,
-            fullName: this.dataForm.name,
+            fullName: this.dataForm.warehouseName,
             icon: this.dataForm.icon,
             id: '',
             isButtonAuthorize: 0,
@@ -224,7 +209,7 @@ export default {
               description: '',
               enCode: 'dbIncomAndOutInventory',
               enabledMark: 1,
-              fullName: '待办出入库',
+              fullName: `待办出入库`,
               icon: 'icon-ym icon-ym-webForm',
               id: '',
               isButtonAuthorize: 1,
@@ -244,7 +229,7 @@ export default {
               description: '',
               enCode: 'directAccessWarehouse',
               enabledMark: 1,
-              fullName: '直接出入库',
+              fullName: `直接出入库`,
               icon: 'icon-ym icon-ym-webForm',
               id: '',
               isButtonAuthorize: 1,
@@ -255,26 +240,6 @@ export default {
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
               sortCode: 10,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress: `warehouseManagement/${this.classAttribute.code}/directInandOutWarehouse`
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'directAccessWarehouse',
-              enabledMark: 1,
-              fullName: '直接出入库',
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 30,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: `warehouseManagement/${this.classAttribute.code}/directInandOutWarehouse`
@@ -371,30 +336,14 @@ export default {
             formMethod(obj)
               .then((response) => {
                 this.$message({
-                  message: '修改成功',
+                  message: '开启成功',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
-                  }
-                })
-              })
-              .catch(() => {
-                this.btnLoading = false
-              })
-          } else {
-            formMethod(this.dataForm)
-              .then((res) => {
-                this.$message({
-                  message: '新建成功',
-                  type: 'success',
-                  duration: 1500,
-                  onClose: () => {
-                    this.visible = false
-                    this.btnLoading = false
-                    this.$emit('close', true)
+                    location.reload()
                   }
                 })
               })

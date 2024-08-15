@@ -96,11 +96,17 @@
             <el-table-column prop="lxr" label="联系人" sortable="custom" width="120" />
             <el-table-column prop="tel" label="电话" sortable="custom" width="140" />
             <el-table-column prop="phone" label="手机" sortable="custom" width="160" />
+            <el-table-column prop="dealStatus" label="成交状态" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.dealStatus=='0'">未成交</div>
+                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
             <el-table-column label="操作" width="200" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button>
+                <!-- <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button> -->
                 <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">

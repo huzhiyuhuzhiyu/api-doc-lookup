@@ -65,6 +65,9 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype=='look'" :detailed="btntype=='look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -80,6 +83,8 @@ import { addcrmReceivablesPlan, detailcrmReceivablesPlan, updatecrmReceivablesPl
 export default {
   data() {
     return {
+      datafilelist: [],
+      isattachmentswitch: '1',
       getcrmContractlist,
       //合同列表字段
       contractTableItems: [
@@ -181,7 +186,7 @@ export default {
       },
     }
   },
-  computed:{
+  computed: {
     ...mapGetters(['userInfo']),
   },
   created() {
@@ -261,6 +266,19 @@ export default {
         if (this.dataForm.id) {
           detailcrmReceivablesPlan(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             this.formLoading = false
           })
         } else {
@@ -272,8 +290,19 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true;
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: 'customer',
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
           let obj = {
-            ...this.dataForm
+            ...this.dataForm,
+            attachmentList: this.datafilelist,
           }
           let formMethod = this.dataForm.id ? updatecrmReceivablesPlan(obj) : addcrmReceivablesPlan(obj);
           formMethod.then(res => {

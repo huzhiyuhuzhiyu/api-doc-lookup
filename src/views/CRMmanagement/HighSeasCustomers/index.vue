@@ -12,7 +12,7 @@
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -69,14 +69,14 @@
           <div class="JNPF-common-head">
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addSupplier('', 'add')">
               <el-button type="primary" size="mini" icon="iconfont icon-lingqu" @click="receiveFun()" :loading="btnLoading" :disabled="btnLoading">领取</el-button>
+              <el-button type="primary" size="mini" icon="icon-ym icon-ym-addFlow" @click="shareFun()">分配</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
               <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
               <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -99,6 +99,12 @@
             <el-table-column prop="contacts" label="联系人" sortable="custom" width="120" />
             <el-table-column prop="phone" label="电话" sortable="custom" width="120" />
             <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120" />
+            <el-table-column prop="dealStatus" label="成交状态" width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.dealStatus=='0'">未成交</div>
+                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column label="操作" width="180" fixed="right">
@@ -142,6 +148,7 @@
           提交</el-button>
       </span>
     </el-dialog>
+    <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
@@ -161,16 +168,18 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import { excelExport, getcategoryTree } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
+import share from './share'
 import Form from './Form'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'carrierProfile',
-  components: { Form, ExportForm, programme, SuperQuery },
+  components: { Form, ExportForm, programme, SuperQuery, share },
   data() {
     return {
-      file:{},
+      shareVisible: false,
+      file: {},
       uploadVisib: false,
       superQueryJson: [
         {
@@ -474,7 +483,14 @@ export default {
       })
 
     },
-
+    shareFun() {
+      if (!this.selectArr.length) return this.$message.error("请先选择你要分配的客户")
+      let idList = this.selectArr.map(item => item.id);
+      this.shareVisible = true
+      this.$nextTick(() => {
+        this.$refs.share.init(idList)
+      })
+    },
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
@@ -594,6 +610,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.orderFollowVisible = false
+      this.shareVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

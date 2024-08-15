@@ -8,7 +8,7 @@
     </template>
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
-        label-position="top" label-width="120px" hide-required-asterisk="fasle">
+        label-position="top" label-width="120px" :hide-required-asterisk="true">
         <!-- <el-form-item label="上级分类" prop="parentName">
         <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
           :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
@@ -30,7 +30,7 @@
           <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <span style="display:flex;justify-content: flex-end;">
+      <span class="button-bottom">
         <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           {{ $t('common.submitButton') }}
@@ -150,5 +150,10 @@ export default {
 .required {
   color: red;
   margin-left: 4px;
+}
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 </style>

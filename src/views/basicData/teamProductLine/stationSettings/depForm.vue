@@ -40,7 +40,7 @@
             :disabled="btntype ? true : false" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
-      <span style="display:flex;justify-content: flex-end;" v-if="!btntype">
+      <span class="button-bottom" v-if="!btntype">
         <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button :disabled="btntype ? true : false" type="primary" :loading="btnLoading" @click="dataFormSubmit()">
           提交</el-button>
@@ -186,5 +186,10 @@ export default {
 .required {
   color: red;
   margin-left: 4px;
+}
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 </style>

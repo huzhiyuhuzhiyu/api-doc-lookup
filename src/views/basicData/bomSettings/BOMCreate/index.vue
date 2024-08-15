@@ -214,7 +214,7 @@ export default {
 
       linesListItems: [
         { prop: "drawingNo", label: "品名规格", value: "", type: 'view', minWidth: 340 },
-        { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
+        // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 160 },
         { prop: "qty", label: "数量", value: "1", type: "input", itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('数量：' + errMsg) }] }), trigger: 'blur' }], minWidth: 120 },
         { prop: "mainUnit", label: "单位", value: "", type: "view", minWidth: 120 },
@@ -246,14 +246,14 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' },
         { prop: 'classAttributeText', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input', },
-        { prop: "name", label: "产品名称", type: 'input', },
+        // { prop: "name", label: "产品名称", type: 'input', },
         { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段
@@ -873,6 +873,7 @@ export default {
           ccList: ccLists,
           doubleSubmitFlag: this.isDoubleFlag
         }
+        console.log(dataObj,'pooooo')
         // 检查是否有循环问题
         let loopBugRes = await checkLoopBug(dataObj).catch(err => { })
         if (!loopBugRes) { this.btnLoading = false }
@@ -969,6 +970,7 @@ export default {
       this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
       this.dataForm[paramsObj.prop] = data[0].name
       this.dataForm.drawNo = data[0].all.drawingNo
+      this.dataForm.productId = data[0].id
     },
     goBack() {
       this.$emit('close')

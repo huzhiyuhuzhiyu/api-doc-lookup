@@ -146,20 +146,20 @@ const actions = {
                   affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
                 }
               }
-              if (e.urlAddress.indexOf(/\${ceshi1}/g)){
-                newObj = {
-                  path: '/' + path,
-                  component: (resolve) => require([`@/views/warehouseManagement/index`], resolve),
-                  name: name,
-                  meta: {
-                    title: name,
-                    icon: e.icon,
-                    zhTitle: e.fullName,
-                    modelId: e.id,
-                    affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
-                  }
-                }
-              }
+              // if (e.urlAddress.indexOf(/\${ceshi1}/g)){
+              //   newObj = {
+              //     path: '/' + path,
+              //     component: (resolve) => require([`@/views/warehouseManagement/index`], resolve),
+              //     name: name,
+              //     meta: {
+              //       title: name,
+              //       icon: e.icon,
+              //       zhTitle: e.fullName,
+              //       modelId: e.id,
+              //       affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
+              //     }
+              //   }
+              // }
               routerList.push(newObj)
             }
             // 功能、字典、报表、门户

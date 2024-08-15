@@ -16,12 +16,12 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item>
                 <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -73,7 +73,7 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
@@ -200,11 +200,11 @@ export default {
           label: '品名规格',
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
+        // {
+        //   prop: 'productName',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
         {
           prop: 'productCode',
           label: '产品编码',

@@ -5,7 +5,7 @@
   
 <script>
 import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
-import paymentIndex from '@/views/financialManagement/components/pay/index.vue'
+import paymentIndex from '@/views/financialManagement/components/collect/index.vue'
 export default {
   name: 'purchasePayment',
   components: { paymentIndex },
@@ -46,14 +46,14 @@ export default {
         reconciliationDateArr: [],
       },
       tableItems: [
-        { prop: 'orderNo', label: '对账流水号', minWidth: '180', sortable: 'custom' },
-        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180', sortable: 'custom' },
-        { prop: 'cooperativePartnerName', label: '客户名称', sortable: 'custom' },
-        { prop: 'cooperativePartnerCode', label: '客户编码', sortable: 'custom' },
-        { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160', sortable: 'custom' },
-        { prop: 'totalReconciliationAmount', label: '应收金额', sortable: 'custom' },
-        { prop: 'totalPaymentAmount', label: '已收款金额', minWidth: '160', sortable: 'custom' },
-        { prop: 'totalUnpaidAmount', label: '未收款金额', minWidth: '160', sortable: 'custom' },
+        { prop: 'orderNo', label: '对账流水号', minWidth: '180' },
+        { prop: 'reconciliationDate', label: '对账日期', minWidth: '180' },
+        { prop: 'cooperativePartnerCode', label: '客户编码' },
+        { prop: 'cooperativePartnerName', label: '客户名称' },
+        { prop: 'includingTaxAmount', label: '出入库金额', minWidth: '160' },
+        { prop: 'totalReconciliationAmount', label: '应付金额', minWidth: '160' },
+        { prop: 'totalPaymentAmount', label: '已收款金额', minWidth: '160' },
+        { prop: 'totalUnpaidAmount', label: '未收款金额', minWidth: '160' },
         // { prop: 'totalInvoicingAmount', label: '已开票金额' },
         // { prop: 'totalNotInvoicedAmount', label: '未开票金额' },
         { prop: 'remark', label: '备注' },
@@ -65,6 +65,7 @@ export default {
         { prop: 'reconciliationDateArr', label: '对账日期', type: 'date' },
         { prop: 'cooperativePartnerName', label: '客户名称', type: 'input' },
       ],
+
     }
   },
   created() {

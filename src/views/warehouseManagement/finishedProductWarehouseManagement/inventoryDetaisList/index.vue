@@ -171,6 +171,9 @@ import {
 export default {
   name: 'inventoryDetaisList',
   components: { Form, SuperQuery, ExportForm },
+  props:{
+    classAttribute:"",
+  },
   data() {
     return {
       columnList: ["partnerCode", 'productCode', "productName", "deputyUnit", "deputyNum", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
@@ -822,6 +825,7 @@ export default {
       })
       this.totalList = []
       this.listQuery.pageNum = 1
+      this.listQuery.classAttribute=this.classAttribute
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

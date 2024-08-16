@@ -57,7 +57,6 @@
                   <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                     @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
                     <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
-                    <el-table-column prop="productName" label="产品名称" width="140" :key="14" />
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
@@ -170,7 +169,6 @@
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="160"
                   sortable="custom"></el-table-column>
-                <el-table-column prop="productName" label="产品名称" sortable="custom" min-width="120" />
                 <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
                 <el-table-column prop="productCategoryName" label="产品分类" sortable="custom" min-width="120" />
                 <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="180" />
@@ -281,7 +279,7 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttribute: "finish_product",
+        classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -335,7 +333,7 @@ export default {
       previousValue: "",
 
       taxRateList: [],
-
+      classAttribute:"",
     }
   },
   created() {
@@ -372,7 +370,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttribute: "finish_product",
+        classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -394,6 +392,7 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
+      this.ProductListRequestObj.classAttribute=this.classAttribute
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -414,7 +413,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttribute: "finish_product",
+        classAttribute: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -520,12 +519,13 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(id, btnType) {
+    init(id, btnType,classAttribute) {
       // this.visible = true
       this.formLoading = true
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.dataForm.id = id
+      this.classAttribute=classAttribute
       this.btnType = btnType
       console.log("btnty", btnType);
       // this.refeshDataFormItems()
@@ -643,7 +643,7 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttribute = 'finish_product'
+            this.dataForm.classAttribute = this.classAttribute
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'allocate_transfer'
 

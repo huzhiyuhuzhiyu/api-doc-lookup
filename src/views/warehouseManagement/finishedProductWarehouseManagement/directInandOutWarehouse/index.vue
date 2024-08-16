@@ -53,7 +53,7 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="仓库" prop="warehouseName">
-                        <ComSelect-list :requestObj="{ type: 'normal',state:'enable' }" :dialogTitle="'选择仓库'"
+                        <ComSelect-list :requestObj="{ type: 'normal', state: 'enable' }" :dialogTitle="'选择仓库'"
                           :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName" :method="getWarehouseList"
                           placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
@@ -420,8 +420,8 @@
         <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
       </span>
     </el-dialog>
-      <!-- 选客户 -->
-      <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
+    <!-- 选客户 -->
+    <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
     <!-- 选货位 -->
     <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
     </WareHouseForm>
@@ -447,8 +447,10 @@ import WareHouseForm from './wareHouseForm.vue'
 import CustomerForm from './customerForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
 export default {
-  components: { WareHouseForm, BatchNumberForm,CustomerForm},
-
+  components: { WareHouseForm, BatchNumberForm, CustomerForm },
+  props: {
+    classAttribute: "",
+  },
   data() {
     return {
       documentTypeList: [
@@ -524,7 +526,6 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -719,7 +720,6 @@ export default {
     resetProductFun() {
       this.orderForm = { //获取产品数据
         drawingNo: "",        // customerProductNo: "",
-        classAttribute: "finish_product",
         productName: "",
         productCode: "",
 
@@ -749,7 +749,7 @@ export default {
           ],
           pageNum: 1,
           pageSize: 20,
-          classAttribute: 'finish_product'
+          classAttribute: this.classAttribute
         },
         this.searchProductFun()
 
@@ -773,7 +773,7 @@ export default {
       console.log("arr", arr);
       arr.forEach(item => {
 
-        item.classAttribute = "finish_product"
+        item.classAttribute = item.classAttribute
         item.ordersId = ""
         item.ordersLineId = ""
         item.noticeId = ""
@@ -1020,7 +1020,6 @@ export default {
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
-        classAttribute: "finish_product",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -1179,7 +1178,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = "finish_product"
+            this.dataForm.classAttribute = this.classAttribute
             let dataObj = {
               stockMove: this.dataForm,
               lines: this.productData,

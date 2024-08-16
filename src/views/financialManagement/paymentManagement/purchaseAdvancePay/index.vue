@@ -40,8 +40,8 @@ export default {
                 prePayFlag: 1,           //预收付款标识
             },
             tableItems: [
-                { prop: 'partnerCode', label: '供应商编码', sortable: 'custom' },
-                { prop: 'partnerName', label: '供应商名称', sortable: 'custom' },
+                { prop: 'partnerCode', label: '供应商编码',minWidth: '180', sortable: 'custom' },
+                { prop: 'partnerName', label: '供应商名称',minWidth: '180', sortable: 'custom' },
                 { prop: 'paymentAmount', label: '付款金额' },
                 { prop: 'remainingAmount', label: '剩余金额' },
                 { prop: 'paymentMethod', label: '付款方式' },

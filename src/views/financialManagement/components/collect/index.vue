@@ -239,8 +239,7 @@ export default {
         },
 
       ],
-      columnList: [
-      ],
+      columnList: ['cooperativePartnerCode'],
       title: '更多查询',
       tableData: [],
       listLoading: false,

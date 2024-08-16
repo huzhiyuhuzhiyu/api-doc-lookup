@@ -20,9 +20,9 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <div class="handle-bar">
+          <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div>
+          </div> -->
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
               <el-table-column prop="settingName" label="阶段" min-width="120" />
@@ -175,7 +175,7 @@ export default {
           sums[index] = '合计';
           return;
         }
-        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : '');
+        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : item[column.property] == '0' ? 0 : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);

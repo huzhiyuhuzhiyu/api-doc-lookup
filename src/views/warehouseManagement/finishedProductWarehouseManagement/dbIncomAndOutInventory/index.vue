@@ -468,7 +468,10 @@ export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
   components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm },
-  data() {
+  props:{
+    classAttribute:"",
+  },
+  data() { 
     return {
       thFormVisible: false,
       fhFormVisible: false,
@@ -483,7 +486,7 @@ export default {
       cgDateArr: [],
       cgTotal: 0,
       cgForm: {
-        classAttribute: "finish_product",
+        classAttribute: "",
         documentStatus: "sibmit",
         deliverDateStart: "",
         deliverDateEnd: "",
@@ -505,7 +508,7 @@ export default {
       fhTotal: 0,//发货 列表总条数
       // 发货列表请求条件
       fhForm: {
-        classAttribute: "finish_product",
+        classAttribute: "",
         orderNo: "",
         partnerName: "",
         pageNum: 1,
@@ -530,7 +533,7 @@ export default {
       wxshTotal: 0,
       wxshTableList: [],
       wxshForm: {
-        classAttribute: "finish_product",
+        classAttribute: "",
         documentStatus: "sibmit",
         deliverDateStart: "",
         deliverDateEnd: "",
@@ -562,7 +565,7 @@ export default {
       wxflTotal: 0,
       wxflTableList: [],
       wxflForm: {
-        classAttribute: "finish_product",
+        classAttribute: "",
         documentStatus: "sibmit",
         rdeDate: "",
         rdsDate: "",
@@ -615,10 +618,11 @@ export default {
     // 进入页面  默认查询销售发货通知单数据
 
     this.getStockMovelistFun()
+    console.log(this.classAttribute);
   },
   methods: {
     getStockMovelistFun() {
-      getStockMovelist('finish_product').then(res => {
+      getStockMovelist(this.classAttribute).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {
@@ -668,7 +672,7 @@ export default {
       if (this.categoryType) {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs[ref].init(data, btnType, this.categoryType)
+          this.$refs[ref].init(data, btnType, this.categoryType,this.classAttribute)
         })
 
       }
@@ -894,7 +898,7 @@ export default {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'inbound_sale_return') {
         this.fhForm = {
           orderNo: "",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
           partnerName: "",
           pageNum: 1,
           pageSize: 20,
@@ -918,7 +922,7 @@ export default {
       if (this.categoryType == 'inbound_purchase' || this.categoryType == 'outbound_purchase') {
         this.cgForm = {
           documentStatus: "sibmit",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
           deliverDateStart: "",
           deliverDateEnd: "",
           notificationType: "procure",
@@ -940,7 +944,7 @@ export default {
       if (this.categoryType == 'outbound_external_send') {
         this.wxflForm = {
           documentStatus: "sibmit",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
 
           rdeDate: "",
           rdsDate: "",
@@ -963,7 +967,7 @@ export default {
       if (this.categoryType == 'inbound_external') {
         this.wxshForm = {
           orderNo: "",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
           partnerName: "",
           pageNum: 1,
           pageSize: 20,

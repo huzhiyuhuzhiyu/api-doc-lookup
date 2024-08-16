@@ -268,7 +268,8 @@
                 <el-col :span="6">
                   <el-form-item label="">
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
+                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期"
+                      clearable></el-date-picker>
                   </el-form-item>
                 </el-col>
 
@@ -384,6 +385,7 @@ export default {
         createByName: '',
         deliveryEndDate: '',
         deliveryStartDate: '',
+
         endTime: '',
         orderNo: '',
         orderType: 'procure',
@@ -398,7 +400,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: '',
+        classAttribute: 'other',
         receivingStatus: 'receiving'
       },
       // orderList: [
@@ -481,9 +483,9 @@ export default {
       ProductMethodArr: [
         {
           label: '产品分类',
-          classAttribute: 'material',
+          classAttribute: '',
           method: getcategoryTree,
-          requestObj: { classAttribute: 'material' }
+          requestObj: { classAttribute: '' }
         }
       ],
       allproductData: [],

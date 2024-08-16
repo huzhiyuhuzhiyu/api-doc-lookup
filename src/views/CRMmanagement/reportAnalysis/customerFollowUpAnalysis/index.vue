@@ -179,12 +179,14 @@ export default {
               barWidth: '20%',
               name: '跟进客户数',
               type: 'bar',
+              barWidth: '20%',
               data: res1.data.map(item => item.customerNum)
             },
             {
               barWidth: '20%',
               name: '跟进次数',
               type: 'bar',
+              barWidth: '20%',
               yAxisIndex: 1,
               data: res1.data.map(item => item.recordNum)
             }
@@ -210,7 +212,7 @@ export default {
           sums[index] = '合计';
           return;
         }
-        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : '');
+        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : item[column.property] == '0' ? 0 : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);

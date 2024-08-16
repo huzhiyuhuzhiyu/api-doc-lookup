@@ -30,12 +30,12 @@
             <span class="required">*</span>
           </template>
           <el-row type="flex">
-            <div style="flex:1;margin-right:10px">
+            <div style="flex:1">
               <el-input v-model="dataForm.icon" placeholder="请选择图标" readonly :suffix-icon="dataForm.icon">
                 <el-button slot="append" @click="openIconBox">选择</el-button>
               </el-input>
             </div>
-            <el-color-picker v-model="dataForm.propertyJson.iconBackgroundColor" :predefine="[
+            <!-- <el-color-picker v-model="dataForm.propertyJson.iconBackgroundColor" :predefine="[
               '#188ae2',
               '#35b8e0',
               '#26bf8c',
@@ -45,7 +45,7 @@
               '#ff8acc',
               '#3b3e47',
               '#282828'
-            ]" />
+            ]" /> -->
           </el-row>
         </el-form-item>
         <el-form-item label="排序" prop="sortCode">
@@ -152,15 +152,14 @@ export default {
   },
   methods: {
     init(row, btntype) {
-      console.log(row, 'row')
       this.classAttribute = row
       this.visible = true
       if (btntype == 'edit') {
         // getClassAttributeInfo(id).then((res) => {
         this.dataForm.code = row.code
         this.autoCode = row.code
-        this.dataForm.warehouseCode = row.code
-        this.dataForm.warehouseName = row.name
+        this.dataForm.warehouseCode = row.warehouseCode ? row.warehouseCode : row.code
+        this.dataForm.warehouseName = row.warehouseName ? row.warehouseName : row.name
         this.classAttribute.warehouseCode = this.dataForm.warehouseCode
         this.classAttribute.warehouseName = this.dataForm.warehouseName
         this.dataForm.remark = row.remark
@@ -180,6 +179,7 @@ export default {
     },
     dataFormSubmit() {
       if (!this.dataForm.icon) return this.$message.error('仓库图标未选择')
+
       this.$refs['dataForm'].validate((valid) => {
         let obj = {
           classAttribute: this.classAttribute,
@@ -222,7 +222,12 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/dbIncomAndOutInventory' +'?'+ this.classAttribute.code
+              urlAddress:
+                'warehouseManagement/${' +
+                this.classAttribute.code +
+                '}/dbIncomAndOutInventory' +
+                '?' +
+                this.classAttribute.code
             },
             {
               category: 'Web',
@@ -242,8 +247,12 @@ export default {
               sortCode: 20,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/directInandOutWarehouse' +'?'+ this.classAttribute.code
-
+              urlAddress:
+                'warehouseManagement/${' +
+                this.classAttribute.code +
+                '}/directInandOutWarehouse' +
+                '?' +
+                this.classAttribute.code
             },
             {
               category: 'Web',
@@ -263,8 +272,8 @@ export default {
               sortCode: 30,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList' +'?'+ this.classAttribute.code
-
+              urlAddress:
+                'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList' + '?' + this.classAttribute.code
             },
             {
               category: 'Web',
@@ -284,8 +293,12 @@ export default {
               sortCode: 40,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryDetaisList'+'?'+ this.classAttribute.code
-
+              urlAddress:
+                'warehouseManagement/${' +
+                this.classAttribute.code +
+                '}/inventoryDetaisList' +
+                '?' +
+                this.classAttribute.code
             },
             {
               category: 'Web',
@@ -305,8 +318,12 @@ export default {
               sortCode: 50,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/transferManagement'+'?'+ this.classAttribute.code
-
+              urlAddress:
+                'warehouseManagement/${' +
+                this.classAttribute.code +
+                '}/transferManagement' +
+                '?' +
+                this.classAttribute.code
             },
             {
               category: 'Web',
@@ -326,12 +343,12 @@ export default {
               sortCode: 60,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventory'+'?'+ this.classAttribute.code
-
+              urlAddress:
+                'warehouseManagement/${' + this.classAttribute.code + '}/inventory' + '?' + this.classAttribute.code
             }
           ]
         }
-        console.log(obj, 'obj')
+
         if (valid) {
           this.btnLoading = true
 

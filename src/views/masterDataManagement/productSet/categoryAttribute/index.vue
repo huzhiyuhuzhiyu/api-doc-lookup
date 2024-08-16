@@ -61,10 +61,10 @@
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                 <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
                   @click="onHandle(scope.row, 'edit')">
-                  开启
+                  开启仓库
                 </el-button>
                 <el-button v-else type="text" size="mini" @click="offHandle(scope.row.id)">
-                  禁用
+                  关闭仓库
                 </el-button>
                 <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
                 复制
@@ -317,19 +317,17 @@ export default {
       }
     },
     onHandle(row, btn) {
-      console.log(123)
       this.warehouseFormVisible = true
       this.$nextTick(() => {
         this.$refs.warehouseForm.init(row, btn)
       })
     },
     offHandle(id, btn) {
-      console.log(123)
       let obj = {
         id: id,
         state: 'disabled'
       }
-      this.$confirm(('是否确定禁用'), {
+      this.$confirm('是否确定禁用', {
         type: 'warning'
       })
         .then(() => {
@@ -340,7 +338,7 @@ export default {
               message: '禁用成功',
               duration: 1500
             })
-            location.reload();
+            location.reload()
           })
         })
         .catch(() => { })
@@ -606,7 +604,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
       })
     }
   }

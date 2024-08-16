@@ -38,7 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { gettotalCustomerTable, getsellFunnel } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -106,7 +106,7 @@ export default {
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getsellFunnel(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'item',
@@ -119,7 +119,7 @@ export default {
             showTitle: false
           },
           legend: {
-            data: ['赢单', '需求分析', '方案/报价', '谈判审核']
+            data: ['验证客户', '赢单', '需求分析', '方案/报价', '谈判审核']
           },
           series: [
             {
@@ -146,23 +146,17 @@ export default {
                 borderColor: '#fff',
                 borderWidth: 1
               },
-              data: [
-                { value: 100, name: '赢单' },
-                { value: 80, name: '需求分析'},
-                { value: 60, name: '方案/报价'},
-                { value: 40, name: '谈判审核' }
-              ]
+              data: res1.data.map(item => {
+                return { value: item.businessMoney, name: item.settingName }
+              })
             }
           ]
         };
-        this.chartLoading = false
-      }).catch(() => {
-        this.chartLoading = false
-      })
-      gettotalCustomerTable(this.dataForm).then(res2 => {
-        this.tableList = res2.data
+        this.tableList = res1.data
         this.listLoading = false
+        this.chartLoading = false
       }).catch(() => {
+        this.chartLoading = false
         this.listLoading = false
       })
     },

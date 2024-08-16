@@ -222,7 +222,7 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/dbIncomAndOutInventory'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/dbIncomAndOutInventory' +'?'+ this.classAttribute.code
             },
             {
               category: 'Web',
@@ -239,7 +239,7 @@ export default {
               linkTarget: '_self',
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 10,
+              sortCode: 20,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/directInandOutWarehouse'
@@ -260,7 +260,7 @@ export default {
               linkTarget: '_self',
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 40,
+              sortCode: 30,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList'
@@ -281,7 +281,7 @@ export default {
               linkTarget: '_self',
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 50,
+              sortCode: 40,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryDetaisList'
@@ -302,7 +302,7 @@ export default {
               linkTarget: '_self',
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 60,
+              sortCode: 50,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/transferManagement'
@@ -323,7 +323,7 @@ export default {
               linkTarget: '_self',
               parentId: '',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 10,
+              sortCode: 60,
               systemId: '309228585019769285',
               type: 2,
               urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/semi_finishedInventory'

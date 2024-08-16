@@ -1,13 +1,15 @@
 <template>
     <advancePayIndex :reconciliationType="listRequestObj.reconciliationType" :listMethod="getfinPaymentReport"
         :listRequestObj="listRequestObj" :tableItems="tableItems" :searchList="searchList"
-        :searchListMore="searchListMore" :delMethod="delfinPayment" :PartnerMethodArr="PartnerMethodArr" :PartnerTableItems="PartnerTableItems" :PartnerTableSearchList="PartnerTableSearchList" :PartnerListRequestObj="PartnerListRequestObj"/>
+        :searchListMore="searchListMore" :delMethod="delfinPayment" :PartnerMethodArr="PartnerMethodArr"
+        :PartnerTableItems="PartnerTableItems" :PartnerTableSearchList="PartnerTableSearchList"
+        :PartnerListRequestObj="PartnerListRequestObj" />
 </template>
 
 <script>
-import { getfinPaymentReport ,delfinPayment } from '@/api/financialManagement/index'
+import { getfinPaymentReport, delfinPayment } from '@/api/financialManagement/index'
 import advancePayIndex from '@/views/financialManagement/components/payAndcollect/advancePay.vue'
-import {getcategoryTree} from "@/api/basicData/index"; //供应商数据
+import { getcategoryTree } from "@/api/basicData/index"; //供应商数据
 export default {
     name: 'saleAdvancePayment',
     components: { advancePayIndex },
@@ -35,13 +37,13 @@ export default {
                 paymentStartDate: "",
                 reconciliationType: "receivable",
                 startTime: "",
-                paymentDateArr:[],
-                createTimeArr:[],
+                paymentDateArr: [],
+                createTimeArr: [],
                 prePayFlag: 1,           //预收付款标识
             },
             tableItems: [
-                { prop: 'partnerCode', label: '客户编码', sortable: 'custom' },
                 { prop: 'partnerName', label: '客户名称', sortable: 'custom' },
+                { prop: 'partnerCode', label: '客户编码', sortable: 'custom' },
                 { prop: 'paymentAmount', label: '收款金额' },
                 { prop: 'remainingAmount', label: '剩余金额' },
                 { prop: 'paymentMethod', label: '收款方式' },
@@ -51,15 +53,16 @@ export default {
                 { prop: 'createByName', label: '创建人' },
             ],
             searchList: [
-                { prop: 'partnerCode', label: '客户编码', type: 'input' },
                 { prop: 'partnerName', label: '客户名称', type: 'input' },
+                { prop: 'partnerCode', label: '客户编码', type: 'input' },
+
                 { prop: 'paymentDateArr', label: '收款', type: 'date' },
             ],
             searchListMore: [
                 { prop: 'partnerCode', label: '客户编码', type: 'input' },
                 { prop: 'partnerName', label: '客户名称', type: 'input' },
                 { prop: 'paymentMethod', label: '收款方式', type: 'select', options: [{ label: '转账', value: 'transfer_accounts', }, { label: '汇票', value: 'draft', }] },
-                { prop: 'paymentDateArr', label: '收款日期', type: 'date', showLabel: '收款'  },
+                { prop: 'paymentDateArr', label: '收款日期', type: 'date', showLabel: '收款' },
                 { prop: 'createTimeArr', label: '创建时间', type: 'dateTime' },
             ],
 

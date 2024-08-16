@@ -74,6 +74,9 @@ module.exports = {
       // 'monaco-editor': 'monaco-editor',
       'echarts': 'echarts'
       // 'vue': 'Vue',
+      // 'vue-router': 'VueRouter',
+      // 'vuex': 'Vuex',
+      // 'axios': 'axios',
       // 'element-ui': 'Element'
     })
     // it can improve the speed of the first screen, it is recommended to turn on preload

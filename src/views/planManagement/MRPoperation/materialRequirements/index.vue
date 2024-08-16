@@ -630,7 +630,7 @@ export default {
       bomFlagList: [
         { label: "有BOM", value: true },
         { label: "无BOM", value: false },
-      ]
+      ],
       //---------
 
       total2: 0,

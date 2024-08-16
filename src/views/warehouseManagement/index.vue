@@ -9,6 +9,14 @@
 
 <script>
 import finish from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory"
+import {
+  getBimProductAttributesInfo,
+  updataBimProductAttributes,
+  delClassAttribute,
+  addBimProductAttributes,
+  getclassAttributeList,
+  disabledClassAttributeState
+} from '@/api/masterDataManagement/index'
 export default {
   name: 'quality',
   components:{finish},
@@ -17,22 +25,48 @@ export default {
       
       listPageComponent:finish,
       depFormVisible:true,
+      form: {
+        code: '',
+        name: '',
+        pageNum: 1,
+        pageSize: 20,
+
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      },
     }
   },
   watch: {
   },
   created() {
-    console.log(this);
-    console.log(this.listPageComponent);
-    
-    console.log(this.$route,this.$route.meta.modelId);
+    console.log("this",this.$route);
+    this.getclassAttributeListFun()
+    let path=this.$route.path
+    console.log(path); 
+    if(path.indexOf('semi_finished')>-1){
+      console.log(1);
+    }else{
+      console.log(2);
+    }
 
   },
   methods: {
    close(){
 
    },
-    
+   getclassAttributeListFun(){
+      getclassAttributeList(this.form).then(res=>{
+        console.log(res);
+      })
+    }
   }
 }
 </script>

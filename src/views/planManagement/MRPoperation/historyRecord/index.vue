@@ -3,6 +3,87 @@
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="组装需求" name="assemble">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="orderForm.productCode" @keyup.enter.native="search()" placeholder="品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+             
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input  v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="是否有BOM" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="orderForm.planNo" @keyup.enter.native="search()" placeholder="计划单号" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
+                  @click="moreQueries()">更多查询</el-button>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table ref="dataTable" v-loading="listLoading" :data="producrData" :fixedNO="true"
+                @sort-change="sortChange" custom-column>
+                <el-table-column prop="planNo" label="计划单号" width="180" fixed="left" sortable="custom"></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="150"  
+                  sortable="custom"></el-table-column>
+                <el-table-column prop="productName" label="产品名称" fixed="left" width="160" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="产品图号" fixed="left" width="160" sortable="custom" />
+
+                <!-- <el-table-column prop="demandType" label="需求类型" width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.demandType == 'finish_product'">成品生产</div>
+                    <div v-if="scope.row.demandType == 'semi_finished'">半成品生产</div>
+                  </template>
+                </el-table-column> -->
+                <el-table-column prop="originNo" label="来源单号" width="160" sortable="custom"></el-table-column>
+                <el-table-column prop="workOrderNo" label="工作令号" width="120"></el-table-column>
+                <el-table-column prop="demandQuantity" label="需求数量" width="120"></el-table-column>
+                <el-table-column prop="safeInventory" label="安全库存" width="100"></el-table-column>
+                <el-table-column prop="inventoryQuantity" label="库存数量" width="100"></el-table-column>
+                <el-table-column prop="totalInProcessQuantity" label="总在制数量" width="120"></el-table-column>
+                <el-table-column prop="inProcessQuantity" label="在制数量" width="100"></el-table-column>
+
+                <el-table-column prop="occupancyQuantity" label="占用数量" width="100"> </el-table-column>
+                <el-table-column prop="outputQuantity" label="生产数量" width="100" />
+
+                <el-table-column prop="issuedQuantity" label="已下达数量" width="120"> </el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="100"> </el-table-column>
+                <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+
+                <el-table-column prop="createTime" label="需求时间" min-width="180" sortable="custom" />
+                <el-table-column prop="createByName" label="运算人" min-width="120" />
+                <el-table-column prop="remark" label="备注" min-width="160" />
+                <el-table-column label="操作" width="200" fixed="right">
+                  <template slot-scope="scope"> 
+                    <el-button size="mini" type="text" :disabled="scope.row.outputQuantity==0||scope.row.mainProductFlag"
+                @click.native="retrospectFun(scope.row.id,'produce')">追溯主产品</el-button>
+                <el-button size="mini" type="text"
+                @click.native="complateSetFun(scope.row.bomId, 'product')">查看子件</el-button>
+                    
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                @pagination="initData" />
+            </div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="生产需求" name="produce">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">

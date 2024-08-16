@@ -119,7 +119,7 @@ import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
 
 export default {
-  name: 'semi_finishedInventory',
+  name: 'inventory',
   components: { Form, SuperQuery,ExportForm},
   data() {
     return {
@@ -153,15 +153,14 @@ export default {
         ],
         warehouseName:"",
         pageNum: 1,
-        pageSize: 20,
-        
+        pageSize: 20, 
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
         superQuery:{},
-        classAttribute:"semi_finished",
+        classAttribute:"finish_product",
       },
       selectedNodeKey: "",
       totalData: {},
@@ -257,7 +256,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1007',
-        exportName: "半成品库存",
+        exportName: "配件库存",
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -324,9 +323,9 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery:{},
-        classAttribute:"semi_finished",
+        classAttribute:"finish_product",
       }
-      this.initData()
+    this.initData() 
     },
  
     

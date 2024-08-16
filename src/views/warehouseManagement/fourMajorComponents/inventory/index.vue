@@ -120,7 +120,7 @@ import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
 
 export default {
-  name: 'productionProgress',
+  name: 'inventory',
   components: { Form, SuperQuery,ExportForm},
   data() {
     return {

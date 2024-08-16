@@ -182,18 +182,18 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="purchaseForm.planNo" placeholder="请输入计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.workOrderNo" placeholder="请输入工作令号" clearable />
+                    <el-input v-model="purchaseForm.workOrderNo" placeholder="请输入工作令号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input v-model="purchaseForm.productDrawingNo" placeholder="请输入产品图号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -302,7 +302,7 @@
 
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+              <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
                 @pagination="initData" />
               <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="initData" /> -->
@@ -316,18 +316,18 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="outForm.planNo" placeholder="请输入计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.workOrderNo" placeholder="请输入工作令号" clearable />
+                    <el-input v-model="outForm.workOrderNo" placeholder="请输入工作令号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="orderForm.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input v-model="outForm.productDrawingNo" placeholder="请输入产品图号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -424,7 +424,7 @@
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+              <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
                 @pagination="initData" />
             </div>
 
@@ -434,7 +434,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
 
-    <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
+    <!-- <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center wlxd" width="1200px">
 
       <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px"
@@ -582,7 +582,7 @@
         <el-button :loading="btnLoading" type="primary" @click="submitAllProduct()">
           确定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
 
     <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @refreshDataList="initData"
       @close="closeForm" />
@@ -699,240 +699,7 @@ export default {
 
 
 
-      retrospectFormVisible: false,
-      complateSetFormVisible: false,
-      popupVisibily: false,
-      popupTitle: "",
-      popupList: [],
-      startPickerOptions: {
-        disabledDate: (date) => {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0); // 将时间设置为当天的凌晨
 
-          return date.getTime() < today.getTime();
-        },
-      },
-      endPickerOptions: {
-        disabledDate: (date) => {
-          const today = new Date();
-          today.setHours(0, 0, 0, 0); // 将时间设置为当天的凌晨
-
-          return date.getTime() < today.getTime();
-        },
-      },
-      btnLoading: false,
-      total: 0,
-      productVisible: false,
-      tableFlag: false,
-      orderDetailData: [],
-      replaceStatusList: [
-        { label: "正常", value: "normal" },
-        { label: "替代中", value: "applying" },
-      ],
-      // 需求类型 最开始默认是生产
-      demandList: [
-        { label: "所有生产", value: "produce" },
-        { label: "成品生产", value: "finish_product" },
-        { label: "半成品生产", value: "semi_finished" },
-      ],
-      sleeveItems: [
-        {
-          prop: "productCode",
-          label: "产品编码",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "productName",
-          label: "产品名称",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "drawingNo",
-          label: "产品图号",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "num",
-          label: "原数量(主)",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "mainUnit",
-          label: "主单位",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "assistantNum",
-          label: "原数量(副)",
-          value: "",
-          type: "view",
-          width: "100",
-        },
-        {
-          prop: "deputyUnit",
-          label: "副单位",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "price",
-          label: "原单价",
-          value: "",
-          type: "view",
-          width: "200",
-        },
-        { prop: "totalAmount", label: "原金额", value: "", type: "view" },
-        {
-          prop: "deliveryDate",
-          label: "原交货日期",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        { prop: "ask", label: "要求", value: "", type: "view" },
-        // { prop: "newNum", label: "新数量(主)", value: "", type: 'input', width: "200", maxlength: 11, itemRules: [{ required: true, trigger: "blur" }, { validator: this.formValidate({ type: 'decimal', params: [10, 2, false, errMsg => { this.$message.error(`新数量(主)：${errMsg}`) }] }), trigger: 'blur' }] },
-        // { prop: "newAssistantNum", label: "新数量(副)", value: "", type: 'view', width: "200" },
-        {
-          prop: "newPrice",
-          label: "新单价",
-          value: "",
-          width: "180",
-          change: this.changePrice,
-          type: "input",
-          itemRules: [
-            { required: true, trigger: "blur" },
-            {
-              validator: this.formValidate({
-                type: "decimal",
-                params: [
-                  10,
-                  2,
-                  false,
-                  (errMsg) => {
-                    this.$message.error(`新单价：${errMsg}`);
-                  },
-                ],
-              }),
-              trigger: "blur",
-            },
-          ],
-        },
-        {
-          prop: "newExcludingTaxAmount",
-          label: "新金额",
-          value: "",
-          type: "view",
-          width: "180",
-        },
-        {
-          prop: "newDeliveryDate",
-          label: "新交货日期",
-          value: "",
-          type: "date",
-          width: "180",
-          itemRules: [{ required: true, trigger: "change" }],
-        },
-        {
-          prop: "newAsk",
-          label: "新要求",
-          value: "",
-          type: "input",
-          width: "180",
-        },
-        {
-          prop: "remark",
-          label: "备注",
-          value: "",
-          type: "input",
-          maxlength: 200,
-          width: "180",
-        },
-      ],
-
-      producrData: [],
-      outData: [],
-      purchaseData: [],
-      customList: [], // 列表中显示的自定义属性
-      title: "更多查询",
-      visible: false,
-      treeData: [],
-      tableData: [],
-      detailTableData: [],
-      treeLoading: false,
-      listLoading: false,
-      authorizeFormVisible: false,
-      userRelationListVisible: false,
-      organizeIdTree: [],
-      activeName: "produce",
-      salespersonList: [],
-      flag: true,
-      detailFlag: false,
-      documentStateList: [
-        { label: "草稿", value: "draft" },
-        { label: "提交", value: "submit" },
-      ],
-      immediatelyBuyFlagList: [
-        { value: 0, label: "否" },
-        { value: 1, label: "是" },
-      ],
-      paymentMethodList: [],
-      paymentCycleList: [],
-      orderForm: {
-        demandType: "produce",
-        documentStatus: "submit",
-        demandState: "not_finish",
-        planNo: "",
-        productCode: "",
-        productName: "",
-        productDrawingNo: "",
-        originNo: "",
-        workOrderNo: "",
-        immediatelyBuyFlag: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        replaceStatus: "",
-        startTime: "",
-        endTime: "",
-        pageNum: 1,
-        pageSize: 100,
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "create_time",
-          },
-        ],
-      },
-      tableDataAss: [],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
-      },
-      createTimeArr: [],
-      deliveryDateArr: [],
-      total: 0,
-      formVisible: false,
-      produceArr: [],
-      produceArrList: [],
-      purchaseArr: [],
-      purchaseArrList: [],
-      outArr: [],
-      outArrList: [],
     };
   },
   computed: {
@@ -947,28 +714,28 @@ export default {
     },
   },
   created() {
-    this.initData();
+    this.getassembleData();
 
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-    // table切换
-    handleClick() {
+      // table切换
+      handleClick() {
       console.log(this.activeName);
-      if (this.activeName == "") {
+      if (this.activeName == "assemble") {
         this.getassembleData()
       }
-      if (this.activeName == "") {
+      if (this.activeName == "produce") {
         this.getproduceData()
 
       }
-      if (this.activeName == "") {
+      if (this.activeName == "purchase") {
         this.getpurchaseDataa()
 
       }
-      if (this.activeName == "") {
+      if (this.activeName == "out") {
         this.getouteData()
-
+        
       }
     },
 
@@ -981,27 +748,76 @@ export default {
     getassembleData() {
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
+        let totalData = res.data.total
+        let tableData = res.data.page.records
+        if (tableData.length) {
+          this.total1 = res.data.page.total
+          this.assembleData = tableData
+
+          this.totalDemandQuantity = totalData.demandQuantity
+          this.outputQuantity = totalData.outputQuantity
+        }
       })
     },
     // 生产列表数据
     getproduceData() {
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
+        let totalData = res.data.total
+        let tableData = res.data.page.records
+        if (tableData.length) {
+          this.produceData = tableData
+          this.total2 = res.data.page.total
+
+          this.totalDemandQuantity = totalData.demandQuantity
+          this.outputQuantity = totalData.outputQuantity
+          this.lossNum = totalData.lossNum
+          this.planInTransitQuantity = totalData.planInTransitQuantity
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
+          this.occupancyQuantity = totalData.occupancyQuantity
+        }
       })
     },
     // 采购列表数据
     getpurchaseDataa() {
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
+        let totalData = res.data.total
+        let tableData = res.data.page.records
+        if (tableData.length) {
+          this.purchaseData = tableData
+          this.total3 = res.data.page.total
+
+          this.totalDemandQuantity = totalData.demandQuantity
+          this.outputQuantity = totalData.outputQuantity
+          this.lossNum = totalData.lossNum
+          this.planInTransitQuantity = totalData.planInTransitQuantity
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
+          this.occupancyQuantity = totalData.occupancyQuantity
+
+        }
       })
     },
-    // 外协列表数据
-    getouteData() {
+       // 外协列表数据
+       getouteData() {
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
+        let totalData=res.data.total
+        let tableData=res.data.page.records
+        if(tableData.length){
+          this.outData=tableData
+          this.total4=res.data.page.total
+
+          this.totalDemandQuantity=totalData.demandQuantity
+          this.outputQuantity=totalData.outputQuantity
+          this.lossNum=totalData.lossNum
+          this.planInTransitQuantity=totalData.planInTransitQuantity
+          this.inTransitUnOccupancyQuantity=totalData.inTransitUnOccupancyQuantity
+          this.occupancyQuantity=totalData.occupancyQuantity
+    
+        }
       })
     },
-
 
 
 
@@ -1651,37 +1467,7 @@ export default {
         }
       }
     },
-    handleClick(e) {
-      console.log(e);
-      this.activeName = e.name;
-      if (e.name == "produce") {
-        this.demandList = [
-          { label: "所有生产", value: "produce" },
-          { label: "成品生产", value: "finish_product" },
-          { label: "半成品生产", value: "semi_finished" },
-        ];
-        this.produceArr = [];
-        this.orderForm.demandType = "produce";
-        this.orderForm.replaceStatus = ""
-        this.initData();
-      } else if (e.name == "purchase") {
-        this.demandList = [
-          { label: "所有采购", value: "purchase" },
-          { label: "成品物料", value: "finished_materials" },
-          { label: "半成品物料", value: "semi_finished_materials" },
-        ];
-        this.purchaseArr = [];
-        this.orderForm.demandType = "purchase";
-        this.initData();
-      } else if (e.name == "out") {
-        this.outArr = [];
-        this.orderForm.demandType = "out";
-        this.orderForm.replaceStatus = ""
-        this.initData();
-      }
-      this.orderForm.pageNum = 1;
-      this.orderForm.pageSize = 100;
-    },
+   
     sortChange({ prop, order }) {
       console.log("prop", prop);
       let newProp;

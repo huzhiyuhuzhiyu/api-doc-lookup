@@ -111,8 +111,8 @@ export default {
       this.form.clearance=data.clearance
       this.form.accuracyLevel=data.accuracyLevel
       this.form.warehouseId=data.warehouseId
-      this.form.packagingMethod=item.packagingMethod
-      this.form.specialRequire=item.specialRequire
+      this.form.packagingMethod=data.packagingMethod
+      this.form.specialRequire=data.specialRequire
       this.form.productsId=data.productsId
       this.getbatchNumList()
     },

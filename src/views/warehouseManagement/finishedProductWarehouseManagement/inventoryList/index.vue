@@ -139,7 +139,7 @@
 
 <script>
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList } from '@/api/warehouseManagement/inboundAndOutbound'
+import { getWarehouseList,deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -414,7 +414,7 @@ export default {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
       }).then(() => {
-        deleteOrders(id).then(res => {
+        deleteWarehouseData(id).then(res => {
           this.initData()
           this.$message({
             type: 'success',

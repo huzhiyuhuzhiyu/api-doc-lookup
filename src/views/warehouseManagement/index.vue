@@ -50,12 +50,8 @@ export default {
     console.log("this",this.$route);
     this.getclassAttributeListFun()
     let path=this.$route.path
-    console.log(path); 
-    if(path.indexOf('semi_finished')>-1){
-      console.log(1);
-    }else{
-      console.log(2);
-    }
+    let pathInfo=this.$route
+    // if()
 
   },
   methods: {

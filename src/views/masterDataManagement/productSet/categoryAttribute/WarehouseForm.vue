@@ -160,8 +160,7 @@ export default {
         this.autoCode = row.code
         this.dataForm.warehouseCode = row.warehouseCode ? row.warehouseCode : row.code
         this.dataForm.warehouseName = row.warehouseName ? row.warehouseName : row.name
-        this.classAttribute.warehouseCode = this.dataForm.warehouseCode
-        this.classAttribute.warehouseName = this.dataForm.warehouseName
+
         this.dataForm.remark = row.remark
         this.dataForm.id = row.id
         this.title = '开启仓库状态'
@@ -179,7 +178,8 @@ export default {
     },
     dataFormSubmit() {
       if (!this.dataForm.icon) return this.$message.error('仓库图标未选择')
-
+      this.classAttribute.warehouseCode = this.dataForm.warehouseCode
+      this.classAttribute.warehouseName = this.dataForm.warehouseName
       this.$refs['dataForm'].validate((valid) => {
         let obj = {
           classAttribute: this.classAttribute,

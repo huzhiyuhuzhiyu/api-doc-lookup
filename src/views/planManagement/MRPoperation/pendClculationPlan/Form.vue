@@ -1,121 +1,542 @@
 <template>
-  <el-dialog :visible.sync="visible" fullscreen lock-scroll class="JNPF-full-dialog" :show-close="false" :modal="false">
-    <div class="JNPF-full-dialog-header">
-      <div class="header-title">
+  <transition name="el-zoom-in-center">
 
-        <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
-        <p class="header-txt"> MRP计算</p>
+    <div class="JNPF-preview-main org-form">
+      <div class="JNPF-full-dialog-header">
+        <div class="header-title">
+
+          <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
+          <h2 class="header-txt"> MRP计算</h2>
+        </div>
+        <el-steps :active="activeStep" finish-status="success" simple s v-if="!loading">
+          <el-step title="计算公式及需求范围" @click.native="stepChick(0)" />
+          <el-step title="执行计算并查看结果" @click.native="stepChick(1)" />
+        </el-steps>
+        <div class="options">
+          <el-button type="primary" size="mini" @click="next" :disabled="activeStep == 1 || loading"
+            v-if="activeStep == 0">执行计算 </el-button>
+          <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0">{{ $t('common.prev')
+            }}</el-button>
+          <el-button size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != maxStep"
+            :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
+          <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
+        </div>
       </div>
-      <el-steps :active="activeStep" finish-status="success" simple style="width: 580px;" v-if="!loading">
-        <el-step title="计算公式及需求范围" @click.native="stepChick(0)" />
-        <el-step title="执行计算并查看结果" @click.native="stepChick(1)" />
-      </el-steps>
-      <div class="options" style="width:400px">
-        <el-button type="primary" size="mini" @click="next" :disabled="activeStep == 1 || loading"
-          v-if="activeStep == 0">执行计算 </el-button>
-        <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0">{{ $t('common.prev')
-          }}</el-button>
-        <el-button size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != maxStep"
-          :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
-        <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
+      <div class="main" v-loading="loading">
+        <el-collapse v-model="activeNames" v-if="!activeStep" style="height: 100%;background-color: #fff;">
+          <el-collapse-item title="运算公式" name="basicInfo" class="orderInfo">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
+              <el-row style="height: 100%;">
+                <el-col :span="24">
+                  <el-form-item label="运算单号">
+                    <el-input v-model="dataForm.arithmeticNo" placeholder="运算单号" style="width: auto;" clearable
+                      :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="24">
+                  <el-form-item label="计算方案">
+                    <div>
+                      <el-select v-model="dataForm.schemeNames" placeholder="请选择计算方案" @change="selectsChemeFun">
+                        <el-option :key="item.id" :label="item.schemeName" :value="item.id"
+                          v-for="item in schemeList" />
+                      </el-select>
+                      <el-button size="mini" type="primary" @click="deleteSchemeFun"
+                        style="margin-left: 10px;">删除方案</el-button>
+                    </div>
+
+
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item label="公式">
+                    <el-checkbox-group v-model="dataForm.type" style="line-height: 33px;height: 33px">
+                      <el-checkbox label="考虑安全库存" name="type"></el-checkbox>
+                      <el-checkbox label="考虑可用库存" name="type"></el-checkbox>
+                    </el-checkbox-group>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                  <el-form-item label="计算BOM级别">
+                    <el-select v-model="dataForm.calcBomLevel" placeholder="计算BOM级别">
+                      <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in BOMList" />
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="10">
+                  <el-form-item label="方案名称">
+                    <div>
+                      <el-input v-model="dataForm.schemeName" placeholder="方案名称" style="width: auto;" clearable />
+                      <el-button type="primary" size="mini" @click="addSchemeFun()" style="margin-left: 10px;">
+                        保存方案</el-button>
+
+                    </div>
+                  </el-form-item>
+                </el-col>
+
+              </el-row>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="已选择的计划" name="productInfo">
+            <div>
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                icon="el-icon-plus" @click="openSeleceProductDialog()">添加计划</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                icon="el-icon-delete" @click="batchDelete">删除计划</el-button>
+            </div>
+            <JNPF-table ref="dataTable" :data="tableData" :fixedNO="true" custom-column
+              @selection-change="handleSelectionChange" hasC style="height: auto;" class="planBox">
+              <el-table-column prop="planNo" label="计划单号" min-width="180">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
+                    scope.row.planNo
+                  }}</el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+              <el-table-column prop="productCode" label="产品编码" min-width="120" />
+              <el-table-column prop="productSource" label="产品来源" min-width="160">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.productSource == 'purchase'">采购</div>
+                  <div v-if="scope.row.productSource == 'out'">外协</div>
+                  <div v-if="scope.row.productSource == 'produce'">生产</div>
+                  <div v-if="scope.row.productSource == 'assemble'">配件</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="bomFlag" label="是否有BOM" min-width="160">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.bomFlag">有BOM</div>
+                  <div v-else>无BOM</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" />
+              <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" />
+              <el-table-column prop="mainUnit" label="单位" min-width="80" />
+              <el-table-column prop="planQuantity" label="计划数量" min-width="120" />
+              <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" />
+              <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" />
+              <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" />
+              <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" />
+              <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" />
+              <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+              <el-table-column prop="oil" label="油脂" min-width="100" />
+              <el-table-column prop="oilQuantity" label="油脂量" min-width="120" />
+              <el-table-column prop="clearance" label="游隙" min-width="100" />
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" />
+              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" />
+              <el-table-column prop="createTime" label="创建时间" min-width="180" />
+
+
+              <el-table-column label="操作" width="120" fixed="right" :key="15">
+                <template slot-scope="scope">
+                  <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
+                </template>
+              </el-table-column>
+            </JNPF-table>
+
+          </el-collapse-item>
+        </el-collapse>
+
+        <template v-if="activeStep == 1">
+          <!--assemble组装 produce生产 purchase采购  out外协-->
+          <el-tabs v-model="activeName" @tab-click="handleClick">
+            <el-tab-pane label="组装需求" name="assemble">
+              <JNPF-table :partentOrChild="'assemble'" @sort-change="sortChange" :data="assembleData"
+                highlight-current-row :fixedNO="true" class="dataTable" border ref="assembleRef" custom-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="bomId">
+                  <template slot-scope="scope">
+                    <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
+                      }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="productDrawingNo" label="立即组装" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="单位" width="320" sortable="custom" />
+                <el-table-column prop="productName" label="需组装数量" min-width="120" sortable="custom" />
+
+                <el-table-column prop="planNo" label="计划开始日期" width="180" />
+                <el-table-column prop="planNo" label="计划结束日期" width="180" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" />
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+                <el-table-column prop="oil" label="油脂" min-width="100" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" />
+                <el-table-column prop="clearance" label="游隙" min-width="100" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" />
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" />
+                <el-table-column label="操作" width="120" fixed="right" :key="15">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click="QTsearch(scope, 'assemble')" style=" color: #ff3a3a">齐套查询</el-button>
+                  </template>
+                </el-table-column>
+
+
+              </JNPF-table>
+              <pagination :total="total1" :page.sync="assembleForm.pageNum" :limit.sync="assembleForm.pageSize"
+                @pagination="getassembleData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需组装数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
+            </el-tab-pane>
+            <el-tab-pane label="生产需求" name="produce">
+              <JNPF-table :partentOrChild="'produce'" @sort-change="sortChange" :data="produceData"
+                highlight-current-row :fixedNO="true" class="dataTable" border ref="listTable" custom-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="bomId">
+                  <template slot-scope="scope">
+                    <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
+                      }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="productDrawingNo" label="立即生产" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="单位" width="320" />
+                <el-table-column prop="productName" label="安全库存" min-width="120" sortable="custom" />
+                <el-table-column prop="planNo" label="库存数量" width="180" sortable="custom" />
+                <el-table-column prop="planNo" label="可用库存数量" width="180" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="计划在制数量" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="实际在制数量" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="当前预占数量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="需生产数量" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="计划开始日期" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="计划结束日期" min-width="120" sortable="custom" />
+                <el-table-column label="操作" width="120" fixed="right" :key="15">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click=" tracMainProduct(scope, 'produce')"
+                      style=" color: #ff3a3a">追溯主产品</el-button>
+                    <el-button type="text" @click="QTsearch(scope, 'produce')" style=" color: #ff3a3a">齐套查询</el-button>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="total2" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
+                @pagination="getproduceData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需生产数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
+            </el-tab-pane>
+            <el-tab-pane label="采购需求" name="purchase">
+              <JNPF-table :partentOrChild="'purchase'"   @sort-change="sortChange"  :data="purchaseData" highlight-current-row :fixedNO="true"
+                class="dataTable" border ref="purchaseRef" custom-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+
+                <el-table-column prop="productDrawingNo" label="立即采购" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="单位" width="320" />
+                <el-table-column prop="productName" label="安全库存" min-width="120" sortable="custom" />
+
+                <el-table-column prop="planNo" label="库存数量" width="180" sortable="custom" />
+                <el-table-column prop="planNo" label="可用库存数量" width="180" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="计划在途数量" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="实际在途数量" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="当前预占数量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="需采购数量" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="计划开始日期" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="计划结束日期" min-width="120" sortable="custom" />
+                <el-table-column label="操作" width="120" fixed="right" :key="15">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click=" tracMainProduct(scope, 'purchase')"
+                      style=" color: #ff3a3a">追溯主产品</el-button>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
+                @pagination="getpurchaseDataa">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在途数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在途数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需采购数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
+            </el-tab-pane>
+            <el-tab-pane label="外协需求" name="out">
+              <JNPF-table :partentOrChild="'out'" @sort-change="sortChange" :data="outData" highlight-current-row :fixedNO="true" class="dataTable"
+                border ref="outRef" custom-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="bomId">
+                  <template slot-scope="scope">
+                    <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
+                      }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="productDrawingNo" label="立即外协" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
+                <el-table-column prop="planNo" label="单位" width="320" />
+                <el-table-column prop="productName" label="安全库存" min-width="120" sortable="custom" />
+                <el-table-column prop="planNo" label="库存数量" width="180" sortable="custom" />
+                <el-table-column prop="planNo" label="可用库存数量" width="180" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="计划在制数量" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="实际在制数量" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="当前预占数量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="需外协数量" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="计划开始日期" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="计划结束日期" min-width="120" sortable="custom" />
+                <el-table-column label="操作" width="120" fixed="right" :key="15">
+                  <template slot-scope="scope">
+                    <el-button type="text" @click=" tracMainProduct(scope, 'out')"
+                      style=" color: #ff3a3a">追溯主产品</el-button>
+                    <el-button type="text" @click="QTsearch(scope, 'out')" style=" color: #ff3a3a">齐套查询</el-button>
+                  </template>
+                </el-table-column>
+
+              </JNPF-table>
+              <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
+                @pagination="getouteData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需外协数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
+            </el-tab-pane>
+          </el-tabs>
+        </template>
+
       </div>
-    </div>
-    <div class="main" v-loading="loading">
-      <el-collapse v-model="activeNames" v-if="!activeStep" style="height: 100%;background-color: #fff;">
-        <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-          <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="120px" label-position="left">
-            <el-row style="height: 100%;">
-              <el-col :span="24">
-                <el-form-item label="设计计算公式">
-                  <el-select v-model="dataForm.gogshi" placeholder="计算公式">
-                    <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in gogshiList" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="公式">
-                  <el-checkbox-group v-model="dataForm.type" style="line-height: 33px;height: 33px">
-                    <el-checkbox label="考虑安全库存" name="type"></el-checkbox>
-                    <el-checkbox label="考虑可用库存" name="type"></el-checkbox> 
-                  </el-checkbox-group>
-                </el-form-item>
-              </el-col>
-              <el-col :span="16">
-                <el-form-item label="计算BOM级别">
-                  <el-select v-model="dataForm.bomjibie" placeholder="计算BOM级别">
-                    <el-option :key="item.id" :label="item.label" :value="item.value" v-for="item in BOMList" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="保存方案">
-                  <el-input v-model="dataForm.fanganName"  placeholder="方案名称" style="width: auto;"
-                  clearable />
-                </el-form-item>
-              </el-col>
-              <el-col :span="16">
-                <el-form-item label="设计计算公式">
-                  <el-select v-model="dataForm.gogshi" placeholder="计算公式">
-                    <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in gogshiList" />
-                  </el-select>
-                </el-form-item>
-              </el-col>
+      <!-- <TableForm :visible.sync="formVisible" ref="tableForm" @closeForm="closeForm"
+        :dbLinkId="dataForm.dbLinkId" /> -->
+      <el-dialog title="选择计划" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="planVisible"
+        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
+
+        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="planForm.planNo" placeholder="请输入计划单号" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="planForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchPlan()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetPlan()">{{
+                      $t('common.reset')
+                    }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
             </el-row>
-          </el-form>
-        </el-collapse-item>
-        <el-collapse-item title="产品信息" name="productInfo">
-        </el-collapse-item>
-      </el-collapse>
-
-      <!-- <template v-if="activeStep==1">
-        <Generator ref="generator" :conf="formData" :modelType="dataForm.type"
-          :webType="dataForm.webType" :dbType="dbType" />
-      </template>
-<template v-if="activeStep==2">
-        <columnDesign ref="columnDesign" :columnData="columnData" :appColumnData="appColumnData"
-          :modelType="dataForm.type" :webType="dataForm.webType" />
-      </template>
-<template v-if="activeStep==3">
-        <Process ref="process" :conf="flowTemplateJson" :flowType="1" />
-      </template> -->
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <JNPF-table :data="planTableData" hasC @sort-change="sortChange" @selection-change="selectPlanFun"
+                ref="dataTableRef" @row-click="handleRowClick">
+                <el-table-column prop="planNo" label="计划单号" min-width="180" sortable="custom"> </el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+                <el-table-column prop="productSource" label="产品来源" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.productSource == 'purchase'">采购</div>
+                    <div v-if="scope.row.productSource == 'out'">外协</div>
+                    <div v-if="scope.row.productSource == 'produce'">生产</div>
+                    <div v-if="scope.row.productSource == 'assemble'">配件</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="bomFlag" label="是否有BOM" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.bomFlag">有BOM</div>
+                    <div v-else>无BOM</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" min-width="80" />
+                <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
+                <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+              </JNPF-table>
+              <pagination :total="total" :page.sync="planForm.pageNum" :limit.sync="planForm.pageSize"
+                @pagination="searchPlan" />
+            </div>
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="planVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+            确定</el-button>
+        </span>
+      </el-dialog>
+      <PlanForm v-if="formVisible" ref="orderForm" @close="closeForm" />
     </div>
-    <!-- <TableForm :visible.sync="formVisible" ref="tableForm" @closeForm="closeForm"
-      :dbLinkId="dataForm.dbLinkId" /> -->
-  </el-dialog>
+  </transition>
 </template>
 
 <script>
-import Generator from '@/components/Generator/index/Home'
-import ColumnDesign from '@/components/ColumnDesign'
-import Process from "@/components/Process"
-import TableForm from '@/views/generator/TableForm'
-import mixin from '@/mixins/generator/form'
+import { getMrpCalcSchemeList, addMrpCalcSchemeList, delMrpCalcSchemeList } from '@/api/plan/index.js'
+import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
+import PlanForm from '@/views/planManagement/assemblyPlan/salesOrderCreation/Form.vue'
 import { mapState } from 'vuex'
 export default {
-  mixins: [mixin],
-  components: { Generator, ColumnDesign, Process, TableForm },
+  components: {
+    PlanForm
+  },
   data() {
     return {
-      dataForm: {
-        gogshi: "",
-        type:[],
-        bomjibie:"calcFirstBom",
-        fanganName:"上一次运算方案",
+      // ---------运算结果相关字段
+      total1: 0,
+      total2: 0,
+      total3: 0,
+      total4: 0,
+      activeName: "assemble",
+      assembleData: [],
+      produceData: [],
+      purchaseData: [],
+      outData:[],
+      assembleForm: {
+        demandType:"assemble",
+        demandState:"not_finish",
+        documentStatus:"submit",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
       },
-      gogshiList: [
-        { label: "公式一", value: "1" },
-        { label: "公式二", value: "2" },
-        { label: "公式三", value: "3" },
-      ],
-      BOMList:[
-        {label:"不计算BOM",value:"notCalcBom",},
-        {label:"只计算1级BOM",value:"calcFirstBom",},
-        {label:"计算所有子级BOM",value:"calcAllBom",},
+      produceForm:{
+        demandType:"produce",
+        demandState:"not_finish",
+        documentStatus:"submit",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+      purchaseForm:{
+        demandType:"purchase",
+        demandState:"not_finish",
+        documentStatus:"submit",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+      outForm:{
+        demandType:"out",
+        demandState:"not_finish",
+        documentStatus:"submit",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+      assembleNum: 0,//组装数量
+      totalDemandQuantity: 0,//需求数量
+      outputQuantity:0,//需组装/生产/采购/外协数量
+      lossNum: 0,//损耗数量
+      planInTransitQuantity:0,//计划在制在途数量
+      inTransitUnOccupancyQuantity:0,//实际在制在途数量
+      occupancyQuantity:0,//当前预占数量
+
+
+
+
+
+      codeConfig: {},
+      planForm: {
+        planNo: "",
+        documentStatus: "submit",
+        productDrawingNo: "",
+        planSsd: "",
+        planSed: "",
+        pageNum: 1,
+        pageSize: 20,
+        planState: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+
+      },
+      total: 0,
+      planTableData: [],
+      deliveryDateArr: [],
+      planVisible: false,
+      dataForm: {
+        type: ["考虑可用库存", "考虑安全库存"],
+        calcBomLevel: "calc_first_bom",
+        schemeName: "上一次运算方案",
+        schemeNames: "",
+        calcSchemeId: "",
+        arithmeticNo: "",
+      },
+      formVisible: false,
+      btnLoading: false,
+      schemeList: [],
+      tableData: [],
+      selectRows: [],
+      BOMList: [
+        { label: "不计算BOM", value: "not_calc_bom", },
+        { label: "只计算1级BOM", value: "calc_first_bom", },
+        { label: "计算所有子级BOM", value: "calc_all_bom", },
       ],
       activeNames: ["productInfo", "basicInfo"],
       visible: false,
       loading: false,
       activeStep: 0,
+      maxStep: 1,
       dataRule: {
         fullName: [
           { required: true, message: '功能名称不能为空', trigger: 'blur' },
@@ -127,22 +548,311 @@ export default {
         category: [
           { required: true, message: '功能分类不能为空', trigger: 'change' },
         ]
-      }
+      },
+      selectArr: [],
     }
   },
+  mounted() {
+    this.getMrpCalcSchemeListFun()
+    this.fetchData("AMDH")
+  },
   methods: {
-    closeDialog() {
 
+    // ----------------------------------------运算结果相关逻辑处理开始
+    // table切换
+    handleClick() {
+
+    },
+    // 齐套查询
+    QTsearch(data, type) {
+
+    },
+    // 组装列表数据
+    getassembleData() {
+
+    },
+    // 生产列表数据
+    getproduceData(){
+
+},
+    // 采购列表数据
+    getpurchaseDataa(){
+
+    },
+    // 外协列表数据
+    getouteData(){
+
+    },
+    // 追溯主产品
+    tracMainProduct(data, type) {
+
+    },
+
+
+    // ----------------------------------------运算结果相关逻辑处理结束
+
+
+
+
+
+
+
+
+    // 获取运算单号
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.arithmeticNo = data.number
+
+      } catch (error) {
+      }
+    },
+
+    // 已选计划表格多选
+    handleSelectionChange(val) {
+      this.selectRows = val
+    },
+    selectPlanFun(val) {
+      this.selectArr = val
+    },
+    submitAllProduct() {
+      if (!this.selectArr.length) return this.$message.error("请选择计划")
+      this.selectArr.forEach(item => {
+        this.tableData.push(item)
+      });
+      let uniqueArr = [];
+      let idSet = new Set();
+
+      this.tableData.forEach(item => {
+        if (!idSet.has(item.id)) {
+          uniqueArr.push(item);
+          idSet.add(item.id);
+        }
+      });
+      this.tableData = uniqueArr
+      this.planVisible = false
+    },
+    //多选
+    handleRowClick(row) {
+      this.$refs['dataTableRef'].$refs.JNPFTable.toggleRowSelection(row)
+    },
+    openSeleceProductDialog() {
+      this.planVisible = true
+      this.searchPlan()
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+        newProp = prop
+      } else if (prop === 'createTime') {
+        newProp = 't1.create_time'
+
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.orderForm.orderItems[0].asc = order === "ascending"
+      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.searchPlan()
+    },
+    searchPlan() {
+
+      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
+        this.planForm.planSsd = this.deliveryDateArr[0]
+        this.planForm.planSed = this.deliveryDateArr[1]
+      } else {
+        this.planForm.planSsd = ""
+        this.planForm.planSed = ""
+      }
+      getPlanList(this.planForm).then(res => {
+        this.planTableData = res.data.records
+        this.total = res.data.total
+      })
+    },
+    resetPlan() {
+      this.$refs['dataTableRef'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.deliveryDateArr = []
+      this.planForm = {
+        planNo: "",
+        documentStatus: "submit",
+        productDrawingNo: "",
+        planSsd: "",
+        planSed: "",
+        pageNum: 1,
+        pageSize: 20,
+        planState: "not_finished",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      }
+    },
+    // 关闭新建编辑页面
+    closeForm() {
+      this.formVisible = false
+
+    },
+    // 获取运算方案
+    getMrpCalcSchemeListFun() {
+      let obj = {
+
+        schemeName: "",
+        pageNum: 1,
+        pageSize: 10,
+
+        orderItems: [{
+          asc: false,
+          column: "create_time"
+        }],
+
+        superQuery: {},
+      }
+      getMrpCalcSchemeList(obj).then(res => {
+        console.log("方案数据", res);
+        let arr = []
+        if (res.data.records.length) {
+          res.data.records.forEach(item => {
+            let obj = {
+              availableStockFlag: item.availableStockFlag,
+              safeInventoryFlag: item.safeInventoryFlag,
+              calcBomLevel: item.calcBomLevel,
+              schemeName: item.schemeName,
+              id: item.id
+            }
+            arr.push(obj)
+
+          });
+          this.schemeList = arr
+          this.dataForm.schemeNames = this.schemeList[0].schemeName
+          this.dataForm.schemeId = this.schemeList[0].id
+          this.dataForm.calcBomLevel = this.schemeList[0].calcBomLevel
+          this.dataForm.type = []
+          if (this.schemeList[0].safeInventoryFlag) {
+            this.dataForm.type.push('考虑安全库存')
+          }
+          if (this.schemeList[0].availableStockFlag) {
+            this.dataForm.type.push('考虑可用库存')
+          }
+          this.dataForm.schemeName = '上一次运算方案'
+        }
+      })
+    },
+    // 选择方案
+    selectsChemeFun(e) {
+      console.log(e);
+      const result = this.schemeList.find(item => item.id === e);
+      console.log(result);
+      this.dataForm.schemeNames = result.schemeName
+      this.dataForm.schemeId = result.id
+      this.dataForm.calcBomLevel = result.calcBomLevel
+      this.dataForm.type = []
+      if (result.safeInventoryFlag) {
+        this.dataForm.type.push('考虑安全库存')
+      }
+      if (result.availableStockFlag) {
+        this.dataForm.type.push('考虑可用库存')
+      }
+    },
+    // 删除方案
+    deleteSchemeFun() {
+      if (!this.schemeList.length) return this.$message.error("暂无方案可删除")
+      console.log(this.dataForm);
+      delMrpCalcSchemeList(this.dataForm.schemeId).then(res => {
+        this.$message.success("删除方案成功")
+        this.getMrpCalcSchemeListFun()
+      })
+    },
+
+    // 保存方案
+    addSchemeFun() {
+      let obj = {
+        rangeList: [],
+        scheme: {
+          schemeName: this.dataForm.schemeName,
+          calcBomLevel: this.dataForm.calcBomLevel,
+        }
+      }
+      if (this.dataForm.type.length) {
+        this.dataForm.type.forEach(item => {
+          if (item == '考虑可用库存') {
+            obj.scheme.availableStockFlag = 1
+
+          }
+          if (item == '考虑安全库存') {
+            obj.scheme.safeInventoryFlag = 1
+
+          }
+        });
+      } else {
+        obj.scheme.availableStockFlag = 0
+        obj.scheme.safeInventoryFlag = 0
+      }
+      console.log(obj);
+      addMrpCalcSchemeList(obj).then(res => {
+        this.$message.success("保存方案成功")
+        this.getMrpCalcSchemeListFun()
+      })
+    },
+    closeDialog() {
+      this.$emit('close', true)
     },
     stepChick(val) {
 
     },
-    init(data) {
-      this.visible = true
-    },
-    next() {
+    handleUserRelation(data, btnType) {
+      console.log(data, btnType);
+      // 订单创建计划
+      detailPlanList(data.id).then(res => {
+        console.log("订单计划详情", res);
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
+        })
+      })
 
     },
+    // 批量删除
+    batchDelete() {
+      // 遍历选中的行的数据
+      if (this.selectRows.length < 1) {
+        this.$message({
+          message: "请选择你要删除的数据",
+          type: "error",
+          duration: 1500,
+        })
+      }
+      for (let i = 0; i < this.selectRows.length; i++) {
+        const row = this.selectRows[i];
+        const index = this.tableData.indexOf(row);
+        if (index > -1) {
+          this.tableData.splice(index, 1); // 从tableData中删除选中的行
+        }
+      }
+      this.selectRows = []; // 清空选中的行的数据
+    },
+    // 单个删除
+    handleDel(data) {
+      this.tableData.splice(data.$index, 1)
+    },
+    init(data) {
+      console.log(data);
+      this.visible = true
+      this.tableData = data
+    },
+    next() {
+      if (!this.tableData.length) return this.$message.error("已选择的计划数据不能为空")
+      this.activeStep = 1
+    },
+    prev() {
+      this.activeStep = 0
+
+    }
   }
 }
 </script>
@@ -211,5 +921,38 @@ export default {
   white-space: nowrap;
   cursor: pointer;
   margin-top: 7px
+}
+
+.btn ::v-deep .el-form-item__content {
+  margin-left: 0 !important;
+}
+
+.planBox ::v-deep.el-table__body-wrapper {
+  height: auto !important;
+}
+
+.JNPF-full-dialog-header {
+  display: flex;
+  padding: 10px 10px 0;
+}
+
+::v-deep.header-title {
+  line-height: 46px;
+  /* width: 200px; */
+  flex: 1;
+}
+
+::v-deep .el-steps {
+  flex: 1.5;
+}
+
+.options {
+  line-height: 46px;
+  text-align: right;
+  flex: 1;
+}
+
+.orderInfo ::v-deep.el-collapse-item__wrap {
+  padding-top: 10px;
 }
 </style>

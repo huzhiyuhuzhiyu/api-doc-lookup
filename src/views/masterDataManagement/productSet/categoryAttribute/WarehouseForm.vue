@@ -227,7 +227,7 @@ export default {
             {
               category: 'Web',
               description: '',
-              enCode: 'directAccessWarehouse',
+              enCode: 'directInandOutWarehouse',
               enabledMark: 1,
               fullName: `直接出入库`,
               icon: 'icon-ym icon-ym-webForm',
@@ -242,13 +242,13 @@ export default {
               sortCode: 20,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/directInandOutWarehouse'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/directInandOutWarehouse' +'?'+ this.classAttribute.code
 
             },
             {
               category: 'Web',
               description: '',
-              enCode: 'CRKLB',
+              enCode: 'inventoryList',
               enabledMark: 1,
               fullName: '出入库列表',
               icon: 'icon-ym icon-ym-webForm',
@@ -263,13 +263,13 @@ export default {
               sortCode: 30,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryList' +'?'+ this.classAttribute.code
 
             },
             {
               category: 'Web',
               description: '',
-              enCode: 'CRKMX',
+              enCode: 'inventoryDetaisList',
               enabledMark: 1,
               fullName: '出入库明细',
               icon: 'icon-ym icon-ym-webForm',
@@ -284,7 +284,7 @@ export default {
               sortCode: 40,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryDetaisList'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventoryDetaisList'+'?'+ this.classAttribute.code
 
             },
             {
@@ -305,13 +305,13 @@ export default {
               sortCode: 50,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/transferManagement'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/transferManagement'+'?'+ this.classAttribute.code
 
             },
             {
               category: 'Web',
               description: '',
-              enCode: 'semi_finishedInventory',
+              enCode: 'inventory',
               enabledMark: 1,
               fullName: '库存查询',
               icon: 'icon-ym icon-ym-webForm',
@@ -326,7 +326,7 @@ export default {
               sortCode: 60,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/semi_finishedInventory'
+              urlAddress: 'warehouseManagement/${' + this.classAttribute.code + '}/inventory'+'?'+ this.classAttribute.code
 
             }
           ]

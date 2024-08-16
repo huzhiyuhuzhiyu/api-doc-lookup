@@ -40,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getCustomerconversionrate, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getaddBusinessAnalyze } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -114,7 +114,7 @@ export default {
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getaddBusinessAnalyze(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'axis',
@@ -192,16 +192,13 @@ export default {
             }
           ]
         }
-        this.chartLoading = false
-      }).catch(() => {
-        this.chartLoading = false
-      })
-      getCustomerconversionrate(this.dataForm).then(res2 => {
-        this.datas = res2.data
+        this.datas = res1.data
         this.init()
         this.listLoading = false
+        this.chartLoading = false
       }).catch(() => {
         this.listLoading = false
+        this.chartLoading = false
       })
     },
     init() {

@@ -67,10 +67,13 @@ export default () => [
       {
         row: [
           { prop: "allocation", clearable: false, label: "库存是否管到库位", value: '0', sm: 6, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
         ]
       },
+     
     ]
   },
+
   {
     tabCode: "attachment",
     tabName: "附件开关",
@@ -86,5 +89,17 @@ export default () => [
         ]
       },
     ]
-  }
-]
+  },  
+  // {
+  //   tabCode: "mrp",
+  //   tabName: "MRP设置",
+  //   tabContent: [
+  //     {
+  //       row: [
+  //         { prop: "ferrule_bom", clearable: false, label: "套圈（对应半成品）是否配置BOM", value: '0', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+  //         { prop: "assemble_custom_product_merge", clearable: false, label: "组装按客户产品合并下达", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+  //       ]
+  //     },
+  //   ]
+  // },
+] 

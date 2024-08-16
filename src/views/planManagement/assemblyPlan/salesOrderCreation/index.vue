@@ -91,7 +91,7 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"  />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -129,7 +129,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -185,7 +185,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        
+
         {
           prop: 'productCode',
           label: "产品编码",
@@ -197,7 +197,7 @@ export default {
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期', 
+          endPlaceholder: '结束日期',
         },
         {
           prop: 'mainUnit',
@@ -258,7 +258,7 @@ export default {
           type: 'select',
           options: [],
         },
-        
+
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -701,7 +701,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -717,12 +717,12 @@ export default {
     },
 
 
-    addSupplier( ) {
+    addSupplier() {
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       if (this.selectList.length == 1) {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init('','add',this.selectList,'order_plan')
+          this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
         })
       } else {
         const fieldsToCheck = [
@@ -733,13 +733,14 @@ export default {
           'oil',
           'oilQuantity',
           'clearance',
-          'packagingMethod'
+          'packagingMethod',
+          'specialRequire',
         ];
         const result = this.areFieldsEqual(this.selectList, fieldsToCheck);
         if (result) {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('','add',this.selectList,'order_plan')
+            this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
           })
         } else {
           this.$message.error("只能选择相同的产品才能生成计划")

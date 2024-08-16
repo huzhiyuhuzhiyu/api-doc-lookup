@@ -33,7 +33,15 @@ export function submitMRP(data) {
   })
 }
 
+// 物料需求报表接口
 
+export function getMaterialDemandReport(data) {
+  return request({
+    url: `/api/mrp/material/demand/report`,
+    method: 'POST',
+    data
+  })
+}
 
 // MRP 清空右侧列表数据
 export function clearMRPList(id) {
@@ -78,7 +86,7 @@ export function getDemandList(id) {
   return request({
     url: `/api/mrp/material/demand/kit/list?id=${id}`,
     method: 'get',
-    
+
   })
 }
 

@@ -25,3 +25,31 @@ export function batchAddPlan(data) {
     data
   })
 }
+
+
+// MRP相关接口
+
+// 获取运算方案
+export function getMrpCalcSchemeList(data) {
+  return request({
+    url: `/api/zgt/mrpCalcScheme/list`,
+    method: 'post',
+    data
+  })
+}
+// 新增运算方案
+
+export function addMrpCalcSchemeList(data) {
+  return request({
+    url: `/api/zgt/mrpCalcScheme/add`,
+    method: 'post',
+    data
+  })
+}
+// 删除方案
+export function delMrpCalcSchemeList(id) {
+  return request({
+    url: `/api/zgt/mrpCalcScheme/del/${id}`,
+    method: 'delete',
+  })
+}

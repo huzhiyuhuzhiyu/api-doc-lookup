@@ -400,7 +400,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         receivingStatus: 'receiving'
       },
       // orderList: [

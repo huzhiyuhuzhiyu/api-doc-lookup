@@ -86,7 +86,7 @@
                 <div v-if="scope.row.productSource == 'purchase'">采购</div>
                 <div v-if="scope.row.productSource == 'out'">外协</div>
                 <div v-if="scope.row.productSource == 'produce'">生产</div>
-                <div v-if="scope.row.productSource == 'assemble'">配件</div>
+                <div v-if="scope.row.productSource == 'assemble'">组装</div>
               </template>
             </el-table-column>
             <el-table-column prop="bomFlag" label="是否有BOM" min-width="160" sortable="custom">
@@ -235,7 +235,7 @@ export default {
             {label:"采购",value:"purchase"},
             {label:"外协",value:"out"},
             {label:"生产",value:"produce"},
-            {label:"配件",value:"assemble"},
+            {label:"组装",value:"assemble"},
           ]
         },
         {
@@ -727,7 +727,9 @@ export default {
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      console.log(1111);
       this.formVisible = false
+      this.mrpForm=false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

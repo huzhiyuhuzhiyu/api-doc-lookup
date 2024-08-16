@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成采购对账单" />
+          <el-page-header @back="goBack" content="生成外协对账单" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -758,7 +758,7 @@ export default {
       const formattedDate = `${year}-${month}-${date}`
       this.dataForm.reconciliationDate = formattedDate
       // // 审批
-      // this.$nextTick(() => { this.getApproverData() })
+      this.$nextTick(() => { this.getApproverData() })
     },
     // 表单提交
     dataFormSubmit() {
@@ -1073,7 +1073,7 @@ export default {
       let foundSymbol = '' // 条件符号
       let result = null // 判断条件是否成立
       let condList = []
-      getBusDetail('b013').then((res) => {
+      getBusDetail('b014').then((res) => {
         console.log(res)
         state = res.data.business.state
         condExpress = res.data.business.condExpress
@@ -1109,7 +1109,7 @@ export default {
             // }
             if (result) {
               let query = {
-                businessCode: 'b013',
+                businessCode: 'b014',
                 condList
               }
               busApprovalFlowTree(query).then((res) => {
@@ -1141,7 +1141,7 @@ export default {
         if (state === 'enable') {
           this.dataForm.approvalFlag = 1
           let query = {
-            businessCode: 'b013',
+            businessCode: 'b014',
             condList
           }
           busApprovalFlowTree(query).then((res) => {
@@ -1311,5 +1311,12 @@ export default {
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

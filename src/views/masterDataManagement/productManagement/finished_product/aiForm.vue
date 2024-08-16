@@ -405,7 +405,8 @@ export default {
           maxlength: '1000',
           itemDisabled: true,
           minWidth: 220,
-          placeholder: '品名规格自动生成'
+          placeholder: '品名规格自动生成',
+          itemRules: [{ required: true, trigger: "blur" }, ]
         },
         {
           prop: 'code',

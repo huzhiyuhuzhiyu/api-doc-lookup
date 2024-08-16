@@ -9,17 +9,17 @@
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
         label-width="120px" :hide-required-asterisk="true">
-        <el-form-item label="类别编码" prop="code">
-          <template slot="label">
-            类别编码<span class="required">*</span>
-          </template>
-          <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
-        </el-form-item>
         <el-form-item label="类别名称" prop="name">
           <template slot="label">
             类别名称<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入类别名称" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="类别编码" prop="code">
+          <template slot="label">
+            类别编码<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />

@@ -35,6 +35,14 @@
                 <div class="JNPF-common-head" style="padding: 8px;">
                     <topOpts @add="addOrUpdateHandle('', 'add')" />
                     <div class="JNPF-common-head-right">
+                        <el-tooltip content="高级查询" placement="top" v-if="true">
+                            <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                                @click="superQueryVisible = true" />
+                        </el-tooltip>
+                        <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                            <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                                @click="columnSetFun()" />
+                        </el-tooltip>
                         <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                             <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                                 @click="initData()" />
@@ -87,14 +95,21 @@
         <advancePayForm ref="depForm" v-if="formVisible" @close="closeForms" :reconciliationType="reconciliationType"
             :PartnerMethodArr="PartnerMethodArr" :PartnerTableItems="PartnerTableItems"
             :PartnerTableSearchList="PartnerTableSearchList" :PartnerListRequestObj="PartnerListRequestObj" />
+        <!-- 高级查询 -->
+        <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+            @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     </div>
 </template>
 
 <script>
 import advancePayForm from './advancePayForm.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+    getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
     name: 'advancePayment',
-    components: { advancePayForm },
+    components: { advancePayForm, SuperQuery },
     props: {
         reconciliationType: {
             type: String,
@@ -170,6 +185,64 @@ export default {
     },
     data() {
         return {
+            superQueryVisible: false,
+            superQueryJson: [
+                {
+                    prop: 'partnerName',
+                    label: '客户名称',
+                    type: 'input'
+                },
+                {
+                    prop: 'partnerCode',
+                    label: '客户编码',
+                    type: 'input'
+                },
+                {
+                    prop: 'paymentAmount',
+                    label: '收款金额',
+                    type: 'input'
+                },
+                {
+                    prop: 'remainingAmount',
+                    label: '剩余金额',
+                    type: 'input'
+                },
+                {
+                    prop: 'paymentMethod',
+                    label: '收款方式',
+                    type: 'input'
+                },
+                {
+                    prop: 'paymentDate',
+                    label: '退货日期',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd',
+                    startPlaceholder: '开始日期',
+                    endPlaceholder: '结束日期',
+                    pickerOptions: this.global.timePickerOptions
+                },
+
+                {
+                    prop: 'remark',
+                    label: '备注',
+                    type: 'input'
+                },
+                {
+                    prop: 'createTime',
+                    label: '创建时间',
+                    type: 'daterange',
+                    valueFormat: 'yyyy-MM-dd HH:mm:ss',
+                    startPlaceholder: '开始日期',
+                    endPlaceholder: '结束日期',
+                    pickerOptions: this.global.timePickerOptions
+                },
+                {
+                    prop: 'createByName',
+                    label: '创建人',
+                    type: 'input'
+                },
+
+            ],
             title: '更多查询',
             tableData: [],
             listLoading: false,
@@ -190,6 +263,14 @@ export default {
         this.getData()
     },
     methods: {
+        superQuerySearch(query) {
+            this.orderForm.superQuery = query
+            this.superQueryVisible = false
+            this.search()
+        },
+        columnSetFun() {
+            this.$refs.dataTable.showDrawer()
+        },
         getData() {
             this.listQuery = JSON.parse(JSON.stringify(this.listRequestObj))
             this.initData()

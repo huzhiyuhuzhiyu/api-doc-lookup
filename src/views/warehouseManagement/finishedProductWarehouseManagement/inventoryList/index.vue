@@ -147,6 +147,9 @@ import Form from './Form'
 export default {
   name: 'finishedProductWarehouseManagement',
   components: { Form, ExportForm, SuperQuery },
+  props:{
+    classAttribute:"",
+  },
   data() {
     return {
       columnList: ["partnerCode", "documentStatus", "remark", "createByName",],
@@ -177,7 +180,7 @@ export default {
         pageNum: 1,
         partnerName: "",
         pageSize: 20,
-        classAttribute: "finish_product",
+        classAttribute: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -304,6 +307,8 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      this.listQuery.classAttribute=this.classAttribute
+      
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []
@@ -343,6 +348,7 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
+        this.initListQuery.classAttribute=this.classAttribute
         let query = this.initListQuery
         let _data = {
           ...query,

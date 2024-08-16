@@ -121,6 +121,9 @@ import Form from './Form'
 export default {
   name: 'inventory',
   components: { Form, SuperQuery,ExportForm},
+  props:{
+    classAttribute:"",
+  },
   data() {
     return {
       exportFormVisible:false,
@@ -287,7 +290,7 @@ export default {
     
     
     initData() {
-
+      this.tableQuery.classAttribute=this.classAttribute 
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         this.tableData = res.data.whPage.records
@@ -323,7 +326,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery:{},
-        classAttribute:"finish_product",
+        classAttribute:this.classAttribute,
       }
     this.initData() 
     },

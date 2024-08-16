@@ -18,7 +18,7 @@
           <el-button size="mini" @click="prev" :disabled="activeStep <= 0" v-if="activeStep > 0">{{ $t('common.prev')
             }}</el-button>
           <el-button size="mini" type="primary" @click="dataFormSubmit()" :disabled="activeStep != maxStep"
-            :loading="btnLoading">{{ $t('common.confirmButton') }}</el-button>
+            :loading="btnLoading">提交</el-button>
           <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -230,8 +230,8 @@
               </pagination>
             </el-tab-pane>
             <el-tab-pane label="采购需求" name="purchase">
-              <JNPF-table :partentOrChild="'purchase'"   @sort-change="sortChange"  :data="purchaseData" highlight-current-row :fixedNO="true"
-                class="dataTable" border ref="purchaseRef" custom-column>
+              <JNPF-table :partentOrChild="'purchase'" @sort-change="sortChange" :data="purchaseData"
+                highlight-current-row :fixedNO="true" class="dataTable" border ref="purchaseRef" custom-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
 
@@ -271,8 +271,8 @@
               </pagination>
             </el-tab-pane>
             <el-tab-pane label="外协需求" name="out">
-              <JNPF-table :partentOrChild="'out'" @sort-change="sortChange" :data="outData" highlight-current-row :fixedNO="true" class="dataTable"
-                border ref="outRef" custom-column>
+              <JNPF-table :partentOrChild="'out'" @sort-change="sortChange" :data="outData" highlight-current-row
+                :fixedNO="true" class="dataTable" border ref="outRef" custom-column>
                 <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="bomId">
@@ -414,6 +414,7 @@
 import { getMrpCalcSchemeList, addMrpCalcSchemeList, delMrpCalcSchemeList } from '@/api/plan/index.js'
 import { addPlanList, updatePlanList, deletePlanList, getPlanList, detailPlanList } from '@/api/calculationList/calculationList.js'
 import PlanForm from '@/views/planManagement/assemblyPlan/salesOrderCreation/Form.vue'
+import { analyseMRP, getMaterialDemandReport } from "@/api/calculationList/MRPOperation.js"
 import { mapState } from 'vuex'
 export default {
   components: {
@@ -430,11 +431,11 @@ export default {
       assembleData: [],
       produceData: [],
       purchaseData: [],
-      outData:[],
+      outData: [],
       assembleForm: {
-        demandType:"assemble",
-        demandState:"not_finish",
-        documentStatus:"submit",
+        demandType: "assemble",
+        demandState: "not_finish",
+        documentStatus: "submit",
         orderItems: [{
           asc: false,
           column: ""
@@ -443,10 +444,10 @@ export default {
           column: "create_time"
         }],
       },
-      produceForm:{
-        demandType:"produce",
-        demandState:"not_finish",
-        documentStatus:"submit",
+      produceForm: {
+        demandType: "produce",
+        demandState: "not_finish",
+        documentStatus: "submit",
         orderItems: [{
           asc: false,
           column: ""
@@ -455,10 +456,10 @@ export default {
           column: "create_time"
         }],
       },
-      purchaseForm:{
-        demandType:"purchase",
-        demandState:"not_finish",
-        documentStatus:"submit",
+      purchaseForm: {
+        demandType: "purchase",
+        demandState: "not_finish",
+        documentStatus: "submit",
         orderItems: [{
           asc: false,
           column: ""
@@ -467,10 +468,10 @@ export default {
           column: "create_time"
         }],
       },
-      outForm:{
-        demandType:"out",
-        demandState:"not_finish",
-        documentStatus:"submit",
+      outForm: {
+        demandType: "out",
+        demandState: "not_finish",
+        documentStatus: "submit",
         orderItems: [{
           asc: false,
           column: ""
@@ -481,11 +482,11 @@ export default {
       },
       assembleNum: 0,//组装数量
       totalDemandQuantity: 0,//需求数量
-      outputQuantity:0,//需组装/生产/采购/外协数量
+      outputQuantity: 0,//需组装/生产/采购/外协数量
       lossNum: 0,//损耗数量
-      planInTransitQuantity:0,//计划在制在途数量
-      inTransitUnOccupancyQuantity:0,//实际在制在途数量
-      occupancyQuantity:0,//当前预占数量
+      planInTransitQuantity: 0,//计划在制在途数量
+      inTransitUnOccupancyQuantity: 0,//实际在制在途数量
+      occupancyQuantity: 0,//当前预占数量
 
 
 
@@ -561,31 +562,58 @@ export default {
     // ----------------------------------------运算结果相关逻辑处理开始
     // table切换
     handleClick() {
+      console.log(this.activeName);
+      if (this.activeName == "") {
+        this.getassembleData()
+      }
+      if (this.activeName == "") {
+        this.getproduceData()
 
+      }
+      if (this.activeName == "") {
+        this.getpurchaseDataa()
+
+      }
+      if (this.activeName == "") {
+        this.getouteData()
+
+      }
     },
+
+
     // 齐套查询
     QTsearch(data, type) {
 
     },
     // 组装列表数据
     getassembleData() {
-
+      getMaterialDemandReport(this.assembleForm).then(res => {
+        console.log("组装res", res);
+      })
     },
     // 生产列表数据
-    getproduceData(){
-
-},
+    getproduceData() {
+      getMaterialDemandReport(this.produceForm).then(res => {
+        console.log("生产res", res);
+      })
+    },
     // 采购列表数据
-    getpurchaseDataa(){
-
+    getpurchaseDataa() {
+      getMaterialDemandReport(this.purchaseForm).then(res => {
+        console.log("采购res", res);
+      })
     },
     // 外协列表数据
-    getouteData(){
-
+    getouteData() {
+      getMaterialDemandReport(this.outForm).then(res => {
+        console.log("外协res", res);
+      })
     },
     // 追溯主产品
     tracMainProduct(data, type) {
-
+      getMaterialDemandReport(this.assembleForm).then(res => {
+        console.log("组装res", res);
+      })
     },
 
 
@@ -845,9 +873,45 @@ export default {
       this.visible = true
       this.tableData = data
     },
+    // 下一步
     next() {
+      if (!this.dataForm.arithmeticNo) return this.$message.error("运算单号不能为空")
       if (!this.tableData.length) return this.$message.error("已选择的计划数据不能为空")
-      this.activeStep = 1
+      let obj = {
+        arithmetic: {
+          arithmeticNo: this.dataForm.arithmeticNo,
+          availableStockFlag: 0,
+          availableStockFlag: 0,
+          calcBomLevel: this.dataForm.calcBomLevel,
+          documentStatus: "submit",
+        },
+        planIdList: [],
+        rangeList: [],
+      }
+      if (this.dataForm.type.length) {
+        this.dataForm.type.forEach(item => {
+          if (item == '考虑可用库存') {
+            obj.arithmetic.availableStockFlag = 1
+
+          }
+          if (item == '考虑安全库存') {
+            obj.arithmetic.safeInventoryFlag = 1
+
+          }
+        });
+      } else {
+        obj.arithmetic.availableStockFlag = 0
+        obj.arithmetic.safeInventoryFlag = 0
+      }
+      this.tableData.forEach(item => {
+        obj.planIdList.push(item.id)
+      });
+      analyseMRP(obj).then(res => {
+        console.log("res", res);
+        this.$message.success("分析成功")
+        this.activeStep = 1
+        this.getassembleData()
+      })
     },
     prev() {
       this.activeStep = 0

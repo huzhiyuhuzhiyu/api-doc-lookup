@@ -130,6 +130,9 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
+  props:{
+    classAttribute:"",
+  },
   data() {
     return {
       documentStatusList: [
@@ -231,7 +234,7 @@ export default {
     editFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType)
+          this.$refs.Form.init(id,btnType,this.classAttribute)
       })
     },
 
@@ -303,6 +306,7 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.form.classAttribute=this.classAttribute
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -347,7 +351,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add')
+        this.$refs.Form.init('', 'add',this.classAttribute)
       })
 
     },
@@ -375,17 +379,7 @@ export default {
       })
 
     },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
-      }
-    },
-
+ 
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

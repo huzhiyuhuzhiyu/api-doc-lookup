@@ -575,7 +575,8 @@ export default {
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-      orderForm: {}
+      orderForm: {},
+      classAttribute:"",
     }
   },
   created() {
@@ -654,7 +655,7 @@ export default {
           customerProductDrawingNo: "",
           rdsDate: "",
           rdeDate: "",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
           pageNum: 1,
           pageSize: 20,
           orderNo: this.dataForm.sourceNo,
@@ -697,7 +698,7 @@ export default {
           customerProductDrawingNo: "",
           deliveryEndDate: "",
           deliveryStartDate: "",
-          classAttribute: "finish_product",
+          classAttribute: this.classAttribute,
           pageNum: 1,
           pageSize: 20,
           orderNo: this.dataForm.sourceNo,
@@ -789,7 +790,7 @@ export default {
         }
 
 
-        item.classAttribute = "finish_product"
+        item.classAttribute = this.classAttribute
 
         if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_external_send') {
           item.noticeId = item.returnDeliveryNoticeId
@@ -992,10 +993,11 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType) {
+    init(data, btnType, businessType,classAttribute) {
       console.log("11", data, btnType, businessType);
       // this.visible = true
       this.dataForm.businessType = businessType
+      this.classAttribute=classAttribute
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       console.log("btnty", btnType);
@@ -1071,10 +1073,10 @@ export default {
       if (businessType == 'outbound_sale_send' || businessType == 'inbound_sale_return' || businessType == 'outbound_external_send') {
         getQuotationsendlist(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
-              item.classAttribute = "finish_product"
+              item.classAttribute = this.classAttribute
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo
@@ -1098,10 +1100,10 @@ export default {
       if (businessType == 'inbound_purchase' || businessType == 'outbound_purchase' || businessType == 'inbound_external') {
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === "finish_product");
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
-              item.classAttribute = "finish_product"
+              item.classAttribute = this.classAttribute
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.purchaseQuantity
@@ -1259,7 +1261,7 @@ export default {
         this.copyLinesData.forEach(element => {
           element.warehouseType = this.dataForm.warehouseType
         });
-        this.dataForm.classAttribute = "finish_product"
+        this.dataForm.classAttribute = this.classAttribute
         this.dataForm.sourceType = 'notice'
         let dataObj = {
           stockMove: this.dataForm,

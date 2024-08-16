@@ -132,6 +132,9 @@ const actions = {
             }
             if (e.type == 2) {
               let path = e.urlAddress
+              // console.log(e.urlAddress);
+              
+              let reg = /\$\{[^}]+\}/
               if (path.indexOf("?") > -1) path = path.split("?")[0]
               e.path = '/' + e.urlAddress
               let newObj = {
@@ -144,6 +147,20 @@ const actions = {
                   zhTitle: e.fullName,
                   modelId: e.id,
                   affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
+                }
+              }
+              if (reg.test(e.urlAddress)){
+                newObj = {
+                  path: '/' + path,
+                  component: (resolve) => require([`@/views/warehouseManagement/index`], resolve),
+                  name: name,
+                  meta: {
+                    title: name,
+                    icon: e.icon,
+                    zhTitle: e.fullName,
+                    modelId: e.id,
+                    affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
+                  }
                 }
               }
               routerList.push(newObj)

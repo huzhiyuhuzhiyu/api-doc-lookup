@@ -25,7 +25,7 @@
           </div>
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-              <el-table-column prop="realName" label="员工姓名" width="120" />
+              <el-table-column prop="realName" label="员工姓名" min-width="120" />
               <el-table-column prop="customerSumNum" label="当前客户数" min-width="120" />
               <el-table-column prop="customerNum" label="新增客户数" min-width="120" />
               <el-table-column prop="dealCustomerNum" label="成交客户数" min-width="120" />
@@ -117,6 +117,12 @@ export default {
             axisPointer: {
               type: 'shadow'
             }
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           grid: {
             top: '10%',

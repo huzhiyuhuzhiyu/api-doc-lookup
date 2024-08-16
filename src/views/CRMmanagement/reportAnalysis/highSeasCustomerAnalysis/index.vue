@@ -39,7 +39,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getcustomerRecordStats, getcustomerRecordInfo } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getpoolStats, getpoolTable } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -107,7 +107,7 @@ export default {
     initData() {
       this.chartLoading = false
       this.listLoading = true
-      getcustomerRecordStats(this.dataForm).then(res1 => {
+      getpoolStats(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'axis',
@@ -115,10 +115,16 @@ export default {
               type: 'shadow'
             }
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           grid: {
             top: '10%',
             left: '1%',
-            right: '1%',
+            right: '3%',
             bottom: '15%',
             containLabel: true
           },
@@ -149,7 +155,8 @@ export default {
               type: 'value',
               axisLabel: {
                 formatter: '{value} 个'
-              }
+              },
+              minInterval: 1
             },
             {
               axisTick: {
@@ -162,7 +169,8 @@ export default {
               name: '公海池领取客户数',
               axisLabel: {
                 formatter: '{value} 次'
-              }
+              },
+              minInterval: 1
             }
           ],
           series: [
@@ -185,7 +193,7 @@ export default {
       }).catch((error) => {
         this.chartLoading = false
       })
-      getcustomerRecordInfo(this.dataForm).then(res2 => {
+      getpoolTable(this.dataForm).then(res2 => {
         this.tableList = res2.data
         this.listLoading = false
       }).catch((error) => {

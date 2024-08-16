@@ -16,13 +16,15 @@ export default {
     return {
       
       listPageComponent:finish,
-      depFormVisible:false,
+      depFormVisible:true,
     }
   },
   watch: {
   },
   created() {
     console.log(this);
+    console.log(this.listPageComponent);
+    
     console.log(this.$route,this.$route.meta.modelId);
 
   },

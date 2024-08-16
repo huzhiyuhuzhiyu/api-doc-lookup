@@ -65,7 +65,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                             <div class="viewData">
@@ -73,7 +73,7 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">

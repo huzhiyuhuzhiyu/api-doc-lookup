@@ -93,7 +93,7 @@ export default {
         this.chartInstance.resize()
       }, 100);
     }
-    this.init()
+    // this.init()
   },
   beforeDestroy() {
     window.onresize = null
@@ -125,6 +125,12 @@ export default {
             right: '1%',
             bottom: '15%',
             containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           color: ['#0052cc', '#42526e'],
           legend: {
@@ -169,6 +175,12 @@ export default {
             bottom: "10",
             type: "scroll"
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           xAxis: [{
             show: false
           }],
@@ -207,6 +219,12 @@ export default {
             right: '1%',
             bottom: '15%',
             containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           color: ['#42526e', '#0052cc'],
           legend: {
@@ -272,6 +290,12 @@ export default {
             },
             formatter: '{b} : {c}%'
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           grid: {
             top: '10%',
             left: '1%',
@@ -321,16 +345,19 @@ export default {
         }
         this.datas = res.data
         this.listLoading = false
+        this.init()
       }).catch(() => {
         this.listLoading = false
       })
     },
     init() {
       const _this = this
-      const columnObj = {}
-      columnObj.label = '日期'
-      columnObj.prop = 'title'
-      _this.columnsData.push(columnObj)
+      const columnObj1 = {}
+      _this.tableList = []
+      _this.columnsData = []
+      columnObj1.label = '日期'
+      columnObj1.prop = 'title'
+      _this.columnsData.push(columnObj1)
       _this.tableList.push({ 'title': '转化率' })
       _this.tableList.push({ 'title': '成交客户数' })
       _this.tableList.push({ 'title': '新增客户数' })

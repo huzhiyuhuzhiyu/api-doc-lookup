@@ -100,7 +100,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
                           产品名称
@@ -111,7 +111,7 @@
                             <el-input v-model="scope.row.productName" placeholder="请输入产品名称" />
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                         <template slot="header">
@@ -532,7 +532,7 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
-        { prop: 'name', label: '产品名称', sortable: 'custom' },
+        // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
         { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
@@ -540,7 +540,7 @@ export default {
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' },
+        // { prop: 'name', label: '产品名称', type: 'input' },
         { prop: 'code', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
       // 审批流需要字段

@@ -256,7 +256,7 @@
     </transition>
     <changeAddress v-if="addressVisibled" ref="addressRef" @getChangeAddress="getChangeAddress"></changeAddress>
     <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
-      :methodArr="ProductMethodArr" :listMethod="shipmentReport" :listRequestObj="ProductListRequestObj"
+      :methodArr="ProductMethodArr" :listMethod="shipmentReport" :listRequestObj="ProductListRequestObj" :renderTree="false"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
@@ -351,7 +351,7 @@ export default {
         { prop: 'processName', label: '料工序名称', sortable: 'custom' },
 
         { prop: 'mainUnit', label: '单位' },
-        { prop: 'demandQuantity', label: '订单发料数量', sortable: 'custom' },
+        { prop: 'demandQuantity', label: '订单发料数量', sortable: 'custom', minWidth: 140 },
         { prop: 'waitDeliverNum', label: '待发料数量', sortable: 'custom' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段

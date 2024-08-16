@@ -5,7 +5,7 @@
   
 <script>
 import { getfinAccountList, getfinAccountDetail, getfinAccountsReport } from '@/api/ReconciliaRePayments/index'
-import paymentIndex from '@/views/financialManagement/components/payAndcollect/index.vue'
+import paymentIndex from '@/views/financialManagement/components/pay/index.vue'
 export default {
   name: 'outPayment',
   components: { paymentIndex },

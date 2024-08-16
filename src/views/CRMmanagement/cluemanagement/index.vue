@@ -742,7 +742,7 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped lang="scss">
 .is-reverse {
   color: #fff !important;
@@ -777,7 +777,7 @@ export default {
 .gjsearch {
   display: flex;
   background-color: #fff;
-  padding: 8px 10px;
+  padding: 8px;
   justify-content: space-between;
   align-items: center;
 }

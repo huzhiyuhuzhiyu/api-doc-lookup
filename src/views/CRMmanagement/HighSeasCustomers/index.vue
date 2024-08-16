@@ -638,6 +638,7 @@ export default {
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
       this.programmetitle = ''
+      this.filterText = ''
       this.getcategoryTree()
     },
 
@@ -686,6 +687,7 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
 .el-tab-pane {
   height: calc(100% - 10px);
@@ -783,7 +785,7 @@ export default {
 .gjsearch {
   display: flex;
   background-color: #fff;
-  padding: 8px 10px;
+  padding: 8px;
   justify-content: space-between;
   align-items: center;
 }

@@ -12,7 +12,7 @@
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -72,8 +72,7 @@
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -211,7 +210,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        categoryId:'',
+        categoryId: '',
         code: "",
         contacts: "",
         createByName: "",
@@ -408,6 +407,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.programmetitle = ''
+      this.filterText = ''
       this.getcategoryTree()
     },
 
@@ -491,7 +491,7 @@ export default {
 .gjsearch {
   display: flex;
   background-color: #fff;
-  padding: 8px 10px;
+  padding: 8px;
   justify-content: space-between;
   align-items: center;
 }

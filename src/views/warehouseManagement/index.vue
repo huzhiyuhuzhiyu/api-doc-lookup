@@ -1,8 +1,5 @@
 <template>
   <div class="JNPF-common-layout">
-   
-   
-
     <component :is="listPageComponent" :classAttribute="classAttribute" v-if="depFormVisible" ref="depForm" @close="close" />
   </div>
 </template>

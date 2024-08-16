@@ -15,10 +15,13 @@
         </span>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-            <span class="text" :title="data.name">{{ `${data.fullCode} - ${data.name}` }}</span>
+            <i
+              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <span class="text" :title="data.name">{{ `${data.name}` }}</span>
           </span>
         </el-tree>
       </el-scrollbar>
@@ -28,18 +31,20 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入工序编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.code" placeholder="工序编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入工序名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="工序名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.pricingType" placeholder="请选择计价类型" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]" :key="index" :label="item.label" :value="item.value"></el-option>
+              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;">
+                <el-option
+                  v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
+                  :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -57,15 +62,23 @@
         <div class="JNPF-common-head" style="padding:10px">
           <el-button type="primary" @click="handleBatch">批量设置价格</el-button>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column ref="dataTable" hasC @selection-change="currentChange">
-          <el-table-column prop="code" label="工序编码" min-width="180" fixed="left" sortable="custom">
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
+          ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
+          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom">
           </el-table-column>
-          <el-table-column prop="name" label="工序名称" min-width="180" fixed="left" sortable="custom" />
+          <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="所属分类" min-width="180" sortable="custom" />
           <el-table-column prop="pricingType" label="计价类型" width="140" sortable="custom">
             <template slot-scope="{row}">
@@ -86,27 +99,31 @@
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="150" />
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+          @pagination="initData" />
       </div>
     </div>
     <!-- 批量设置价格 -->
-    <el-dialog v-if="analyseDialog" title="批量设置单价" :close-on-click-modal="false" append-to-body :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+    <el-dialog v-if="analyseDialog" title="批量设置单价" :close-on-click-modal="false" append-to-body
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
       <el-row :gutter="15" style="margin-top: 0px;">
         <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
           <el-row :gutter="30">
             <el-col :sm="24">
               <el-form-item prop="pricingType" label="计价类型">
                 <el-select v-model="dataForm.pricingType" placeholder="请选择计价类型" clearable style="width: 100%;">
-                  <el-option v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]" :key="index" :label="item.label" :value="item.value"></el-option>
+                  <el-option
+                    v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
+                    :key="index" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :sm="24" v-if="dataForm.pricingType=='by_time'">
+            <el-col :sm="24" v-if="dataForm.pricingType == 'by_time'">
               <el-form-item prop="timePrice" label="计时单价">
                 <el-input v-model="dataForm.timePrice" placeholder="请输入计时单价" />
               </el-form-item>
             </el-col>
-            <el-col :sm="24" v-if="dataForm.pricingType=='by_piece'">
+            <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
               <el-form-item prop="unitPrice" label="正品单价">
                 <el-input v-model="dataForm.unitPrice" placeholder="请输入正品单价" />
               </el-form-item>
@@ -121,15 +138,172 @@
         </el-button>
       </span>
     </el-dialog>
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import { getBimProcessList, updatebimProcessPrice } from "@/api/bimProcess/index";
 import { getcategoryTree } from '@/api/basicData/materialSettings'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
+  components: { SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '单号',
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '退货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'customerProductNo',
+          label: '客户料号',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'input'
+        },
+        {
+          prop: 'deliveryQuantity',
+          label: '退货数量',
+          type: 'input'
+        },
+        {
+          prop: 'sealingCoverTyping',
+          label: '打字内容',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: '精度等级',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: '振动等级',
+          type: 'select',
+          options: []
+        },
+
+        {
+          prop: 'oil',
+          label: '油脂',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: '油脂量',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'ordersNo',
+          label: '订单号',
+          type: 'input'
+        },
+        {
+          prop: 'exchangeGoodsFlag',
+          label: '退货标识',
+          type: 'select',
+          options: [{ label: '换货', value: true }, { label: '退货', value: false }]
+        },
+        {
+          prop: 'deliveryStatus',
+          label: '退货状态',
+          type: 'select',
+          options: [
+            { label: '待退货', value: 'not_returned' },
+            { label: '已退货', value: 'returned' },
+            { label: '已取消', value: 'canceled' }
+          ]
+        },
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
+      columnList: ["createByName"],
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -188,6 +362,14 @@ export default {
     this.getcategoryTree()
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productCategoryIdText') {
@@ -219,7 +401,12 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: "process" }).then(res => {
+      let query = {
+        classAttribute: "process",
+        pageNum: 1,
+        pageSize: 20,
+      }
+      getcategoryTree(query).then(res => {
         this.treeData = res.data.length ? res.data : []
         this.$nextTick(() => {
           this.treeLoading = false

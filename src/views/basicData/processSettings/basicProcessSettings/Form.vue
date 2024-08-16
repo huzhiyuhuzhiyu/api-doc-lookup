@@ -252,9 +252,7 @@ export default {
     return {
       process_typeList: [
         { label: '正常工序', value: 'normal' },
-        { label: '锻打工序', value: 'forge' },
-        { label: '电镀工序', value: 'plating' },
-        { label: '钻孔工序', value: 'drill' }
+        { label: '待装配工序', value: 'wait_assembly' },
       ],
       getcategoryTree,
       configurationName: '',

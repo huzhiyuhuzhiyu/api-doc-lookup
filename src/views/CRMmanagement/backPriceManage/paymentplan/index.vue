@@ -13,6 +13,11 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
+          <div style="min-width: 250px;">
+            <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
+            <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
+            <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
+          </div>
           <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
             <div v-if="programmelist.length">
               <span class="text">方案：</span>
@@ -25,11 +30,6 @@
                 </div>
               </el-popover>
             </div>
-          </div>
-          <div style="min-width: 233px;">
-            <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
-            <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
-            <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
           </div>
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">

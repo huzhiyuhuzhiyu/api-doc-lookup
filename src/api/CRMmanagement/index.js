@@ -356,3 +356,64 @@ export function updatecrmProduct(data) {
     data
   })
 }
+// crm产品管理树形结构
+export function crmProductCategorytree(data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/tree`,
+    method: 'POST',
+    data
+  })
+}
+// crm产品管理 产品类别
+export function crmProductCategorylist(data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/list/condition`,
+    method: 'POST',
+    data
+  })
+}
+// crm产品管理产品类别 编辑
+export function updatecrmProductCategory(data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/modify`,
+    method: 'PUT',
+    data
+  })
+}
+//crm产品管理产品类别-删除
+export function deletecrmProductCategory(id) {
+  return request({
+    url: `/api/zgt/crmProductCategory/remove/${id}`,
+    method: 'DELETE'
+  })
+}
+// crm产品管理产品类别 新增
+export function addcrmProductCategory(data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/insert`,
+    method: 'POST',
+    data
+  })
+}
+// crm产品管理产品类别 详情
+export function detailcrmProductCategory(id) {
+  return request({
+    url: `/api/zgt/crmProductCategory/detail/${id}`,
+    method: 'GET'
+  })
+}
+// crm产品管理产品类别 子节点
+export function checkcrmProductCategory (data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/check/child/node`,
+    method: 'post',
+    data: data
+  })
+}
+// crm产品管理产品类别-检查编码重复
+export function checkCategoryCode(data) {
+  return request({
+    url: `/api/zgt/crmProductCategory/check/code/exist?code=` + data.code + '&parentId=' + data.parentId,
+    method: 'GET'
+  })
+}

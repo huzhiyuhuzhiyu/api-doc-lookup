@@ -95,3 +95,27 @@ export function getproductCycle(data) {
     data
   })
 }
+//报表数据-销售漏斗
+export function getsellFunnel(data) {
+  return request({
+    url: `/biFunnel/sellFunnel`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-新增商机分析
+export function getaddBusinessAnalyze(data) {
+  return request({
+    url: `/biFunnel/addBusinessAnalyze`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-商机转化率分析
+export function getwin(data) {
+  return request({
+    url: `/biFunnel/win`,
+    method: 'POST',
+    data
+  })
+}

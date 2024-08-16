@@ -4,7 +4,7 @@
       <div class="vux-flexbox filtrate-content filtrate-bar vux-flex-row" style="justify-content: flex-start;">
         <div class="vux-flexbox title-box vux-flex-row" style="justify-content: flex-start;">
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
-          <div class="text-one-line">客户跟进次数分析</div>
+          <div class="text-one-line">销售漏斗</div>
         </div>
         <div class="xr-radio-menu-wrap" style="width: 250px;">
           <selectdate @change="datechange"></selectdate>
@@ -25,11 +25,9 @@
           </div>
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
-              <el-table-column prop="realName" label="员工姓名" width="120" />
-              <el-table-column prop="recordNum" label="跟进次数" min-width="120" />
-              <el-table-column prop="validNum" label="有效跟进数" min-width="120" />
-              <el-table-column prop="invalidNum" label="无效跟进数" min-width="120" />
-              <el-table-column prop="customerNum" label="跟进客户数" min-width="120" />
+              <el-table-column prop="settingName" label="阶段" min-width="120" />
+              <el-table-column prop="businessMoney" label="金额(元)" min-width="120" />
+              <el-table-column prop="businessNum" label="商机数" min-width="120" />
             </JNPF-table>
           </div>
         </div>
@@ -40,7 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getcustomerRecordStats, getcustomerRecordInfo } from "@/api/CRMmanagement/instrumentPanel/index";
+import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -60,7 +58,7 @@ export default {
       },
       tableList: [],
       chartInstance: null,
-      option: {},
+      option: {}
     }
   },
   computed: {
@@ -106,15 +104,13 @@ export default {
       this.dataForm.userIds = data
     },
     initData() {
-      this.chartLoading = false
+      this.chartLoading = true
       this.listLoading = true
-      getcustomerRecordStats(this.dataForm).then(res1 => {
+      gettotalCustomerStats(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
+            trigger: 'item',
+            formatter: '{b}({c}元)<br/>'
           },
           toolbox: {
             feature: {
@@ -122,82 +118,51 @@ export default {
             },
             showTitle: false
           },
-          grid: {
-            top: '10%',
-            left: '1%',
-            right: '3%',
-            bottom: '15%',
-            containLabel: true
-          },
-          color: ['#42526e', '#0052cc'],
           legend: {
-            data: ['跟进客户数', '跟进次数'],
-            bottom: 10
+            data: ['赢单', '需求分析', '方案/报价', '谈判审核']
           },
-          xAxis: [
-            {
-              type: 'category',
-              data: res1.data.map(item => item.type),
-              axisTick: {
-                alignWithLabel: true,
-                show: false
-              }
-            }
-          ],
-          yAxis: [
-            {
-              axisTick: {
-                show: false
-              },
-              axisLine: {
-                show: false
-              },
-              type: 'value',
-              name: '跟进客户数',
-              axisLabel: {
-                formatter: '{value} 个'
-              },
-              minInterval: 1
-            },
-            {
-              axisTick: {
-                show: false
-              },
-              axisLine: {
-                show: false
-              },
-              type: 'value',
-              name: '跟进次数',
-              axisLabel: {
-                formatter: '{value} 次'
-              },
-              minInterval: 1
-            }
-          ],
           series: [
             {
-              barWidth: '20%',
-              name: '跟进客户数',
-              type: 'bar',
-              data: res1.data.map(item => item.customerNum)
-            },
-            {
-              barWidth: '20%',
-              name: '跟进次数',
-              type: 'bar',
-              yAxisIndex: 1,
-              data: res1.data.map(item => item.recordNum)
+              name: 'Funnel',
+              type: 'funnel',
+              width: '50%',
+              left: '25%',
+              top: 60,
+              bottom: 30,
+              gap: 2,
+              label: {
+                show: true,
+                position: 'right',
+                formatter: '{b}({c}元)'
+              },
+              labelLine: {
+                length: 25,
+                lineStyle: {
+                  width: 3,
+                  type: 'solid'
+                }
+              },
+              itemStyle: {
+                borderColor: '#fff',
+                borderWidth: 1
+              },
+              data: [
+                { value: 100, name: '赢单' },
+                { value: 80, name: '需求分析'},
+                { value: 60, name: '方案/报价'},
+                { value: 40, name: '谈判审核' }
+              ]
             }
           ]
-        }
+        };
         this.chartLoading = false
-      }).catch((error) => {
+      }).catch(() => {
         this.chartLoading = false
       })
-      getcustomerRecordInfo(this.dataForm).then(res2 => {
+      gettotalCustomerTable(this.dataForm).then(res2 => {
         this.tableList = res2.data
         this.listLoading = false
-      }).catch((error) => {
+      }).catch(() => {
         this.listLoading = false
       })
     },

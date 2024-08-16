@@ -309,7 +309,7 @@
 
 
             </el-tab-pane>
-            <el-tab-pane :label="showLabel + '款信息'" name="payInfo">
+            <!-- <el-tab-pane :label="showLabel + '款信息'" name="payInfo">
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="collectiontableForm"
                 :data="collectList">
                 <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
@@ -329,8 +329,8 @@
               </JNPF-table>
               <pagination :total="collecttotal" :page.sync="collectionQuery.pageNum"
                 :limit.sync="collectionQuery.pageSize" @pagination="collectionData" />
-            </el-tab-pane>
-            <!-- <el-tab-pane :label="showLabel2 + '票信息'" name="collectionInfo">
+            </el-tab-pane> -->
+            <el-tab-pane :label="showLabel2 + '票信息'" name="collectionInfo">
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="makeoutForm"
                 :data="makeoutList">
                 <el-table-column prop="totalReconciliationAmount" :label="'应' + showLabel + '金额'" min-width="120">
@@ -349,7 +349,7 @@
               </JNPF-table>
               <pagination :total="makeouttotal" :page.sync="makeQuery.pageNum" :limit.sync="makeQuery.pageSize"
                 @pagination="makeData" />
-            </el-tab-pane> -->
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>

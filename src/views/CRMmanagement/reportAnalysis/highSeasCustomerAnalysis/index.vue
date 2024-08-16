@@ -115,10 +115,16 @@ export default {
               type: 'shadow'
             }
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           grid: {
             top: '10%',
             left: '1%',
-            right: '1%',
+            right: '3%',
             bottom: '15%',
             containLabel: true
           },

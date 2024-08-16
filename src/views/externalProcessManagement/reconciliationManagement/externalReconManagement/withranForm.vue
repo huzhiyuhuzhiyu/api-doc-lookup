@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成外协对账单" />
+          <el-page-header @back="goBack" content="生成采购对账单" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -24,8 +24,8 @@
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6">
-                    <el-form-item label="外协供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择外协供应商名称">
+                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                      <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称">
                       </el-input>
                     </el-form-item>
                   </el-col>
@@ -44,10 +44,11 @@
                   </el-col>
                   <el-col :span="6">
                     <el-form-item label="对账金额" prop="totalReconciliationAmount">
-                      <el-input v-model="dataForm.totalReconciliationAmount" disabled placeholder="请输入对账金额">
+                      <el-input disabled v-model="dataForm.includingTaxAmount" placeholder="请输入对账金额">
                       </el-input>
                     </el-form-item>
                   </el-col>
+
                   <el-col :span="24">
                     <el-form-item label="备注" prop="remark" ref="remark">
                       <el-input type="textarea" :rows="3" maxlength="200" v-model="dataForm.remark" placeholder="请输入备注">
@@ -61,12 +62,10 @@
                 <h5>产品信息</h5>
               </div>
               <div v-if="type !== 'look'">
-                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-delete" @click="batchDelete">批量删除</el-button>| -->
                 <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                   icon="el-icon-plus" @click="addAdjustmentBtn()">增加调价行</el-button>
+                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                      icon="el-icon-delete" @click="batchDelete">批量删除</el-button>| -->
               </div>
 
               <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
@@ -78,7 +77,7 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
                         <div class="viewData">
-                          <span>{{ scope.row.productCode ? scope.row.productCode : "调价" }}</span>
+                          <span>{{ scope.row.productCode?scope.row.productCode:"调价" }}</span>
                         </div>
                       </el-form-item>
                     </template>
@@ -87,19 +86,19 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                         <div class="viewData">
-                          <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
+                          <span>{{ scope.row.productName?scope.row.productName:"调价" }}</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-
+                
 
                   <el-table-column prop="productDrawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
                         <div class="viewData">
-                          <span>{{ scope.row.productDrawingNo ? scope.row.productDrawingNo : "调价" }}</span>
+                          <span>{{ scope.row.productDrawingNo?scope.row.productDrawingNo:"调价" }}</span>
                         </div>
                       </el-form-item>
                     </template>
@@ -109,8 +108,8 @@
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptReturnType'">
                         <div class="viewData">
                           <span>{{ scope.row.receiptReturnType === 'receipt' ? '收货' : scope.row.receiptReturnType ===
-            'back' ?
-            '退货' : '' }}</span>
+                            'back' ?
+                            '退货' : '' }}</span>
                         </div>
                       </el-form-item>
                     </template>
@@ -189,42 +188,43 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
-
-
-
                   <el-table-column prop="excludingTaxAmount" label="不含税总金额" min-width="120" fixed="right">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'"
                         :rules="productFormRules.excludingTaxAmount">
-                        <div :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : 'red']">
-
+                        <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20" placeholder="请输入不含税总金额">
+                        </el-input> -->
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
                           <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.excludingTaxAmount
-                            }}</span>
+                          }}</span>
                           <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.excludingTaxAmount
-                            }}</span>
+                          }}</span>
 
                         </div>
                         <el-input v-if="!scope.row.receiptReturnType" disabled v-model="scope.row.excludingTaxAmount">{{
-            scope.row.excludingTaxAmount }}</el-input>
+                          scope.row.excludingTaxAmount
+                        }}</el-input>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
+
                   <el-table-column prop="taxAmount" label="税额" min-width="120" fixed="right">
+
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'"
                         :rules="productFormRules.taxAmount">
-                        <div :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : 'red']">
-
-
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
                           <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.taxAmount }}</span>
                           <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.taxAmount }}</span>
 
                         </div>
-                        <el-input v-if="!scope.row.receiptReturnType" disabled v-model="scope.row.taxAmount">{{
-            scope.row.taxAmount
-          }}</el-input>
+                        <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.taxAmount" disabled>{{
+                          scope.row.taxAmount
+                        }}</el-input>
+
                       </el-form-item>
                     </template>
                   </el-table-column>
@@ -233,33 +233,31 @@
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'includingTaxAmount'"
                         :rules="productFormRules.includingTaxAmount">
-                        <div :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : 'red']">
-
-
+                        <div
+                          :class="['viewData', scope.row.receiptReturnType === 'receipt' ? 'green' : scope.row.receiptReturnType === 'back' ? 'red' : '']">
                           <span v-if="scope.row.receiptReturnType === 'receipt'">+{{ scope.row.includingTaxAmount
-                            }}</span>
+                          }}</span>
                           <span v-else-if="scope.row.receiptReturnType === 'back'">{{ scope.row.includingTaxAmount
-                            }}</span>
+                          }}</span>
 
                         </div>
                         <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">{{
-            scope.row.includingTaxAmount }}</el-input>
+                          scope.row.includingTaxAmount }}</el-input>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> 
 
                   <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip fixed="right">
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.remark" maxlength="20" placeholder="请输入备注">{{
-            scope.row.remark }}
+                        scope.row.remark }}
                       </el-input>
                     </template>
                   </el-table-column>
 
                   <el-table-column label="操作" width="120" fixed="right" v-if="dataFormTwo.data.length > 1">
                     <template slot-scope="scope">
-                      <el-button type="text" class="JNPF-table-delBtn"
-                        @click="delequipment_process_relList(scope.$index)"
+                      <el-button type="text" class="JNPF-table-delBtn" @click="delequipment_process_relList(scope.$index)"
                         :disabled="newArr.length <= 1 && (scope.row.productCode ? true : false)">删除</el-button>
 
                     </template>
@@ -268,20 +266,20 @@
               </el-form>
               <div class="text" style="height: 40px; line-height: 40px; background: #f5f7fa;">
                 <span style="font-weight:500;margin-right:10px">退货合计金额：<span class="red">{{
-            backComputedValue }}</span></span>
-                <span style="font-weight:500;margin-right:10px">收货合计金额：<span class="green">+{{
-            receiptComputedValue }}</span></span>
-                <span style="font-weight:500;margin-right:10px"> 不含税金额：<span
+                  backComputedValue }}</span></span>
+                <span style="font-weight:500;margin-right:10px">收货合计金额：<span
+                    :class="receiptComputedValue > 0 ? 'green' : 'red'">+{{ receiptComputedValue }}</span></span>
+                <span style="font-weight:500;margin-right:10px">不含税金额：<span
                     :class="computedValue > 0 ? 'green' : 'red'">{{ computedValue > 0 ? '+' + computedValue :
-            computedValue
+                      computedValue
                     }}</span></span>
-                <span style="font-weight:500;margin-right:10px"> 税额：<span
+                <span style="font-weight:500;margin-right:10px">税额：<span
                     :class="computedValue2 > 0 ? 'green' : 'red'">{{ computedValue2 > 0 ? '+' + computedValue2 :
-            computedValue2 }}</span></span>
+                      computedValue2 }}</span></span>
                 <!-- <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue3 }}</span> -->
-                <span style="font-weight:500;margin-right:10px"> 合计金额：<span
+                <span style="font-weight:500;margin-right:10px">合计金额：<span
                     :class="brComputedValue > 0 ? 'green' : 'red'">{{ brComputedValue > 0 ? '+' + brComputedValue :
-            brComputedValue }}</span></span>
+                      brComputedValue }}</span></span>
               </div>
 
             </el-tab-pane>
@@ -328,8 +326,7 @@
                                   points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
                               </g>
                               <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                height="36">
-                              </rect>
+                                height="36"></rect>
                               <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
                                 <mask id="mask-4-48" fill="white">
                                   <use xlink:href="#path-3-48"></use>
@@ -396,14 +393,14 @@ export default {
         cooperativePartnerId: '',
         cooperativePartnerName: '',      //供应商名称
         reconciliationDate: '',                //交货日期.
-        reconciliationType: 'outside_processing',
+        reconciliationType: 'payable',
         reasonRejection: '',
         id: null,
         documentStatus: 'submit',
         orderNo: "",
         remark: '',
         submitDate: '',
-        excludingTaxAmount: '',       //订单 不含税总金额
+        excludingTaxAmount: '',              //订单 不含税总金额
         includingTaxAmount: '',                    //   含税总金额
         totalReconciliationAmount: '',       // 对账总金额
         taxAmount: '',                     // 税额
@@ -411,7 +408,16 @@ export default {
         receiptAmount: '',                   // 收货总金额
         brTotalAmount: '',                   // 收/退货总金额
       },
-      includingTaxAmount: 0,
+
+      type: "",
+      dataFormArr: [],
+      rules: {
+        reconciliationDate: [{ required: true, message: '请选择对账日期', trigger: ['change'] }],
+        totalReconciliationAmount: [
+          { required: true, message: '请输入对账金额', trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal2', params: [10, 2, "",] }), trigger: 'blur' },
+        ],
+      },
       productFormRules: {
         excludingTaxAmount: [
           { validator: this.formValidate({ type: 'noEmtry', params: ["请输入不含税总金额", (errMsg) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
@@ -425,15 +431,6 @@ export default {
           { validator: this.formValidate({ type: 'decimal2', params: [20, 6, "", (errMsg, index) => { this.$message.error('' + errMsg) }] }), trigger: 'blur' },
         ],
       },
-      type: "",
-      dataFormArr: [],
-      rules: {
-        reconciliationDate: [{ required: true, message: '请选择对账日期', trigger: ['change'] }],
-        totalReconciliationAmount: [
-          { required: true, message: '请输入对账金额', trigger: ['blur'] },
-          { validator: this.formValidate({ type: 'decimal2', params: [10, 2, "",] }), trigger: 'blur' },
-        ],
-      },
       productRules: {
 
       },
@@ -442,6 +439,7 @@ export default {
         label: 'fullName'
       },
       newArr: [],
+      includingTaxAmount: 0,
       // 审批流需要字段
       approvalBusinessId: '',
       workVisible: false,
@@ -509,10 +507,11 @@ export default {
       this.dataFormTwo.data.forEach(item => {
         count += item.taxAmount * 1
       })
-      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
 
+      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.taxAmount
     },
+
     // computedValue3() {
     //   // 在这里计算第三个输入框的值
     //   let count = 0
@@ -533,13 +532,9 @@ export default {
       this.dataForm.backAmount = this.jnpf.numberFormat(count)
       return this.dataForm.backAmount
     },
-    // excludingTaxAmount: '',       //订单 不含税总金额
-    //     includingTaxAmount: '',                    //   含税总金额
-    //     totalReconciliationAmount: '',       // 对账总金额
-    //     taxAmount: '',                     // 税额
-    //     backAmount: '',                      // 退货总金额
-    //     receiptAmount: '',                   // 收货总金额
-    //     brTotalAmount: '',                   // 收/退货总金额
+    // computedValue不含税金额：
+    //       computedValue2 合计金额：
+    //       brComputedValue 合计金额：
     receiptComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach(item => {
@@ -548,25 +543,18 @@ export default {
         }
       })
       this.dataForm.receiptAmount = this.jnpf.numberFormat(count)
+      console.log(this.dataForm.receiptAmount, 'this.dataForm.receiptAmount');
       return this.dataForm.receiptAmount
     },
-    // brComputedValue() {
-    //   let count = 0
-    //   if (this.dataForm.receiptAmount !== '' && this.dataForm.backAmount !== '') {
-    //     count = this.dataForm.receiptAmount * 1 + this.dataForm.backAmount * 1
-    //   }
-    //   this.dataForm.includingTaxAmount = this.jnpf.numberFormat(count)
-    //   return this.dataForm.includingTaxAmount
-    // },
     brComputedValue() {
       let count = 0
       if (this.dataForm.excludingTaxAmount !== '' && this.dataForm.taxAmount !== '') {
         count = this.dataForm.excludingTaxAmount * 1 + this.dataForm.taxAmount * 1
       }
-      console.log(count);
       this.dataForm.includingTaxAmount = this.jnpf.numberFormat(count)
       return this.dataForm.includingTaxAmount
     },
+
 
   },
   watch: {
@@ -580,9 +568,9 @@ export default {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
 
-              } else {
-                item.excludingTaxAmount = this.jnpf.numberFormat(item.includingTaxAmount / (1 + (newVal[0].taxRate / 100)), 2)
-                item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
+              }else{
+                item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
               }
             }
           } else if (item.receiptReturnType === 'back') {
@@ -590,15 +578,15 @@ export default {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
 
-              } else {
-                item.excludingTaxAmount = this.jnpf.numberFormat(item.includingTaxAmount / (1 + (newVal[0].taxRate / 100)), 2)
-                item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
+              }else{
+                item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
               }
             }
-          } else {
+          } else {                                                                                                                          
             if (item.includingTaxAmount) {
-              item.excludingTaxAmount = this.jnpf.numberFormat(item.includingTaxAmount / (1 + (newVal[0].taxRate / 100)), 2)
-              item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
+              item.excludingTaxAmount=this.jnpf.numberFormat(item.includingTaxAmount/(1+(newVal[0].taxRate/100)),2)
+                item.taxAmount=this.jnpf.numberFormat(item.includingTaxAmount-item.excludingTaxAmount,2)
             }
           }
 
@@ -606,17 +594,17 @@ export default {
       },
       deep: true,
     },
+  
     'dataForm.includingTaxAmount': {
       handler: function (newVal, oldVal) {
         console.log(newVal, '// immediate:true,');
-        this.dataForm.totalReconciliationAmount = newVal
+        this.dataForm.totalReconciliationAmount = this.jnpf.numberFormat(newVal, 4)
       },
       immediate: true,
     },
   },
   methods: {
     addAdjustmentBtn() {
-      console.log(234, this.dataFormTwo.data);
       this.dataFormTwo.data.push({
         accountsReceivableId: "",
         calculationDirection: "",
@@ -642,10 +630,9 @@ export default {
         taxRate: "",
         price: "",
         adjustmentLineFlag: true,
-
       })
       this.newArr = this.dataFormTwo.data.filter(item => item.adjustmentLineFlag === false);
-      console.log(" this.dataFormTwo.data", this.dataFormTwo.data, this.newArr);
+      console.log(" this.dataFormTwo.data", this.dataFormTwo.data);
     },
     clearData() {
       this.dataForm.id = ""
@@ -654,21 +641,24 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data) {
+    init(row, data, type) {
       this.dataFormTwo.data = []
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
-
       let _data = JSON.parse(JSON.stringify(data))
+      this.dataForm = JSON.parse(JSON.stringify(row))
+      console.log(_data, '数据数据');
       let excludingTaxAmount, includingTaxAmount;
       _data.forEach(item => {
+
         if (item.receiptReturnType) {
           excludingTaxAmount = item.receiptReturnType === 'receipt' ? item.receiptQuantity * this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2) : -item.receiptQuantity * this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2)
-          includingTaxAmount = item.receiptReturnType === 'receipt' ? item.receiptQuantity * item.price : item.receiptQuantity * item.price
+          includingTaxAmount = item.receiptReturnType === 'receipt' ? this.jnpf.numberFormat(item.receiptQuantity * item.price,2) : -this.jnpf.numberFormat(item.receiptQuantity * item.price,2)
         } else {
-          console.log(1341234);
           excludingTaxAmount = item.excludingTaxAmount
           includingTaxAmount = item.includingTaxAmount
         }
+        console.log("includingTaxAmount",includingTaxAmount);
+        console.log("excludingTaxAmount",excludingTaxAmount);
         this.dataFormTwo.data.push({
           accountsReceivableId: '',
           calculationDirection: item.calculationDirection,
@@ -691,7 +681,7 @@ export default {
           remark: item.remark,
           excludingTaxPrice: this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2),
           excludingTaxAmount: excludingTaxAmount,
-          taxAmount: this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
+          taxAmount: item.receiptReturnType === 'receipt' ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount) : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
           taxRate: item.taxRate,
           price: item.price,
           adjustmentLineFlag: false,
@@ -700,19 +690,20 @@ export default {
 
 
       })
+
       this.listLoading = false
 
       this.dataFormTwo.data.forEach((item, index) => {
         if (item.receiptReturnType === 'receipt') {
-          item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
-          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount * 1 + item.taxAmount * 1)
+          this.includingTaxAmount += this.jnpf.numberFormat(item.excludingTaxAmount + item.taxAmount) 
         } else {
-          item.includingTaxAmount = -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
           this.includingTaxAmount += -this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
         }
 
       })
-      console.log(this.includingTaxAmount);
+      console.log("object", this.includingTaxAmount);
+      console.log("object", this.dataFormTwo.data);
+
       this.dataForm.cooperativePartnerName = data[0].cooperativePartnerName
       this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
       // 获取当前日期
@@ -730,7 +721,6 @@ export default {
       // 拼接为YYYY-MM-DD格式
       const formattedDate = `${year}-${month}-${date}`;
       this.dataForm.reconciliationDate = formattedDate
-      this.newArr = this.dataFormTwo.data.filter(item => item.adjustmentLineFlag === false);
       // 审批
       this.$nextTick(() => { this.getApproverData() })
     },
@@ -862,13 +852,25 @@ export default {
       this.$refs['elForm'].validate((valid) => {
         if (valid) {
           if (!valid_2) {
-            console.log(1);
+            console.log(1, this.dataFormTwo.data);
             this.btnLoading = false
-            // for (let i = 0; i < this.dataFormTwo.data.length; i++) {
-            //   const item = this.dataFormTwo.data[i]
-
-            // }
-            return
+            if (this.dataFormTwo.data.length > 0) {
+              console.log(66767);
+              for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+                const item = this.dataFormTwo.data[index];
+                console.log("item,", item);
+                if (!item.adjustmentLineFlag) {
+                  console.log("32123123", item);
+                  if (item.excludingTaxAmount == "") {
+                    console.log(22222);
+                    this.$message.error("请填写" + (index + 1) + "含税总金额、不含税总金额")
+                    this.btnLoading = false
+                    flag = false
+                    break
+                  }
+                }
+              }
+            }
           } else {
             this.btnLoading = true
             let totalExcludingTaxAmount = 0;
@@ -894,6 +896,22 @@ export default {
               ccList: ccLists,
             }
             _data.reconciliation.includingTaxAmount = this.includingTaxAmount
+            let flag = null;
+            // if (this.dataFormTwo.data.length > 0) {
+            //   for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+            //     const item = this.dataFormTwo.data[index];
+            //     if (item.adjustmentLineFlag == false) {
+            //       if (!item.excludingTaxAmount || !item.includingTaxAmount) {
+            //         this.$message.error("请填写含税总金额、不含税总金额")
+            //         this.btnLoading = false
+            //         flag = false
+            //         break
+            //       }
+            //     }
+            //   }
+            // }
+            console.log("提交参数", _data);
+            if (flag === false) return
             if (submitFlag) {
               addfinAccount(_data).then(res => {
                 if (res.msg === 'Success') res.msg = '保存成功'
@@ -925,6 +943,17 @@ export default {
     // 删除项
     delequipment_process_relList(index) {
       this.dataFormTwo.data.splice(index, 1)
+    },
+    //  选择产品弹框传递的数据
+    productsSubmit(data) {
+      if (this.dataFormTwo.data.length) {
+        this.dataFormTwo.data = this.dataFormTwo.data.filter(item => {
+          return !data.some(element => element.productsId === item.productsId);
+        });
+      }
+      console.log(data, '传递数据1111');
+      this.dataFormTwo.data = [...this.dataFormTwo.data, ...data,]
+      console.log(this.dataFormTwo.data, '传递数据');
     },
     // 获取审批流参数递归处理
     addNodeTypeAndNodeName(obj) {
@@ -1029,7 +1058,7 @@ export default {
       let foundSymbol = ''  // 条件符号
       let result = null     // 判断条件是否成立
       let condList = []
-      getBusDetail('b014').then(res => {
+      getBusDetail('b012').then(res => {
         console.log(res);
         state = res.data.business.state
         condExpress = res.data.business.condExpress
@@ -1065,7 +1094,7 @@ export default {
             // }
             if (result) {
               let query = {
-                businessCode: "b014",
+                businessCode: "b012",
                 condList,
               }
               busApprovalFlowTree(query).then(res => {
@@ -1097,7 +1126,7 @@ export default {
         if (state === 'enable') {
           this.dataForm.approvalFlag = 1
           let query = {
-            businessCode: "b014",
+            businessCode: "b012",
             condList,
           }
           busApprovalFlowTree(query).then(res => {
@@ -1130,7 +1159,6 @@ export default {
 
     },
 
-
   },
 }
 </script>
@@ -1157,14 +1185,8 @@ export default {
   padding: 5px 10px;
 }
 
-::v-deep .el-tabs {
-  height: 100% !important;
-}
-
 ::v-deep .el-tabs__content {
-  /* height: auto !important; */
-  height: calc(100% - 47px) !important;
-  overflow: auto !important;
+  height: auto !important;
   padding: 0 20px;
 }
 
@@ -1204,6 +1226,7 @@ export default {
 }
 
 ::v-deep .workNode {
+  min-height: 1045px !important;
   background-color: #f5f5f7 !important;
 }
 
@@ -1214,5 +1237,4 @@ export default {
   min-height: 1045px !important;
   background-color: #f5f5f7 !important;
   color: #576a95;
-}
-</style>
+}</style>

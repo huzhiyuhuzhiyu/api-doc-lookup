@@ -93,7 +93,7 @@ export default {
         this.chartInstance.resize()
       }, 100);
     }
-    this.init()
+    // this.init()
   },
   beforeDestroy() {
     window.onresize = null
@@ -125,6 +125,12 @@ export default {
             right: '1%',
             bottom: '15%',
             containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           color: ['#0052cc', '#42526e'],
           legend: {
@@ -169,6 +175,12 @@ export default {
             bottom: "10",
             type: "scroll"
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           xAxis: [{
             show: false
           }],
@@ -207,6 +219,12 @@ export default {
             right: '1%',
             bottom: '15%',
             containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           color: ['#42526e', '#0052cc'],
           legend: {
@@ -271,6 +289,12 @@ export default {
               type: 'shadow'
             },
             formatter: '{b} : {c}%'
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
           },
           grid: {
             top: '10%',

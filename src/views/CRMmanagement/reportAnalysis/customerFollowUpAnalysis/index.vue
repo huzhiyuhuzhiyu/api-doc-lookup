@@ -50,7 +50,7 @@ export default {
   },
   data() {
     return {
-      chartLoading:false,
+      chartLoading: false,
       listLoading: false,
       dataForm: {
         startTime: "",
@@ -116,10 +116,16 @@ export default {
               type: 'shadow'
             }
           },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            },
+            showTitle: false
+          },
           grid: {
             top: '10%',
             left: '1%',
-            right: '1%',
+            right: '3%',
             bottom: '15%',
             containLabel: true
           },
@@ -146,7 +152,26 @@ export default {
               axisLine: {
                 show: false
               },
-              type: 'value'
+              type: 'value',
+              name: '跟进客户数',
+              axisLabel: {
+                formatter: '{value} 个'
+              },
+              minInterval: 1
+            },
+            {
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                show: false
+              },
+              type: 'value',
+              name: '跟进次数',
+              axisLabel: {
+                formatter: '{value} 次'
+              },
+              minInterval: 1
             }
           ],
           series: [
@@ -160,6 +185,7 @@ export default {
               barWidth: '20%',
               name: '跟进次数',
               type: 'bar',
+              yAxisIndex: 1,
               data: res1.data.map(item => item.recordNum)
             }
           ]

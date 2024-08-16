@@ -179,8 +179,16 @@ export default {
             column: ''
           }
         ],
-
-        superQuery: {}
+        superQuery: {
+          condition: [
+            {
+              field: '',
+              fieldValue: '',
+              symbol: ''
+            }
+          ],
+          matchLogic: ''
+        },
       },
 
       detailTotal: 0,

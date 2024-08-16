@@ -103,7 +103,7 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
-            <el-table-column label="操作" width="200" fixed="right">
+            <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button> -->
                 <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>

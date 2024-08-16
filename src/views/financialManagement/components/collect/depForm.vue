@@ -133,7 +133,7 @@
                       <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                      <!-- <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
                             <div class="viewData">
@@ -141,39 +141,19 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
-                      <el-table-column prop="confirmReceiptRecordsOrderNo" label="发退货通知单号" min-width="180"
+                      <el-table-column prop="stockMoveOrderNo" label="出入库单号" min-width="180"
                         show-overflow-tooltip>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'confirmReceiptRecordsOrderNo'">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'stockMoveOrderNo'">
                             <div class="viewData">
-                              <span>{{ scope.row.confirmReceiptRecordsOrderNo }}</span>
+                              <span>{{ scope.row.stockMoveOrderNo }}</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-
-
-                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productCode ? scope.row.productCode : "调价" }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
-                            <div class="viewData">
-                              <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 
@@ -183,8 +163,34 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productCode ? scope.row.productCode : "调价" }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productName ? scope.row.productName : "调价" }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column> -->
+                      <el-table-column prop="mainUnit" label="单位" min-width="100" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
 
-
+                            <div class="viewData">
+                              <span>{{ scope.row.mainUnit }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'reconciliationUnitPrice'">
@@ -196,16 +202,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位(主)" min-width="100" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
-
-                            <div class="viewData">
-                              <span>{{ scope.row.mainUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
+                
 
                       <el-table-column prop="taxRate" label="税率%" min-width="100">
                         <template slot-scope="scope">
@@ -813,11 +810,15 @@ export default {
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
+}
+.JNPF-preview-main .main {
+  padding-top: 0;
 }
 </style>

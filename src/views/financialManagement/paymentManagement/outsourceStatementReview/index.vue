@@ -115,6 +115,9 @@
 
 
     <component :is="listPageComponent" v-if="depFormVisible" ref="depForm" @close="close" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -125,13 +128,56 @@ import outReconciliationForm from '../components/outReconciliationForm.vue'
 
 import moment from 'moment'
 import findPage from '../findPage.js'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'quality',
   components: {
-    outReconciliationForm
+    outReconciliationForm, SuperQuery
   },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '审批单号',
+          type: 'input'
+        },
+        {
+          prop: 'documentNo',
+          label: '业务单号',
+          type: 'input'
+        },
+
+        {
+          prop: 'businessName',
+          label: '流程标题',
+          type: 'input'
+        },
+        {
+          prop: 'businessName',
+          label: '所属业务',
+          type: 'input'
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'submitDate',
+          label: '发起时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+      ],
       activeName: 'dont',
       depFormVisible: false,
       background: true, //分页器背景颜色
@@ -193,6 +239,14 @@ export default {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.listQuery.orderItems[0].asc = order !== 'descending'

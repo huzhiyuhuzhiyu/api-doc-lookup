@@ -193,7 +193,7 @@ export default {
           sums[index] = '合计';
           return;
         }
-        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : '');
+        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : item[column.property] == '0' ? 0 : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);

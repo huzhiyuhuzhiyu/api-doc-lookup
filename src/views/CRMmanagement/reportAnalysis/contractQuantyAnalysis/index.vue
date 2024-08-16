@@ -4,10 +4,11 @@
       <div class="vux-flexbox filtrate-content filtrate-bar vux-flex-row" style="justify-content: flex-start;">
         <div class="vux-flexbox title-box vux-flex-row" style="justify-content: flex-start;">
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
-          <div class="text-one-line">新增商机</div>
+          <div class="text-one-line">合同数量分析</div>
         </div>
-        <div class="xr-radio-menu-wrap" style="width: 250px;">
-          <selectdate @change="datechange"></selectdate>
+        <div class="xr-radio-menu-wrap">
+          <el-date-picker v-model="dataForm.startDate" type="year" value-format="yyyy" placeholder="选择年" :picker-options="pickerOptions">
+          </el-date-picker>
         </div>
         <div class="xr-radio-menu-wrap">
           <selectdepartment @change="departmentchange"></selectdepartment>
@@ -20,9 +21,9 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <!-- <div class="handle-bar">
+          <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div> -->
+          </div>
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
               <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="120">
@@ -50,7 +51,12 @@ export default {
   },
   data() {
     return {
-      datas:[],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
+      datas: [],
       headerCellStyle: {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
@@ -58,10 +64,13 @@ export default {
       columnsData: [],
       chartLoading: false,
       listLoading: false,
+      // dataForm: {
+      //   startDate: "",
+      //   userIds: []
+      // },
       dataForm: {
-        startTime: "",
-        endTime: "",
-        type: "year",
+        type: 'year',
+        startDate: "",
         userIds: []
       },
       tableList: [],
@@ -74,6 +83,7 @@ export default {
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
+    this.dataForm.startDate = this.jnpf.getToday('YYYY')
     this.initData()
   },
   mounted() {
@@ -103,11 +113,6 @@ export default {
     search() {
       this.initData()
     },
-    datechange(data) {
-      this.dataForm.startTime = data.dateStart
-      this.dataForm.endTime = data.dateEnd
-      this.dataForm.type = data.value
-    },
     departmentchange(data) {
       this.dataForm.userIds = data
     },
@@ -131,13 +136,13 @@ export default {
           grid: {
             top: '10%',
             left: '1%',
-            right: '4%',
+            right: '3%',
             bottom: '15%',
             containLabel: true
           },
-          color: ['#707f9a', '#0065ff'],
+          color: ['#0065ff', '#00b8d9', '#36b37e'],
           legend: {
-            data: ['新增商机金额', '新增商机数量'],
+            data: ['当月合同数', '环比增长', '同比增长'],
             bottom: 10
           },
           xAxis: [{
@@ -155,11 +160,8 @@ export default {
             axisLine: {
               show: false
             },
-            name: '新增商机金额',
+            name: '个',
             type: 'value',
-            axisLabel: {
-              formatter: '{value} 元'
-            },
             minInterval: 1
           },
           {
@@ -170,25 +172,53 @@ export default {
               show: false
             },
             type: 'value',
-            name: '新增商机数量',
             axisLabel: {
-              formatter: '{value} 个'
+              formatter: '{value} %'
             },
             minInterval: 1
           }],
           series: [
             {
-              name: '新增商机金额',
-              data: res1.data.map(item => item.businessMoney),
-              type: 'line',
-              smooth: true
+              name: '当月回款金额',
+              data: [0, 25, 1, 21, 21, 45, 56, 5, 8, 6, 23, 85],
+              //res1.data.map(item => item.monthNum)
+              type: 'bar',
+              barWidth: '20%',
+              smooth: true,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              }
             },
             {
-              name: '新增商机数量',
-              data: res1.data.map(item => item.businessNum),
+              name: '环比增长',
+              data: [0, 0, 0, 0, 0, 0, 230, 0, 0, 0, 0, 0],
+              // res1.data.map(item => item.prevYearNum),
               type: 'line',
               yAxisIndex: 1,
-              smooth: true
+              smooth: true,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              }
+            },
+            {
+              name: '同比增长',
+              data: [0, 0, 0, 100, 200, 100, 0, 200, 0, 0, 0, 0],
+              //res1.data.map(item => item.pervMonthNum),
+              type: 'line',
+              yAxisIndex: 1,
+              smooth: true,
+              markPoint: {
+                data: [
+                  { type: 'max', name: 'Max' },
+                  { type: 'min', name: 'Min' }
+                ]
+              },
             }
           ]
         }
@@ -212,14 +242,18 @@ export default {
       columnObj1.label = '日期'
       columnObj1.prop = 'title'
       _this.columnsData.push(columnObj1)
-      _this.tableList.push({ 'title': '数量' })
+      _this.tableList.push({ 'title': '当月合同数量(个)' })
+      _this.tableList.push({ 'title': '环比增长(%)' })
+      _this.tableList.push({ 'title': '同比增长(%)' })
       var props = 'prop'
       _this.datas.forEach((item, index) => {
         const columnObj = {}
         columnObj.label = item.type
         columnObj.prop = props + index
         _this.columnsData.push(columnObj)
-        _this.$set(_this.tableList[0], columnObj.prop, item.businessNum)
+        _this.$set(_this.tableList[0], columnObj.prop, item.monthNum)
+        _this.$set(_this.tableList[0], columnObj.prop, item.prevYearNum)
+        _this.$set(_this.tableList[0], columnObj.prop, item.pervMonthNum)
       })
     }
   }

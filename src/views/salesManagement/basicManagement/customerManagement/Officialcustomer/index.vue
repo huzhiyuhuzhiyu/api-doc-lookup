@@ -98,7 +98,7 @@
             </el-table-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
            
-            <el-table-column prop="taxId" label="税号" min-width="180" />
+            <el-table-column prop="taxId" label="税号" min-width="200" />
             <el-table-column prop="contacts" label="联系人" sortable="custom" min-width="100" />
             <el-table-column prop="phone" label="电话" sortable="custom" min-width="120" />
             <el-table-column prop="mobilePhone" label="手机" sortable="custom" min-width="120" />
@@ -161,16 +161,12 @@
 <script>
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import programme from "../components/programme.vue";
-import { getPartnerList, deletePartner, uploadPartner } from '@/api/customerManagement'
+import { deletePartner, uploadPartner } from '@/api/customerManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import RecordForm from '@/views/CRMmanagement/punter/RecordForm1.vue'
-import { UserListAll, } from '@/api/permission/user'
 import { excelExport, getCooperativeData, getcategoryTree } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import { getOrganization } from '@/api/permission/user'
 import Form from './Form'
-import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {

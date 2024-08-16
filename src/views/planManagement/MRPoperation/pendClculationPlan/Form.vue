@@ -153,11 +153,11 @@
                 </el-table-column>
                 <el-table-column prop="productDrawingNo" label="立即组装" width="320" sortable="custom" />
                 <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
-                <el-table-column prop="planNo" label="单位" width="320" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="320" sortable="custom" />
                 <el-table-column prop="productName" label="需组装数量" min-width="120" sortable="custom" />
 
-                <el-table-column prop="planNo" label="计划开始日期" width="180" />
-                <el-table-column prop="planNo" label="计划结束日期" width="180" />
+                <el-table-column prop="planStartDate" label="计划开始日期" width="180" />
+                <el-table-column prop="planEndDate" label="计划结束日期" width="180" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" />
                 <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" />
                 <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />

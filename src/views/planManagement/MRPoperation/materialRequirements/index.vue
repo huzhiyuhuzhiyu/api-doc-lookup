@@ -13,10 +13,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-select v-model="assembleForm.bomFlag" placeholder="有无BOM" clearable style="width: 100%;">
-                      <el-option v-for="(item, index) in bomFlagList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
+
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -26,9 +23,17 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-date-picker v-model="planDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getassembleData()">
                       {{ $t("common.search") }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetAssembleData()">{{
+                      $t("common.reset") }}
                     </el-button>
                   </el-form-item>
                 </el-col>
@@ -42,6 +47,10 @@
                     @click="bulkRelease('assembleData')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('assembleRef')" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                       @click="getassembleData()" />
@@ -50,8 +59,8 @@
               </div>
               <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
                 @sort-change="sortChange" custom-column hasC @selection-change="handleProduce"
-                :checkSelectable="disproduceData">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+                :setColumnDisplayList="columnList1" :checkSelectable="disproduceData">
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -60,24 +69,28 @@
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productDrawingNo" label="立即组装" width="320" sortable="custom" />
-                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
-                <el-table-column prop="mainUnit" label="单位" width="320" sortable="custom" />
-                <el-table-column prop="productName" label="需组装数量" min-width="120" sortable="custom" />
-                <el-table-column prop="planStartDate" label="计划开始日期" width="180" />
-                <el-table-column prop="planEndDate" label="计划结束日期" width="180" />
-                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" />
-                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" />
-                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
-                <el-table-column prop="oil" label="油脂" min-width="100" />
-                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" />
-                <el-table-column prop="clearance" label="游隙" min-width="100" />
-                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" />
-                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" />
+                <el-table-column prop="immediatelyBuyFlag" label="立即组装" min-width="140" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" min-width="80" />
+                <el-table-column prop="outputQuantity" label="需组装数量" min-width="160" sortable="custom" />
+                <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
+                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+                <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+                <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+                <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+                <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+                <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+                <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+                <el-table-column prop="specialRequire" label="特殊要求" min-width="120" sortable="custom" />
                 <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
-                      @click.native="complateSetFun(scope.row.id, 'produce')">齐套查询</el-button>
+                      @click.native="complateSetFun(scope.row.id, 'assemble')">齐套查询</el-button>
 
                   </template>
 
@@ -110,9 +123,17 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-date-picker v-model="planDateArr" type="daterange" value-format="yyyy-MM-dd"
+                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                    </el-date-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getproduceData()">
                       {{ $t("common.search") }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProduceData()">{{
+                      $t("common.reset") }}
                     </el-button>
                   </el-form-item>
                 </el-col>
@@ -125,38 +146,71 @@
                     @click="bulkRelease('produce')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('produceRef')" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
+                      @click="getproduceData()" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="dataTable" v-loading="listLoading" :data="producrData" :fixedNO="true"
-                @sort-change="sortChange" custom-column hasC @selection-change="handleProduce"
-                :checkSelectable="disproduceData">
-                <el-table-column prop="productDrawingNo" label="品名规格" width="320" sortable="custom" />
+              <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true"
+                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC
+                @selection-change="handleProduce" :checkSelectable="disproduceData">
+                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-                <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="bomId">
+                <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
-                    <div :style="scope.row.bomId ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomId ? "有" : '否'
+                    <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
+                      '无BOM'
                       }}
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="productDrawingNo" label="立即生产" width="320" sortable="custom" />
-                <el-table-column prop="planNo" label="计划单号" width="320" sortable="custom" />
-                <el-table-column prop="planNo" label="单位" width="320" />
-                <el-table-column prop="productName" label="安全库存" min-width="120" sortable="custom" />
-                <el-table-column prop="planNo" label="库存数量" width="180" sortable="custom" />
-                <el-table-column prop="planNo" label="可用库存数量" width="180" sortable="custom" />
-                <el-table-column prop="sealingCoverTyping" label="需求数量" min-width="120" sortable="custom" />
-                <el-table-column prop="accuracyLevel" label="损耗数量" min-width="120" sortable="custom" />
-                <el-table-column prop="vibrationLevel" label="计划在制数量" min-width="120" sortable="custom" />
-                <el-table-column prop="oil" label="实际在制数量" min-width="100" sortable="custom" />
-                <el-table-column prop="oilQuantity" label="占用数量" min-width="120" sortable="custom" />
-                <el-table-column prop="clearance" label="需生产数量" min-width="100" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="计划开始日期" min-width="120" sortable="custom" />
-                <el-table-column prop="specialRequire" label="计划结束日期" min-width="120" sortable="custom" />
+                <el-table-column prop="immediatelyBuyFlag" label="立即生产" width="140" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.safeInventory ? scope.row.safeInventory : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="demandQuantity" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="lossNum" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="planInTransitQuantity" label="计划在制数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.planInTransitQuantity ? scope.row.planInTransitQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inTransitUnOccupancyQuantity" label="实际在制数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.inTransitUnOccupancyQuantity ? scope.row.inTransitUnOccupancyQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="occupancyQuantity" label="占用数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.occupancyQuantity ? scope.row.occupancyQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="outputQuantity" label="需生产数量" min-width="140" sortable="custom" />
+                <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
 
                 <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
@@ -171,7 +225,16 @@
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total2" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
-                @pagination="getproduceData" />
+                @pagination="getproduceData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需生产数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
             </div>
 
           </div>
@@ -182,26 +245,31 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
+                    <el-input v-model="purchaseForm.productDrawingNo" placeholder="品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-select v-model="purchaseForm.immediatelyBuyFlag" placeholder="立即采购" clearable
+                      style="width: 100%;">
+                      <el-option v-for="(item, index) in immediatelyBuyFlagList" :key="index" :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
                     <el-input v-model="purchaseForm.planNo" placeholder="请输入计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="purchaseForm.workOrderNo" placeholder="请输入工作令号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="purchaseForm.productDrawingNo" placeholder="请输入产品图号" clearable />
-                  </el-form-item>
-                </el-col>
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getpurchaseData()">
                       {{ $t("common.search") }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetPurchaseData()">{{
+                      $t("common.reset") }}
                     </el-button>
                   </el-form-item>
                 </el-col>
@@ -216,6 +284,10 @@
                     @click="bulkRelease('purchase')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('purchaseRef')" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                       @click="initData()" />
@@ -223,87 +295,74 @@
                 </div>
               </div>
 
-              <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
-                @sort-change="sortChange" custom-column hasC show-summary :summary-method="getSummaries2"
+              <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
+                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
                 @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
-                <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom"></el-table-column>
-                <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="产品图号" fixed="left" min-width="160" sortable="custom" />
-
-                <!-- <el-table-column prop="demandType" label="需求类型" width="160">
+                <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.demandType == 'finished_materials'">成品物料</div>
-                    <div v-if="scope.row.demandType == 'semi_finished_materials'">半成品物料</div>
-
-                  </template>
-                </el-table-column> -->
-                <el-table-column prop="originNo" label="来源单号" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="workOrderNo" label="工作令号" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="demandQuantity" label="需求数量" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="100">
-                  <template slot-scope="scope">
-                    <div :style="scope.row.immediatelyBuyFlag == 1 ? 'color:red;' : ''
-                      ">
-                      {{ scope.row.immediatelyBuyFlag == 1 ? "是" : "否" }}
-                    </div>
+                    <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="safeInventory" label="安全库存" width="100"></el-table-column>
-                <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.safeInventory ? scope.row.safeInventory : 0 }}</div>
+                  </template>
+                </el-table-column>
+
+                <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom">
                   <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.availableQuantity ? scope.row.availableQuantity : '0' }}
-                    </div>
+                    <div>{{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="inTransitUnOccupancyQuantity" label="在制未占用数量" min-width="140">
+                <el-table-column prop="demandQuantity" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="lossNum" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="planInTransitQuantity" label="计划在途数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.planInTransitQuantity ? scope.row.planInTransitQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inTransitUnOccupancyQuantity" label="实际在途数量" min-width="160" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.inTransitUnOccupancyQuantity ? scope.row.inTransitUnOccupancyQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="lossNum" label="损耗数量" width="100"></el-table-column>
-                <!-- <el-table-column prop="totalInProcessQuantity" label="总在制数量" width="120"></el-table-column> -->
-                <!-- <el-table-column prop="inProcessQuantity" label="在制数量" width="120"></el-table-column> -->
-
-                <el-table-column prop="occupancyQuantity" label="占用数量" width="120">
-                </el-table-column>
-                <el-table-column prop="outputQuantity" label="采购数量" width="120" sortable="custom" />
-
-                <el-table-column prop="issuedQuantity" label="已下达数量" width="120">
-                </el-table-column>
-                <el-table-column prop="mainUnit" label="单位" width="160">
-                </el-table-column>
-                <el-table-column prop="deliveryDate" label="订单交货日期" width="160" sortable="custom" />
-                <el-table-column prop="replaceStatus" label="替代状态" min-width="120" sortable="custom">
+                <el-table-column prop="occupancyQuantity" label="当前预占数量" min-width="160" sortable="custom">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.replaceStatus == 'normal'">正常</div>
-                    <el-link type="primary" @click.native="viewData(scope.row.id, 'look')"
-                      v-if="scope.row.replaceStatus == 'applying'">替代中</el-link>
-                    <div v-if="scope.row.replaceStatus == 'replaced'">
-                      已替代
-                    </div>
+                    <div>{{ scope.row.occupancyQuantity ? scope.row.occupancyQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="createTime" label="需求时间" min-width="180" sortable="custom" />
-                <el-table-column prop="createByName" label="运算人" min-width="100" />
-                <el-table-column prop="remark" label="备注" min-width="160" />
+                <el-table-column prop="outputQuantity" label="需采购数量" min-width="140" sortable="custom" />
+                <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
                 <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
                       :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag"
                       @click.native="retrospectFun(scope.row.id, 'purchase')">追溯主产品</el-button>
-                    <el-button size="mini" type="text"
-                      :disabled="(scope.row.mainProductFlag ? true : scope.row.replaceStatus == 'normal' ? false : true) || Number(scope.row.issuedQuantity) > 0"
-                      @click.native="alternativeProducts(scope.row.id, 'add')">替代产品</el-button>
-
                   </template>
 
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total3" :page.sync="purchaseForm.pageNum" :limit.sync="purchaseForm.pageSize"
-                @pagination="initData" />
+                @pagination="initData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在途数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在途数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需采购数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
               <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="initData" /> -->
             </div>
@@ -349,6 +408,10 @@
                   <el-button size="mini" type="primary" icon="el-icon-plus" @click="bulkRelease('out')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('outRef')" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
                       @click="initData()" />
@@ -356,62 +419,61 @@
                 </div>
               </div>
 
-              <JNPF-table ref="tableDataAsss" v-loading="listLoading" :data="outData" :fixedNO="true"
-                @sort-change="sortChange" custom-column hasC show-summary :summary-method="getSummaries3"
-                @selection-change="handleOut" :checkSelectable="disOutData">
-                <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" width="150" sortable="custom"></el-table-column>
-                <el-table-column prop="productName" label="产品名称" min-width="120" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="产品图号" fixed="left" min-width="160" sortable="custom" />
-                <!-- <el-table-column
-                  prop="bomFlagText"
-                  label="是否有BOM"
-                  min-width="120"
-                >
+              <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
+                :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
+                :checkSelectable="disOutData">
+                <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
+                <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
-                    <div>{{ scope.row.bomId ? "有" : 否 }}</div>
-                  </template>
-                </el-table-column> -->
-                <!-- <el-table-column prop="demandType" label="需求类型" width="120">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.demandType == 'out'">外协需求</div>
-                  </template>
-                </el-table-column> -->
-                <el-table-column prop="originNo" label="来源单号" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="workOrderNo" label="工作令号" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="demandQuantity" label="需求数量" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="safeInventory" label="安全库存" width="100"></el-table-column>
-                <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom"></el-table-column>
-                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom">
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.availableQuantity ? scope.row.availableQuantity : '0' }}
+                    <div :style="scope.row.bomFlag ? 'color:#85ce60' : 'color:#f56c6c'">{{ scope.row.bomFlag ? "有BOM" :
+                      '无BOM'
+                      }}
                     </div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="inTransitUnOccupancyQuantity" label="在制未生产数量" min-width="140">
+                <el-table-column prop="immediatelyBuyFlag" label="立即外协" width="140" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.immediatelyBuyFlag ? "是" : "否" }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="planNo" label="计划单号" width="170" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.safeInventory ? scope.row.safeInventory : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inventoryQuantity" label="库存数量" width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.inventoryQuantity ? scope.row.inventoryQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="availableQuantity" label="可用库存数量" width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="demandQuantity" label="需求数量" min-width="120" sortable="custom" />
+                <el-table-column prop="lossNum" label="损耗数量" min-width="120" sortable="custom" />
+                <el-table-column prop="planInTransitQuantity" label="计划在制数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.planInTransitQuantity ? scope.row.planInTransitQuantity : 0 }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="inTransitUnOccupancyQuantity" label="实际在制数量" min-width="160" sortable="custom">
                   <template slot-scope="scope">
                     <div>{{ scope.row.inTransitUnOccupancyQuantity ? scope.row.inTransitUnOccupancyQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="lossNum" label="损耗数量" width="100"></el-table-column>
-                <!-- <el-table-column prop="totalInProcessQuantity" label="总在制数量" width="120"></el-table-column> -->
-                <!-- <el-table-column prop="inProcessQuantity" label="在制数量" width="120"></el-table-column> -->
-
-                <el-table-column prop="occupancyQuantity" label="占用数量" width="120">
+                <el-table-column prop="occupancyQuantity" label="占用数量" min-width="160" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.occupancyQuantity ? scope.row.occupancyQuantity : 0 }}</div>
+                  </template>
                 </el-table-column>
-                <el-table-column prop="outputQuantity" label="外协数量" width="120" sortable="custom" />
-
-                <el-table-column prop="issuedQuantity" label="已下达数量" width="120">
-                </el-table-column>
-                <el-table-column prop="mainUnit" label="单位" width="160">
-                </el-table-column>
-                <el-table-column prop="deliveryDate" label="订单交货日期" width="160" sortable="custom" />
-                <el-table-column prop="partnerName" label="客户名称" width="220" sortable="custom" />
-
-                <el-table-column prop="createTime" label="需求时间" min-width="180" sortable="custom" />
-                <el-table-column prop="createByName" label="运算人" min-width="100" />
-                <el-table-column prop="remark" label="备注" min-width="160" />
+                <el-table-column prop="outputQuantity" label="需外协数量" min-width="140" sortable="custom" />
+                <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
 
                 <el-table-column label="操作" width="200" fixed="right">
                   <template slot-scope="scope">
@@ -425,7 +487,16 @@
                 </el-table-column>
               </JNPF-table>
               <pagination :total="total4" :page.sync="outForm.pageNum" :limit.sync="outForm.pageSize"
-                @pagination="initData" />
+                @pagination="initData">
+                <div style="background: #f5f7fa;text-align:end" class="text">
+                  <span style="font-weight:500;margin-right:10px">需求数量：{{ totalDemandQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">损耗数量：{{ lossNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">计划在制数量：{{ planInTransitQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">实际在制数量：{{ inTransitUnOccupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">当前预占数量：{{ occupancyQuantity }}</span>
+                  <span style="font-weight:500;margin-right:10px">需外协数量：{{ outputQuantity }}</span>
+                </div>
+              </pagination>
             </div>
 
           </div>
@@ -434,140 +505,67 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
 
-    <!-- <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog :title="'物料下达'" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center wlxd" width="1200px">
 
-      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px"
-        v-if="orderForm.demandType == 'produce'" height="600" hasC @selection-change="selectInsertOrderFun">
-        <el-table-column prop="productCode" label="产品编码" width="130"></el-table-column>
-        <el-table-column prop="productName" label="产品名称" width="160" />
-        <el-table-column prop="productDrawingNo" label="产品图号" min-width="460" />
+      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px" height="600"
+        hasC @selection-change="selectInsertOrderFun">
+        <el-table-column prop="productionPlanNo" label="生产计划单号" width="180" v-if="activeName != 'purchase' && activeName != 'out'"></el-table-column>
+        <el-table-column prop="productDrawingNo" label="品名规格" min-width="460" />
+        <el-table-column prop="productCode" label="产品编码" min-width="460" />
+        <el-table-column prop="outputQuantity" label="组装数量" min-width="460" v-if="activeName == 'assemble'" />
 
-        <el-table-column prop="outputQuantity" label="生产数量" width="100" v-if="orderForm.demandType == 'produce'" />
-        <el-table-column prop="outputQuantity" label="采购数量" width="100" v-if="orderForm.demandType == 'purchase'" />
-        <el-table-column prop="outputQuantity" label="外协数量" width="100" v-if="orderForm.demandType == 'out'" />
-        <el-table-column prop="deliveryDates" label="订单交货日期" width="160" v-if="
-          orderForm.demandType == 'out' || orderForm.demandType == 'purchase'
-        " />
-        <el-table-column prop="issuedQuantity" label="已下达数量" width="120"></el-table-column>
-        <el-table-column prop="deliveryDate" label="交货日期" width="180" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>交货日期
-          </template>
-          <template slot-scope="scope">
-            <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"
-              :disabled="orderForm.demandType == 'produce'" placeholder="请选择交货日期"
-              @change="selectDate(scope.row.deliveryDate)">
-            </el-date-picker>
-          </template>
-        </el-table-column>
-        <el-table-column prop="productionQuantity" label="下达数量" width="120" v-if="orderForm.demandType == 'produce'"
+        <el-table-column prop="outputQuantity" label="生产数量" width="100" v-if="activeName == 'produce'" />
+        <el-table-column prop="outputQuantity" label="采购数量" width="100" v-if="activeName == 'purchase'" />
+        <el-table-column prop="outputQuantity" label="外协数量" width="100" v-if="activeName == 'out'" />
+        <el-table-column prop="planProductionQuantity" label="下达数量" width="120" v-if="activeName == 'produce'||activeName == 'assemble'"
           fixed="right">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.productionQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.productionQuantity }}</el-input>
+            <el-input v-model="scope.row.planProductionQuantity" :disabled="activeName == 'assemble'"  >{{ scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" :key="1" label="下达数量" width="120"
-          v-if="orderForm.demandType == 'purchase'" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>下达数量
-          </template>
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.planDemandQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.planDemandQuantity }}</el-input>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="planDemandQuantity" :key="2" label="下达数量" width="120"
-          v-if="orderForm.demandType == 'out'" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>下达数量
-          </template>
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.planDemandQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.planDemandQuantity }}</el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="insertOrderFlag" :key="5" label="是否插单(紧急)" width="140" fixed="right"
-          v-if="orderForm.demandType == 'produce'">
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.insertOrderFlag"></el-checkbox>
-          </template>
-        </el-table-column>
-
-
-        <el-table-column label="操作" width="80" fixed="right">
-          <template slot-scope="scope">
-            <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleDel(scope)">删除</el-button>
-          </template>
-        </el-table-column>
-      </JNPF-table>
-      <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px" v-else
-        height="600">
-        <el-table-column prop="productCode" label="产品编码" width="130"></el-table-column>
-        <el-table-column prop="productName" label="产品名称" width="160" />
-        <el-table-column prop="productDrawingNo" label="产品图号" min-width="460" />
-
-        <el-table-column prop="outputQuantity" label="生产数量" width="100" v-if="orderForm.demandType == 'produce'" />
-        <el-table-column prop="outputQuantity" label="采购数量" width="100" v-if="orderForm.demandType == 'purchase'" />
-        <el-table-column prop="outputQuantity" label="外协数量" width="100" v-if="orderForm.demandType == 'out'" />
-        <el-table-column prop="deliveryDates" label="订单交货日期" width="160" v-if="
-          orderForm.demandType == 'out' || orderForm.demandType == 'purchase'
-        " />
-        <el-table-column prop="issuedQuantity" label="已下达数量" width="120"></el-table-column>
-        <el-table-column prop="deliveryDate" label="交货日期" width="180" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>交货日期
-          </template>
-          <template slot-scope="scope">
-            <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"
-              :disabled="orderForm.demandType == 'produce'" placeholder="请选择交货日期"
-              @change="selectDate(scope.row.deliveryDate)">
-            </el-date-picker>
-          </template>
-        </el-table-column>
-        <el-table-column prop="productionQuantity" label="下达数量" width="120" v-if="orderForm.demandType == 'produce'"
+        <el-table-column prop="planDemandQuantity" label="下达数量" width="120" v-if="activeName == 'purchase'||activeName == 'out'"
           fixed="right">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
-            <el-input v-model="scope.row.productionQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.productionQuantity }}</el-input>
+            <el-input v-model="scope.row.planDemandQuantity"  >{{ scope.row.planDemandQuantity }}</el-input>planDemandQuantity
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" :key="1" label="下达数量" width="120"
-          v-if="orderForm.demandType == 'purchase'" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>下达数量
-          </template>
+        <el-table-column prop="urgentFlag" :key="5" label="是否插单(紧急)" min-width="180" fixed="right" v-if="activeName == 'produce'||activeName == 'assemble'">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.planDemandQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.planDemandQuantity }}</el-input>
+            <el-checkbox v-model="scope.row.urgentFlag"></el-checkbox>
           </template>
         </el-table-column>
+        <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="oil" label="油脂" min-width="100" v-if="activeName == 'assemble'" />
+        <el-table-column prop="oilQuantity" label="油脂量" min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="clearance" label="游隙" min-width="100" v-if="activeName == 'assemble'" />
+        <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="activeName == 'assemble'" />
+        <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="activeName == 'assemble'" />
 
-        <el-table-column prop="planDemandQuantity" :key="2" label="下达数量" width="120"
-          v-if="orderForm.demandType == 'out'" fixed="right">
-          <template slot="header">
-            <span class="required">*</span>下达数量
-          </template>
-          <template slot-scope="scope">
-            <el-input v-model="scope.row.planDemandQuantity" disabled placeholder="请输入下达数量">{{
-              scope.row.planDemandQuantity }}</el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="insertOrderFlag" :key="5" label="是否插单(紧急)" width="140" fixed="right"
-          v-if="orderForm.demandType == 'produce'">
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.insertOrderFlag"></el-checkbox>
-          </template>
-        </el-table-column>
 
+
+
+
+        <el-table-column prop="deliveryDate" label="交货日期" width="180" fixed="right" v-if="activeName == 'purchase'||activeName == 'out'">
+          <template slot="header">
+            <span class="required">*</span>交货日期
+          </template>
+          <template slot-scope="scope">
+            <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"
+              :disabled="activeName == 'produce'" placeholder="请选择交货日期" @change="selectDate(scope.row.deliveryDate)">
+            </el-date-picker>
+          </template>
+        </el-table-column>
+        <el-table-column prop="standardValue" label="规值" width="160" v-if="activeName == 'purchase'" />
+        <el-table-column prop="colour" label="颜色" width="160" v-if="activeName == 'purchase'" />
 
         <el-table-column label="操作" width="80" fixed="right">
           <template slot-scope="scope">
@@ -582,7 +580,7 @@
         <el-button :loading="btnLoading" type="primary" @click="submitAllProduct()">
           确定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
 
     <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @refreshDataList="initData"
       @close="closeForm" />
@@ -609,16 +607,21 @@ export default {
   components: { Form, ComplateSetForm, RetrospectForm },
   data() {
     return {
-      // 组装
+      orderDetailData: [],
+      productVisible: false,
+      columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
+      columnList2: ["productCode", "planNo", "planEndDate"],
+      columnList3: ["productCode", "planNo", "planEndDate"],
+      columnList4: ["productCode", "planNo", "planEndDate"],
       total1: 0,
-      assembleData: [],
       assembleForm: {
         demandType: "assemble",
         demandState: "not_finish",
         documentStatus: "submit",
         productDrawingNo: "",
         planNo: "",
-        bomFlag: "",
+        planSed: "",
+        planSsd: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -627,24 +630,26 @@ export default {
           column: "create_time"
         }],
       },
-      bomFlagList: [
-        { label: "有BOM", value: true },
-        { label: "无BOM", value: false },
-      ],
-      //---------
 
       total2: 0,
       total3: 0,
       total4: 0,
       activeName: "assemble",
+      assembleData: [],
       produceData: [],
       purchaseData: [],
+      planDateArr: [],
       outData: [],
-
+      complateSetFormVisible: false,
+      retrospectFormVisible: false,
       produceForm: {
         demandType: "produce",
         demandState: "not_finish",
         documentStatus: "submit",
+        productDrawingNo: "",
+        planNo: "",
+        planSed: "",
+        planSsd: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -653,7 +658,11 @@ export default {
           column: "create_time"
         }],
       },
+      immediatelyBuyFlagList: [{ label: "是", value: true }, { label: "否", value: false }],
       purchaseForm: {
+        productDrawingNo: "",
+        planNo: "",
+        immediatelyBuyFlag: "",
         demandType: "purchase",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -684,7 +693,8 @@ export default {
       planInTransitQuantity: 0,//计划在制在途数量
       inTransitUnOccupancyQuantity: 0,//实际在制在途数量
       occupancyQuantity: 0,//当前预占数量
-
+      allSelected: false,
+      isIndeterminate: false,
 
 
 
@@ -719,23 +729,59 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
-      // table切换
-      handleClick() {
+    renderHeader(h, data) {
+      return h("span", {
+        style: "color:red;",
+      }, [
+        h("el-checkbox", {
+          on: {
+            change: this.selectBox
+          },
+          props: {
+            value: this.allSelected,
+            indeterminate: this.isIndeterminate
+          },
+          style: "color:red;"
+        },
+          ['*',
+            h("span", { style: "color:#606266;" }, "是否插单(紧急)")
+          ],
+        )
+      ]);
+    },
+    toggleCheck(row) {
+      // 获取已勾选
+      let list = this.orderDetailData.filter(item => item.insertOrderFlag);
+      this.allSelected = list.length === this.orderDetailData.length//是否全选
+      this.isIndeterminate = list.length > 0 && list.length < this.orderDetailData.length;//是否半选
+    },
+    handleCellClassName({ rowIndex, columnIndex }) {
+      if (columnIndex === 8) {
+        return {
+          background: '#e73648'
+        }
+      }
+    },
+    // table切换
+    handleClick() {
       console.log(this.activeName);
       if (this.activeName == "assemble") {
+        this.planDateArr = []
         this.getassembleData()
       }
       if (this.activeName == "produce") {
+        this.planDateArr = []
         this.getproduceData()
 
       }
       if (this.activeName == "purchase") {
-        this.getpurchaseDataa()
+        this.getpurchaseData()
 
       }
       if (this.activeName == "out") {
+        this.planDateArr = []
         this.getouteData()
-        
+
       }
     },
 
@@ -746,6 +792,13 @@ export default {
     },
     // 组装列表数据
     getassembleData() {
+      if (this.planDateArr.length) {
+        this.assembleForm.planSsd = this.planDateArr[0]
+        this.assembleForm.planSed = this.planDateArr[1]
+      } else {
+        this.assembleForm.planSsd = ""
+        this.assembleForm.planSed = ""
+      }
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
@@ -756,8 +809,35 @@ export default {
 
           this.totalDemandQuantity = totalData.demandQuantity
           this.outputQuantity = totalData.outputQuantity
+        } else {
+          this.assembleData = []
+          this.total1 = 0
+          this.totalDemandQuantity = 0
+          this.outputQuantity = 0
+
         }
       })
+    },
+    resetAssembleData() {
+      this.planDateArr = []
+      this.assembleForm = {
+        demandType: "assemble",
+        demandState: "not_finish",
+        documentStatus: "submit",
+        productDrawingNo: "",
+        planNo: "",
+        bomFlag: "",
+        planSed: "",
+        planSsd: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+        this.getassembleData()
     },
     // 生产列表数据
     getproduceData() {
@@ -775,11 +855,40 @@ export default {
           this.planInTransitQuantity = totalData.planInTransitQuantity
           this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
           this.occupancyQuantity = totalData.occupancyQuantity
+        } else {
+          this.produceData = []
+          this.total2 = 0
+          this.totalDemandQuantity = 0
+          this.outputQuantity = 0
+          this.lossNum = 0
+          this.planInTransitQuantity = 0
+          this.inTransitUnOccupancyQuantity = 0
+          this.occupancyQuantity = 0
         }
       })
     },
+    resetProduceData() {
+      this.planDateArr = []
+      this.produceForm = {
+        demandType: "produce",
+        demandState: "not_finish",
+        documentStatus: "submit",
+        productDrawingNo: "",
+        planNo: "",
+        planSed: "",
+        planSsd: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+        this.getproduceData()
+    },
     // 采购列表数据
-    getpurchaseDataa() {
+    getpurchaseData() {
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
@@ -795,149 +904,136 @@ export default {
           this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
           this.occupancyQuantity = totalData.occupancyQuantity
 
+        } else {
+          this.purchaseData = []
+          this.total3 = 0
+          this.totalDemandQuantity = 0
+          this.outputQuantity = 0
+          this.lossNum = 0
+          this.planInTransitQuantity = 0
+          this.inTransitUnOccupancyQuantity = 0
+          this.occupancyQuantity = 0
         }
       })
     },
-       // 外协列表数据
-       getouteData() {
+    resetPurchaseData() {
+      this.purchaseForm = {
+        productDrawingNo: "",
+        planNo: "",
+        immediatelyBuyFlag: "",
+        demandType: "purchase",
+        demandState: "not_finish",
+        documentStatus: "submit",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+        this.getpurchaseData()
+    },
+    // 外协列表数据
+    getouteData() {
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
-        let totalData=res.data.total
-        let tableData=res.data.page.records
-        if(tableData.length){
-          this.outData=tableData
-          this.total4=res.data.page.total
+        let totalData = res.data.total
+        let tableData = res.data.page.records
+        if (tableData.length) {
+          this.outData = tableData
+          this.total4 = res.data.page.total
 
-          this.totalDemandQuantity=totalData.demandQuantity
-          this.outputQuantity=totalData.outputQuantity
-          this.lossNum=totalData.lossNum
-          this.planInTransitQuantity=totalData.planInTransitQuantity
-          this.inTransitUnOccupancyQuantity=totalData.inTransitUnOccupancyQuantity
-          this.occupancyQuantity=totalData.occupancyQuantity
-    
+          this.totalDemandQuantity = totalData.demandQuantity
+          this.outputQuantity = totalData.outputQuantity
+          this.lossNum = totalData.lossNum
+          this.planInTransitQuantity = totalData.planInTransitQuantity
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
+          this.occupancyQuantity = totalData.occupancyQuantity
+
+        } else {
+          this.outData = []
+          this.total4 = 0
+          this.totalDemandQuantity = 0
+          this.outputQuantity = 0
+          this.lossNum = 0
+          this.planInTransitQuantity = 0
+          this.inTransitUnOccupancyQuantity = 0
+          this.occupancyQuantity = 0
         }
       })
     },
+    resetOuData() {
+      this.planDateArr = []
+      this.outForm = {
+        demandType: "out",
+        demandState: "not_finish",
+        documentStatus: "submit",
+        productDrawingNo: "",
+        planNo: "",
+        planSed: "",
+        planSsd: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      },
+        this.getouteData()
+    },
+    sortChange({ prop, order }) {
+      console.log("prop", prop);
+      let newProp;
+      if (
+        prop === "productCode" ||
+        prop === "productName" ||
+        prop === "productDrawingNo" ||
+        prop === "routingName" ||
+        prop === "routingCode"
+      ) {
+        newProp = prop;
+      } else {
+        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
+      }
 
 
+      if (this.activeName == "assemble") {
+        this.assembleForm.orderItems[0].asc = order === "ascending";
+        this.assembleForm.orderItems[0].column = order === null ? "" : newProp;
+        this.getassembleData()
+      }
+      if (this.activeName == "produce") {
+        this.produceForm.orderItems[0].asc = order === "ascending";
+        this.produceForm.orderItems[0].column = order === null ? "" : newProp;
+        this.getproduceData()
 
+      }
+      if (this.activeName == "purchase") {
+        this.purchaseForm.orderItems[0].asc = order === "ascending";
+        this.purchaseForm.orderItems[0].column = order === null ? "" : newProp;
+        this.getpurchaseData()
 
+      }
+      if (this.activeName == "out") {
+        this.outForm.orderItems[0].asc = order === "ascending";
+        this.outForm.orderItems[0].column = order === null ? "" : newProp;
+        this.getouteData()
 
-
-
-
-
-
-    // 合计处理
-    getSummaries1(param) {
-      const { columns, data } = param;
-      const sums = [];
-      let arr = ['issuingQuantity', 'issuedQuantity', 'outputQuantity', 'demandQuantity']
-
-      columns.forEach((column, index) => {
-        if (index === 1) {
-          sums[index] = '合计';
-          return;
-        }
-        console.log("colums", column);
-
-        if (index == 0 | index == 2 || index == 3 || index == 4 || index == 5 || index == 6 || index == 7 ||
-          index == 8 || index == 9 || index == 11 ||
-          index == 12 || index == 13 || index == 14 || index == 15 || index == 19 || index == 20 || index == 21 || index == 22 || index == 23 || index == 24 || index == 25 || index == 26) {
-          sums[index] = '';
-          return;
-        }
-
-        const values = this.producrData.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-          sums[index] = Math.round(sums[index] * 1000) / 1000;
-        } else {
-          sums[index] = null;
-        }
-      });
-      console.log("sums", sums);
-      return sums;
+      }
+    },
+    columnSetFun(ref) {
+      this.$refs.ref.showDrawer()
 
     },
-    // 合计处理
-    getSummaries2(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 1) {
-          sums[index] = '合计';
-          return;
-        }
-        if (index == 0 | index == 2 || index == 3 || index == 4 || index == 5 || index == 6 || index == 7 ||
-          index == 10 || index == 9 || index == 11 ||
-          index == 12 || index == 13 || index == 16 || index == 17 || index == 18 || index == 19 || index == 20 || index == 21 || index == 22 || index == 23 || index == 24 || index == 25 || index == 26) {
-          sums[index] = '';
-          return;
-        }
-        const values = this.purchaseData.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
 
-              return (prev + curr);
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-          sums[index] = Math.round(sums[index] * 1000) / 1000;
-        } else {
-          sums[index] = null;
-        }
-      });
 
-      return sums
 
-    },
-    // 合计处理
-    getSummaries3(param) {
-      const { columns, data } = param;
-      const sums = [];
-      columns.forEach((column, index) => {
-        if (index === 1) {
-          sums[index] = '合计';
-          return;
-        }
-        if (index == 0 | index == 2 || index == 3 || index == 4 || index == 5 || index == 6 || index == 7 ||
-          index == 10 || index == 9 || index == 11 ||
-          index == 12 || index == 15 || index == 16 || index == 17 || index == 18 || index == 19 || index == 20 || index == 21 || index == 22 || index == 23 || index == 24 || index == 25 || index == 26) {
-          sums[index] = '';
-          return;
-        }
-        const values = this.outData.map(item => item[column.property] ? Number(item[column.property]) : '');
-        if (!values.every(value => isNaN(value))) {
-          sums[index] = values.reduce((prev, curr) => {
-            const value = Number(curr);
-            if (!isNaN(value)) {
-              return prev + curr;
-            } else {
-              return prev;
-            }
-          });
-          // sums[index] += '';
-          sums[index] = Math.round(sums[index] * 1000) / 1000;
-        } else {
-          sums[index] = null;
-        }
-      });
-      return sums;
 
-    },
+
+
+
 
     selectInsertOrderFun(val) {
       console.log("val", val);
@@ -1467,49 +1563,11 @@ export default {
         }
       }
     },
-   
-    sortChange({ prop, order }) {
-      console.log("prop", prop);
-      let newProp;
-      if (
-        prop === "productCode" ||
-        prop === "productName" ||
-        prop === "productDrawingNo" ||
-        prop === "routingName" ||
-        prop === "routingCode"
-      ) {
-        newProp = prop;
-      } else {
-        newProp = prop.replace(/[A-Z]/g, (match) => "_" + match.toLowerCase());
-      }
-      this.orderForm.orderItems[0].asc = order === "ascending";
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp;
 
-      this.initData();
-    },
 
-    moreQueries() {
-      this.visible = true;
-    },
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1;
 
-      if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0];
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1];
-      } else {
-        this.orderForm.deliveryStartDate = "";
-        this.orderForm.deliveryEndDate = "";
-      }
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0];
-        this.orderForm.endTime = this.createTimeArr[1];
-      } else {
-        this.orderForm.startTime = "";
-        this.orderForm.endTime = "";
-      }
-      this.initData();
-    },
+
+
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false;
@@ -1529,153 +1587,9 @@ export default {
     disOutData(row) {
       return !row.disabled;
     },
-    initData() {
-      this.listLoading = true;
 
-      getMRPMaterialList(this.orderForm)
-        .then((res) => {
-          console.log("res++", res, this.orderForm);
-          if (
-            this.orderForm.demandType == "produce" ||
-            this.orderForm.demandType == "finish_product" ||
-            this.orderForm.demandType == "semi_finished"
-          ) {
-            if (res.data.records.length > 0) {
-              res.data.records.forEach((item) => {
-                if (
-                  Number(item.issuedQuantity) + Number(item.issuingQuantity) >=
-                  Number(item.outputQuantity)
-                ) {
-                  item.disabled = true;
-                } else {
-                  item.disabled = false;
-                }
-              });
-            }
-            this.producrData = res.data.records;
-          } else if (
-            this.orderForm.demandType == "purchase" ||
-            this.orderForm.demandType == "finished_materials" ||
-            this.orderForm.demandType == "semi_finished_materials"
-          ) {
-            if (res.data.records.length > 0) {
-              res.data.records.forEach((item) => {
-                if (
-                  Number(item.issuedQuantity) >= Number(item.outputQuantity)
-                ) {
-                  item.disabled = true;
-                } else {
-                  item.disabled = false;
-                }
-              });
-            }
-            this.purchaseData = res.data.records;
-          } else if (this.orderForm.demandType == "out") {
-            if (res.data.records.length > 0) {
-              res.data.records.forEach((item) => {
-                if (
-                  Number(item.issuedQuantity) >= Number(item.outputQuantity)
-                ) {
-                  item.disabled = true;
-                } else {
-                  item.disabled = false;
-                }
-              });
-            }
-            this.outData = res.data.records;
-          }
-          this.total = res.data.total;
-          this.listLoading = false;
-          this.visible = false;
-        })
-        .catch(() => {
-          this.listLoading = false;
-        });
-    },
 
-    search() {
-      this.dataFormSubmit();
-    },
-    reset() {
-      this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      this.$refs["tableDataAss"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      this.$refs["tableDataAsss"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      this.createTimeArr = [];
-      this.deliveryDateArr = [];
-      let demandType = "";
-      if (this.activeName == "produce") {
-        demandType = "produce";
-      } else if (this.activeName == "purchase") {
-        demandType = "purchase";
-      } else if (this.activeName == "out") {
-        demandType = "out";
-      }
-      this.orderForm = {
-        demandType: demandType,
-        documentStatus: "submit",
-        demandState: "not_finish",
-        planNo: "",
-        productCode: "",
-        productName: "",
-        productDrawingNo: "",
-        originNo: "",
-        workOrderNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        replaceStatus: "",
-        immediatelyBuyFlag: "",
-        startTime: "",
-        endTime: "",
-        pageNum: 1,
-        pageSize: 100,
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "create_time",
-          },
-        ],
-      };
 
-      this.search();
-    },
-    clear() {
-      this.$refs["dataTable"].$refs.JNPFTable.clearSort(); // 清除排序箭头高亮
-      this.createTimeArr = [];
-      this.deliveryDateArr = [];
-      this.orderForm = {
-        demandType: "produce",
-        documentStatus: "submit",
-        demandState: "not_finish",
-        planNo: "",
-        productCode: "",
-        productName: "",
-        productDrawingNo: "",
-        immediatelyBuyFlag: "",
-        originNo: "",
-        workOrderNo: "",
-        deliveryStartDate: "",
-        deliveryEndDate: "",
-        replaceStatus: "",
-        startTime: "",
-        endTime: "",
-        pageNum: 1,
-        pageSize: 100,
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "create_time",
-          },
-        ],
-      };
-    },
     addSupplier(id, btntype) {
       console.log(id, btntype);
       this.formVisible = true;
@@ -1783,7 +1697,7 @@ export default {
 }
 
 .JNPF-common-search-box {
-  padding-top: 5px;
+  padding-top: 0px;
   padding-bottom: 10px;
   margin-bottom: 5px;
 }

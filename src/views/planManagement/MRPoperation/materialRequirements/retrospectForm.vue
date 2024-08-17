@@ -3,13 +3,12 @@
         <div class="JNPF-preview-main org-form">
             <div class="JNPF-common-page-header">
                 <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-                <el-page-header @back="goBack" :content="pageTitle" />
+                <el-page-header   @back="goBack" :content="pageTitle" />
             </div>
             <div class="main"> 
                 <JNPF-table  ref="popupTitleData"  v-loading="listLoading" border :data="popupList"   show-summary :summary-method="getSummaries" height="calc(100vh - 211px)">
                     <el-table-column prop="productCode" label="来源产品编码"  min-width="130" ></el-table-column>
-                    <el-table-column prop="productName" label="来源产品名称" min-width="130" />
-                    <el-table-column prop="productDrawingNo" label="来源产品图号" min-width="400"/>
+                    <el-table-column prop="productDrawingNo" label="来源品名规格" min-width="400"/>
                     <el-table-column prop="mainUnit" label="单位" width="80"/>
                
                     

@@ -135,6 +135,7 @@ const actions = {
               // console.log(e.urlAddress);
               
               let reg = /\$\{[^}]+\}/
+              let reg2 = /\$\{\{[^}]+\}\}/
               if (path.indexOf("?") > -1) path = path.split("?")[0]
               e.path = '/' + e.urlAddress
               let newObj = {
@@ -153,6 +154,21 @@ const actions = {
                 newObj = {
                   path: '/' + path,
                   component: (resolve) => require([`@/views/warehouseManagement/index`], resolve),
+                  name: name,
+                  meta: {
+                    title: name,
+                    icon: e.icon,
+                    zhTitle: e.fullName,
+                    modelId: e.id,
+                    affix:data.systemVO.homeAdress&&path==data.systemVO.homeAdress?true:false
+                  }
+                }
+              }
+              console.log(reg2.test(e.urlAddress),'reg2.test(e.urlAddress)')
+              if (reg2.test(e.urlAddress)){
+                newObj = {
+                  path: '/' + path,
+                  component: (resolve) => require([`@/views/masterDataManagement/productManagement/index`], resolve),
                   name: name,
                   meta: {
                     title: name,

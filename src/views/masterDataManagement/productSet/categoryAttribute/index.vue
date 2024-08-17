@@ -365,6 +365,7 @@ export default {
               message: '删除成功',
               duration: 1500
             })
+            location.reload()
           })
         })
         .catch(() => { })

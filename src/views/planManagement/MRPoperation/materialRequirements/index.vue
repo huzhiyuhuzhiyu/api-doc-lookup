@@ -375,18 +375,14 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="outForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="outForm.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
+              
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="outForm.workOrderNo" placeholder="请输入工作令号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="outForm.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input v-model="outForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
 

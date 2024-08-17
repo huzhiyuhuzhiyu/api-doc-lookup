@@ -43,8 +43,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus"
-                    @click="bulkRelease('assembleData')">批量下达</el-button>
+                 
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -118,7 +117,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="produceForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="produceForm.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -142,8 +141,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus"
-                    @click="bulkRelease('produce')">批量下达</el-button>
+                
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -259,7 +257,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="purchaseForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="purchaseForm.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -280,8 +278,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus"
-                    @click="bulkRelease('purchase')">批量下达</el-button>
+            
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -375,18 +372,14 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="outForm.planNo" placeholder="请输入计划单号" clearable />
+                    <el-input v-model="outForm.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
 
+               
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="outForm.workOrderNo" placeholder="请输入工作令号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="outForm.productDrawingNo" placeholder="请输入产品图号" clearable />
+                    <el-input v-model="outForm.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
 
@@ -405,7 +398,6 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus" @click="bulkRelease('out')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">

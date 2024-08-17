@@ -27,24 +27,14 @@
                   </el-input>
                 </el-form-item>
               </el-col>
+          
               <el-col :span="6">
-                <el-form-item label="产品名称" prop="productName">
-                  <el-input v-model="dataForm.productName" placeholder="产品名称" disabled>
+                <el-form-item label="品名规格" prop="productDrawingNo">
+                  <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
                   </el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
-                <el-form-item label="产品图号" prop="productDrawingNo">
-                  <el-input v-model="dataForm.productDrawingNo" placeholder="产品图号" disabled>
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="6">
-                <el-form-item label="工作令号" prop="workOrderNo">
-                  <el-input v-model="dataForm.workOrderNo" placeholder="工作令号" disabled>
-                  </el-input>
-                </el-form-item>
-              </el-col>
+             
               <el-col :span="6">
                 <el-form-item label="单位" prop="mainUnit">
                   <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
@@ -52,7 +42,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="需生产数量" prop="outputQuantity">
+                <el-form-item :label="labelTitle" prop="outputQuantity">
                   <el-input v-model="dataForm.outputQuantity" placeholder="需生产数量" disabled>
                   </el-input>
                 </el-form-item>
@@ -78,15 +68,14 @@
             style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
             <h5>产品信息</h5>
           </div>
-          <el-table style="border: 1px solid #e3e7ee;" hasC hasNO fixedNO :data="popupList" id="table"
-            @selection-change="handleSelectionChange" border>
+          <el-table style="border: 1px solid #e3e7ee;"  hasNO fixedNO :data="popupList" id="table"
+            border>
             <el-table-column type="selection" width="45" fixed="left" align="center" key="selection" />
             <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" />
             <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="140" show-overflow-tooltip>
             </el-table-column>
-            <el-table-column prop="productName" key="productName" label="产品名称" min-width="140"
-              show-overflow-tooltip></el-table-column>
-            <el-table-column prop="productDrawingNo" key="productDrawingNo" label="产品图号" min-width="350"
+      
+            <el-table-column prop="productDrawingNo" key="productDrawingNo" label="品名规格" min-width="350"
               show-overflow-tooltip> </el-table-column>
             <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
               <template slot-scope="scope">
@@ -151,6 +140,7 @@ export default {
       selectedDataType: '',
       /**设置替换规则表单 */
       formVisible: false,
+      labelTitle:"",
     }
   },
   methods: {
@@ -161,16 +151,18 @@ export default {
       this.$emit('close')
     },
     init(id, type) {
-      if(type=='assembl'){
+      if(type=='assemble'){
         this.pageTitle = "组装需求——齐套查询"
-
+        this.labelTitle="需组装数量"
       }
       if (type == "produce") {
         this.pageTitle = "生产需求——齐套查询"
+        this.labelTitle="需生产数量"
       }
 
       if (type == 'out') {
         this.pageTitle = "外协需求——齐套查询"
+        this.labelTitle="需外协数量"
       }
       this.formLoading = true
       getDemandList({'id':id}).then(res => {

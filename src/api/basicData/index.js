@@ -354,6 +354,15 @@ export const editWarehouse = (data) => {
   })
 }
 
+// 修改仓库
+export const editWarehouseState = (data) => {
+  return request({
+    url: `/api/wms/stockWarehouse/modify/state`,
+    method: 'put',
+    data: data
+  })
+}
+
 // 仓库详情数据
 export const getWarehouseInfo = (id) => {
   return request({

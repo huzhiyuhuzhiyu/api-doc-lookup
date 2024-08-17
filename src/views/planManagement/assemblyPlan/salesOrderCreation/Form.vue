@@ -519,7 +519,8 @@ export default {
           productDrawingNo: productData[0].drawingNo,
           sealingCoverTyping: productData[0].sealingCoverTyping,
           vibrationLevel: productData[0].vibrationLevel,
-
+          packagingMethod:productData[0].packagingMethod,
+          specialRequire:productData[0].specialRequire,
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -530,7 +531,7 @@ export default {
         }
 
         this.planForm.planQuantity = productData.reduce((acc, item) => {
-          return acc + Number(item.planQuantity); // 使用 Number() 将字符串转换为数字  
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
         }, 0);
 
         this.planForm.productDrawingNo = productData[0].drawingNo
@@ -541,6 +542,7 @@ export default {
         productData.forEach(item => {
           item.productDrawingNo = item.drawingNo
           item.ordersNo = item.orderNo
+          this.$set(item,'planQuantity',item.num)
         });
         console.log(obj);
         this.productData = productData
@@ -562,7 +564,7 @@ export default {
 
         if (planType == 'order_plan') {
           this.planForm.planQuantity = productData.planLineList.reduce((acc, item) => {
-            return acc + Number(item.ordersNum); // 使用 Number() 将字符串转换为数字  
+            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
           }, 0);
         } else {
           this.planForm.planQuantity = productData.plan.planQuantity

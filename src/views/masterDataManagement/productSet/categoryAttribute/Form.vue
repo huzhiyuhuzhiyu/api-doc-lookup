@@ -21,6 +21,12 @@
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" :disabled="dataForm.id" />
         </el-form-item>
+        <el-form-item label="产品编码" prop="productCode">
+          <template slot="label">
+            产品编码<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.productCode" placeholder="请输入产品编码" maxlength="20"  />
+        </el-form-item>
         <el-form-item label="图标" v-if="!dataForm.id">
           <template slot="label">
             图标
@@ -86,6 +92,7 @@ export default {
         name: '',
         remark: '',
         code: '',
+        productCode: '',
         propertyJson: {
           moduleId: '',
           iconBackgroundColor: '',
@@ -220,7 +227,7 @@ export default {
               sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: `masterDataManagement/productManagement/${this.dataForm.code}`
+              urlAddress: 'masterDataManagement/productManagement/${{' + this.dataForm.code + '}}/?productCode=' + this.dataForm.productCode
             }
           ]
         }
@@ -241,6 +248,7 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
+                    location.reload()
                   }
                 })
               })
@@ -258,6 +266,7 @@ export default {
                     this.visible = false
                     this.btnLoading = false
                     this.$emit('close', true)
+                    location.reload()
                   }
                 })
               })

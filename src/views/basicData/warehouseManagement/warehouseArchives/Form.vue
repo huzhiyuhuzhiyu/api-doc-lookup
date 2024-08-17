@@ -165,6 +165,7 @@ export default {
         if (tc.prop === 'code') {
           if (this.businessType === '1') {
             tc.render = false
+            tc.itemDisabled = true
           } else {
             if (!tc.itemRules) {
               tc.itemRules = []

@@ -715,9 +715,33 @@ export default {
 
       this.search()
     },
+    checkFieldsEqual(arr) {
+      const keys = [
+        'drawingNo',
+        'accuracyLevel',
+        'vibrationLevel',
+        'oil',
+        'oilQuantity',
+        'clearance',
+        'packagingMethod',
+        'specialRequire'
+      ];
 
+      let firstObj = arr[0];
+
+      for (let key of keys) {
+        for (let i = 1; i < arr.length; i++) {
+          if (arr[i][key] !== firstObj[key]) {
+            return false; // return false if any value is different  
+          }
+        }
+      }
+
+      return true; // all values are the same  
+    },
 
     addSupplier() {
+      console.log(this.selectList);
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       if (this.selectList.length == 1) {
         this.formVisible = true
@@ -727,7 +751,6 @@ export default {
       } else {
         const fieldsToCheck = [
           'drawingNo',
-          'sealingCoverTyping',
           'accuracyLevel',
           'vibrationLevel',
           'oil',
@@ -736,7 +759,8 @@ export default {
           'packagingMethod',
           'specialRequire',
         ];
-        const result = this.areFieldsEqual(this.selectList, fieldsToCheck);
+
+        const result = this.checkFieldsEqual(this.selectList);
         if (result) {
           this.formVisible = true
           this.$nextTick(() => {
@@ -748,23 +772,7 @@ export default {
       }
 
     },
-    // 检查字段是否相同  
-    areFieldsEqual(arr, fields) {
-      const firstEntry = arr[0];
-      const values = new Set();
-
-      for (const field of fields) {
-        values.add(firstEntry[field]);
-      }
-
-      for (let i = 1; i < arr.length; i++) {
-        for (const field of fields) {
-          values.add(arr[i][field]);
-        }
-      }
-
-      return values.size === 1;
-    },
+ 
     getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {

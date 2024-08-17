@@ -14,6 +14,10 @@
           </el-dropdown>
         </span>
       </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
+      </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
@@ -156,6 +160,7 @@ export default {
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -262,6 +267,11 @@ export default {
       ],
       columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice'],
       leftFlag: false,
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   mounted() {
@@ -687,6 +697,7 @@ export default {
         productCategoryId: '',
       }
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.getcategoryTree()
       // this.initData()
     },

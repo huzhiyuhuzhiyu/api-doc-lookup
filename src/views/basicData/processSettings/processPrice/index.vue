@@ -14,6 +14,10 @@
           </el-dropdown>
         </span>
       </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
+      </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
@@ -155,6 +159,7 @@ export default {
   components: { SuperQuery },
   data() {
     return {
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -357,6 +362,11 @@ export default {
       selectedData: []
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
+    }
+  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery));
     this.getcategoryTree()
@@ -439,6 +449,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       // this.search()
+      this.filterText = ''
       this.getcategoryTree()
     },
     handleNodeClick(data, node) {

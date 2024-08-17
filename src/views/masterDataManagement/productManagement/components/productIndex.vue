@@ -14,6 +14,10 @@
           </el-dropdown>
         </span>
       </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
+      </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
@@ -157,7 +161,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
       :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" />
-  
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
@@ -248,6 +252,7 @@ export default {
   },
   data() {
     return {
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -428,6 +433,11 @@ export default {
       },
       uploadVisib: false,
       leftFlag: false
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   mounted() {
@@ -1050,7 +1060,7 @@ export default {
       this.listQuery.productCategoryId = data.id
       this.search()
     },
-  
+
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.listQuery.orderItems[0].asc = order === 'ascending'
@@ -1079,7 +1089,7 @@ export default {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
-        
+
         })
         .catch(() => {
           this.listLoading = false
@@ -1092,6 +1102,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.search()
     },
 

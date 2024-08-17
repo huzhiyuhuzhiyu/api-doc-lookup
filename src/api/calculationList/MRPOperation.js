@@ -82,11 +82,11 @@ export function demandProcureissue(data) {
   })
 }
 // 齐套查询
-export function getDemandList(id) {
+export function getDemandList(data) {
   return request({
-    url: `/api/mrp/material/demand/kit/list?id=${id}`,
+    url: `/api/mrp/material/demand/kit/list`,
     method: 'get',
-
+    data
   })
 }
 

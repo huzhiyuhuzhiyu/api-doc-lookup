@@ -14,6 +14,10 @@
           </el-dropdown>
         </span>
       </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
+      </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
@@ -46,14 +50,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码"
-                clearable />
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称"
-                clearable />
+              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
             </el-form-item>
           </el-col>
 
@@ -204,6 +206,7 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
+      filterText: '',
       leftFlag: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -304,6 +307,11 @@ export default {
       btnLoading: false,
       selectedData: [],
       columnList: ['productName', 'pickingWay', 'createByName']
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   created() {
@@ -433,6 +441,7 @@ export default {
         pageSize: 20
       }
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.getcategoryTree()
     },
     addOrUpdateHandle(productId, btnType, approvalStatus) {

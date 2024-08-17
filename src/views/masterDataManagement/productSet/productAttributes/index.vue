@@ -21,7 +21,7 @@
           </span>
         </div>
         <div v-if="!leftFlag">
-          <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
             suffix-icon="el-icon-search" clearable></el-input>
         </div>
       </div>
@@ -159,7 +159,6 @@ export default {
         pageSize: 20,
         typeCode: '',
         orderItems: [
-      
           {
             asc: true,
             column: 'name'
@@ -252,7 +251,6 @@ export default {
       this.initData()
     },
     reset() {
-
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
 
       this.form = {
@@ -273,6 +271,7 @@ export default {
         ]
       }
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
 
       this.search()
     },

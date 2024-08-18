@@ -150,7 +150,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: ['remark', 'createByName'],
+      columnList: ['remark','createTime', 'createByName'],
       createTimeArr: [],
 
       superQueryJson: [

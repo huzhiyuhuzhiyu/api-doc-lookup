@@ -205,7 +205,7 @@ export default {
 
       total: 0,
       formVisible: false,
-      columnList: ['remark', 'createByName']
+      columnList: ['remark', 'createByName','createTime']
     }
   },
   created() {

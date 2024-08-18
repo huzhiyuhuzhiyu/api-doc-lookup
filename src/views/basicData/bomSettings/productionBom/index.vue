@@ -7,9 +7,11 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="reset()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -306,7 +308,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName']
+      columnList: ['productName', 'pickingWay', 'createByName','createTime']
     }
   },
   watch: {
@@ -316,6 +318,11 @@ export default {
   },
   created() {
     this.getcategoryTree()
+    if (localStorage.getItem("productionBomFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     // this.initData()
   },
   methods: {
@@ -495,7 +502,15 @@ export default {
         })
       })
     },
-
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("productionBomFlag", expands)
+      })
+    },
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''

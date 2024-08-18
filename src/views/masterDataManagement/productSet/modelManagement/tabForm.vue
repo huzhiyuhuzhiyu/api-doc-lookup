@@ -198,9 +198,9 @@ export default {
       let index = this.sleeveList.length
       this.sleeveList.push({
         index,
-        holderNum: '',
-        oilNum: '',
-        steelBallNum: '',
+        holderNum: 1,
+        oilNum: 1,
+        steelBallNum: 1,
         steelBall: '',
         outerCircle: '',
         innerCircle: ''

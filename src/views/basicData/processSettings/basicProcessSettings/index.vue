@@ -8,8 +8,8 @@
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -265,7 +265,7 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice'],
+      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice','createTime'],
       leftFlag: false,
     }
   },

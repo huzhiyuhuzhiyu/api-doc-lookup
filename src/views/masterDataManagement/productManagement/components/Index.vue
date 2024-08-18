@@ -10,6 +10,8 @@
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -97,7 +99,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable">
+          ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
@@ -408,6 +410,7 @@ export default {
           type: 'input'
         }
       ],
+      columnList: ['remark', 'createTime', 'createByName'],
       exportFormVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -451,7 +454,12 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
       this.getcategoryTree()
       this.initData()
-  },
+      if (localStorage.getItem(this.busSetId)) {
+        let roleFlag = JSON.parse(localStorage.getItem(this.busSetId))
+        this.expands = roleFlag
+        this.toggleExpand(roleFlag)
+      }
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -1031,6 +1039,15 @@ export default {
         this.$nextTick(() => {
           this.$refs.treeBox.setCurrentKey(this.companyId)
         })
+      })
+    },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem(this.busSetId, expands)
       })
     },
     filterNode(value, data) {

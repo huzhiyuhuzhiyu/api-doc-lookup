@@ -236,7 +236,7 @@ export default {
             total: 0,
             formVisible: false,
             filterText: '',
-            columnList: ['remark', 'createByName']
+            columnList: ['remark', 'createByName','createTime']
         }
     },
     watch: {

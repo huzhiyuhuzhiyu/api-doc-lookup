@@ -135,22 +135,7 @@ export default {
           filterable: true,
           remote: true,
           maxlength: 50,
-
-          itemRules: [
-            {
-              validator: this.formValidate({
-                type: 'noEmtry',
-                params: [
-                  '不能为空',
-                  (errMsg, index) => {
-                    this.$message.error(`基础信息第${index + 1}行：型号${errMsg}`)
-                  }
-                ]
-              }),
-              trigger: 'blur'
-            },
-            { required: true, trigger: 'blur' }
-          ],
+          itemRules: [{ required: true, trigger: "change" }],
           itemDisabled: false
         },
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },

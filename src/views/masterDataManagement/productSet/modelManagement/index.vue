@@ -67,11 +67,11 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          hasC @selection-change="handleSelectionChange" ref="dataTable">
+          hasC @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="model" label="型号" sortable="custom" />
-          <el-table-column prop="innerCircle" label="内圈" sortable="custom" width="120" />
-          <el-table-column prop="outerCircle" label="外圈" sortable="custom" />
-          <el-table-column prop="steelBall" label="钢球型号" sortable="custom" width="120" />
+          <el-table-column prop="innerCircle" label="内圈" sortable="custom" min-width="150" />
+          <el-table-column prop="outerCircle" label="外圈" sortable="custom" min-width="150" />
+          <el-table-column prop="steelBall" label="钢球型号" sortable="custom" min-width="150" />
           <el-table-column prop="steelBallNum" label="钢球用量" sortable="custom" width="120" />
           <el-table-column prop="oilNum" label="油脂用量" sortable="custom" width="120" />
           <el-table-column prop="holderNum" label="保持架用量" sortable="custom" width="140" />
@@ -146,6 +146,7 @@ export default {
     return {
       tableFormVisible: false,
       exportFormVisible: false,
+      columnList: ['remark','createTime', 'createByName'],
       createTimeArr: [],
       title: '更多查询',
       visible: false,

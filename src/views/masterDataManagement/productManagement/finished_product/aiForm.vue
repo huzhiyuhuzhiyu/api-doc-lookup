@@ -267,7 +267,7 @@ export default {
           itemDisabled: false
         },
         {
-          prop: 'steelBallManufacturer',
+          prop: 'steelBallManufacturerName',
           label: '钢球厂家',
           value: '',
           type: 'custom',
@@ -406,7 +406,7 @@ export default {
           itemDisabled: true,
           minWidth: 220,
           placeholder: '品名规格自动生成',
-          itemRules: [{ required: true, trigger: "blur" }, ]
+          itemRules: [{ required: true, trigger: "blur" },]
         },
         {
           prop: 'code',
@@ -682,7 +682,7 @@ export default {
           tc.clearable = true
           tc.change = this.modelChange
           // tc.paramsObj = { prop: tc.prop, tabInd }
-        } else if (tc.prop === 'steelBallManufacturer') {
+        } else if (tc.prop === 'steelBallManufacturerName') {
           tc.dialogTitle = '选择' + tc.label
           tc.treeTitle = '钢球厂家分类'
           // 选择钢球厂家的api
@@ -726,6 +726,23 @@ export default {
         tc.clearable = true
 
         this.sleeveList[0][tc.prop] = tc.options[0]
+        tc.change = (val) => {
+          this.sleeveList = this.sleeveList.map((item) => {
+            return {
+              ...item,
+              drawingNo:
+                item.model +
+                item.sealingCoverStructure +
+                item.structureType +
+                '.' +
+                item.clearance +
+                item.steelBallManufacturer +
+                item.oil +
+                item.noise +
+                item.holder
+            }
+          })
+        }
         // tc.change = this.ProductChange
         // tc.paramsObj = { prop: tc.prop, tabInd }
       }
@@ -833,6 +850,21 @@ export default {
         this.sleeveList.forEach((item) => {
           item['model'] = data[0].all.model
         })
+        this.sleeveList = this.sleeveList.map((item) => {
+          return {
+            ...item,
+            drawingNo:
+              item.model +
+              item.sealingCoverStructure +
+              item.structureType +
+              '.' +
+              item.clearance +
+              item.steelBallManufacturer +
+              item.oil +
+              item.noise +
+              item.holder
+          }
+        })
       } else {
         // 不选择任何内容，置空绑定的值
         this.sleeveList.forEach((item) => {
@@ -842,12 +874,28 @@ export default {
     },
     // 钢球厂家
     steelBallChange(val, data, paramsObj) {
+      console.log(data, paramsObj, 'paramsObj')
       if (data && data.length) {
         // 数据有效，进行更新
-        this.dataForm[paramsObj.prop] = data[0].all.code
+        
         let index = paramsObj.scope.$index
-
-        this.sleeveList[index].steelBallManufacturer = data[0].name
+        this.sleeveList[index].steelBallManufacturer = data[0].all.code
+        this.sleeveList[index].steelBallManufacturerName = data[0].name
+        this.sleeveList = this.sleeveList.map((item) => {
+          return {
+            ...item,
+            drawingNo:
+              item.model +
+              item.sealingCoverStructure +
+              item.structureType +
+              '.' +
+              item.clearance +
+              item.steelBallManufacturer +
+              item.oil +
+              item.noise +
+              item.holder
+          }
+        })
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm[paramsObj.prop] = ''

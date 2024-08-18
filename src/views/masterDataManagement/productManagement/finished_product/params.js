@@ -32,7 +32,7 @@ export default () => [
       { prop: "sealingCoverTyping", label: "密封盖-打字", value: "", type: "select", typeCode: 'pa007', options: [],itemDisabled: false },
       { prop: "structureType", label: "结构类型", value: "", typeCode: 'pa013', type: "select", itemRules: [{ required: true, trigger: "change" }], itemDisabled: false, options: [] },
       { prop: "clearance", label: "游隙", value: "", type: "select", typeCode: 'pa001', itemRules: [{ required: true, trigger: "change" }], itemDisabled: false, options: [] },
-      { prop: "steelBallManufacturer", label: "钢球厂家", value: "", type: "custom", customComponent: 'ComSelect-page', itemRules: [{ required: true, trigger: "change" }], itemDisabled: false },
+      { prop: "steelBallManufacturerName", label: "钢球厂家", value: "", type: "custom", customComponent: 'ComSelect-page', itemRules: [{ required: true, trigger: "change" }], itemDisabled: false },
       { prop: "oil", label: "油脂", value: "", typeCode: 'pa002', type: "select", itemRules: [{ required: true, trigger: "change" }], itemDisabled: false, options: [] },
       { prop: "oilQuantity", label: "油脂量", value: "", typeCode: 'pa003', type: "select", options: [] },
       { prop: "noise", label: "噪音", value: "", typeCode: 'pa014', type: "select", itemRules: [{ required: true, trigger: "change" }], itemDisabled: false, options: [] },

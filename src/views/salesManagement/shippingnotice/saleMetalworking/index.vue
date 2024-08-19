@@ -7,13 +7,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderNoS" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="partnerNameS" placeholder="客户名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -85,7 +84,7 @@
 
             <el-table-column prop="delivery" label="发货方式" width="160">
               <template slot-scope="scope">
-                <div v-if="scope.row.delivery == 'deliver_goods'">
+                <!-- <div v-if="scope.row.delivery == 'deliver_goods'">
                   <span>送货</span>
                 </div>
                 <div v-else-if="scope.row.delivery == 'self_pickup'">
@@ -99,7 +98,8 @@
                 </div>
                 <div v-else-if="scope.row.delivery == 'collect_payment'">
                   <span>到付</span>
-                </div>
+                </div> -->
+                <div v-for="(item,index) in departMentList" :key="index">{{ scope.row.delivery==item.value?item.label:"" }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="countryName" label="国家" width="160" />
@@ -122,7 +122,7 @@
                 <div v-if="scope.row.deliveryStatus == 'not_finished'">
                   <el-tag type="primary">未完成</el-tag>
                 </div>
-                <div v-else-if="scope.row.deliveryStatus  == 'finished'">
+                <div v-else-if="scope.row.deliveryStatus == 'finished'">
                   <el-tag type="success">已完成 </el-tag>
                 </div>
                 <div v-else-if="scope.row.deliveryStatus == 'canceled'">
@@ -186,6 +186,7 @@
 import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
 import { UserListAll, } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
@@ -193,7 +194,9 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      superQueryVisible:false,
+      partnerNameS: "",
+      orderNoS: "",
+      superQueryVisible: false,
       columnList: ["partnerCode", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       rdeDateArr: [],
       exportFormVisible: false,
@@ -247,18 +250,13 @@ export default {
       ],
 
       departMentList: [
-        { label: "送货", value: "deliver_goods" },
-        { label: "自提", value: "self_pickup" },
-        { label: "快递", value: "express_delivery" },
-        { label: "货运", value: "freight_transport" },
-        { label: "到付", value: "collect_payment" },
       ],
       paymentMethodList: [],
       paymentCycleList: [],
       orderForm: {},
       orderFormlist: {
         orderNo: "",
-        partnerName: "", 
+        partnerName: "",
         pageNum: 1,
         notifyType: "sale",
         pageSize: 20,
@@ -272,7 +270,10 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
 
       detailTotal: 0,
@@ -334,13 +335,7 @@ export default {
           label: "发货方式",
           type: 'select',
 
-          options: [
-            { label: "送货", value: "deliver_goods" },
-            { label: "自提", value: "self_pickup" },
-            { label: "快递", value: "express_delivery" },
-            { label: "货运", value: "freight_transport" },
-            { label: "到付", value: "collect_payment" },
-          ]
+          options: [ ]
 
         },
         {
@@ -349,19 +344,19 @@ export default {
           type: 'select',
 
           options: [
-          { label: "正常发货", value: false },
-          { label: "换货发货", value: true }
+            { label: "正常发货", value: false },
+            { label: "换货发货", value: true }
           ]
 
         },
-      
+
         {
           prop: 'documentStatus',
           label: "单据状态",
           type: 'select',
           options: [
-          { label: "草稿", value: "draft" },
-          { label: "提交", value: "submit" },
+            { label: "草稿", value: "draft" },
+            { label: "提交", value: "submit" },
           ]
         },
 
@@ -373,6 +368,7 @@ export default {
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search()
+    this.getbimProductAttributesFun()
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -382,6 +378,24 @@ export default {
     }
   },
   methods: {
+    getbimProductAttributesFun() {
+      getbimProductAttributes('595170644241464069').then(res => {
+        res.data.list.forEach(item => {
+          let obj = {
+            label: item.fullName,
+            value: item.enCode
+          }
+          this.departMentList.push(obj)
+          let arr = []
+
+          let oilObj = this.superQueryJson.find(item => item.prop === 'delivery');
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = this.departMentList;
+          }
+        });
+      })
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -403,7 +417,7 @@ export default {
       if (row.deliveryStatus !== 'not_finished' || row.documentStatus == 'draft') {
         console.log(222);
         return false
-      }else{
+      } else {
         console.log(333);
         return true
 
@@ -421,8 +435,9 @@ export default {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
+      this.$confirm('您确认取消选中的发货通知单吗(已备货商品需手动处理)？', this.$t('common.tipTitle'), {
+        type: 'warning',
+        customClass: 'custom-confirm',
       }).then(() => {
         let a = this.selectArr.map(item => {
           return item.id
@@ -505,7 +520,20 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.orderNoS) {
+        this.orderForm.superQuery.condition.push(
+          { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+        )
+      }
+      if (this.partnerNameS) {
+        this.orderForm.superQuery.condition.push(
+          { "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" }
+        )
+      }
 
+      if (this.orderNoS || this.partnerNameS) {
+        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -539,7 +567,9 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
+      this.orderNoS = ""
+      this.partnerNameS = ""
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, btntype) {
@@ -621,4 +651,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.custom-confirm {
+  width: 440px;
+  /* 自定义弹框宽度 */
+}
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

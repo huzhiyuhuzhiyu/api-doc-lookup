@@ -48,10 +48,6 @@
             ]" /> -->
           </el-row>
         </el-form-item>
-        <el-form-item label="排序" prop="sortCode">
-          <el-input-number style="width: 100%;" :min="0" :max="999999" v-model="dataForm.sortCode"
-            controls-position="right" />
-        </el-form-item>
       </el-form>
       <span class="button-bottom">
         <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
@@ -198,7 +194,6 @@ export default {
             linkTarget: '_self',
             parentId: '568721982921638149',
             propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-            sortCode: 0,
             systemId: '309228585019769285',
             type: 1,
             urlAddress: ''

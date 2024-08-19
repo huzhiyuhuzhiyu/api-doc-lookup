@@ -87,7 +87,7 @@
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                  <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                  <!-- <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
                         <div class="viewData">
@@ -106,7 +106,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
 
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
@@ -127,7 +127,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 
@@ -137,7 +137,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
+                  <!-- <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'spec'">
 
@@ -146,7 +146,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
                   <el-table-column prop="reconciliationUnitPrice" label="对账数量" min-width="140">
                     <template slot-scope="scope">

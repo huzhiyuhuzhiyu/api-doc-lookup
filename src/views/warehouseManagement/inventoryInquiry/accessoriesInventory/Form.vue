@@ -40,8 +40,14 @@
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
-              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
-              <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom">
+                <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.warehouseName + '/' + scope.row.shelfSpaceName }}</div>
+                  </template>
+                </el-table-column>
+              </el-table-column>
+              <!-- <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" /> -->
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -85,9 +91,9 @@ export default {
       originalListQuery: {},
       total: 0,
       totalData: {
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
       },
 
       listQuery: {
@@ -105,7 +111,7 @@ export default {
         warehouseId: '',
         productDrawingNo: "",
         productsId: "",
-        batchNumber: "", 
+        batchNumber: "",
       }
     }
   },
@@ -142,7 +148,7 @@ export default {
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
-    }, 
+    },
     init(id, type) {
       this.getProductClassFun()
       if (type === 'inventoryFlag') { this.title = '库存数明细' }
@@ -164,7 +170,7 @@ export default {
           column: "latest_storage_time"
         }],
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
       }
       tempListQuery[type] = 1
       this.originalListQuery = tempListQuery
@@ -188,11 +194,11 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if(!res.data.whPage.records.length) return
+        if (!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
         this.totalData = res.data.stockSts
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

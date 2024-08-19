@@ -576,7 +576,7 @@ export default {
       this.formLoading = true
       this.btnType = btnType
 
-      // getByCode('bm_cp_cp').then((res) => {
+      // getByCode('CPBM').then((res) => {
       //   this.businessType = res.data.codeWay
       //   if (this.businessType !== 'input') {
       //     let target = this.tabs[0].tabContent.find((tc) => tc.prop === 'code')
@@ -618,7 +618,7 @@ export default {
             ) {
               tc.itemDisabled = true
             }
-            this.jnpf.getBillRuleConfigFun('bm_cp_cp').then((res) => {
+            this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
               if (!res.modifyFlag) {
                 if (tc.prop === 'code') tc.itemDisabled = true
               }
@@ -656,7 +656,7 @@ export default {
       } else {
         this.title = '新建成品档案'
 
-        this.fetchData('bm_cp_cp')
+        this.fetchData('CPBM')
         this.formLoading = false
       }
     },

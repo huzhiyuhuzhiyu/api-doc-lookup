@@ -64,11 +64,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="工作令号" prop="workOrderNo">
-                          <el-input v-model="dataForm.workOrderNo" placeholder="请输入工作令号" disabled maxlength="20" />
-                        </el-form-item>
-                      </el-col>
+                    
 
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="订单日期" prop="orderDate">
@@ -1105,7 +1101,6 @@ export default {
         salesName: [
           { required: true, message: '所属销售不能为空', trigger: 'change' }
         ],
-        workOrderNo: [{ required: true, message: "请输入工作令号", trigger: 'blur' }],
         orderNo: [{ required: true, message: "请输入订单号", trigger: 'blur' }],
         orderDate: [{ required: true, message: '订单日期不能为空', trigger: 'change' }],
         deliveryDate: [{ required: true, message: '交货日期不能为空', trigger: 'change' }],
@@ -1655,13 +1650,7 @@ export default {
       a.click()
     },
 
-
-    // 获取工作令号
-    getWorkOrderNoFun() {
-      getWorkOrderNo("ZC").then(res => {
-        this.dataForm.workOrderNo = res.data
-      })
-    },
+ 
     // 接收传递的地址
     getChangeAddress(data) {
       if (data) {

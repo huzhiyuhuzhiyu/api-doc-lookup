@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-  
+
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
@@ -17,7 +17,8 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-input v-model="tableQuery.warehouseName" placeholder="仓库名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="tableQuery.warehouseName" placeholder="仓库名称" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -38,9 +39,9 @@
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
-              </el-tooltip>
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -50,46 +51,49 @@
           </div>
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableData" custom-column row-key="id" :fixedNo="true"
-          @sort-change="sortChange" >
-         
+          @sort-change="sortChange">
 
-          <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom"/>
-          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom"/>
+
+          <el-table-column prop="productDrawingNo" label="品名规格" width="200" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
           <el-table-column prop="classAttribute" label="产品分类" width="120" sortable="custom">
             <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute=='finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute=='raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute=='semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute=='accessories'">配件</div>
+              <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
+              <div v-if="scope.row.classAttribute == 'raw_material'">原材料</div>
+              <div v-if="scope.row.classAttribute == 'semi_finished'">半成品</div>
+              <div v-if="scope.row.classAttribute == 'accessories'">配件</div>
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
           <el-table-column prop="inventoryQuantity" label="库存数量" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'inventoryFlag',scope.row.warehouseId )">
-                {{scope.row.inventoryQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'inventoryFlag', scope.row.warehouseId)">
+                {{ scope.row.inventoryQuantity }}
               </el-link>
             </template>
 
           </el-table-column>
           <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'availableFlag',scope.row.warehouseId )">
-                {{scope.row.availableQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId)">
+                {{ scope.row.availableQuantity }}
               </el-link>
             </template>
           </el-table-column>
           <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary"  @click.native="viewFun(scope.row.productsId, 'occupancyFlag',scope.row.warehouseId )">
-                {{scope.row.occupancyQuantity}}
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId)">
+                {{ scope.row.occupancyQuantity }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom"/>
-          <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"/>
-          <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom"/>
-          
+          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
+          <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
+          <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
+
         </JNPF-table>
         <pagination :total="total" :page.sync="tableQuery.currentPage" :limit.sync="tableQuery.pageSize"
           @pagination="initData">
@@ -103,8 +107,8 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" />
-     <!-- 高级查询 -->
-   <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -120,14 +124,14 @@ import Form from './Form'
 
 export default {
   name: 'inventory',
-  components: { Form, SuperQuery,ExportForm},
-  props:{
-    classAttribute:"",
+  components: { Form, SuperQuery, ExportForm },
+  props: {
+    classAttribute: "",
   },
   data() {
     return {
-      exportFormVisible:false,
-      superQueryVisible:false, 
+      exportFormVisible: false,
+      superQueryVisible: false,
       treeData: [],
       tableData: [],
       treeLoading: false,
@@ -135,7 +139,7 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-     
+
       defaultProps: {
         children: 'childrenList',
         label: 'name'
@@ -154,19 +158,23 @@ export default {
             column: ''
           }
         ],
-        warehouseName:"",
+        warehouseName: "",
         pageNum: 1,
-        pageSize: 20, 
+        pageSize: 20,
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
-        superQuery:{},
-        classAttribute:"finish_product",
+        superQuery: {},
+        classAttribute: "finish_product",
       },
       selectedNodeKey: "",
-      totalData: {},
+      totalData: {
+        totalInventory:0,
+        totalOccupancy:0,
+        totalAvailable:0,
+      },
       superQueryJson: [
         {
           prop: 'productDrawingNo',
@@ -177,27 +185,27 @@ export default {
           prop: 'productCode',
           label: "产品编码",
           type: 'input'
-        }, 
-      
+        },
+
         {
           prop: 'classAttribute',
           label: "产品分类",
           type: 'select',
-          options:[{label:"成品",value:"finish_product",},{label:"原材料",value:"raw_material",},{label:"半成品",value:"semi_finished",},{label:"配件",value:"accessories",}]
+          options: [{ label: "成品", value: "finish_product", }, { label: "原材料", value: "raw_material", }, { label: "半成品", value: "semi_finished", }, { label: "配件", value: "accessories", }]
         },
-    
+
         {
           prop: 'mainUnit',
           label: "单位",
           type: 'input'
-        },  
-            
+        },
+
         {
           prop: 'availableQuantity',
           label: "可用数量",
           type: 'input',
-        },  
-           
+        },
+
         {
           prop: 'occupancyQuantity',
           label: "占用数量",
@@ -212,7 +220,7 @@ export default {
           prop: 'warehouseName',
           label: "仓库名称",
           type: 'input'
-           
+
         },
         {
           prop: 'latestStorageTime',
@@ -223,8 +231,8 @@ export default {
           endPlaceholder: '创建结束时间',
           pickerOptions: this.global.timePickerOptions
         },
-         
-    
+
+
       ],
     }
   },
@@ -235,18 +243,18 @@ export default {
   },
   created() {
     this.initData()
-    
+
   },
   methods: {
-       // 导出
+    // 导出
     exportForm(exportTableRef) {
-      console.log("object,",exportTableRef);
+      console.log("object,", exportTableRef);
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       console.log(this.$refs[exportTableRef]);
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
       columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      console.log("columnList",columnList);
+      console.log("columnList", columnList);
       this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
     },
     download(data) {
@@ -259,7 +267,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1007',
-        exportName: "配件库存",
+        exportName: "库存查询",
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -275,27 +283,32 @@ export default {
       this.search()
     },
     // 查看产品明细
-    viewFun(id,type,warehouseId){
+    viewFun(id, type, warehouseId) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id,type,warehouseId)
+        this.$refs.Form.init(id, type, warehouseId)
       })
     },
-    
-    
+
+
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
 
-    
-    
+
+
     initData() {
-      this.tableQuery.classAttribute=this.classAttribute 
+      this.tableQuery.classAttribute = this.classAttribute
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
-        this.tableData = res.data.whPage.records
-        this.totalData = res.data.stockSts
-        this.total = res.data.whPage.total
+        if (res.data.whPage.records.length) {
+          this.tableData = res.data.whPage.records
+          this.totalData = res.data.stockSts
+          this.total = res.data.whPage.total
+        }else{
+
+        }
+
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -305,7 +318,7 @@ export default {
       this.initData()
     },
     reset() {
-      if (this.treeData.length > 1) { 
+      if (this.treeData.length > 1) {
         this.selectedNodeKey = this.tableQuery.warehouseId
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
@@ -316,22 +329,22 @@ export default {
             column: ''
           }
         ],
-        warehouseName:"",
+        warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-        
+
         scrapFlag: false,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",
         productCode: "",
-        superQuery:{},
-        classAttribute:this.classAttribute,
+        superQuery: {},
+        classAttribute: this.classAttribute,
       }
-    this.initData() 
+      this.initData()
     },
- 
-    
+
+
 
 
     sortChange({ prop, order }) {

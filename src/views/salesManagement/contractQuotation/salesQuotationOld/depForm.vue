@@ -3,10 +3,10 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="$emit('close')"
-          :content="btnType == 'add' ? '新建销售报价' : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
+          :content="btnType == 'add'||btnType == 'copy' ? '新建销售报价' : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
         <div class="options">
           <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')"
-            v-if="btnType == 'add' || btnType == 'edit'">
+          v-if="btnType !== 'look'">
             保存草稿</el-button>
           <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
             @click="handleConfirm('submit')">
@@ -554,6 +554,7 @@ export default {
 
 
       },
+      quotationNoS:"",
       activeNames: ["productInfo", "basicInfo"],
       // 审批流需要字段
       approvalBusinessId: '',
@@ -1298,6 +1299,7 @@ export default {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
         this.dataForm.quotationNo = data.number
+        this.quotationNoS=data.number
 
       } catch (error) {
       }
@@ -1320,7 +1322,7 @@ export default {
       }
 
       // 新建
-      if (this.btnType == 'add' && !this.dataForm.id) {
+      if ((this.btnType == 'add' && !this.dataForm.id)||this.btnType=='copy') {
         const end = new Date();//获取当前的日期
         end.setTime(end.getTime())
         //计算，将当期日期-1天
@@ -1340,6 +1342,7 @@ export default {
         this.fetchData("XSBJ")
 
       }
+      
       // 重新提交
       if (this.btnType == 'add' && this.dataForm.id) {
         const end = new Date();//获取当前的日期
@@ -1399,7 +1402,7 @@ export default {
           this.$nextTick(() => {
             this.dataForm = res.data.sale
             this.dataFormTwo.lines = res.data.lines
-
+            this.dataForm.quotationNo=this.quotationNoS
             this.dataForm.totalAmount = 0
 
             if (res.data.attachmentList) {

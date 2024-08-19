@@ -78,7 +78,7 @@
                         <el-form-item label="发货方式" prop="delivery">
                           <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
                             :disabled="btnType == 'look' || btnType == 'qrsh'">
-                            <el-option v-for="(item, index) in orderListfhfs" :key="index" :label="item.label"
+                            <el-option v-for="(item, index) in departMentList" :key="index" :label="item.label"
                               @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
                           </el-select>
                         </el-form-item>
@@ -411,6 +411,7 @@ import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import changeAddress from "./changeAddress.vue"
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
@@ -479,12 +480,7 @@ export default {
         { label: "内销", value: "domestic_market" },
         { label: "总成", value: "assembly" }
       ],
-      orderListfhfs: [
-        { label: "送货", value: "deliver_goods" },
-        { label: "自提", value: "self_pickup" },
-        { label: "快递", value: "express_delivery" },
-        { label: "货运", value: "freight_transport" },
-        { label: "到付", value: "collect_payment" }
+      departMentList: [ 
       ],
       paymentStatusList: [
         { label: "未付款", value: "no_pay", },
@@ -723,6 +719,7 @@ export default {
   created() {
     // this.handleChange()
     // this.getProvinceList() 
+    this.getbimProductAttributesFun()
   },
   mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
@@ -730,6 +727,20 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    getbimProductAttributesFun() {
+      getbimProductAttributes('595170644241464069').then(res => {
+        res.data.list.forEach(item => {
+          let obj = {
+            label: item.fullName,
+            value: item.enCode
+          }
+          this.departMentList.push(obj)
+          let arr = []
+
+          
+        });
+      })
+    },
     // 选择产品——搜索
     searchProductFun() {
       if (this.deliveryDateArr.length) {

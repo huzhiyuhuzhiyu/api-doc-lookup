@@ -31,16 +31,17 @@
 
               </el-form-item>
 
-            </el-col> 
+            </el-col>
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <!-- <el-dropdown> -->
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('tableForm')">导出</el-button>
             </topOpts>
-           
+
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -108,7 +109,7 @@
                 <el-button type="text" @click="addOrUpdateHandle(scope.row, 'edit')" size="mini"
                   :disabled="scope.row.documentStatus == 'draft' ? false : true">编辑</el-button>
                 <el-button type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true" size="mini"
-                  @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button> 
+                  @click="handleDel(scope.row.id,)" class="JNPF-table-delBtn">删除</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -127,6 +128,9 @@
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="copyFun(scope.row.id, 'copy')">
+                      复制
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="downloadOrder(scope.row.id)">
                       下载报价单
@@ -156,10 +160,10 @@ import DepForm from './depForm'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { excelExport  } from '@/api/basicData/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'salesQuotation',
-  components: { DepForm, SuperQuery,ExportForm },
+  components: { DepForm, SuperQuery, ExportForm },
   data() {
     return {
       columnList: ["deliver", "cooperativePartnerCode", "address", "fax", "reasonRejection", "createByName", "remark"],
@@ -205,8 +209,8 @@ export default {
         submitStartDate: '',
         submitEndDate: '',
         superQuery: {
-          condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
       },
       superQueryJson: [
@@ -296,19 +300,19 @@ export default {
           type: 'input'
         },
 
-       
 
-       
-    
+
+
+
       ],
       quotationTime: [],
       submitDate: [],
       listLoading: false,
       total: 0,
       formVisible: false,
-      bidderS:"",
-      cooperativePartnerIdTextS:"",
-      quotationNoS:"",
+      bidderS: "",
+      cooperativePartnerIdTextS: "",
+      quotationNoS: "",
     }
   },
   created() {
@@ -317,7 +321,7 @@ export default {
   },
 
   methods: {
-   
+
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false
@@ -347,23 +351,23 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if(this.quotationNoS){
+      if (this.quotationNoS) {
         this.form.superQuery.condition.push(
-          {"field":"quotationNo","fieldValue":this.quotationNoS,"symbol":"like"}
+          { "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" }
         )
       }
-      if(this.cooperativePartnerIdTextS){
+      if (this.cooperativePartnerIdTextS) {
         this.form.superQuery.condition.push(
-          {"field":"cooperativePartnerIdText","fieldValue":this.cooperativePartnerIdTextS,"symbol":"like"}
+          { "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" }
         )
       }
-      if(this.bidderS){
+      if (this.bidderS) {
         this.form.superQuery.condition.push(
-          {"field":"bidder","fieldValue":this.bidderS,"symbol":"like"}
+          { "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" }
         )
       }
-      if(this.quotationNoS||this.cooperativePartnerIdTextS||this.bidderS){
-        this.$set(this.form.superQuery,'matchLogic','AND')
+      if (this.quotationNoS || this.cooperativePartnerIdTextS || this.bidderS) {
+        this.$set(this.form.superQuery, 'matchLogic', 'AND')
       }
       getQuotationLists(this.form).then(res => {
         this.tableDataList = res.data.records
@@ -401,9 +405,9 @@ export default {
 
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.form = JSON.parse(JSON.stringify(this.formlist))
-      this.quotationNoS=""
-      this.cooperativePartnerIdTextS=""
-      this.bidderS=""
+      this.quotationNoS = ""
+      this.cooperativePartnerIdTextS = ""
+      this.bidderS = ""
       this.quotationTime = [],
         this.submitDate = []
 
@@ -415,11 +419,23 @@ export default {
         this.$refs.depForm.init(id, type)
       })
     },
+    copyFun(id, type) {
+      this.depFormVisible = true
+
+
+      if (id) {
+        // setTimeout(() => {
+        this.$nextTick(() => {
+          this.$refs.depForm.init(id, type)
+        })
+        // }, 600);
+      }
+    },
     // 编辑
     addOrUpdateHandle(res, type) {
       this.depFormVisible = true
- 
-    
+
+
       let id = res.id
       if (id) {
         // setTimeout(() => {
@@ -429,8 +445,8 @@ export default {
         // }, 600);
       }
     },
- 
-    
+
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -458,8 +474,8 @@ export default {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
-       // 导出
-       exportForm(exportTableRef) {
+    // 导出
+    exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
       let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
@@ -476,7 +492,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1054',
-        exportName:  '销售报价单',
+        exportName: '销售报价单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -509,11 +525,12 @@ export default {
 }
 </script>
 <style scoped>
-  .JNPF-common-search-box{
-    padding: 8px;
-  }
-  .JNPF-common-head{
-    padding: 8px;
-  }
+.JNPF-common-search-box {
+  padding: 8px;
+}
+
+.JNPF-common-head {
+  padding: 8px;
+}
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

@@ -52,16 +52,16 @@
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contractNo" label="合同编号" min-width="160" />
             <el-table-column prop="num" label="期数" min-width="100" />
-            <el-table-column prop="planReceivablesMoney" label="计划回款金额（元）" min-width="160" />
+            <el-table-column prop="planReceivablesMoney" label="计划回款金额(元)" min-width="160" />
             <el-table-column prop="planReceivablesData" label="计划回款日期" min-width="160" />
-            <el-table-column prop="remindInAdvance" label="提前几天提醒" min-width="110" />
+            <el-table-column prop="remindInAdvance" label="提前几天提醒" min-width="130" />
             <el-table-column prop="receivablesType" label="回款方式" min-width="140">
               <template slot-scope="scope">
                 {{returnTypeVisitForm(scope.row.receivablesType)}}
               </template>
             </el-table-column>
             <el-table-column prop="ownerUserName" label="负责人" min-width="120" />
-            <el-table-column prop="practiceMoney" label="实际回款金额（元）" min-width="160" />
+            <el-table-column prop="practiceMoney" label="实际回款金额(元)" min-width="160" />
             <el-table-column prop="practiceTime" label="实际回款时间" min-width="180" />
             <el-table-column prop="unreceivedMoney" label="未回款金额" min-width="140" />
             <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">

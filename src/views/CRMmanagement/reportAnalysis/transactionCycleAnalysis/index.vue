@@ -20,6 +20,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">员工客户成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -53,6 +54,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">地区成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly2" :option="option2" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -86,6 +88,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">产品成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly3" :option="option3" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -206,13 +209,13 @@ export default {
         })
         getemployeeCycle(this.dataForm).then(res1 => {
           this.option = {
-            title: {
-              text: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -226,9 +229,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -316,13 +319,13 @@ export default {
         })
         getdistrictCycle(this.dataForm2).then(res1 => {
           this.option2 = {
-            title: {
-              text: '地区成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '地区成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -336,9 +339,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -423,13 +426,13 @@ export default {
         })
         getproductCycle(this.dataForm3).then(res1 => {
           this.option3 = {
-            title: {
-              text: '产品成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '产品成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -443,9 +446,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -573,16 +576,16 @@ export default {
   padding: 14px 0 0 14px;
   .el-tabs__headermain {
     height: 100%;
-    padding: 0 40px 0 0;
+    padding: 0 14px 0 0;
     position: relative;
     margin: 0 0 15px 0;
     ::v-deep .el-tab-pane {
       height: 100%;
     }
-    ::v-deep .el-tabs--top{
+    ::v-deep .el-tabs--top {
       height: 100%;
     }
-    ::v-deep .el-tabs__content{
+    ::v-deep .el-tabs__content {
       height: 100%;
     }
   }
@@ -629,6 +632,10 @@ export default {
   .axis-content {
     margin-right: 40px;
     margin-bottom: 24px;
+    .content-title {
+      padding: 8px 40px;
+      font-size: 16px;
+    }
   }
   .table-content {
     padding-right: 40px;

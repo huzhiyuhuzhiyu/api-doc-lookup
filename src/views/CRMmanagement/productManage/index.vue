@@ -78,7 +78,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
             <el-table-column prop="name" label="产品名称" min-width="180" />
-            <el-table-column prop="code" label="产品编码" min-width="170" />
+            <el-table-column prop="code" label="产品编码" min-width="180" />
             <el-table-column prop="type" label="产品类型" min-width="160" />
             <el-table-column prop="unit" label="产品单位" min-width="120">
               <template slot-scope="scope">
@@ -88,7 +88,7 @@
             <el-table-column prop="price" label="价格(元)" min-width="140" />
             <el-table-column prop="describe" label="产品描述" min-width="300" />
             <el-table-column prop="costPrice" label="成本价(元)" min-width="140" />
-            <el-table-column prop="stackingFlag" label="是否上下架" min-width="100">
+            <el-table-column prop="stackingFlag" label="是否上下架" min-width="130">
               <template slot-scope="scope">
                 <div v-if="scope.row.stackingFlag == '0'">否</div>
                 <div v-if="scope.row.stackingFlag == '1'">是</div>

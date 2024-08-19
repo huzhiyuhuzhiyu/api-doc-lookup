@@ -7,12 +7,18 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="reset()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
@@ -46,14 +52,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码"
-                clearable />
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称"
-                clearable />
+              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
             </el-form-item>
           </el-col>
 
@@ -204,6 +208,7 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
+      filterText: '',
       leftFlag: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -303,11 +308,21 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName']
+      columnList: ['productName', 'pickingWay', 'createByName','createTime']
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   created() {
     this.getcategoryTree()
+    if (localStorage.getItem("productionBomFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     // this.initData()
   },
   methods: {
@@ -433,6 +448,7 @@ export default {
         pageSize: 20
       }
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.getcategoryTree()
     },
     addOrUpdateHandle(productId, btnType, approvalStatus) {
@@ -486,7 +502,15 @@ export default {
         })
       })
     },
-
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("productionBomFlag", expands)
+      })
+    },
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.hasOwnProperty('parentId') ? data.id : ''

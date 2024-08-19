@@ -1,12 +1,14 @@
 <template>
   <el-dialog :title="!dataForm.id ? '新建班组' : !btntype ? '编辑班组' : '查看班组'" :close-on-click-modal="false"
-    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="70%">
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+    width="70%">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
       label-width="120px">
       <el-row :gutter="30">
         <el-col :span="12">
           <el-form-item label="班组编码" prop="code">
-            <el-input v-model="dataForm.code" placeholder="请输入班组编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
+            <el-input v-model="dataForm.code" placeholder="请输入班组编码" maxlength="20"
+              :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
           </el-form-item>
         </el-col>
 
@@ -46,7 +48,8 @@
 
         <el-col :span="12">
           <el-form-item label="备注" prop="remark">
-            <el-input v-model="dataForm.remark" maxlength="200" :disabled="btntype ? true : false" placeholder="请输入备注" />
+            <el-input v-model="dataForm.remark" maxlength="200" :disabled="btntype ? true : false"
+              placeholder="请输入备注" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -67,8 +70,8 @@
           <el-table :data="lines" height="300" highlight-current-row>
             <el-table-column prop="personnelIdText" label="人员名称" width="120">
               <template slot="header">
-                  <span class="required">*</span>人员名称
-                </template>
+                <span class="required">*</span>人员名称
+              </template>
               <template slot-scope="scope">
                 <user-select v-model="scope.row.personnelId" placeholder="请选择人员" clearable
                   :disabled="btntype ? true : false">
@@ -234,14 +237,15 @@ export default {
   created() {
   },
   methods: {
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
+        const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
         }
-      } catch (error) {}
+      } catch (error) {
+      }
     },
     hangleC(e) {
       console.log(e);
@@ -284,7 +288,10 @@ export default {
       console.log(id);
       this.lines = []
       this.dataForm.id = id || ''
-      if (type == "edit" || type == "add") {
+      if (type == "edit") {
+        this.btntype = false
+        this.fetchData('bm_sc_bz', false)
+      } else if (type == "add") {
         this.btntype = false
       } else if (type == "look") {
         this.btntype = true
@@ -302,7 +309,7 @@ export default {
 
           })
         } else {
-          this.fetchData('bm_sc_bz')
+          this.fetchData('bm_sc_bz', true)
           this.formLoading = false
         }
       })
@@ -367,15 +374,15 @@ export default {
 
 
           }
-        }else {
-              flag = false
-              this.btnLoading = false;
-              return this.$message({
-                message: "请添加人员",
-                type: 'error',
-                duration: 1500,
-              })
-            }
+        } else {
+          flag = false
+          this.btnLoading = false;
+          return this.$message({
+            message: "请添加人员",
+            type: 'error',
+            duration: 1500,
+          })
+        }
         console.log("this.lines", this.lines);
         if (flag === false) return
         formMethod(obj).then(res => {
@@ -509,7 +516,7 @@ export default {
   }
 }
 </script>
-<style >
+<style>
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -518,11 +525,11 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
 .required {
   color: red;
   margin-right: 4px;
 }
-
 </style>
 <style>
 .el-input--prefix .el-input__inner {

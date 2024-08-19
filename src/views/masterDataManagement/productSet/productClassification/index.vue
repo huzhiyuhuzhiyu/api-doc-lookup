@@ -156,7 +156,7 @@ export default {
         { label: '成品', value: 'finish_product' },
         { label: '辅料', value: 'accessories' }
       ],
-      columnList: ['classAttribute', 'classType'],
+      columnList: ['classAttribute', 'classType', 'createTime', 'createByName','remark'],
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -597,6 +597,7 @@ export default {
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 8px !important;
 }
+
 .table-icon {
   vertical-align: bottom;
   font-size: 16px;

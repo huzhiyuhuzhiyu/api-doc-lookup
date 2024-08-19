@@ -101,7 +101,7 @@
             <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
             <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" sortable="custom" />
             <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="120" sortable="custom" />
+            <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />

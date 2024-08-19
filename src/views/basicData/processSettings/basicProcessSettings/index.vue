@@ -8,11 +8,15 @@
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
@@ -156,6 +160,7 @@ export default {
   components: { JNPFForm, ExportForm, SuperQuery },
   data() {
     return {
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -260,8 +265,13 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice'],
+      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice','createTime'],
       leftFlag: false,
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   mounted() {
@@ -687,6 +697,7 @@ export default {
         productCategoryId: '',
       }
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.getcategoryTree()
       // this.initData()
     },

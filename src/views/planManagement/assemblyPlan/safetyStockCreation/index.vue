@@ -845,6 +845,7 @@ export default {
           }
           this.productData.forEach(item => {
             item.documentStatus = value
+            item.finalPlanQuantity=item.planQuantity
           });
           if (submitFlag === false) return
           this.btnLoading = true

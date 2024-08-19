@@ -150,7 +150,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: ['remark', 'createByName'],
+      columnList: ['remark','createTime', 'createByName'],
       createTimeArr: [],
 
       superQueryJson: [
@@ -365,6 +365,7 @@ export default {
               message: '删除成功',
               duration: 1500
             })
+            location.reload()
           })
         })
         .catch(() => { })

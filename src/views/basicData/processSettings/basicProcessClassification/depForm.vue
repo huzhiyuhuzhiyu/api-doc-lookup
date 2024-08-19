@@ -15,14 +15,16 @@
       </el-form-item> -->
         <el-form-item label="分类编码" prop="code">
           <template slot="label">
-            分类编码<span class="required">*</span>
+            分类编码
+            <span class="required">*</span>
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20"
             :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <template slot="label">
-            分类名称<span class="required">*</span>
+            分类名称
+            <span class="required">*</span>
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
         </el-form-item>
@@ -41,7 +43,7 @@
 </template>
 
 <script>
-import { detailCategory, updateCategory, addCategory, checkCategoryCode } from "@/api/basicData/materialSettings"
+import { detailCategory, updateCategory, addCategory, checkCategoryCode } from '@/api/basicData/materialSettings'
 
 export default {
   data() {
@@ -51,11 +53,11 @@ export default {
       btnLoading: false,
       dataForm: {
         parentId: '',
-        parentName: "",
+        parentName: '',
         code: '',
         name: '',
         remark: '',
-        classAttribute: "process"
+        classAttribute: 'process'
       },
       autoCode: '',
       title: '',
@@ -68,26 +70,40 @@ export default {
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              if (!value) { callback() }
-              else if (value === this.autoCode) { callback() }
-              else {
-                checkCategoryCode({ code: value, parentId: this.dataForm.parentId, classAttribute: this.dataForm.classAttribute }).then((res) => {
-                  if (!res.data) { callback() }
-                  else { callback(new Error('此分类编码已存在')) }
-                }).catch((err) => { callback(new Error(" ")) })
+              if (!value) {
+                callback()
+              } else if (value === this.autoCode) {
+                callback()
+              } else {
+                checkCategoryCode({
+                  code: value,
+                  parentId: this.dataForm.parentId,
+                  classAttribute: this.dataForm.classAttribute
+                })
+                  .then((res) => {
+                    if (!res.data) {
+                      callback()
+                    } else {
+                      callback(new Error('此分类编码已存在'))
+                    }
+                  })
+                  .catch((err) => {
+                    callback(new Error(' '))
+                  })
               }
             },
             trigger: 'blur'
-          }]
+          }
+        ]
       }
     }
   },
   methods: {
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
         }
       } catch (error) { }
@@ -100,13 +116,14 @@ export default {
       this.title = !this.dataForm.id ? '新建工序分类' : '编辑工序分类'
       this.$nextTick(() => {
         if (this.dataForm.id) {
-          detailCategory(this.dataForm.id).then(res => {
+          this.fetchData('bm_gy_gxfl', false)
+          detailCategory(this.dataForm.id).then((res) => {
             this.dataForm = res.data
             this.autoCode = res.data.code
             this.formLoading = false
           })
         } else {
-          this.fetchData('bm_gy_gxfl')
+          this.fetchData('bm_gy_gxfl', true)
           this.formLoading = false
         }
       })
@@ -121,20 +138,26 @@ export default {
       }
     },
     async dataFormSubmit() {
-      let valid = await this.$refs['dataForm'].validate().catch(err => false)
+      let valid = await this.$refs['dataForm'].validate().catch((err) => false)
       this.btnLoading = true
       if (valid) {
         if (!this.dataForm.parentId) this.dataForm.parentId = '-1'
         let formMethod = this.dataForm.id ? updateCategory : addCategory
-        formMethod(this.dataForm).then(res => {
-          this.$emit('close', true)
-          this.$message({
-            message: this.dataForm.id ? '修改成功' : '新建成功',
-            type: 'success',
-            duration: 1500
+        formMethod(this.dataForm)
+          .then((res) => {
+            this.$emit('close', true)
+            this.$message({
+              message: this.dataForm.id ? '修改成功' : '新建成功',
+              type: 'success',
+              duration: 1500
+            })
           })
-        }).catch(() => { this.btnLoading = false })
-      } else { this.btnLoading = false }
+          .catch(() => {
+            this.btnLoading = false
+          })
+      } else {
+        this.btnLoading = false
+      }
     }
   }
 }
@@ -151,6 +174,7 @@ export default {
   color: red;
   margin-left: 4px;
 }
+
 .button-bottom {
   position: fixed;
   bottom: 10px;

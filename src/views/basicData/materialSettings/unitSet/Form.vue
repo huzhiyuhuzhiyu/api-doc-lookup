@@ -2,7 +2,8 @@
   <el-dialog :title="dialogTitle" :close-on-click-modal="false" append-to-body :visible.sync="visible"
     class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px" @close="$emit('refresh')">
     <el-row :gutter="15" class="" v-loading="loading">
-      <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
+      <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top"
+        hide-required-asterisk="fasle">
         <template>
           <!-- <el-col :span="12">
             <el-form-item label="单位编码" prop="unitCode" ref="unitCode">
@@ -12,6 +13,9 @@
           </el-col> -->
           <el-col :span="12">
             <el-form-item label="单位名称" prop="name" ref="name">
+              <template slot="label">
+                单位名称<span class="required">*</span>
+              </template>
               <el-input v-model="dataForm.name" placeholder="请输入单位名称" clearable :style="{ width: '100%' }"
                 maxlength="20"></el-input>
             </el-form-item>
@@ -355,4 +359,15 @@ export default {
 ::v-deep#table .el-form-item--small.el-form-item {
   margin-bottom: 0px;
 }
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+.required {
+  color: red;
+  margin-left: 4px;
+}
 </style>
+

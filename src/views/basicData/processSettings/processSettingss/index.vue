@@ -355,7 +355,7 @@ export default {
       detailLoading: false,
       visible: false,
       customerRecognitionTime: [],
-      columnList: ['reasonRejection', 'remark', 'createByName']
+      columnList: ['reasonRejection', 'remark', 'createByName','createTime']
     }
   },
   mounted() {

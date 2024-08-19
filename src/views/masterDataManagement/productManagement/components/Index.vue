@@ -1,5 +1,5 @@
 <template>
-  <div class="JNPF-common-layout" :element-loading-text="loadingText">
+  <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title">
         <h2 v-if="!leftFlag">产品分类</h2>
@@ -39,25 +39,25 @@
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
     </div>
-
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
+              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -71,31 +71,20 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:8px">
-          <div>
-            <el-dropdown style="margin-right:10px;">
-              <el-button size="mini" type="primary" icon="el-icon-plus">
-                新建
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>
-                <el-dropdown-item @click.native="aiAdd()">智能新建</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
+          <topOpts :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">
+              导入
+            </el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
-          </div>
-
+          </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -104,7 +93,6 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
-
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
@@ -135,9 +123,6 @@
               <template v-else-if="row.productSource == 'out'">
                 外协
               </template>
-              <template v-else-if="row.productSource == 'assemble'">
-                组装
-              </template>
             </template>
           </el-table-column>
           <el-table-column prop="productStatus" label="产品状态" width="120" align="center">
@@ -147,34 +132,19 @@
             </template>
           </el-table-column>
           <el-table-column prop="brand" label="品牌" width="120" />
-          <el-table-column prop="model" label="型号" width="120" />
-          <el-table-column prop="sealingCoverStructure" label="密封盖-结构" width="120" />
-          <el-table-column prop="sealingCoverTyping" label="密封盖-打字" width="120" />
-          <el-table-column prop="structureType" label="结构类型" width="120" />
-          <el-table-column prop="clearance" label="游隙" width="120" />
-          <el-table-column prop="steelBallManufacturer" label="钢球厂家" width="120" />
-          <el-table-column prop="oil" label="油脂" width="120" />
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" />
-          <el-table-column prop="noise" label="噪音" width="120" />
-          <el-table-column prop="holder" label="保持架" width="120" />
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" />
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" />
-          <el-table-column prop="colour" label="颜色" width="120" />
-          <el-table-column prop="aperture" label="孔径" width="120" />
-          <el-table-column prop="remark" label="备注" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
-                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
+              <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
+                @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
+                <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    <el-button type="text" size="mini" v-has="'btn_detail'">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
@@ -191,16 +161,13 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
+      :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
       :http-request="UploadProduct" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" :auto-upload="false" :limit="1"
@@ -222,16 +189,18 @@
         </el-button>
       </span>
     </el-dialog>
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct, uploadCpProductData } from '@/api/masterDataManagement/productManage'
+import { getProductList, deleteProduct, uploadProductData } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
-import aiForm from './aiForm'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
@@ -242,83 +211,50 @@ import {
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
 export default {
-  components: { Form, ExportForm, aiForm, SuperQuery },
-  name: 'finished_product',
+  components: { Form, ExportForm, SuperQuery },
+  name: 'productCom',
+  props: {
+    initListQuery: {
+      type: Object,
+      default() {
+        return {
+          code: '',
+          name: '',
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ],
+          pageNum: 1,
+          pageSize: 20,
+          drawingNo: '', // 图号
+          productSource: '', // 产品来源
+          startAndEndTime: [], // 创建时间
+          productCategoryId: '', // 类型id
+          productStatus: '', // 产品状态
+          customerQueryFields: [],
+          createTimeArr: [],
+          classAttribute: 'raw_material'
+        }
+      }
+    },
+    productName: {
+      type: String,
+      default: ''
+    },
+    busSetId: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
-      exportFormVisible: false,
-      getbimProductsModelList, // 型号管理属性列表
-      title: '更多查询',
-      background: true, //分页器背景颜色
-
-      aiformVisible: false,
-      treeData: [],
-      tableData: [],
-      treeLoading: false,
-      listLoading: false,
-      loadingText: false,
-      leftFlag: false,
-      initListQuery: {
-        code: '',
-        name: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        drawingNo: '', // 图号
-        productSource: '', // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: 'finish_product'
-      },
-      listQuery: {},
-      productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
-      productSourceList: [
-        { label: '自制', value: 'produce' },
-        { label: '采购', value: 'purchase' },
-        { label: '外协', value: 'out' }
-      ], // 产品来源
-      total: 0,
-      formVisible: false,
-      expands: true,
-      refreshTree: true,
-      defaultProps: {
-        children: 'childrenList',
-        label: 'name'
-      },
-      columnList: [
-        'name',
-        'mainUnit',
-        'brand',
-        'model',
-        'sealingCoverStructure',
-        'sealingCoverTyping',
-        'structureType',
-        'clearance',
-        'steelBallManufacturer',
-        'oil',
-        'oilQuantity',
-        'noise',
-        'holder',
-        'vibrationLevel',
-        'accuracyLevel',
-        'colour',
-        'aperture',
-        'remark',
-        'createByName',
-        'createTime'
-      ],
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -406,7 +342,6 @@ export default {
           options: []
         },
 
-
         {
           prop: 'oil',
           label: '油脂',
@@ -475,8 +410,32 @@ export default {
           type: 'input'
         }
       ],
-      filterText: '',
-      uploadVisib: false
+      columnList: ['remark', 'createTime', 'createByName'],
+      exportFormVisible: false,
+      title: '更多查询',
+      background: true, //分页器背景颜色
+      treeData: [],
+      tableData: [],
+      treeLoading: false,
+      listLoading: false,
+      loadingText: false,
+      listQuery: {},
+      productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
+      productSourceList: [
+        { label: '自制', value: 'produce' },
+        { label: '采购', value: 'purchase' },
+        { label: '外协', value: 'out' }
+      ], // 产品来源
+      total: 0,
+      formVisible: false,
+      expands: true,
+      refreshTree: true,
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      uploadVisib: false,
+      leftFlag: false
     }
   },
   watch: {
@@ -487,32 +446,18 @@ export default {
   mounted() {
     this.getProductClassFun()
   },
-  created() {
-    if (localStorage.getItem("finishedFlag")) {
-      let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
-      this.expands = roleFlag
-      this.toggleExpand(roleFlag)
-    }
-    this.getcategoryTree()
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
-    this.initData()
-  },
   computed: {
     ...mapState('user', ['token'])
   },
   methods: {
-    // 选择型号 带出 密封盖 结构 打字 结构类型 游隙 钢球厂家 油脂 噪音 保持架
-    modelChange(val, data, paramsObj) {
-      this.$nextTick(() => {
-        this.$refs['dataForm'][paramsObj.tabInd].$children[0].validateField(paramsObj.prop)
-      })
-      if (data && data.length) {
-        // 数据有效，进行更新
-        this.dataForm[paramsObj.prop] = data[0].all.model
-      } else {
-        // 不选择任何内容，置空绑定的值
-        this.dataForm[paramsObj.prop] = ''
+    init(initListQuery) {
+      this.listQuery = JSON.parse(JSON.stringify(initListQuery))
+      this.getcategoryTree()
+      this.initData()
+      if (localStorage.getItem(this.busSetId)) {
+        let roleFlag = JSON.parse(localStorage.getItem(this.busSetId))
+        this.expands = roleFlag
+        this.toggleExpand(roleFlag)
       }
     },
     superQuerySearch(query) {
@@ -747,7 +692,6 @@ export default {
         pageSize: 100
       }
       getUnitData(obj8).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -768,7 +712,6 @@ export default {
         pageSize: 20
       }
       getbimProductsModelList(obj9).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -833,7 +776,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj11).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -865,7 +807,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj12).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -918,7 +859,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj14).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -950,7 +890,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj15).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -983,7 +922,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj16).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1016,7 +954,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj17).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -1039,7 +976,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-
       })
     },
     changeLeft() {
@@ -1047,6 +983,18 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    handleRemove(file, fileList) { },
+    handlePreview(file) { },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
+    saveSubmit() {
+      this.UploadProduct(this.file)
     },
     // 导出
     exportForm() {
@@ -1069,7 +1017,7 @@ export default {
         let _data = {
           ...this.listQuery,
           exportType: '1200',
-          exportName: '成品信息',
+          exportName: this.productName + '信息',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
@@ -1099,7 +1047,7 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem("finishedFlag", expands)
+        localStorage.setItem(this.busSetId, expands)
       })
     },
     filterNode(value, data) {
@@ -1111,7 +1059,7 @@ export default {
       this.listLoading = true
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
-      getcategoryTree({ classAttribute: 'finish_product' })
+      getcategoryTree({ classAttribute: this.listQuery.classAttribute })
         .then((res) => {
           this.treeData = res.data.length ? res.data : []
           this.$nextTick(() => {
@@ -1127,7 +1075,6 @@ export default {
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
       this.listQuery.productCategoryId = data.id
-      this.listQuery.productCategoryCode = data.code
       this.search()
     },
 
@@ -1140,8 +1087,8 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.aiformVisible = false
       if (isRefresh) {
+        this.getcategoryTree()
         this.initData()
       }
     },
@@ -1173,7 +1120,7 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
       this.filterText = ''
-      this.initData()
+      this.search()
     },
 
     addOrUpdateHandle(id, btnType) {
@@ -1207,26 +1154,15 @@ export default {
         this.uploadVisib = true
       }
     },
-    handleRemove(file, fileList) {
-
-    },
-    handlePreview(file) {
-
-    },
-    handleFileChange(file) {
-
-      this.file = file.raw
-    },
     // 下载模板
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/成品导入模板.xlsx')
+      a.setAttribute('href', location.origin + `/static/${this.productName}导入模板.xlsx`)
       a.click()
     },
     // 上传产品
     UploadProduct(data) {
-
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -1234,15 +1170,14 @@ export default {
       formData.append('productCategoryId', this.listQuery.productCategoryId)
       formData.append('classAttribute', this.listQuery.classAttribute)
       //调用上传文件接口
-      uploadCpProductData(formData)
+      uploadProductData(formData)
         .then((res) => {
           if (!res.data) {
             this.$message.success(`导入成功`)
             this.uploadVisib = false
-            this.$refs['UploadProduct']
+            this.$refs['uploadRef'].clearFiles()
             this.initData()
           } else {
-            this.uploadVisib = false
             this.handleMessage(res.data)
           }
 
@@ -1250,7 +1185,6 @@ export default {
           this.loadingText = ''
         })
         .catch((err) => {
-          this.uploadVisib = false
           this.$message.error(`导入数据超过最大限制：500`)
           this.formLoading = false
           this.loadingText = ''
@@ -1261,13 +1195,6 @@ export default {
       this.jnpf.downloadFile(res.url, res.name)
       this.uploadVisib = false
       this.$refs['uploadRef'].clearFiles()
-    },
-    cancelFun() {
-      this.uploadVisib = false
-      this.$refs['uploadRef'].clearFiles()
-    },
-    saveSubmit() {
-      this.UploadProduct(this.file)
     },
     // 提示
     handleMessage(data) {
@@ -1283,7 +1210,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, '导入成功，存在成品产品档案错误！'),
+            h('p', { style: 'font-size:14px;' }, `导入成功，存在${this.productName}产品档案错误！`),
             h(
               'el-button',
               {
@@ -1310,18 +1237,6 @@ export default {
         )
       })
       return
-    },
-    // 智能新建
-    aiAdd() {
-      this.aiformVisible = true
-      this.$nextTick(() => {
-        this.$refs.aiForm.init()
-      })
-    },
-    superQuerySearch(query) {
-      this.listQuery.superQuery = query
-      this.superQueryVisible = false
-      this.search()
     }
   }
 }

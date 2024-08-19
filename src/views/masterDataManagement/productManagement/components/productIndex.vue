@@ -10,9 +10,15 @@
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
@@ -93,7 +99,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
-          ref="dataTable">
+          ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
@@ -157,7 +163,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"
       :classAttribute="listQuery.classAttribute" :productName="productName" :busSetId="busSetId" />
-  
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
@@ -248,6 +254,7 @@ export default {
   },
   data() {
     return {
+      filterText: '',
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -403,6 +410,7 @@ export default {
           type: 'input'
         }
       ],
+      columnList: ['remark', 'createTime', 'createByName'],
       exportFormVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -430,6 +438,11 @@ export default {
       leftFlag: false
     }
   },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
+    }
+  },
   mounted() {
     this.getProductClassFun()
   },
@@ -437,6 +450,11 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getcategoryTree()
     this.initData()
+    if (localStorage.getItem(this.busSetId)) {
+      let roleFlag = JSON.parse(localStorage.getItem(this.busSetId))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
   },
   computed: {
     ...mapState('user', ['token'])
@@ -1023,6 +1041,15 @@ export default {
         })
       })
     },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem(this.busSetId, expands)
+      })
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
@@ -1050,7 +1077,7 @@ export default {
       this.listQuery.productCategoryId = data.id
       this.search()
     },
-  
+
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.listQuery.orderItems[0].asc = order === 'ascending'
@@ -1079,7 +1106,7 @@ export default {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
-        
+
         })
         .catch(() => {
           this.listLoading = false
@@ -1092,6 +1119,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.search()
     },
 

@@ -21,17 +21,17 @@
               :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="分类编码" prop="code">
-          <template slot="label">
-            分类编码<span class="required">*</span>
-          </template>
-          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
-        </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <template slot="label">
             分类名称<span class="required">*</span>
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="分类编码" prop="code">
+          <template slot="label">
+            分类编码<span class="required">*</span>
+          </template>
+          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
         </el-form-item>
         <el-form-item label="类型" prop="classType">
           <el-select v-model="dataForm.classType" placeholder="请选择类型" clearable style="width: 100%;">

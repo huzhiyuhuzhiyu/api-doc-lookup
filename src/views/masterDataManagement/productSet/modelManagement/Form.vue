@@ -85,7 +85,7 @@ export default {
       ProductTableSearchList: [
         { prop: "code", label: "产品编码", type: 'input', },
         { prop: "name", label: "产品名称", type: 'input', },
-        { prop: "drawingNo", label: "产品图号", type: 'input' }
+        { prop: "drawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
       ProductMethodArr: [
         { label: "物料分类", classAttribute: "", method: getcategoryTree, requestObj: { classAttribute: "" } },
@@ -111,7 +111,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '产品图号', minWidth: 0 },
+        { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'mainUnit', label: '主单位', minWidth: 0 },
         { prop: 'productType', label: '产品类别', minWidth: 0 },
         { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
@@ -280,11 +280,11 @@ export default {
         if (this.btnType == 'edit') {
           getbimProductsModelInfo(this.dataForm.id).then(res => {
             console.log("详情", res);
-            this.dataForm=res.data
-            this.autoModel=res.data.model
+            this.dataForm = res.data
+            this.autoModel = res.data.model
           })
         }
-    
+
       });
       // this.$store.commit('generator/UPDATE_RELATION_DATA', {})
     },
@@ -295,29 +295,29 @@ export default {
         if (valid) {
           this.btnLoading = true
           console.log(this.dataForm);
-          let arr=[]
-          arr[0]=this.dataForm
+          let arr = []
+          arr[0] = this.dataForm
           let formMethod = this.dataForm.id ? updataBimProductsModel : addBimProductsModel
-          formMethod(arr).then(res=>{
+          formMethod(arr).then(res => {
             let msg = formMethod === updataBimProductsModel ? '编辑成功' : '新增成功'
             this.$message.success(msg)
             this.visible = false
             this.btnLoading = false
             this.$emit('refresh', true)
-          }).catch(error=>{
-            this.btnLoading=false
+          }).catch(error => {
+            this.btnLoading = false
           })
         }
       })
 
 
-     
-     
 
 
-    
 
-     
+
+
+
+
 
     },
 

@@ -80,11 +80,7 @@
             <el-table-column prop="name" label="产品名称" min-width="180" />
             <el-table-column prop="code" label="产品编码" min-width="180" />
             <el-table-column prop="type" label="产品类型" min-width="160" />
-            <el-table-column prop="unit" label="产品单位" min-width="120">
-              <template slot-scope="scope">
-                {{returnTypeVisitForm(scope.row.unit)}}
-              </template>
-            </el-table-column>
+            <el-table-column prop="unit" label="产品单位" min-width="120" />
             <el-table-column prop="price" label="价格(元)" min-width="140" />
             <el-table-column prop="describe" label="产品描述" min-width="300" />
             <el-table-column prop="costPrice" label="成本价(元)" min-width="140" />
@@ -252,7 +248,7 @@ export default {
     }
   },
   created() {
-    this.getDictionaryType()
+    // this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getcategoryTree()
   },

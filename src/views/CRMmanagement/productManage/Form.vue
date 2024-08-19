@@ -44,7 +44,7 @@
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="产品单位" prop="unit">
                         <el-select v-model="dataForm.unit" placeholder="请选择产品单位" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                          <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.fullName"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>

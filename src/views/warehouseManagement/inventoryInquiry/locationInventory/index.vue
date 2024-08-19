@@ -128,8 +128,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom"/>
-          <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom"/>
-          <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom"/>
+          <el-table-column prop="warehouseName" label="仓库名称/货位名称" min-width="180" sortable="custom">
+            <template slot-scope="scope">
+              <div>{{ scope.row.warehouseName+'/'+scope.row.shelfSpaceName }}</div>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom"/> -->
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom"/>
           
         </JNPF-table>

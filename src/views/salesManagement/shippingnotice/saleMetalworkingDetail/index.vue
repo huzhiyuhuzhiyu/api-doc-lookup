@@ -234,13 +234,7 @@ export default {
         { label: "审批拒绝", value: "rebut" },
       ],
 
-      departMentList: [
-        { label: "送货", value: "deliver_goods" },
-        { label: "自提", value: "self_pickup" },
-        { label: "快递", value: "express_delivery" },
-        { label: "货运", value: "freight_transport" },
-        { label: "到付", value: "collect_payment" },
-      ],
+       
       paymentMethodList: [],
       paymentCycleList: [],
       orderForm: {},
@@ -445,9 +439,10 @@ export default {
     }
   },
   mounted() {
-    this.getProductClassFun()
+    this.getProductClassFun() 
   },
   methods: {
+  
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
 

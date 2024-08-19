@@ -1158,7 +1158,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + `/static/${this.productName}导入模板.xlsx`)
+      a.setAttribute('href', location.origin + `/static/产品导入模板.xlsx`)
       a.click()
     },
     // 上传产品
@@ -1210,7 +1210,7 @@ export default {
             style: 'padding-right:20px;display:flex;align-items:center;color:#f56c6c;'
           },
           [
-            h('p', { style: 'font-size:14px;' }, `导入成功，存在${this.productName}产品档案错误！`),
+            h('p', { style: 'font-size:14px;' }, `导入成功，存在产品档案错误！`),
             h(
               'el-button',
               {

@@ -132,7 +132,7 @@ const actions = {
             }
             if (e.type == 2) {
               let path = e.urlAddress
-              // console.log(e.urlAddress);
+           
               
               let reg = /\$\{[^}]+\}/
               let reg2 = /\$\{\{[^}]+\}\}/
@@ -164,7 +164,7 @@ const actions = {
                   }
                 }
               }
-              console.log(reg2.test(e.urlAddress),'reg2.test(e.urlAddress)')
+              
               if (reg2.test(e.urlAddress)){
                 newObj = {
                   path: '/' + path,

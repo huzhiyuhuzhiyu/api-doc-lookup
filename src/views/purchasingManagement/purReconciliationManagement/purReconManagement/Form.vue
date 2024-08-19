@@ -758,7 +758,7 @@ export default {
       const formattedDate = `${year}-${month}-${date}`
       this.dataForm.reconciliationDate = formattedDate
       // // 审批
-      // this.$nextTick(() => { this.getApproverData() })
+      this.$nextTick(() => { this.getApproverData() })
     },
     // 表单提交
     dataFormSubmit() {
@@ -769,117 +769,117 @@ export default {
       // this.btnLoading = true
       let submitFlag = true
       // // 审批条件参数列表
-      // let nodeCondList = []
+      let nodeCondList = []
       // // 审批抄送人列表
-      // let ccList = []
+      let ccList = []
       let ccLists = []
       let nodeJudg = []
       // // 业务审批单流程节点列表
       let formNodeList = []
       // // 业务审批单
       let form = {}
-      // let templateLineList = []
-      // if (this.busNodeConfig.childNode) {
-      //   let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-      //   let flattenedNodes = this.flattenNodes(data);
-      //   flattenedNodes.splice(0, 1)
-      //   flattenedNodes = flattenedNodes.map(item => {
-      //     return {
-      //       ...item,
-      //       nodeUserList: item.nodeUserList ? item.nodeUserList : []
-      //     }
-      //   })
-      //   templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-      //   // 抄送人节点数组 ccList
-      //   ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
+      let templateLineList = []
+      if (this.busNodeConfig.childNode) {
+        let data = JSON.parse(JSON.stringify(this.busNodeConfig))
+        let flattenedNodes = this.flattenNodes(data);
+        flattenedNodes.splice(0, 1)
+        flattenedNodes = flattenedNodes.map(item => {
+          return {
+            ...item,
+            nodeUserList: item.nodeUserList ? item.nodeUserList : []
+          }
+        })
+        templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
+        // 抄送人节点数组 ccList
+        ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
 
-      //   for (var i = 0; i < ccList.length; i++) {
-      //     var nodeUserList = ccList[i].nodeUserList;
-      //     ccLists = ccLists.concat(nodeUserList);
-      //   }
+        for (var i = 0; i < ccList.length; i++) {
+          var nodeUserList = ccList[i].nodeUserList;
+          ccLists = ccLists.concat(nodeUserList);
+        }
 
-      //   if (templateLineList.length) {
-      //     submitFlag = templateLineList.every(item => item.nodeUserList.length)
-      //     if (!submitFlag) {
-      //       this.$message.error('审核人不能为空！')
-      //       this.btnLoading = false
-      //       return
-      //     }
-      //   }
-      //   if (ccList.length) {
-      //     submitFlag = ccList.every(item => item.nodeUserList.length)
-      //     if (!submitFlag) {
-      //       this.$message.error('抄送人不能为空！')
-      //       this.btnLoading = false
-      //       return
-      //     }
-      //   }
-      //   // 条件节点数组 nodeJudgmentList
-      //   nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-      //   // 业务审批单流程节点参数
-      //   formNodeList = flattenedNodes.map((item, index) => {
-      //     return {
-      //       ...item,
-      //       approvalStatus: item.name == '审核人' ? 'no' : '',
-      //       adminId: '',
-      //       id: '',
-      //       previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-      //       name: item.nodeName,
-      //       designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-      //     }
-      //   })
-      //   // 抄送人
-      //   ccLists = ccLists.map(item => {
-      //     return {
-      //       ...item,
-      //       approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
-      //       ccToId: item.targetId,
-      //       approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
-      //       id: '',
-      //       defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
-      //     }
-      //   })
-      //   // 条件列表
-      //   if (nodeCondList.length) {
-      //     nodeJudg = nodeCondList.map(item => {
-      //       return {
-      //         ...item,
-      //         approvalFormNodeCode: item.code,
-      //         businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-      //         code: item.conditionList[0].tjCode,
-      //         dataType: item.conditionList[0].dataType,
-      //         id: item.conditionList[0].id ? item.conditionList[0].id : ''
-      //       }
-      //     })
-      //   }
-      //   // 业务审批单
-      //   form = {
-      //     ...this.approvalForm,
-      //     approvalTemplateId: this.approvalForm.id,
-      //     documentStatus: 'submit',
-      //     documentId: '',
-      //     id: ''
-      //   }
-      // }
-      // if (this.dataForm.approvalFlag) {
-      //   if (!this.busNodeConfig.childNode) {
-      //     submitFlag = false
-      //     this.btnLoading = false
-      //     this.$message.error('未找到匹配的审批流程，请联系管理员！')
-      //   }
-      //   if (formNodeList.length) {
-      //     formNodeList.forEach(item => {
-      //       if (item.approvalType === 'option') {
-      //         if (!item.designatedMembersId) {
-      //           submitFlag = false
-      //           this.btnLoading = false
-      //           this.activeName = "approvalFlow"
-      //           this.$message.error('未配置发起人自选！')
-      //         }
-      //       }
-      //     })
-      //   }
-      // }
+        if (templateLineList.length) {
+          submitFlag = templateLineList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('审核人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        if (ccList.length) {
+          submitFlag = ccList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('抄送人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        // 条件节点数组 nodeJudgmentList
+        nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
+        // 业务审批单流程节点参数
+        formNodeList = flattenedNodes.map((item, index) => {
+          return {
+            ...item,
+            approvalStatus: item.name == '审核人' ? 'no' : '',
+            adminId: '',
+            id: '',
+            previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
+            name: item.nodeName,
+            designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
+          }
+        })
+        // 抄送人
+        ccLists = ccLists.map(item => {
+          return {
+            ...item,
+            approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
+            ccToId: item.targetId,
+            approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
+            id: '',
+            defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
+          }
+        })
+        // 条件列表
+        if (nodeCondList.length) {
+          nodeJudg = nodeCondList.map(item => {
+            return {
+              ...item,
+              approvalFormNodeCode: item.code,
+              businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
+              code: item.conditionList[0].tjCode,
+              dataType: item.conditionList[0].dataType,
+              id: item.conditionList[0].id ? item.conditionList[0].id : ''
+            }
+          })
+        }
+        // 业务审批单
+        form = {
+          ...this.approvalForm,
+          approvalTemplateId: this.approvalForm.id,
+          documentStatus: 'submit',
+          documentId: '',
+          id: ''
+        }
+      }
+      if (this.dataForm.approvalFlag) {
+        if (!this.busNodeConfig.childNode) {
+          submitFlag = false
+          this.btnLoading = false
+          this.$message.error('未找到匹配的审批流程，请联系管理员！')
+        }
+        if (formNodeList.length) {
+          formNodeList.forEach(item => {
+            if (item.approvalType === 'option') {
+              if (!item.designatedMembersId) {
+                submitFlag = false
+                this.btnLoading = false
+                this.activeName = "approvalFlow"
+                this.$message.error('未配置发起人自选！')
+              }
+            }
+          })
+        }
+      }
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       console.log(this.dataForm, '参数')
@@ -1073,7 +1073,7 @@ export default {
       let foundSymbol = '' // 条件符号
       let result = null // 判断条件是否成立
       let condList = []
-      getBusDetail('b013').then((res) => {
+      getBusDetail('b012').then((res) => {
         console.log(res)
         state = res.data.business.state
         condExpress = res.data.business.condExpress
@@ -1109,7 +1109,7 @@ export default {
             // }
             if (result) {
               let query = {
-                businessCode: 'b013',
+                businessCode: 'b012',
                 condList
               }
               busApprovalFlowTree(query).then((res) => {
@@ -1141,7 +1141,7 @@ export default {
         if (state === 'enable') {
           this.dataForm.approvalFlag = 1
           let query = {
-            businessCode: 'b013',
+            businessCode: 'b012',
             condList
           }
           busApprovalFlowTree(query).then((res) => {

@@ -1,6 +1,6 @@
 <template>
   <FinishedProduct v-if="code == 'finished_product'"></FinishedProduct>
-  <ProductIndex v-else ref="productIndex" :initListQuery="initListQuery" :productName="name" :busSetId="productCode" />
+  <ProductIndex v-else ref="productIndex" :initListQuery="initListQuery" :productName="name" :busSetId="'CPBM'" />
 </template>
 
 <script>
@@ -18,7 +18,7 @@ export default {
   created() {
     this.name = this.$route.meta.zhTitle
     this.code = this.$route.meta.title
-    this.productCode = this.$route.query.productCode
+    // this.productCode = this.$route.query.productCode
 
     this.initListQuery = {
       code: "",

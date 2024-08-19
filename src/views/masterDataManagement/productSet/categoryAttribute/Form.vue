@@ -21,20 +21,14 @@
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入类别编码" maxlength="20" :disabled="dataForm.id" />
         </el-form-item>
-        <el-form-item label="产品编码" prop="productCode">
+        <el-form-item label="类别图标" v-if="!dataForm.id">
           <template slot="label">
-            产品编码<span class="required">*</span>
-          </template>
-          <el-input v-model="dataForm.productCode" placeholder="请输入产品编码" maxlength="20"  />
-        </el-form-item>
-        <el-form-item label="图标" v-if="!dataForm.id">
-          <template slot="label">
-            图标
+            类别图标
             <span class="required">*</span>
           </template>
           <el-row type="flex">
             <div style="flex:1;">
-              <el-input v-model="dataForm.icon" placeholder="请选择图标" readonly :suffix-icon="dataForm.icon">
+              <el-input v-model="dataForm.icon" placeholder="请选择类别图标" readonly :suffix-icon="dataForm.icon">
                 <el-button slot="append" @click="openIconBox">选择</el-button>
               </el-input>
             </div>
@@ -51,10 +45,10 @@
             ]" /> -->
           </el-row>
         </el-form-item>
-        <el-form-item label="排序" prop="sortCode" v-if="!dataForm.id">
+        <!-- <el-form-item label="排序" prop="sortCode" v-if="!dataForm.id">
           <el-input-number style="width: 100%;" :min="0" :max="999999" v-model="dataForm.sortCode"
             controls-position="right" />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="备注" prop="remark">
           <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" placeholder="请输入备注" />
         </el-form-item>
@@ -92,7 +86,6 @@ export default {
         name: '',
         remark: '',
         code: '',
-        productCode: '',
         propertyJson: {
           moduleId: '',
           iconBackgroundColor: '',
@@ -224,10 +217,9 @@ export default {
               linkTarget: '_self',
               parentId: '568432565338243269',
               propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 10,
               systemId: '309228585019769285',
               type: 2,
-              urlAddress: 'masterDataManagement/productManagement/${{' + this.dataForm.code + '}}/?productCode=' + this.dataForm.productCode
+              urlAddress: 'masterDataManagement/productManagement/${{' + this.dataForm.code + '}}'
             }
           ]
         }

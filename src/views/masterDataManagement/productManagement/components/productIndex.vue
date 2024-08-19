@@ -1158,7 +1158,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + `/static/${this.productName}导入模板.xlsx`)
+      a.setAttribute('href', location.origin + `/static/产品导入模板.xlsx`)
       a.click()
     },
     // 上传产品

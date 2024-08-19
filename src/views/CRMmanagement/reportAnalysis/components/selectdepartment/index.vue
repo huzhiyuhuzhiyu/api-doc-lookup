@@ -69,6 +69,7 @@ export default {
         this.personnellist = organizelist.data.map(item => item.id)
       } else if (this.dataForm.code == 'brjxs') {
         let Subordinates = await getSubordinate(this.userInfo.userId)
+        Subordinates.data.push({id:this.userInfo.userId})
         this.personnellist = Subordinates.data.map(item => item.id)
       } else if (this.dataForm.code == 'jbr') {
         this.personnellist = [this.userInfo.userId]

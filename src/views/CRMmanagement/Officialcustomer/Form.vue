@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div class="JNPF-common-page-header">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType=='look' ? '查看正式客户' :btnType=='add'? '新建正式客户' :'编辑正式客户'" />
+        <el-page-header @back="goBack" :content="btnType=='look' ? '查看成交客户' :btnType=='add'? '新建成交客户' :'编辑成交客户'" />
         <div class="options">
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm()" v-if="btnType!='look'">
             提交</el-button>

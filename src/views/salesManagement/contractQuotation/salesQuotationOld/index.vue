@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.quotationNo" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="quotationNoS" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.cooperativePartnerIdText" placeholder="请输入客户名称" clearable
+                <el-input v-model="cooperativePartnerIdTextS" placeholder="请输入客户名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.bidder" placeholder="请输入报价人" clearable @keyup.enter.native="search()" />
+                <el-input v-model="bidderS" placeholder="请输入报价人" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -65,8 +65,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="deliver" label="致" width="200" />
-            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" width="200" />
-            <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" width="200" />
+            <el-table-column prop="cooperativePartnerCode" label="客户编码" sortable="custom" min-width="120" />
+            <el-table-column prop="cooperativePartnerIdText" label="客户名称" sortable="custom" min-width="160" />
             <el-table-column prop="bidder" label="报价人" sortable="custom" width="100" />
             <el-table-column prop="quotationTime" label="报价时间" width="130" sortable="custom" />
             <el-table-column prop="validEnd" label="有效时间止" width="130" sortable="custom" />
@@ -204,7 +204,10 @@ export default {
         documentStatus: "",
         submitStartDate: '',
         submitEndDate: '',
-        superQuery: {},
+        superQuery: {
+          condition:[],
+          matchLogic:""
+        },
       },
       superQueryJson: [
         {
@@ -303,6 +306,9 @@ export default {
       listLoading: false,
       total: 0,
       formVisible: false,
+      bidderS:"",
+      cooperativePartnerIdTextS:"",
+      quotationNoS:"",
     }
   },
   created() {
@@ -341,6 +347,24 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if(this.quotationNoS){
+        this.form.superQuery.condition.push(
+          {"field":"quotationNo","fieldValue":this.quotationNoS,"symbol":"like"}
+        )
+      }
+      if(this.cooperativePartnerIdTextS){
+        this.form.superQuery.condition.push(
+          {"field":"cooperativePartnerIdText","fieldValue":this.cooperativePartnerIdTextS,"symbol":"like"}
+        )
+      }
+      if(this.bidderS){
+        this.form.superQuery.condition.push(
+          {"field":"bidder","fieldValue":this.bidderS,"symbol":"like"}
+        )
+      }
+      if(this.quotationNoS||this.cooperativePartnerIdTextS||this.bidderS){
+        this.$set(this.form.superQuery,'matchLogic','AND')
+      }
       getQuotationLists(this.form).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false
@@ -377,6 +401,9 @@ export default {
 
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.form = JSON.parse(JSON.stringify(this.formlist))
+      this.quotationNoS=""
+      this.cooperativePartnerIdTextS=""
+      this.bidderS=""
       this.quotationTime = [],
         this.submitDate = []
 
@@ -449,7 +476,7 @@ export default {
       let _data = {
         ...targetListQuery,
         exportType: '1054',
-        exportName:  '报价单列表',
+        exportName:  '销售报价单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

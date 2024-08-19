@@ -7,18 +7,18 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="请输入订单号" clearable />
+                <el-input v-model="orderNoS" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
-                  placeholder="请输入客户名称" clearable />
+                <el-input v-model="cooperativePartnerNameS" @keyup.enter.native="search()"
+                  placeholder="客户名称" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" @keyup.enter.native="search()" placeholder="请输入 客户料号"
+                <el-input v-model="customerProductNoS" @keyup.enter.native="search()" placeholder="客户料号"
                   clearable />
               </el-form-item>
             </el-col>
@@ -170,6 +170,9 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
+      customerProductNoS:"",
+      cooperativePartnerNameS:"",
+      orderNoS:"",
       totalNum: 0,
       columnList: ["cooperativePartnerCode", "departmentName", "productName", "deputyUnit", "assistantNum", "taxRate", "createTime",],
       orderFollowVisible: false,
@@ -208,7 +211,10 @@ export default {
           column: "t1.create_time"
         }],
 
-        superQuery: {},
+        superQuery: {
+          condition:[],
+          matchLogic:""
+        },
       },
 
       detailTotal: 0,
@@ -841,6 +847,25 @@ export default {
     },
     initData() {
       this.listLoading = true
+      this.listLoading = true
+      if(this.orderNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
+        )
+      }
+      if(this.customerProductNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"customerProductNo","fieldValue":this.customerProductNoS,"symbol":"like"}
+        )
+      }
+      if(this.cooperativePartnerNameS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"cooperativePartnerName","fieldValue":this.cooperativePartnerNameS,"symbol":"like"}
+        )
+      }
+      if(this.orderNoS||this.customerProductNoS||this.cooperativePartnerNameS){
+        this.$set(this.orderForm.superQuery,'matchLogic','AND')
+      }
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -889,8 +914,15 @@ export default {
           asc: false,
           column: "t1.create_time"
         }],
-
+        superQuery: {
+          condition:[],
+          matchLogic:""
+        },
       }
+      this.customerProductNoS="",
+      this.cooperativePartnerNameS="",
+      this.orderNoS="",
+      this.$refs.SuperQuery.conditionList = []
 
       this.search()
     },

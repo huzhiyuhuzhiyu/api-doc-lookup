@@ -7,12 +7,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderNoS" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="partnerNameS" placeholder="客户名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -193,6 +193,8 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      partnerNameS:"",
+      orderNoS:"",
       superQueryVisible:false,
       columnList: ["partnerCode", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       rdeDateArr: [],
@@ -272,7 +274,10 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
 
       detailTotal: 0,
@@ -421,8 +426,9 @@ export default {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发货`)
-      this.$confirm('您确认取消选中的发货通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
-        type: 'warning'
+      this.$confirm('您确认取消选中的发货通知单吗(已备货商品需手动处理)？', this.$t('common.tipTitle'), {
+        type: 'warning',
+        customClass: 'custom-confirm',
       }).then(() => {
         let a = this.selectArr.map(item => {
           return item.id
@@ -505,7 +511,20 @@ export default {
     },
     initData() {
       this.listLoading = true
-
+      if(this.orderNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
+        )
+      }
+      if(this.partnerNameS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"partnerName","fieldValue":this.partnerNameS,"symbol":"like"}
+        )
+      }
+       
+      if(this.orderNoS||this.partnerNameS ){
+        this.$set(this.orderForm.superQuery,'matchLogic','AND')
+      }
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -539,7 +558,9 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
+      this.orderNoS= ""
+      this.partnerNameS= ""
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, btntype) {
@@ -621,4 +642,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.custom-confirm  {  
+  width: 440px; /* 自定义弹框宽度 */  
+} </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

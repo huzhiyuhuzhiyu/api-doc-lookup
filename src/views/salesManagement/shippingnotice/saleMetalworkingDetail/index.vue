@@ -7,25 +7,24 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderNoS" placeholder="单号" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="partnerNameS" placeholder="客户名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="customerDrawingNumberS"  placeholder="客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerDrawingNumber" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -93,7 +92,7 @@
             <el-table-column prop="oilQuantity" label="油脂量" width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" width="160" />
+            <el-table-column prop="specialRequire" label="特殊要求" width="160" sortable="custom" />
             <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
             <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
               <template slot-scope="scope">
@@ -180,6 +179,10 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
+      orderNoS: "",
+      partnerNameS: "",
+      customerDrawingNumber: "",
+      productDrawingNoS: "",
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -257,7 +260,10 @@ export default {
         endTime: '',
         pageNum: 1,
         pageSize: 20,
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
         orderItems: [{
           asc: false,
           column: ""
@@ -671,7 +677,7 @@ export default {
           oilObj.options = arr;
         }
       })
-      
+
       let obj8 = {
         pageNum: -1,
         pageSize: 20,
@@ -759,7 +765,7 @@ export default {
         type: 'warning'
       }).then(() => {
         let a = this.selectArr.map(item => {
-          return item.id
+          return item.returnDeliveryNoticeId
         })
         this.qxbtnLoading = true
         Cancelshipmentlist(a).then(res => {
@@ -838,6 +844,30 @@ export default {
     },
     initData() {
       this.listLoading = true
+     
+      if(this.orderNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
+        )
+      }
+      if(this.partnerNameS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"partnerName","fieldValue":this.partnerNameS,"symbol":"like"}
+        )
+      }
+      if(this.customerDrawingNumberS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"customerDrawingNumber","fieldValue":this.customerDrawingNumber,"symbol":"like"}
+        )
+      }
+      if(this.productDrawingNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"productDrawingNo","fieldValue":this.productDrawingNo,"symbol":"like"}
+        )
+      }
+      if(this.orderNoS||this.partnerNameS||this.customerDrawingNumberS||this.productDrawingNoS){
+        this.$set(this.orderForm.superQuery,'matchLogic','AND')
+      }
       getQuotationdatasenddatalist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -883,7 +913,11 @@ export default {
       this.orderDateArr = []
       this.deliveryDateArr = []
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-
+      this.orderNoS= ""
+      this.partnerNameS= ""
+      this.customerDrawingNumberS= ""
+      this.productDrawingNoS= ""
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, btntype) {

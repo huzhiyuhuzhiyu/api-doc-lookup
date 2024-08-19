@@ -7,7 +7,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="订单号"
+                <el-input v-model=" orderNoS" @keyup.enter.native="search()" placeholder="订单号"
                   clearable />
               </el-form-item>
             </el-col>
@@ -158,7 +158,7 @@ export default {
       treeLoading: false,
       listLoading: false,
       detailFlag: false,
-
+      orderNoS:"",
       orderForm: {
 
         approvalStatus: "ok",
@@ -175,7 +175,10 @@ export default {
           column: ""
         }],
 
-        superQuery: {},
+        superQuery: {
+            condition:[],
+          matchLogic:""
+        },
       },
 
       detailTotal: 0,
@@ -825,6 +828,15 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if(this.orderNoS){
+        this.orderForm.superQuery.condition.push(
+          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
+        )
+      }
+      
+      if(this.orderNoS){
+        this.$set(this.orderForm.superQuery,'matchLogic','AND')
+      }
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.getOrderLineReportFun()
@@ -846,16 +858,16 @@ export default {
       // 默认设置为近3天  
       const end = new Date();
       const start = new Date();
-
       end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = [start, end];
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
       this.orderForm = {
 
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
         deliveryEndTime: this.dateFun(this.deliveryDateArr[1]),
-        deliveryStartTime: this.dateFun(this.deliveryDateArr[0]),
+        deliveryStartTime: "",
         extensionFlag: 1,
         deliverQueryFlag: 1,
         pageNum: 1,
@@ -868,9 +880,13 @@ export default {
           column: "t1.create_time"
         }],
 
-        superQuery: {},
+        superQuery: {
+            condition:[],
+          matchLogic:""
+        },
       }
-
+      this.orderNoS=""
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
 

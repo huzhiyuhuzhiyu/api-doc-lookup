@@ -8,8 +8,8 @@
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item> -->
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -23,8 +23,9 @@
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ `${data.name}` }}</span>
           </span>
         </el-tree>
@@ -55,9 +56,9 @@
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                {{ $t('common.search') }}
               </el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
         </el-form>
@@ -80,14 +81,17 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom">
-          </el-table-column>
+          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
           <el-table-column prop="productCategoryIdText" label="所属分类" min-width="180" sortable="custom" />
           <el-table-column prop="pricingType" label="计价类型" width="140" sortable="custom">
-            <template slot-scope="{row}">
-              <template v-if="row.pricingType == 'by_time'">计时</template>
-              <template v-else-if="row.pricingType == 'by_piece'">计件</template>
+            <template slot-scope="{ row }">
+              <template v-if="row.pricingType == 'by_time'">
+                计时
+              </template>
+              <template v-else-if="row.pricingType == 'by_piece'">
+                计件
+              </template>
             </template>
           </el-table-column>
           <el-table-column prop="unitPrice" label="正品单价" width="160">
@@ -149,12 +153,10 @@
 </template>
 
 <script>
-import { getBimProcessList, updatebimProcessPrice } from "@/api/bimProcess/index";
+import { getBimProcessList, updatebimProcessPrice } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   components: { SuperQuery },
   data() {
@@ -163,131 +165,33 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderNo',
-          label: '单号',
+          prop: 'code',
+          label: '工序编码',
           type: 'input'
         },
         {
-          prop: 'partnerName',
-          label: '客户名称',
+          prop: 'name',
+          label: '工序名称',
           type: 'input'
         },
         {
-          prop: 'deliverDate',
-          label: '退货日期',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
+          prop: 'pricingType',
+          label: '计价类型',
+          type: 'select',
+          options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
         },
 
         {
-          prop: 'customerProductNo',
-          label: '客户料号',
+          prop: 'unitPrice',
+          label: '正品单价',
           type: 'input'
         },
         {
-          prop: 'productDrawingNo',
-          label: '品名规格',
+          prop: 'timePrice',
+          label: '计时单价',
           type: 'input'
-        },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位',
-          type: 'input'
-        },
-        {
-          prop: 'deliveryQuantity',
-          label: '退货数量',
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
         },
 
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'ordersNo',
-          label: '订单号',
-          type: 'input'
-        },
-        {
-          prop: 'exchangeGoodsFlag',
-          label: '退货标识',
-          type: 'select',
-          options: [{ label: '换货', value: true }, { label: '退货', value: false }]
-        },
-        {
-          prop: 'deliveryStatus',
-          label: '退货状态',
-          type: 'select',
-          options: [
-            { label: '待退货', value: 'not_returned' },
-            { label: '已退货', value: 'returned' },
-            { label: '已取消', value: 'canceled' }
-          ]
-        },
-        {
-          prop: 'documentStatus',
-          label: '单据状态',
-          type: 'select',
-          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
-        },
-        {
-          prop: 'approvalStatus',
-          label: '审批状态',
-          type: 'select',
-          options: [
-            { label: '审批中', value: 'ing' },
-            { label: '审批通过', value: 'ok' },
-            { label: '审批拒绝', value: 'rebut' },
-            { label: '审批撤回', value: 'withdrawn' }
-          ]
-        },
         {
           prop: 'createTime',
           label: '创建时间',
@@ -301,33 +205,31 @@ export default {
           prop: 'createByName',
           label: '创建人',
           type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        },
+        }
       ],
-      columnList: ["createByName"],
+      columnList: ['createByName','createTime'],
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        code: "",
-        name: "",
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
         pageNum: 1,
         pageSize: 20,
-        processingType: "self_produced",
-        productCategoryId: "",
+        processingType: 'self_produced',
+        productCategoryId: ''
       },
       defaultProps: {
         children: 'childrenList',
@@ -347,17 +249,15 @@ export default {
         unitPrice: ''
       },
       dataFormRules: {
-        pricingType: [
-          { required: true, message: '计价类型不能为空', trigger: 'change' }
-        ],
+        pricingType: [{ required: true, message: '计价类型不能为空', trigger: 'change' }],
         timePrice: [
-          { validator: this.formValidate({ type: 'decimal', params: [10, 4, "", (errMsg) => { }] }), trigger: 'blur' },
-          { required: true, message: '计时单价不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
+          { required: true, message: '计时单价不能为空', trigger: 'blur' }
         ],
         unitPrice: [
-          { validator: this.formValidate({ type: 'decimal', params: [10, 4, "", (errMsg) => { }] }), trigger: 'blur' },
-          { required: true, message: '正品单价不能为空', trigger: 'blur' },
-        ],
+          { validator: this.formValidate({ type: 'decimal', params: [10, 4, '', (errMsg) => { }] }), trigger: 'blur' },
+          { required: true, message: '正品单价不能为空', trigger: 'blur' }
+        ]
       },
       selectedData: []
     }
@@ -368,7 +268,7 @@ export default {
     }
   },
   created() {
-    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery));
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getcategoryTree()
   },
   methods: {
@@ -381,14 +281,14 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'productCategoryIdText') {
         newProp = prop
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
       this.listQuery.orderItems[0].asc = order === 'ascending'
-      this.listQuery.orderItems[0].column = order === null ? "" : newProp
+      this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()
     },
     // 展开或折叠全部
@@ -403,42 +303,46 @@ export default {
       })
     },
     filterNode(value, data) {
-      if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
     },
     // 获取指定树状列表
     getcategoryTree() {
       this.listLoading = true
       this.treeLoading = true
-      this.listQuery.productCategoryId = "" // 重置数据类型id筛选
+      this.listQuery.productCategoryId = '' // 重置数据类型id筛选
       let query = {
-        classAttribute: "process",
+        classAttribute: 'process',
         pageNum: 1,
-        pageSize: 20,
+        pageSize: 20
       }
-      getcategoryTree(query).then(res => {
-        this.treeData = res.data.length ? res.data : []
-        this.$nextTick(() => {
-          this.treeLoading = false
-          this.initData()
+      getcategoryTree(query)
+        .then((res) => {
+          this.treeData = res.data.length ? res.data : []
+          this.$nextTick(() => {
+            this.treeLoading = false
+            this.initData()
+          })
         })
-      }).catch(() => {
-        this.treeLoading = false
-        this.listLoading = false
-      })
+        .catch(() => {
+          this.treeLoading = false
+          this.listLoading = false
+        })
     },
     initData() {
       this.listLoading = true
-      getBimProcessList(this.listQuery).then(res => {
-        this.tableData = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
+      getBimProcessList(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
     search() {
-      Object.keys(this.listQuery).forEach(key => {
+      Object.keys(this.listQuery).forEach((key) => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -470,32 +374,36 @@ export default {
       let submitFlag = true
 
       const form_1 = this.$refs.elForm
-      const valid_1 = await form_1.validate().catch(err => false)
+      const valid_1 = await form_1.validate().catch((err) => false)
       if (!valid_1 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
       }
 
       if (submitFlag) {
-        let idList = this.selectedData.map(item => { return item.id })
+        let idList = this.selectedData.map((item) => {
+          return item.id
+        })
         let _data = {
           idList: idList,
           ...this.dataForm
         }
-        updatebimProcessPrice(_data).then(res => {
-          this.$message.success('单价设置成功')
-          this.selectedData = []
-          this.$refs.dataTable.$refs.JNPFTable.clearSelection()
-          this.analyseDialog = false
-          this.dataForm = {
-            pricingType: '',
-            timePrice: '',
-            unitPrice: ''
-          }
-          this.search()
-        }).catch(err => {
-          this.btnLoading = false
-        })
+        updatebimProcessPrice(_data)
+          .then((res) => {
+            this.$message.success('单价设置成功')
+            this.selectedData = []
+            this.$refs.dataTable.$refs.JNPFTable.clearSelection()
+            this.analyseDialog = false
+            this.dataForm = {
+              pricingType: '',
+              timePrice: '',
+              unitPrice: ''
+            }
+            this.search()
+          })
+          .catch((err) => {
+            this.btnLoading = false
+          })
       } else {
         this.btnLoading = false
       }

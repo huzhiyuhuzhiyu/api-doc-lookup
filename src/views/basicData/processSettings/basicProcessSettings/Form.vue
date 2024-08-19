@@ -26,13 +26,13 @@
                     <el-col :span="12">
                       <el-form-item label="工序编码" prop="code">
                         <el-input oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" v-model="dataForm.code"
-                          placeholder="请输入工序编码" maxlength="20"
-                          :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"></el-input>
+                          placeholder="请输入工序编码" maxlength="20" :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false
+                            "></el-input>
                       </el-form-item>
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="工序分类" prop="productCategoryIdText">
-                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'proce  ss' }"
+                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'process' }"
                           :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
                           :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
                       </el-form-item>
@@ -250,10 +250,7 @@ export default {
   },
   data() {
     return {
-      process_typeList: [
-        { label: '正常工序', value: 'normal' },
-        { label: '待装配工序', value: 'wait_assembly' },
-      ],
+      process_typeList: [{ label: '正常工序', value: 'normal' }, { label: '待装配工序', value: 'wait_assembly' }],
       getcategoryTree,
       configurationName: '',
       dialogTitle: '',
@@ -307,10 +304,8 @@ export default {
           },
           {
             validator: (rule, value, callback) => {
-              console.log(value, this.dataForm.id)
               checkBimProcessCode(value, this.dataForm.id)
                 .then((res) => {
-                  console.log('res===>', res)
                   if (res.data) {
                     callback(new Error('工序编码重复'))
                   } else {
@@ -478,11 +473,11 @@ export default {
     // this.getBusinessType()
   },
   methods: {
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code)
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
         }
       } catch (error) { }
@@ -542,7 +537,6 @@ export default {
     },
     // 选中人员的数据
     handelepersonInfoData(val) {
-      console.log(val)
       this.personArr = val
     },
     // 选中班组的数据
@@ -551,7 +545,6 @@ export default {
     },
     // 选中设备的数据
     handeledeviceInfoData(val) {
-      console.log(val, '选中设备')
       this.equipArr = val
     },
     // 选中工具的数据
@@ -596,9 +589,6 @@ export default {
         this.classArr = [] // 清空选中的行的数据
       }
       if (type === 'device') {
-        console.log('设备')
-        console.log(this.equipData)
-        console.log(this.equipArr)
         if (this.equipArr.length === 0) {
           this.$message({
             message: '请选择你要删除的数据',
@@ -636,7 +626,6 @@ export default {
     },
     // 人员数据
     submit(id, data) {
-      console.log(data, '生产资源弹框传递数据')
       // let type = Array.isArray(data) ? 'Array' : 'Object'
       // if (type === 'Object') {}
       if (data.length === 0) {
@@ -664,11 +653,9 @@ export default {
           }
         })
       }
-      console.log(this.personData, '再次添加人员')
     },
     // 班组
     WorkgroupSubmit(id, data) {
-      console.log(data, '班组')
       if (data.length === 0) {
       } else {
         let list = data.map((item) => item.all)
@@ -698,7 +685,6 @@ export default {
     },
     // 设备
     DeviceSubmit(id, data) {
-      console.log(data, '设备')
       if (data.length === 0) {
       } else {
         let list = data.map((item) => item.all)
@@ -725,7 +711,6 @@ export default {
           }
         })
       }
-      console.log(this.equipData, '设备数据')
     },
     // 工具
     ToolSubmit(id, data) {
@@ -755,7 +740,6 @@ export default {
           }
         })
       }
-      console.log(this.toolData, '工具数据')
     },
 
     handleClick(tab, event) { },
@@ -764,14 +748,11 @@ export default {
     },
     getBusinessType() {
       getBimBusinessInfo(6).then((res) => {
-        console.log(res, '业务开关详情')
         this.businessType = res.data.currentValue
       })
     },
 
     changeProductCategory(val, data, params) {
-      console.log(data)
-      console.log(this.$refs.dataForm.validateField('productCategoryIdText'))
       this.$nextTick(() => {
         this.$refs.dataForm.validateField('productCategoryIdText')
       })
@@ -781,7 +762,6 @@ export default {
       this.dataForm.productCategoryId = data[0].id
     },
     handlepricingType(e) {
-      console.log(e)
       if (e == 'by_piece') {
         this.dataForm = {
           id: this.dataForm.id, // 工序id
@@ -844,14 +824,13 @@ export default {
     },
     // 初始化内容
     init(id, type) {
-      console.log('----', id, type)
       this.autoCode = []
       this.dataForm.id = id ? id : ''
       // this.disabled = type === "true"
       this.dialogTitle = id ? (type == 'edit' ? '编辑工序' : '查看工序') : '新建工序'
       this.visible = true
       this.type = type
-      console.log('this。type', this.type)
+
       if (this.type == 'look') {
         this.disabled = true
       } else {
@@ -862,13 +841,12 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.type === 'add') {
           this.clearData()
-          this.fetchData('bm_gy_gx')
+          this.fetchData('bm_gy_gx', true)
         } else {
-          console.log('工序详情5555')
           this.loading = true
+          this.fetchData('bm_gx_gx', false)
           // 获取当前项详情
           getBimProcessDetail(id).then((res) => {
-            console.log('工序详情', res)
             this.dataForm = res.data.process
             this.resourceList = res.data.resourceList
             this.loading = false
@@ -876,7 +854,7 @@ export default {
               if (resourceList.length) {
                 const filteredData = this.resourceList.filter((item) => item.resourceType === 'personnel')
                 this.personData = filteredData
-                console.log(filteredData, 'ren')
+
                 this.personData.forEach((item, index) => {
                   this.personData[index].resourceId = item.resourceId
                   this.personData[index].jobNumber = item.jobNumber
@@ -919,7 +897,6 @@ export default {
               if (this.resourceList.length) {
                 const filteredData = this.resourceList.filter((item) => item.resourceType === 'personnel')
                 this.personData = filteredData
-                console.log(filteredData, 'ren')
 
                 const filteredData2 = this.resourceList.filter((item) => item.resourceType === 'work_group')
                 this.classData = filteredData2

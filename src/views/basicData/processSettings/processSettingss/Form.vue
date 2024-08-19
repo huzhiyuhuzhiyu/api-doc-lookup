@@ -483,15 +483,15 @@ export default {
   },
   created() { },
   methods: {
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
-        const data = await this.jnpf.getBillRuleConfigFun(code)
+        const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        if (!data.modifyFlag && data.codeWay == 'auto') {
+        if (flag) {
           this.dataForm.code = data.number
-
         }
-      } catch (error) { }
+      } catch (error) {
+      }
     },
     listDataFormatting(res) {
       let treeData = res.data.records.map((item) => {
@@ -598,18 +598,19 @@ export default {
 
         if (!this.dataForm.id) {
           this.clearData()
-          this.fetchData('bm_gy_gylx')
+          this.fetchData('bm_gy_gylx', true)
         } else {
           this.loading = true
           // this.dataForm = rowData
           // 获取当前项详情
+          this.fetchData('bm_gy_gylx', false)
           detailProcess(this.dataForm.id).then((res) => {
-            console.log(res, 'res123')
+
             this.dataForm = {
               ...this.dataForm,
               ...res.data.routing
             }
-            console.log(this.dataForm, 'form')
+
             res.data.routingLineList.forEach((item) => {
               item.name = item.processName
               item.code = item.processCode
@@ -771,7 +772,7 @@ export default {
           }
         })
       }
-      console.log(this.dataFormTwo, 'two')
+
       this.dataFormTwo = this.dataFormTwo.map((item, index) => {
         // 复制当前的item
         let newItem = { ...item }
@@ -853,7 +854,7 @@ export default {
       //   }
       //   return item
       // })
-      console.log(newArr, 'new')
+
       // let arr = [
       //   {
       //     index: 0,
@@ -1068,7 +1069,7 @@ export default {
         routingLineList: newArr,
         attachmentList: this.datafilelist
       }
-      console.log(_data, 'data')
+
       let msgs = ''
       if (type === 'draft') {
         msgs = '保存成功'
@@ -1289,8 +1290,7 @@ export default {
     },
     // 抽屉提交
     handlerConfirm(data) {
-      console.log(data, 'iiiiii888')
-      console.log(this.dataFormTwo)
+
       this.dataFormTwo[this.currntIndex].bimRoutingProcessResourceDTOList = data
       this.sourceVisibled = false
     },

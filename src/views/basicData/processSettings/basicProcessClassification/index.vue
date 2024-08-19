@@ -165,7 +165,7 @@ export default {
       btnLoading: false,
       listLoading: true,
       depFormVisible: false,
-      columnList: ['createByName']
+      columnList: ['createByName','createTime']
     }
   },
   mounted() {

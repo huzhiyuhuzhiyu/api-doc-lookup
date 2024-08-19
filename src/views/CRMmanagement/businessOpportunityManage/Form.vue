@@ -67,7 +67,7 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip />
-                    <el-table-column prop="productUnit" label="单位(主)" width="110" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
                     <el-table-column prop="costPrice" label="成本价" width="160" show-overflow-tooltip />
                     <el-table-column prop="num" label="数量" width="160">
@@ -131,7 +131,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProducts" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getcrmProductlist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -139,10 +139,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getCategoryTrees } from '@/api/basicData/index'
 import { getPartnerList } from '@/api/customerManagement/index'
-import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness } from '@/api/CRMmanagement/index'
+import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness, crmProductCategorytree, getcrmProductlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -200,25 +198,20 @@ export default {
       },
       productVisible: false,
       // totalAmount: 0,
-      ProductMethodArr: { method: getCategoryTrees, requestObj: { classAttribute: "" } },
+      ProductMethodArr: { method: crmProductCategorytree, requestObj: { keyword: "" } },
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'mainUnit', label: '单位(主)' },
+        { prop: 'price', label: '价格(元)' },
+        { prop: 'unit', label: '单位' },
       ],
       ProductTableSearchList: [
-        { prop: "code", label: "产品名称", type: 'input' },
         { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' },
+        { prop: "code", label: "产品编码", type: 'input' },
       ],
       ProductListRequestObj: {
-        classAttributeList: [],
-        classAttribute: "",
-        productDrawingNo: "",
+        productCategoryList: [],
         productCategoryId: "",
-        queryType: 2,
-        productStatus: 'enable',
         code: "",
         name: "",
         orderItems: [{
@@ -231,8 +224,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      getProducts,
-      getCategoryTrees,
+      getcrmProductlist,
+      crmProductCategorytree,
       dataFormTwo: {
         lines: []
       },
@@ -295,8 +288,10 @@ export default {
   methods: {
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.id
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryList = []
+      listQuery.productCategoryList.push(data.id)
+      listQuery.productCategoryId = data.id
       return listQuery
     },
     // 客户选框传值
@@ -520,8 +515,8 @@ export default {
         this.dataFormTwo.lines.push({
           productId: item.id,
           productName: item.name,
-          productUnit: item.mainUnit,
-          purchasePrice: item.purchasePrice,
+          productUnit: item.unit,
+          purchasePrice: item.price,
           costPrice: item.costPrice,
           id: '',
           num: '',

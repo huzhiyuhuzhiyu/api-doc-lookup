@@ -81,9 +81,8 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column
           ref="dataTable" hasC @selection-change="currentChange" :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="name" label="工序名称" min-width="180" sortable="custom" />
-          <el-table-column prop="productCategoryIdText" label="所属分类" min-width="180" sortable="custom" />
+          <el-table-column prop="code" label="工序编码" min-width="180" sortable="custom"></el-table-column>
           <el-table-column prop="pricingType" label="计价类型" width="140" sortable="custom">
             <template slot-scope="{ row }">
               <template v-if="row.pricingType == 'by_time'">
@@ -94,12 +93,12 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column prop="unitPrice" label="正品单价" width="160">
+          <el-table-column prop="unitPrice" label="计件单价(元)" width="160">
             <template slot-scope="scope">
               <div>{{ scope.row.unitPrice ? scope.row.unitPrice : 0 }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="timePrice" label="计时单价" width="160">
+          <el-table-column prop="timePrice" label="计时单价(元)" width="160">
             <template slot-scope="scope">
               <div>{{ scope.row.timePrice ? scope.row.timePrice : 0 }}</div>
             </template>
@@ -183,12 +182,12 @@ export default {
 
         {
           prop: 'unitPrice',
-          label: '正品单价',
+          label: '计件单价(元)',
           type: 'input'
         },
         {
           prop: 'timePrice',
-          label: '计时单价',
+          label: '计时单价(元)',
           type: 'input'
         },
 
@@ -207,7 +206,7 @@ export default {
           type: 'input'
         }
       ],
-      columnList: ['createByName','createTime'],
+      columnList: ['createByName', 'createTime'],
       treeData: [],
       tableData: [],
       treeLoading: false,

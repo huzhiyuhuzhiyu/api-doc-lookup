@@ -71,7 +71,7 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column label="操作" width="210" fixed="right">
+            <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="invoice(scope.row.id)" :disabled="!!scope.row.realInvoiceDate">标记为开票</el-button>
                 <el-button class="JNPF-table-delBtn" size="mini" type="text" @click="handleDel(scope.row.id, 'edit')">删除</el-button>

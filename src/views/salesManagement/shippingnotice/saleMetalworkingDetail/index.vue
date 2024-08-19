@@ -852,12 +852,12 @@ export default {
       }
       if(this.customerDrawingNumberS){
         this.orderForm.superQuery.condition.push(
-          {"field":"customerDrawingNumber","fieldValue":this.customerDrawingNumber,"symbol":"like"}
+          {"field":"customerDrawingNumber","fieldValue":this.customerDrawingNumberS,"symbol":"like"}
         )
       }
       if(this.productDrawingNoS){
         this.orderForm.superQuery.condition.push(
-          {"field":"productDrawingNo","fieldValue":this.productDrawingNo,"symbol":"like"}
+          {"field":"productDrawingNo","fieldValue":this.productDrawingNoS,"symbol":"like"}
         )
       }
       if(this.orderNoS||this.partnerNameS||this.customerDrawingNumberS||this.productDrawingNoS){

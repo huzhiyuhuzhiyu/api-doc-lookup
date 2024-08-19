@@ -106,7 +106,7 @@
             <!-- <el-table-column prop="provinceText" label="省" width="120" />
           <el-table-column prop="cityText" label="市" width="140" />
           <el-table-column prop="areaText" label="区" width="140" /> -->
-            <el-table-column prop="areaText" label="地址" min-width="160" />
+            <el-table-column prop="areaText" label="地址" min-width="200" />
             <el-table-column prop="address" label="详细地址" min-width="200" />
             <el-table-column prop="industry" label="客户行业" min-width="140">
               <template slot-scope="scope">

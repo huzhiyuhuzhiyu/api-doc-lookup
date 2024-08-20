@@ -58,7 +58,8 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"
+                :hasDel="!scope.row.defaultFlag">
                 <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
                   @click="onHandle(scope.row, 'edit')">
                   开启仓库
@@ -98,7 +99,7 @@ import Form from './Form'
 import WarehouseForm from './WarehouseForm.vue'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, enableClassAttributeState } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierProfile',
   components: { Form, SuperQuery, WarehouseForm },
@@ -150,7 +151,7 @@ export default {
       expands: true,
       refreshTree: true,
       filterText: '',
-      columnList: ['remark','createTime', 'createByName'],
+      columnList: ['remark', 'createTime', 'createByName'],
       createTimeArr: [],
 
       superQueryJson: [
@@ -318,9 +319,187 @@ export default {
     },
     onHandle(row, btn) {
       this.warehouseFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.warehouseForm.init(row, btn)
-      })
+      if (row.warehouseCode) {
+        console.log(row, 'ooooo')
+        let obj = {
+          classAttribute: row,
+          directory: {
+            category: 'Web',
+            description: '',
+            enCode: row.warehouseCode,
+            enabledMark: 1,
+            fullName: row.warehouseName,
+            id: '',
+            isButtonAuthorize: 0,
+            isColumnAuthorize: 0,
+            isDataAuthorize: 0,
+            isFormAuthorize: 0,
+            linkTarget: '_self',
+            parentId: '568721982921638149',
+            propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+            systemId: '309228585019769285',
+            type: 1,
+            urlAddress: ''
+          },
+          menuList: [
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'dbIncomAndOutInventory',
+              enabledMark: 1,
+              fullName: `待办出入库`,
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 10,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' +
+                row.code +
+                '}/dbIncomAndOutInventory' +
+                '?' +
+                row.code
+            },
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'directInandOutWarehouse',
+              enabledMark: 1,
+              fullName: `直接出入库`,
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 20,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' +
+                row.code +
+                '}/directInandOutWarehouse' +
+                '?' +
+                row.code
+            },
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'inventoryList',
+              enabledMark: 1,
+              fullName: '出入库列表',
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 30,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' + row.code + '}/inventoryList' + '?' + row.code
+            },
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'inventoryDetaisList',
+              enabledMark: 1,
+              fullName: '出入库明细',
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 40,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' +
+                row.code +
+                '}/inventoryDetaisList' +
+                '?' +
+                row.code
+            },
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'transferManagement',
+              enabledMark: 1,
+              fullName: '调拨管理',
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 50,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' +
+                row.code +
+                '}/transferManagement' +
+                '?' +
+                row.code
+            },
+            {
+              category: 'Web',
+              description: '',
+              enCode: 'inventory',
+              enabledMark: 1,
+              fullName: '库存查询',
+              icon: 'icon-ym icon-ym-webForm',
+              id: '',
+              isButtonAuthorize: 1,
+              isColumnAuthorize: 1,
+              isDataAuthorize: 1,
+              isFormAuthorize: 1,
+              linkTarget: '_self',
+              parentId: '',
+              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+              sortCode: 60,
+              systemId: '309228585019769285',
+              type: 2,
+              urlAddress:
+                'warehouseManagement/${' + row.code + '}/inventory' + '?' + row.code
+            }
+          ]
+        }
+        enableClassAttributeState(obj).then(res => {
+          this.$message({
+            type: 'success',
+            message: '开启成功',
+            duration: 1500
+          })
+          location.reload()
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.warehouseForm.init(row, btn)
+        })
+      }
+
     },
     offHandle(id, btn) {
       let obj = {

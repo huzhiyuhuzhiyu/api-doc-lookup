@@ -305,7 +305,7 @@
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
                           @change="changeTaxRate(scope.row, scope.$index)">
-                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
                             :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
@@ -1200,13 +1200,13 @@ export default {
             let obj = {
               taxRate: res.data.taxRate * 1,
               fullName: res.data.taxRate + '%',
-              enCode: res.data.taxRate + '%',
+              enCode: res.data.taxRate   ,
             }
             this.taxRateList.push(obj)
           }
         } else {
           this.$message.error("您输入的品名规格未匹配到对应的产品，请重新输入")
-          data.drawingNo = ""
+          this.$set(this.productData,idx,this.createdData)
         }
 
 
@@ -1232,7 +1232,7 @@ export default {
               let obj = {
                 taxRate: res.data.records[0].taxRate * 1,
                 fullName: res.data.records[0].taxRate + '%',
-                enCode: res.data.records[0].taxRate + '%',
+                enCode: res.data.records[0].taxRate ,
               }
               this.taxRateList.push(obj)
             }
@@ -2191,98 +2191,7 @@ export default {
         this.contractFlag = false
 
       }
-      // }).catch(() => {
-      //   this.customerVisible = false
-      // })
-      // } else {
-      //   getCooperativeInfo(e.id).then(res => {
-      //     let addressInfo = {}
-      //     if (res.data.deliveryAddressList.length > 0) {
-      //       res.data.deliveryAddressList.forEach((item, index) => {
-      //         if (item.defaultFlag) {
-      //           addressInfo = item
-      //           this.dataForm.recipient = addressInfo.recipient
-      //           this.dataForm.phone = addressInfo.phone
-      //           this.dataForm.country = addressInfo.country === '中国' ? 'CN' : addressInfo.country
-      //           if (this.dataForm.country === 'CN') {
-
-      //             this.dataForm.province = addressInfo.province
-      //             this.dataForm.city = addressInfo.city
-      //             this.dataForm.area = addressInfo.area
-      //             this.dataForm.address = addressInfo.address
-      //             this.defaultAddress = addressInfo.countryText + addressInfo.provinceText + addressInfo.cityText + addressInfo.areaText + addressInfo.address
-      //           } else {
-      //             this.dataForm.province = ''
-      //             this.dataForm.city = ''
-      //             this.dataForm.area = ''
-      //             this.defaultAddress = (addressInfo.countryText ? addressInfo.countryText : '') + addressInfo.address
-      //           }
-      //         } else {
-      //           this.dataForm.recipient = res.data.deliveryAddressList[0].recipient
-      //           this.dataForm.phone = res.data.deliveryAddressList[0].phone
-      //           this.dataForm.country = res.data.deliveryAddressList[0].country === '中国' ? 'CN' : res.data.deliveryAddressList[0].country
-      //           if (this.dataForm.country === 'CN') {
-
-      //             this.dataForm.province = res.data.deliveryAddressList[0].province
-      //             this.dataForm.city = res.data.deliveryAddressList[0].city
-      //             this.dataForm.area = res.data.deliveryAddressList[0].area
-      //             this.dataForm.address = res.data.deliveryAddressList[0].address
-      //             this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].provinceText + res.data.deliveryAddressList[0].cityText + res.data.deliveryAddressList[0].areaText + res.data.deliveryAddressList[0].address
-      //           } else {
-      //             this.dataForm.province = ''
-      //             this.dataForm.city = ''
-      //             this.dataForm.area = ''
-      //             this.defaultAddress = (res.data.deliveryAddressList[0].countryText ? res.data.deliveryAddressList[0].countryText : '') + res.data.deliveryAddressList[0].address
-      //           }
-      //         }
-      //       });
-      //     } else {
-      //       this.dataForm.recipient = ""
-      //       this.dataForm.phone = ""
-      //       this.dataForm.country = ""
-      //       this.dataForm.province = ""
-      //       this.dataForm.city = ""
-      //       this.dataForm.area = ""
-      //       this.dataForm.address = ""
-      //       this.defaultAddress = ""
-      //     }
-
-      //   })
-      //   this.customerData = e
-      //   this.dataForm.cooperativePartnerId = e.id
-      //   this.dataForm.cooperativePartnerName = e.name
-      //   this.dataForm.cooperativePartnerCode = e.code
-      //   this.ProductListRequestObjs.partnerId = e.id
-
-
-      //   this.dataForm.code = e.code
-      //   this.customerVisible = false
-      //   this.getQuotationdatalist()
-      //   // if (e.country) {
-      //   //   this.changeCountry(e.country)
-      //   // }
-      //   // if (e.province) {
-      //   //   let obj = {
-      //   //     id: e.province
-      //   //   }
-      //   //   this.changeProvince(obj)
-
-      //   // }
-      //   // if (e.city) {
-      //   //   let ooo = {
-      //   //     id: e.city
-      //   //   }
-      //   //   this.changeCity(ooo)
-
-
-      //   // }
-      //   if (this.dataForm.orderType != 'normal' && this.dataForm.orderType != 'urgent') {
-      //     this.contractFlag = true
-      //   } else {
-      //     this.contractFlag = false
-
-      //   }
-      // }
+      
 
       this.dataForm.paymentMethod = e.paymentMethod
       this.dataForm.paymentCycle = e.paymentCycle
@@ -2419,36 +2328,7 @@ export default {
         this.resetDetail()
       }
     },
-    // 根据选择的省份获取相应的城市数据
-    // changeProvince(item, row) {
-    //   console.log("item", item);
-    //   getProvinceList(item.id).then(res => {
-    //     console.log(res);
-    //     this.cities = res.data.list
-    //   })
-    // },
-    // // 根据选择的城市获取各区的数据
-    // changeCity(item, row) {
-    //   console.log(item, row);
-
-    //   console.log("item", item);
-    //   getProvinceList(item.id).then(res => {
-    //     console.log(res);
-    //     this.area = res.data.list
-    //   })
-    // },
-    // // 获取省份数据
-    // getProvinceList() {
-    //   getProvinceList(this.nodeId, this.listQuery).then(res => {
-    //     console.log("省份数据", res);
-    //     this.provinces = res.data.list
-    //   }).catch(() => {
-    //     this.listLoading = false
-    //     this.btnLoading = false
-    //     this.refreshTable = true
-    //   })
-    // },
-
+    
 
 
 
@@ -2651,10 +2531,8 @@ export default {
       }
       if (this.btnType == 'add' || this.btnType == 'copy') {
         setTimeout(() => {
-          this.getWorkOrderNoFun()
-
+          this.fetchData("SHDD", true)
         }, 500);
-        this.fetchData("SHDD", true)
       }
       if (this.btnType == 'edit') {
         this.fetchData("SHDD", false)

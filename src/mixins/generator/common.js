@@ -21,7 +21,11 @@ export default {
       this.$emit('close', isRefresh)
     },
     prev() {
-      this.activeStep -= 1
+      if (this.dataForm.formType === 3){
+        this.activeStep -= 2
+      }else{
+        this.activeStep -= 1
+      }
       if (this.activeStep == 0) this.updateTables()
     },
     stepChick(key) {

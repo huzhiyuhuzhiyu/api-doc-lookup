@@ -32,8 +32,7 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                  @click="visible = true">更多查询</el-button>
+       
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -108,8 +107,7 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                  @click="visible = true">更多查询</el-button>
+          
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -166,87 +164,6 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form v-model="listQuery" label-width="120px" label-position="top" v-if="activeName === 'dataTable'">
-          <el-col :span="12">
-            <el-form-item label="收货单号">
-              <el-input v-model="listQuery.orderNo" placeholder="请输入收货单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model="listQuery.purchaseOrderNo" placeholder="请输入采购单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="业务员">
-              <el-input v-model="listQuery.salesman" placeholder="请输入业务员" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                style="width: 100%;" start-placeholder="请选择创建开始时间" end-placeholder="请选择创建结束时间"
-                :picker-options="global.timePickerOptions" :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-        <el-form v-model="linesQuery" label-width="120px" label-position="top" v-else>
-          <el-col :span="12">
-            <el-form-item label="收货单号">
-              <el-input v-model="linesQuery.orderNo" placeholder="请输入收货单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model="linesQuery.purchaseOrderNo" placeholder="请输入采购单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="业务员">
-              <el-input v-model="linesQuery.salesman" placeholder="请输入业务员" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="linesQuery.productCode" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="linesQuery.productName" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品图号">
-              <el-input v-model="linesQuery.productDrawingNo" placeholder="请输入产品图号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="收货日期">
-              <el-date-picker v-model="linesQuery.deliveryDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" clearable start-placeholder="请选择收货开始日期" end-placeholder="请选择收货结束日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="linesQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">搜 索</el-button>
-      </span>
-    </el-dialog>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" />
   </div>

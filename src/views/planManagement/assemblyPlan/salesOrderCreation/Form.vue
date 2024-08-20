@@ -65,7 +65,7 @@
                           </el-input>
                           <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
                             placement="top-start" v-else>
-                            <div style="color: #3fb9f8;" class="drawingNo">{{ planForm.productDrawingNo }}</div>
+                            <div style="color: #3fb9f8;" class="drawingNo" @click="lookBom(planForm)">{{ planForm.productDrawingNo }}</div>
                           </el-tooltip>
 
                         </el-form-item>
@@ -214,15 +214,16 @@
         </div>
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
+      <BomForm v-if="bomFormVisible" ref="bomForm" @refreshDataList="initData" @close="closeForm" />
+  
     </div>
   </transition>
 </template>
 
 <script>
 // import productForm from "./productForm"
-import { excelExport } from '@/api/basicData/index'
 import { getProductInventory } from '@/api/plan/index.js'
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import BomForm from "@/views/basicData/bomSettings/productionBom/Form.vue"
 import {
   getProvinceList,
 } from '@/api/system/province'
@@ -237,11 +238,11 @@ import {
 export default {
 
   components: {
-    ExportForm
+    BomForm
   },
   data() {
     return {
-
+      bomFormVisible:false,
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan " },
@@ -355,6 +356,16 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    lookBom(data){
+      console.log(data);
+      this.bomFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.bomForm.init(data.productsId,'look')
+      })
+    },
+    closeForm(){
+      this.bomFormVisible=false
+    },
     // 监听列表计划数量/订单数量修改
     watchPlanQuantity(data) {
       console.log(data);

@@ -152,9 +152,8 @@
                       icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <el-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
+                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo   hasC
                       v-loading="tableloading">
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
 
 
 
@@ -165,7 +164,7 @@
                       <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="290" key="13" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="80" key="13" show-overflow-tooltip>
                       </el-table-column>
                       <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
                         show-overflow-tooltip></el-table-column>
@@ -209,7 +208,7 @@
                           <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </JNPF-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
                       <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">总待发货数量：{{

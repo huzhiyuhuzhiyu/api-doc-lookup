@@ -47,7 +47,7 @@
           <el-table-column prop="category" label="流程分类" width="150" />
           <el-table-column prop="formType" label="表单类型" width="120">
             <template slot-scope="scope">
-              <span>{{ scope.row.formType == 1? "系统表单" : "自定义表单" }}</span>
+              <span>{{ scope.row.formType == 1? "系统表单" : scope.row.formType == 2 ? "自定义表单" : '业务流程' }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="type" label="流程类型" width="120">
@@ -101,7 +101,7 @@
     <previewDialog :visible.sync="previewDialogVisible" :id="currRow.id" type="flow"
       @previewPc="previewPc" />
     <el-dialog title="新建表单" :visible.sync="dialogVisible" class="JNPF-dialog JNPF-dialog_center"
-      lock-scroll width="600px">
+      lock-scroll width="1000px">
       <div class="add-main">
         <div class="add-item add-item-sys" @click="addFlow(1)">
           <i class="add-icon el-icon-document"></i>
@@ -115,6 +115,13 @@
           <div class="add-txt">
             <p class="add-title">自定义表单</p>
             <p class="add-desc">自定义设计流程表单</p>
+          </div>
+        </div>
+        <div class="add-item add-item-sys" @click="addFlow(3)">
+          <i class="add-icon icon-ym icon-ym-generator-company"></i>
+          <div class="add-txt">
+            <p class="add-title">业务流程</p>
+            <p class="add-desc">自定义设计业务流程</p>
           </div>
         </div>
       </div>

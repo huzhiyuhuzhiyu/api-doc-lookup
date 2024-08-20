@@ -3,7 +3,7 @@
     <el-table :data="data" ref="JNPFTable" class="JNPF-common-table" :height="height"
       :element-loading-text="$t('common.loadingText')" v-bind="$attrs" v-on="$listeners" :border="border"
       :header-cell-style="headerCellStyle" @header-dragend="handleHeaderDragEnd">
-      <el-table-column prop="selection" type="selection" width="45" key="selection" :fixed="fixedSelect" v-if="hasC"
+      <el-table-column prop="selection" type="selection" width="30" key="selection" :fixed="fixedSelect" v-if="hasC"
         align="center" :selectable="checkSelectable" />
       <el-table-column align="center" label="拖动" width="60" v-if="hasMove">
         <template>

@@ -2433,7 +2433,7 @@ export default {
 
           })
         } else {
-          getCopyOrders(this.dataForm.id).then(res => {
+          getOrderDetail(this.dataForm.id).then(res => {
             console.log("复制订单", res);
             this.dataForm.country = res.data.order.country
             this.dataForm.province = res.data.order.province
@@ -2445,6 +2445,7 @@ export default {
             res.data.order.approvalStatus = ""
             res.data.order.shipmentStatus = ""
             this.dataForm = res.data.order
+            this.dataForm.orderNo=""
             this.dataForm.distributeStatus = "undistributed"
             this.dataForm.planStatus = "not_generated"
             this.dataForm.orderState = "not_finish"

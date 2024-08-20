@@ -10,9 +10,15 @@
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
+      </div>
+      <div v-if="!leftFlag">
+        <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
@@ -39,8 +45,7 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -311,7 +316,8 @@ export default {
         'colour',
         'aperture',
         'remark',
-        'createByName'
+        'createByName',
+        'createTime'
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -469,15 +475,27 @@ export default {
           type: 'input'
         }
       ],
+      filterText: '',
       uploadVisib: false
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
     }
   },
   mounted() {
     this.getProductClassFun()
   },
   created() {
+    if (localStorage.getItem("finishedFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('finishedFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+
     this.initData()
   },
   computed: {
@@ -1075,6 +1093,15 @@ export default {
         })
       })
     },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("finishedFlag", expands)
+      })
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
@@ -1145,6 +1172,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.$refs.SuperQuery.conditionList = []
+      this.filterText = ''
       this.initData()
     },
 

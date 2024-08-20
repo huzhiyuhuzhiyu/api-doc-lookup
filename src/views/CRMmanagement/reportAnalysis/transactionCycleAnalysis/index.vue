@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <div class="el-tabs__header">
+      <div class="el-tabs__headermain">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="员工客户成交周期" name="ygkhcjzq">
             <div class="vux-flexbox filtrate-content filtrate-bar vux-flex-row" style="justify-content: flex-start;">
@@ -20,6 +20,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">员工客户成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -53,6 +54,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">地区成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly2" :option="option2" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -86,6 +88,7 @@
             </div>
             <div class="content-table-main">
               <div class="axis-content" v-loading="chartLoading">
+                <div class="content-title">产品成交周期（根据合同下单时间和客户创建时间计算）</div>
                 <div id="CustomerAnaly3" :option="option3" style="width: 100%; height: 400px;"></div>
               </div>
               <div class="table-content" v-loading="listLoading">
@@ -111,7 +114,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getcustomerRecordStats, getcustomerRecordInfo } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getcustomerRecordStats, getproductCycle, getcustomerRecordInfo, getemployeeCycle, getemployeeCycleInfo, getdistrictCycle } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -204,15 +207,15 @@ export default {
         this.$nextTick(() => {
           this.chartInstance = this.$echarts.init(document.getElementById('CustomerAnaly'));
         })
-        getcustomerRecordStats(this.dataForm).then(res1 => {
+        getemployeeCycle(this.dataForm).then(res1 => {
           this.option = {
-            title: {
-              text: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '员工客户成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -226,9 +229,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -304,7 +307,7 @@ export default {
         }).catch((error) => {
           this.chartLoading = false
         })
-        getcustomerRecordInfo(this.dataForm).then(res2 => {
+        getemployeeCycleInfo(this.dataForm).then(res2 => {
           this.tableList = res2.data
           this.listLoading = false
         }).catch((error) => {
@@ -314,15 +317,15 @@ export default {
         this.$nextTick(() => {
           this.chartInstance2 = this.$echarts.init(document.getElementById('CustomerAnaly2'));
         })
-        getcustomerRecordStats(this.dataForm2).then(res1 => {
+        getdistrictCycle(this.dataForm2).then(res1 => {
           this.option2 = {
-            title: {
-              text: '地区成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '地区成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -336,9 +339,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -410,29 +413,26 @@ export default {
               this.chartInstance2.resize()
             }, 100);
           }
+          this.tableList2 = res1.data
+          this.listLoading = false
           this.chartLoading = false
         }).catch((error) => {
+          this.listLoading = false
           this.chartLoading = false
-        })
-        getcustomerRecordInfo(this.dataForm2).then(res2 => {
-          this.tableList2 = res2.data
-          this.listLoading = false
-        }).catch((error) => {
-          this.listLoading = false
         })
       } else if (val == 'cpcjzq') {
         this.$nextTick(() => {
           this.chartInstance3 = this.$echarts.init(document.getElementById('CustomerAnaly3'));
         })
-        getcustomerRecordStats(this.dataForm3).then(res1 => {
+        getproductCycle(this.dataForm3).then(res1 => {
           this.option3 = {
-            title: {
-              text: '产品成交周期（根据合同下单时间和客户创建时间计算）',
-              textStyle: {
-                fontWeight: "normal"
-              },
-              padding: [0, 40, 8, 40]
-            },
+            // title: {
+            //   text: '产品成交周期（根据合同下单时间和客户创建时间计算）',
+            //   textStyle: {
+            //     fontWeight: "normal"
+            //   },
+            //   padding: [0, 40, 8, 40]
+            // },
             tooltip: {
               trigger: 'axis',
               axisPointer: {
@@ -446,9 +446,9 @@ export default {
               showTitle: false
             },
             grid: {
-              top: '15%',
+              top: '10%',
               left: '1%',
-              right: '1%',
+              right: '3%',
               bottom: '15%',
               containLabel: true
             },
@@ -520,15 +520,12 @@ export default {
               this.chartInstance3.resize()
             }, 100);
           }
+          this.tableList3 = res1.data
+          this.listLoading = false
           this.chartLoading = false
         }).catch((error) => {
+          this.listLoading = false
           this.chartLoading = false
-        })
-        getcustomerRecordInfo(this.dataForm3).then(res2 => {
-          this.tableList3 = res2.data
-          this.listLoading = false
-        }).catch((error) => {
-          this.listLoading = false
         })
       }
     },
@@ -542,7 +539,7 @@ export default {
           return;
         }
         let arr = this.activeName == 'ygkhcjzq' ? this.tableList : this.activeName == 'dqcjzq' ? this.tableList2 : this.tableList3
-        const values = arr.map(item => item[column.property] ? Number(item[column.property]) : '');
+        const values = arr.map(item => item[column.property] ? Number(item[column.property]) : item[column.property] == '0' ? 0 : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);
@@ -577,10 +574,20 @@ export default {
 }
 .JNPF-flex-main {
   padding: 14px 0 0 14px;
-  .el-tabs__header {
-    padding: 0 40px 0 0;
+  .el-tabs__headermain {
+    height: 100%;
+    padding: 0 14px 0 0;
     position: relative;
     margin: 0 0 15px 0;
+    ::v-deep .el-tab-pane {
+      height: 100%;
+    }
+    ::v-deep .el-tabs--top {
+      height: 100%;
+    }
+    ::v-deep .el-tabs__content {
+      height: 100%;
+    }
   }
 }
 .JNPF-common-layout {
@@ -618,13 +625,17 @@ export default {
   }
 }
 .content-table-main {
-  height: calc(100% - 54px);
+  height: calc(100% - 100px);
   padding-bottom: 24px;
   margin-top: 24px;
   overflow-y: auto;
   .axis-content {
     margin-right: 40px;
     margin-bottom: 24px;
+    .content-title {
+      padding: 8px 40px;
+      font-size: 16px;
+    }
   }
   .table-content {
     padding-right: 40px;

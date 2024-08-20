@@ -91,7 +91,7 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"  />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
 
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -129,7 +129,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -185,7 +185,7 @@ export default {
           label: "品名规格",
           type: 'input'
         },
-        
+
         {
           prop: 'productCode',
           label: "产品编码",
@@ -197,7 +197,7 @@ export default {
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期', 
+          endPlaceholder: '结束日期',
         },
         {
           prop: 'mainUnit',
@@ -258,7 +258,7 @@ export default {
           type: 'select',
           options: [],
         },
-        
+
         {
           prop: 'contractNo',
           label: "客户合同号",
@@ -701,7 +701,7 @@ export default {
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
-        orderState:"not_finish",
+        orderState: "not_finish",
         orderItems: [{
           asc: false,
           column: ""
@@ -715,31 +715,56 @@ export default {
 
       this.search()
     },
+    checkFieldsEqual(arr) {
+      const keys = [
+        'drawingNo',
+        'accuracyLevel',
+        'vibrationLevel',
+        'oil',
+        'oilQuantity',
+        'clearance',
+        'packagingMethod',
+        'specialRequire'
+      ];
 
+      let firstObj = arr[0];
 
-    addSupplier( ) {
+      for (let key of keys) {
+        for (let i = 1; i < arr.length; i++) {
+          if (arr[i][key] !== firstObj[key]) {
+            return false; // return false if any value is different  
+          }
+        }
+      }
+
+      return true; // all values are the same  
+    },
+
+    addSupplier() {
+      console.log(this.selectList);
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
       if (this.selectList.length == 1) {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init('','add',this.selectList,'order_plan')
+          this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
         })
       } else {
         const fieldsToCheck = [
           'drawingNo',
-          'sealingCoverTyping',
           'accuracyLevel',
           'vibrationLevel',
           'oil',
           'oilQuantity',
           'clearance',
-          'packagingMethod'
+          'packagingMethod',
+          'specialRequire',
         ];
-        const result = this.areFieldsEqual(this.selectList, fieldsToCheck);
+
+        const result = this.checkFieldsEqual(this.selectList);
         if (result) {
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init('','add',this.selectList,'order_plan')
+            this.$refs.Form.init('', 'add', this.selectList, 'order_plan')
           })
         } else {
           this.$message.error("只能选择相同的产品才能生成计划")
@@ -747,23 +772,7 @@ export default {
       }
 
     },
-    // 检查字段是否相同  
-    areFieldsEqual(arr, fields) {
-      const firstEntry = arr[0];
-      const values = new Set();
-
-      for (const field of fields) {
-        values.add(firstEntry[field]);
-      }
-
-      for (let i = 1; i < arr.length; i++) {
-        for (const field of fields) {
-          values.add(arr[i][field]);
-        }
-      }
-
-      return values.size === 1;
-    },
+ 
     getCopyOrders(id, btntype) {
       this.formVisible = true
       this.$nextTick(() => {

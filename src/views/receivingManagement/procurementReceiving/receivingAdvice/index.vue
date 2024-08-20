@@ -214,7 +214,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'procure',
-        classAttribute: '',
+        classAttribute: 'other',
         notificationTypeList: [],
         orderItems: [
           {

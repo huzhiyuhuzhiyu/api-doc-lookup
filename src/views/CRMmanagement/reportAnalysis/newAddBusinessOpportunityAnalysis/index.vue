@@ -20,9 +20,9 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <div class="handle-bar">
+          <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div>
+          </div> -->
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
               <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="120">
@@ -40,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getCustomerconversionrate, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getaddBusinessAnalyze } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -114,7 +114,7 @@ export default {
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getaddBusinessAnalyze(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'axis',
@@ -192,16 +192,13 @@ export default {
             }
           ]
         }
-        this.chartLoading = false
-      }).catch(() => {
-        this.chartLoading = false
-      })
-      getCustomerconversionrate(this.dataForm).then(res2 => {
-        this.datas = res2.data
+        this.datas = res1.data
         this.init()
         this.listLoading = false
+        this.chartLoading = false
       }).catch(() => {
         this.listLoading = false
+        this.chartLoading = false
       })
     },
     init() {

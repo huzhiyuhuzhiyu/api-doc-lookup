@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div class="JNPF-common-page-header">
-          <el-page-header @back="goBack" content="生成采购对账单" />
+          <el-page-header @back="goBack" content="生成外协对账单" />
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -70,15 +70,15 @@
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                      <!-- <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
-                        <div class="viewData">
-                          <span>{{ scope.row.productCode }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-</el-table-column> -->
+                      <el-table-column prop="productCode" label="产品编码" min-width="200" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'">
+                            <div class="viewData">
+                              <span>{{ scope.row.productCode }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
 
                       <!-- <el-table-column prop="productName" label="产品名称" min-width="200" show-overflow-tooltip>
                     <template slot-scope="scope">
@@ -105,9 +105,9 @@
                             <div class="viewData">
                               <span>
                                 {{
-                                  scope.row.receiptReturnType === 'outbound_purchase'
+                                  scope.row.receiptReturnType === 'outbound_external'
                                     ? '退货'
-                                    : scope.row.receiptReturnType === 'inbound_purchase'
+                                    : scope.row.receiptReturnType === 'inbound_external'
                                       ? '收货'
                                       : ''
                                 }}
@@ -190,12 +190,12 @@
                         </el-input> -->
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
                                 +{{ scope.row.excludingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
                                 {{ scope.row.excludingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" disabled
@@ -213,12 +213,12 @@
                             :rules="productFormRules.taxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
                                 +{{ scope.row.taxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
                                 {{ scope.row.taxAmount }}
                               </span>
 
@@ -236,12 +236,12 @@
                             :rules="productFormRules.includingTaxAmount">
                             <div :class="[
                               'viewData',
-                              scope.row.receiptReturnType === 'outbound_purchase' ? 'green' : 'red'
+                              scope.row.receiptReturnType === 'outbound_external' ? 'green' : 'red'
                             ]">
-                              <span v-if="scope.row.receiptReturnType === 'outbound_purchase'">
+                              <span v-if="scope.row.receiptReturnType === 'outbound_external'">
                                 +{{ scope.row.includingTaxAmount }}
                               </span>
-                              <span v-else-if="scope.row.receiptReturnType === 'inbound_purchase'">
+                              <span v-else-if="scope.row.receiptReturnType === 'inbound_external'">
                                 {{ scope.row.includingTaxAmount }}
                               </span>
                               <el-input v-if="!scope.row.receiptReturnType" v-model="scope.row.includingTaxAmount">
@@ -559,7 +559,7 @@ export default {
     backComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType == 'inbound_purchase') {
+        if (item.receiptReturnType == 'inbound_external') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -569,7 +569,7 @@ export default {
     receiptComputedValue() {
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        if (item.receiptReturnType === 'outbound_purchase') {
+        if (item.receiptReturnType === 'outbound_external') {
           count += item.includingTaxAmount * 1
         }
       })
@@ -592,7 +592,7 @@ export default {
       handler: function (newVal, oldVal) {
         console.log(111, newVal)
         newVal.forEach((item) => {
-          if (item.receiptReturnType === 'outbound_purchase') {
+          if (item.receiptReturnType === 'outbound_external') {
             if (item.includingTaxAmount) {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
@@ -604,7 +604,7 @@ export default {
                 item.taxAmount = this.jnpf.numberFormat(item.includingTaxAmount - item.excludingTaxAmount, 2)
               }
             }
-          } else if (item.receiptReturnType === 'inbound_purchase') {
+          } else if (item.receiptReturnType === 'inbound_external') {
             if (item.includingTaxAmount) {
               if (!newVal[0].taxRate || newVal[0].taxRate == 0) {
                 item.excludingTaxAmount = item.excludingTaxAmount
@@ -683,7 +683,7 @@ export default {
       let _data = JSON.parse(JSON.stringify(data))
       _data.forEach((item) => {
         let excludingTaxAmount =
-          item.businessType === 'outbound_purchase'
+          item.businessType === 'outbound_external'
             ? this.jnpf.numberFormat(
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
               2
@@ -692,7 +692,7 @@ export default {
               item.num * this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100))
             )
         let includingTaxAmount =
-          item.businessType === 'inbound_purchase'
+          item.businessType === 'inbound_external'
             ? this.jnpf.numberFormat(Math.abs(excludingTaxAmount) * (1 + (item.taxRate * 1) / 100))
             : this.jnpf.numberFormat(excludingTaxAmount * (1 + (item.taxRate * 1) / 100))
         this.dataFormTwo.data.push({
@@ -719,7 +719,7 @@ export default {
           excludingTaxPrice: this.jnpf.numberFormat(item.costPrice / (1 + (item.taxRate * 1) / 100), 2),
           excludingTaxAmount: excludingTaxAmount,
           taxAmount:
-            item.businessType === 'outbound_purchase'
+            item.businessType === 'outbound_external'
               ? this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount)
               : this.jnpf.numberFormat(includingTaxAmount - excludingTaxAmount),
           taxRate: item.taxRate,
@@ -731,7 +731,7 @@ export default {
       this.listLoading = false
 
       this.dataFormTwo.data.forEach((item, index) => {
-        if (item.receiptReturnType === 'outbound_purchase') {
+        if (item.receiptReturnType === 'outbound_external') {
           item.includingTaxAmount = this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
           this.includingTaxAmount += this.jnpf.numberFormat(item.reconciliationUnitPrice * item.price)
         } else {
@@ -758,7 +758,7 @@ export default {
       const formattedDate = `${year}-${month}-${date}`
       this.dataForm.reconciliationDate = formattedDate
       // // 审批
-      // this.$nextTick(() => { this.getApproverData() })
+      this.$nextTick(() => { this.getApproverData() })
     },
     // 表单提交
     dataFormSubmit() {
@@ -769,117 +769,117 @@ export default {
       // this.btnLoading = true
       let submitFlag = true
       // // 审批条件参数列表
-      // let nodeCondList = []
+      let nodeCondList = []
       // // 审批抄送人列表
-      // let ccList = []
+      let ccList = []
       let ccLists = []
       let nodeJudg = []
       // // 业务审批单流程节点列表
       let formNodeList = []
       // // 业务审批单
       let form = {}
-      // let templateLineList = []
-      // if (this.busNodeConfig.childNode) {
-      //   let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-      //   let flattenedNodes = this.flattenNodes(data);
-      //   flattenedNodes.splice(0, 1)
-      //   flattenedNodes = flattenedNodes.map(item => {
-      //     return {
-      //       ...item,
-      //       nodeUserList: item.nodeUserList ? item.nodeUserList : []
-      //     }
-      //   })
-      //   templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-      //   // 抄送人节点数组 ccList
-      //   ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
+      let templateLineList = []
+      if (this.busNodeConfig.childNode) {
+        let data = JSON.parse(JSON.stringify(this.busNodeConfig))
+        let flattenedNodes = this.flattenNodes(data);
+        flattenedNodes.splice(0, 1)
+        flattenedNodes = flattenedNodes.map(item => {
+          return {
+            ...item,
+            nodeUserList: item.nodeUserList ? item.nodeUserList : []
+          }
+        })
+        templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
+        // 抄送人节点数组 ccList
+        ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
 
-      //   for (var i = 0; i < ccList.length; i++) {
-      //     var nodeUserList = ccList[i].nodeUserList;
-      //     ccLists = ccLists.concat(nodeUserList);
-      //   }
+        for (var i = 0; i < ccList.length; i++) {
+          var nodeUserList = ccList[i].nodeUserList;
+          ccLists = ccLists.concat(nodeUserList);
+        }
 
-      //   if (templateLineList.length) {
-      //     submitFlag = templateLineList.every(item => item.nodeUserList.length)
-      //     if (!submitFlag) {
-      //       this.$message.error('审核人不能为空！')
-      //       this.btnLoading = false
-      //       return
-      //     }
-      //   }
-      //   if (ccList.length) {
-      //     submitFlag = ccList.every(item => item.nodeUserList.length)
-      //     if (!submitFlag) {
-      //       this.$message.error('抄送人不能为空！')
-      //       this.btnLoading = false
-      //       return
-      //     }
-      //   }
-      //   // 条件节点数组 nodeJudgmentList
-      //   nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-      //   // 业务审批单流程节点参数
-      //   formNodeList = flattenedNodes.map((item, index) => {
-      //     return {
-      //       ...item,
-      //       approvalStatus: item.name == '审核人' ? 'no' : '',
-      //       adminId: '',
-      //       id: '',
-      //       previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-      //       name: item.nodeName,
-      //       designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-      //     }
-      //   })
-      //   // 抄送人
-      //   ccLists = ccLists.map(item => {
-      //     return {
-      //       ...item,
-      //       approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
-      //       ccToId: item.targetId,
-      //       approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
-      //       id: '',
-      //       defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
-      //     }
-      //   })
-      //   // 条件列表
-      //   if (nodeCondList.length) {
-      //     nodeJudg = nodeCondList.map(item => {
-      //       return {
-      //         ...item,
-      //         approvalFormNodeCode: item.code,
-      //         businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-      //         code: item.conditionList[0].tjCode,
-      //         dataType: item.conditionList[0].dataType,
-      //         id: item.conditionList[0].id ? item.conditionList[0].id : ''
-      //       }
-      //     })
-      //   }
-      //   // 业务审批单
-      //   form = {
-      //     ...this.approvalForm,
-      //     approvalTemplateId: this.approvalForm.id,
-      //     documentStatus: 'submit',
-      //     documentId: '',
-      //     id: ''
-      //   }
-      // }
-      // if (this.dataForm.approvalFlag) {
-      //   if (!this.busNodeConfig.childNode) {
-      //     submitFlag = false
-      //     this.btnLoading = false
-      //     this.$message.error('未找到匹配的审批流程，请联系管理员！')
-      //   }
-      //   if (formNodeList.length) {
-      //     formNodeList.forEach(item => {
-      //       if (item.approvalType === 'option') {
-      //         if (!item.designatedMembersId) {
-      //           submitFlag = false
-      //           this.btnLoading = false
-      //           this.activeName = "approvalFlow"
-      //           this.$message.error('未配置发起人自选！')
-      //         }
-      //       }
-      //     })
-      //   }
-      // }
+        if (templateLineList.length) {
+          submitFlag = templateLineList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('审核人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        if (ccList.length) {
+          submitFlag = ccList.every(item => item.nodeUserList.length)
+          if (!submitFlag) {
+            this.$message.error('抄送人不能为空！')
+            this.btnLoading = false
+            return
+          }
+        }
+        // 条件节点数组 nodeJudgmentList
+        nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
+        // 业务审批单流程节点参数
+        formNodeList = flattenedNodes.map((item, index) => {
+          return {
+            ...item,
+            approvalStatus: item.name == '审核人' ? 'no' : '',
+            adminId: '',
+            id: '',
+            previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
+            name: item.nodeName,
+            designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
+          }
+        })
+        // 抄送人
+        ccLists = ccLists.map(item => {
+          return {
+            ...item,
+            approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
+            ccToId: item.targetId,
+            approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
+            id: '',
+            defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
+          }
+        })
+        // 条件列表
+        if (nodeCondList.length) {
+          nodeJudg = nodeCondList.map(item => {
+            return {
+              ...item,
+              approvalFormNodeCode: item.code,
+              businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
+              code: item.conditionList[0].tjCode,
+              dataType: item.conditionList[0].dataType,
+              id: item.conditionList[0].id ? item.conditionList[0].id : ''
+            }
+          })
+        }
+        // 业务审批单
+        form = {
+          ...this.approvalForm,
+          approvalTemplateId: this.approvalForm.id,
+          documentStatus: 'submit',
+          documentId: '',
+          id: ''
+        }
+      }
+      if (this.dataForm.approvalFlag) {
+        if (!this.busNodeConfig.childNode) {
+          submitFlag = false
+          this.btnLoading = false
+          this.$message.error('未找到匹配的审批流程，请联系管理员！')
+        }
+        if (formNodeList.length) {
+          formNodeList.forEach(item => {
+            if (item.approvalType === 'option') {
+              if (!item.designatedMembersId) {
+                submitFlag = false
+                this.btnLoading = false
+                this.activeName = "approvalFlow"
+                this.$message.error('未配置发起人自选！')
+              }
+            }
+          })
+        }
+      }
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       console.log(this.dataForm, '参数')
@@ -1073,7 +1073,7 @@ export default {
       let foundSymbol = '' // 条件符号
       let result = null // 判断条件是否成立
       let condList = []
-      getBusDetail('b013').then((res) => {
+      getBusDetail('b014').then((res) => {
         console.log(res)
         state = res.data.business.state
         condExpress = res.data.business.condExpress
@@ -1109,7 +1109,7 @@ export default {
             // }
             if (result) {
               let query = {
-                businessCode: 'b013',
+                businessCode: 'b014',
                 condList
               }
               busApprovalFlowTree(query).then((res) => {
@@ -1141,7 +1141,7 @@ export default {
         if (state === 'enable') {
           this.dataForm.approvalFlag = 1
           let query = {
-            businessCode: 'b013',
+            businessCode: 'b014',
             condList
           }
           busApprovalFlowTree(query).then((res) => {
@@ -1311,5 +1311,13 @@ export default {
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

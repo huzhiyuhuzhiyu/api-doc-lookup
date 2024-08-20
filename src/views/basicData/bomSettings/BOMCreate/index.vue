@@ -1200,6 +1200,7 @@ export default {
       this.dataForm = {}
       this.linesList = []
       this.tipsvisible = false
+      this.btnLoading = false
     },
   }
 }
@@ -1294,5 +1295,21 @@ export default {
 }
 ::v-deep .selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
     padding: 0 0px !important;
+}
+.import_t {
+  font-size: 22px;
+  color: rgb(103, 194, 58);
+  vertical-align: top;
+  margin-top: 40px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.import_b {
+  font-size: 18px;
+  /* color: #67c23a; */
+  vertical-align: top;
+  margin-top: 43px;
+  display: inline-block;
 }
 </style>

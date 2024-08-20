@@ -20,9 +20,9 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <div class="handle-bar">
+          <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div>
+          </div> -->
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
               <el-table-column prop="settingName" label="阶段" min-width="120" />
@@ -38,7 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { gettotalCustomerTable, getsellFunnel } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -106,7 +106,7 @@ export default {
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getsellFunnel(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'item',
@@ -119,7 +119,7 @@ export default {
             showTitle: false
           },
           legend: {
-            data: ['赢单', '需求分析', '方案/报价', '谈判审核']
+            data: ['验证客户', '赢单', '需求分析', '方案/报价', '谈判审核']
           },
           series: [
             {
@@ -146,23 +146,17 @@ export default {
                 borderColor: '#fff',
                 borderWidth: 1
               },
-              data: [
-                { value: 100, name: '赢单' },
-                { value: 80, name: '需求分析'},
-                { value: 60, name: '方案/报价'},
-                { value: 40, name: '谈判审核' }
-              ]
+              data: res1.data.map(item => {
+                return { value: item.businessMoney, name: item.settingName }
+              })
             }
           ]
         };
-        this.chartLoading = false
-      }).catch(() => {
-        this.chartLoading = false
-      })
-      gettotalCustomerTable(this.dataForm).then(res2 => {
-        this.tableList = res2.data
+        this.tableList = res1.data
         this.listLoading = false
+        this.chartLoading = false
       }).catch(() => {
+        this.chartLoading = false
         this.listLoading = false
       })
     },
@@ -175,7 +169,7 @@ export default {
           sums[index] = '合计';
           return;
         }
-        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : '');
+        const values = this.tableList.map(item => item[column.property] ? Number(item[column.property]) : item[column.property] == '0' ? 0 : '');
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr);

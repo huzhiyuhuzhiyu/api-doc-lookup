@@ -233,8 +233,8 @@ export default {
     },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.id
+      if (listQuery.categoryId === data.id) return listQuery
+      listQuery.categoryId = data.id
       return listQuery
     },
     // 客户选框传值

@@ -7,8 +7,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="订单号"
-                  clearable />
+                <el-input v-model="orderNoS" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -155,6 +154,7 @@ export default {
   components: { Form, UserRelationList, AddForm, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
+      orderNoS: "",
       addFormVisible: false,
       btnsearchFlag: true,
       columnList: ["cooperativePartnerCode", "departmentName", "productName",],
@@ -185,7 +185,10 @@ export default {
           column: ""
         }],
 
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
 
       detailTotal: 0,
@@ -227,7 +230,7 @@ export default {
 
         {
           prop: 'salesName',
-          label: "所属销售人员",
+          label: "所属销售",
           type: 'custom',
           component: 'user-select',
         },
@@ -689,7 +692,7 @@ export default {
           oilObj.options = arr;
         }
       })
-      
+
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
@@ -843,6 +846,15 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.orderNoS) {
+        this.orderForm.superQuery.condition.push(
+          { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+        )
+      }
+
+      if (this.orderNoS) {
+        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -863,16 +875,17 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       // 默认设置为近3天  
       const end = new Date();
-      const start = new Date();
-
+      const start = "";
       end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = [start, end];
+      this.deliveryDateArr = ["", end];
+      this.orderForm.deliveryStartTime = ""
+      this.orderForm.deliveryEndTime = this.dateFun(this.deliveryDateArr[1])
       this.orderForm = {
 
         approvalStatus: "ok",
         documentStatus: "submit",
         orderState: "not_finish",
-        deliveryEndTime: "",
+        deliveryEndTime: this.deliveryDateArr[1],
         deliveryStartTime: "",
         extensionFlag: 1,
         deliverQueryFlag: 1,
@@ -886,9 +899,13 @@ export default {
           column: "t1.create_time"
         }],
 
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       }
-
+      this.orderNoS = ""
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
 

@@ -1,38 +1,87 @@
 <template>
   <div class="JNPF-common-layout">
-   
-   
-
-    <component :is="listPageComponent" v-if="depFormVisible" ref="depForm" @close="close" />
+    <component :is="listPageComponent" :classAttribute="classAttribute" v-if="depFormVisible" ref="depForm" @close="close" />
   </div>
 </template>
 
 <script>
-import finish from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory"
+import dbIncomAndOutInventory from "@/views/warehouseManagement/finishedProductWarehouseManagement/dbIncomAndOutInventory"
+import directInandOutWarehouse from "@/views/warehouseManagement/finishedProductWarehouseManagement/directInandOutWarehouse"
+import inventory from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventory"
+import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList"
+import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
+import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
+import {
+  getBimProductAttributesInfo,
+  updataBimProductAttributes,
+  delClassAttribute,
+  addBimProductAttributes,
+  getclassAttributeList,
+  disabledClassAttributeState
+} from '@/api/masterDataManagement/index'
 export default {
   name: 'quality',
-  components:{finish},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement},
   data() {
     return {
-      
-      listPageComponent:finish,
+      businessType:"",
+      listPageComponent:null,
+      classAttribute:"",
       depFormVisible:true,
+      form: {
+        code: '',
+        name: '',
+        pageNum: 1,
+        pageSize: 20,
+
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'code'
+          }
+        ]
+      },
     }
   },
   watch: {
   },
   created() {
-    console.log(this);
-    console.log(this.listPageComponent);
-    
-    console.log(this.$route,this.$route.meta.modelId);
+    console.log("this",this.$route);
+    let path=this.$route.path
+    let pathInfo=this.$route
+    this.classAttribute=pathInfo.fullPath.split("?")[1]
+    let arr=path.split('/')
+    this.businessType=arr[arr.length-1] 
+    if(this.businessType=='dbIncomAndOutInventory'){
+      this.listPageComponent=dbIncomAndOutInventory
+    }
+    if(this.businessType=='directInandOutWarehouse'){
+      this.listPageComponent=directInandOutWarehouse
+    }
+    if(this.businessType=='inventory'){
+      this.listPageComponent=inventory
+    }
+    if(this.businessType=='inventoryDetaisList'){
+      this.listPageComponent=inventoryDetaisList
+    }
+    if(this.businessType=='inventoryList'){
+      this.listPageComponent=inventoryList
+    }
+    if(this.businessType=='transferManagement'){
+      this.listPageComponent=transferManagement
+    }
+    // if()
 
   },
   methods: {
    close(){
 
    },
-    
+   
   }
 }
 </script>

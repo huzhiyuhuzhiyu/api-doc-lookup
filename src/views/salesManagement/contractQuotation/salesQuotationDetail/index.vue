@@ -12,7 +12,7 @@
 
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.customerDrawingNumber" placeholder="请输入 客户料号" clearable
+                <el-input v-model="form.customerDrawingNumber" placeholder="请输入客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>

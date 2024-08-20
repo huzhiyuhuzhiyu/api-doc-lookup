@@ -65,15 +65,15 @@
           custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="工位编码" min-width="180" sortable="custom" />
           <el-table-column prop="name" label="工位名称" min-width="180" sortable="custom" />
-          <el-table-column prop="state" label="状态" sortable="custom">
+          <el-table-column prop="state" label="状态" sortable="custom" max-width="80">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'enable'">启用</div>
               <div v-if="scope.row.state == 'disabled'">停用</div>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
@@ -216,7 +216,7 @@ export default {
 
       total: 0,
       formVisible: false,
-      columnList: ['remark', 'createByName']
+      columnList: ['remark', 'createByName', 'createTime']
     }
   },
   created() {

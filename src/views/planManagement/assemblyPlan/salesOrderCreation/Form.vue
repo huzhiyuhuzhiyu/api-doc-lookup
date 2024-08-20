@@ -65,7 +65,7 @@
                           </el-input>
                           <el-tooltip class="item" effect="dark" :content="planForm.productDrawingNo"
                             placement="top-start" v-else>
-                            <div style="color: #3fb9f8;" class="drawingNo">{{ planForm.productDrawingNo }}</div>
+                            <div style="color: #3fb9f8;" class="drawingNo" @click="lookBom(planForm)">{{ planForm.productDrawingNo }}</div>
                           </el-tooltip>
 
                         </el-form-item>
@@ -200,7 +200,7 @@
                       <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"></el-table-column>
                       <el-table-column prop="clearance" label="游隙" width="120" :key="100"></el-table-column>
                       <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"></el-table-column>
-                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101"></el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
                       <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
                     </el-table>
                   </div>
@@ -214,15 +214,16 @@
         </div>
       </div>
       <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
+      <BomForm v-if="bomFormVisible" ref="bomForm" @refreshDataList="initData" @close="closeForm" />
+  
     </div>
   </transition>
 </template>
 
 <script>
 // import productForm from "./productForm"
-import { excelExport } from '@/api/basicData/index'
 import { getProductInventory } from '@/api/plan/index.js'
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import BomForm from "@/views/basicData/bomSettings/productionBom/Form.vue"
 import {
   getProvinceList,
 } from '@/api/system/province'
@@ -237,11 +238,11 @@ import {
 export default {
 
   components: {
-    ExportForm
+    BomForm
   },
   data() {
     return {
-
+      bomFormVisible:false,
       planTypeList: [
         { label: "订单生成计划", value: "order_plan" },
         { label: "直接创建计划", value: "add_plan " },
@@ -355,6 +356,16 @@ export default {
   beforeDestroy() {
   },
   methods: {
+    lookBom(data){
+      console.log(data);
+      this.bomFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.bomForm.init(data.productsId,'look')
+      })
+    },
+    closeForm(){
+      this.bomFormVisible=false
+    },
     // 监听列表计划数量/订单数量修改
     watchPlanQuantity(data) {
       console.log(data);
@@ -519,7 +530,8 @@ export default {
           productDrawingNo: productData[0].drawingNo,
           sealingCoverTyping: productData[0].sealingCoverTyping,
           vibrationLevel: productData[0].vibrationLevel,
-
+          packagingMethod:productData[0].packagingMethod,
+          specialRequire:productData[0].specialRequire,
         };
         this.planForm.bomId = productData[0].bomId
         if (productData[0].bomId) {
@@ -530,7 +542,7 @@ export default {
         }
 
         this.planForm.planQuantity = productData.reduce((acc, item) => {
-          return acc + Number(item.planQuantity); // 使用 Number() 将字符串转换为数字  
+          return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
         }, 0);
 
         this.planForm.productDrawingNo = productData[0].drawingNo
@@ -541,6 +553,7 @@ export default {
         productData.forEach(item => {
           item.productDrawingNo = item.drawingNo
           item.ordersNo = item.orderNo
+          this.$set(item,'planQuantity',item.num)
         });
         console.log(obj);
         this.productData = productData
@@ -562,7 +575,7 @@ export default {
 
         if (planType == 'order_plan') {
           this.planForm.planQuantity = productData.planLineList.reduce((acc, item) => {
-            return acc + Number(item.ordersNum); // 使用 Number() 将字符串转换为数字  
+            return acc + Number(item.num); // 使用 Number() 将字符串转换为数字  
           }, 0);
         } else {
           this.planForm.planQuantity = productData.plan.planQuantity

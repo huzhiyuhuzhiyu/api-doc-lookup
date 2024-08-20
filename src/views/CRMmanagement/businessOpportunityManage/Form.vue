@@ -67,7 +67,7 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
                     <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip />
-                    <el-table-column prop="productUnit" label="单位(主)" width="110" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
                     <el-table-column prop="costPrice" label="成本价" width="160" show-overflow-tooltip />
                     <el-table-column prop="num" label="数量" width="160">
@@ -131,7 +131,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProducts" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getcrmProductlist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :treeNodeClick="ProductTreeNodeClick" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -139,10 +139,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getProducts } from '@/api/masterDataManagement/index.js' // 产品列表
-import { getCategoryTrees } from '@/api/basicData/index'
 import { getPartnerList } from '@/api/customerManagement/index'
-import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness } from '@/api/CRMmanagement/index'
+import { addcrmBusiness, updatecrmBusiness, detailcrmBusiness, crmProductCategorytree, getcrmProductlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -200,25 +198,20 @@ export default {
       },
       productVisible: false,
       // totalAmount: 0,
-      ProductMethodArr: { method: getCategoryTrees, requestObj: { classAttribute: "" } },
+      ProductMethodArr: { method: crmProductCategorytree, requestObj: { keyword: "" } },
       ProductTableItems: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '品名规格' },
-        { prop: 'mainUnit', label: '单位(主)' },
+        { prop: 'price', label: '价格(元)' },
+        { prop: 'unit', label: '单位' },
       ],
       ProductTableSearchList: [
-        { prop: "code", label: "产品名称", type: 'input' },
         { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "productDrawingNo", label: "品名规格", type: 'input' },
+        { prop: "code", label: "产品编码", type: 'input' },
       ],
       ProductListRequestObj: {
-        classAttributeList: [],
-        classAttribute: "",
-        productDrawingNo: "",
+        productCategoryList: [],
         productCategoryId: "",
-        queryType: 2,
-        productStatus: 'enable',
         code: "",
         name: "",
         orderItems: [{
@@ -231,8 +224,8 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      getProducts,
-      getCategoryTrees,
+      getcrmProductlist,
+      crmProductCategorytree,
       dataFormTwo: {
         lines: []
       },
@@ -293,10 +286,17 @@ export default {
     this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
+    ProductTreeNodeClick(data, node, listQuery) {
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryList = []
+      listQuery.productCategoryList.push(data.id)
+      listQuery.productCategoryId = data.id
+      return listQuery
+    },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.partnerCategoryId === data.id) return listQuery
-      listQuery.partnerCategoryId = data.id
+      if (listQuery.categoryId === data.id) return listQuery
+      listQuery.categoryId = data.id
       return listQuery
     },
     // 客户选框传值
@@ -335,8 +335,8 @@ export default {
     },
     changeTaxRate(row, index) {
       let productArr = [...this.dataFormTwo.lines]
-      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.price * (1 - (row.discount * 1 / 100)), 4)
-      productArr[index].priceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
+      productArr[index].price = this.jnpf.numberFormat(row.purchasePrice * (1 - row.discount / 100), 4)
+      productArr[index].priceSum = this.jnpf.numberFormat((row.price * row.num), 4)
       productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum), 4)
       this.dataFormTwo.lines = productArr
       // var totalPrice = 0;
@@ -391,12 +391,9 @@ export default {
         }
       }
       if (row.price && row.price != '0') {
-        let c = this.jnpf.numberFormat((100 - (row.purchasePrice / row.price)), 4)
+        let c = this.jnpf.numberFormat((100 - (row.price * 1 / row.purchasePrice * 1) * 100), 4)
         row.discount = row.purchasePrice && c ? c : 0
-        let b = this.jnpf.numberFormat((row.price * (1 - row.discount / 100)), 4)
-        row.excludingTaxUnitPrice = b ? b : 0
       } else {
-        row.excludingTaxUnitPrice = ''
         row.discount = ''
       }
 
@@ -411,8 +408,8 @@ export default {
       // if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.price)) {
       //   this.totalAmount = 0
       // }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+      if (row.price && row.num) {
+        let c = this.jnpf.numberFormat((row.price * row.num), 6)
         row.priceSum = c ? c : ''
       } else {
         row.priceSum = ''
@@ -473,12 +470,6 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
-      if (row.price && row.price != '0') {
-        let b = this.jnpf.numberFormat((row.price * (1 - row.discount / 100)), 4)
-        row.excludingTaxUnitPrice = b ? b : 0
-      } else {
-        row.excludingTaxUnitPrice = ''
-      }
 
       if (!row.num || !row.price) {
         row.amounts = ''
@@ -488,8 +479,8 @@ export default {
         let a = this.jnpf.numberFormat((row.price * row.num), 6)
         row.amounts = a ? a : '' // 含税金额
       }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+      if (row.price && row.num) {
+        let c = this.jnpf.numberFormat((row.price * row.num), 6)
         row.priceSum = c ? c : ''
       } else {
         row.priceSum = ''
@@ -520,8 +511,8 @@ export default {
         this.dataFormTwo.lines.push({
           productId: item.id,
           productName: item.name,
-          productUnit: item.mainUnit,
-          purchasePrice: item.purchasePrice,
+          productUnit: item.unit,
+          purchasePrice: item.price,
           costPrice: item.costPrice,
           id: '',
           num: '',

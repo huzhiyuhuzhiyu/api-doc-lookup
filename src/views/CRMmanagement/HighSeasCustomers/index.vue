@@ -163,15 +163,10 @@ import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import programme from "../components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPartnerList, uploadProduct, deletePartner, receiveCustomer } from '@/api/customerManagement'
-import { UserListAll, } from '@/api/permission/user'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-
 import { excelExport, getcategoryTree } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getSaleordersTotal } from '@/api/salesManagement/assemblyOrders'
 import share from './share'
 import Form from './Form'
-import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'carrierProfile',

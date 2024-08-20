@@ -169,6 +169,27 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
+      ProductListRequestObj1: {
+        classAttribute: 'semi_finished',
+
+        productCategoryId: '1810110053677125634',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productSource: '',
+        productStatus: 'enable',
+        pageNum: 1,
+        pageSize: 20
+      },
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'code', label: '产品编码', fixed: 'left' },
@@ -185,6 +206,9 @@ export default {
       ],
       ProductMethodArr: [
         { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+      ],
+      ProductMethodArr1: [
+        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: 'semi_finished' } }
       ]
     }
   },
@@ -198,9 +222,9 @@ export default {
       let index = this.sleeveList.length
       this.sleeveList.push({
         index,
-        holderNum: '',
-        oilNum: '',
-        steelBallNum: '',
+        holderNum: 1,
+        oilNum: 1,
+        steelBallNum: 1,
         steelBall: '',
         outerCircle: '',
         innerCircle: ''
@@ -327,9 +351,9 @@ export default {
         if (tc.prop === 'innerCircle') {
           tc.dialogTitle = '选择产品'
           tc.treeTitle = '产品分类'
-          tc.methodArr = this.ProductMethodArr
+          tc.methodArr = this.ProductMethodArr1
           tc.listMethod = getProductList
-          tc.listRequestObj = this.ProductListRequestObj
+          tc.listRequestObj = this.ProductListRequestObj1
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
           tc.change = this.sleeveNameChange1
@@ -337,9 +361,9 @@ export default {
         } else if (tc.prop === 'outerCircle') {
           tc.dialogTitle = '选择产品'
           tc.treeTitle = '产品分类'
-          tc.methodArr = this.ProductMethodArr
+          tc.methodArr = this.ProductMethodArr1
           tc.listMethod = getProductList
-          tc.listRequestObj = this.ProductListRequestObj
+          tc.listRequestObj = this.ProductListRequestObj1
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
           tc.change = this.sleeveNameChange2

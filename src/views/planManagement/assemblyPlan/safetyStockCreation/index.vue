@@ -1,329 +1,113 @@
 <template>
-  <div>
-    <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+  <!-- 销售订单创建 -->
+  <div class="JNPF-common-layout">
 
-        <div class="pageTitle">新建计划</div>
-        <div class="options">
-          <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
-            @click="handleConfirm('draft')">
-            保存草稿</el-button>
-          <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
-            @click="handleConfirm('submit')">
-            保存并提交</el-button>
-          <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
-        </div>
-      </div>
-      <div class="main" v-loading="formLoading">
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="JNPF-common-layout-center JNPF-flex-main">
+        <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="productDrawingNoS" @keyup.enter.native="search()" placeholder="品名规格" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="productCodeS" @keyup.enter.native="search()" placeholder="产品编码" clearable />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
 
-        <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="orderInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <el-form ref="dataForm" :model="planForm" :rules="dataRule" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划类型" prop="planType">
-                        <el-select v-model="planForm.planType" placeholder="请选择订单类型" clearable style="width: 100%;"
-                          disabled>
-                          <el-option v-for="(item, index) in planTypeList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="6" :xs="24">
-                      <el-form-item label="计划日期" prop="planDate">
-                        <el-date-picker v-model="planForm.planDate" type="daterange" value-format="yyyy-MM-dd"
-                          :disabled='btnType == "look"' style="width: 100%;" start-placeholder="开始日期"
-                          @change="changDateFun" end-placeholder="结束日期" clearable>
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="12" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="planForm.remark" placeholder="请输入备注"
-                          :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="产品信息" name="productInfo">
-                <div>
-                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                    icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
-                </div>
-
-                <JNPF-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
-                  border height="660" :key="165" style="width: 100%;" hasC>
-
-                  <el-table-column type="planNo" width="160" label="计划单号" :key="1011"
-                    v-if="codeConfig.codeWay != 'auto'">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.planNo" placeholder="计划单号" />
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="140" :key="4" />
-                  <el-table-column prop="bomId" label="BOM" width="140" :key="444">
-                    <template slot-scope="scope">
-                      <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="mainUnit" label="单位" width="80" :key="89" />
-                  <el-table-column prop="inventoryQuantity" label="可用库存数量" width="140" :key="8" />
-                  <el-table-column prop="planQuantity" label="计划数量" width="100" :key="7">
-                    <template slot="header">
-                      <span class="required">*</span>计划数量
-                    </template>
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.planQuantity" placeholder="计划数量"
-                        oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
-                      </el-input>
-                    </template>
-                  </el-table-column>
-
-                  <!-- <el-table-column prop="planStartDate" label="计划开始日期" width="180" :key="13">
-                    <template slot="header">
-                      <span class="required">*</span>计划开始日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planStartDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="planEndDate" label="计划结束日期" width="180" :key="139">
-                    <template slot="header">
-                      <span class="required">*</span>计划结束日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planEndDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column> -->
-
-                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
-                        style="width: 100%;">
-                        <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
-                        <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="oil" label="油脂" width="120" :key="61">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
-
-                    <template slot-scope="scope">
-                      <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
-                        <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                          :value="item.name"></el-option>
-                      </el-select>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="remark" label="备注" width="200" :key="128">
-                    <template slot-scope="scope">
-                      <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
-                    </template>
-                  </el-table-column>
-
-                  <el-table-column label="操作" width="120" fixed="right" :key="15">
-                    <template slot-scope="scope">
-
-                      <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
-
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
-          <el-tab-pane label="附件" name="annex">
-            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
-      <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="allProVisible"
-        lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body>
-
-        <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
-
-          <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
-              <el-form @submit.native.prevent>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchAllProduct()">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetAllProduct()">{{
-                      $t('common.reset')
-                    }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
-                @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
-                <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                <el-table-column prop="name" label="产品名称" sortable="custom" />
-                <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
-                <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
-                <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
-                <el-table-column prop="bomId" label="是否有BOM" sortable="custom">
-                  <template slot-scope="scope">
-                    {{ scope.row.bomId ? '有' : '无' }}
-                  </template>
-                </el-table-column>
-
-              </JNPF-table>
-              <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
-                :limit.sync="ProductListRequestObj.pageSize" @pagination="initData" />
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <topOpts @add="addSupplier()" :addText="'生成计划'">
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button>
+            </topOpts>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
             </div>
           </div>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column
+            @selection-change="handleSelectionChange" hasC>
+            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="80" />
+            <el-table-column prop="safeInventory" label="安全库存" min-width="120" />
+            <el-table-column prop="inventoryQuantity" label="可用库存" min-width="120" />
+
+          </JNPF-table>
+
+          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
+            @pagination="initData">
+
+          </pagination>
+
         </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="allProVisible = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
-            确定</el-button>
-        </span>
-      </el-dialog>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
-        width="500px">
-        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
-            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="goBack">返回列表</el-button>
-          <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
-        </span>
-      </el-dialog>
+      </div>
+
     </div>
-    <!-- <productForm v-if="productFormVisible" ref="productForm" @refresh="refresh" /> -->
+
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+
+
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
-import { batchAddPlan } from '@/api/plan/index.js'
-import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
-import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct, getCopyOrders, getWorkOrderNo, uploadProduct, } from '@/api/salesManagement/assemblyOrders'
-import { getCounryData, getCooperativeInfo, getCooperativeData, getscheduleList } from '@/api/basicData/index'
+import { excelExport } from '@/api/basicData/index'
+import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, getOrderLineReport } from '@/api/salesManagement/assemblyOrders'
+import Form from './Form'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import moment from 'moment'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表 
-import { mapGetters, mapState } from 'vuex'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { log } from 'mathjs'
-
 export default {
-
-
+  name: 'salesOrderCreation',
+  components: { Form, ExportForm, SuperQuery },
   data() {
     return {
-      planTypeList: [
-        { label: "订单生成计划", value: "order_plan" },
-        { label: "直接创建计划", value: "add_plan" },
-        { label: "安全库存创建计划", value: "safety_stock_plan" },
-      ],
-      planForm: {
-        planType: "safety_stock_plan",
-        planDate: [],
-        planStartDate: "",
-        planEndDate: "",
-      },
-      codeConfig: {},//单据规则配置
-      list1: [],
-      list2: [],
-      list3: [],
-      list4: [],
-      list5: [],
-      list6: [],
-      list7: [],
-      list8:[],
-      btnText: "",
-      tipsvisible: false,
-      activeNames: ["productInfo", "basicInfo"],
-
-      ProductListRequestObj: {
+      productCodeS:"",
+      productDrawingNoS:"",
+      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productName", "productCode", "createTime", 'createByName'],
+      superQueryVisible: false,
+      exportFormVisible: false,
+      tableData: [],
+      listLoading: false,
+      form: {
         classAttribute: "finish_product",
         productDrawingNo: "",
-        productCategoryId: "",
-        queryType: 2,
+        productCode: "",
         productStatus: 'enable',
+        safeInventoryWarnFlag: 1,
         purchaseFlag: false,
         code: "",
         name: "",
@@ -337,210 +121,90 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      dataFormTwo: {
-        data: []
-      },
-      submitmethodsTitle: "",
-      background: true,
-      datafilelist: [],
-      allProVisible: false,
 
-      allproductData: [],
-      allProductTotal: 0,
 
-      productData: [],
-      listLoading: false,
+      total: 0,
+      formVisible: false,
+      superQueryJson: [
 
-      index: null,
 
-      customerVisible: false,
-      btnType: undefined,
-      activeName: "orderInfo",
-      btnLoading: false,
-      formLoading: false,
-      treeLoading: false,
-      parentId: '',
-      dataRule: {
-        planDate: [
-          { required: true, message: '计划日期不能为空', trigger: 'change' }
-        ],
-      },
-      customerData: {},
-      selectRows: [],
-      selectArr: [],
-      customStyleData: 0,
+
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
+          type: 'input'
+        },
+
+        {
+          prop: 'productCode',
+          label: "产品编码",
+          type: 'input'
+        },
+        {
+          prop: 'productCategoryName',
+          label: "产品分类",
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: "单位",
+          type: 'input'
+        },
+        {
+          prop: 'safeInventory',
+          label: "安全库存",
+          type: 'input'
+        },
+        {
+          prop: 'inventoryQuantity',
+          label: "库存数量",
+          type: 'input'
+        },
+
+
+
+
+      ],
+      selectList: [],
     }
   },
-  computed: {
-    ...mapGetters(['userInfo']),
-    ...mapState('user', ['token']),
-
+  watch: {
+    filterText(val) {
+      this.$refs.treeBox.filter(val)
+    }
   },
+
 
   created() {
-  },
-  mounted() {
-    this.init()
-    this.getProductClassFun()
-  },
-  beforeDestroy() {
+    this.initData()
   },
   methods: {
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
-      })
-
-
+    handleSelectionChange(val) {
+      this.selectList = val
     },
+
+
+
+
+
+
+
+    superQuerySearch(query) {
+      this.form.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+
+ 
+
+
+
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode') {
+      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
       } else if (prop === 'createTime') {
         newProp = 't1.create_time'
@@ -548,115 +212,80 @@ export default {
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
-
-      this.ProductListRequestObj.orderItems[0].asc = order === "ascending"
-      this.ProductListRequestObj.orderItems[0].column = order === null ? "" : newProp
+      if (prop == "createByName") {
+        newProp = "create_by"
+      }
+      this.form.orderItems[0].asc = order === "ascending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
       this.initData()
     },
 
 
-    //多选
-    handleRowClick(row) {
-      this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
-    },
-    // 表单选择交货日期 表格批量覆盖
-    changDateFun() {
-      let arr = JSON.parse(JSON.stringify(this.productData))
-      if (this.productData.length) {
-        arr.forEach((item, index) => {
-          // item.deliveryDate = this.dataForm.deliveryDate
-          if (!item.planStartDate) {
-            this.$set(item, "planStartDate", this.planForm.planDate[0])
-          }
+    dataFormSubmit() {
+      this.form.pageNum = 1
+      Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
+        let item = this.form[key]
+        this.form[key] = typeof item === 'string' ? item.trim() : item
+      })
 
-          if (!item.planEndDate) {
-            this.$set(item, "planEndDate", this.planForm.planDate[1])
-          }
-        });
-        this.productData = arr
+
+      this.initData()
+
+    },
+
+
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
       }
     },
-
-
-
-
-
-
-
-    // 产品列表选中 
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
-    // 批量删除
-    batchDelete() {
-      // 遍历选中的行的数据
-      if (this.selectRows.length < 1) {
-        this.$message({
-          message: "请选择你要删除的数据",
-          type: "error",
-          duration: 1500,
-        })
-      }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i];
-        const index = this.productData.indexOf(row);
-        if (index > -1) {
-          this.productData.splice(index, 1); // 从tableData中删除选中的行
-        }
-      }
-      this.selectRows = []; // 清空选中的行的数据
-    },
-    // 单个删除
-    handleDel(data) {
-      this.productData.splice(data.$index, 1)
-    },
-
-
-
-
-
-
-
-
-    // 根据订单类型  打开不同的选择产品弹框
-    openSeleceProductDialog() {
-
-      this.allProVisible = true
-      this.allproductData = []
-      this.resetAllProduct()
-
-
-    },
-    // 获取所有产品列表数据
     initData() {
       this.listLoading = true
-      getProducts(this.ProductListRequestObj).then(listRes => {
-        if (Array.isArray(listRes.data)) {
-          this.allproductData = listRes.data
-        } else {
-          this.allproductData = listRes.data.records
-        }
-        this.allProductTotal = listRes.data.total
-        this.$forceUpdate()
-        this.treeLoading = false
+      if(this.productCodeS){
+        this.form.superQuery.condition.push(
+          {"field":"productCode","fieldValue":this.productCodeS,"symbol":"like"}
+        )
+      }
+      if(this.productDrawingNoS){
+        this.form.superQuery.condition.push(
+          {"field":"productDrawingNo","fieldValue":this.productDrawingNoS,"symbol":"like"}
+        )
+      }
+     
+      if(this.productCodeS||this.productDrawingNoS ){
+        this.$set(this.form.superQuery,'matchLogic','AND')
+      }
+      getProducts(this.form).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+        this.getOrderLineReportFun()
+      }).catch(() => {
         this.listLoading = false
       })
+
     },
-    // 搜索所有产品 列表
-    searchAllProduct() {
-      this.ProductListRequestObj.pageNum = 1
-      this.initData()
+
+
+    search() {
+      this.dataFormSubmit()
     },
-    // 所有产品弹框 重置搜索条件
-    resetAllProduct() {
-      this.ProductListRequestObj = {
+
+    reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.deliveryDateArr = []
+      this.form = {
         classAttribute: "finish_product",
         productDrawingNo: "",
-        productCategoryId: "",
-        queryType: 2,
+        productCode: "",
+        productStatus: 'enable',
+        safeInventoryWarnFlag: 1,
+        purchaseFlag: false,
         code: "",
         name: "",
-        purchaseFlag: false,
         orderItems: [{
           "asc": false,
           "column": ""
@@ -664,346 +293,125 @@ export default {
           "asc": false,
           "column": "create_time"
         }],
-        productStatus: "enable",
         pageNum: 1,
         pageSize: 20,
-      },
-        this.searchAllProduct()
-    },
-    // 所有产品列表 多选
-    handleSelectionChangeAllPruduct(val) {
-      this.selectArr = val
 
-
-    },
-    submitAllProduct() {
-      console.log("所选的数据", this.selectArr);
-
-      this.allProVisible = false
-      this.selectArr.forEach(item => {
-        item.productName = item.name
-        item.productsId = item.id
-        item.planType = 'safety_stock_plan'
-        if (this.planForm.planDate.length) {
-          this.$set(item, 'planStartDate', this.planForm.planDate[0])
-          this.$set(item, 'planEndDate', this.planForm.planDate[1])
-
-        }
-        if (this.codeConfig.codeWay != 'auto') {
-          item.planNo = ""
-        }
-        this.productData.push(item)
-      });
-      let uniqueArr = [];
-      let idSet = new Set();
-
-      this.productData.forEach(item => {
-        if (!idSet.has(item.id)) {
-          uniqueArr.push(item);
-          idSet.add(item.id);
-        }
-      });
-      this.productData = uniqueArr
-
-    },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    async fetchData(code) {
-      try {
-        const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-
-      } catch (error) {
+        superQuery: {},
       }
-    },
-    // 继续修改
-    continueEdit() {
-      this.init(this.oldId, this.oldType)
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
-    // 继续新增
-    continueAdd() {
-      this.init('', 'add')
+      this.$refs.SuperQuery.conditionList = []
 
-      this.tipsvisible = false
-      this.btnLoading = false
-      this.planForm = {
-        planNo: "",
-        planType: "safety_stock_plan",
-        planDate: [],
-        planStartDate: "",
-        planEndDate: "",
+      this.productCodeS="",
+      this.productDrawingNoS="",
+      this.search()
+    },
+  
+
+    addSupplier() {
+      console.log(this.selectList);
+      if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
+      this.formVisible=true
+      this.$nextTick(() => {
+        this.$refs.Form.init(this.selectList)
+      })
+
+    },
+
+
+
+
+    // 导出
+    exportForm(exportTableRef) {
+      this.exportTableRef = exportTableRef
+      this.exportFormVisible = true
+      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      this.exportFormVisible = false
+      let includeFieldMap = {}
+      for (let i = 0; i < data.selectKey.length; i++) {
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
       }
-      this.productData = []
-    },
-    init(id, btnType) {
-      this.fetchData("JHDH")
-    },
-
-    goBack() {
-      this.$router.push({
-        path: "/planManagement/assemblyPlan/assemblyPlanManagement",
+      const targetListQuery = this.form
+      let _data = {
+        ...targetListQuery,
+        exportType: '1200',
+        exportName: '安全库存',
+        includeFieldMap,
+        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
+      }
+      excelExport(_data).then(res => {
+        this.exportFormVisible = false
+        if (!res.data.url) return
+        this.jnpf.downloadFile(res.data.url, res.data.name)
       })
-      this.tipsvisible = false
-    },
-
-
-
-    handleConfirm(value) {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-
-          let submitFlag = null;
-
-
-
-
-          // this.dataForm.documentStatus = value
-          if (this.datafilelist.length) {
-            this.datafilelist.map((item, index) => {
-              item.bimAttachments = {
-                businessType: '',
-                documentId: item.id,
-                fileFlag: '',
-                sort: index
-              }
-            })
-          }
-
-          if (this.productData.length < 1) {
-            submitFlag = false
-            this.$message({
-              message: "请选择产品",
-              type: 'error',
-              duration: 1500,
-            })
-            return
-          } else {
-            for (let index = 0; index < this.productData.length; index++) {
-              const item = this.productData[index];
-              if (!item.planQuantity) {
-                submitFlag = false
-                this.$message({
-                  message: "请输入第" + (index + 1) + "行产品的计划数量",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
-              }
-              if (Number(item.num) == 0) {
-                submitFlag = false
-                this.$message({
-                  message: "第" + (index + 1) + "行产品的计划数量必须大于0",
-                  type: 'error',
-                  duration: 1500,
-                })
-                break
-              }
-
-              // if (!item.planStartDate) {
-              //   submitFlag = false
-              //   this.$message({
-              //     message: "请选择第" + (index + 1) + "行产品的计划开始日期",
-              //     type: 'error',
-              //     duration: 1500,
-              //   })
-              //   break
-              // }
-              // if (!item.planEndDate) {
-              //   submitFlag = false
-              //   this.$message({
-              //     message: "请选择第" + (index + 1) + "行产品的计划结束日期",
-              //     type: 'error',
-              //     duration: 1500,
-              //   })
-              //   break
-              // }
-
-
-
-            }
-
-          }
-          this.productData.forEach(item => {
-            item.documentStatus = value
-          });
-          if (submitFlag === false) return
-          this.btnLoading = true
-
-          batchAddPlan(this.productData).then(res => {
-            let msg = "";
-            if (value == "draft") {
-              this.submitmethodsTitle = "保存成功"
-            } else {
-              this.submitmethodsTitle = "提交成功"
-
-            }
-            this.tipsvisible = true
-
-          }).catch(() => {
-            this.btnLoading = false
-          })
-
-        }
-      })
-    },
-
+    }
   }
 }
 </script>
-<style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
-::v-deep .handle-mr {
-  display: block !important;
-}
-
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  margin-bottom: 10px
-}
-
-
-
-//.el-button--small {
-// padding: 1;
-//}</style>
 <style scoped>
+.el-tab-pane {
+  height: calc(100% - 10px);
+}
+
 ::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0;
+  height: calc(100% - 40px);
 }
 
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 9px 10px;
-}
-</style>
-<style scoped lang="scss">
-.required {
-  color: red;
-  margin-right: 4px;
+.el-tabs {
+  height: 100%;
 }
 
-.el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
+.el-tabs__nav-scroll {
+  padding-left: 10px;
 }
 
-::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
+
+
+.JNPF-common-search-box {
+  padding: 8px !important;
+
+  margin-bottom: 5px;
 }
 
-.el-button span {
-  font-size: 14px !important;
+.JNPF-common-head {
+  padding: 8px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 0px !important;
 }
 
 .pagination-container {
-  background-color: #f5f7fa;
+  background-color: #f5f5f5;
+  margin-top: 0px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
-::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+.main {
+  padding: 10px 30px 0;
 }
 
-.el-table__footer {
-  display: none;
-}
-
-::v-deep.has-gutter {
-  display: none;
-}
-
-.JNPF-preview-main .main {
-  padding-top: 0;
-}
-
-::v-deep .el-tabs__item {
-  padding: 0 10px !important
-}
-
-::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
-}
-
-::v-deep .el-collapse-item__header {
-  line-height: 33px;
-  font-size: 18px;
-  border-top: 1px solid rgb(220, 223, 230);
-  // background: #dcdfe6;
-  background: rgb(250, 250, 250);
-  padding-left: 5px;
-  font-weight: 700;
-  // border-bottom:none;
-  border-right: 1px solid #dcdfe6;
-  border-left: 1px solid #dcdfe6;
-}
-
-::v-deep .el-collapse-item__wrap {
-  border: 1px solid #dcdfe6 !important;
-  border-top: none;
+.aaa ::v-deep .el-tabs__header {
+  padding: 0 !important;
+  padding-bottom: 10px !important;
   margin-bottom: 0;
-  padding: 0 10px 0px;
-  border-top: none !important;
-
+  padding-left: 10px !important;
+  background: #fff;
 }
 
-::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+.el-button--small {
+  padding: 1;
 }
 
-
-.import_t {
-  font-size: 22px;
-  color: rgb(103, 194, 58);
-  vertical-align: top;
-  margin-top: 40px;
-  display: inline-block;
-  margin-left: 20px;
+::v-deep .JNPF-common-page-header {
+  padding: 5px 10px;
 }
 
-.import_b {
-  font-size: 18px;
-  /* color: #67c23a; */
-  vertical-align: top;
-  margin-top: 43px;
-  display: inline-block;
-}
-
-.orderInfo ::v-deep .el-collapse-item__wrap {
-  border-bottom: none !important
-}
-
-.options {
-  display: inline-block;
-  float: right;
-}
-
-.pageTitle {
-  display: inline-block;
-  font-size: 18px;
-  color: #303133;
-  height: 100%;
-  line-height: 36px;
-  font-weight: 700;
+.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding-bottom: 0;
 }
 </style>

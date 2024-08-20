@@ -44,6 +44,14 @@ export function getProductionResource(data) {
   })
 }
 // 导入
+export function batchProductionResource(data) {
+  return request({
+    url: `/api/mes/production/resource/setting/batch`,
+    method: 'post',
+    data
+  })
+}
+// 导入
 export function saleUploadroutingModel(data) {
   return request({
     url: `/api/mes/production/resource/upload/data`,

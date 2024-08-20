@@ -320,7 +320,7 @@ export default {
       activeNames: ["productInfo", "basicInfo"],
 
       ProductListRequestObj: {
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
@@ -651,7 +651,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttribute: "semi_finished",
+        classAttribute: "finish_product",
         productDrawingNo: "",
         productCategoryId: "",
         queryType: 2,
@@ -846,6 +846,7 @@ export default {
           }
           this.productData.forEach(item => {
             item.documentStatus = value
+            item.finalPlanQuantity=item.planQuantity
           });
           if (submitFlag === false) return
           this.btnLoading = true

@@ -92,7 +92,7 @@
                   <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
                   <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                  <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
+                  <!-- <el-table-column prop="ordersNo" label="订单号" min-width="180" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'ordersNo'">
                         <div class="viewData">
@@ -111,7 +111,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
 
                   <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
@@ -132,7 +132,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="drawingNo" label="产品图号" min-width="160" show-overflow-tooltip>
+                  <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
 
@@ -142,7 +142,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
+                  <!-- <el-table-column prop="spec" label="规格型号" min-width="160" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'spec'">
 
@@ -151,7 +151,7 @@
                         </div>
                       </el-form-item>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
 
                   <el-table-column prop="reconciliationUnitPrice" label="数量" min-width="140">
                     <template slot-scope="scope">
@@ -233,15 +233,16 @@
                 <span style="font-size:17px;font-weight:500;margin-right:10px">不含税金额：
                   <span :class="dataForm.excludingTaxAmount > 0 ? 'green' : 'red'">{{ dataForm.excludingTaxAmount > 0 ?
                     '+' + dataForm.excludingTaxAmount : dataForm.excludingTaxAmount
-                  }}</span></span>
+                    }}</span></span>
                 <span style="font-size:17px;font-weight:500;margin-right:10px">订单税额：
                   <span :class="dataForm.taxAmount > 0 ? 'green' : 'red'">{{ dataForm.taxAmount > 0 ?
                     '+' + dataForm.taxAmount : dataForm.taxAmount
-                  }}</span></span>
-             <span style="font-size:17px;font-weight:500;margin-right:10px">含税金额：
-                  <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">{{ dataForm.totalReconciliationAmount > 0 ?
-                    '+' + dataForm.totalReconciliationAmount : dataForm.totalReconciliationAmount
-                  }}</span></span>
+                    }}</span></span>
+                <span style="font-size:17px;font-weight:500;margin-right:10px">含税金额：
+                  <span :class="dataForm.totalReconciliationAmount > 0 ? 'green' : 'red'">{{
+                    dataForm.totalReconciliationAmount > 0 ?
+                      '+' + dataForm.totalReconciliationAmount : dataForm.totalReconciliationAmount
+                    }}</span></span>
 
               </div>
             </el-tab-pane>
@@ -288,7 +289,8 @@
                                   points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
                               </g>
                               <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                height="36"></rect>
+                                height="36">
+                              </rect>
                               <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
                                 <mask id="mask-4-48" fill="white">
                                   <use xlink:href="#path-3-48"></use>
@@ -328,8 +330,8 @@
         </div>
       </div>
     </transition>
-    <okOrNo v-if="okOrNoVisible" ref="okForm" @close="closeForm"/>
-    <transferForm v-if="transferFormVisible" ref="transferForm" @close="closeForm"/>
+    <okOrNo v-if="okOrNoVisible" ref="okForm" @close="closeForm" />
+    <transferForm v-if="transferFormVisible" ref="transferForm" @close="closeForm" />
   </div>
 </template>
 <script>
@@ -341,12 +343,12 @@ import okOrNo from './okOrNoForm.vue'
 import transferForm from './transferForm.vue'
 export default {
   components: {
-    workFlow,okOrNo,transferForm
+    workFlow, okOrNo, transferForm
   },
   data() {
     return {
-      okOrNoVisible:false,
-      transferFormVisible:false,
+      okOrNoVisible: false,
+      transferFormVisible: false,
       activeName: 'jcInfo',
       dialogTitle: '',
       loading: false,
@@ -377,8 +379,8 @@ export default {
       productRules: {
       },
       productArr: [],
-       // 审批流需要字段
-       approvalBusinessId: '',
+      // 审批流需要字段
+      approvalBusinessId: '',
       workVisible: false,
       busNodeConfig: {
         nodeName: "发起人",
@@ -418,12 +420,12 @@ export default {
         startTime: ""
       },
       transferData: [],
-      formLoading:false,
-      isShow:'',
-      row:{},
+      formLoading: false,
+      isShow: '',
+      row: {},
     }
   },
-  computed:{
+  computed: {
     ...mapGetters(['userInfo']),
   },
   created() {
@@ -437,7 +439,7 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(row, type,isShow) {
+    init(row, type, isShow) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = row.documentId || ''
       this.row = row
@@ -499,7 +501,7 @@ export default {
         }
       })
     },
-  
+
 
     // 删除项
     delequipment_process_relList(index) {
@@ -529,14 +531,14 @@ export default {
       this.dataFormTwo.data = [...this.dataFormTwo.data, ...data,]
       console.log(this.dataFormTwo.data, '传递数据');
     },
-    download(){
+    download() {
       console.log(this);
-      exportFinAccountsReceivableReconciliation(this.dataForm.id).then(res=>{
+      exportFinAccountsReceivableReconciliation(this.dataForm.id).then(res => {
         this.jnpf.downloadFile(res.data.url, res.data.name)
       })
     },
-       // 获取审批流参数递归处理
-       addNodeTypeAndNodeName(obj) {
+    // 获取审批流参数递归处理
+    addNodeTypeAndNodeName(obj) {
       console.log(obj);
       if (obj) {
         if (obj.name === "审核人") {
@@ -596,19 +598,19 @@ export default {
         }
       }
     },
-    confirmOk(title,state,row){
+    confirmOk(title, state, row) {
       this.okOrNoVisible = true
-      this.$nextTick(()=>{
-        this.$refs.okForm.init(title,state,row)
+      this.$nextTick(() => {
+        this.$refs.okForm.init(title, state, row)
       })
     },
-    confirmTrans(title,state,row){
+    confirmTrans(title, state, row) {
       this.transferFormVisible = true
-      this.$nextTick(()=>{
-        this.$refs.transferForm.init(title,state,row)
+      this.$nextTick(() => {
+        this.$refs.transferForm.init(title, state, row)
       })
     },
-    closeForm(isRefresh){
+    closeForm(isRefresh) {
       if (isRefresh) {
         this.$emit('close', true)
       }
@@ -640,12 +642,13 @@ export default {
 }
 
 ::v-deep .el-tabs {
-  height: 100%!important;
+  height: 100% !important;
 }
+
 ::v-deep .el-tabs__content {
   /* height: auto !important; */
   height: calc(100% - 47px) !important;
-  overflow:auto!important;
+  overflow: auto !important;
   padding: 0 20px;
 }
 
@@ -678,6 +681,7 @@ export default {
 .green {
   color: #67C23A;
 }
+
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
 }

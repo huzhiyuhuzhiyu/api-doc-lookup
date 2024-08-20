@@ -1,6 +1,36 @@
 <template>
   <div class="JNPF-common-layout">
-
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title">
+        <h2 v-if="!leftFlag">产品分类</h2>
+        <span class="options" v-if="!leftFlag">
+          <el-dropdown>
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+      </div>
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
+            <span class="text" :title="data.name">{{ data.name }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+    </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
@@ -48,17 +78,13 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
             <el-table-column prop="name" label="产品名称" min-width="180" />
-            <el-table-column prop="code" label="产品编码" min-width="170" />
+            <el-table-column prop="code" label="产品编码" min-width="180" />
             <el-table-column prop="type" label="产品类型" min-width="160" />
-            <el-table-column prop="unit" label="产品单位" min-width="120">
-              <template slot-scope="scope">
-                {{returnTypeVisitForm(scope.row.unit)}}
-              </template>
-            </el-table-column>
+            <el-table-column prop="unit" label="产品单位" min-width="120" />
             <el-table-column prop="price" label="价格(元)" min-width="140" />
             <el-table-column prop="describe" label="产品描述" min-width="300" />
             <el-table-column prop="costPrice" label="成本价(元)" min-width="140" />
-            <el-table-column prop="stackingFlag" label="是否上下架" min-width="100">
+            <el-table-column prop="stackingFlag" label="是否上下架" min-width="130">
               <template slot-scope="scope">
                 <div v-if="scope.row.stackingFlag == '0'">否</div>
                 <div v-if="scope.row.stackingFlag == '1'">是</div>
@@ -99,7 +125,7 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmProduct, getcrmProductlist } from '@/api/CRMmanagement/index'
+import { deletecrmProduct, getcrmProductlist, crmProductCategorytree } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -113,6 +139,17 @@ export default {
   },
   data() {
     return {
+      //左侧分类
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      treeData: [],
+      expands: true,
+      refreshTree: true,
+      treeLoading: false,
+      leftFlag: false,
+      //
       datalist: [],
       unitList: [],
       superQueryJson: [
@@ -187,6 +224,8 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
+        productCategoryId: '',//产品分类id
+        productCategoryList: [],//产品分类idlist
         name: '',
         pageNum: 1,
         pageSize: 20,
@@ -209,9 +248,9 @@ export default {
     }
   },
   created() {
-    this.getDictionaryType()
+    // this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.initData()
+    this.getcategoryTree()
   },
   beforeDestroy() {
     window.onresize = null
@@ -220,6 +259,52 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    //左侧分类
+    filterNode(value, data) {
+      if (!value) return true
+      return data.name.indexOf(value) !== -1
+    },
+    handleNodeClick(data, node) {
+      if (this.listQuery.productCategoryId === data.id) return
+      this.listQuery.productCategoryList = []
+      this.listQuery.productCategoryList.push(data.id)
+      this.listQuery.productCategoryId = data.id
+      this.search()
+    },
+    // 展开或折叠全部
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+    // 获取指定树状列表
+    getcategoryTree() {
+      this.listLoading = true
+      this.treeLoading = true
+      this.listQuery.productCategoryId = '' // 重置数据类型id筛选
+      this.listQuery.productCategoryList = []
+      crmProductCategorytree({})
+        .then((res) => {
+          this.treeData = res.data.length ? res.data : []
+          this.$nextTick(() => {
+            this.treeLoading = false
+            this.initData()
+          })
+        })
+        .catch(() => {
+          this.treeLoading = false
+          this.listLoading = false
+        })
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
+    //
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -337,7 +422,7 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.initData()
+        this.getcategoryTree()
       }
     },
     search() {
@@ -348,7 +433,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.programmetitle = ''
-      this.initData()
+      this.getcategoryTree()
     },
   }
 }

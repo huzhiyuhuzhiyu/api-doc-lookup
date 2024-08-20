@@ -32,6 +32,11 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
+                      <el-form-item label="产品类别" prop="productCategoryId">
+                        <ComSelect-list :isdisabled="btntype == 'look' ? true : false" v-model="dataForm.productCategoryName" placeholder="请选择产品类别" auth @change="onOrganizeChange" :title="'选择产品类型'" :method="crmProductCategorytree" :requestObj="requestObjTwo" :paramsObj="{}" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="成本价" prop="costPrice">
                         <el-input v-model="dataForm.costPrice" placeholder="请输入成本价" :disabled="btntype == 'look'" />
                       </el-form-item>
@@ -39,7 +44,7 @@
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="产品单位" prop="unit">
                         <el-select v-model="dataForm.unit" placeholder="请选择产品单位" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                          <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.fullName"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -76,10 +81,14 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { addcrmProduct, detailcrmProduct, updatecrmProduct } from '@/api/CRMmanagement/index'
+import { addcrmProduct, detailcrmProduct, updatecrmProduct, crmProductCategorytree } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
+      crmProductCategorytree,
+      requestObjTwo: {
+        pageSize: -1,
+      },
       stacklist: [{ fullName: '是', enCode: 1 }, { fullName: '否', enCode: 0 }],
       codeConfig: {},//单据规则配置
       datafilelist: [],
@@ -99,15 +108,17 @@ export default {
         code: '',
         price: '',
         describe: '',
-        stackingFlag: ''
+        stackingFlag: '',
+        productCategoryId:'',
+        productCategoryName:''
       },
       btntype: false,
       dataRule: {
         name: [
           { required: true, message: '请输入产品名称', trigger: 'blur' },
         ],
-        type: [
-          { required: true, message: '请输入产品类型', trigger: 'blur' },
+        productCategoryId: [
+          { required: true, message: '请输入产品类别', trigger: 'blur' },
         ],
         code: [
           { required: true, message: '请输入产品编码', trigger: 'blur' },
@@ -125,6 +136,15 @@ export default {
     this.getDictionaryType()
   },
   methods: {
+    onOrganizeChange(val, data) {
+      if (!data) {
+        this.dataForm.productCategoryId = ''
+        this.dataForm.productCategoryName = ''
+      } else {
+        this.dataForm.productCategoryId = data[0].id
+        this.dataForm.productCategoryName = data[0].name
+      }
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

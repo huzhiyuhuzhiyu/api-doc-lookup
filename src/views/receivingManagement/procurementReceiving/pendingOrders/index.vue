@@ -169,6 +169,7 @@ export default {
         orderType:'procure',
         deliveryEndDate: '',
         deliveryStartTime: '',
+        classAttribute: 'other',
         // extensionFlag: 1,
         // deliverQueryFlag: 1,
         pageNum: 1,

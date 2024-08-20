@@ -75,7 +75,6 @@
             </el-table-column>
             <el-table-column prop="departmentName" label="所属部门" min-width="160" sortable="custom"></el-table-column>
             <el-table-column prop="salesName" label="所属销售 " min-width="140" sortable="custom" />
-            <el-table-column prop="workOrderNo" label="工作令号" min-width="140"></el-table-column>
             <el-table-column prop="orderDate" label="订单日期" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="contractNo" label="客户合同号" min-width="140" sortable="custom"></el-table-column>
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom"></el-table-column>
@@ -95,11 +94,11 @@
               </template>
             </el-table-column>
 
-            <el-table-column prop="changesCount" label="变更次数" min-width="120">
+            <!-- <el-table-column prop="changesCount" label="变更次数" min-width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.changesCount ? scope.row.changesCount : 0 }}</div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" sortable="custom" min-width="120" />
 
@@ -251,9 +250,11 @@ export default {
         documentStatus: "",
         approvalStatus: "",
         startTime: "",
-        endTime: "",
-        superQuery: {},
-
+        endTime: "", 
+        superQuery: {
+          condition:[],
+          matchLogic:""
+        },
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -389,15 +390,11 @@ export default {
         },
         {
           prop: 'salesName',
-          label: "所属销售人员",
+          label: "所属销售",
           type: 'custom',
           component: 'user-select',
         },
-        {
-          prop: 'workOrderNo',
-          label: "工作令号",
-          type: 'input'
-        },
+     
         {
           prop: 'orderDate',
           label: '订单日期',
@@ -455,16 +452,9 @@ export default {
 
   },
 
-  created() {
-    this.getDictionaryType()
-    this.getUserList()
-    this.getAttributeline()
-    let endDate = new Date().toISOString().slice(0, 10);
-    let startDate = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().slice(0, 10);
-    this.orderDateArr[0] = startDate
-    this.orderDateArr[1] = endDate
-    this.orderForm.orderStartDate = startDate
-    this.orderForm.orderEndDate = endDate
+  created() { 
+    this.getUserList() 
+    
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -474,17 +464,7 @@ export default {
     },
 
 
-    // 获取产品列表字段 编排属性
-    getAttributeline() {
-      getAttributeline('product').then(res => {
-        this.customList = []
-        res.data.forEach(column => {
-          // 列表中显示
-          let propExists = this.customList.some(item2 => item2.prop === column.attributeColumn);
-          if (!propExists) { this.customList.push({ prop: column.attributeColumn, label: column.name }) }
-        })
-      })
-    },
+   
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -495,44 +475,7 @@ export default {
     },
 
 
-    // 获取等级付款方式数据
-    getDictionaryType() {
-      getDictionaryType().then(res => {
-        let data = res.data.list
-        data.forEach(item => {
-          if (item.enCode == "partnerArchives") {
-            let children = item.children
-            children.forEach(resp => {
-              // 付款方式
-              if (resp.enCode == "paymentMethod") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.paymentMethodList = response.data.list
-                })
-              }
-              // 付款周期
-              if (resp.enCode == "paymentCycle") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.paymentCycleList = response.data.list
-                })
-              }
-
-            });
-
-          }
-
-        });
-      })
-    },
+  
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'salesName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
@@ -576,6 +519,13 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if(this.deliveryDateArr.length){
+        this.orderForm.deliveryStartDate=this.deliveryDateArr[0]
+        this.orderForm.deliveryEndDate=this.deliveryDateArr[1]
+      }else{
+        this.orderForm.deliveryStartDate=""
+        this.orderForm.deliveryEndDate=""
+      }
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -628,8 +578,13 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition:[],
+          matchLogic:""
+        },
 
       }
+      this.$refs.SuperQuery.conditionList = []
 
       this.search()
     },

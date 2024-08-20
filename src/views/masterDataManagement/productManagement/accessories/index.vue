@@ -7,7 +7,7 @@
  * @Description: 辅料页面
 -->
 <template>
-  <ProductIndex :initListQuery="initListQuery" productName="配件" :busSetId="'bm_cp_fl'" />
+  <ProductIndex :initListQuery="initListQuery" productName="配件" :busSetId="'CPBM'" />
  </template>
  
  <script>

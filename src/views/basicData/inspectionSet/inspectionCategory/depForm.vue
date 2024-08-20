@@ -1,30 +1,39 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建检验项目分类' : '编辑检验项目分类'" :close-on-click-modal="false" :close-on-press-escape="false"
-    :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px" @close="$emit('close')">
-    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
-      label-position="top" label-width="120px">
-      <el-form-item label="上级分类" prop="parentName">
-        <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth
-          @change="onOrganizeChange" :currOrgId="dataForm.id" :type="dataForm.type"
-          :classAttribute="dataForm.classAttribute" />
-      </el-form-item>
-      <el-form-item label="分类编码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
-      </el-form-item>
-      <el-form-item label="分类名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
+  <el-drawer :title="!dataForm.id ? '新建检验项目分类' : '编辑检验项目分类'" :close-on-click-modal="false"
+    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-common-drawer" width="500px"
+    @close="$emit('close')">
+    <template slot="title">
+      <div class="custom_title">
+        {{ title }}
+      </div>
+    </template>
+    <div style="padding: 10px;">
+      <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
+        label-position="top" label-width="120px">
+        <el-form-item label="上级分类" prop="parentName">
+          <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
+            :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
+        </el-form-item>
+        <el-form-item label="分类名称" prop="name">
+          <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
+        </el-form-item>
+        <el-form-item label="分类编码" prop="code">
+          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+        </el-form-item>
+
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="dataForm.remark" type="textarea" maxlength="200" placeholder="请输入备注" />
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <span class="button-bottom">
       <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
       <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
         {{ $t('common.submitButton') }}
       </el-button>
     </span>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <script>
@@ -36,6 +45,7 @@ export default {
       visible: false,
       formLoading: false,
       btnLoading: false,
+      title: '',
       dataForm: {
         parentId: '',
         parentName: "",
@@ -71,6 +81,7 @@ export default {
       this.visible = true
       this.dataForm.id = id || ''
       this.dataForm.parentId = parentId || '-1'
+      this.title = !this.dataForm.id ? '新建检验项目分类' : '编辑检验项目分类'
       this.formLoading = true
       this.$nextTick(() => {
         if (this.dataForm.id) {
@@ -112,3 +123,22 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.button-bottom {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+</style>

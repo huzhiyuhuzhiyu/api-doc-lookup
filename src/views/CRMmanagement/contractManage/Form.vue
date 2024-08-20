@@ -179,7 +179,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getcrmProductlist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getcrmProductlist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :treeNodeClick="ProductTreeNodeClick" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -189,7 +189,7 @@ import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
-import { addcrmContract, updatecrmContract, detailcrmContract, detailcrmBusiness, getcrmBusinessList,crmProductCategorytree, getcrmProductlist } from '@/api/CRMmanagement/index'
+import { addcrmContract, updatecrmContract, detailcrmContract, detailcrmBusiness, getcrmBusinessList, crmProductCategorytree, getcrmProductlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
@@ -376,6 +376,13 @@ export default {
     this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
+    ProductTreeNodeClick(data, node, listQuery) {
+      if (listQuery.productCategoryId === data.id) return listQuery
+      listQuery.productCategoryList = []
+      listQuery.productCategoryList.push(data.id)
+      listQuery.productCategoryId = data.id
+      return listQuery
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -411,10 +418,8 @@ export default {
     },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.productCategoryId === data.id) return listQuery
-      listQuery.productCategoryList = []
-      listQuery.productCategoryList.push(data.id)
-      listQuery.productCategoryId = data.id
+      if (listQuery.categoryId === data.id) return listQuery
+      listQuery.categoryId = data.id
       return listQuery
     },
     //商机选框传值
@@ -482,8 +487,8 @@ export default {
     },
     changeTaxRate(row, index) {
       let productArr = [...this.dataFormTwo.lines]
-      productArr[index].excludingTaxUnitPrice = this.jnpf.numberFormat(row.price * (1 - (row.discount * 1 / 100)), 4)
-      productArr[index].priceSum = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 4)
+      productArr[index].price = this.jnpf.numberFormat(row.purchasePrice * (1 - row.discount / 100), 4)
+      productArr[index].priceSum = this.jnpf.numberFormat((row.price * row.num), 4)
       productArr[index].totalTaxAmount = this.jnpf.numberFormat((row.amounts * 1 - row.priceSum), 4)
       this.dataFormTwo.lines = productArr
       // var totalPrice = 0;
@@ -538,12 +543,9 @@ export default {
         }
       }
       if (row.price && row.price != '0') {
-        let c = this.jnpf.numberFormat((100 - (row.purchasePrice / row.price)), 4)
+        let c = this.jnpf.numberFormat((100 - (row.price * 1 / row.purchasePrice * 1) * 100), 4)
         row.discount = row.purchasePrice && c ? c : 0
-        let b = this.jnpf.numberFormat((row.price * (1 - row.discount / 100)), 4)
-        row.excludingTaxUnitPrice = b ? b : 0
       } else {
-        row.excludingTaxUnitPrice = ''
         row.discount = ''
       }
 
@@ -558,8 +560,8 @@ export default {
       // if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.price)) {
       //   this.totalAmount = 0
       // }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+      if (row.price && row.num) {
+        let c = this.jnpf.numberFormat((row.price * row.num), 6)
         row.priceSum = c ? c : ''
       } else {
         row.priceSum = ''
@@ -620,12 +622,6 @@ export default {
           row.num = row.num.substring(0, 8);
         }
       }
-      if (row.price && row.price != '0') {
-        let b = this.jnpf.numberFormat((row.price * (1 - row.discount / 100)), 4)
-        row.excludingTaxUnitPrice = b ? b : 0
-      } else {
-        row.excludingTaxUnitPrice = ''
-      }
 
       if (!row.num || !row.price) {
         row.amounts = ''
@@ -635,8 +631,8 @@ export default {
         let a = this.jnpf.numberFormat((row.price * row.num), 6)
         row.amounts = a ? a : '' // 含税金额
       }
-      if (row.excludingTaxUnitPrice && row.num) {
-        let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
+      if (row.price && row.num) {
+        let c = this.jnpf.numberFormat((row.price * row.num), 6)
         row.priceSum = c ? c : ''
       } else {
         row.priceSum = ''

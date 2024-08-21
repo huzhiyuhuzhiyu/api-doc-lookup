@@ -56,9 +56,12 @@
           :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column>
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
-              <i
-                :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{
-                  scope.row.name }}
+              <i :class="[
+                scope.row.childrenList.length >= 1
+                  ? 'icon-ym icon-ym-tree-organization3'
+                  : 'icon-ym icon-ym-systemForm'
+              ]"></i>
+              {{ scope.row.name }}
             </template>
           </el-table-column>
           <el-table-column prop="parentName" label="上级分类" />
@@ -68,8 +71,7 @@
               <el-input @blur="switchShow(scope.row, 'sortCode')" clearable v-model="scope.row.sortCode"></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="300">
-          </el-table-column>
+          <el-table-column prop="remark" label="备注" width="300"></el-table-column>
           <el-table-column label="操作" width="180">
             <template slot-scope="scope">
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, scope.row.parentId)">编辑</el-button>
@@ -77,7 +79,6 @@
                 style=" color: #ff3a3a">删除</el-button> -->
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
                 @del="handleDel(scope.row.id, scope.row.parentId)" />
-
             </template>
           </el-table-column>
         </JNPF-table>
@@ -98,9 +99,7 @@ import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/i
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierCategory',
   components: { DepForm, CheckUser, SuperQuery },
@@ -131,15 +130,17 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ],
       listQuery: {
         keyword: '',
-        type: "supplier",
-        orderItems: [{
-          asc: false,
-          column: "createTime"
-        }],
+        type: 'supplier',
+        orderItems: [
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ]
       },
       treeList: [],
       expands: true,
@@ -165,249 +166,240 @@ export default {
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-
       let obj1 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa007",
+        typeCode: 'pa007',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj1).then(res => {
-
+      getbimProductAttributesList(obj1).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj2 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa006",
+        typeCode: 'pa006',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-
-      getbimProductAttributesList(obj2).then(res => {
+      getbimProductAttributesList(obj2).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa005",
+        typeCode: 'pa005',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj3).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj4 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa002",
+        typeCode: 'pa002',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj4).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj5 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa003",
+        typeCode: 'pa003',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj5).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj6 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa001",
+        typeCode: 'pa001',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj6).then(res => {
+      getbimProductAttributesList(obj6).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj7 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa015",
+        typeCode: 'pa015',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj7).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
 
-
       // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
       })
-
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
     switchShow(row) {
+      if (!row.sortCode) return this.$message.error('请输入排序值')
       let obj = row
       delete obj.burdenSortCode
       editCategory(obj)
@@ -427,32 +419,32 @@ export default {
     },
     initData() {
       this.loading = true
-      getcategoryTree(this.listQuery).then(res => {
-        console.log("树形", res);
-        this.treeList = res.data
-        if (this.treeList.length > 0) this.setTableIndex(this.treeList);
-        this.listLoading = false
-        this.btnLoading = false
-      }).catch(() => {
-        this.listLoading = false
-        this.btnLoading = false
-      })
+      getcategoryTree(this.listQuery)
+        .then((res) => {
+          this.treeList = res.data
+          if (this.treeList.length > 0) this.setTableIndex(this.treeList)
+          this.listLoading = false
+          this.btnLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+          this.btnLoading = false
+        })
     },
     search() {
       this.initData()
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log("arr", arr, index);
       arr.forEach((item, key) => {
-        item.index = key + 1;
+        item.index = key + 1
         if (index) {
-          item.index = index + 1;
+          item.index = index + 1
         }
         if (item.childrenList.length > 0) {
-          this.setTableIndex(item.childrenList, item.index);
+          this.setTableIndex(item.childrenList, item.index)
         }
-      });
+      })
     },
     reset() {
       this.listQuery.keyword = ''
@@ -460,9 +452,7 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {
-      console.log("id", id, parentId);
       this.addOrUpdateDep(id, parentId)
-
     },
     addOrUpdateDep(id, parentId) {
       this.depFormVisible = true
@@ -490,38 +480,38 @@ export default {
         this.$refs.checkUserForm.init(id, name)
       })
     },
-    checkUser() {
-
-    },
+    checkUser() { },
     toggleExpand() {
-      this.refreshTable = false;
-      this.expands = !this.expands;
+      this.refreshTable = false
+      this.expands = !this.expands
       this.$nextTick(() => {
-        this.refreshTable = true;
-      });
+        this.refreshTable = true
+      })
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning',
-      }).then(() => {
-        deleteCategory(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        }).catch((error) => {
-          if (error == "Error: 当前标签分类存在子标签分类") {
-            this.$message({
-              message: "当前供应商分类存在档案数据，不允许删除！",
-              type: "error"
-            })
-          }
-        })
-      }).catch((error) => {
-        console.log(error);
+        type: 'warning'
       })
+        .then(() => {
+          deleteCategory(id)
+            .then((res) => {
+              this.initData()
+              this.$message({
+                type: 'success',
+                message: '删除成功',
+                duration: 1500
+              })
+            })
+            .catch((error) => {
+              if (error == 'Error: 当前标签分类存在子标签分类') {
+                this.$message({
+                  message: '当前供应商分类存在档案数据，不允许删除！',
+                  type: 'error'
+                })
+              }
+            })
+        })
+        .catch((error) => { })
     }
   }
 }

@@ -98,6 +98,7 @@
 import {
   getBimProductAttributesInfo,
   updataBimProductAttributes,
+  updataClassAttribute,
   delClassAttribute,
   addBimProductAttributes,
   getclassAttributeList,
@@ -254,7 +255,7 @@ export default {
     switchShow(row) {
       if (!row.sort) return this.$message.error('请输入排序值')
       let obj = row
-      updateCategory(obj)
+      updataClassAttribute(obj)
         .then((response) => {
           this.$message({
             message: '修改成功',

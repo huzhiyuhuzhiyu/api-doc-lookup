@@ -53,13 +53,21 @@
           :setColumnDisplayList="columnList" @sort-change="sortChange">
           <el-table-column prop="name" label="类别名称" sortable="custom" />
           <el-table-column prop="code" label="类别编码" sortable="custom" />
+          <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
+            <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
+          </el-table-column>
+          <el-table-column prop="sort" label="排序" width="100" align="center">
+            <template slot-scope="scope">
+              <el-input @blur="switchShow(scope.row, 'sort')" clearable v-model="scope.row.sort"></el-input>
+            </template>
+          </el-table-column>
           <el-table-column prop="remark" label="备注" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right" align="center">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"
-                :hasDel="!scope.row.defaultFlag">
+                :delDisabled="scope.row.defaultFlag || scope.row.state !== 'disabled'">
                 <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
                   @click="onHandle(scope.row, 'edit')">
                   开启仓库
@@ -243,7 +251,24 @@ export default {
       if (!value) return true
       return data.fullName.indexOf(value) !== -1
     },
-
+    switchShow(row) {
+      if (!row.sort) return this.$message.error('请输入排序值')
+      let obj = row
+      updateCategory(obj)
+        .then((response) => {
+          this.$message({
+            message: '修改成功',
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+        .catch(() => {
+          this.btnLoading = false
+        })
+    },
     initData() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
         this.form.startTime = this.createTimeArr[0] + ' 00:00:00'

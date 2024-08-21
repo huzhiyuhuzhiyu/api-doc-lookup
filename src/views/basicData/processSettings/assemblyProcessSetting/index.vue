@@ -42,7 +42,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
@@ -105,7 +105,7 @@
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
           border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
           @selection-change="currentChange">
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品分类" min-width="160" sortable="custom" />
           <el-table-column prop="routingName" label="工艺路线名称" min-width="180" sortable="custom" />
@@ -198,6 +198,7 @@ export default {
   components: { ExportForm, SuperQuery, JNPFForm },
   data() {
     return {
+      btnLoading: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -616,6 +617,7 @@ export default {
             this.selectedData = []
             this.$refs.tableForm.$refs.JNPFTable.clearSelection()
             this.analyseDialog = false
+            this.btnLoading = false
             this.dataForm = {
               routingId: '',
               remark: ''
@@ -684,6 +686,8 @@ export default {
             column: 'createTime'
           }
         ],
+        classAttribute: 'finish_product',
+        routingFlag: 0,
         productCode: '',
         productName: '',
         productDrawingNo: '',
@@ -729,7 +733,7 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(row, type) {
-      if (!row.routingId) return this.$message.error('请先设置工艺');
+      if (!row.routingId) return this.$message.error('请先设置工艺')
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.JNPFForm.init(row, type)

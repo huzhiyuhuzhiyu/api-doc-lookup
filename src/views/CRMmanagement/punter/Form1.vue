@@ -24,7 +24,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                        <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="btnType === 'look'" placeholder="请选择所属分类" auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId" :selectClassifyType="dataForm.type" />
+                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择所属分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -53,7 +53,12 @@
                         <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20" :disabled="btnType === 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="下次联系时间" prop="nextTime">
+                        <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="内勤人员" prop="internalStaffId" ref="euqPeople">
                         <user-select v-model="dataForm.internalStaffId" :disabled="btnType === 'look'" placeholder="请选择内勤人员" @change="changePerple" clearable style="width: 100%;">
@@ -498,7 +503,7 @@ import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
-  getCounryData, getBimBusinessInfo
+  getCounryData, getBimBusinessInfo,getcategoryTree
 } from '@/api/basicData/index'
 import { updatePartner, addPartner, detailPartner, checkPartner } from "@/api/customerManagement/index";
 import {
@@ -508,6 +513,11 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   data() {
     return {
+      getcategoryTree,
+      requestObjTwo: {
+        keyword: '',
+        type: "customer"
+      },
       codeConfig: {},//单据规则配置
       activeNames: ["basicInfo"],
       tableData: [],
@@ -584,6 +594,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        nextTime: '',
         provincecityarea: [],
         // 合作伙伴
         code: '',

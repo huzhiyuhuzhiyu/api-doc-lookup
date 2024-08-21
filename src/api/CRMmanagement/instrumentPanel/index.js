@@ -1,8 +1,48 @@
 import request from '@/utils/request'
-//报表数据-销售接单-列表
+//报表数据-仪表盘销售简报-列表
 export function getsaleskitList(data) {
   return request({
-    url: `/api/zgt/crm/report/data/sale/receive/list`,
+    url: `/api/zgt/crm/report/data/queryBulletin`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-仪表盘数据汇总图
+export function getqueryDataInfo(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/queryDataInfo`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-仪表盘合同金额目标图
+export function getsalesTrendList(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/salesTrend`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-仪表盘目标完成率
+export function getqueryPerformance(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/queryPerformance`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-仪表盘销售漏斗
+export function getsellFunneldata(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/sellFunnel`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-仪表盘客户遗忘提醒
+export function getforgottenCustomerCount(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/forgottenCustomerCount`,
     method: 'POST',
     data
   })

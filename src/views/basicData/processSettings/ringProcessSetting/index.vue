@@ -42,7 +42,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
@@ -108,7 +108,7 @@
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList"
           border @sort-change="sortChange" custom-column :setColumnDisplayList="columnList" hasC
           @selection-change="currentChange">
-          <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="240" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
           <el-table-column prop="productName" label="产品分类" min-width="160" sortable="custom" />
           <el-table-column prop="routingName" label="工艺路线名称" min-width="180" sortable="custom" />
@@ -137,11 +137,6 @@
                   <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
                     :value="item.id"></el-option>
                 </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="24">
-              <el-form-item label="备注">
-                <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="dataForm.remark" placeholder="请输入备注" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -206,6 +201,7 @@ export default {
   components: { ExportForm, SuperQuery, JNPFForm },
   data() {
     return {
+      btnLoading: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -628,6 +624,7 @@ export default {
             this.selectedData = []
             this.$refs.tableForm.$refs.JNPFTable.clearSelection()
             this.analyseDialog = false
+            this.btnLoading = false
             this.dataForm = {
               routingId: '',
               remark: ''
@@ -695,6 +692,8 @@ export default {
             column: 'createTime'
           }
         ],
+        classAttribute: 'semi_finished',
+        routingFlag: 0,
         productCode: '',
         productName: '',
         productDrawingNo: '',

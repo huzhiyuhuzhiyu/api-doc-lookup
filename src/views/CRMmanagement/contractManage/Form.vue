@@ -581,7 +581,6 @@ export default {
     },
     // 监听主数量输入
     watchnums(row, index) {
-      console.log("ROW", row, index);
       // 数量处理
       row.num = row.num ? row.num.replace(/[^\d.]/g, '') : ''
       if (row.num.length == 1 && row.num == '.') {

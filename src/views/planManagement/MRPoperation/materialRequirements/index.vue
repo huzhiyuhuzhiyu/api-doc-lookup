@@ -8,7 +8,7 @@
               <el-form @submit.native.prevent>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="assembleForm.productDrawingNo" placeholder="品名规格" clearable />
+                    <el-input v-model="assembleFormSQ.productDrawingNo" placeholder="品名规格" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -18,7 +18,7 @@
                 </el-col>
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model="assembleForm.planNo" placeholder="计划单号" clearable />
+                    <el-input v-model="assembleFormSQ.planNo" placeholder="计划单号" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -47,6 +47,11 @@
                     @click="bulkRelease('assemble')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
+
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('assembleRef')" />
@@ -59,7 +64,7 @@
               </div>
               <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
                 @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
-                :setColumnDisplayList="columnList1" :checkSelectable="disproduceData">
+                :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
@@ -145,6 +150,10 @@
                     @click="bulkRelease('produce')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('produceRef')" />
@@ -155,8 +164,8 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true"
-                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC
+              <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true" :key="2"
+                :setColumnDisplayList="columnList1" @sort-change="sortChange" custom-column hasC 
                 @selection-change="handleProduce" :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -283,6 +292,10 @@
                     @click="bulkRelease('purchase')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('purchaseRef')" />
@@ -295,7 +308,7 @@
               </div>
 
               <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
-                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
+                :setColumnDisplayList="columnList1" @sort-change="sortChange" custom-column hasC
                 @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -403,6 +416,10 @@
                   <el-button size="mini" type="primary" icon="el-icon-plus" @click="bulkRelease('out')">批量下达</el-button>
                 </div>
                 <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
                       @click="columnSetFun('outRef')" />
@@ -415,7 +432,7 @@
               </div>
 
               <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
-                :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
+                :setColumnDisplayList="columnList1" custom-column hasC @selection-change="handleOut"
                 :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -505,14 +522,16 @@
 
       <JNPF-table ref="tableDataAss" v-loading="listLoading" :data="orderDetailData" style="margin-top: 20px"
         height="600">
-        <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"  v-if="activeName != 'purchase' && activeName != 'out'&&codeConfig.codeWay != 'auto'"></el-table-column>
+        <el-table-column prop="productionPlanNo" label="生产计划单号" width="180"
+          v-if="activeName != 'purchase' && activeName != 'out' && codeConfig.codeWay != 'auto'"></el-table-column>
         <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
         <el-table-column prop="productCode" label="产品编码" min-width="120" />
         <el-table-column prop="outputQuantity" label="组装数量" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="outputQuantity" label="生产数量" min-width="120" v-if="activeName == 'produce'" />
         <el-table-column prop="outputQuantity" label="采购数量" min-width="120" v-if="activeName == 'purchase'" />
         <el-table-column prop="outputQuantity" label="外协数量" min-width="120" v-if="activeName == 'out'" />
-        <el-table-column prop="planProductionQuantity" label="下达数量" width="120" v-if="activeName == 'produce' || activeName == 'assemble'">
+        <el-table-column prop="planProductionQuantity" label="下达数量" width="120"
+          v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
@@ -521,16 +540,18 @@
               scope.row.planProductionQuantity }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="planDemandQuantity" label="下达数量" width="120" v-if="activeName == 'purchase' || activeName == 'out'">
+        <el-table-column prop="planDemandQuantity" label="下达数量" width="120"
+          v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>下达数量
           </template>
           <template slot-scope="scope">
             <el-input v-model="scope.row.planDemandQuantity">{{ scope.row.planDemandQuantity
-              }}</el-input>planDemandQuantity
+              }}</el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="urgentFlag" :key="5" label="是否插单(紧急)" min-width="160" v-if="activeName == 'produce' || activeName == 'assemble'">
+        <el-table-column prop="urgentFlag" :key="5" label="是否插单(紧急)" min-width="160"
+          v-if="activeName == 'produce' || activeName == 'assemble'">
           <template slot-scope="scope">
             <el-checkbox v-model="scope.row.urgentFlag"></el-checkbox>
           </template>
@@ -543,13 +564,14 @@
         <el-table-column prop="clearance" label="游隙" min-width="100" v-if="activeName == 'assemble'" />
         <el-table-column prop="packagingMethod" label="包装方式" min-width="120" v-if="activeName == 'assemble'" />
         <el-table-column prop="specialRequire" label="特殊要求" min-width="120" v-if="activeName == 'assemble'" />
-        <el-table-column prop="deliveryDate" label="交货日期" width="180" v-if="activeName == 'purchase' || activeName == 'out'">
+        <el-table-column prop="deliveryDate" label="交货日期" width="180"
+          v-if="activeName == 'purchase' || activeName == 'out'">
           <template slot="header">
             <span class="required">*</span>交货日期
           </template>
           <template slot-scope="scope">
             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd" style="width: 100%"
-              :disabled="activeName == 'produce'" placeholder="请选择交货日期" @change="selectDate(scope.row.deliveryDate)">
+              :disabled="activeName == 'produce'" placeholder="交货日期" @change="selectDate(scope.row.deliveryDate)">
             </el-date-picker>
           </template>
         </el-table-column>
@@ -574,7 +596,8 @@
     <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @refreshDataList="initData"
       @close="closeForm" />
     <RetrospectForm v-if="retrospectFormVisible" ref="retrospectForm" @refreshDataList="initData" @close="closeForm" />
-
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -590,13 +613,32 @@ import {
 import Form from "./Form";
 import ComplateSetForm from "./complateSetForm";
 import RetrospectForm from "./retrospectForm";
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from "moment";
 import { index } from 'mathjs';
+import { getbimProductAttributesList, getbimProductAttributes } from "@/api/masterDataManagement/index";
 export default {
-  name: "carrierProfile",
-  components: { Form, ComplateSetForm, RetrospectForm },
+  name: "materialRequirements",
+  components: { Form, ComplateSetForm, RetrospectForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      assembleFormSQ: {
+        planNo: "",
+        productDrawingNo: "",
+      },
+      produceFormSQ: {
+        planNo: "",
+        productDrawingNo: "",
+      },
+      purchaseFormSQ: {
+        planNo: "",
+        productDrawingNo: "",
+      },
+      outFormSQ: {
+        planNo: "",
+        productDrawingNo: "",
+      },
       orderDetailData: [],
       productVisible: false,
       columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
@@ -619,6 +661,12 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
 
       total2: 0,
@@ -647,6 +695,12 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
       immediatelyBuyFlagList: [{ label: "是", value: true }, { label: "否", value: false }],
       purchaseForm: {
@@ -656,6 +710,9 @@ export default {
         demandType: "purchase",
         demandState: "not_finish",
         documentStatus: "submit",
+        planNo: "",
+        planSed: "",
+        planSsd: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -663,11 +720,21 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
       outForm: {
         demandType: "out",
         demandState: "not_finish",
         documentStatus: "submit",
+        productDrawingNo: "",
+        planNo: "",
+        planSed: "",
+        planSsd: "",
         orderItems: [{
           asc: false,
           column: ""
@@ -675,6 +742,12 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
       assembleNum: 0,//组装数量
       totalDemandQuantity: 0,//需求数量
@@ -693,8 +766,37 @@ export default {
       purchaseArrList: [],
       outArrList: [],
       outArr: [],
-      codeConfig:{},//生产计划单号配置
+      codeConfig: {},//生产计划单号配置
 
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
+        },
+        {
+          prop: "vibrationLevel",
+          typeCode: "pa005"
+        },
+        {
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
+      ]
 
 
 
@@ -727,6 +829,453 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    // 获取打字内容等
+    getProductClassFun() {
+      this.requestArr.forEach((item, index) => {
+        let obj1 = {
+          pageNum: -1,
+          pageSize: 20,
+          typeCode: item.typeCode,
+          orderItems: [
+            {
+              asc: false,
+              column: "",
+            },
+            {
+              asc: false,
+              column: "code",
+            },
+          ],
+        };
+        getbimProductAttributesList(obj1).then(res => {
+
+          let arr = []
+          res.data.records.forEach(items => {
+            let obj = {
+              label: items.name,
+              value: items.name,
+            }
+            arr.push(obj)
+          });
+          console.log(this.superQueryJson);
+          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = JSON.parse(JSON.stringify(arr));
+            if (index == this.requestArr.length - 1) this.superQueryVisible = true
+          }
+        })
+      })
+
+
+
+
+    },
+    superQuerySearch(query) {
+
+      if (this.activeName == 'assemble') {
+        this.assembleForm.superQuery = query
+        this.superQueryVisible = false
+        this.getassembleData()
+      }
+      if (this.activeName == 'produce') {
+        this.produceForm.superQuery = query
+        this.superQueryVisible = false
+        this.getproduceData()
+      }
+      if (this.activeName == 'purchase') {
+        this.purchaseForm.superQuery = query
+        this.superQueryVisible = false
+        this.getpurchaseData()
+      }
+      if (this.activeName == 'out') {
+        this.outForm.superQuery = query
+        this.superQueryVisible = false
+        this.getouteData()
+      }
+    },
+    // 高级查询
+    advancedQueryFun() {
+      if (this.activeName == 'assemble') {
+        this.superQueryJson = [
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'bomFlag',
+            label: "是否有BOM",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'immediatelyBuyFlag',
+            label: "立即组装",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+
+          {
+            prop: 'planNo',
+            label: "计划单号",
+            type: 'input',
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input',
+          },
+          {
+            prop: 'outputQuantity',
+            label: "需组装数量",
+            type: 'input',
+          },
+          {
+            prop: 'sealingCoverTyping',
+            label: "打字内容",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'accuracyLevel',
+            label: "精度等级",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'vibrationLevel',
+            label: "振动等级",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oil',
+            label: "油脂",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'oilQuantity',
+            label: "油脂量",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'clearance',
+            label: "游隙",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'packagingMethod',
+            label: "包装方式",
+            type: 'select',
+            options: []
+          },
+          {
+            prop: 'specialRequire',
+            label: "特殊要求",
+            type: 'select',
+            options: []
+          },
+
+        ]
+        setTimeout(() => {
+          this.getProductClassFun()
+        }, 1000);
+      }
+      if (this.activeName == 'produce') {
+        this.superQueryJson = [
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'bomFlag',
+            label: "是否有BOM",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'immediatelyBuyFlag',
+            label: "立即生产",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'planNo',
+            label: "计划单号",
+            type: 'input',
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input',
+          },
+          {
+            prop: 'safeInventory',
+            label: "安全库存",
+            type: 'input',
+          },
+          {
+            prop: 'inventoryQuantity',
+            label: "库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'availableQuantity',
+            label: "可用库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'demandQuantity',
+            label: "需求数量",
+            type: 'input',
+          },
+          {
+            prop: 'lossNum',
+            label: "损耗数量",
+            type: 'input',
+          },
+          {
+            prop: 'planInTransitQuantity',
+            label: "计划在制数量",
+            type: 'input',
+          },
+          {
+            prop: 'inTransitUnOccupancyQuantity',
+            label: "实际在制数量",
+            type: 'input',
+          },
+          {
+            prop: 'occupancyQuantity',
+            label: "占用数量",
+            type: 'input',
+          },
+          {
+            prop: 'outputQuantity',
+            label: "需生产数量",
+            type: 'input',
+          },
+
+
+
+
+
+
+        ]
+        this.superQueryVisible=true
+      }
+      if (this.activeName == 'purchase') {
+        this.superQueryJson = [
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'immediatelyBuyFlag',
+            label: "立即采购",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'planNo',
+            label: "计划单号",
+            type: 'input',
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input',
+          },
+          {
+            prop: 'safeInventory',
+            label: "安全库存",
+            type: 'input',
+          },
+          {
+            prop: 'inventoryQuantity',
+            label: "库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'availableQuantity',
+            label: "可用库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'demandQuantity',
+            label: "需求数量",
+            type: 'input',
+          },
+          {
+            prop: 'lossNum',
+            label: "损耗数量",
+            type: 'input',
+          },
+          {
+            prop: 'planInTransitQuantity',
+            label: "计划在途数量",
+            type: 'input',
+          },
+          {
+            prop: 'inTransitUnOccupancyQuantity',
+            label: "实际在途数量",
+            type: 'input',
+          },
+          {
+            prop: 'occupancyQuantity',
+            label: "占用数量",
+            type: 'input',
+          },
+          {
+            prop: 'outputQuantity',
+            label: "需采购数量",
+            type: 'input',
+          },
+
+
+
+
+
+
+
+        ]
+        this.superQueryVisible=true
+      }
+      if (this.activeName == 'out') {
+        this.superQueryJson = [
+          {
+            prop: 'productDrawingNo',
+            label: "品名规格",
+            type: 'input'
+          },
+          {
+            prop: 'productCode',
+            label: "产品编码",
+            type: 'input'
+          },
+          {
+            prop: 'bomFlag',
+            label: "是否有BOM",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'immediatelyBuyFlag',
+            label: "立即外协",
+            type: 'select',
+            options: [
+              { label: "是", value: true },
+              { label: "否", value: false },
+            ]
+          },
+          {
+            prop: 'planNo',
+            label: "计划单号",
+            type: 'input',
+          },
+          {
+            prop: 'mainUnit',
+            label: "单位",
+            type: 'input',
+          },
+          {
+            prop: 'safeInventory',
+            label: "安全库存",
+            type: 'input',
+          },
+          {
+            prop: 'inventoryQuantity',
+            label: "库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'availableQuantity',
+            label: "可用库存数量",
+            type: 'input',
+          },
+          {
+            prop: 'demandQuantity',
+            label: "需求数量",
+            type: 'input',
+          },
+          {
+            prop: 'lossNum',
+            label: "损耗数量",
+            type: 'input',
+          },
+          {
+            prop: 'planInTransitQuantity',
+            label: "计划在制数量",
+            type: 'input',
+          },
+          {
+            prop: 'inTransitUnOccupancyQuantity',
+            label: "实际在制数量",
+            type: 'input',
+          },
+          {
+            prop: 'occupancyQuantity',
+            label: "占用数量",
+            type: 'input',
+          },
+          {
+            prop: '需外协数量',
+            label: "需生产数量",
+            type: 'input',
+          },
+
+
+
+
+
+
+
+
+
+        ]
+        this.superQueryVisible=true
+      }
+    },
+
+
     // 获取生产计划单号配置
     getconfigFun() {
       this.fetchData("SHDD")
@@ -778,18 +1327,22 @@ export default {
       if (this.activeName == "assemble") {
         this.planDateArr = []
         this.getassembleData()
+        this.columnList1=["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"]
       }
       if (this.activeName == "produce") {
+        this.columnList1=["productCode", "planNo", "planEndDate"]
         this.planDateArr = []
         this.getproduceData()
 
       }
       if (this.activeName == "purchase") {
         this.getpurchaseData()
+        this.columnList1=["productCode", "planNo", "planEndDate"]
 
       }
       if (this.activeName == "out") {
         this.planDateArr = []
+        this.columnList1=["productCode", "planNo", "planEndDate"]
         this.getouteData()
 
       }
@@ -820,11 +1373,29 @@ export default {
         this.assembleForm.planSsd = ""
         this.assembleForm.planSed = ""
       }
+      if (this.assembleFormSQ.planNo) {
+        this.assembleForm.superQuery.condition.push(
+          { "field": "planNo", "fieldValue": this.assembleFormSQ.planNo, "symbol": "like" }
+        )
+      }
+      if (this.assembleFormSQ.productDrawingNo) {
+        this.assembleForm.superQuery.condition.push(
+          { "field": "productDrawingNo", "fieldValue": this.assembleFormSQ.productDrawingNo, "symbol": "like" }
+        )
+      }
+
+      if (this.assembleFormSQ.planNo || this.assembleFormSQ.productDrawingNo) {
+        this.$set(this.assembleForm.superQuery, 'matchLogic', 'AND')
+      }
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
         if (tableData.length) {
+          tableData.forEach(item => {
+            item.planProductionQuantity=item.outputQuantity
+            item.productionPlanNo=item.planNo
+          });
           this.total1 = res.data.page.total
           this.assembleData = tableData
 
@@ -857,16 +1428,49 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
-        this.getassembleData()
+        this.assembleFormSQ.planNo = ""
+      this.assembleFormSQ.productDrawingNo = ""
+      this.$refs.SuperQuery.conditionList = []
+      this.getassembleData()
     },
     // 生产列表数据
     getproduceData() {
+      if (this.planDateArr.length) {
+        this.produceForm.planSsd = this.planDateArr[0]
+        this.produceForm.planSed = this.planDateArr[1]
+      } else {
+        this.produceForm.planSsd = ""
+        this.produceForm.planSed = ""
+      }
+      if (this.produceFormSQ.planNo) {
+        this.produceForm.superQuery.condition.push(
+          { "field": "planNo", "fieldValue": this.produceFormSQ.planNo, "symbol": "like" }
+        )
+      }
+      if (this.produceFormSQ.productDrawingNo) {
+        this.produceForm.superQuery.condition.push(
+          { "field": "productDrawingNo", "fieldValue": this.produceFormSQ.productDrawingNo, "symbol": "like" }
+        )
+      }
+      if (this.produceFormSQ.planNo || this.produceFormSQ.productDrawingNo) {
+        this.$set(this.produceForm.superQuery, 'matchLogic', 'AND')
+      }
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
         let totalData = res.data.total
         let tableData = res.data.page.records
         if (tableData.length) {
+          tableData.forEach(item => {
+            item.planProductionQuantity=item.outputQuantity
+            item.productionPlanNo=item.planNo
+          });
           this.produceData = tableData
           this.total2 = res.data.page.total
 
@@ -905,11 +1509,34 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
-        this.getproduceData()
+        this.produceFormFormSQ.planNo = ""
+      this.produceFormFormSQ.productDrawingNo = ""
+      this.$refs.SuperQuery.conditionList = []
+      this.getproduceData()
     },
     // 采购列表数据
     getpurchaseData() {
+      if (this.purchaseFormSQ.planNo) {
+        this.purchaseForm.superQuery.condition.push(
+          { "field": "planNo", "fieldValue": this.purchaseFormSQ.planNo, "symbol": "like" }
+        )
+      }
+      if (this.purchaseFormSQ.productDrawingNo) {
+        this.purchaseForm.superQuery.condition.push(
+          { "field": "productDrawingNo", "fieldValue": this.purchaseFormSQ.productDrawingNo, "symbol": "like" }
+        )
+      }
+
+      if (this.purchaseFormSQ.planNo || this.purchaseFormSQ.productDrawingNo) {
+        this.$set(this.purchaseForm.superQuery, 'matchLogic', 'AND')
+      }
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
         let totalData = res.data.total
@@ -952,11 +1579,41 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
-        this.getpurchaseData()
+        this.purchaseFormSQ.planNo = ""
+      this.purchaseFormSQ.productDrawingNo = ""
+      this.$refs.SuperQuery.conditionList = []
+      this.getpurchaseData()
     },
     // 外协列表数据
     getouteData() {
+      if (this.planDateArr.length) {
+        this.outForm.planSsd = this.planDateArr[0]
+        this.outForm.planSed = this.planDateArr[1]
+      } else {
+        this.outForm.planSsd = ""
+        this.outForm.planSed = ""
+      }
+      if (this.outFormSQ.planNo) {
+        this.outForm.superQuery.condition.push(
+          { "field": "planNo", "fieldValue": this.outFormSQ.planNo, "symbol": "like" }
+        )
+      }
+      if (this.outFormSQ.productDrawingNo) {
+        this.outForm.superQuery.condition.push(
+          { "field": "productDrawingNo", "fieldValue": this.outFormSQ.productDrawingNo, "symbol": "like" }
+        )
+      }
+
+      if (this.outFormSQ.planNo || this.outFormSQ.productDrawingNo) {
+        this.$set(this.outForm.superQuery, 'matchLogic', 'AND')
+      }
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
@@ -1001,8 +1658,17 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
+        pageNum: 1,
+        pageSize: 20,
       },
-        this.getouteData()
+        this.outFormSQ.planNo = ""
+      this.outFormSQ.productDrawingNo = ""
+      this.$refs.SuperQuery.conditionList = []
+      this.getouteData()
     },
 
     // 排序
@@ -1046,9 +1712,9 @@ export default {
 
       }
     },
-    // 列表字段设置
+ 
     columnSetFun(ref) {
-      this.$refs.ref.showDrawer()
+      this.$refs[ref].showDrawer()
 
     },
 
@@ -1060,7 +1726,6 @@ export default {
 
 
 
- 
     // 批量选择时间
     selectDate(data, row) {
       this.orderDetailData.forEach((item) => {
@@ -1077,7 +1742,7 @@ export default {
       this.purchaseArr = arr;
       console.log("purchaseArr", this.purchaseArr, this.orderDetailData);
     },
-  
+
     // 组装下达
     handleAssemble(val) {
       console.log("组装", val);
@@ -1103,19 +1768,16 @@ export default {
       this.outArr = val;
       this.outArrList = JSON.parse(JSON.stringify(this.outArr));
     },
- 
+
     // 提交下达数据
     submitAllProduct() {
-      if (this.orderForm.demandType == "assemble") {
+      if (this.activeName == "assemble") {
         let flag = null;
         console.log(this.orderDetailData);
         for (let index = 0; index < this.orderDetailData.length; index++) {
           const item = this.orderDetailData[index];
 
-          if (
-            !item.planProductionQuantity ||
-            Number(item.planProductionQuantity) == 0
-          ) {
+          if (!item.planProductionQuantity || Number(item.planProductionQuantity) == 0) {
             flag = false;
             this.$message({
               type: "error",
@@ -1141,19 +1803,25 @@ export default {
         let arr = [];
         this.orderDetailData.forEach((item) => {
           this.assembleArr.forEach((ids, index) => {
-            if (
-              item.cooperativePartnerId === ids.cooperativePartnerId &&
-              item.productsId === ids.productsId
+            if (item.productsId === ids.productsId &&
+              item.sealingCoverTyping === ids.sealingCoverTyping &&
+              item.accuracyLevel === ids.accuracyLevel &&
+              item.vibrationLevel === ids.vibrationLevel &&
+              item.oil === ids.oil &&
+              item.oilQuantity === ids.oilQuantity &&
+              item.clearance === ids.clearance &&
+              item.packagingMethod === ids.packagingMethod &&
+              item.specialRequire === ids.specialRequire
+
             ) {
-             
+              item.productionPlanNo = item.planNo
               ids.urgentFlag = item.urgentFlag
               ids.planProductionQuantity = this.assembleArrList[index].planProductionQuantity;
               ids.materialDemandId = this.assembleArrList[index].materialDemandId;
             }
           });
         });
-        arr = this.produceArr;
-        return console.log(arr);
+        arr = this.assembleArr;
         demandProduceissue(arr)
           .then((res) => {
             this.btnLoading = false;
@@ -1166,7 +1834,7 @@ export default {
             this.assembleArr = [];
             this.productVisible = false;
             this.tableFlag = false;
-            this.initData();
+            this.getassembleData();
           })
           .catch((error) => {
             this.btnLoading = false;
@@ -1231,7 +1899,7 @@ export default {
             this.produceArr = [];
             this.productVisible = false;
             this.tableFlag = false;
-            this.initData();
+            this.getproduceData();
           })
           .catch((error) => {
             this.btnLoading = false;
@@ -1404,11 +2072,11 @@ export default {
             item.urgentFlag = false;
             item.insertOrderSort = "";
             item.outputQuantity = Number(item.outputQuantity);
-            item.planProductionQuantity=item.outputQuantity
+            item.planProductionQuantity = item.outputQuantity
             // item.issuedQuantity = Number(item.issuedQuantity);
             // item.issuingQuantity = Number(item.issuingQuantity);
             // this.$set(this.assembleArrList[index],'planProductionQuantity',item.outputQuantity)
-            
+
           });
           const mergedData = arr.reduce((acc, curr) => {
             console.log("object");
@@ -1449,7 +2117,7 @@ export default {
             item.urgentFlag = false;
             item.insertOrderSort = "";
             item.outputQuantity = Number(item.outputQuantity);
-            this.produceArrList[index].planProductionQuantity =item.planProductionQuantity
+            this.produceArrList[index].planProductionQuantity = item.planProductionQuantity
           });
 
           const mergedData = arr.reduce((acc, curr) => {
@@ -1632,12 +2300,12 @@ export default {
         this.initData();
       }
     },
- 
 
 
 
-   
-     
+
+
+
     handleDel(row) {
       if (this.activeName == "produce") {
         if (this.orderDetailData.length == 1) {

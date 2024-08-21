@@ -49,7 +49,7 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180" />
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
-            <el-table-column prop="serviceDescription" label="服务记录" min-width="160" />
+            <el-table-column prop="serviceDescription" label="跟进记录" min-width="160" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
             <el-table-column label="操作" width="180">
@@ -108,7 +108,7 @@ export default {
         },
         {
           prop: 'serviceDescription',
-          label: "服务记录",
+          label: "跟进记录",
           type: 'input'
         },
         { // 日期时间选择器（区间）

@@ -22,7 +22,7 @@
             <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
               <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
             </el-collapse-item>
-            <el-collapse-item title="其他信息" name="basicInfo">
+            <el-collapse-item title="其他信息" name="otherInfo">
               <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
             </el-collapse-item>
           </el-collapse>
@@ -52,7 +52,7 @@ export default {
     return {
       datafilelist: [],
       activeName: 'basicInfo',
-      activeNames: ['modelInfo', 'basicInfo'],
+      activeNames: ['modelInfo', 'basicInfo','otherInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,

@@ -14,7 +14,7 @@
                 {{item.name}}
               </div>
               <div class="value">
-                1<span class="value-unit">{{item.unit}}</span>
+                {{item.value}}<span class="value-unit">{{item.unit}}</span>
               </div>
             </div>
           </div>
@@ -35,7 +35,7 @@
                 {{item.name}}
               </div>
               <div class="value" :class="{'font-value':item.name=='商机总金额'}">
-                1<span class="value-unit">{{item.unit}}</span>
+                {{item.value}}<span class="value-unit">{{item.unit}}</span>
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
                 <span v-if="item.name=='即将到期'||item.name=='已到期'" class="el-tag" :class="{'el-tag--warning':item.name=='即将到期','el-tag--danger':item.name=='已到期'}">{{item.name=='即将到期'?'警告':'已到期'}}</span>
               </div>
               <div class="value" :class="{'font-value':item.name=='合同金额'}">
-                1<span class="value-unit">{{item.unit}}</span>
+                {{item.value}}<span class="value-unit">{{item.unit}}</span>
               </div>
             </div>
           </div>
@@ -80,7 +80,7 @@
                     {{o.name}}
                   </div>
                   <div class="value" :class="{'font-value':o.name=='回款'||o.name=='预计回款'}">
-                    1<span class="value-unit">{{o.unit}}</span>
+                    {{o.value}}<span class="value-unit">{{o.unit}}</span>
                   </div>
                 </div>
               </div>
@@ -94,40 +94,69 @@
 
 <script>
 export default {
+  props: {
+    data: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       CollectionSummarylist: [
         {
           title: '跟进汇总', arr: [
-            { name: '跟进客户数', id: '77', unit: '个' },
-            { name: '新增未跟进客户数', id: '88', unit: '个' },
+            { name: '跟进客户数', id: 'allRecords', unit: '个', value: '0' },
+            { name: '新增未跟进客户数', id: 'notRecordsNum', unit: '个', value: '0' },
           ]
         },
         {
           title: '回款金额', arr: [
-            { name: '回款', id: '99', unit: '元' },
-            { name: '预计回款', id: '66', unit: '元' },
+            { name: '回款', id: 'receivablesMoney', unit: '元', value: '0' },
+            { name: '预计回款', id: 'receivablesPlanMoney', unit: '元', value: '0' },
           ]
         }
       ],
       Customerlist: [
-        { name: '新增客户', id: '1', unit: '个' },
-        { name: '转成交客户', id: '2', unit: '个' },
-        { name: '放入公海客户', id: '3', unit: '个' },
-        { name: '公海池领取', id: '4', unit: '个' },
+        { name: '新增客户', id: 'newCustomerNum', unit: '个', value: '0' },
+        { name: '转成交客户', id: 'dealCustomerNum', unit: '个', value: '0' },
+        { name: '放入公海客户', id: 'putInNum', unit: '个', value: '0' },
+        { name: '公海池领取', id: 'receiveNum', unit: '个', value: '0' }
       ],
       nichelist: [
-        { name: '新增商机', id: '11', unit: '个' },
-        { name: '赢单商机', id: '22', unit: '个' },
-        { name: '输单商机', id: '33', unit: '个' },
-        { name: '商机总金额', id: '44', unit: '元' },
+        { name: '新增商机', id: 'allBusiness', unit: '个', value: '0' },
+        { name: '赢单商机', id: 'endBusiness', unit: '个', value: '0' },
+        { name: '输单商机', id: 'loseBusiness', unit: '个', value: '0' },
+        { name: '商机总金额', id: 'businessMoney', unit: '元', value: '0' }
       ],
       contractlist: [
-        { name: '签约合同', id: '111', unit: '个' },
-        { name: '即将到期', id: '222', unit: '个' },
-        { name: '已到期', id: '333', unit: '个' },
-        { name: '合同金额', id: '444', unit: '元' },
+        { name: '签约合同', id: 'allContract', unit: '个', value: '0' },
+        { name: '即将到期', id: 'expireContract', unit: '个', value: '0' },
+        { name: '已到期', id: 'endContract', unit: '个', value: '0' },
+        { name: '合同金额', id: 'contractMoney', unit: '元', value: '0' }
       ],
+    }
+  },
+  watch: {
+    data: {
+      handler(newOption) {
+        this.CollectionSummarylist[0].arr.forEach(item => {
+          item.value = newOption[item.id]
+        })
+        this.CollectionSummarylist[1].arr.forEach(item => {
+          item.value = newOption[item.id]
+        })
+        this.Customerlist.forEach(item => {
+          item.value = newOption[item.id]
+        })
+        this.nichelist.forEach(item => {
+          item.value = newOption[item.id]
+        })
+        this.contractlist.forEach(item => {
+          item.value = newOption[item.id]
+        })
+      },
+      deep: true,
+      immediate: true
     }
   }
 }

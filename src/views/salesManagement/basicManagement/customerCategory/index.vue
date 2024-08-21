@@ -21,10 +21,9 @@
       </el-row> -->
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
+          <topOpts @add="addOrUpdateHandle()" :isJudgePer="true" :addPerCode="'btn_add'" />
           <!-- <el-dropdown> -->
-          <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addOrUpdateHandle()">
-            新建
-          </el-button>
+
           <!-- <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="addOrUpdateHandle('','company')">新建公司
               </el-dropdown-item>
@@ -33,51 +32,36 @@
           </el-dropdown> -->
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" content="展开" placement="top">
-              <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
+              <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon" :underline="false" @click="toggleExpand()" />
             </el-tooltip>
             <el-tooltip effect="dark" content="折叠" placement="top">
-              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
-            </el-tooltip>
-            <el-tooltip content="高级查询" placement="top" v-if="true">
-              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                @click="superQueryVisible = true" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false" @click="toggleExpand()" />
             </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" ref="tableForm"
-          :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column>
+        <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable" :default-expand-all="expands" :tree-props="{children: 'childrenList', hasChildren: ''}" custom-column>
           <el-table-column prop="name" label="名称">
             <template slot-scope="scope">
-              <i :class="[
-                scope.row.childrenList.length >= 1
-                  ? 'icon-ym icon-ym-tree-organization3'
-                  : 'icon-ym icon-ym-systemForm'
-              ]"></i>
-              {{ scope.row.name }}
+              <i :class="[scope.row.childrenList.length>=1?'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{scope.row.name}}
             </template>
           </el-table-column>
           <el-table-column prop="parentName" label="上级分类" />
-          <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
-          <el-table-column prop="sortCode" label="排序" width="100" align="center">
+          <el-table-column prop="sortCode" label="排序">
             <template slot-scope="scope">
-              <el-input @blur="switchShow(scope.row, 'sortCode')" clearable v-model="scope.row.sortCode"></el-input>
+              <el-input @blur="switchShow(scope.row)" clearable v-model="scope.row.sortCode"></el-input>
             </template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" width="300"></el-table-column>
-          <el-table-column label="操作" width="180">
+          <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
+          <el-table-column prop="remark" label="备注" width="200"></el-table-column>
+          <el-table-column label="操作" width="120">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)" />
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id,scope.row.parentId)" >编辑</el-button>
               <el-button type="text" @click="handleDel(scope.row.id,scope.row.parentId)" style=" color: #ff3a3a">删除</el-button> -->
+
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)" @del="handleDel(scope.row.id, scope.row.parentId)" />
               <!-- <tableOpts @edit="addOrUpdateHandle(scope.row.id,scope.row.parentId)"
                 @del="handleDel(scope.row.id)"> -->
               <!-- <el-dropdown>
@@ -99,27 +83,23 @@
     </div>
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeDepForm" />
-    <CheckUser v-if="checkUserFormVisible" ref="checkUserForm" @close="checkUserFormVisible = false" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <CheckUser v-if="checkUserFormVisible" ref="checkUserForm" @close="checkUserFormVisible=false" />
   </div>
 </template>
 
 <script>
+import { getOrganizeList, delOrganize } from '@/api/permission/organize'
 import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/index'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
-import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-  name: 'outsourcingSuppliersCategory',
-  components: { DepForm, CheckUser, SuperQuery },
+  name: 'customerCategory',
+  components: { DepForm, CheckUser },
   data() {
     return {
       listQuery: {
         keyword: '',
-        type: 'outsourcing_suppliers'
+        type: "customer"
       },
       treeList: [],
       expands: true,
@@ -128,105 +108,76 @@ export default {
       listLoading: true,
       formVisible: false,
       depFormVisible: false,
-      checkUserFormVisible: false,
-      superQueryVisible: false,
-      superQueryJson: [
-        {
-          prop: 'name',
-          label: '名称',
-          type: 'input'
-        },
-        {
-          prop: 'parentName',
-          label: '上级分类',
-          type: 'input'
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
-      ]
+      checkUserFormVisible: false
     }
   },
-
   created() {
     this.initData()
   },
   methods: {
-    superQuerySearch(query) {
-      this.orderForm.superQuery = query
-      this.superQueryVisible = false
-      this.search()
-    },
-    columnSetFun() {
-      this.$refs.tableForm.showDrawer()
-    },
+    // 切换input框的显示状态
     switchShow(row) {
-      if (!row.sortCode) return this.$message.error('请输入排序值')
-      let obj = row
-      editCategory(obj)
-        .then((response) => {
-          this.$message({
-            message: '修改成功',
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.initData()
-            }
-          })
+      let obj = {
+        sortCode: row.sortCode,
+        name: row.name,
+        remark: row.remark,
+        id: row.id,
+        type: 'customer',
+        parentId: row.parentId,
+        parentName: row.parentName
+      }
+      editCategory(obj).then(res => {
+        this.$message({
+          message: "修改成功",
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.initData()
+          }
         })
-        .catch(() => {
-          this.btnLoading = false
-        })
+      })
     },
     initData() {
       this.loading = true
-      getcategoryTree(this.listQuery)
-        .then((res) => {
-
-          this.treeList = res.data
-          if (this.treeList.length > 0) this.setTableIndex(this.treeList)
-          this.listLoading = false
-          this.btnLoading = false
-        })
-        .catch(() => {
-          this.listLoading = false
-          this.btnLoading = false
-        })
+      getcategoryTree(this.listQuery).then(res => {
+        this.treeList = res.data
+        if (this.treeList.length > 0) this.setTableIndex(this.treeList);
+        this.listLoading = false
+        this.btnLoading = false
+      }).catch(() => {
+        this.listLoading = false
+        this.btnLoading = false
+      })
     },
     search() {
       this.initData()
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-
+      console.log("arr", arr, index);
       arr.forEach((item, key) => {
-        item.index = key + 1
+        item.index = key + 1;
         if (index) {
-          item.index = index + 1
+          item.index = index + 1;
         }
         if (item.childrenList.length > 0) {
-          this.setTableIndex(item.childrenList, item.index)
+          this.setTableIndex(item.childrenList, item.index);
         }
-      })
+      });
     },
     reset() {
       this.listQuery.keyword = ''
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {
-
       this.addOrUpdateDep(id, parentId)
+
+    },
+    addOrUpdateOrganize(id, parentId) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, parentId)
+      })
     },
     addOrUpdateDep(id, parentId) {
       this.depFormVisible = true
@@ -254,42 +205,41 @@ export default {
         this.$refs.checkUserForm.init(id, name)
       })
     },
-    checkUser() { },
+    checkUser() {
+
+    },
     toggleExpand() {
-      this.refreshTable = false
-      this.expands = !this.expands
+      this.refreshTable = false;
+      this.expands = !this.expands;
       this.$nextTick(() => {
-        this.refreshTable = true
-      })
+        this.refreshTable = true;
+      });
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      })
-        .then(() => {
-          deleteCategory(id)
-            .then((res) => {
-              this.initData()
-              this.$message({
-                type: 'success',
-                message: '删除成功',
-                duration: 1500
-              })
+      }).then(() => {
+        deleteCategory(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        }).catch((error) => {
+          if (error == "Error: 当前标签分类存在子标签分类") {
+            this.$message({
+              message: "当前供应商分类存在档案数据，不允许删除！",
+              type: "error"
             })
-            .catch((error) => {
-              if (error == 'Error: 当前标签分类存在子标签分类') {
-                this.$message({
-                  message: '当前供应商分类存在档案数据，不允许删除！',
-                  type: 'error'
-                })
-              }
-            })
+          }
         })
-        .catch(() => { })
+      }).catch(() => { })
     }
   }
 }
 </script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style lang="scss" scoped>
 .table-icon {
   vertical-align: bottom;

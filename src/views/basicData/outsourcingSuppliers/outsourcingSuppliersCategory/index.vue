@@ -158,9 +158,7 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.getProductClassFun()
-  },
+
   created() {
     this.initData()
   },
@@ -174,6 +172,7 @@ export default {
       this.$refs.tableForm.showDrawer()
     },
     switchShow(row) {
+      if (!row.sortCode) return this.$message.error('请输入排序值')
       let obj = row
       editCategory(obj)
         .then((response) => {
@@ -194,7 +193,7 @@ export default {
       this.loading = true
       getcategoryTree(this.listQuery)
         .then((res) => {
-          console.log('树形', res)
+
           this.treeList = res.data
           if (this.treeList.length > 0) this.setTableIndex(this.treeList)
           this.listLoading = false
@@ -210,7 +209,7 @@ export default {
     },
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
-      console.log('arr', arr, index)
+
       arr.forEach((item, key) => {
         item.index = key + 1
         if (index) {
@@ -226,7 +225,7 @@ export default {
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {
-      console.log('id', id, parentId)
+
       this.addOrUpdateDep(id, parentId)
     },
     addOrUpdateDep(id, parentId) {

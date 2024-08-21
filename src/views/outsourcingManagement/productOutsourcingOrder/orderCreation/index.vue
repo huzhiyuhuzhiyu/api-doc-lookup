@@ -254,12 +254,23 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column label="操作" width="180" fixed="right" v-if="dataFormTwo.data.length > 1">
+                      <!-- <el-table-column label="操作" width="180" fixed="right" v-if="dataFormTwo.data.length > 1">
                         <template slot-scope="scope">
                           <el-button type="text" class="JNPF-table-delBtn"
                             @click="delequipment_process_relList(scope.$index)">
                             删除
                           </el-button>
+                        </template>
+                      </el-table-column> -->
+
+                      <el-table-column label="操作" width="180" fixed="right">
+                        <template slot-scope="scope">
+
+                          <el-button size="mini" type="text" :disabled="sourceDisabled"
+                            @click="handlerOpenSource(scope.$index, 'source')">查看发料清单</el-button>
+                          <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                            v-if="dataFormTwo.data.length > 1"
+                            @click="delequipment_process_relList(scope.$index)">删除</el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -365,12 +376,14 @@
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
       :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
       :searchList="ProductTableSearchList" :elementShow="false" multiple />
+    <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
   </div>
 </template>
 <script>
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-
+import SourceArea from './source.vue'
 import {
+  getShipmentList,
   getpurProcurementRequireDetail,
   addpurProcurementRequire,
   editpurProcurementRequire,
@@ -394,7 +407,7 @@ import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    workFlow
+    workFlow, SourceArea
   },
   data() {
     return {
@@ -446,7 +459,7 @@ export default {
         reasonRejection: '', //驳回理由
         submitDate: '' //提交时间
       },
-
+      sourceVisibled: false,
       type: 'add',
       dataFormArr: [],
       rules: {
@@ -876,6 +889,47 @@ export default {
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
+    },
+    // 配置资源
+    handlerOpenSource(index, type) {
+      console.log(index, 'index')
+      this.sourceVisibled = true
+      this.index = index
+      console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
+      let obj = {
+        productsId: this.dataFormTwo.data[index].productsId,
+        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity,
+      }
+      // 通过需求池id 获取明细的数据
+      getShipmentList(obj).then(res => {
+        console.log(res, '清单数据');
+        this.sourceData = res.data
+        if (this.dataFormTwo.data[this.index].outShipmentList) {
+
+          this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+            this.sourceData[ind].demandQuantity1 = item.demandQuantity1
+            // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
+
+          })
+        } else {
+          this.sourceData.forEach((item, index) => {
+            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity < 0 ? 0 : item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity)
+          })
+        }
+        console.log(this.sourceData, '1111');
+
+        if (this.sourceData.length === 0) {
+          this.sourceDisabled = true
+        } else {
+          this.sourceDisabled = false
+        }
+        this.$nextTick(() => {
+
+          this.$refs['sourceRef'].init(this.sourceData, '')
+        })
+      })
+
+
     },
 
     // 弹窗节点的点击
@@ -1828,6 +1882,7 @@ export default {
   background-color: #f5f5f7 !important;
   color: #576a95;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }

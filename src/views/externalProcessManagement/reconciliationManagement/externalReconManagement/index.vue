@@ -40,7 +40,7 @@
         <div class="JNPF-common-head">
           <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
           <div>
-            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成采购对账</el-button>
+            <el-button size="mini" type="primary" @click="addOrUpdateHandle()">生成外协对账</el-button>
             <el-button v-has="'btn_export'" :disabled="tableDataList.length > 0 ? false : true" size="mini"
               type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
           </div>

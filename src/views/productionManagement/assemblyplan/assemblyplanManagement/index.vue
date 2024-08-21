@@ -38,7 +38,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
@@ -113,6 +113,7 @@ import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -386,7 +387,6 @@ export default {
             }
             arr.push(obj)
           });
-          console.log(this.superQueryJson);
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
             // 将options赋值为5  

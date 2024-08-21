@@ -358,7 +358,7 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -396,8 +396,7 @@
             <el-table-column type="index" width="70" label="序号" />
             <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" min-width="120"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
@@ -527,6 +526,7 @@ export default {
         processName: "",
       },
       detailDataList: [],
+      detailDiaFlag:false,
     }
   },
   computed: {

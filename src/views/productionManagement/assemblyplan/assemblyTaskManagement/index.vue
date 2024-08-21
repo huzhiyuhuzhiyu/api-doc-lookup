@@ -58,12 +58,12 @@
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
               </el-tooltip>
             </div>
-          </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          </div> 
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id )">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -76,9 +76,9 @@
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
-            <el-table-column prop="productionQuantity" label="总生产数量" min-width="160" sortable="custom" />
-            <el-table-column prop="completedQuantity" label="已完成数量" min-width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
+            <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -89,7 +89,7 @@
             <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="120" sortable="custom" />
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
 
 
 
@@ -102,11 +102,11 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="220" fixed="right">
              
               <template slot-scope="scope">
                 <el-button size="mini" type="text"   @click="addOrUpdateHandle(scope.row.id, 'edit')">追加生产</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"  @click="handleDel(scope.row.id)">改派</el-button>
+                <el-button size="mini" type="text"   @click="handleDel(scope.row.id)">改派</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -114,7 +114,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id)">
                       查看详情
                     </el-dropdown-item>
                     
@@ -130,7 +130,7 @@
 
     </div>
 
-    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" /> -->
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm"   />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -138,16 +138,16 @@
 </template>
 
 <script> 
-import {ordershengchanList} from '@/api/productOrdes/index.js'
+import {ordershengchanList,prodOrderClose} from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-// import Form from '../saleMetalworking/Form'
+import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'foreigntradenotice',
-  components: {  SuperQuery  },
+  components: {  SuperQuery,Form  },
   data() {
     return {
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
@@ -184,6 +184,7 @@ export default {
         productDrawingNo: "",
         productionPlanNo: "",
         orderNo: "",
+        orderStatus:"normal",
 
 
         pageNum: 1,
@@ -384,16 +385,47 @@ export default {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search()
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+ 
   mounted() {
     this.getProductClassFun()
   },
   methods: {
-    
+    // 多选
+    handleSelectionChange(val){
+      this.selectArr=val
+    },
+      //禁用复选框
+      checkSelectable(row) {
+      if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend'||row.documentStatus=='draft') {
+        console.log(222);
+        return false
+      } else {
+        console.log(333);
+        return true
+
+      }
+    },
+
+    // 关单
+    Cancelshipment(){
+      if(!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
+      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
+        type: 'warning',
+        customClass: 'custom-confirm',
+      }).then(() => {
+       let arr=[]
+       this.selectArr.forEach(item => {
+        arr.push(item.id)
+       });
+        prodOrderClose(arr).then(res => {
+          
+          this.$message.success('关单成功')
+          this.search()
+        }).catch(() => {
+          this.qxbtnLoading = false
+        })
+      }).catch(() => { })
+    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -422,7 +454,6 @@ export default {
             }
             arr.push(obj)
           });
-          console.log(this.superQueryJson);
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
             // 将options赋值为5  
@@ -467,10 +498,8 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
+    
         this.search()
-      }
     },
     initData() {
       this.listLoading = true
@@ -520,9 +549,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
+    
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
       this.orderNoS = ""
@@ -531,24 +558,7 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
-    addSupplier(id, btntype) {
-      console.log(id, btntype);
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-    },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        console.log(id);
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
-      }
-    },
+  
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -563,10 +573,10 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id, btnType) {
+    handleUserRelation(id) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Form.init(id)
       })
     },
 
@@ -577,4 +587,5 @@ export default {
   }
 }
 </script>
+
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

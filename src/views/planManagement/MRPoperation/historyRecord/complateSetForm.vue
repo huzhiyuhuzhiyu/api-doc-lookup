@@ -7,14 +7,12 @@
       </div>
       <div class="main">
         <JNPF-table ref="popupTitleData" v-loading="listLoading" border :data="popupList">
+          <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" />
           <el-table-column prop="productCode" label="产品编码" width="130"></el-table-column>
-          <el-table-column prop="productName" label="产品名称" />
-          <el-table-column prop="productDrawingNo" label="产品图号" min-width="320" />
           <el-table-column prop="mainUnit" label="单位" width="80" />
           <el-table-column prop="qty" label="数量" />
           <el-table-column prop="lossRate" label="损耗率(%)" />
           <el-table-column prop="fixedLoss" label="固定损耗" />
-
         </JNPF-table>
       </div>
     </div>

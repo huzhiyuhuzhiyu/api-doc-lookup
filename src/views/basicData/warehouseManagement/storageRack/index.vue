@@ -17,36 +17,18 @@
         </span>
       </div>
       <div v-if="!leftFlag">
-        <el-input
-          placeholder="输入关键字进行过滤"
-          v-model="filterText"
-          style="width:200px;margin:10px auto;display:block"
-          suffix-icon="el-icon-search"
-          clearable
-        ></el-input>
+        <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          suffix-icon="el-icon-search" clearable></el-input>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-        <el-tree
-          ref="treeBox"
-          :data="treeData"
-          :props="defaultProps"
-          :default-expand-all="expands"
-          highlight-current
-          :expand-on-click-node="false"
-          node-key="id"
-          @node-click="handleNodeClick"
-          class="JNPF-common-el-tree"
-          v-if="refreshTree"
-          :filter-node-method="filterNode"
-          :default-expanded-keys="[selectedNodeKey]"
-        >
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode" :default-expanded-keys="[selectedNodeKey]">
           <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-            <i
-              :class="[
-                data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
-              ]"
-            />
+            <i :class="[
+              data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm'
+            ]" />
             <span class="text" :title="data.name">{{ data.name }}</span>
           </span>
         </el-tree>
@@ -83,16 +65,16 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <el-dropdown>
-            <el-button icon="el-icon-plus" type="primary" size="mini">
-              新建
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addSupplier('addReservoirArea')">新建库区</el-dropdown-item>
+          <!-- <el-dropdown> -->
+          <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
+            新建货位
+          </el-button>
+          <!-- <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="addSupplier('add')">新建库区</el-dropdown-item>
               <el-dropdown-item @click.native="addSupplier('addShelves')">新建货架</el-dropdown-item>
               <el-dropdown-item @click.native="addSupplier('addLocation')">新建货位</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+            </el-dropdown-menu> -->
+          <!-- </el-dropdown> -->
           <div class="JNPF-common-head-right">
             <!-- <el-tooltip effect="dark" content="展开" placement="top">
                             <el-link v-show="!expandsTable" type="text"
@@ -112,26 +94,17 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table
-          ref="tabForm"
-          v-loading="listLoading"
-          :data="tableDataList"
-          row-key="id"
-          v-if="refreshTable"
-          :fixedNO="true"
-          @sort-change="sortChange"
-          custom-column
-          :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }"
-        >
-          <el-table-column prop="name" label="货架/货位名称" fixed="left" min-width="180">
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
+          :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }">
+          <el-table-column prop="name" label="货位名称" fixed="left" min-width="180">
             <!-- <template slot-scope="scope">
               <i
                 :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{
                   scope.row.name }}
             </template> -->
           </el-table-column>
-          <el-table-column prop="code" label="货架/货位编码" width="180" sortable="custom">
+          <el-table-column prop="code" label="货位编码" width="180" sortable="custom">
             <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
                 {{ scope.row.code }}
@@ -142,16 +115,25 @@
           <el-table-column prop="usedVolume" label="已使用体积" width="150" />
           <el-table-column prop="residualVolume" label="剩余体积" width="150" />
           <el-table-column prop="warehouseName" label="仓库名称" width="160" /> -->
-          <el-table-column prop="category" label="货位类型" width="100" />
+          <!-- <el-table-column prop="category" label="货位类型" width="100">
+            <template slot-scope="{ row }">
+              <template v-if="row.category == 'area'">
+                库区
+              </template>
+              <template v-else-if="row.category == 'shelves'">
+                货架
+              </template>
+              <template v-else-if="row.category == 'location'">
+                货位
+              </template>
+            </template>
+          </el-table-column> -->
           <!-- <el-table-column prop="goodsFrameRow" label="货架行" width="80" />
                     <el-table-column prop="goodsFrameCol" label="货架列" width="80" /> -->
           <el-table-column prop="remark" label="备注" width="160" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts
-                @edit="addOrUpdateHandle(scope.row.id, scope.row.warehouseId, scope.row.category)"
-                @del="handleDel(scope.row.id, scope.row.parentId)"
-              >
+              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
                 <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -386,13 +368,6 @@ export default {
     // 树形列表index层级，实现方法（可复制直接调用）
     setTableIndex(arr, index) {
       arr.forEach((item, key) => {
-        if (item.category == 'area') {
-          item.category = '库区'
-        } else if (item.category == 'shelves') {
-          item.category = '货架'
-        } else if (item.category == 'location') {
-          item.category = '货位'
-        }
         item.index = key + 1
         if (index) {
           item.index = index + 1
@@ -431,6 +406,7 @@ export default {
         parentId: '',
         startTime: ''
       }
+      this.filterText = ''
       this.getWarehouseList(true)
 
       // this.search()
@@ -456,25 +432,26 @@ export default {
     addSupplier(type) {
       this.depFormVisible = true
       this.$nextTick(() => {
-        this.$refs.depForm.init('', this.tableQuery.warehouseId, type, this.warehouseName)
+        let row = {
+          id: '',
+          warehouseId: this.tableQuery.warehouseId,
+          btntype: type,
+          warehouseName: this.warehouseName
+        }
+        this.$refs.depForm.init(row)
       })
     },
-    addOrUpdateHandle(id, warehouseId, btntype) {
+    addOrUpdateHandle(row) {
+      console.log(row, 'row')
       this.depFormVisible = true
-      let newBtnType = ''
-
-      if (btntype == '库区') {
-        newBtnType = 'areaEdit'
-      } else if (btntype == '货架') {
-        newBtnType = 'shelvesEdit'
-      } else if (btntype == '货位') {
-        newBtnType = 'locationEdit'
+      if (row.category == 'location') {
+        row.btntype = 'edit'
       }
 
-      if (id) {
+      if (row.id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(id, warehouseId, newBtnType)
+          this.$refs.depForm.init(row)
         })
         // }, 600);
       }
@@ -508,7 +485,7 @@ export default {
             })
           })
         })
-        .catch(() => {})
+        .catch(() => { })
     },
     handleUserRelation(id, parentId, btnType) {
       this.depFormVisible = true

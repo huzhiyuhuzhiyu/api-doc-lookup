@@ -48,12 +48,14 @@
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="4">
+          <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="产品名称" clearable
-                @keyup.enter.native="search()" />
+              <el-select v-model="listQuery.routingFlag" placeholder="请选择">
+                <el-option v-for="item in routingFlagOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
@@ -115,39 +117,7 @@
           <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
-                @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-
-              <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
-              <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
-                style=" color: #ff3a3a">删除</el-button> -->
-              <!-- <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id, scope.row.parentId)" />
-              <el-dropdown hide-on-click>
-                <span class="el-dropdown-link">
-                  <el-button type="text" size="mini">
-                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                  </el-button>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
-                    查看详情
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown> -->
+              <el-button type="text" @click="handleUserRelation(scope.row, 'look')">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -155,7 +125,35 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-
+    <!-- 批量设置工艺 -->
+    <el-dialog v-if="analyseDialog" title="批量设置工艺" :close-on-click-modal="false" append-to-body
+      :visible.sync="analyseDialog" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="400px">
+      <el-row :gutter="15" style="margin-top: 0px;">
+        <el-form ref="elForm" :model="dataForm" label-position="top" :rules="dataFormRules">
+          <el-row :gutter="30">
+            <el-col :sm="24">
+              <el-form-item prop="routingId" label="工艺路线">
+                <el-select v-model="dataForm.routingId" placeholder="请选择工艺路线" clearable style="width: 100%;">
+                  <el-option v-for="(item, index) in routingIdOptions" :key="index" :label="item.name"
+                    :value="item.id"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :sm="24">
+              <el-form-item label="备注">
+                <el-input type="textarea" :autosize="{ minRows: 2 }" v-model="dataForm.remark" placeholder="请输入备注" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="analyseDialog = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" @click="dataFormSubmit()" :loading="btnLoading">
+          {{ $t('common.submitButton') }}
+        </el-button>
+      </span>
+    </el-dialog>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -183,6 +181,7 @@
       </span>
     </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
   </div>
 </template>
 
@@ -198,11 +197,13 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import JNPFForm from '../assemblyProcessSetting/Form.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
+import { getProcessList } from '@/api/basicData/processSettingss'
 export default {
   name: 'ProductionResource',
-  components: { ExportForm, SuperQuery },
+  components: { ExportForm, SuperQuery, JNPFForm },
   data() {
     return {
       superQueryVisible: false,
@@ -362,6 +363,12 @@ export default {
         label: 'name'
       },
       selectedData: [],
+      routingIdOptions: [],
+      dataForm: {
+        routingId: '',
+        remark: ''
+      },
+      analyseDialog: false,
       exportFormVisible: false,
       treeData: [],
       customerRecognitionTime: [],
@@ -371,6 +378,16 @@ export default {
       tableDataList: [],
       formVisible: false,
       listLoading: false,
+      routingFlagOptions: [
+        {
+          value: 0,
+          label: '未设置工艺'
+        },
+        {
+          value: 1,
+          label: '已设置工艺'
+        }
+      ],
       listQuery: {
         orderItems: [
           {
@@ -382,6 +399,7 @@ export default {
         productCode: '',
         productName: '',
         productDrawingNo: '',
+        routingFlag: 0,
         routingCode: '',
         routingName: '',
         pageNum: 1,
@@ -466,6 +484,16 @@ export default {
           this.treeLoading = false
           this.listLoading = false
         })
+    },
+    getProcessList() {
+      let obj = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getProcessList(obj).then((res) => {
+        console.log(res, 'res')
+        this.routingIdOptions = res.data.records
+      })
     },
     handleNodeClick(data, node) {
       if (this.listQuery.productCategoryId === data.id) return
@@ -567,23 +595,51 @@ export default {
     currentChange(data) {
       this.selectedData = data
     },
-    async handleBatch() {
+    handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工艺数据')
       console.log(this.selectedData, 'selectedData')
-      batchProductionResource().then(res => {
-        console.log(res, 'res')
-      })
+      this.getProcessList()
+      this.analyseDialog = true
     },
-    dataFormSubmit() {
-      this.listQuery.pageNum = 1
-      if (this.customerRecognitionTime && this.customerRecognitionTime.length > 0) {
-        this.listQuery.startTime = this.customerRecognitionTime[0]
-        this.listQuery.endTime = this.customerRecognitionTime[1]
-      } else {
-        this.listQuery.startTime = ''
-        this.listQuery.endTime = ''
+    async dataFormSubmit() {
+      this.btnLoading = true
+      let submitFlag = true
+
+      const form_1 = this.$refs.elForm
+      const valid_1 = await form_1.validate().catch((err) => false)
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.jnpf.focusErrValidItem(form_1.fields)
       }
-      this.initData()
+
+      if (submitFlag) {
+        let _data = this.selectedData.map((item) => {
+          return {
+            classAttribute: item.classAttribute,
+            id: item.id,
+            productsId: item.productsId,
+            routingId: this.dataForm.routingId
+          }
+        })
+
+        batchProductionResource(_data)
+          .then((res) => {
+            this.$message.success('工艺设置成功')
+            this.selectedData = []
+            this.$refs.tableForm.$refs.JNPFTable.clearSelection()
+            this.analyseDialog = false
+            this.dataForm = {
+              routingId: '',
+              remark: ''
+            }
+            this.search()
+          })
+          .catch((err) => {
+            this.btnLoading = false
+          })
+      } else {
+        this.btnLoading = false
+      }
     },
     sortChange({ prop, order }) {
       let newProp = prop.replace(/_([a-zA-Z])/g, (match, letter) => letter.toUpperCase())
@@ -683,10 +739,11 @@ export default {
         })
         .catch(() => { })
     },
-    handleUserRelation(id, type) {
+    handleUserRelation(row, type) {
+      if (!row.routingId) return this.$message.error('请先设置工艺');
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init(id, type)
+        this.$refs.JNPFForm.init(row, type)
       })
     }
   }

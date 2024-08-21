@@ -33,8 +33,7 @@
               </el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
+
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -44,12 +43,20 @@
             新建
           </el-button>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column >
+        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
+          custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="code" label="检验类型编码" sortable="custom" min-width="200">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -74,7 +81,7 @@
           <el-table-column prop="productCategoryName" label="产品分类名称" width="180" />
           <el-table-column prop="productCode" label="产品编码" width="180" />
           <el-table-column prop="productName" label="产品名称" width="180" />
-          <el-table-column prop="productDrawingNo" label="产品图号" width="180" />
+          <el-table-column prop="productDrawingNo" label="品名规格" width="180" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="remark" label="备注" min-width="200" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -117,81 +124,77 @@
           @pagination="initData" />
       </div>
     </div>
-    <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-        <el-form :model="query" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="检验类型编码">
-              <el-input v-model="query.code" placeholder="请输入检验类型编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="检验类型名称">
-              <el-input v-model="query.name" placeholder="请输入检验类型名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="检验种类">
-              <el-select v-model="query.inspectionCategory" placeholder="请选择检验种类" style="width: 100%;">
-                <el-option v-for="(item, index) in inspectionCategoryList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="类型名称">
-              <el-select v-model="query.inspectionType" placeholder="请选择类型名称" style="width: 100%;">
-                <el-option v-for="(item, index) in inspectionTypeList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品分类编码">
-              <el-input v-model="query.productCategoryCode" placeholder="请输入产品分类编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品分类名称">
-              <el-input v-model="query.productCategoryName" placeholder="请输入产品分类名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="query.productCode" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="query.productName" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品图号">
-              <el-input v-model="query.productDrawingNo" placeholder="请输入产品图号" clearable />
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">搜 索</el-button>
-      </span>
-    </el-dialog>
+
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
-  
+
 <script>
 import { delbimInspectionType, getbimInspectionType, exportInspection } from '@/api/basicData/index'
 import DepForm from './depForm'
 import moment from 'moment'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'quality',
-  components: { DepForm, },
+  components: { DepForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'productCategoryCode',
+          label: '产品分类编码',
+          type: 'input'
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类名称',
+          type: 'input'
+        },
+
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'productName',
+          label: '产品名称',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+   
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
+      columnList: ["partnerCode", "productCode", "productName", "createByName"],
       depFormVisible: false,
       background: true,//分页器背景颜色
       visible: false,
@@ -233,6 +236,15 @@ export default {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.tableForm.showDrawer()
+    },
+
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       this.query.orderItems[0].asc = order === 'ascending'
@@ -376,5 +388,5 @@ export default {
 
 .el-tabs__nav-scroll {
   padding-left: 0;
-}</style>
-  
+}
+</style>

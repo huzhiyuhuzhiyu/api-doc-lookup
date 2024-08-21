@@ -250,7 +250,7 @@ export default {
   },
   data() {
     return {
-      process_typeList: [{ label: '正常工序', value: 'normal' }, { label: '待装配工序', value: 'wait_assembly' }],
+      process_typeList: [{ label: '正常工序', value: 'normal' }, { label: '待装配工序', value: 'wait_assemble' }],
       getcategoryTree,
       configurationName: '',
       dialogTitle: '',

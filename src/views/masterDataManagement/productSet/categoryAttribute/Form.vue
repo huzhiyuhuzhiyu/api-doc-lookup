@@ -227,8 +227,7 @@ export default {
           this.btnLoading = true
 
           let formMethod = this.btntype == 'edit' ? updataClassAttribute : addClassAttributes
-          this.dataForm.warehouseCode = this.dataForm.code
-          this.dataForm.warehouseName = this.dataForm.name
+
           if (formMethod == updataClassAttribute) {
             formMethod(this.dataForm)
               .then((response) => {

@@ -3,7 +3,7 @@
     <div class="JNPF-common-layout-center  JNPF-flex-main">
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <el-button type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle()">
+          <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addOrUpdateHandle()">
             新建
           </el-button>
           <div class="JNPF-common-head-right">

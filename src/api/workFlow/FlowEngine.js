@@ -15,6 +15,13 @@ export function FlowEngineInfo(id) {
     method: 'get'
   })
 }
+// 通过businessFlow获取流程引擎信息
+export function getBusinessFlowInfo(businessFlow) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/infoByBusinessFlow/${businessFlow}`,
+    method: 'get'
+  })
+}
 // 删除流程引擎
 export function Delete(id) {
   return request({

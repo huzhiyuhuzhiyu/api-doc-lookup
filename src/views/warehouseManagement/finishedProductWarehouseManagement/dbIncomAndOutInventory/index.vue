@@ -371,7 +371,7 @@
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
+                @click.native="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
             </template>
@@ -627,16 +627,16 @@ export default {
         if (res.data.length) {
           res.data.forEach(item => {
             if (item.businessType == 'outbound_sale_send') {
-              this.$set(item, 'fullName', '销售待发货')
+              this.$set(item, 'fullName', '销售发货')
             }
             if (item.businessType == 'inbound_sale_return') {
-              item.fullName = '销售待退货'
+              item.fullName = '销售退货'
             }
             if (item.businessType == 'inbound_purchase') {
-              item.fullName = '采购待收货'
+              item.fullName = '采购收货'
             }
             if (item.businessType == 'outbound_purchase') {
-              item.fullName = '采购待退货'
+              item.fullName = '采购退货'
             }
 
             if (item.businessType == 'outbound_external_send') {

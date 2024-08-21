@@ -4,7 +4,8 @@
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" :content="!dataForm.id ? `新建检验工具档案` : disabled ? '查看检验工具档案' : '编辑检验工具档案'" />
         <div class="options">
-          <el-button type="primary" v-if="!disabled" :disabled="disabled" :loading="btnLoading" @click="handleConfirm()">
+          <el-button type="primary" v-if="!disabled" :disabled="disabled" :loading="btnLoading"
+            @click="handleConfirm()">
             提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -12,111 +13,121 @@
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
-              <el-row :gutter="20" class="custom-row">
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="检验工具分类" prop="categoryName" ref="categoryName">
-                    <!-- <JNPFTreeSelect v-model="dataForm.productCategoryId" placeholder="请选择所属分类" clearable
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="140px" label-position="top">
+                  <el-row :gutter="20" class="custom-row">
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验工具分类" prop="categoryName" ref="categoryName">
+                        <!-- <JNPFTreeSelect v-model="dataForm.productCategoryId" placeholder="请选择所属分类" clearable
                   :options="categoryIdOptions" :props="categoryIdProps" :disabled="disabled">
                 </JNPFTreeSelect> -->
-                <ComSelect-list :isdisabled="disabled" v-model="dataForm.categoryName" placeholder="请选择检验工具分类" auth
-                  @change="onOrganizeChange" :title="'选择检验工具分类'" :method="getCategoryTrees" :requestObj="requestObjTwo"
-                  :paramsObj="{}" />
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="检验工具名称" prop="name">
-                <el-input v-model="dataForm.name" placeholder="请输入检验工具名称" maxlength="20" :disabled="disabled" />
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="检验工具编码" prop="code">
-                <el-input v-model="dataForm.code" placeholder="请输入检验工具编码" maxlength="20" :disabled="disabled"
-                  oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" />
-              </el-form-item>
-            </el-col>
+                        <ComSelect-list :isdisabled="disabled" v-model="dataForm.categoryName" placeholder="请选择检验工具分类"
+                          auth @change="onOrganizeChange" :title="'选择检验工具分类'" :method="getCategoryTrees"
+                          :requestObj="requestObjTwo" :paramsObj="{}" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验工具名称" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入检验工具名称" maxlength="20" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验工具编码" prop="code">
+                        <el-input v-model="dataForm.code" placeholder="请输入检验工具编码" maxlength="20" :disabled="disabled"
+                          oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" />
+                      </el-form-item>
+                    </el-col>
 
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="检验工具规格" prop="specModel">
-                <el-input v-model="dataForm.specModel" placeholder="请输入检验工具规格" :disabled="disabled" maxlength="50" />
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="图号" prop="drawingNo">
-                <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50"
-                   :disabled="disabled">
-                  <!-- <template slot="append">KG</template> -->
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="长" prop="equLong">
-                <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
-                  <template #append>（cm）</template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="宽" prop="width">
-                <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
-                  <template #append>（cm）</template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="高" prop="height">
-                <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
-                  <template #append>（cm）</template>
-                </el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="使用人" prop="userId">
-                <user-select v-model="dataForm.userId" placeholder="请选择所属人员" clearable style="width: 100%;"
-                  :disabled="disabled" @change="getuserDepartment">
-                </user-select>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验工具规格" prop="specModel">
+                        <el-input v-model="dataForm.specModel" placeholder="请输入检验工具规格" :disabled="disabled"
+                          maxlength="50" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="图号" prop="drawingNo">
+                        <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
+                          <!-- <template slot="append">KG</template> -->
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="长" prop="equLong">
+                        <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="宽" prop="width">
+                        <el-input v-model="dataForm.width" placeholder="请输入宽" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="高" prop="height">
+                        <el-input v-model="dataForm.height" placeholder="请输入高" :disabled="disabled">
+                          <template #append>（cm）</template>
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="使用人" prop="userId">
+                        <user-select v-model="dataForm.userId" placeholder="请选择所属人员" clearable style="width: 100%;"
+                          :disabled="disabled" @change="getuserDepartment">
+                        </user-select>
 
-                  </el-form-item>
-                </el-col>
+                      </el-form-item>
+                    </el-col>
 
-                <el-col :sm="12" :xs="8">
-                  <el-form-item label="使用部门" prop="userDepartmentName">
-                    <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
+                    <el-col :sm="12" :xs="8">
+                      <el-form-item label="使用部门" prop="userDepartmentName">
+                        <el-input v-model="dataForm.userDepartmentName" readonly placeholder="请输入使用部门"
+                          :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
 
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="用途" prop="usin">
-                    <el-input v-model="dataForm.usin" maxlength="200" placeholder="请输入用途" :disabled="disabled" />
-                  </el-form-item>
-                </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="用途" prop="usin">
+                        <el-input v-model="dataForm.usin" maxlength="200" placeholder="请输入用途" :disabled="disabled" />
+                      </el-form-item>
+                    </el-col>
 
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="检验工具状态" prop="state">
-                <el-select v-model="dataForm.state" placeholder="请选择检验工具状态" clearable :disabled="true"
-                  style="width: 100%;">
-                  <el-option v-for="( item, index ) in  equipmentStatusList " :key="index" :label="item.label"
-                    :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :sm="12" :xs="24">
-              <el-form-item label="体积" prop="unitVolume">
-                <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled" maxlength="20" />
-              </el-form-item>
-            </el-col>
-            <el-col :sm="24" :xs="24">
-              <el-form-item label="备注" prop="remark">
-                <el-input class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
-                  maxlength="200" :disabled="disabled" style="width: 100%;" />
-              </el-form-item>
-            </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="检验工具状态" prop="state">
+                        <el-select v-model="dataForm.state" placeholder="请选择检验工具状态" clearable :disabled="true"
+                          style="width: 100%;">
+                          <el-option v-for="( item, index ) in equipmentStatusList " :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="体积" prop="unitVolume">
+                        <el-input v-model="dataForm.unitVolume" placeholder="请输入体积" :disabled="disabled"
+                          maxlength="20" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="24" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input class="shuru" v-model="dataForm.remark" placeholder="请输入备注" type="textarea" :rows="2"
+                          maxlength="200" :disabled="disabled" style="width: 100%;" />
+                      </el-form-item>
+                    </el-col>
 
 
 
 
-              </el-row>
-            </el-form>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+
+
+            </el-collapse>
+
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="disabled" :detailed="disabled"></UploadWj>
@@ -142,8 +153,9 @@ export default {
   data() {
     return {
       action: 'https://jsonplaceholder.typicode.com/posts/', // 后期替换上传接口
-      datafilelist:[],
+      datafilelist: [],
       activeName: "jcInfo",
+      activeNames: ['productInfo', 'basicInfo'],
       title: '',
       getCategoryTrees,
       billingTypeList: [],
@@ -159,7 +171,7 @@ export default {
       formLoading: false,
 
       dataForm: {
-        state:'normal',
+        state: 'normal',
         id: "",
         name: null, //设备名称
         code: null, //设备编码
@@ -171,7 +183,7 @@ export default {
         userDepartmentName: '',
         userDepartmentId: '',
         categoryName: '',
-        attachmentList:[]
+        attachmentList: []
       },
       parentId: '',
       // 设备状态
@@ -232,7 +244,7 @@ export default {
             }, trigger: 'blur',
           }
         ],
-        state:[{ required: true, message: '请选择检验工具状态', trigger: 'change' }],
+        state: [{ required: true, message: '请选择检验工具状态', trigger: 'change' }],
         categoryName: [
           { required: true, message: '请选择检验工具所属分类', trigger: 'change' }
         ],
@@ -329,7 +341,7 @@ export default {
               }
             })
           }
-          this.dataForm.attachmentList=this.datafilelist
+          this.dataForm.attachmentList = this.datafilelist
           const formMethod = this.dataForm.id ? editEquEquipment : saveEquEquipment
           console.log(this.dataForm, '参数');
           formMethod(this.dataForm).then(res => {
@@ -362,11 +374,13 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  padding: 10px 30px 0;
+  // padding: 10px 30px 0;
 }
-::v-deep .el-tabs__header{
+
+::v-deep .el-tabs__header {
   padding: 0 !important;
 }
+
 .el-button--small {
   // padding: 1;
 }
@@ -384,5 +398,41 @@ export default {
 .qinq {
   position: absolute;
 
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

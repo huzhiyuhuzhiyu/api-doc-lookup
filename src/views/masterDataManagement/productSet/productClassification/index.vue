@@ -156,7 +156,7 @@ export default {
         { label: '成品', value: 'finish_product' },
         { label: '辅料', value: 'accessories' }
       ],
-      columnList: ['classAttribute', 'classType', 'createTime', 'createByName','remark'],
+      columnList: ['classAttribute', 'classType', 'createTime', 'createByName', 'remark'],
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -450,10 +450,10 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
       })
     },
     switchShow(row) {
+      if (!row.sort) return this.$message.error('请输入排序值')
       let obj = row
       updateCategory(obj)
         .then((response) => {

@@ -454,8 +454,8 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(initListQuery))
       this.getcategoryTree()
       this.initData()
-      if (localStorage.getItem(this.busSetId)) {
-        let roleFlag = JSON.parse(localStorage.getItem(this.busSetId))
+      if (localStorage.getItem(this.listQuery.classAttribute)) {
+        let roleFlag = JSON.parse(localStorage.getItem(this.listQuery.classAttribute))
         this.expands = roleFlag
         this.toggleExpand(roleFlag)
       }
@@ -1047,7 +1047,7 @@ export default {
       this.expands = expands
       this.$nextTick(() => {
         this.refreshTree = true
-        localStorage.setItem(this.busSetId, expands)
+        localStorage.setItem(this.listQuery.classAttribute, expands)
       })
     },
     filterNode(value, data) {

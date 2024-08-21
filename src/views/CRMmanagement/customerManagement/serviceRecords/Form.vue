@@ -7,7 +7,7 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <el-dialog :title="btnType === 'add' ? '新建服务说明' : btnType === 'edit' ? '编辑服务说明' : '查看服务说明'" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
+  <el-dialog :title="btnType === 'add' ? '新建跟进记录' : btnType === 'edit' ? '编辑跟进记录' : '查看跟进记录'" :visible.sync="visibleDialog" append-to-body class="JNPF-dialog JNPF-dialog_center"
     width="600px">
     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
       <el-col :span="24">
@@ -17,8 +17,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="24">
-        <el-form-item prop="serviceDescription" ref="serviceDescription" label="服务说明">
-          <el-input type="textarea" :rows="4" :disabled="btnType=== 'look'" v-model="dataForm.serviceDescription" placeholder="请输入服务说明" maxlength="200">
+        <el-form-item prop="serviceDescription" ref="serviceDescription" label="跟进记录">
+          <el-input type="textarea" :rows="4" :disabled="btnType=== 'look'" v-model="dataForm.serviceDescription" placeholder="请输入跟进记录" maxlength="200">
           </el-input>
         </el-form-item>
       </el-col>
@@ -53,7 +53,7 @@ export default {
           { required: true, message: '请选择客户', trigger: ['change'] },
         ],
         serviceDescription: [
-          { required: true, message: '请输入服务说明', trigger: ['blur'] },
+          { required: true, message: '请输入跟进记录', trigger: ['blur'] },
         ],
       },
     }

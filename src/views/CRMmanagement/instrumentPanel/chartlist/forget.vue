@@ -7,7 +7,7 @@
             {{item.name}}
             <span v-if="item.name=='超过3个月未联系'||item.name=='超过6个月未联系'||item.name=='逾期未联系'" class="el-tag" :class="{'el-tag--warning':item.name=='超过3个月未联系'||item.name=='超过6个月未联系','el-tag--danger':item.name=='逾期未联系'}">{{item.name=='逾期未联系'?'已逾期':'警告'}}</span>
           </div>
-          <div class="value">0
+          <div class="value">{{item.value}}
             <span class="value-unit">{{item.unit}}</span>
           </div>
         </div>
@@ -18,19 +18,35 @@
 
 <script>
 export default {
+  props: {
+    data: {
+      type: String,
+      required: true
+    }
+  },
   data() {
     return {
       forgetlist: [
-        { name: '超过7天未联系', id: '111', unit: '个' },
-        { name: '超过15天未联系', id: '222', unit: '个' },
-        { name: '超过30天未联系', id: '333', unit: '个' },
-        { name: '超过3个月未联系', id: '444', unit: '个' },
-        { name: '超过6个月未联系', id: '555', unit: '个' },
-        { name: '逾期未联系', id: '666', unit: '个' },
+        { name: '超过7天未联系', id: 'sevenDays', unit: '个', value: '0' },
+        { name: '超过15天未联系', id: 'fifteenDays', unit: '个', value: '0' },
+        { name: '超过30天未联系', id: 'oneMonth', unit: '个', value: '0' },
+        { name: '超过3个月未联系', id: 'threeMonth', unit: '个', value: '0' },
+        { name: '超过6个月未联系', id: 'sixMonth', unit: '个', value: '0' },
+        { name: '逾期未联系', id: 'unContactCustomerCount', unit: '个', value: '0' },
       ]
     }
+  },
+  watch: {
+    data: {
+      handler(newOption) {
+        this.forgetlist.forEach(item => {
+          item.value = newOption[item.id]
+        })
+      },
+      deep: true,
+      immediate: true
+    }
   }
-
 }
 </script>
 

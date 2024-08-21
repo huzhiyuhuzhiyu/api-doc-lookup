@@ -103,6 +103,7 @@ export default {
         this.innerValue = this.dataForm.name
       }
       this.$emit('change', this.dataForm)
+      this.$emit('inputcontent', this.innerValue)
       this.visible = false
     }
   }

@@ -187,7 +187,6 @@ export default {
 
         if (!cacheList) {
           list.forEach(item => {
-            console.log("setColumnDisplayList",this.setColumnDisplayList);
             if (this.setColumnDisplayList.includes(item.prop)) {
               item.columnVisible = false;
             } else {

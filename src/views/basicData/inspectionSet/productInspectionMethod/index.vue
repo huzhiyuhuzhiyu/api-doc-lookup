@@ -58,7 +58,6 @@
             </el-form-item>
           </el-col>
 
-
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -71,7 +70,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:10px">
-          <el-button size="mini" @click="handleBatch" type="primary">批量设置检验方式</el-button>
+          <el-button size="mini" @click="handleBatch" type="primary">设置检验方式</el-button>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -627,43 +626,6 @@ export default {
     // 关闭批量处理
     closeBatch() {
       this.batchVisible = false
-    },
-    // 批量处理提交
-    async handleBatchConfirm() {
-      this.batchBtnLoading = true
-      let submitFlag = true
-
-      const form = this.$refs.batchDataForm
-      const valid = await form.validate().catch((err) => false)
-      if (!valid) {
-        submitFlag = false
-        this.jnpf.focusErrValidItem(form.fields)
-      }
-
-      if (submitFlag) {
-        let _data = this.selectedData.map((item) => ({
-          id: item.id,
-          inspectionMethod: this.batchDataForm.inspectionMethod,
-          spotCheckRatio: this.batchDataForm.spotCheckRatio
-        }))
-        batchSetInspectionMethod(_data)
-          .then((res) => {
-            this.$message.success('操作成功')
-            this.selectedData = []
-            this.$refs.dataTable.$refs.JNPFTable.clearSelection()
-            this.batchVisible = false
-            this.batchBtnLoading = false
-            this.search()
-          })
-          .catch((err) => {
-            this.batchBtnLoading = false
-          })
-      } else {
-        this.batchBtnLoading = false
-      }
-    },
-    inspectionMethodChange(val) {
-      this.batchDataFormRules.spotCheckRatio[0].required = val === 'spot_check' // 检验方式抽检，必须设置抽检比例
     }
   }
 }

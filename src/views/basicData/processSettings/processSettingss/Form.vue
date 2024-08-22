@@ -282,7 +282,7 @@
                             删除
                           </el-button>
                           <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
-                            资源配置
+                            工艺资源配置
                           </el-button>
                         </template>
                       </el-table-column>

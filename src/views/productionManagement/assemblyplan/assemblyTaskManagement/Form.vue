@@ -346,11 +346,10 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
+  padding-bottom: 10px!important;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
+ 
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {

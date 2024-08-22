@@ -37,7 +37,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
                 新建返工任务
               </el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
@@ -131,11 +131,6 @@
       </div>
 
     </div>
-
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false"
       :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
       <el-row :gutter="20">
@@ -160,11 +155,16 @@
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
         <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
           提交</el-button>
       </span>
     </el-dialog>
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
   </div>
 </template>
 
@@ -173,48 +173,29 @@ import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
+import ReworkForm from './reworkForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form },
+  components: { SuperQuery, Form,ReworkForm },
   data() {
     return {
-      form: {
-
-      },
+      form: { },
+      reworkVisible:false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       orderNoS: "",
       productDrawingNoS: "",
       productionPlanNoS: "",
       superQueryVisible: false,
-      qxbtnLoading: false,
-      hbbtnLoading: false,
       btnLoading: false,
-      linesTotal: 0,
-      linesTableData: [],
-      createTimeArrfahuo: [],
-      deliveryDatefahuo: [],
-      customList: [], // 列表中显示的自定义属性
       title: "更多查询",
-      visible: false,
-      detailVisible: false,
-      treeData: [],
-      tableData: [],
-      detailTableData: [],
-      treeLoading: false,
-      listLoading: false,
-      authorizeFormVisible: false,
-      userRelationListVisible: false,
-      organizeIdTree: [],
-      activeName: "orderList",
-      salespersonList: [],
+      tableData: [], 
+      listLoading: false, 
       detailFlag: false,
-
-
       orderForm: {},
       orderFormlist: {
         productDrawingNo: "",
@@ -222,7 +203,6 @@ export default {
         orderNo: "",
         orderStatus: "normal",
         classAttribute: "finish_product",
-
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -237,26 +217,9 @@ export default {
           column: "create_time"
         }],
       },
-
-      salespersonList: [],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-      },
-      gradeList: [],
-      defaultProps: {
-        children: 'childrenList',
-        label: 'name'
-      },
-      createTimeArr: [],
-      deliveryDateArr: [],
-      orderDateArr: [],
       total: 0,
-      diagramVisible: false,
       formVisible: false,
       selectArr: [],
-
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -433,6 +396,13 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    // 新建返工
+    addTaskFun(id,type){
+      this.reworkVisible=true
+      this.$nextTick(()=>{
+        this.$refs.reworkForm.init(id,type)
+      })
+    },
     addition(data) {
       this.form = data
       this.addOrderVisible = true
@@ -537,12 +507,6 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-
-
-
-
-
-
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -563,7 +527,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-
+      this.reworkVisible=false
       this.search()
     },
     initData() {

@@ -106,7 +106,8 @@
             <el-table-column label="操作" width="220" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.orderType=='rework'" @click="addOrUpdateHandle(scope.row.id, 'edit')">追加生产</el-button>
+                <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
+                  @click="addition(scope.row)">追加生产</el-button>
                 <el-button size="mini" type="text" @click="handleDel(scope.row.id)">改派</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
@@ -135,11 +136,40 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false"
+      :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+      <el-row :gutter="20">
+
+        <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
+          <el-col :span="24">
+            <el-form-item label="生产任务单号" prop="orderNo">
+              <el-input v-model="form.orderNo" placeholder="生产任务单号" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="原生产数" prop="productionQuantity">
+              <el-input v-model="form.productionQuantity" placeholder="原生产数" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item label="追加数量" prop="appendQuantity">
+              <el-input v-model="form.appendQuantity" placeholder="追加数量" clearable />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+          提交</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { ordershengchanList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
@@ -152,6 +182,10 @@ export default {
   components: { SuperQuery, Form },
   data() {
     return {
+      form: {
+
+      },
+      addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       orderNoS: "",
       productDrawingNoS: "",
@@ -381,6 +415,13 @@ export default {
           typeCode: "pa016"
         }
       ],
+      dataRule: {
+        appendQuantity: [
+          { validator: this.formValidate({ type: 'noEmtry', params: ["追加数量不能为空", (errMsg, index) => { this.$message.error(`追加数量：${errMsg}`) }] }), trigger: 'blur' },
+          { required: true, trigger: 'blur' },
+          { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
+        ],
+      },
     }
   },
   created() {
@@ -392,6 +433,28 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    addition(data) {
+      this.form = data
+      this.addOrderVisible = true
+    },
+    // 追加生产数量
+    submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          console.log(this.form);
+          this.btnLoading = true
+          addOrderNum(this.form).then(res => {
+            this.addOrderVisible = false
+            this.btnLoading = false
+            this.$message.success("追加生产数量成功")
+            this.search()
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
+
+    },
     // 多选
     handleSelectionChange(val) {
       this.selectArr = val
@@ -415,7 +478,7 @@ export default {
         type: 'warning',
         customClass: 'custom-confirm',
       }).then(() => {
-         
+
         let arr = this.selectArr.map(item => {
           return item.id
         })
@@ -507,21 +570,39 @@ export default {
       this.listLoading = true
 
       if (this.orderNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-        )
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
+          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+          )
+        }
       }
-
-
       if (this.productionPlanNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
-        )
+
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productionPlanNo"));
+          filteredData.push({ "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.productDrawingNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
-        )
+
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productDrawingNo"));
+          filteredData.push({ "field": "productDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.orderNoS || this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
@@ -585,5 +666,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0 !important;
 
+  margin-bottom: 5px;
+}
+</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

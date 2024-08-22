@@ -2206,9 +2206,10 @@ export default {
 }
 
 .JNPF-common-search-box {
-  padding-top: 0px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+  padding-top: 0px!important; 
+  margin-bottom: 5px; 
 }
 
 .JNPF-common-search-box .el-form-item {

@@ -6,7 +6,7 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="出入库单号" clearable />
+              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="单号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -969,3 +969,11 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style scoped>
+ .JNPF-common-search-box { 
+  padding: 8px 0 0 0!important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
+}
+</style>

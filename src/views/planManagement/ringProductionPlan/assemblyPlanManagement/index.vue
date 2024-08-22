@@ -18,11 +18,7 @@
                   clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
-              </el-form-item>
-            </el-col>
+          
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -61,9 +57,8 @@
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" width="120" sortable="custom" />
-            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" /> 
+            <el-table-column prop="code" label="产品编码" width="120" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
@@ -774,9 +769,9 @@ export default {
 
 
 
-.JNPF-common-search-box {
-  padding: 8px !important;
-
+.JNPF-common-search-box { 
+  padding: 8px 0 !important;
+  margin-left: 0!important;
   margin-bottom: 5px;
 }
 

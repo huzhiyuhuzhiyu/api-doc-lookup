@@ -213,3 +213,14 @@ export function modifyProgramIssuesParameters(data) {
     data
   })
 }
+
+
+// 追加生产数
+
+export function addOrderNum(data) {
+  return request({
+    url: `/api/mrp/prod/order/append`,
+    method: 'POST',
+    data
+  })
+}

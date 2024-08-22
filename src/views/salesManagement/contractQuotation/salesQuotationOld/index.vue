@@ -526,7 +526,8 @@ export default {
 </script>
 <style scoped>
 .JNPF-common-search-box {
-  padding: 8px;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
 }
 
 .JNPF-common-head {

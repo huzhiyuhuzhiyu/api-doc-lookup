@@ -437,8 +437,8 @@ export default {
 }
 
 .JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
+  padding: 8px 0 !important;
+    margin-left: 0!important; 
   margin-bottom: 5px;
 }
 
@@ -469,5 +469,8 @@ export default {
 
 .el-tabs__nav-scroll {
   padding-left: 0;
+}
+.JNPF-common-head{
+  padding: 8px!important
 }
 </style>

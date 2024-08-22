@@ -3,7 +3,7 @@
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="10">
+        <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
@@ -173,7 +173,12 @@ export default {
         orderItems: [{
           asc: false,
           column: ""
-        }],
+        },
+        {
+          asc:false,
+          column:"t1.create_time"
+        }
+      ],
 
         superQuery: {
             condition:[],
@@ -992,7 +997,8 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding: 8px!important;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
 
   margin-bottom: 5px;
 }

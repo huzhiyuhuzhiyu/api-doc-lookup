@@ -440,14 +440,30 @@ export default {
 
 
       if (this.productionPlanNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
-        )
+       
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productionPlanNo"));
+          filteredData.push({ "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition=filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.productDrawingNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        )
+        // this.orderForm.superQuery.condition.push(
+        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
+        // )
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
+          filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition=filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
@@ -527,5 +543,12 @@ export default {
 ::v-deep .all-select .cell .el-checkbox__inner {
   display: none;
 }
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
+}
 </style>
+ 
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

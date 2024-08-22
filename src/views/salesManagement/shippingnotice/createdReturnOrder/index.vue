@@ -1,5 +1,4 @@
-<template>
-  <transition name="el-zoom-in-center">
+<template> 
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
@@ -334,8 +333,7 @@
           <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
         </span>
       </el-dialog>
-    </div>
-  </transition>
+    </div> 
 </template>
 
 <script>

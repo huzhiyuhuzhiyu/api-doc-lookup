@@ -82,7 +82,7 @@
                             <div v-else-if="scope.row.reportingType == 'by_total'">按工序总数报工</div>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="state" label="状态" sortable="custom">
+                    <el-table-column prop="state" label="状态" sortable="custom" width="80">
                         <template slot-scope="scope">
                             <el-tag type="danger" disable-transitions v-if="scope.row.state === 'disabled'">停用</el-tag>
                             <el-tag type="success" disable-transitions v-else>启用</el-tag>

@@ -1,13 +1,10 @@
 <template>
-  <!-- <el-dialog :title="btnType === 'add' ? '批量设置检验方式' : '查看产品检验明细'" :close-on-click-modal="false"
-    :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
-    width="1200px" @close="$emit('close')"> -->
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="btnType === 'add' ? '批量设置检验方式' : '查看产品检验明细'" />
         <div class="options" v-if="!btnType">
-          <el-button type="primary" :loading="btnLoading" @click="handleConfirm()">
+          <el-button type="primary" :loading="btnLoading" @click="handleBatchConfirm()">
             {{ $t('common.submitButton') }}
           </el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -43,7 +40,7 @@
   </transition>
 </template>
 <script>
-import { batchSetInspectionMethod, detailInspectionLine } from '@/api/basicData/materialFiles'
+import { batchSetProducts, detailInspectionLine } from '@/api/basicData/materialFiles'
 export default {
   props: {
     selectedData: {}
@@ -69,25 +66,68 @@ export default {
       linesForm: [],
       linesFormItems: [],
       startSymbolList: [
-        {
-          label: '小于',
-          value: '<'
-        },
+        // {
+        //   label: '等于',
+        //   value: 'eq'
+        // },
+        // {
+        //   label: '大于等于',
+        //   value: 'ge'
+        // },
+        // {
+        //   label: '大于',
+        //   value: 'gt'
+        // },
         {
           label: '小于等于',
-          value: '<='
+          value: 'le'
+        }, {
+          label: '小于',
+          value: 'lt'
         }
       ],
       endSymbolList: [
-        {
-          label: '小于',
-          value: '<'
-        },
+        // {
+        //   label: '等于',
+        //   value: 'eq'
+        // },
+        // {
+        //   label: '大于等于',
+        //   value: 'ge'
+        // },
+        // {
+        //   label: '大于',
+        //   value: 'gt'
+        // },
         {
           label: '小于等于',
-          value: '<='
+          value: 'le'
+        }, {
+          label: '小于',
+          value: 'lt'
         }
-      ]
+      ],
+      samplingMethodList: [
+        // {
+        //   label: '等于',
+        //   value: 'eq'
+        // },
+        // {
+        //   label: '大于等于',
+        //   value: 'ge'
+        // },
+        // {
+        //   label: '大于',
+        //   value: 'gt'
+        // },
+        {
+          label: '按总数比例',
+          value: 'proportion'
+        }, {
+          label: '固定抽检数',
+          value: 'fixed_quantity'
+        }
+      ],
     }
   },
   computed: {
@@ -186,7 +226,7 @@ export default {
             { required: true, trigger: 'change' }
           ]
         },
-        { prop: 'inspectionQuantity', label: '报检数量', type: 'input', width: 90, itemDisabled: true },
+        { prop: 'inspectionQuantity', label: '报检数量', type: 'view', width: 90, itemDisabled: true, clearable: false, },
         {
           prop: 'endSymbol',
           label: '终止比较符号',
@@ -249,6 +289,29 @@ export default {
           ]
         },
         {
+          prop: 'samplingMethod',
+          label: '方式',
+          type: 'select',
+          options: this.samplingMethodList,
+          change: this.samplingMethodChange,
+          clearable: false,
+          itemRules: [
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '',
+                  (errMsg, index) => {
+                    this.$message.error(`抽检规则第${index + 1}行：起始比较符号${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'change'
+            },
+            { required: true, trigger: 'change' }
+          ]
+        },
+        {
           prop: 'samplingRatio',
           label: '抽检比例或数量',
           type: 'input',
@@ -278,6 +341,9 @@ export default {
       // this.dataFormRules.startSymbol[0].required = this.spotCheckFlag
       // this.dataFormRules.endSymbol[0].required = this.spotCheckFlag
       // this.dataFormRules.endVal[0].required = this.spotCheckFlag
+    },
+    samplingMethodChange(val, data) {
+      console.log(val, data, 'ppppp')
     },
 
     // 批量处理提交
@@ -360,7 +426,8 @@ export default {
           inspectionMethod: this.dataForm.inspectionMethod,
           rulesList
         }))
-        batchSetInspectionMethod(_data)
+        console.log(_data, 'daaaa')
+        batchSetProducts(_data)
           .then((res) => {
             this.$message.success('操作成功')
             // this.selectedData = []
@@ -416,9 +483,9 @@ export default {
       this.linesForm.push({
         // index,
         startVal: '',
-        startSymbol: '<',
+        startSymbol: 'le',
         inspectionQuantity: '？',
-        endSymbol: '<=',
+        endSymbol: 'le',
         endVal: '',
         samplingRatio: ''
       })

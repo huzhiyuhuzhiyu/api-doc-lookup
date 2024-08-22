@@ -508,7 +508,6 @@ export default {
 
       inspectionResultsList: [//检验下拉框数据
         { label: "合格", value: "qualified" },
-        { label: "不合格", value: "unqualified" },
         { label: "待检验", value: "unInspect" },
       ],
       dataRule: {

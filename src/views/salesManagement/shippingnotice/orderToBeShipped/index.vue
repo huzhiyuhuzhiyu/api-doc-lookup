@@ -1028,7 +1028,8 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding: 8px !important;
+  padding: 8px 0 !important;
+    margin-left: 0!important; 
 
   margin-bottom: 5px;
 }
@@ -1071,5 +1072,8 @@ export default {
 
 .btnBox {
   padding: 7px 10px;
+}
+.JNPF-common-head{
+  padding: 8px!important;
 }
 </style>

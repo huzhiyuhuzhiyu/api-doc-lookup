@@ -734,7 +734,7 @@ export default {
 
     goBack() {
       this.$router.push({
-        path: "/planManagement/assemblyPlan/assemblyPlanManagement",
+        path: "/planManagement/ringProductionPlan/assemblyPlanManagement",
       })
       this.tipsvisible = false
     },

@@ -292,4 +292,11 @@ export default {
   margin-right: 6px;
   line-height: 23px;
 }
+.JNPF-common-head {
+  padding: 8px!important
+}
+.JNPF-common-search-box {
+  padding: 8px 0 0 0 !important;
+  margin-left: 0!important; 
+}
 </style>

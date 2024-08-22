@@ -245,14 +245,28 @@ export default {
     initData() {
       this.listLoading = true
       if(this.productCodeS){
-        this.form.superQuery.condition.push(
-          {"field":"productCode","fieldValue":this.productCodeS,"symbol":"like"}
-        )
+       
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("code"));
+          filteredData.push({ "field": "code", "fieldValue": this.productCodeS, "symbol": "like" })
+          this.form.superQuery.condition=filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "code", "fieldValue": this.productCodeS, "symbol": "like" }
+          )
+        }
       }
       if(this.productDrawingNoS){
-        this.form.superQuery.condition.push(
-          {"field":"productDrawingNo","fieldValue":this.productDrawingNoS,"symbol":"like"}
-        )
+       
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("drawingNo"));
+          filteredData.push({ "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          this.form.superQuery.condition=filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+          )
+        }
       }
      
       if(this.productCodeS||this.productDrawingNoS ){
@@ -370,7 +384,8 @@ export default {
 
 
 .JNPF-common-search-box {
-  padding: 8px !important;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
 
   margin-bottom: 5px;
 }

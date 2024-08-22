@@ -168,6 +168,7 @@ import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasend
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../returnSalesmemo/Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -594,8 +595,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '退货通知单明细',
+        exportType:  '1061',
+        exportName:  '销售退货通知单明细',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -893,5 +894,11 @@ export default {
 <style lang="scss" scoped>
 :v-deep .el-table__body-wrapper {
   height: auto !important;
+}
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
 }
 </style>

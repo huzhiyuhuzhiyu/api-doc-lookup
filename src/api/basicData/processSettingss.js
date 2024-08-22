@@ -50,3 +50,23 @@ export function checkBimRoutingCode(code, id) {
         method: 'get',
     })
 }
+
+
+
+export function getWorkListMap(data) {
+  return request({
+      url: `/api/mrp/work/listMap`,
+      method: 'POST',
+      data
+  })
+}
+
+// 生产计划——编排
+
+export function addProdPlanArrange(data) {
+  return request({
+      url: `/api/zgt/prod/plan/arrange`,
+      method: 'POST',
+      data
+  })
+}

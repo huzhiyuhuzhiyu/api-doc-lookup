@@ -61,7 +61,7 @@
                 </div>
               </div>
               <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
-                @sort-change="sortChange" custom-column hasC @selection-change="handleProduce"
+                @sort-change="sortChange" custom-column 
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -163,8 +163,8 @@
                 </div>
               </div>
               <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true"
-                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC :key="2"
-                @selection-change="handleProduce" :checkSelectable="disproduceData">
+                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column :key="2"
+               :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -304,8 +304,7 @@
               </div>
 
               <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true" :key="3"
-                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
-                @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
+                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column   :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="immediatelyBuyFlag" label="立即采购" width="140" sortable="custom">
@@ -426,7 +425,7 @@
               </div>
 
               <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange" :key="4"
-                :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
+                :setColumnDisplayList="columnList4" custom-column 
                 :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -2207,9 +2206,10 @@ export default {
 }
 
 .JNPF-common-search-box {
-  padding-top: 0px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+  padding-top: 0px!important; 
+  margin-bottom: 5px; 
 }
 
 .JNPF-common-search-box .el-form-item {

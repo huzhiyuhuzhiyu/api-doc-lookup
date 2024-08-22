@@ -4,70 +4,34 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="生产编排" />
+          <el-page-header @back="goBack" content="新建返工任务" />
           <div class="options">
-            <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
-              @click="handleConfirm('submit')">提交</el-button>
-            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+            <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('draft')">
+              保存草稿</el-button>
+            <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
+              @click="handleConfirm('submit')">
+              保存并提交</el-button>
+            <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="基本信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="生产计划单号" prop="productionPlanNo">
+                        <el-form-item label="返工产品" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="生产任务单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo"
-                            :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="品名规格" prop="productsDrawingNo">
-                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="产品编码" prop="productsCode">
-                          <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="单位" prop="mainUnit">
-                          <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="计划生产数量" prop="planProductionQuantity">
-                          <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="可编排数量" prop="availableArrangeQuantity">
-                          <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="编排数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
-                          </el-input>
+                        <el-form-item label="工艺路线名称" prop="routingName">
+                          <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
+                            @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -77,11 +41,10 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="工艺路线名称" prop="routingName">
-                          <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
-                            @focus="openRoutingFun"></el-input>
+                        <el-form-item label="返工生产数量" prop="availableArrangeQuantity">
+                          <el-input v-model="dataForm.availableArrangeQuantity" placeholder="返工生产数量" disabled>
+                          </el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -166,8 +129,8 @@
                 <el-collapse-item title="工序信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
-                      <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processName" label="工序名称" min-width="170" />
+                      <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
                       <el-table-column prop="processingType" label="加工类型" width="100">
                         <template slot-scope="scope">
                           <div>
@@ -358,7 +321,7 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -396,7 +359,8 @@
             <el-table-column type="index" width="70" label="序号" />
             <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
+            <el-table-column prop="productName" label="产品名称" min-width="120"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
@@ -526,7 +490,6 @@ export default {
         processName: "",
       },
       detailDataList: [],
-      detailDiaFlag:false,
     }
   },
   computed: {

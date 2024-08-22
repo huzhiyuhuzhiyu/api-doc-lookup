@@ -38,11 +38,11 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
-                编排
+                生产编排
               </el-button>
 
             </div>
@@ -65,7 +65,7 @@
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
@@ -99,26 +99,27 @@
 
     </div>
 
-    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" /> -->
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
 import { UserListAll, } from '@/api/permission/user'
-// import Form from '../saleMetalworking/Form'
-// import ExportForm from '@/components/no_mount/ExportBox/index'
+import Form from './Form'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  // components: { Form, SuperQuery, ExportForm },
+  components: { Form, SuperQuery, ExportForm },
   data() {
     return {
       columnList: ["productCode", "arithmeticNo", "remark", "createByName",],
@@ -138,7 +139,7 @@ export default {
 
       orderForm: {},
       orderFormlist: {
-        productDrawingNo: "",
+        productsDrawingNo: "",
         productionPlanNo: "",
         urgentFlag: "",
         pageNum: 1,
@@ -155,6 +156,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        classAttribute:"finish_product",
       },
       urgentFlagList: [
         { label: "是", value: true },
@@ -334,21 +336,26 @@ export default {
     },
     // 编排
     translateFun() {
-
+      if (!this.selectArr.length) return this.$message.error("请选择您要生成编排的数据")
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(this.selectArr)
+      })
     },
     selectFun(val) {
       console.log(val);
       if (val.length) {
         this.tableData.forEach(item => {
-          if(item.id!=val[0].id){
-            item.selectFlag=true
+          if (item.id != val[0].id) {
+            item.selectFlag = true
           }
         });
-      }else{
+        this.selectArr = val
+      } else {
         this.tableData.forEach(item => {
-            item.selectFlag=false
-        }); 
-        this.$message.error("请选择您要生成编排的数据")
+          item.selectFlag = false
+        });
+
       }
 
     },
@@ -380,12 +387,10 @@ export default {
             }
             arr.push(obj)
           });
-          console.log(this.superQueryJson);
           let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
           if (oilObj) {
             // 将options赋值为5  
             oilObj.options = JSON.parse(JSON.stringify(arr));
-            if (index == this.requestArr.length - 1) this.superQueryVisible = true
           }
         })
       })
@@ -426,10 +431,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.search()
-      }
+      this.search()
     },
     initData() {
       this.listLoading = true
@@ -438,14 +440,30 @@ export default {
 
 
       if (this.productionPlanNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
-        )
+       
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productionPlanNo"));
+          filteredData.push({ "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition=filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.productDrawingNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        )
+        // this.orderForm.superQuery.condition.push(
+        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
+        // )
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
+          filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition=filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+          )
+        }
       }
       if (this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
@@ -507,8 +525,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发货通知单明细',
+        exportType: "1210",
+        exportName: '生产计划',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -525,5 +543,12 @@ export default {
 ::v-deep .all-select .cell .el-checkbox__inner {
   display: none;
 }
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
+}
 </style>
+ 
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

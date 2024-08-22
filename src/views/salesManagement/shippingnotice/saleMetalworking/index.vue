@@ -189,6 +189,7 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
   name: 'foreigntradenotice',
   components: { Form, SuperQuery, ExportForm },
@@ -637,8 +638,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发货通知单明细',
+        exportType:  '1060',
+        exportName:  '销售发货通知单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -655,6 +656,12 @@ export default {
 .custom-confirm {
   width: 440px;
   /* 自定义弹框宽度 */
+}
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

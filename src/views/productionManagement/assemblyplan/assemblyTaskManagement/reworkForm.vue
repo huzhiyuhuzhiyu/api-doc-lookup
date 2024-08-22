@@ -551,7 +551,7 @@ export default {
         { prop: 'code', label: '工序编码', fixed: 'left' },
         { prop: 'name', label: '工序名称', fixed: 'left' },
         { prop: 'name', label: '工序类型', fixed: 'left' },
-        { prop: 'processingTypeName', label: '加工类型', fixed: 'left' }
+        { prop: 'processTypeName', label: '加工类型', fixed: 'left' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'code', label: '工序编码', type: 'input' },
@@ -725,7 +725,15 @@ export default {
         } else if (item.processingType == 'external_production') {
           item.processingTypeName = '外协'
         }
-        return item
+
+        if (item.processType == 'normal') {
+          item.processTypeName = '正常工序'
+        } else if (item.processType == 'wait_assemble') {
+          item.processTypeName = '待装配工序'
+        }else if (item.processType == 'vibrate') {
+          item.processTypeName = '测震工序'
+        }
+       return item
       })
       return treeData
     },
@@ -1342,6 +1350,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
+          this.dataForm.productsId=this.dataForm.id
+          this.dataForm.planStartDate=this.dataForm.planDate[0]
+          this.dataForm.planEndDate=this.dataForm.planDate[1]
           let submitFlag = null;
           if (!this.dataFormTwo.data.length) {
             this.$message.error("至少需要一道工序")
@@ -1365,9 +1376,9 @@ export default {
             }
           }
           this.dataFormTwo.data.forEach(item => {
-            this.$set(itemtem, 'productionQuantity', this.dataForm.productionQuantity)
-            this.$set(itemtem, 'planEndDate', this.dataForm.planEndDate)
-            this.$set(itemtem, 'planStartDate', this.dataForm.planStartDate)
+            this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
+            this.$set(item, 'planEndDate', this.dataForm.planEndDate)
+            this.$set(item, 'planStartDate', this.dataForm.planStartDate)
           });
 
           if (submitFlag === false) return
@@ -1379,14 +1390,16 @@ export default {
             this.$set(item, 'workOrderResList', item.routingProResList)
           });
           let obj = {
-            prodOrder: this.dataForm,
-            workOrderList: this.dataFormTwo.data
+            collect: this.collect,
+            materialList: this.dataFormOne.collectData,
+            prodOrder:this.dataForm,
+            workOrderList:this.dataFormTwo.data
           }
            console.log("dataForm",this.dataForm);
            console.log("dataFormTwo.data",this.dataFormTwo.data);
            console.log("coll",this.collect);
            console.log("dataFormOne.collectData",this.dataFormOne.collectData);
-           return
+           
           addProdOrder(obj).then(res => {
             this.btnLoading = false
             this.$message.success("生成编排成功")

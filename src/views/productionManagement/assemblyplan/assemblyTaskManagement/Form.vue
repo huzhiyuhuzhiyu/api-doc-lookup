@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="查看订单" />
+          <el-page-header @back="goBack" content="查看任务" />
           <div class="options">
 
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>

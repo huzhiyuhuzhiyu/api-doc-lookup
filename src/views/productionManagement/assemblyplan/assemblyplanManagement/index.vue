@@ -65,7 +65,7 @@
             :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="160" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
@@ -139,7 +139,7 @@ export default {
 
       orderForm: {},
       orderFormlist: {
-        productDrawingNo: "",
+        productsDrawingNo: "",
         productionPlanNo: "",
         urgentFlag: "",
         pageNum: 1,

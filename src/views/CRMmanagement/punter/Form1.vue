@@ -13,9 +13,9 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户编码" prop="code">
@@ -32,12 +32,6 @@
                         <el-input v-model="dataForm.name" placeholder="请输入客户名称" :disabled="btnType === 'look' ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="税号" prop="taxId">
-                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType === 'look' ? true : false" maxlength="25" />
-                      </el-form-item>
-                    </el-col>
-
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="英文名称" prop="nameEn">
                         <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType === 'look' ? true : false" maxlength="200" />
@@ -81,7 +75,6 @@
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="认定日期" prop="customerRecognitionTime">
-
                         <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd" style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions" placeholder="请选择认定日期" :disabled="btnType === 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item></el-col>
@@ -194,64 +187,6 @@
                   </el-form-item>
                 </el-col> -->
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="付款方式" prop="paymentMethod">
-                        <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
-                          <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="付款周期" prop="paymentCycle">
-                        <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
-                          <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="对账开始日期" prop="reconciliationStartDate">
-                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="对账结束日期" prop="reconciliationEndDate">
-                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="开票类型" prop="billingTypeText">
-                        <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
-                          <el-option v-for="item in billingTypeList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="税率%" prop="taxRate">
-                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
-                          <el-option v-for="item in taxRateTypeList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="开户银行" prop="bank">
-                        <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType === 'look' ? true : false" maxlength="100" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="银行账号" prop="bankInfo">
-                        <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType === 'look' ? true : false" maxlength="100" />
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24">
                       <el-form-item label="渠道类型" prop="channel">
                         <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
                           <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
@@ -292,9 +227,72 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
+                </el-collapse-item>
+                <el-collapse-item title="财务信息" name="FinanceInfo">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="税号" prop="taxId">
+                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType === 'look' ? true : false" maxlength="25" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="付款方式" prop="paymentMethod">
+                        <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
+                          <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="付款周期" prop="paymentCycle">
+                        <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
+                          <el-option v-for="item in paymentCycleList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="对账开始日期" prop="reconciliationStartDate">
+                        <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账开始日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="对账结束日期" prop="reconciliationEndDate">
+                        <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择对账结束日期" :disabled="btnType == 'look' ? true : false" :clearable="false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="开票类型" prop="billingTypeText">
+                        <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
+                          <el-option v-for="item in billingTypeList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="税率%" prop="taxRate">
+                        <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;" :disabled="btnType === 'look' ? true : false">
+                          <el-option v-for="item in taxRateTypeList" size="small" :key="item.enCode" :label="item.fullName" :value="item.enCode">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="开户银行" prop="bank">
+                        <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType === 'look' ? true : false" maxlength="100" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="银行账号" prop="bankInfo">
+                        <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType === 'look' ? true : false" maxlength="100" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+              </el-collapse>
+            </el-form>
           </el-tab-pane>
           <el-tab-pane label="联系人信息" name="lxr">
             <el-table :data="contactsList" style="width: 100%">
@@ -503,7 +501,7 @@ import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
-  getCounryData, getBimBusinessInfo,getcategoryTree
+  getCounryData, getBimBusinessInfo, getcategoryTree
 } from '@/api/basicData/index'
 import { updatePartner, addPartner, detailPartner, checkPartner } from "@/api/customerManagement/index";
 import {
@@ -519,7 +517,7 @@ export default {
         type: "customer"
       },
       codeConfig: {},//单据规则配置
-      activeNames: ["basicInfo"],
+      activeNames: ["basicInfo", "FinanceInfo"],
       tableData: [],
       taxRateTypeList: [],
       loadingareafoundation: false,

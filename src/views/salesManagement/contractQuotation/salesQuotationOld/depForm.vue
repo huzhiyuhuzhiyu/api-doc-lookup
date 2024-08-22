@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')"
           :content="btnType == 'add'||btnType == 'copy' ? '新建销售报价' : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
         <div class="options">
@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading" ref="main" :element-loading-text="loadingText">
-        <el-tabs v-model="activeName">
+        <el-tabs v-model="activeName" v-if="!approvalFlag">
           <el-tab-pane label="订单信息" name="orderInfo" class="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -232,74 +232,7 @@
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
           <el-tab-pane label="流程信息" name="approvalFlow">
-            <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="btnType" :nodeConfig.sync="busNodeConfig"
-              ref="workflowRef" />
-            <div class="noDataTip" v-if="!workVisible">
-              <span class="el-table__empty-text">
-                <div data-v-4d190d64="" class="el-empty">
-                  <div class="el-empty__image" style="width: 120px;"><svg viewBox="0 0 79 86" version="1.1"
-                      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                      <defs>
-                        <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%" y2="100%">
-                          <stop stop-color="#FCFCFD" offset="0%"></stop>
-                          <stop stop-color="#EEEFF3" offset="100%"></stop>
-                        </linearGradient>
-                        <linearGradient id="linearGradient-2-48" x1="0%" y1="9.5%" x2="100%" y2="90.5%">
-                          <stop stop-color="#FCFCFD" offset="0%"></stop>
-                          <stop stop-color="#E9EBEF" offset="100%"></stop>
-                        </linearGradient>
-                        <rect id="path-3-48" x="0" y="0" width="17" height="36"></rect>
-                      </defs>
-                      <g id="Illustrations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                        <g id="B-type" transform="translate(-1268.000000, -535.000000)">
-                          <g id="Group-2" transform="translate(1268.000000, 535.000000)">
-                            <path id="Oval-Copy-2"
-                              d="M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z"
-                              fill="#F7F8FC"></path>
-                            <polygon id="Rectangle-Copy-14" fill="#E5E7E9"
-                              transform="translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) "
-                              points="13 58 53 58 42 45 2 45"></polygon>
-                            <g id="Group-Copy"
-                              transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)">
-                              <polygon id="Rectangle-Copy-10" fill="#E5E7E9"
-                                transform="translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) "
-                                points="2.84078316e-14 3 18 3 23 7 5 7"></polygon>
-                              <polygon id="Rectangle-Copy-11" fill="#EDEEF2"
-                                points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"></polygon>
-                              <rect id="Rectangle-Copy-12" fill="url(#linearGradient-1-48)"
-                                transform="translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) "
-                                x="38" y="7" width="17" height="36"></rect>
-                              <polygon id="Rectangle-Copy-13" fill="#F8F9FB"
-                                transform="translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) "
-                                points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
-                            </g>
-                            <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                              height="36">
-                            </rect>
-                            <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
-                              <mask id="mask-4-48" fill="white">
-                                <use xlink:href="#path-3-48"></use>
-                              </mask>
-                              <use id="Mask" fill="#E0E3E9"
-                                transform="translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) "
-                                xlink:href="#path-3-48"></use>
-                              <polygon id="Rectangle-Copy" fill="#D5D7DE" mask="url(#mask-4-48)"
-                                transform="translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) "
-                                points="7 0 24 0 20 18 -1.70530257e-13 16"></polygon>
-                            </g>
-                            <polygon id="Rectangle-Copy-18" fill="#F8F9FB"
-                              transform="translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) "
-                              points="62 45 79 45 70 58 53 58"></polygon>
-                          </g>
-                        </g>
-                      </g>
-                    </svg></div>
-                  <div class="el-empty__description">
-                    <p>暂无流程信息</p>
-                  </div><!---->
-                </div>
-              </span>
-            </div>
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look'" label="流转记录" name="transferList">
             <el-table v-loading="formLoading" :data="transferData">
@@ -312,6 +245,215 @@
             </el-table>
           </el-tab-pane>
         </el-tabs>
+        <el-collapse v-model="activeNames" v-else>
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="报价单号" prop="quotationNo">
+                        <el-input v-model="dataForm.quotationNo" placeholder="输入报价单号"
+                          :disabled="status ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                          maxlength="50" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="致" prop="deliver">
+                        <el-input v-model="dataForm.deliver" placeholder="输入致" :disabled="status" maxlength="20" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="客户" prop="cooperativePartnerIdText">
+                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.cooperativePartnerIdText"
+                          @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类"
+                          placeholder="请选择客户"
+                          :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }"
+                          :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj"
+                          :searchList="partnerSearchList" :treeNodeClick="yxPartnerTreeNodeClick"
+                          :isdisabled="btnType === 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="报价人" prop="bidder">
+                        <el-input v-model="dataForm.bidder" placeholder="输入报价人" :disabled="status" maxlength="20" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="报价时间" prop="quotationTime">
+                        <el-date-picker v-model="dataForm.quotationTime" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择报价时间" :disabled="status">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="有效时间止" prop="validEnd">
+                        <el-date-picker v-model="dataForm.validEnd" placeholder="请选择有效时间" type="date" :disabled="status"
+                          value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="pickerOptions">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="地址" prop="address">
+                        <el-input v-model="dataForm.address" placeholder="输入地址" maxlength="300" :disabled="status" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="电话" prop="phone">
+                        <el-input v-model="dataForm.phone" placeholder="输入电话" maxlength="20" :disabled="status" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="传真" prop="fax">
+                        <el-input v-model="dataForm.fax" placeholder="输入传真" maxlength="20" :disabled="status" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType == 'look' && dataForm.documentStatus != 'draft'">
+                      <el-form-item label="是否生成客户产品" prop="generateFlag">
+                        <el-input :value="dataForm.generateFlag ? '是' : '否'" placeholder="请选择是否生成客户产品"
+                          :disabled="status" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.approvalStatus == 'review_failed'">
+                      <el-form-item label="驳回理由" prop="reasonRejection">
+                        <el-input v-model="dataForm.reasonRejection" placeholder="输入驳回理由" :disabled="status"
+                          maxlength="200" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="status" type="textarea"
+                          maxlength="200" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+
+
+
+              <el-collapse-item title="产品信息" name="productInfo">
+                <div v-if="btnType == 'add' || btnType == 'edit'">
+
+                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
+                    icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
+                    icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
+                    icon="el-icon-delete" @click="historyPriceFun">历史价格</el-button>
+                </div>
+
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData"
+                    v-if="tableVisible" v-bind="customStyleData">
+                    <el-table-column type="selection" width="60" fixed='left' align="center"
+                      v-if="this.btnType !== 'look'" key="1" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="200">
+                      <template slot="header">
+                        <span class="required">*</span> 客户料号
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerDrawingNumber'"
+                          :rules='productRules.customerDrawingNumber'>
+                          <el-input :title="scope.row.customerDrawingNumber" v-model="scope.row.customerDrawingNumber"
+                            placeholder="请输入" :disabled="status" style="width: 135px;">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="productDrawingNo" label="品名规格" width="400">
+                      <template slot="header">
+                        <span class="required">*</span> 品名规格
+                      </template>
+                      <template slot-scope="scope">
+                        <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
+                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.row,scope.$index, $event)"
+                          @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
+                          :disabled="status"></el-autocomplete>
+                        <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
+                          style="width: 100%;"  /> -->
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="num" label="数量" width="160">
+                      <template slot="header">
+                        <span class="required">*</span>数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
+                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量"
+                            :disabled="status" maxlength="11" @input="watchnums(scope.row, scope.$index)"
+                            style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="unitPrice" label="单价(含税)" width="160">
+                      <template slot="header">
+                        <span class="required">*</span>单价(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'unitPrice'"
+                          :rules='productRules.unitPrice'>
+                          <el-input v-model="scope.row.unitPrice" placeholder="请输入单价" :disabled="status" maxlength="20"
+                            @input="watchPrice(scope.row, scope.$index)" style="width: 135px;"
+                            oninput="value=value.replace(/[^0-9.]/g,'')">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="taxRate" label="税率(%)" width="160">
+                      <template slot="header">
+                        <span class="required">*</span>税率(%)
+                      </template>
+                      <!-- <template slot-scope="scope">
+                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
+                          <el-input v-model="scope.row.taxRate" placeholder="请输入税率" :disabled="status" maxlength="2"
+                            style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"
+                            @input="watchnums(scope.row, scope.$index)" />
+                        </el-form-item>
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                          :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
+                            :value="item.taxRate"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
+                    </el-table-column>
+
+
+
+                    <el-table-column prop="remark" label="备注" min-width="200">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="status" maxlength="200" />
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'add' || btnType == 'edit'">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="deltable(scope)" style=" color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+
+                  </el-table>
+                  <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                    <span style="font-weight:500;margin:0 10px">总数量：{{ totalNum }}</span>
+                    <span style="font-weight:500;margin:0 10px">总金额：{{ totalAmount }}</span>
+                  </div>
+                </el-form>
+              </el-collapse-item>
+
+        </el-collapse>
       </div>
       <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
@@ -431,8 +573,12 @@ import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSal
 // import errorDialog from '@/components/WorkFlow/dialog/errorDialog.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
 export default {
-  components: { workFlow, ExportForm },
+  components: { workFlow, ExportForm ,Process},
+  mixins: [busFlow],
   data() {
     return {
       exportFormVisible: false,
@@ -626,6 +772,9 @@ export default {
       codeConfig: {},
       selectName: [],
       partnerInfo: {},
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
     }
   },
   watch: {
@@ -891,7 +1040,7 @@ export default {
     },
     // 继续修改
     continueEdit() {
-      this.init(this.oldId, this.oldType)
+      this.init(this.dataForm.id, this.btnType)
       this.btnLoading = false
     },
     // 继续新增
@@ -1050,31 +1199,6 @@ export default {
           this.dataFormTwo.lines.splice(index, 1); // 从tableData中删除选中的行
         }
       }
-      this.$nextTick(() => {
-        if (!this.dataFormTwo.lines.length) {
-          this.busNodeConfig = {
-            nodeName: "发起人",
-            nodeType: 0,
-            type: 'node',
-            priorityLevel: "",
-            approvalType: "appoint",
-            selectMode: "",
-            selectRange: "",
-            directorLevel: "",
-            examineMode: "",
-            whenEmpty: "",
-            examineEndDirectorLevel: "",
-            ccSelfSelectFlag: "",
-            conditionList: [],
-            nodeUserList: [],
-            childNode: null,
-            conditionNodes: []
-          }
-          this.workVisible = false
-        } else {
-          // this.getApproverData()//暂时注释
-        }
-      })
       this.selectRows = []; // 清空选中的行的数据
     },
     // 联系人信息新增行
@@ -1097,31 +1221,6 @@ export default {
     deltable(row, index) {
       if (this.dataFormTwo.lines.length === 1) return this.$message.error('至少需要保留一条产品数据')
       this.dataFormTwo.lines.splice(row.$index, 1)
-      this.$nextTick(() => {
-        if (!this.dataFormTwo.lines.length) {
-          this.busNodeConfig = {
-            nodeName: "发起人",
-            nodeType: 0,
-            type: 'node',
-            priorityLevel: "",
-            approvalType: "appoint",
-            selectMode: "",
-            selectRange: "",
-            directorLevel: "",
-            examineMode: "",
-            whenEmpty: "",
-            examineEndDirectorLevel: "",
-            ccSelfSelectFlag: "",
-            conditionList: [],
-            nodeUserList: [],
-            childNode: null,
-            conditionNodes: []
-          }
-          this.workVisible = false
-        } else {
-          // this.getApproverData()//暂时注释
-        }
-      })
     },
     // 监听单价(含税)输入
     watchPrice(row, index) {
@@ -1304,12 +1403,15 @@ export default {
       } catch (error) {
       }
     },
-    init(id, btnType) {
+    init(id, btnType,approvalFlag) {
       // 表格表单适配模式
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.dataForm.id = id || ''
-      this.oldId = JSON.parse(JSON.stringify(id)) || ""
-      this.oldType = JSON.parse(JSON.stringify(btnType))
+      this.approvalFlag = approvalFlag
+      console.log(id,'id');
+      
+      // this.oldId = JSON.parse(JSON.stringify(id)) || ""
+      // this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       if (btnType == 'look') {
         this.iszt = false
@@ -1340,7 +1442,7 @@ export default {
         // 审批
         // this.getApproverData()
         this.fetchData("XSBJ")
-
+        this.getBusInfo()
       }
       
       // 重新提交
@@ -1397,12 +1499,11 @@ export default {
 
       }
       if (this.dataForm.id && this.btnType !== 'add') {
-        this.formLoading = true
+        // this.formLoading = true
         getQuotationInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {
             this.dataForm = res.data.sale
             this.dataFormTwo.lines = res.data.lines
-            this.dataForm.quotationNo=this.quotationNoS
             this.dataForm.totalAmount = 0
 
             if (res.data.attachmentList) {
@@ -1423,234 +1524,13 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
-        getSaleBusDetail(this.dataForm.id).then(res => {
-          console.log(res, '业务详情');
-          if (res.data) {
-            this.firstOneNode = []
-            this.approvalForm = res.data.form
-            this.transferQuery.approvalFormId = this.approvalForm.id
-            this.firstOneNode.push({
-              name: res.data.form.createByName
-            })
-            let data = res.data.formNodeTree.childNode
-            if (data) {
-              this.addNodeTypeAndNodeName(data)
-
-              this.busNodeConfig.childNode = data
-              this.workVisible = true
-              // this.$nextTick(() => {
-              //   this.$refs.workflowRef.initData('busing', this.btnType)
-              // })
-            }
-            if (this.btnType == 'look') {
-              console.log(this.approvalForm, '++++++++++');
-              this.transferQuery.documentId = this.dataForm.id
-              approvalTransferList(this.transferQuery).then(res => {
-                console.log(res, '流转记录');
-                this.transferData = res.data.records
-              })
-            }
-          } else {
-            this.busNodeConfig.childNode = null
-          }
-        })
-
       }
     },
     async handleConfirm(value) {
       this.dataForm.documentStatus = value
       this.btnLoading = true
       let submitFlag = true
-      // 审批条件参数列表
-      let nodeCondList = []
-      // 审批抄送人列表
-      let ccList = []
-      let ccLists = []
-      let nodeJudg = []
-      // 业务审批单流程节点列表
-      let formNodeList = []
-      // 业务审批单
-      let form = {}
-      // 增加审批限制  yc 1.30
-      let templateLineList = []
-      if (this.btnType === 'add') {
-        if (this.busNodeConfig.childNode) {
-          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
-          flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item => {
-            return {
-              ...item,
-              nodeUserList: item.nodeUserList ? item.nodeUserList : []
-            }
-          })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-          // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
-
-          for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
-          }
-
-          if (templateLineList.length && value === 'submit') {
-            submitFlag = templateLineList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('审核人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          if (ccList.length && value === 'submit') {
-            submitFlag = ccList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('抄送人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-          // 业务审批单流程节点参数
-          formNodeList = flattenedNodes.map((item, index) => {
-            return {
-              ...item,
-              approvalStatus: item.name == '审核人' ? 'no' : '',
-              adminId: '',
-              id: '',
-              previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-              name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-            }
-          })
-          // 抄送人
-          ccLists = ccLists.map(item => {
-            return {
-              ...item,
-              approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
-              ccToId: item.targetId,
-              approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
-              id: '',
-              defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
-            }
-          })
-          // 条件列表
-          if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
-              return {
-                ...item,
-                approvalFormNodeCode: item.code,
-                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-                code: item.conditionList[0].tjCode,
-                dataType: item.conditionList[0].dataType,
-                id: item.conditionList[0].id ? item.conditionList[0].id : ''
-              }
-            })
-          }
-          // 业务审批单
-          form = {
-            ...this.approvalForm,
-            approvalTemplateId: this.approvalForm.id,
-            documentStatus: value,
-            documentId: '',
-            id: ''
-          }
-        }
-      } else {
-        if (this.busNodeConfig.childNode) {
-          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
-          flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item => {
-            return {
-              ...item,
-              nodeUserList: item.nodeUserList ? item.nodeUserList : []
-            }
-          })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-          // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
-          for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
-          }
-          if (templateLineList.length && value === 'submit') {
-            submitFlag = templateLineList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('审核人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          if (ccList.length && value === 'submit') {
-            submitFlag = ccList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('抄送人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          // return
-          // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-          // 业务审批单流程节点参数
-          formNodeList = flattenedNodes.map((item, index) => {
-            return {
-              ...item,
-              // previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-              // name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-            }
-          })
-          // 抄送人
-          ccLists = ccLists.map(item => {
-            return {
-              ...item,
-              approvalFormId: item.approvalFormId ? item.approvalFormId : this.approvalForm.id,
-              approvalFormNodeCode: item.approvalFormNodeCode ? item.approvalFormNodeCode : item.code,
-              ccToId: item.targetId,
-              id: item.id ? item.id : ''
-            }
-          })
-          // 条件列表
-          if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
-              return {
-                ...item,
-                approvalFormNodeCode: item.code,
-                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-                code: item.conditionList[0].tjCode,
-                dataType: item.conditionList[0].dataType,
-                id: item.conditionList[0].id ? item.conditionList[0].id : ''
-              }
-            })
-          }
-          // 业务审批单
-          form = {
-            ...this.approvalForm,
-            approvalTemplateId: this.approvalForm.id,
-            documentStatus: value,
-          }
-        }
-      }
-      if (value === 'submit' && this.dataForm.approvalFlag) {
-        if (!this.busNodeConfig.childNode) {
-          submitFlag = false
-          this.btnLoading = false
-          this.$message.error('未找到匹配的审批流程，请联系管理员！')
-        }
-        if (formNodeList.length) {
-          formNodeList.forEach(item => {
-            if (item.approvalType === 'option') {
-              if (!item.designatedMembersId) {
-                submitFlag = false
-                this.btnLoading = false
-                this.$message.error('未配置发起人自选！')
-              }
-            }
-          })
-        }
-      }
+     
 
       // 校验主表
       const form_1 = this.$refs['dataForm']
@@ -1703,10 +1583,7 @@ export default {
           attachmentList: this.datafilelist,
           sale: this.dataForm,
           lines: this.dataFormTwo.lines,
-          form: form,
-          formNodeList,
-          nodeCondList: nodeJudg,
-          ccList: ccLists,
+          flowData:this.flowData
         }
         console.log(obj, '参数');
         // return
@@ -1746,210 +1623,6 @@ export default {
       } else {
         this.btnLoading = false
       }
-    },
-    // 获取审批流参数递归处理
-    addNodeTypeAndNodeName(obj) {
-      console.log(obj);
-      if (obj) {
-        if (obj.name === "审核人") {
-          obj.nodeType = 1;
-          obj.nodeName = obj.name;
-          obj.directorLevel = obj.approvalType == "manager" ? obj.levelSupervisor : ''
-          obj.examineEndDirectorLevel = obj.approvalType == "multilevel" ? obj.levelSupervisor : ''
-        }
-        if (obj.name === "路由") {
-          obj.nodeType = 4;
-        }
-        if (obj.name === "抄送人") {
-          obj.nodeType = 2;
-          obj.nodeName = obj.name;
-        }
-        if (obj.childNode) {
-          this.addNodeTypeAndNodeName(obj.childNode);
-        } else {
-          if (obj.conditionNodes) {
-            for (let i = 0; i < obj.conditionNodes.length; i++) {
-              obj.conditionNodes[i].priorityLevel = obj.conditionNodes[i].priority
-              obj.conditionNodes[i].showName = obj.conditionNodes[i].name
-              obj.conditionNodes[i].nodeName = obj.conditionNodes[i].name
-              obj.conditionNodes[i].nodeType = 3
-              obj.conditionNodes[i].conditionList = obj.conditionNodes[i].conditionList.map(item => {
-                // this.approvalBusinessId = item.approvalBusinessId
-                if (item.optionNames && item.optionValues) {
-                  var optionNames = item.optionNames.split(','); // 如果习惯使用英文逗号，这里可以用 ','
-                  var optionValues = item.optionValues.split(',');
-                  var resultArr = [];
-                  if (optionNames.length === optionValues.length) {
-                    for (var i = 0; i < optionNames.length; i++) {
-                      var option = {
-                        label: optionNames[i],
-                        value: optionValues[i]
-                      };
-                      resultArr.push(option);
-                    }
-                  }
-                }
-                return {
-                  ...item,
-                  columnDbname: item.name,
-                  columnType: item.dataType,
-                  showName: item.name,
-                  tjCode: item.code,
-                  zdy1: item.comparisonValue,
-                  columnId: item.approvalBusinessId,
-                  options: resultArr,
-                  optType: item.dataType == 'number' ? (item.operationalFormula == 'lt' ? '1' : item.operationalFormula == 'gt' ? '2' : item.operationalFormula == 'eq' ? '4' : item.operationalFormula == 'ge' ? '5' : item.operationalFormula == 'le' ? '3' : '') : ''
-
-                }
-              })
-              this.addNodeTypeAndNodeName(obj.conditionNodes[i].childNode);
-            }
-          }
-        }
-      }
-    },
-    // // 审批 提交参数递归处理
-    flattenNodes(node, flattenedNodes = [], previousCode = '') {
-      if (node) {
-        console.log(node, '提交数1');
-        if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
-        if (node.type === 'node') {
-
-          if (node.childNode) {
-            node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
-          }
-          // delete node.childNode;
-        } else if (node.type === 'condition' && node.name === '路由') {
-          if (node.conditionNodes) {
-            for (let i = 0; i < node.conditionNodes.length; i++) {
-
-              // let previousCode = node.conditionNodes[i].code
-              node.conditionNodes[i].previousCode = previousCode
-              this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code);
-            }
-          }
-          // if (node.childNode) {
-          //   this.flattenNodes(node.childNode, flattenedNodes,node.code);
-          // }
-        } else if (node.nodeType == 3) {
-          if (node.childNode) {
-            node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
-          }
-        }
-      }
-      return flattenedNodes;
-    },
-    // // 获取审批模版
-    getApproverData() {
-      this.firstOneNode = []
-      let condArr = ['>', '<', '>=', '<=', '=']
-      let state = ''
-      let condExpress = ''
-      let foundSymbol = ''  // 条件符号
-      let result = null     // 判断条件是否成立
-      let condList = []
-
-      getBusDetail('b001').then(res => {
-        console.log(res);
-        state = res.data.business.state
-        condExpress = res.data.business.condExpress
-        if (res.data.businessConditionList.length) {
-          res.data.businessConditionList.forEach(item => {
-            condList.push({
-              code: item.code,
-              val: item.code === 'numCode' ? this.totalNum : this.totalPrice
-            })
-          })
-        }
-        if (state === 'condition') {
-          this.dataForm.approvalFlag = 1
-          for (var i = 0; i < condArr.length; i++) {
-            if (condExpress.includes(condArr[i])) {
-              foundSymbol = condArr[i];
-              break;
-            }
-          }
-          // 找到符号并进行销售报价业务判断
-          if (foundSymbol) {
-            const parts = condExpress.split(foundSymbol); // 使用 ">" 符号拆分字符串
-            const leftValue = parts[0]; // 提取 ">" 符号左边的值
-            const rightValue = parts[1]; // 提取 ">" 符号右边的值
-            console.log(leftValue);
-            console.log(rightValue);
-            if (leftValue == 'numCode') {
-              const condition = `${this.totalNum} ${foundSymbol} ${this.totalPrice}`; // 构建条件表达式
-              result = eval(condition); // 执行条件判断
-            } else {
-              const condition = `${this.totalPrice} ${foundSymbol} ${this.totalNum}`; // 构建条件表达式
-              result = eval(condition); // 执行条件判断
-            }
-            if (result) {
-              let query = {
-                businessCode: "b001",
-                condList,
-              }
-              busApprovalFlowTree(query).then(res => {
-                console.log(res, '树详情');
-                if (res.data) {
-                  this.firstOneNode = []
-                  this.approvalForm = res.data.template
-                  this.firstOneNode.push({
-                    name: this.userInfo.userName
-                  })
-                  let data = res.data.tempLineTree.childNode
-                  if (data) {
-                    this.addNodeTypeAndNodeName(data)
-                    this.busNodeConfig.childNode = data
-                    this.workVisible = true
-                    this.$nextTick(() => {
-                      this.$refs.workflowRef.initData('busing', this.btnType)
-                    })
-                  }
-                } else {
-                  this.busNodeConfig.childNode = null
-                }
-              })
-            } else {
-              this.busNodeConfig.childNode = null
-            }
-          }
-        }
-        if (state === 'enable') {
-          this.dataForm.approvalFlag = 1
-          let query = {
-            businessCode: "b001",
-            condList,
-          }
-          busApprovalFlowTree(query).then(res => {
-            console.log(res, '树详情');
-            if (res.data) {
-              this.firstOneNode = []
-              this.approvalForm = res.data.template
-              this.firstOneNode.push({
-                name: this.userInfo.userName
-              })
-              let data = res.data.tempLineTree.childNode
-              if (data) {
-                this.addNodeTypeAndNodeName(data)
-                this.busNodeConfig.childNode = data
-                this.workVisible = true
-                this.$nextTick(() => {
-                  this.$refs.workflowRef.initData('busing', this.btnType)
-                })
-              }
-            } else {
-              this.busNodeConfig.childNode = null
-            }
-          })
-        }
-        if (state === 'disabled') {
-          this.dataForm.approvalFlag = 0
-          this.busNodeConfig.childNode = null
-        }
-      })
-
     },
 
     async switchStyle(type) {
@@ -2034,7 +1707,21 @@ export default {
       })
       return
     },
-
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b001').then(res=>{
+        console.log(res,'流程信息')
+        if (res.data){
+          this.flowData = res.data
+          this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+          this.dataForm.approvalFlag = res.data.enabledMark
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+          this.$message.error('未找到审批流程！')
+        }
+      }).catch(()=>{})
+    },
   }
 }
 </script>

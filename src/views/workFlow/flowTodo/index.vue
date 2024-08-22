@@ -82,17 +82,17 @@
         </div>
         <JNPF-table v-loading="listLoading" :data="list" custom-column>
           <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
-          <el-table-column prop="flowName" label="所属流程" width="130" />
-          <el-table-column prop="startTime" label="发起时间" width="150"
+          <el-table-column prop="flowName" label="所属流程" min-width="130" />
+          <el-table-column prop="startTime" label="发起时间" min-width="150"
             :formatter="jnpf.tableDateFormat" />
-          <el-table-column prop="userName" label="发起人员" width="130" />
-          <el-table-column prop="thisStep" label="审批节点" width="130" />
-          <el-table-column prop="flowUrgent" label="紧急程度" width="100" align="center">
+          <el-table-column prop="userName" label="发起人员" min-width="130" />
+          <el-table-column prop="thisStep" label="审批节点" min-width="130" />
+          <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
             <template slot-scope="scope">
               {{ scope.row.flowUrgent | urgentText() }}
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="流程状态" width="130" align="center">
+          <el-table-column prop="status" label="流程状态" min-width="130" align="center">
             <template slot-scope="scope">
               <el-tag type="success" v-if="scope.row.status==2">审核通过</el-tag>
               <el-tag type="danger" v-else-if="scope.row.status==3">审核驳回</el-tag>
@@ -101,12 +101,12 @@
               <el-tag type="primary" v-else>等待审核</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="creatorTime" label="接收时间" width="150">
+          <el-table-column prop="creatorTime" label="接收时间" min-width="150">
             <template slot-scope="scope">
               {{scope.row.creatorTime | toDate() }}
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="60" fixed="right">
+          <el-table-column label="操作" min-width="60" fixed="right">
             <template slot-scope="scope">
               <el-button size="mini" type="text" @click="toDetail(scope.row)">审批</el-button>
             </template>
@@ -259,7 +259,8 @@ export default {
         formType: item.formType,
         opType: 1,
         taskNodeId: item.thisStepId,
-        taskId: item.id
+        taskId: item.id,
+        businessId:item.businessId,
       }
       this.formVisible = true
       this.$nextTick(() => {

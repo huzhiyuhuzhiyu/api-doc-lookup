@@ -3,10 +3,10 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')"
-          :content="btnType == 'add'||btnType == 'copy' ? '新建销售报价' : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
+          :content="btnType == 'add' || btnType == 'copy' ? '新建销售报价' : btnType == 'edit' ? '编辑销售报价' : '查看销售报价'" />
         <div class="options">
           <el-button size="mini" type="success" :loading="btnLoading" @click="handleConfirm('draft')"
-          v-if="btnType !== 'look'">
+            v-if="btnType !== 'look'">
             保存草稿</el-button>
           <el-button size="mini" type="primary" v-if="btnType !== 'look'" :loading="btnLoading"
             @click="handleConfirm('submit')">
@@ -24,7 +24,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="报价单号" prop="quotationNo">
                         <el-input v-model="dataForm.quotationNo" placeholder="输入报价单号"
-                          :disabled="status ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false"
+                          :disabled="status ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
                           maxlength="50" />
                       </el-form-item>
                     </el-col>
@@ -139,7 +139,8 @@
                       </template>
                       <template slot-scope="scope">
                         <el-autocomplete v-model="scope.row.productDrawingNo" :fetch-suggestions="querySearchAsync"
-                          placeholder="请输入" prefix-icon="el-icon-search" @select="handleSelect(scope.row,scope.$index, $event)"
+                          placeholder="请输入" prefix-icon="el-icon-search"
+                          @select="handleSelect(scope.row, scope.$index, $event)"
                           @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)"
                           :disabled="status"></el-autocomplete>
                         <!-- <el-input v-model="scope.row.drawingNo" placeholder="请输入" :disabled="status" maxlength="100"
@@ -700,7 +701,6 @@ export default {
 
 
       },
-      quotationNoS:"",
       activeNames: ["productInfo", "basicInfo"],
       // 审批流需要字段
       approvalBusinessId: '',
@@ -931,7 +931,7 @@ export default {
 
 
     },
-    handleSelect(row,index, item) {
+    handleSelect(row, index, item) {
       //返回的意见点击选择触发事件
       console.log("产品数据", index, item);
 
@@ -950,7 +950,7 @@ export default {
         getQuotationmxLists(obj).then(res => {
           console.log("产品信息", res);
           if (res.data.records.length) {
-    
+
             this.$set(this.dataFormTwo.lines, index, res.data.records[0])
             console.log(this.dataFormTwo.lines);
             let exists = this.taxRateList.some(item => item.taxRate === parseInt(res.data.taxRate));
@@ -967,11 +967,11 @@ export default {
             item.data.taxRate = this.taxRate
             item.data.productDrawingNo = item.value
             item.data.productsId = item.data.id
-       
+
             this.$set(this.dataFormTwo.lines, index, item.data)
             console.log("this.dataFormTwo.lines", this.dataFormTwo.lines);
-      this.watchPrice(row, index)
-    }
+            this.watchPrice(row, index)
+          }
         })
       }
     },
@@ -1277,22 +1277,22 @@ export default {
         this.dataForm.totalAmount = 0
       } else {
         let a = this.jnpf.numberFormat((row.unitPrice * row.num), 6)
-        console.log("aaa",a);
+        console.log("aaa", a);
         row.amounts = a ? a : '' // 含税金额
-        console.log("row.amounts",row.amounts);
-        console.log("this.s",this.dataFormTwo.lines);
+        console.log("row.amounts", row.amounts);
+        console.log("this.s", this.dataFormTwo.lines);
       }
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item=this.dataFormTwo.lines[a]
-        console.log("item",item.amounts);
-        
+        let item = this.dataFormTwo.lines[a]
+        console.log("item", item.amounts);
+
         totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
       }
-      this.totalAmount=totalPrice
+      this.totalAmount = totalPrice
 
-      if( this.dataFormTwo.lines.length==1&&(!row.num||!row.unitPrice)){
-        console.log("进来了"); 
+      if (this.dataFormTwo.lines.length == 1 && (!row.num || !row.unitPrice)) {
+        console.log("进来了");
       }
       if (row.excludingTaxUnitPrice && row.num) {
         let c = this.jnpf.numberFormat((row.excludingTaxUnitPrice * row.num), 6)
@@ -1373,8 +1373,8 @@ export default {
       }
       var totalPrice = 0;
       for (var a = 0; a < this.dataFormTwo.lines.length; a++) {
-        let item=this.dataFormTwo.lines[a]
-        console.log("item",item.amounts);
+        let item = this.dataFormTwo.lines[a]
+        console.log("item", item.amounts);
         totalPrice = this.jnpf.math('add', [totalPrice, item.amounts])
       }
       if (row.excludingTaxUnitPrice && row.num) {
@@ -1393,13 +1393,14 @@ export default {
     handeleProductInfoData(val) {
       this.selectRows = val
     },
-    async fetchData(code) {
+    async fetchData(code, flag) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
         this.codeConfig = data
-        this.dataForm.quotationNo = data.number
-        this.quotationNoS=data.number
+        if (flag) {
+          this.dataForm.quotationNo = data.number
 
+        }
       } catch (error) {
       }
     },
@@ -1424,7 +1425,7 @@ export default {
       }
 
       // 新建
-      if ((this.btnType == 'add' && !this.dataForm.id)||this.btnType=='copy') {
+      if ((this.btnType == 'add' && !this.dataForm.id) || this.btnType == 'copy') {
         const end = new Date();//获取当前的日期
         end.setTime(end.getTime())
         //计算，将当期日期-1天
@@ -1441,10 +1442,10 @@ export default {
         this.dataForm.quotationType = 'latest'
         // 审批
         // this.getApproverData()
-        this.fetchData("XSBJ")
-        this.getBusInfo()
+        this.fetchData("XSBJ", true)
+
       }
-      
+
       // 重新提交
       if (this.btnType == 'add' && this.dataForm.id) {
         const end = new Date();//获取当前的日期
@@ -1499,7 +1500,8 @@ export default {
 
       }
       if (this.dataForm.id && this.btnType !== 'add') {
-        // this.formLoading = true
+        this.formLoading = true
+        this.fetchData("XSBJ", false)
         getQuotationInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {
             this.dataForm = res.data.sale

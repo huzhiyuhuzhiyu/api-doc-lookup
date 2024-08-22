@@ -9,31 +9,25 @@
       <div class="crm-head">
         <div class="vux-flexbox head__body vux-flex-row">
           <div>
-            <el-select v-model="value" placeholder="请选择">
-              <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+            <selectdate @change="datechange" @inputcontent="inputcontent"></selectdate>
           </div>
           <div style="margin-left: 8px;">
-            <el-select v-model="value1" placeholder="请选择">
-              <el-option v-for="item in options1" :key="item.value" :label="item.label" :value="item.value">
-              </el-option>
-            </el-select>
+            <selectdepartment @change="departmentchange" @inputcontent="depinputcontent"></selectdepartment>
           </div>
         </div>
       </div>
       <div style="padding-top:16px;">
-        <flexbox></flexbox>
+        <flexbox :Requestparameters="dataForm"></flexbox>
       </div>
       <div class="vux-flex-row section vux-flexbox1">
         <div class="left">
           <draggable v-model="list" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list" :key="item.id" :type="item.typechart"></chartlist>
+            <chartlist v-for="item in list" :key="item.id" :type="item.typechart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
         <div class="right">
           <draggable v-model="list1" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list1" :key="item.id" :type="item.typechart"></chartlist>
+            <chartlist v-for="item in list1" :key="item.id" :type="item.typechart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
       </div>
@@ -41,6 +35,9 @@
   </div>
 </template>
 <script>
+import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
+import selectdepartment from "@/views/CRMmanagement/reportAnalysis/components/selectdepartment";
+import { mapGetters } from 'vuex'
 import chartlist from "./chartlist/index.vue";
 import draggable from 'vuedraggable';
 import flexbox from "./flexbox/index.vue";
@@ -48,28 +45,20 @@ export default {
   components: {
     flexbox,
     draggable,
-    chartlist
+    chartlist,
+    selectdepartment,
+    selectdate
   },
   data() {
     return {
-      value: '选项1',
-      value1: '选项1',
-      options: [
-        {
-          value: '选项1',
-          label: '仅本人'
-        },
-        {
-          value: '选项2',
-          label: '本人及下属'
-        }
-      ],
-      options1: [
-        {
-          value: '选项1',
-          label: '本月'
-        }
-      ],
+      dataForm: {
+        startTime: "",
+        endTime: "",
+        type: "year",
+        userIds: [],
+        daterangecontent: '',
+        personnelcontent: ''
+      },
       list: [
         { name: '合同金额目标及完成情况', id: '1', typechart: 'contractamount' },
         { name: '排行榜', id: '2', typechart: 'rankinglist' },
@@ -84,7 +73,27 @@ export default {
       ]
     }
   },
+  created() {
+    this.dataForm.userIds = [this.userInfo.userId]
+  },
+  computed: {
+    ...mapGetters(['userInfo']),
+  },
   methods: {
+    depinputcontent(value) {
+      this.dataForm.personnelcontent = value
+    },
+    inputcontent(value) {
+      this.dataForm.daterangecontent = value
+    },
+    departmentchange(data) {
+      this.dataForm.userIds = data
+    },
+    datechange(data) {
+      this.dataForm.startTime = data.dateStart
+      this.dataForm.endTime = data.dateEnd
+      this.dataForm.type = data.value
+    },
   }
 }
 </script>

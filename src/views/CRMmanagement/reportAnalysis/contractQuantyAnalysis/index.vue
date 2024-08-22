@@ -26,7 +26,7 @@
           </div>
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
-              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="120">
+              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="150">
                 <template slot-scope="scope">
                   {{scope.row[item.prop]}}
                 </template>

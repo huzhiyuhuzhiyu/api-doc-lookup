@@ -14,9 +14,10 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+
+            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户编码" prop="code">
@@ -25,7 +26,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                        <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类" auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId" :selectClassifyType="dataForm.type" />
+                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择所属分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -33,12 +34,6 @@
                         <el-input v-model="dataForm.name" placeholder="请输入客户名称" :disabled="btnType=='look' ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="税号" prop="taxId">
-                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType=='look' ? true : false" maxlength="25" />
-                      </el-form-item>
-                    </el-col>
-
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="英文名称" prop="nameEn">
                         <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType=='look' ? true : false" maxlength="200" />
@@ -67,7 +62,12 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="下次联系时间" prop="nextTime">
+                        <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btnType == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="内勤人员" prop="internalStaffId" ref="euqPeople">
                         <user-select v-model="dataForm.internalStaffId" :disabled="salesFlag" placeholder="请选择设备人员" @change="changePerple" clearable style="width: 100%;">
@@ -173,7 +173,47 @@
                         <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType=='look' ? true : false" maxlength="512" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="渠道类型" prop="channel">
+                        <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" style="width: 100%;" :disabled="btnType=='look' ? true : false">
+                          <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
 
+                    <el-col :sm="8" :xs="24" v-if="btnType=='look'">
+                      <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
+                        <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;" :disabled="btnType=='look' ? true : false">
+                          <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="运输方式" prop="modeTransport">
+                        <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" style="width: 100%;" :disabled="btnType=='look' ? true : false">
+                          <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="运输时间(天)" prop="transportationTime">
+                        <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')" placeholder="请输入运输时间(天)" :disabled="btnType=='look' ? true : false" maxlength="4" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-collapse-item>
+                <el-collapse-item title="财务信息" name="FinanceInfo">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="税号" prop="taxId">
+                        <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType=='look' ? true : false" maxlength="25" />
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="付款方式" prop="paymentMethod">
                         <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;" :disabled="btnType=='look' ? true : false">
@@ -218,43 +258,10 @@
                         <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType=='look' ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
-
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="渠道类型" prop="channel">
-                        <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" style="width: 100%;" :disabled="btnType=='look' ? true : false">
-                          <el-option v-for="(item, index) in channelList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-
-                    <el-col :sm="8" :xs="24" v-if="btnType=='look'">
-                      <el-form-item label="是否禁止发货出库" prop="shipmentFreezeFlag">
-                        <el-select v-model="dataForm.shipmentFreezeFlag" placeholder="请选择是否禁止发货" style="width: 100%;" :disabled="btnType=='look' ? true : false">
-                          <el-option v-for="(item, index) in shipmentFreezeFlagList" :key="index" :label="item.text" :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="运输方式" prop="modeTransport">
-                        <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" style="width: 100%;" :disabled="btnType=='look' ? true : false">
-                          <el-option v-for="(item, index) in modeTransportList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="运输时间(天)" prop="transportationTime">
-                        <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')" placeholder="请输入运输时间(天)" :disabled="btnType=='look' ? true : false" maxlength="4" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
-                      </el-form-item>
-                    </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
+                </el-collapse-item>
+              </el-collapse>
+            </el-form>
           </el-tab-pane>
           <el-tab-pane label="联系人信息" name="lxr">
             <el-table :data="contactsList" style="width: 100%">
@@ -453,7 +460,7 @@ import { checkPartner, addPartner, updatePartner, detailPartner } from '@/api/cu
 import { getOrganization } from '@/api/permission/user'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { getBimBusinessInfo, getCooperativeInfo, getCounryData, checkCode } from '@/api/basicData/index'
+import { getBimBusinessInfo, getCounryData, getcategoryTree } from '@/api/basicData/index'
 
 import {
   getProvinceList,
@@ -461,8 +468,13 @@ import {
 export default {
   data() {
     return {
+      getcategoryTree,
+      requestObjTwo: {
+        keyword: '',
+        type: "customer"
+      },
       codeConfig: {},//单据规则配置
-      activeNames: ["basicInfo"],
+      activeNames: ["basicInfo","FinanceInfo"],
       tableData: [],
       taxRateTypeList: [],
       loadingareafoundation: false,
@@ -537,6 +549,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        nextTime: '',
         // 合作伙伴
         code: '',
         taxId: '',
@@ -593,14 +606,12 @@ export default {
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-              console.log(this.dataForm.id);
               let obj = {
                 id: this.dataForm.id,
                 code: value,
                 type: this.dataForm.type
               }
               checkPartner(obj).then(res => {
-                console.log('res===>', res);
                 if (res.data) {
                   callback(new Error("编码重复"));
                 } else {
@@ -658,7 +669,6 @@ export default {
       })
     },
     changePerple(internalStaffId, data) {
-      // console.log(data);
       if (!data) return
       this.$refs['dataForm'].validateField('internalStaffId')
       if (data) {
@@ -710,10 +720,8 @@ export default {
       }
     },
     changeCountry(e, index) {
-      console.log(e);
       this.dataForm.country = e.code
       if (this.dataForm.country != 'CN') {
-        console.log(this.deliveryAddressList, '收货地址');
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -723,12 +731,10 @@ export default {
       }
     },
     hangleSelectSales(e, r) {
-      console.log("销售人员", e, r);
       this.dataForm.departmentId = r.parentId
       this.dataForm.departmentIdText = r.organize
     },
     handleAddress(e) {
-      console.log(123, e);
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -739,14 +745,12 @@ export default {
       }
     },
     selectsales(val) {
-      console.log(val);
       this.dataForm.salespersonId = val
       // this.dataForm.salespersonIdText = val
 
     },
     onOrganizeChangeHandle(val) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('departmentId') })
-      console.log("val,val", val);
       this.dataForm.salespersonIdText = ""
       this.dataForm.salespersonId = ""
       this.$forceUpdate()
@@ -755,19 +759,16 @@ export default {
       this.salesFlag = false
 
       getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
-        console.log("用户", res);
         if (res.data.length > 0) {
           res.data.forEach(item => {
             item.name = item.fullName.split('/')[0]
           });
         }
-        console.log(this.salesList);
         this.salesList = res.data
 
       })
     },
     handleChange($event) {
-      console.log(123, $event);
       if ($event == 'domestic') {
         // 国内
         this.countryList = [{
@@ -797,7 +798,6 @@ export default {
           "pageSize": -1
         }
         getCounryData(obj).then(res => {
-          console.log("国家数据", res);
           this.countryList = res.data.records.filter((item) => {
             return item.name !== '中国'
           })
@@ -807,7 +807,6 @@ export default {
     },
     // 切换table
     handleClick(tab, event) {
-      console.log(tab.label, event);
       if (tab.label == '收货信息') {
         // 国内
         this.countryList1 = [{
@@ -878,12 +877,10 @@ export default {
     },
     // 联系人信息删除当前行
     deltable(row, index) {
-      console.log("row", row, index);
       this.contactsList.splice(row.$index, 1)
     },
     // 根据选择的省份获取相应的城市数据
     changeProvince(item, row) {
-      console.log("item", item);
 
       if (row) {
         row.area = ''
@@ -897,7 +894,6 @@ export default {
       this.area = []
 
       getProvinceList(item.id).then(res => {
-        console.log(res);
         this.cities = res.data.list
       })
     },
@@ -914,7 +910,6 @@ export default {
     },
     // 根据选择的城市获取各区的数据
     changeCity(item, row) {
-      console.log("item", item);
       if (row) {
         row.area = ''
 
@@ -923,7 +918,6 @@ export default {
 
       }
       getProvinceList(item.id).then(res => {
-        console.log(res);
         this.area = res.data.list
       })
     },
@@ -938,7 +932,6 @@ export default {
     // 获取省份数据
     getProvinceList() {
       getProvinceList(this.nodeId, this.listQuery).then(res => {
-        console.log("省份数据", res);
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
@@ -1053,7 +1046,6 @@ export default {
 
 
     init(id, parentId, btnType) {
-      console.log("btntype", btnType);
       this.visible = true
       this.dataForm.id = id || ''
       this.parentId = parentId || ''
@@ -1082,7 +1074,6 @@ export default {
           if (this.dataForm.departmentId) {
             getOrganizeInfo(this.dataForm.departmentId).then(sss => {
               this.organizeIdTrees = sss.data.organizeIdTree || []
-              console.log("this.dataForm.departmentId", this.dataForm.departmentId);
               this.organizeIdTrees.push(this.dataForm.departmentId)
             })
             getOrganization({ keyword: "", organizeId: this.dataForm.departmentId }).then(res => {
@@ -1091,7 +1082,6 @@ export default {
                   item.name = item.fullName.split('/')[0]
                 });
               }
-              console.log(this.salesList);
               this.salesList = res.data
             })
           }
@@ -1130,7 +1120,6 @@ export default {
               id: res.data.cooperativePartner.province
             }
             getProvinceList(res.data.cooperativePartner.province).then(res => {
-              console.log(res);
               this.cities = res.data.list
             })
 
@@ -1141,7 +1130,6 @@ export default {
             }
             // this.changeCity(ooo)
             getProvinceList(res.data.cooperativePartner.city).then(res => {
-              console.log(res);
               this.area = res.data.list
             })
           }
@@ -1183,19 +1171,13 @@ export default {
       this.$emit('close')
     },
     onOrganizeChange(val, data) {
-      console.log("123", val, data);
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryIdText')
       })
-      console.log(this.$refs['dataForm']);
       this.dataForm.partnerCategoryId = data ? data[0].id : ''
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-      console.log("表单", this.dataForm);
-      console.log("联系人", this.contactsList);
-      console.log("收货地址", this.deliveryAddressList);
-      console.log("附件", this.datafilelist);
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

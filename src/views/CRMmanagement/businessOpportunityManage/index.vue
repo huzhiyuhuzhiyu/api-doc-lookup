@@ -70,6 +70,9 @@
                       <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                         查看详情
                       </el-dropdown-item>
+                      <el-dropdown-item @click.native="promotionstage(scope.row.id)">
+                        推进阶段
+                      </el-dropdown-item>
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>
@@ -82,6 +85,7 @@
         </div>
       </div>
     </div>
+    <tageForm v-if="formVisibletage" ref="tageForm" @close="closeForm" />
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
@@ -95,11 +99,13 @@ import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import Form from './Form'
+import tageForm from './tageForm'
 export default {
   name: 'businessOpportunityManage',
-  components: { Form, programme, SuperQuery },
+  components: { Form, programme, SuperQuery, tageForm },
   data() {
     return {
+      formVisibletage: false,
       datalist: [],
       superQueryJson: [
         {
@@ -307,6 +313,12 @@ export default {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)
+      })
+    },
+    promotionstage(id) {
+      this.formVisibletage = true
+      this.$nextTick(() => {
+        this.$refs.tageForm.init(id)
       })
     },
     handleDel(id) {

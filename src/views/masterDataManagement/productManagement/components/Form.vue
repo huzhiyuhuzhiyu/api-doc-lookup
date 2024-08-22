@@ -24,7 +24,7 @@
                     </div> -->
                   <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
                 </el-collapse-item>
-                <el-collapse-item title="其他信息" name="basicInfo">
+                <el-collapse-item title="其他信息" name="otherInfo">
                   <JNPF-col v-model="dataForm" :tabContent="otherItems" ref="dataForm" :openMode="openMode" />
                 </el-collapse-item>
               </el-collapse>
@@ -62,7 +62,7 @@ export default {
       getbimProductAttributesList, // 产品类别属性列表请求api
       datafilelist: [],
       activeName: "basicInfo",
-      activeNames: ['basicInfo'],
+      activeNames: ['basicInfo','otherInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,

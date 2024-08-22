@@ -2,12 +2,12 @@ import request from '@/utils/request'
 // 采购询价单 
 // 采购列表
 export function getbuyInquirySheetList(data) {
-    return request({
-      url: `/api/erp/buyInquirySheet/list/condition`,
-      method: 'post',
-      data
-    })
-  }
+  return request({
+    url: `/api/erp/buyInquirySheet/list/condition`,
+    method: 'post',
+    data
+  })
+}
 // //   查询询价单列表
 // export function getbuyInquirySheetDetailList(data) {
 //     return request({
@@ -16,29 +16,29 @@ export function getbuyInquirySheetList(data) {
 //       data
 //     })
 //   }
-  // 询价单详情
-  export const getbuyInquirySheetDetail = (id) => {
-    return request({
-      url: `/api/erp/buyInquirySheet/detail/${id}`,
-      method: 'get'
-    })
-  }
-  // 新增询价单
-  export function addbuyInquirySheet(data) {
-    return request({
-      url: `/api/erp/buyInquirySheet/insert`,
-      method: 'post',
-      data
-    })
-  }
-  // 修改询价单
-  export function editbuyInquirySheet(data) {
-    return request({
-      url: `/api/erp/buyInquirySheet/modify`,
-      method: 'put',
-      data
-    })
-  }
+// 询价单详情
+export const getbuyInquirySheetDetail = (id) => {
+  return request({
+    url: `/api/erp/buyInquirySheet/detail/${id}`,
+    method: 'get'
+  })
+}
+// 新增询价单
+export function addbuyInquirySheet(data) {
+  return request({
+    url: `/api/erp/buyInquirySheet/insert`,
+    method: 'post',
+    data
+  })
+}
+// 修改询价单
+export function editbuyInquirySheet(data) {
+  return request({
+    url: `/api/erp/buyInquirySheet/modify`,
+    method: 'put',
+    data
+  })
+}
 // 删除询价单
 export const deletebuyInquirySheet = (id) => {
   return request({
@@ -130,6 +130,15 @@ export function getPurProcurementRequirementsList(data) {
   return request({
     url: `/api/erp/purProcurementRequirements/list`,
     method: 'post',
+    data
+  })
+}
+
+// 详情
+export const getShipmentList = (data) => {
+  return request({
+    url: `/api/erp/purPurchaseOrder/getShipmentList`,
+    method: 'get',
     data
   })
 }
@@ -291,94 +300,94 @@ export function updateoutReceiptGoods(data) {
 }
 
 
-  // 外协发退料 发退货明细列表
-  export function linesReceiptGoods(data) {
-    return request({
-      url: `/api/erp/sale/orders/notice/line/list`,
-      method: 'post',
-      data
-    })
-  }
+// 外协发退料 发退货明细列表
+export function linesReceiptGoods(data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/line/list`,
+    method: 'post',
+    data
+  })
+}
 
-  // 请购单 明细列表
-  export function linesRequirements(data) {
-    return request({
-      url: `/api/erp/purProcurementRequirements/detail/list`,
-      method: 'post',
-      data
-    })
-  }
-  // 询价单  明细列表
-  export function linesBuyInquirySheetLine(data) {
-    return request({
-      url: `/api/erp/buyInquirySheetLine/list/condition`,
-      method: 'post',
-      data
-    })
-  }
-  // 询价-导入产品
-  export function linesBuyInquiryUploadData(data) {
-    return request({
-      url: `/api/erp/buyInquirySheet/upload/data`,
-      method: 'post',
-      data
-    })
-  }
+// 请购单 明细列表
+export function linesRequirements(data) {
+  return request({
+    url: `/api/erp/purProcurementRequirements/detail/list`,
+    method: 'post',
+    data
+  })
+}
+// 询价单  明细列表
+export function linesBuyInquirySheetLine(data) {
+  return request({
+    url: `/api/erp/buyInquirySheetLine/list/condition`,
+    method: 'post',
+    data
+  })
+}
+// 询价-导入产品
+export function linesBuyInquiryUploadData(data) {
+  return request({
+    url: `/api/erp/buyInquirySheet/upload/data`,
+    method: 'post',
+    data
+  })
+}
 
-  // 定点定价 明细列表
-  export function linesbuyFixedPointPricing(data) {
-    return request({
-      url: `/api/erp/buyFixedPointPricingLine/list/condition`,
-      method: 'post',
-      data
-    })
-  }
+// 定点定价 明细列表
+export function linesbuyFixedPointPricing(data) {
+  return request({
+    url: `/api/erp/buyFixedPointPricingLine/list/condition`,
+    method: 'post',
+    data
+  })
+}
 
-  // 采购和外协收退货明细列表接口
-  export function linesReceiptReturn(data) {
-    return request({
-      url: `/api/erp/purPurchaseReceiptReturnGoods/detail/list`,
-      method: 'post',
-      data
-    })
-  }
+// 采购和外协收退货明细列表接口
+export function linesReceiptReturn(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/detail/list`,
+    method: 'post',
+    data
+  })
+}
 
 
 
-  // 外协采购需求池  来源明细
-  
-  export function getPoolSourceList(data) {
-    return request({
-      url: `/api/mrp/demand/pool/source/list`,
-      method: 'post',
-      data
-    })
-  }
+// 外协采购需求池  来源明细
 
-    // 收退货通知单 批量完成 停止
-   // 批量完成
-   export function purPurchaseGoodsBatch(data) {
-    return request({
-      url: `/api/erp/purPurchaseReceiptReturnGoods/batch`,
-      method: 'put',
-      data
-    })
-  }
+export function getPoolSourceList(data) {
+  return request({
+    url: `/api/mrp/demand/pool/source/list`,
+    method: 'post',
+    data
+  })
+}
 
-  // 批量停止
-  export function purPurchaseGoodsBatchLine(data) {
-    return request({
-      url: `/api/erp/purPurchaseReceiptReturnGoods/batch/line`,
-      method: 'put',
-      data
-    })
-  }
+// 收退货通知单 批量完成 停止
+// 批量完成
+export function purPurchaseGoodsBatch(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/batch`,
+    method: 'put',
+    data
+  })
+}
 
-  // 无价格 无bom 无工艺 查询
-  export function getProductWithOut(data) {
-    return request({
-      url: `/api/erp/products/without/list`,
-      method: 'post',
-      data
-    })
-  }
+// 批量停止
+export function purPurchaseGoodsBatchLine(data) {
+  return request({
+    url: `/api/erp/purPurchaseReceiptReturnGoods/batch/line`,
+    method: 'put',
+    data
+  })
+}
+
+// 无价格 无bom 无工艺 查询
+export function getProductWithOut(data) {
+  return request({
+    url: `/api/erp/products/without/list`,
+    method: 'post',
+    data
+  })
+}

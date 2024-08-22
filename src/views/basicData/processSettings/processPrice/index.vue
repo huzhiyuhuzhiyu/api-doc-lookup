@@ -131,8 +131,8 @@
               </el-form-item>
             </el-col>
             <el-col :sm="24" v-if="dataForm.pricingType == 'by_piece'">
-              <el-form-item prop="unitPrice" label="正品单价">
-                <el-input v-model="dataForm.unitPrice" placeholder="请输入正品单价" />
+              <el-form-item prop="unitPrice" label="计件单价">
+                <el-input v-model="dataForm.unitPrice" placeholder="请输入计件单价" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -215,6 +215,7 @@ export default {
       initListQuery: {
         code: '',
         name: '',
+        pricingType: 'by_time',
         orderItems: [
           {
             asc: false,
@@ -365,6 +366,7 @@ export default {
     },
     async handleBatch() {
       if (!this.selectedData.length) return this.$message.error('请至少选择一条工序数据')
+      this.dataForm.pricingType = this.selectedData[0].pricingType
       this.btnLoading = false
       this.analyseDialog = true
     },

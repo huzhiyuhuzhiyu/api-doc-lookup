@@ -9,24 +9,26 @@
           </div>
           <div class="card-title-right">
             <div class="wk-toggle-button__bd">
-              <div class="wk-toggle-item selected">线条</div>
-              <div class="wk-toggle-item">柱状图</div>
+              <div class="wk-toggle-item" :class="{'selected':charttitles=='xt'}" @click="charttype('xt')">线条</div>
+              <div class="wk-toggle-item" :class="{'selected':charttitles=='zzt'}" @click="charttype('zzt')">柱状图</div>
             </div>
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
           <div class="el-select">
-            <el-select v-model="dataForm.titleType" placeholder="请选择" style="width: 100%;">
-              <el-option v-for="(item, index) in [{fullName:'合同金额',enCode:'dw'},{fullName:'回款金额',enCode:'gr'}]" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+            <el-select v-model="dataForm.label" placeholder="请选择" style="width: 100%;" @change="changelabel">
+              <el-option v-for="(item, index) in [{fullName:'合同金额',enCode:'1'},{fullName:'回款金额',enCode:'2'}]" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
             </el-select>
           </div>
         </div>
-        <div v-if="true" class="sale-statistics">
+        <div v-if="charttitles=='xt'" class="sale-statistics" v-loading="saleloading">
           <moneychart :option="optionmoney"></moneychart>
         </div>
-        <div v-else></div>
+        <div v-else class="sale-statistics" v-loading="saleloading">
+          <moneychart :option="optionmoneyzz"></moneychart>
+        </div>
       </div>
     </div>
     <div v-else-if="type=='rankinglist'">
@@ -37,8 +39,8 @@
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
           <div class="el-select">
             <el-select v-model="rankingForm.titleType" placeholder="请选择" style="width: 100%;" @change="changeranking">
               <el-option v-for="(item, index) in rankingFormlist" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
@@ -73,19 +75,21 @@
           </div>
           <div class="card-title-right">
             <div class="wk-toggle-button__bd">
-              <div class="wk-toggle-item selected">金额</div>
-              <div class="wk-toggle-item">数量</div>
+              <div class="wk-toggle-item" :class="{'selected':charttitlefunnel=='je'}" @click="charttypefunnel('je')">金额</div>
+              <div class="wk-toggle-item" :class="{'selected':charttitlefunnel=='sl'}" @click="charttypefunnel('sl')">数量</div>
             </div>
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
         </div>
-        <div v-if="true" class="sale-statistics">
+        <div v-if="charttitlefunnel=='je'" class="sale-statistics">
           <salesfunnelchart :option="optionsales"></salesfunnelchart>
         </div>
-        <div v-else></div>
+        <div v-else class="sale-statistics">
+          <salesfunnelchart :option="sloptionsales"></salesfunnelchart>
+        </div>
       </div>
     </div>
     <div v-else-if="type=='datasummary'">
@@ -96,13 +100,12 @@
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
         </div>
-        <div v-if="true" class="sale-statistics-content">
-          <datasummary></datasummary>
+        <div class="sale-statistics-content">
+          <datasummary :data="datasum"></datasummary>
         </div>
-        <div v-else></div>
       </div>
     </div>
     <div v-else-if="type=='targetcompletionrate'">
@@ -113,18 +116,27 @@
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
           <div class="el-select">
-            <el-select v-model="dataForm.titleType" placeholder="请选择" style="width: 100%;">
-              <el-option v-for="(item, index) in [{fullName:'合同金额',enCode:'dw'},{fullName:'回款金额',enCode:'gr'}]" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+            <el-select v-model="dataFormtarge.label" placeholder="请选择" style="width: 100%;" @change="changelabeltarge">
+              <el-option v-for="(item, index) in [{fullName:'合同金额',enCode:'1'},{fullName:'回款金额',enCode:'2'}]" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
             </el-select>
           </div>
         </div>
-        <div v-if="true" class="performance-chart">
+        <div class="performance-chart">
           <performancechart :option="optionperformance"></performancechart>
+          <div class="vux-flexbox info-box vux-flex-row">
+            <div class="info-item">
+              <span class="mark">目标金额</span>
+              <span class="value">{{mbformancemoney}}元</span>
+            </div>
+            <div class="info-item">
+              <span class="mark lighr">完成金额</span>
+              <span class="value">{{formancemoney}}元</span>
+            </div>
+          </div>
         </div>
-        <div v-else></div>
       </div>
     </div>
     <div v-else-if="type=='forgettingreminder'">
@@ -135,14 +147,14 @@
           </div>
         </div>
         <div class="filter-bar vux-flexbox vux-flex-row">
-          <span class="filter-tag">本人及下属</span>
-          <span class="filter-tag">本月</span>
+          <span class="filter-tag">{{personnelcontent}}</span>
+          <span class="filter-tag">{{daterangecontent}}</span>
           <div class="el-select">
 
           </div>
         </div>
         <div v-if="true" class="forgettreminder">
-          <forget></forget>
+          <forget :data="dataforget"></forget>
         </div>
         <div v-else></div>
       </div>
@@ -151,6 +163,7 @@
 </template>
  
 <script>
+import { getsalesTrendList, getqueryDataInfo, getqueryPerformance, getsellFunneldata, getforgottenCustomerCount } from "@/api/CRMmanagement/instrumentPanel/index";
 import forget from "./forget.vue";
 import datasummary from "./datasummary.vue";
 import moneychart from "./moneychart.vue";
@@ -168,10 +181,24 @@ export default {
     type: {
       type: String,
       required: true
+    },
+    Requestparameters: {
+      type: Object,
+      required: true
     }
   },
   data() {
     return {
+      dataforget: {},
+      charttitlefunnel: 'je',
+      formancemoney: 0,
+      mbformancemoney: 0,
+      dataFormtarge: {},
+      datasum: {},
+      daterangecontent: '本年度',
+      personnelcontent: '仅本人',
+      charttitles: 'xt',
+      saleloading: false,
       rankingFormlist: [
         { fullName: '回款金额', enCode: 'hkje' },
         { fullName: '合同金额', enCode: 'htje' },
@@ -185,193 +212,322 @@ export default {
       },
       columnList: [],//隐藏表格列
       tableList: [],
-      dataForm: {
-        titleType: 'dw'
-      },
+      dataForm: {},
       //目标完成率
-      optionperformance: {
-        series: [
-          {
-            type: 'gauge',
-            progress: {
-              show: true,
-              width: 4
-            },
-            splitNumber: 4,
-            axisLine: {
-              lineStyle: {
-                width: 4
-              }
-            },
-            pointer: {
-              length: '40%'
-            },
-            axisTick: {
-              show: false
-            },
-            splitLine: {
-              distance: 10,
-              length: 10,
-              lineStyle: {
-                width: 2,
-                color: '#999'
-              }
-            },
-            axisLabel: {
-              distance: 6,
-              color: '#999',
-              fontSize: 15
-            },
-            title: {
-              show: false
-            },
-            detail: {
-              valueAnimation: true,
-              fontSize: 20,
-              offsetCenter: [0, '55%'],
-              formatter: '{value}%'
-            },
-            data: [
-              {
-                value: 70,
-                name: '完成率'
-              }
-            ]
-          }
-        ]
-      },
+      optionperformance: {},
       //销售漏斗
-      optionsales: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          top: '8%',
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#0052cc'],
-        xAxis: [{
-          type: 'value',
-          axisTick: {
-            show: false
-          },
-          axisLine: {
-            show: false
-          }
-        }],
-        yAxis: [{
-          type: 'category',
-          data: ['输单', '赢单', '验证客户'],
-          axisTick: {
-            show: false
-          }
-        }],
-        series: [
-          {
-            name: '商机金额',
-            type: 'bar',
-            barWidth: '30%',
-            data: [18203, 23489, 29034]
-          },
-        ]
-      },
+      optionsales: {},
+      sloptionsales: {},
       //合同金额目标及完成情况
-      optionmoney: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          top: '10%',
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#0052cc', '#42526e'],
-        legend: {
-          data: ['实际完成金额', '当月目标金额'],
-          bottom: 10
-        },
-        xAxis: [{
-          type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          axisTick: {
-            show: false
-          }
-        }],
-        yAxis: [{
-          type: 'value',
-          name: '元',
-          axisLine: {
-            show: false
-          }
-        }],
-        series: [
-          {
-            name: '实际完成金额',
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: 'line',
-            smooth: true
-          }
-        ]
-      },
+      optionmoney: {},
       //合同金额目标及完成情况柱状图
-      optionmoneyzz: {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'shadow'
-          }
-        },
-        grid: {
-          top: '10%',
-          left: '1%',
-          right: '1%',
-          bottom: '15%',
-          containLabel: true
-        },
-        color: ['#0052cc', '#42526e'],
-        legend: {
-          data: ['实际完成金额', '当月目标金额'],
-          bottom: 10
-        },
-        xAxis: [
-          {
-            type: 'category',
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            axisTick: {
-              alignWithLabel: true,
-              show: false
-            }
-          }
-        ],
-        yAxis: [
-          {
-            name: '元',
-            type: 'value'
-          }
-        ],
-        series: [
-          {
-            barWidth: '30%',
-            name: '实际完成金额',
-            type: 'bar',
-            data: [10, 52, 200, 334, 390, 330, 220]
-          }
-        ]
-      },
+      optionmoneyzz: {},
     };
   },
+  watch: {
+    Requestparameters: {
+      handler(newOption) {
+        this.daterangecontent = newOption.daterangecontent ? newOption.daterangecontent : '本年度'
+        this.personnelcontent = newOption.personnelcontent ? newOption.personnelcontent : '仅本人'
+        if (this.type == 'contractamount') {
+          this.dataForm = { ...newOption, label: '1' }
+          this.initDatasalesTrend()
+        } else if (this.type == 'datasummary') {
+          this.getqueryData()
+        } else if (this.type == 'targetcompletionrate') {
+          this.dataFormtarge = { ...newOption, label: '1' }
+          this.initDatatarge()
+        } else if (this.type == 'salesfunnel') {
+          this.initDatasalesfunnel()
+        } else if (this.type == 'forgettingreminder') {
+          this.initDataforget()
+        }
+      },
+      deep: true,
+      immediate: true
+    }
+  },
+  created() {
+
+  },
   methods: {
+    charttype(val) {
+      this.charttitles = val
+    },
+    charttypefunnel(val) {
+      this.charttitlefunnel = val
+    },
+    changelabel(e) {
+      this.initDatasalesTrend()
+    },
+    changelabeltarge(e) {
+      this.initDatatarge()
+    },
+    //客户遗忘提醒
+    initDataforget() {
+      getforgottenCustomerCount(this.Requestparameters).then(res => {
+        this.dataforget = res.data
+      })
+    },
+    //销售漏斗
+    initDatasalesfunnel() {
+      getsellFunneldata(this.Requestparameters).then(res => {
+        this.optionsales = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: function (params) {
+              return params[0].name + '<br>商机金额: ' + params[0].data.value + '元' + '<br>商机个数: ' + params[0].data.businessNum
+            }
+          },
+          grid: {
+            top: '8%',
+            left: '1%',
+            right: '3%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc'],
+          xAxis: [{
+            type: 'value',
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: false
+            }
+          }],
+          yAxis: [{
+            type: 'category',
+            data: res.data.map(item => item.settingName),
+            axisTick: {
+              show: false
+            }
+          }],
+          series: [
+            {
+              type: 'bar',
+              barWidth: '30%',
+              data: res.data.map(item => {
+                return {
+                  value: item.businessMoney,
+                  businessNum: item.businessNum
+                }
+              })
+            },
+          ]
+        }
+        this.sloptionsales = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            },
+            formatter: function (params) {
+              return params[0].name + '<br>商机金额: ' + params[0].data.businessMoney + '元' + '<br>商机个数: ' + params[0].data.value
+            }
+          },
+          grid: {
+            top: '8%',
+            left: '1%',
+            right: '3%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc'],
+          xAxis: [{
+            type: 'value',
+            axisTick: {
+              show: false
+            },
+            axisLine: {
+              show: false
+            },
+            minInterval: 1
+          }],
+          yAxis: [{
+            type: 'category',
+            data: res.data.map(item => item.settingName),
+            axisTick: {
+              show: false
+            }
+          }],
+          series: [
+            {
+              type: 'bar',
+              barWidth: '30%',
+              data: res.data.map(item => {
+                return {
+                  value: item.businessNum,
+                  businessMoney: item.businessMoney
+                }
+              })
+            },
+          ]
+        }
+      })
+    },
+    //目标完成率
+    initDatatarge() {
+      getqueryPerformance(this.dataFormtarge).then(res => {
+        this.optionperformance = {
+          series: [
+            {
+              type: 'gauge',
+              progress: {
+                show: true,
+                width: 4
+              },
+              splitNumber: 4,
+              axisLine: {
+                lineStyle: {
+                  width: 4
+                }
+              },
+              pointer: {
+                length: '30%'
+              },
+              axisTick: {
+                show: false
+              },
+              splitLine: {
+                distance: 10,
+                length: 10,
+                lineStyle: {
+                  width: 2,
+                  color: '#999'
+                }
+              },
+              axisLabel: {
+                distance: 5,
+                color: '#999',
+                fontSize: 13
+              },
+              title: {
+                show: true,
+                fontSize: '12',
+                offsetCenter: [0, '60%']
+              },
+              detail: {
+                valueAnimation: true,
+                fontSize: 18,
+                fontWeight: 'bold',
+                offsetCenter: [0, '40%'],
+                formatter: '{value}%'
+              },
+              data: [
+                {
+                  value: 100,
+                  name: '完成率'
+                }
+              ]
+            }
+          ]
+        }
+        this.formancemoney = res.data.money
+      })
+    },
+    //合同金额目标
+    initDatasalesTrend() {
+      this.saleloading = true
+      getsalesTrendList(this.dataForm).then(res => {
+        this.saleloading = false
+        this.optionmoney = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc', '#42526e'],
+          legend: {
+            data: ['实际完成金额', '当月目标金额'],
+            bottom: 10
+          },
+          xAxis: [{
+            type: 'category',
+            data: res.data.list.map(item => item.type),
+            axisTick: {
+              show: false
+            }
+          }],
+          yAxis: [{
+            type: 'value',
+            name: '元',
+            axisLine: {
+              show: false
+            }
+          }],
+          series: [
+            {
+              name: '实际完成金额',
+              data: res.data.list.map(item => item.money),
+              type: 'line',
+              smooth: true
+            }
+          ]
+        }
+        this.optionmoneyzz = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
+          },
+          grid: {
+            top: '10%',
+            left: '1%',
+            right: '1%',
+            bottom: '15%',
+            containLabel: true
+          },
+          color: ['#0052cc', '#42526e'],
+          legend: {
+            data: ['实际完成金额', '当月目标金额'],
+            bottom: 10
+          },
+          xAxis: [
+            {
+              type: 'category',
+              data: res.data.list.map(item => item.type),
+              axisTick: {
+                alignWithLabel: true,
+                show: false
+              }
+            }
+          ],
+          yAxis: [
+            {
+              name: '元',
+              type: 'value'
+            }
+          ],
+          series: [
+            {
+              barWidth: '30%',
+              name: '实际完成金额',
+              type: 'bar',
+              data: res.data.list.map(item => item.money)
+            }
+          ]
+        }
+      })
+    },
+    //数据汇总
+    getqueryData() {
+      getqueryDataInfo(this.Requestparameters).then(res => {
+        this.datasum = res.data
+      })
+    },
     changeranking(e) {
       this.rankingForm.titleType = e
       this.$refs.tabForm.$refs.JNPFTable.clearSelection()
@@ -433,6 +589,34 @@ export default {
   width: 100%;
   height: 260px;
   margin-top: 10px;
+  .info-box {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    width: 100%;
+    justify-content: center;
+    .info-item {
+      position: relative;
+      margin: 0 5px;
+      .mark::before {
+        position: absolute;
+        top: 4px;
+        left: -12px;
+        width: 8px;
+        height: 8px;
+        content: ' ';
+        background-color: #a0a5ba;
+        border-radius: 4px;
+      }
+      .value {
+        margin-left: 12px;
+        color: #172b4d;
+      }
+    }
+    .info-item + .info-item {
+      margin-left: 32px;
+    }
+  }
 }
 .forgettreminder {
   width: 100%;
@@ -486,8 +670,6 @@ export default {
     background-color: #ebecf0;
     border-radius: 3px;
     margin-right: 8px;
-  }
-  .el-select {
   }
   &.statistics-card {
     height: auto !important;

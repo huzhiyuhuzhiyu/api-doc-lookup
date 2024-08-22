@@ -1,74 +1,95 @@
 <template>
-  <el-dialog :title="!dataForm.id ? '新建检验项目' : btntype ? '查看检验项目' : '编辑检验项目'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="70%" @close="handleClose">
-    <div style="height: 28vh">
-    <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
-      <el-row :gutter="30">
-        <el-col :span="12">
+  <transition name="el-zoom-in-center">
+    <div class="JNPF-preview-main org-form">
+      <div :class="['JNPF-common-page-header', btntype ? 'noButtons' : '']">
+        <el-page-header @back="handleClose" :content="!dataForm.id ? '新建检验项目' : btntype ? '查看检验项目' : '编辑检验项目'" />
+        <div class="options" v-if="!btntype">
+          <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+            保存并提交</el-button>
+          <el-button @click="handleClose">{{ $t('common.cancelButton') }}</el-button>
+        </div>
+      </div>
+      <div style="height: 28vh;padding: 10px;">
+        <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
+          label-width="120px">
+          <el-row :gutter="30">
+            <el-col :span="12">
 
-          <el-form-item label="所属分类" prop="categoryIdText">
-            <ComSelectInspection :isdisabled="btntype ? true : false" v-model="dataForm.categoryIdText" placeholder="请选择所属分类" auth @change="onOrganizeChangeTwo" :title="'选择所属分类'" :method="getCategoryTrees" :requestObj="requestObj" :paramsObj="{}" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="项目编码" prop="code">
-            <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="检验项目名称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="请输入检验项目名称" maxlength="50" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="检验方式" prop="inspectionMethod">
-            <el-select v-model="dataForm.inspectionMethod" placeholder="请选择检验方式" style="width: 100%;" :disabled="btntype ? true : false" @change="hangleWay">
-              <el-option v-for="(item, index) in wayList" :key="index" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="检验工具" prop="equipmentId">
-            <!-- <el-select v-model="dataForm.inspectionTools" placeholder="请选择检验方式" style="width: 100%;"
+              <el-form-item label="所属分类" prop="categoryIdText">
+                <ComSelectInspection :isdisabled="btntype ? true : false" v-model="dataForm.categoryIdText"
+                  placeholder="请选择所属分类" auth @change="onOrganizeChangeTwo" :title="'选择所属分类'" :method="getCategoryTrees"
+                  :requestObj="requestObj" :paramsObj="{}" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="检验项目名称" prop="name">
+                <el-input v-model="dataForm.name" placeholder="请输入检验项目名称" maxlength="50"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="项目编码" prop="code">
+                <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="检验方式" prop="inspectionMethod">
+                <el-select v-model="dataForm.inspectionMethod" placeholder="请选择检验方式" style="width: 100%;"
+                  :disabled="btntype ? true : false" @change="hangleWay">
+                  <el-option v-for="(item, index) in wayList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="检验工具" prop="equipmentId">
+                <!-- <el-select v-model="dataForm.inspectionTools" placeholder="请选择检验方式" style="width: 100%;"
               :disabled="btntype ? true : false" @change="hangleWay">
               <el-option v-for="(item, index) in allEqu" :key="index" :label="item.name" :value="item.name"></el-option>
             </el-select> -->
-            <!-- <ComSelect-list :isdisabled="btntype ? true : false" v-model="dataForm.inspectionTools" placeholder="请选择检验工具"
+                <!-- <ComSelect-list :isdisabled="btntype ? true : false" v-model="dataForm.inspectionTools" placeholder="请选择检验工具"
               auth @change="onOrganizeChange" :title="'选择检验工具'" :method="getCategoryTrees" :requestObj="requestObjTwo"
               :paramsObj="{}" /> -->
-            <ComSelectInspection :isdisabled="btntype ? true : false" v-model="dataForm.equipmentName" placeholder="请选择检验工具" auth @change="onOrganizeChange" :title="'选择检验工具'" :method="getEquEquipmentList" :requestObj="requestObjTwo" :paramsObj="{}" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" v-if="dataForm.inspectionMethod == 'other'">
-          <el-form-item label="检验要求" prop="inspectionBasis">
-            <el-input v-model="dataForm.inspectionBasis" placeholder="请输入检验要求" maxlength="200" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
-          <el-form-item label="正常值" prop="normalValue">
-            <!-- /^[^\u4e00-\u9fa5\uF900-\uFA2D\u0020-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E\.?[0-9]*$/ -->
-            <el-input v-model="dataForm.normalValue" oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" maxlength="20" placeholder="请输入正常值" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
-          <el-form-item label="最低值" prop="minimum">
-            <el-input v-model="dataForm.minimum" maxlength="20" oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最低值" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
-          <el-form-item label="最高值" prop="maximum">
-            <el-input v-model="dataForm.maximum" maxlength="20" oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最高值" :disabled="btntype ? true : false" />
-          </el-form-item>
-        </el-col>
+                <ComSelectInspection :isdisabled="btntype ? true : false" v-model="dataForm.equipmentName"
+                  placeholder="请选择检验工具" auth @change="onOrganizeChange" :title="'选择检验工具'" :method="getEquEquipmentList"
+                  :requestObj="requestObjTwo" :paramsObj="{}" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="dataForm.inspectionMethod == 'other'">
+              <el-form-item label="检验要求" prop="inspectionBasis">
+                <el-input v-model="dataForm.inspectionBasis" placeholder="请输入检验要求" maxlength="200"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+              <el-form-item label="正常值" prop="normalValue">
+                <!-- /^[^\u4e00-\u9fa5\uF900-\uFA2D\u0020-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E\.?[0-9]*$/ -->
+                <el-input v-model="dataForm.normalValue"
+                  oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" maxlength="20" placeholder="请输入正常值"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+              <el-form-item label="最低值" prop="minimum">
+                <el-input v-model="dataForm.minimum" maxlength="20"
+                  oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最低值"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+              <el-form-item label="最高值" prop="maximum">
+                <el-input v-model="dataForm.maximum" maxlength="20"
+                  oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最高值"
+                  :disabled="btntype ? true : false" />
+              </el-form-item>
+            </el-col>
 
-      </el-row>
-    </el-form>
+          </el-row>
+        </el-form>
+      </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button v-if="!btntype" @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-      <el-button v-if="!btntype" :disabled="btntype ? true : false" type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-        提交</el-button>
-    </span>
-  </el-dialog>
+  </transition>
 </template>
 
 <script>
@@ -79,7 +100,7 @@ export default {
   components: {
     ComSelectInspection
   },
-  data () {
+  data() {
     return {
       getEquEquipmentList,
       visible: false,
@@ -181,10 +202,10 @@ export default {
       },
     }
   },
-  created () {
+  created() {
   },
   methods: {
-    hangleWay (e) {
+    hangleWay(e) {
       console.log(e);
       // this.dataForm.inspectionMethod = e
       if (e == "measure") {
@@ -197,7 +218,7 @@ export default {
         this.dataForm.maxVal = ""
       }
     },
-    onOrganizeChange (val, data, param) {
+    onOrganizeChange(val, data, param) {
       if (!data) return
       console.log(data);
       if (data.length == 0) {
@@ -208,7 +229,7 @@ export default {
         this.dataForm.equipmentId = data[0].id
       }
     },
-    onOrganizeChangeTwo (val, data, param) {
+    onOrganizeChangeTwo(val, data, param) {
       if (!data) return
       console.log(data, '数据数据');
       if (data.length == 0) {
@@ -221,9 +242,10 @@ export default {
       }
     },
 
-    handleClose () {
+    handleClose() {
+      this.$emit('close')
     },
-    init (id, type) {
+    init(id, type) {
       this.visible = true
       this.dataForm.id = id || ''
       this.dataForm.normalValue = ''
@@ -286,7 +308,7 @@ export default {
         }
       })
     },
-    dataFormSubmit () {
+    dataFormSubmit() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.dataForm.productCategoryIdText = ''
@@ -326,5 +348,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>
+<style scoped></style>

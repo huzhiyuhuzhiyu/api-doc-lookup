@@ -152,6 +152,7 @@
 import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
 import { UserListAll, } from '@/api/permission/user'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport } from '@/api/basicData/index'
 import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
@@ -541,8 +542,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: this.exportTableRef === '1061',
-        exportName: this.exportTableRef === '发货通知单明细',
+        exportType: '1060',
+        exportName: '销售退货通知单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

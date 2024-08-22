@@ -79,6 +79,7 @@ export default {
         this.personnellist = this.personnellist.map(item => item.id)
       }
       this.$emit('change', this.personnellist)
+      this.$emit('inputcontent', this.innerValue)
       this.visible = false
     }
   }

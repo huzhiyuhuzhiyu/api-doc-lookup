@@ -78,7 +78,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <!-- <div class="JNPF-common-head">
           <div>
             <el-button type="danger" @click="handleDel" icon="el-icon-delete">删除</el-button>
           </div>
@@ -88,8 +88,8 @@
                 @click="initData()" />
             </el-tooltip>
           </div>
-        </div>
-        <JNPF-table v-loading="listLoading" :data="list" hasC @selection-change="handleChange" custom-column>
+        </div> -->
+        <JNPF-table v-loading="listLoading" :data="list"  custom-column>
           <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
           <el-table-column prop="flowName" label="所属流程" width="130" />
           <el-table-column prop="startTime" label="发起时间" width="150"
@@ -291,16 +291,17 @@ export default {
         status: item.status,
         opType: 4,
         hasCancel: true,
-        readonly: true
+        readonly: true,
+        businessId:item.businessId,
       }
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.FlowBox.init(data)
       })
     },
-    handleChange(val) {
-      this.multipleSelection = val.map(item => item.id)
-    },
+    // handleChange(val) {
+    //   this.multipleSelection = val.map(item => item.id)
+    // },
     handleDel() {
       if (!this.multipleSelection.length) {
         this.$message({ type: 'error', message: '请选择一条数据' });

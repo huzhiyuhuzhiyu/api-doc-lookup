@@ -229,7 +229,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="行业类别" prop="industry">
-                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;"></el-cascader>
+                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType === 'look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -762,6 +762,9 @@ export default {
     this.getDictionaryType()
   },
   methods: {
+    changeindustry(val) {
+      this.dataForm.industry = val[val.length - 1]
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

@@ -160,7 +160,7 @@ export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
 }
 export function toDate(v, format) {
-  return jnpf.toDate(v, format)
+  return jnpf.dateFormat(v, format)
 }
 export function toDateText(dateTime) {
   return jnpf.toDateText(dateTime)

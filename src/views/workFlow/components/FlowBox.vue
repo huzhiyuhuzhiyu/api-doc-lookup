@@ -43,14 +43,14 @@
           </template>
           <template v-if="setting.opType == 1">
             <el-button type="warning" @click="openUserBox('transfer')"
-              v-if="properties.hasTransferBtn">{{properties.transferBtnText||'转 审'}}</el-button>
+              v-if="properties.hasTransferBtn && !messageFlag">{{properties.transferBtnText||'转 审'}}</el-button>
             <el-button type="primary" @click="eventLauncher('audit')" :loading="candidateLoading"
-              v-if="properties.hasAuditBtn">{{properties.auditBtnText||'通 过'}}</el-button>
+              v-if="properties.hasAuditBtn && !messageFlag">{{properties.auditBtnText||'通 过'}}</el-button>
             <el-button type="warning" @click="eventLauncher('saveAudit')"
-              v-if="properties.hasSaveBtn" :loading="btnLoading">{{properties.saveBtnText||'暂 存'}}
+              v-if="properties.hasSaveBtn && !messageFlag" :loading="btnLoading">{{properties.saveBtnText||'暂 存'}}
             </el-button>
             <el-button type="danger" @click="eventReceiver({},'reject')"
-              v-if="properties.hasRejectBtn">
+              v-if="properties.hasRejectBtn && !messageFlag">
               {{properties.rejectBtnText||'拒 绝'}}</el-button>
           </template>
           <template v-if="setting.opType == 0 && setting.status == 1">
@@ -230,8 +230,12 @@ import Process from '@/components/Process/Preview'
 import PrintBrowse from '@/components/PrintBrowse'
 import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
+// 业务单据 审批页面引入
+import SaleQuoForm from '@/views/salesManagement/contractQuotation/salesQuotationOld/depForm.vue'
 export default {
-  components: { recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog },
+  components: { recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog ,
+    SaleQuoForm
+  },
   data() {
     return {
       assignVisible: false,
@@ -311,6 +315,10 @@ export default {
       errorVisible: false,
       errorNodeList: [],
       isValidate: false,
+      pageView:{
+        'b001':'SaleQuoForm'
+      },
+      messageFlag:false
     }
   },
   computed: {
@@ -377,10 +385,11 @@ export default {
     goBack(isRefresh) {
       this.$emit('close', isRefresh)
     },
-    init(data) {
+    init(data,messageFlag) {
       this.loading = true
       this.activeTab = '0'
       this.setting = data
+      this.messageFlag = messageFlag
       /**
        * opType
        * -1 - 我发起的新建/编辑
@@ -393,6 +402,8 @@ export default {
       if (this.setting.opType == '-1') {
         this.getEngineInfo(data)
       } else {
+        console.log(data,'datadata');
+        
         this.getBeforeInfo(data)
       }
     },
@@ -446,8 +457,14 @@ export default {
           } else {
             this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/${data.enCode}`], resolve)
           }
-        } else {
+        } else if (data.formType == 2) {
           this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/dynamicForm`], resolve)
+        } else{
+          console.log(this.pageView[data.enCode]);
+          console.log(data);
+          
+          this.currentView = this.pageView[data.enCode]
+          
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
         this.flowTemplateJson = this.flowTaskInfo.flowTemplateJson ? JSON.parse(this.flowTaskInfo.flowTemplateJson) : null
@@ -496,7 +513,15 @@ export default {
         }
         setTimeout(() => {
           this.$nextTick(() => {
-            this.$refs.form && this.$refs.form.init(data)
+            if (data.formType === 3){
+              console.log(data,'data');
+              
+              this.$refs.form && this.$refs.form.init(data.businessId,'look',true)
+              // this.$refs.form && this.$refs.form.init('1826164119768203265','look',true)
+              this.loading = false
+            } else{
+              this.$refs.form && this.$refs.form.init(data)
+            }
           })
         }, 500)
       }).catch(() => { this.loading = false })

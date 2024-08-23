@@ -3,7 +3,6 @@ const path = require('path')
 const defaultSettings = require('./src/settings.js')
 const define = require('./src/utils/define.js')
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-const BundleAnalyzer = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -67,8 +66,7 @@ module.exports = {
       new MonacoWebpackPlugin({
         // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
         languages: ['javascript', 'css', 'html', 'typescript', 'json', 'java', 'sql']
-      }),
-      new BundleAnalyzer()
+      })
     ]
   },
   chainWebpack(config) {

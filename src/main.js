@@ -26,14 +26,9 @@ import * as filters from './filters' // global filters
 
 import * as echarts from 'echarts'
 
-// 引入样式
-import "vue-easytable/libs/theme-default/index.css";
 
-// 引入组件库
-import VueEasytable from "vue-easytable"
-import { VeLocale } from "vue-easytable";
 
-import zhCN from "vue-easytable/libs/locale/lang/zh-CN";
+
 
 // 审批流引入
 import func from './utils/preload.js'
@@ -56,8 +51,7 @@ Vue.directive('focus', {
   }
 });
 
-Vue.use(VueEasytable);
-VeLocale.use(zhCN)
+
 
 
 // 自定义按钮权限指令

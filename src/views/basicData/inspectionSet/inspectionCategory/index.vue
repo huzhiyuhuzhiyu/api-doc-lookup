@@ -30,15 +30,15 @@
         <JNPF-table v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :setColumnDisplayList="columnList" :default-expand-all="expands" ref="tableForm"
           :tree-props="{ children: 'childrenList', hasChildren: '' }" custom-column>
-          <el-table-column prop="name" label="分类名称">
+          <el-table-column prop="name" label="分类名称" min-width="100">
             <template slot-scope="scope">
               <i
                 :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{
                   scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column prop="code" label="分类编码" />
-          <el-table-column prop="parentName" label="上级分类" />
+          <el-table-column prop="code" label="分类编码" min-width="100" />
+          <el-table-column prop="parentName" label="上级分类" min-width="100" />
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" width="300">
           </el-table-column>

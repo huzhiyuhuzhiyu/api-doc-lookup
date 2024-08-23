@@ -521,6 +521,10 @@ export default {
   margin-bottom: 8px !important;
 }
 
+.JNPF-common-head {
+  padding: 8px!important
+}
+
 .pagination-container {
   background-color: #f5f7fa;
   margin-top: 0px;

@@ -657,5 +657,11 @@ export default {
   width: 440px;
   /* 自定义弹框宽度 */
 }
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
+}
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

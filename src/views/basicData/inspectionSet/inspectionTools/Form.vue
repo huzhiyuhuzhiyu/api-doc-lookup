@@ -46,13 +46,13 @@
                           maxlength="50" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="12" :xs="24">
+                    <!-- <el-col :sm="12" :xs="24">
                       <el-form-item label="图号" prop="drawingNo">
                         <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
-                          <!-- <template slot="append">KG</template> -->
+                          <template slot="append">KG</template>
                         </el-input>
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="长" prop="equLong">
                         <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">

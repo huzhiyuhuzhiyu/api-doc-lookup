@@ -262,11 +262,7 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
+            column: 'name'
           }
         ]
       }

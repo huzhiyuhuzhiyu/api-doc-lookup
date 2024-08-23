@@ -6,8 +6,9 @@
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
           <div class="text-one-line">合同汇总表</div>
         </div>
-        <div class="xr-radio-menu-wrap" style="width: 250px;">
-          <selectdate @change="datechange"></selectdate>
+        <div class="xr-radio-menu-wrap">
+          <el-date-picker v-model="dataForm.year" type="year" value-format="yyyy" placeholder="选择年" :picker-options="pickerOptions">
+          </el-date-picker>
         </div>
         <div class="xr-radio-menu-wrap">
           <selectdepartment @change="departmentchange"></selectdepartment>
@@ -18,7 +19,7 @@
       </div>
       <div class="content-table-main">
         <div class="axis-content">
-          <div class="content-title">签约合同数：7个；签约合同金额：1150500元；回款金额：10000元；未回款金额：1140500元</div>
+          <div class="content-title">签约合同数：<span>{{totalcontractNum}}</span>个；签约合同金额：<span>{{totalcontractMoney}}</span>元；回款金额：<span>{{totalreceivablesMoney}}</span>元；未回款金额：<span>{{totalcontractMoney*1-totalreceivablesMoney*1}}</span>元</div>
         </div>
         <div class="table-content" v-loading="listLoading">
           <!-- <div class="handle-bar">
@@ -38,7 +39,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { gettotalCustomerTable, getsellFunnel } from "@/api/CRMmanagement/instrumentPanel/index";
+import { gettotalContract } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -48,42 +49,61 @@ export default {
   },
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        }
+      },
       listLoading: false,
       dataForm: {
-        startTime: "",
-        endTime: "",
-        type: "year",
+        year: "",
         userIds: []
       },
-      tableList: [],
-      option: {}
+      tableList: []
     }
   },
   computed: {
     ...mapGetters(['userInfo']),
+    totalcontractNum: function () {
+      let totalNum = 0;
+      for (var i = 0; i < this.tableList.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].contractNum * 1])
+      }
+      return totalNum
+    },
+    totalcontractMoney: function () {
+      let totalNum = 0;
+      for (var i = 0; i < this.tableList.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].contractMoney * 1])
+      }
+      return totalNum
+    },
+    totalreceivablesMoney: function () {
+      let totalNum = 0;
+      for (var i = 0; i < this.tableList.length; i++) {
+        totalNum = this.jnpf.math('add', [totalNum, this.tableList[i].receivablesMoney * 1])
+      }
+      return totalNum
+    },
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
+    this.dataForm.year = this.jnpf.getToday('YYYY')
     this.initData()
-  },
-  beforeDestroy() {
-    window.onresize = null
   },
   methods: {
     search() {
       this.initData()
     },
-    datechange(data) {
-      this.dataForm.startTime = data.dateStart
-      this.dataForm.endTime = data.dateEnd
-      this.dataForm.type = data.value
-    },
     departmentchange(data) {
       this.dataForm.userIds = data
     },
     initData() {
-      // this.listLoading = true
-
+      this.listLoading = true
+      gettotalContract(this.dataForm).then(res => {
+        this.tableList = res.data
+        this.listLoading = false
+      })
     }
   }
 }
@@ -131,15 +151,22 @@ export default {
   padding-bottom: 24px;
   margin-top: 24px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   .axis-content {
     margin-right: 40px;
     margin-bottom: 15px;
     .content-title {
       padding: 8px 40px;
       font-size: 16px;
+      span {
+        margin-right: 3px;
+        font-weight: 700;
+      }
     }
   }
   .table-content {
+    flex: 1;
     min-height: 500px;
     padding-right: 14px;
     .handle-bar {

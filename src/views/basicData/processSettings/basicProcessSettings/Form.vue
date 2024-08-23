@@ -68,7 +68,7 @@
 
             <div class="box"></div>
           </el-tab-pane>
-          <el-tab-pane label="生产资源配置" name="zypz">
+          <el-tab-pane label="工序资源配置" name="zypz">
             <div>
               <el-tabs v-model="configurationName" @tab-click="handleClickFun" stretch style="margin-top:-10px">
                 <div v-if="type !== 'look'">
@@ -250,7 +250,11 @@ export default {
   },
   data() {
     return {
-      process_typeList: [{ label: '正常工序', value: 'normal' }, { label: '待装配工序', value: 'wait_assemble' }],
+      process_typeList: [
+        { label: '正常工序', value: 'normal' },
+        { label: '待装配工序', value: 'wait_assemble' },
+        { label: '测震工序', value: 'vibrate' }
+      ],
       getcategoryTree,
       configurationName: '',
       dialogTitle: '',
@@ -844,7 +848,7 @@ export default {
           this.fetchData('bm_gy_gx', true)
         } else {
           this.loading = true
-          this.fetchData('bm_gx_gx', false)
+          this.fetchData('bm_gy_gx', false)
           // 获取当前项详情
           getBimProcessDetail(id).then((res) => {
             this.dataForm = res.data.process

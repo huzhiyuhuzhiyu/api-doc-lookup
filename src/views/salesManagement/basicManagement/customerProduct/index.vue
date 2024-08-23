@@ -472,4 +472,8 @@ export default {
 ::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0px;
 }
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0!important; 
+}
 </style>

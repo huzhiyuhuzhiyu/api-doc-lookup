@@ -205,6 +205,11 @@
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="行业类别" prop="industry">
+                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;"></el-cascader>
+                      </el-form-item>
+                    </el-col>
                   </el-row>
                 </el-collapse-item>
                 <el-collapse-item title="财务信息" name="FinanceInfo">
@@ -514,6 +519,7 @@ export default {
       billingTypeList: [],
       paymentMethodList: [],
       modeTransportList: [],
+      industryoptions:[],
       channelList: [],
       contactsList: [],
       paymentCycleList: [],
@@ -570,6 +576,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        industry:'',
         nextTime: '',
         // 合作伙伴
         code: '',
@@ -1082,7 +1089,16 @@ export default {
                   this.modeTransportList = response.data.list
                 })
               }
-
+              if (resp.enCode == "IndustryType") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 1
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.industryoptions = response.data.list
+                })
+              }
             });
 
           }
@@ -1129,7 +1145,7 @@ export default {
           this.dataForm = res.data.cooperativePartner
           this.tableData = res.data.recordsList
           this.dataForm.provincecityarea = []
-          if (res.data.province) {
+          if (res.data.cooperativePartner.province) {
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.province)
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.city)
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.area)

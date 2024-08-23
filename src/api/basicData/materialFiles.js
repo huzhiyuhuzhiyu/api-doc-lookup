@@ -168,3 +168,12 @@ export function bomProductData(data) {
     data
   })
 }
+
+// 产品 批量设置检验方式
+export function batchSetProducts(data) {
+  return request({
+    url: `/api/erp/products/sampling/rules/batch/set`,
+    method: 'POST',
+    data
+  })
+}

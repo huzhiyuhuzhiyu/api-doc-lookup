@@ -71,7 +71,11 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'attachment'
         this.getData(1)
-      } 
+      }  else if (this.activeName === 'produce') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'produce'
+        this.getData(2)
+      }
       // else if (this.activeName === 'mrp') {
       //   this.listQuery.pageSize = -1
       //   this.listQuery.businessCode = 'mrp'

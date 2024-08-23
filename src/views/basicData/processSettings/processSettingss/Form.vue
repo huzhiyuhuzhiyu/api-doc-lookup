@@ -138,9 +138,8 @@
                         <template slot-scope="scope">
                           <div class="viewData">
                             <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'forge'">锻打工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'plating'">电镀工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'drill'">钻孔工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">测震工序</div>
                           </div>
                         </template>
                       </el-table-column>

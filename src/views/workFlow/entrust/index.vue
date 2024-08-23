@@ -38,9 +38,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="startTime" label="开始时间" width="120"
-            :formatter="jnpf.tableDateFormat" />
+            :formatter="jnpf.tableDateFormatDayTime" />
           <el-table-column prop="endTime" label="结束时间" width="120"
-            :formatter="jnpf.tableDateFormat" />
+            :formatter="jnpf.tableDateFormatDayTime" />
           <el-table-column prop="status" label="状态" width="100" align="center">
             <template slot-scope="scope">
               <el-tag type="info" v-if='scope.row.status==1'>未开始</el-tag>
@@ -128,8 +128,8 @@ export default {
           let e = this.list[i];
           let startTime = this.jnpf.toDate(e.startTime);
           let endTime = this.jnpf.toDate(e.endTime);
-          e.startTime = startTime
-          e.endTime = endTime
+          // e.startTime = startTime
+          // e.endTime = endTime
           // 0-委托中 1-未开始 2-已失效
           let status = 0
           if (startTime > currTime) {

@@ -43,14 +43,14 @@
           </template>
           <template v-if="setting.opType == 1">
             <el-button type="warning" @click="openUserBox('transfer')"
-              v-if="properties.hasTransferBtn">{{properties.transferBtnText||'转 审'}}</el-button>
+              v-if="properties.hasTransferBtn && !messageFlag">{{properties.transferBtnText||'转 审'}}</el-button>
             <el-button type="primary" @click="eventLauncher('audit')" :loading="candidateLoading"
-              v-if="properties.hasAuditBtn">{{properties.auditBtnText||'通 过'}}</el-button>
+              v-if="properties.hasAuditBtn && !messageFlag">{{properties.auditBtnText||'通 过'}}</el-button>
             <el-button type="warning" @click="eventLauncher('saveAudit')"
-              v-if="properties.hasSaveBtn" :loading="btnLoading">{{properties.saveBtnText||'暂 存'}}
+              v-if="properties.hasSaveBtn && !messageFlag" :loading="btnLoading">{{properties.saveBtnText||'暂 存'}}
             </el-button>
             <el-button type="danger" @click="eventReceiver({},'reject')"
-              v-if="properties.hasRejectBtn">
+              v-if="properties.hasRejectBtn && !messageFlag">
               {{properties.rejectBtnText||'拒 绝'}}</el-button>
           </template>
           <template v-if="setting.opType == 0 && setting.status == 1">
@@ -230,6 +230,7 @@ import Process from '@/components/Process/Preview'
 import PrintBrowse from '@/components/PrintBrowse'
 import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
+// 业务单据 审批页面引入
 import SaleQuoForm from '@/views/salesManagement/contractQuotation/salesQuotationOld/depForm.vue'
 export default {
   components: { recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog ,
@@ -316,7 +317,8 @@ export default {
       isValidate: false,
       pageView:{
         'b001':'SaleQuoForm'
-      }
+      },
+      messageFlag:false
     }
   },
   computed: {
@@ -383,10 +385,11 @@ export default {
     goBack(isRefresh) {
       this.$emit('close', isRefresh)
     },
-    init(data) {
+    init(data,messageFlag) {
       this.loading = true
       this.activeTab = '0'
       this.setting = data
+      this.messageFlag = messageFlag
       /**
        * opType
        * -1 - 我发起的新建/编辑

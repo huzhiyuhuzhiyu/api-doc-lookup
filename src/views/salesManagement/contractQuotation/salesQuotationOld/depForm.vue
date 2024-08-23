@@ -1443,7 +1443,7 @@ export default {
         // 审批
         // this.getApproverData()
         this.fetchData("XSBJ", true)
-
+        this.getBusInfo()
       }
 
       // 重新提交

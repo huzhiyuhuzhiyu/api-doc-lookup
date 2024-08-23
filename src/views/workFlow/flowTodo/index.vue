@@ -69,7 +69,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <!-- <div class="JNPF-common-head">
           <div>
             <el-button type="primary" icon="el-icon-finished" @click="goBatch">批量审批</el-button>
           </div>
@@ -79,7 +79,7 @@
                 @click="initData()" />
             </el-tooltip>
           </div>
-        </div>
+        </div> -->
         <JNPF-table v-loading="listLoading" :data="list" custom-column>
           <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
           <el-table-column prop="flowName" label="所属流程" min-width="130" />

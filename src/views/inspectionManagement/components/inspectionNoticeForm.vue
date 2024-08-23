@@ -5,7 +5,7 @@
       <div :class="['JNPF-common-page-header', readOnly ? 'noButtons' : '']">
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="!readOnly">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
+          <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -15,18 +15,40 @@
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <el-tabs v-model="activeName">
               <el-tab-pane label="基础信息" name="jcInfo">
-                <div class="subtitle">
-                  <h5>基本信息</h5>
-                </div>
-                <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :openMode="openMode" />
-                <div class="subtitle">
-                  <h5>产品信息</h5>
-                </div>
-                <el-row :gutter="30" style="padding:0 15px">
-                  <TableForm-product :value="linesList" @input="linesChange" ref="linesForm"
-                    :tableItems="linesListItems" :openMode="openMode" @openSide="openSide"
-                    @viewdrawings="viewdrawings" />
-                </el-row>
+                <el-collapse v-model="activeNames">
+                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :openMode="openMode" />
+
+                  </el-collapse-item>
+
+
+                  </el-collapse-item>
+                  <el-collapse-item title="检验项目" name="inspectionInfo">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                        :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                        @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                        :nowNum="nowNum" />
+                    </el-row>
+
+                  </el-collapse-item>
+                  <el-collapse-item title="不良原因" name="adverseCausesInfo">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
+                        :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
+                        @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                        :nowNum="nowNumTwo" />
+                    </el-row>
+
+                  </el-collapse-item>
+                </el-collapse>
+
+
+              </el-tab-pane>
+              <el-tab-pane label="图纸信息" name="drawingcard">
+                <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
+                  :openMode="openMode" />
+
               </el-tab-pane>
               <el-tab-pane label="流程卡" name="flowcard" v-if="typeflag">
                 <JNPF-col v-model="flowCard" :tabContent="flowCardItems" ref="flowCardForm" />
@@ -40,17 +62,6 @@
       </div>
 
       <WareSide v-if="wareVisibled" ref="wareSide" @confirm="sideConfirm" :openMode="openMode" />
-      <ComSelect-page ref="ComSelect-page" :tableItems="ProductTableItemss" title="查看图纸" :listMethod="getbimDrawingData"
-        :listRequestObj="ProductListRequestObjs" :searchList="[]" :elementShow="false" :renderTree="false">
-        <template slot="table-action">
-          <el-table-column label="操作" width="150" fixed="right">
-            <template slot-scope="scope">
-              <el-button type="text" @click="currentChangelook(scope.row)" size="mini">查看</el-button>
-              <el-button type="text" @click="downloadtuzhi(scope.row)" size="mini">下载</el-button>
-            </template>
-          </el-table-column>
-        </template>
-      </ComSelect-page>
       <Preview :visible.sync="previewVisible" :file="activeFile" />
     </div>
   </transition>
@@ -63,6 +74,8 @@ import { getQuotationsendlist } from "@/api/salesManagement/index"; // 外协退
 import { detailWithdrawal, detailordershengchan } from '@/api/productOrdes/index' // 生产退料
 import { inspectionTypeList } from '../data.js'
 import TableFormProduct from "./TableForm-product.vue"
+import TableFormWare from "./TableForm-ware.vue"
+import TableFormWareTwo from "./TableForm-ware-two.vue"
 import { getInspectionItem } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import WareSide from './WareSide.vue'
 import { getbimDrawingData } from "@/api/basicData/index";
@@ -70,16 +83,16 @@ import Preview from "@/components/upload-wj/Preview.vue";
 import { getDownloadUrl } from '@/api/common'
 import { mapGetters } from 'vuex'
 export default {
-  components: { TableFormProduct, WareSide, Preview },
+  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo },
   data() {
     return {
       activeFile: {},
       previewVisible: false,
       ProductListRequestObjs: {},
       ProductTableItemss: [
+        { prop: 'drawingNo', label: '品名规格' },
+        // { prop: 'name', label: '产品名称' },
         { prop: 'code', label: '产品编码' },
-        { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '产品图号' },
         { prop: 'sheetName', label: '图纸名称' },
         { prop: 'version', label: '版本' }
       ],
@@ -87,6 +100,7 @@ export default {
       flowCard: {},
       datafilelist: [],
       activeName: "jcInfo",
+      activeNames: ['productInfo', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
       title: "",
       inspectionTypeList,
       visible: true,
@@ -125,6 +139,24 @@ export default {
       spaceLines: [],
       productionLotList: [],
       batchFlag: false, // 是否读取的单据是批量检验单据
+      scope: {},
+      inspectionItems: this.initLinesListItems(),
+      inspectionList: [],
+      linesListTwo: [],
+      linesListItemsTwo: [
+        { prop: "name", label: "不良原因名称", value: "", type: 'view', minWidth: 180 },
+        {
+          prop: "unqualifiedQuantity", label: "不良品数量", value: "", type: "input", itemRules: [
+            { required: true, trigger: "blur" },
+            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`不良品数量：${errMsg}`) }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不良品数量：' + errMsg) }] }), trigger: 'blur' }
+          ], minWidth: 180
+        },
+        { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+      ],
+      productList: [],
+      codeConfig: {}
+
     }
   },
   methods: {
@@ -143,23 +175,12 @@ export default {
         this.jnpf.downloadFile(res.data.url, row.filename)
       })
     },
-    //查看图纸
-    viewdrawings({ row }) {
-      this.ProductListRequestObjs = {
-        code: row.productCode,
-        drawingNo: "",
-        name: row.productName,
-        orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
-        pageNum: 1,
-        pageSize: 20,
-      }
-      this.$refs['ComSelect-page'].openDialog()
-    },
+
     // 设置主表结构
     setDataFormItems() {
       this.dataFormItems = [
         {
-          prop: "sourceNo", label: "来源单号", value: "", type: "input", itemDisabled: true, itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          prop: "orderNo", label: "单号", value: "", type: "input", itemDisabled: true, itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
         {
@@ -167,18 +188,46 @@ export default {
           change: () => { this.$nextTick(() => { this.$refs.dataForm.$refs.main.validateField('inspectorId') }) }, sm: 12
         },
         { prop: "inspectionDate", label: "检验日期", value: undefined, type: "date", itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+
+        {
+          prop: "productDrawingNo", label: "品名规格", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "mainUnit", label: "单位", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "inspectionQuantity", label: "报检数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "inspectionMethod", label: "检验方式", value: '', type: 'select', clearable: false,
+          change: this.inspectionMethodChange, itemRules: [{ required: true, trigger: 'change' }], sm: 12,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: [{ label: "免检", value: "exempt" }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
+        },
         // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
         {
-          prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 12, multiple: true,
-          render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+          prop: "samplingQuantity", label: "检验数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag, itemDisabled:(rowIndex) =>  this.dataForm.inspectionMethod == 'all'
         },
+        { prop: "inspectionResults", label: "检验结果", value: undefined, type: "select", options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+        {
+          prop: "unqualifiedQuantity", label: "不合格数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        // {
+        //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 12, multiple: true,
+        //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+        // },
         { prop: "remark", label: "备注", value: "", type: "textarea" }
       ]
     },
     // 设置子表结构
     setLinesListItems() {
       this.linesListItems = [
-        { prop: "sourceNo", label: "来源单号", type: 'view', minWidth: 180, render: this.inspectionType.indexOf('_batch') !== -1 || this.batchFlag },
+        { prop: "orderNo", label: "来源单号", type: 'view', minWidth: 180, render: this.inspectionType.indexOf('_batch') !== -1 || this.batchFlag },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 140 },
         { prop: "productDrawingNo", label: "产品图号", value: "", type: 'view', minWidth: 140, render: ['procure', 'finished', 'sale_back', 'process', 'back_material', 'produce', 'external'].includes(this.inspectionType) },
@@ -190,7 +239,7 @@ export default {
           prop: "inspectionMethod", label: "检验方式", value: '', type: 'select', clearable: false,
           change: this.inspectionMethodChange, width: 140, itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: (rowIndex) => this.linesList[rowIndex].inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: [{ label: "免检", value: "exempt", disabled: true }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
+          options: [{ label: "免检", value: "exempt" }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
         },
         { prop: "inspectionQuantity", label: "报检数量", value: "", type: "view", minWidth: 150 },
         { prop: "mainUnit", label: "单位", value: "", type: "view", width: 130 },
@@ -234,8 +283,51 @@ export default {
       ]
       this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() })
     },
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        console.log(data, 'data')
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) { }
+    },
     // 初始化
-    async init(id, readOnly, inspectionType, type, businessCode) {
+    async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log(row, 'rrrrr')
+      this.scope = { ...row }
+      console.log(this.scope, 'sc')
+
+      this.fetchData(businessCode, true)
+      console.log(this.dataForm, 'form')
+      this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
+      this.dataForm.inspectionDate = new Date()
+      this.dataForm.productDrawingNo = row.productDrawingNo
+      this.dataForm.mainUnit = row.mainUnit
+      this.dataForm.inspectionQuantity = row.receivedQuantity
+      this.ProductListRequestObjs = {
+        code: this.scope.productCode,
+        drawingNo: "",
+        name: this.scope.productName,
+        orderItems: [{ asc: false, column: "" }, { asc: false, column: "create_time" }],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      await getbimDrawingData(this.ProductListRequestObjs).then((res) => {
+
+        this.productList = res.data.records
+        this.loading = false
+      }).catch(err => {
+        this.loading = false
+      })
+      await getInspectionItem({ id: this.scope.productsId, inspectionCategory: this.scope.notificationType }).then((res) => {
+        this.addOrDelInspectionItem(res.data)
+        this.loading = false
+      }).catch(err => {
+        this.loading = false
+      })
+      let id = row.id
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.visible = true
@@ -253,7 +345,7 @@ export default {
       }
       if (typeof id === 'object' && inspectionType === 'process') { // 生产巡检
         let rowData = id
-        this.dataForm = { noticeId: rowData.id, sourceNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'process', submitMethod: 'add' }
+        this.dataForm = { noticeId: rowData.id, orderNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'process', submitMethod: 'add' }
         let tempLinesList = [{
           ordersLineId: rowData.id,
           productsId: rowData.productId,
@@ -285,7 +377,7 @@ export default {
         this.dataForm = { inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
         let tempLinesList = selectedData.map(rowData => {
           return {
-            sourceNo: rowData.orderNo,
+            orderNo: rowData.orderNo,
             ordersLineId: rowData.id,
             productsId: rowData.productsId,
             productCode: rowData.productCode,
@@ -329,10 +421,10 @@ export default {
             )
           })
         }
-        this.dataForm = { ...res.data, sourceNo: res.data.originOrderNo, approvalStatus: '' }
+        this.dataForm = { ...res.data, orderNo: res.data.originOrderNo, approvalStatus: '' }
         this.linesList = res.data.lines
         delete this.dataForm.lines
-        if (!this.dataForm.sourceNo) {
+        if (!this.dataForm.orderNo) {
           this.batchFlag = true
           this.setDataFormItems()
         }
@@ -355,7 +447,7 @@ export default {
           }
           this.dataForm = {
             ...res.data,
-            sourceNo: res.data.orderNo,
+            orderNo: res.data.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.id,
             approvalStatus: '',
@@ -394,7 +486,11 @@ export default {
             this.linesList = tempLinesList
             this.setLinesListItems()
             this.formLoading = false
+          }).catch(err => {
+            this.formLoading = false
           })
+        }).catch(errpr => {
+          this.formLoading = false
         })
       } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') { // 销售退货、外协退料
         getQuotationsendlist(id).then(res => {
@@ -413,7 +509,7 @@ export default {
           }
           this.dataForm = {
             ...res.data.notice,
-            sourceNo: res.data.notice.orderNo,
+            orderNo: res.data.notice.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.notice.id,
             notificationType: inspectionType,
@@ -456,7 +552,7 @@ export default {
           }
           this.dataForm = {
             ...res.data.collect,
-            sourceNo: res.data.collect.orderNo,
+            orderNo: res.data.collect.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.collect.id,
             notificationType: inspectionType,
@@ -485,7 +581,7 @@ export default {
       } else if (inspectionType === 'finished') { // 完工
         console.log(id);
         let rowData = id
-        this.dataForm = { noticeId: rowData.id, sourceNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
+        this.dataForm = { noticeId: rowData.id, orderNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
         let tempLinesList = [{
           ordersLineId: rowData.id,
           productsId: rowData.productsId,
@@ -510,7 +606,7 @@ export default {
         this.setLinesListItems()
         this.formLoading = false
       }
-      this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
+
     },
     // 子表数据通用处理
     linesListFormat(linesList) {
@@ -615,8 +711,10 @@ export default {
           })
         }
         let dataObj = {
-          ...this.dataForm,
-          lines: this.linesList,
+          inspection: this.dataForm,
+          // lines: this.linesList,
+          causesList: this.linesListTwo,
+          itemList: this.inspectionList,
           attachmentList: this.datafilelist,
         }
         let modifyFlag = dataObj.submitMethod !== 'add'
@@ -637,22 +735,22 @@ export default {
           }
         }
 
-        formMethod(dataObj).then(res => {
-          let msg = res.msg
-          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-          this.visible = false
-          this.$emit('close', true)
-          this.$message({
-            message: msg,
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.btnLoading = false
-            }
-          })
-        }).catch(() => {
-          this.btnLoading = false
-        })
+        // formMethod(dataObj).then(res => {
+        //   let msg = res.msg
+        //   if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+        //   this.visible = false
+        //   this.$emit('close', true)
+        //   this.$message({
+        //     message: msg,
+        //     type: 'success',
+        //     duration: 1500,
+        //     onClose: () => {
+        //       this.btnLoading = false
+        //     }
+        //   })
+        // }).catch(() => {
+        //   this.btnLoading = false
+        // })
       } else {
         this.btnLoading = false
       }
@@ -679,6 +777,43 @@ export default {
         }
         this.linesList = tempList.map(item => { return { ...item, warehouseId: this.dataForm.warehouseId } })
         this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() });
+      }
+    },
+    // 检验项目
+    addOrDelInspectionItem(data) {
+      let type = Array.isArray(data) ? 'Array' : 'Object'
+      if (type === 'Object') { this.inspectionList.splice(data.$index, 1) }
+      else {
+        let tempList = JSON.parse(JSON.stringify(this.inspectionList))
+        let hasItemList = []
+        for (let i = 0; i < data.length; i++) {
+          let item = data[i];
+          // if (this.rowNum == "0") item.unqualifiedQuantity = 0
+          const hasFlag = this.inspectionList.find(i => item.id === i.id)
+          if (hasFlag) { hasItemList.push(item.name) }
+          else { tempList.push(item) }
+        }
+        if (hasItemList.length) this.$message.error(`已经存在的检验项目：${hasItemList.join('、')}`)
+        this.inspectionList = JSON.parse(JSON.stringify(tempList))
+        this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() });
+      }
+    },
+    // 不良原因
+    addOrDelLinesItemTwo(data) {
+      let type = Array.isArray(data) ? 'Array' : 'Object'
+      if (type === 'Object') { this.linesListTwo.splice(data.$index, 1) }
+      else {
+        let tempList = JSON.parse(JSON.stringify(this.linesListTwo))
+        let hasItemList = []
+        for (let i = 0; i < data.length; i++) {
+          let item = data[i];
+          const hasFlag = this.linesListTwo.find(i => item.id === i.id)
+          if (hasFlag) { hasItemList.push(item.name) }
+          else { tempList.push(item) }
+        }
+        if (hasItemList.length) this.$message.error(`已经存在的不良原因：${hasItemList.join('、')}`)
+        this.linesListTwo = JSON.parse(JSON.stringify(tempList))
+        this.$nextTick(() => { this.$refs.linesFormTwo.setDefaultValue() });
       }
     },
     // 子表数据更改
@@ -731,16 +866,28 @@ export default {
     // 检验方式更改
     inspectionMethodChange(val, scope) {
       if (val === 'exempt') { // 免检
-        this.linesList[scope.$index].inspectionResults = 'qualified'
-        this.linesList[scope.$index].samplingQuantity = this.linesList[scope.$index].inspectionQuantity
-        this.linesList[scope.$index].unqualifiedQuantity = 0
+        this.dataForm.inspectionResults = 'qualified'
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = 0
         this.inspectionResultsChange('qualified', scope)
       } else if (val === 'spot_check') { // 抽检
 
       } else if (val === 'all') { // 全检
-        this.linesList[scope.$index].samplingQuantity = this.linesList[scope.$index].inspectionQuantity
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
       }
     }
+  },
+  beforeCreate() {
+    this.initLinesListItems = () => [
+      { prop: "name", label: "检验项目", value: "", type: 'view', minWidth: 120 },
+      {
+        prop: "unqualifiedQuantity", label: "不合格数量", value: "0", type: "input", itemRules: [
+          { required: true, trigger: "blur" },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不合格数量：' + errMsg) }] }), trigger: 'blur' }
+        ], minWidth: 180
+      },
+      { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+    ]
   },
   computed: {
     openMode() {
@@ -761,7 +908,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px 30px;
+  padding: 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -787,5 +934,41 @@ export default {
   border-bottom: 1px solid #dcdfe6;
   background: #fafafa;
   padding-left: 5px;
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

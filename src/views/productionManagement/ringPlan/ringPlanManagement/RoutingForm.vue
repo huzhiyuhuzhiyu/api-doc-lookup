@@ -1,7 +1,7 @@
 <template>
 
   <el-dialog title="选择工艺路线" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
-    lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
+    lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body
     @close="customerVisible = false">
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -118,11 +118,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-  .JNPF-common-layout-center .JNPF-common-layout-main{
-    padding: 10px!important;
-  }
-   .selectProcess.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body{
-    padding: 0!important;
-  }
-</style>

@@ -449,3 +449,11 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style scoped>
+ .JNPF-common-search-box {
+  padding: 8px 0 0 0!important;
+  margin-left: 0!important;
+
+  margin-bottom: 5px;
+}
+</style>

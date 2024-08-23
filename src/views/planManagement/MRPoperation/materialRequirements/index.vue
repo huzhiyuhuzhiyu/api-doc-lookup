@@ -62,10 +62,10 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
+              <JNPF-table  :partentOrChild="'assemble'" ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
                 @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" sortable="custom" />
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomId" label="是否有BOM" min-width="140" sortable="custom">
                   <template slot-scope="scope">
@@ -164,8 +164,8 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true" :key="2"
-                :setColumnDisplayList="columnList1" @sort-change="sortChange" custom-column hasC 
+              <JNPF-table :partentOrChild="'produce'"  ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true" :key="2"
+                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC 
                 @selection-change="handleProduce" :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -307,8 +307,8 @@
                 </div>
               </div>
 
-              <JNPF-table ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
-                :setColumnDisplayList="columnList1" @sort-change="sortChange" custom-column hasC
+              <JNPF-table :partentOrChild="'purchase'" ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
+                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
                 @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -431,8 +431,8 @@
                 </div>
               </div>
 
-              <JNPF-table ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
-                :setColumnDisplayList="columnList1" custom-column hasC @selection-change="handleOut"
+              <JNPF-table :partentOrChild="'out'" ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
+                :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
                 :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -1327,22 +1327,18 @@ export default {
       if (this.activeName == "assemble") {
         this.planDateArr = []
         this.getassembleData()
-        this.columnList1=["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"]
       }
       if (this.activeName == "produce") {
-        this.columnList1=["productCode", "planNo", "planEndDate"]
         this.planDateArr = []
         this.getproduceData()
 
       }
       if (this.activeName == "purchase") {
         this.getpurchaseData()
-        this.columnList1=["productCode", "planNo", "planEndDate"]
 
       }
       if (this.activeName == "out") {
         this.planDateArr = []
-        this.columnList1=["productCode", "planNo", "planEndDate"]
         this.getouteData()
 
       }
@@ -1394,7 +1390,6 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
             item.planProductionQuantity=item.outputQuantity
-            item.productionPlanNo=item.planNo
           });
           this.total1 = res.data.page.total
           this.assembleData = tableData
@@ -1469,7 +1464,6 @@ export default {
         if (tableData.length) {
           tableData.forEach(item => {
             item.planProductionQuantity=item.outputQuantity
-            item.productionPlanNo=item.planNo
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1814,7 +1808,6 @@ export default {
               item.specialRequire === ids.specialRequire
 
             ) {
-              item.productionPlanNo = item.planNo
               ids.urgentFlag = item.urgentFlag
               ids.planProductionQuantity = this.assembleArrList[index].planProductionQuantity;
               ids.materialDemandId = this.assembleArrList[index].materialDemandId;
@@ -1840,16 +1833,13 @@ export default {
             this.btnLoading = false;
           });
       }
-      if (this.orderForm.demandType == "produce") {
+      if (this.activeName == "produce") {
         let flag = null;
         console.log(this.orderDetailData);
         for (let index = 0; index < this.orderDetailData.length; index++) {
           const item = this.orderDetailData[index];
 
-          if (
-            !item.planProductionQuantity ||
-            Number(item.planProductionQuantity) == 0
-          ) {
+          if ( !item.planProductionQuantity || Number(item.planProductionQuantity) == 0 ) {
             flag = false;
             this.$message({
               type: "error",
@@ -1905,7 +1895,7 @@ export default {
             this.btnLoading = false;
           });
       }
-      if (this.orderForm.demandType == "out") {
+      if (this.activeName == "out") {
         let flag = null;
         for (let index = 0; index < this.orderDetailData.length; index++) {
           const item = this.orderDetailData[index];
@@ -1952,8 +1942,7 @@ export default {
               item.productsId === ids.productsId
             ) {
               ids.deliveryDate = item.deliveryDate;
-              ids.planDemandQuantity =
-                this.outArrList[index].planDemandQuantity;
+              ids.planDemandQuantity = this.outArrList[index].planDemandQuantity;
               ids.materialDemandId = this.outArrList[index].materialDemandId;
               ids.poolType = item.poolType;
             }
@@ -1971,13 +1960,13 @@ export default {
             this.btnLoading = false;
             this.productVisible = false;
             this.tableFlag = false;
-            this.initData();
+            this.getouteData();
           })
           .catch((error) => {
             this.btnLoading = false;
           });
       }
-      if (this.orderForm.demandType == "purchase") {
+      if (this.activeName == "purchase") {
         let flag = null;
         for (let index = 0; index < this.orderDetailData.length; index++) {
           const item = this.orderDetailData[index];
@@ -2027,6 +2016,7 @@ export default {
                 this.purchaseArrList[index].materialDemandId;
               ids.deliveryDate = item.deliveryDate;
               ids.poolType = item.poolType;
+              
             }
           });
         });
@@ -2043,7 +2033,7 @@ export default {
             this.purchaseArr = [];
             this.productVisible = false;
             this.tableFlag = false;
-            this.initData();
+            this.getpurchaseData();
           })
           .catch((error) => {
             this.btnLoading = false;
@@ -2117,25 +2107,27 @@ export default {
             item.urgentFlag = false;
             item.insertOrderSort = "";
             item.outputQuantity = Number(item.outputQuantity);
-            this.produceArrList[index].planProductionQuantity = item.planProductionQuantity
+            item.planProductionQuantity = item.outputQuantity
+
+
+            
           });
 
           const mergedData = arr.reduce((acc, curr) => {
             console.log("object");
             // const key = curr.bussinessCode === "complete" ? `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}` : `${curr.bussinessCode}-${curr.productsId}`;
-            const key = `${curr.bussinessCode}-${curr.productsId}-${curr.cooperativePartnerId}`;
+            const key = `${curr.productsId}`;
             if (!acc[key]) {
               acc[key] = { ...curr };
             } else {
-              acc[key].outputQuantity += curr.outputQuantity;
-              acc[key].issuedQuantity += curr.issuedQuantity;
-              acc[key].productionQuantity += curr.productionQuantity;
+              acc[key].outputQuantity += curr.outputQuantity; 
+              acc[key].planProductionQuantity += curr.planProductionQuantity;
               let earliestDate = arr.reduce((earliest, current) => {
                 return earliest.deliveryDate < current.deliveryDate
                   ? earliest
                   : current;
               });
-              acc[key].deliveryDate = earliestDate.deliveryDate;
+               
             }
             return acc;
           }, {});
@@ -2232,24 +2224,25 @@ export default {
                 4
               );
           });
+          const key = `${curr.sealingCoverTyping}-${curr.accuracyLevel}-${curr.vibrationLevel}-${curr.oil}-${curr.oilQuantity}-${curr.productsId}-${curr.clearance}-${curr.packagingMethod}-${curr.specialRequire}`;
+            if (!acc[key]) {
+              acc[key] = { ...curr };
+            } else {
+              acc[key].outputQuantity += curr.outputQuantity;
+              acc[key].planProductionQuantity += curr.planProductionQuantity;
+            }
           console.log("arr", arr);
           const mergedArr = arr.reduce((acc, curr) => {
             const existingItem = acc.find(
-              (item) => item.productCode === curr.productCode
+              (item) => item.productCode === curr.productCode&&item.colour === curr.colour&&item.standardValue === curr.standardValue
             );
             if (existingItem) {
               console.log(6);
               existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.issuedQuantity += Number(curr.issuedQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat(
-                Number(curr.planDemandQuantity),
-                4
-              );
+              existingItem.planDemandQuantity += this.jnpf.numberFormat( Number(curr.planDemandQuantity), 4 );
               console.log("curr", curr);
               let earliestDate = arr.reduce((earliest, current) => {
-                return earliest.deliveryDates < current.deliveryDates
-                  ? earliest
-                  : current;
+                return earliest.deliveryDates < current.deliveryDates ? earliest : current;
               });
               existingItem.deliveryDates = earliestDate.deliveryDates;
               // 如果productionQuantity是字符串，您可能需要进行适当的处理
@@ -2391,12 +2384,14 @@ export default {
 }
 
 .JNPF-common-head {
-  padding: 10px;
+  padding: 8px;
 }
 
 .JNPF-common-search-box {
-  padding-top: 0px;
-  padding-bottom: 10px;
+  padding: 8px 0 !important;
+  margin-left: 0!important;
+  padding-top: 0px!important;
+   
   margin-bottom: 5px;
 }
 

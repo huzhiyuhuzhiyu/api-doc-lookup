@@ -118,10 +118,7 @@ export default {
       requestObj: {
         orderItems: [{
           asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
         pageNum: 1,
         pageSize: -1,
@@ -133,7 +130,7 @@ export default {
           column: ""
         }, {
           asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
         pageNum: 1,
         pageSize: 999,

@@ -4,35 +4,77 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="新建返工任务" />
+          <el-page-header @back="goBack" content="生产编排" />
           <div class="options">
-            <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
-              @click="handleConfirm('draft')">
-              保存草稿</el-button>
-            <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
-              @click="handleConfirm('submit')">
-              保存并提交</el-button>
-            <el-button size="mini" @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+            <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
+              @click="handleConfirm('submit')">提交</el-button>
+            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="基本信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="生产任务单号" prop="orderNo">
-                          <el-input v-model="dataForm.orderNo"
-                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                        <el-form-item label="生产计划单号" prop="productionPlanNo">
+                          <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="返工产品" prop="drawingNo">
-                          <el-input v-model="dataForm.drawingNo" placeholder="返工产品"
-                            @focus="openSelectProductFun"></el-input>
+                        <el-form-item label="生产任务单号" prop="orderNo">
+                          <el-input v-model="dataForm.orderNo"
+                            :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                        </el-form-item>
+                      </el-col>
+
+
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="品名规格" prop="productsDrawingNo">
+                          <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="产品编码" prop="productsCode">
+                          <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="单位" prop="mainUnit">
+                          <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="计划生产数量" prop="planProductionQuantity">
+                          <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="可编排数量" prop="availableArrangeQuantity">
+                          <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+
+
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="编排数量" prop="productionQuantity">
+                          <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
+                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                            start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                          </el-date-picker>
                         </el-form-item>
                       </el-col>
 
@@ -40,20 +82,6 @@
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="计划生产开始—结束日期" prop="planDate">
-                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
-                            style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="返工生产数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
-                          </el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -136,20 +164,10 @@
                   </el-form>
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo">
-                  <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                      @click="openselectProcessFun()">选择工序</el-button>|
-                    <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                      @click="batchDeleteProcess">批量删除</el-button>|
-                  </div>
-                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="processRef" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading" hasC
-                      @selection-change="delProcessFun">
-                      <el-table-column prop="processName" label="工序名称" min-width="170" />
+                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
+                      <el-table-column prop="processName" label="工序名称" min-width="170" />
                       <el-table-column prop="processingType" label="加工类型" width="100">
                         <template slot-scope="scope">
                           <div>
@@ -233,92 +251,15 @@
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-
+                      
                     </JNPF-table>
 
                   </el-form>
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="领料信息" name="annex">
-              <el-collapse v-model="activeNames2">
-                <el-collapse-item title="基本信息" name="pickbasicInfo" class="orderInfo" v-if="allocationFlag">
-                  <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
-                    label-position="top">
-                    <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料单号" prop="orderNo">
-                          <el-input v-model="collect.orderNo"
-                            :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料人" prop="personId">
-                          <user-select v-model="collect.personId" placeholder="请选择领料人" clearable style="width: 100%;"
-                            :disabled="btnType == 'look'" @change="hangleSelectSales">
-                          </user-select>
-
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="领料日期" prop="operationDate">
-                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime"
-                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
-                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
-                          </el-date-picker>
-                        </el-form-item>
-                      </el-col>
-
-                    </el-row>
-                  </el-form>
-                </el-collapse-item>
-                <el-collapse-item title="领料清单" name="pickInfo">
-                  <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
-                      @click="openselectcollectProductFun()">选择产品</el-button>|
-                    <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
-                      @click="batchDelete">批量删除</el-button>|
-                  </div>
-                  <el-form :model="dataFormOne" v-bind="dataFormOne" ref="processRef" class="data-form">
-
-                    <el-table ref="product" :data="dataFormOne.collectData" fixedNo v-loading="tableloading"
-                      v-bind="dataFormOne.collectData" @selection-change="handeleProductInfoData">
-                      <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="drawingNo" label="品名规格" />
-                      <el-table-column prop="productCode" label="产品编码"></el-table-column>
-                      <el-table-column prop="processName" label="工序名称">
-                        <template slot="header">
-                          <span class="required">*</span>工序名称
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'processName'"
-                            :rules="productRules.processName">
-                            <el-input v-model="scope.row.processName" readonly
-                              @focus="selectCollectProcess(scope.$index)"></el-input>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位"></el-table-column>
-                      <el-table-column prop="materialsUsedQuantity" label="投料数量">
-                        <template slot="header">
-                          <span class="required">*</span>投料数量
-                        </template>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'materialsUsedQuantity'"
-                            :rules="productRules.materialsUsedQuantity">
-                            <el-input v-model="scope.row.materialsUsedQuantity" placeholder="投料数量" />
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                    </el-table>
-                  </el-form>
-                </el-collapse-item>
-              </el-collapse>
+            <el-tab-pane label="附件" name="annex">
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -417,7 +358,7 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -455,8 +396,7 @@
             <el-table-column type="index" width="70" label="序号" />
             <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" min-width="120"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
@@ -481,18 +421,8 @@
 
 
 
-        <RoutingForm v-if="routingVisible" ref="routingForm" @selectRouting="selectRoutingFun"> </RoutingForm>
-        <SelectProductForm v-if="productVisible" ref="productForm" @selectProduct="selectProductFun">
-        </SelectProductForm>
-        <SelectProcrssForm v-if="processVisible" ref="processForm" @selectProcess="selectProcessFun">
-        </SelectProcrssForm>
-        <CollectProductForm v-if="collectVisible" ref="collectProductForm"
-          @selectCollectProduct="selectCollectProductFun">
-        </CollectProductForm>
-        <ComSelect-page ref="ComSelect-page" @change="submit" :tableItems="ProductTableItems" title="选择工序"
-          treeTitle="工序分类" :methodArr="ProductMethodArr" :listMethod="getBimProcessList"
-          :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false"
-          :multiple="false" :listDataFormatting="listDataFormatting" />
+        <RoutingForm v-if="routingVisible" ref="routingForm" @selectRouting="selectRoutingFun">
+        </RoutingForm>
       </div>
     </transition>
   </div>
@@ -509,94 +439,14 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
-import SelectProductForm from './selectProductForm.vue'
-import SelectProcrssForm from './processForm.vue'
-import CollectProductForm from './CollectProductForm.vue'
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
-import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
-import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
-import { getcategoryTree } from '@/api/basicData/materialSettings'
+import { detailProcess, getProcessList, getWorkListMap,addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 export default {
   components: {
-    RoutingForm,
-    SelectProductForm,
-    SelectProcrssForm,
-    CollectProductForm,
+    RoutingForm
   },
   data() {
     return {
-      getBimProcessList,
-      ProductMethodArr: [
-        {
-          label: '工序分类',
-          classAttribute: 'process',
-          method: getcategoryTree,
-          requestObj: { classAttribute: 'process' }
-        }
-      ], // 产品选择弹出框树状列表
-      ProductListRequestObj: {
-        name: '',
-        code: '',
-        processingType: '',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        productCategoryId: ''
-      }, // 产品选择弹出框列表请求参数
-      ProductTableItems: [
-        { prop: 'code', label: '工序编码', fixed: 'left' },
-        { prop: 'name', label: '工序名称', fixed: 'left' },
-        { prop: 'name', label: '工序类型', fixed: 'left' },
-        { prop: 'processTypeName', label: '加工类型', fixed: 'left' }
-      ], // 产品选择弹出框表单展示字段
-      ProductTableSearchList: [
-        { prop: 'code', label: '工序编码', type: 'input' },
-        { prop: 'name', label: '工序名称', type: 'input' }
-      ],
-      collectVisible: false,
-      productRules: {
-        materialsUsedQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }] }), trigger: ['blur'] },
-          { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：投料数量${errMsg}`) }), trigger: 'blur' },
-          { required: true, trigger: ['blur'] }
-        ],
-        processName: [{ validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：工序${errMsg}`) }] }), trigger: ['blur'] },]
-      },
-      collectConfig: {
-
-      },
-      pickDataRule: {
-        orderNo: [
-          { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
-        ],
-        operationDate: [
-          { required: true, message: '领料日期不能为空', trigger: 'change' }
-        ],
-        personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
-        ],
-      },
-      activeNames2: [],
-      collect: {
-        orderNo: "",
-        operationDate: "",
-        personId: "",
-      },
-      allocationFlag: false,
-      btnType: "",
-      processVisible: false,
-      productVisible: false,
       activeNames: ["productInfo", "basicInfo"],
       routingVisible: false,
       dataForm: {
@@ -622,14 +472,9 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
-        drawingNo: "",
       },
       dataFormTwo: {
         data: [],
-      },
-      dataFormOne: {
-        collectData: [],
-
       },
       listLoading: false,
       activeName: "orderInfo",
@@ -638,19 +483,13 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataRule: {
-        orderNo: [
-          { required: true, message: '生产任务单号不能为空', trigger: 'blur' }
-        ],
-        drawingNo: [
-          { required: true, message: '返工产品不能为空', trigger: 'change' }
-        ],
         planDate: [
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: [(errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["编排数量不能为空", (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '返工生产数量必须大于0', (errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', '编排数量必须大于0', (errMsg, index) => { this.$message.error(`编排数量：${errMsg}`) }), trigger: 'blur' }
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -687,186 +526,19 @@ export default {
         processName: "",
       },
       detailDataList: [],
-      selectProcessArr: [],
-      selectRows: [],
-      currentProductIndex: "",
+      detailDiaFlag:false,
     }
   },
   computed: {
 
   },
   created() {
-    this.getPickingConfig()
+
   },
   mounted() {
 
   },
   methods: {
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
-    // 批量删除
-    batchDelete() {
-      // 遍历选中的行的数据
-      if (this.selectRows.length < 1) {
-        this.$message({
-          message: "请选择你要删除的数据",
-          type: "error",
-          duration: 1500,
-        })
-      }
-      for (let i = 0; i < this.selectRows.length; i++) {
-        const row = this.selectRows[i];
-        const index = this.dataFormOne.collectData.indexOf(row);
-        if (index > -1) {
-          this.dataFormOne.collectData.splice(index, 1); // 从tableData中删除选中的行
-        }
-      }
-      this.selectRows = []; // 清空选中的行的数据
-    },
-    listDataFormatting(res) {
-      let treeData = res.data.records.map((item) => {
-        if (item.processingType == 'self_produced') {
-          item.processingTypeName = '自制'
-        } else if (item.processingType == 'external_production') {
-          item.processingTypeName = '外协'
-        }
-
-        if (item.processType == 'normal') {
-          item.processTypeName = '正常工序'
-        } else if (item.processType == 'wait_assemble') {
-          item.processTypeName = '待装配工序'
-        } else if (item.processType == 'vibrate') {
-          item.processTypeName = '测震工序'
-        }
-        console.log("item", item)
-
-        return item
-      })
-      return treeData
-    },
-    // 打开选择领料清单产品的工序弹框
-    selectCollectProcess(index) {
-      this.$refs['ComSelect-page'].openDialog()
-      this.currentProductIndex = index
-      console.log("currentProductIndex", this.currentProductIndex);
-    },
-    submit(id, data) {
-      console.log("选择的工序", id, data, this.dataFormOne.collectData);
-      let datas = data[0].all
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processName', datas.name)
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processId', datas.id)
-    },
-
-    // 打开选择领料清单选择产品弹框
-    openselectcollectProductFun() {
-      this.collectVisible = true
-      this.$nextTick(() => {
-        this.$refs.collectProductForm.init()
-      })
-    },
-    // 选择的领料清单产品
-    selectCollectProductFun(data) {
-      console.log("领料产品", data);
-      this.dataFormOne.collectData = data
-    },
-    //领料人
-    hangleSelectSales(e, r) {
-      this.$nextTick(() => {
-        this.$refs.collectForm.clearValidate('personId')
-      })
-      this.collect.personId = e
-    },
-    // 获取领料设置 领料是否自动生成领料单
-    getPickingConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "produce" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
-        if (this.allocationFlag) {
-          this.activeNames2 = ['pickInfo', 'pickbasicInfo']
-        } else {
-          this.activeNames2 = ['pickInfo']
-
-        }
-      })
-    },
-    // 打开选择工序的弹框
-    openselectProcessFun() {
-      if (!this.dataForm.routingId) return this.$message.error("请先选择工艺路线")
-      this.processVisible = true
-      this.$nextTick(() => {
-        this.$refs.processForm.init(this.dataForm.routingId, this.dataFormTwo.data)
-      })
-    },
-    // 选择工序
-    selectProcessFun(data) {
-      console.log("所选返工工序", data);
-      this.dataFormTwo.data = data
-    },
-    delProcessFun(val) {
-      this.selectProcessArr = val
-    },
-    // 批量删除工序
-    batchDeleteProcess() {
-      if (!this.selectProcessArr.length) return this.$message.error("请先选择您要删除的工序")
-      let data = this.dataFormTwo.data
-      for (let i = 0; i < this.selectProcessArr.length; i++) {
-        const row = this.selectProcessArr[i];
-        const index = data.indexOf(row);
-        if (index > -1) {
-          data.splice(index, 1); // 从tableData中删除选中的行
-        }
-      }
-      data[0].firstFlag = true;
-      if (data.length == 1) {
-        if (data[0].processingType !== "self_produced") {
-          data[data.length - 1].stockFlag = false;
-          data[data.length - 1].reportFlag = false;
-        } else {
-          data[data.length - 1].lastFlag = true;
-          data[data.length - 1].stockFlag = true;
-          data[data.length - 1].reportFlag = true;
-        }
-      } else {
-        if (data[0].processingType !== "self_produced") {
-          data[data.length - 1].stockFlag = false;
-          data[data.length - 1].reportFlag = false;
-        } else {
-          data[data.length - 1].lastFlag = true;
-          data[data.length - 1].stockFlag = true;
-          data[data.length - 1].reportFlag = true;
-        }
-        if (data[data.length - 1].processingType !== "self_produced") {
-          data[data.length - 1].stockFlag = false;
-          data[data.length - 1].reportFlag = false;
-        } else {
-          data[data.length - 1].lastFlag = true;
-          data[data.length - 1].stockFlag = true;
-          data[data.length - 1].reportFlag = true;
-        }
-      }
-    },
-    // 打开选择返工产品弹框
-    openSelectProductFun() {
-      this.productVisible = true
-      this.$nextTick(() => {
-        this.$refs.productForm.init()
-      })
-      console.log(6666);
-    },
-    // 选择返工产品
-    selectProductFun(data) {
-      console.log("所选返工产品", data);
-      this.dataForm = data
-      this.$set(this.dataForm, 'planDate', [])
-      this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
-    },
-
-
-
-
-
     // 通过查询条件查询未完成的派工单
     dataFormSubmit() {
       if (this.daterangeList.length) {
@@ -935,6 +607,7 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
+      this.getRoutingDetail(this.dataForm.routingId)
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1306,46 +979,27 @@ export default {
         });
       })
     },
-    init(id, btnType) {
-      console.log("传递数据", id, btnType);
-      this.dataForm.id = id || ''
-      this.btnType = btnType
-      this.$set(this.dataForm, 'planDate', [])
-      this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
-      if (btnType == 'edit') {
-        this.fetchData("PROD", false)
-        this.fetchData("PODH", false)
-      }
-      if (btnType == 'add') {
-
-        this.fetchData("PROD", true)
-        this.fetchData("PODH", true)
-      }
-      return
+    init(data) {
+      console.log("传递数据", data);
+      this.$set(data[0],'productionQuantity','')
       this.dataForm = data[0]
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
+      this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
+      this.$refs.dataForm.clearValidate('planDate');
+      this.getProductClassFun()
       this.getProductionLineListFun()
+      this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)
     },
-    async fetchData(code, flag) {
+    async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        if (code == 'PROD') {
-          this.codeConfig = data
-          if (flag) this.dataForm.orderNo = data.number
-
-        }
-        if (code == 'PODH') {
-          this.collectConfig = data
-          if (flag) this.collect.orderNo = data.number
-
-        }
-
+        this.codeConfig = data
+        this.dataForm.orderNo = data.number
       } catch (error) {
       }
     },
@@ -1358,15 +1012,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
-          this.dataForm.productsId = this.dataForm.id
-          this.dataForm.planStartDate = this.dataForm.planDate[0]
-          this.dataForm.planEndDate = this.dataForm.planDate[1]
+          if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
           let submitFlag = null;
-          if (!this.dataFormTwo.data.length) {
-            this.$message.error("至少需要一道工序")
-            submitFlag = false;
-            return
-          }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {
             const item = this.dataFormTwo.data[index];
             if (
@@ -1376,6 +1023,7 @@ export default {
               item.processingType == "self_produced"
             ) {
               submitFlag = false;
+              this.btnLoading = false;
               this.$message({
                 message: "第" + (index + 1) + "行班组、人员需要必填一项",
                 type: "error",
@@ -1383,38 +1031,26 @@ export default {
               break;
             }
           }
-          this.dataFormTwo.data.forEach(item => {
-            this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
-            this.$set(item, 'planEndDate', this.dataForm.planEndDate)
-            this.$set(item, 'planStartDate', this.dataForm.planStartDate)
-          });
-
+          console.log("表单", this.dataForm);
+          console.log("工序", this.dataFormTwo.data);
           if (submitFlag === false) return
-          this.btnLoading = true;
           this.dataFormTwo.data.forEach(item => {
-            item.routingProResList.forEach(items => {
-              items.processId = item.processId
-            })
-            this.$set(item, 'workOrderResList', item.routingProResList)
-          });
-          let obj = {
-            collect: this.collect,
-            materialList: this.dataFormOne.collectData,
-            prodOrder: this.dataForm,
-            workOrderList: this.dataFormTwo.data
+              item.routingProResList.forEach(items=>{
+                items.processId=item.processId
+              })
+              this.$set(item,'workOrderResList',item.routingProResList)
+            });
+          let obj={
+            prodOrder:this.dataForm,
+            workOrderList:this.dataFormTwo.data
           }
-          console.log("dataForm", this.dataForm);
-          console.log("dataFormTwo.data", this.dataFormTwo.data);
-          console.log("coll", this.collect);
-          console.log("dataFormOne.collectData", this.dataFormOne.collectData);
-
-          addProdOrder(obj).then(res => {
+          addProdPlanArrange(obj).then(res=>{
             this.btnLoading = false
-            this.$message.success("新建返工任务成功")
+            this.$message.success("生成编排成功")
             setTimeout(() => {
               this.$emit('close')
             }, 1500);
-          }).catch(error => {
+          }).catch(error=>{
             this.btnLoading = false
 
           })
@@ -1446,7 +1082,6 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  padding-bottom: 10px !important;
 }
 
 ::v-deep .el-tabs__header {

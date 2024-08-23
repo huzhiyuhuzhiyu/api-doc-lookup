@@ -137,11 +137,11 @@
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo">
                   <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openselectProcessFun()">选择工序</el-button>|
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDeleteProcess">批量删除</el-button>|
                   </div>
@@ -262,9 +262,9 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="领料日期" prop="operationDate">
-                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime"
-                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
-                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
+                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
+                            style="width: 100%;" placeholder="领料日期" :disabled="btnType == 'look' ? true : false"
+                            @change="changDateFun">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -274,11 +274,11 @@
                 </el-collapse-item>
                 <el-collapse-item title="领料清单" name="pickInfo">
                   <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openselectcollectProductFun()">选择产品</el-button>|
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>|
                   </div>
@@ -291,11 +291,8 @@
                       <el-table-column prop="drawingNo" label="品名规格" />
                       <el-table-column prop="productCode" label="产品编码"></el-table-column>
                       <el-table-column prop="processName" label="工序名称">
-                        <template slot="header">
-                          <span class="required">*</span>工序名称
-                        </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'processName'"
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
                             :rules="productRules.processName">
                             <el-input v-model="scope.row.processName" readonly
                               @focus="selectCollectProcess(scope.$index)"></el-input>
@@ -304,11 +301,8 @@
                       </el-table-column>
                       <el-table-column prop="mainUnit" label="单位"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量">
-                        <template slot="header">
-                          <span class="required">*</span>投料数量
-                        </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'materialsUsedQuantity'"
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'materialsUsedQuantity'"
                             :rules="productRules.materialsUsedQuantity">
                             <el-input v-model="scope.row.materialsUsedQuantity" placeholder="投料数量" />
                           </el-form-item>
@@ -689,7 +683,7 @@ export default {
       detailDataList: [],
       selectProcessArr: [],
       selectRows: [],
-      currentProductIndex: "",
+      currentProductIndex:"",
     }
   },
   computed: {
@@ -736,26 +730,24 @@ export default {
           item.processTypeName = '正常工序'
         } else if (item.processType == 'wait_assemble') {
           item.processTypeName = '待装配工序'
-        } else if (item.processType == 'vibrate') {
+        }else if (item.processType == 'vibrate') {
           item.processTypeName = '测震工序'
         }
-        console.log("item", item)
-
-        return item
+       return item
       })
       return treeData
     },
     // 打开选择领料清单产品的工序弹框
     selectCollectProcess(index) {
       this.$refs['ComSelect-page'].openDialog()
-      this.currentProductIndex = index
-      console.log("currentProductIndex", this.currentProductIndex);
+      this.currentProductIndex=index
+      console.log("currentProductIndex",this.currentProductIndex);
     },
-    submit(id, data) {
-      console.log("选择的工序", id, data, this.dataFormOne.collectData);
-      let datas = data[0].all
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processName', datas.name)
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processId', datas.id)
+    submit(id,data) {
+      console.log("选择的工序", id, data,this.dataFormOne.collectData); 
+      let datas=data[0].all
+      this.$set(this.dataFormOne.collectData[this.currentProductIndex],'processName',datas.name)
+      this.$set(this.dataFormOne.collectData[this.currentProductIndex],'processId',datas.id)
     },
 
     // 打开选择领料清单选择产品弹框
@@ -1358,9 +1350,9 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
-          this.dataForm.productsId = this.dataForm.id
-          this.dataForm.planStartDate = this.dataForm.planDate[0]
-          this.dataForm.planEndDate = this.dataForm.planDate[1]
+          this.dataForm.productsId=this.dataForm.id
+          this.dataForm.planStartDate=this.dataForm.planDate[0]
+          this.dataForm.planEndDate=this.dataForm.planDate[1]
           let submitFlag = null;
           if (!this.dataFormTwo.data.length) {
             this.$message.error("至少需要一道工序")
@@ -1400,14 +1392,14 @@ export default {
           let obj = {
             collect: this.collect,
             materialList: this.dataFormOne.collectData,
-            prodOrder: this.dataForm,
-            workOrderList: this.dataFormTwo.data
+            prodOrder:this.dataForm,
+            workOrderList:this.dataFormTwo.data
           }
-          console.log("dataForm", this.dataForm);
-          console.log("dataFormTwo.data", this.dataFormTwo.data);
-          console.log("coll", this.collect);
-          console.log("dataFormOne.collectData", this.dataFormOne.collectData);
-
+           console.log("dataForm",this.dataForm);
+           console.log("dataFormTwo.data",this.dataFormTwo.data);
+           console.log("coll",this.collect);
+           console.log("dataFormOne.collectData",this.dataFormOne.collectData);
+           
           addProdOrder(obj).then(res => {
             this.btnLoading = false
             this.$message.success("新建返工任务成功")

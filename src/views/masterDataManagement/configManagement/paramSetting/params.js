@@ -90,6 +90,19 @@ export default () => [
       },
     ]
   },  
+  {
+    tabCode: "produce",
+    tabName: "领料设置",
+    tabContent: [
+      {
+        row: [
+          { prop: "arrange_auto_picking", clearable: false, label: "领料是否自动生成领料单", value: '0', sm: 6, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+        ]
+      },
+     
+    ]
+  },
   // {
   //   tabCode: "mrp",
   //   tabName: "MRP设置",

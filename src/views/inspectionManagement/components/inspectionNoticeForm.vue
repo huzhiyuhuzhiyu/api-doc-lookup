@@ -5,7 +5,7 @@
       <div :class="['JNPF-common-page-header', readOnly ? 'noButtons' : '']">
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="!readOnly">
-          <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
+          <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
           <el-button @click="$emit('close')">{{ $t('common.cancelButton') }}</el-button>
         </div>
@@ -154,7 +154,8 @@ export default {
         },
         { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
       ],
-      productList: []
+      productList: [],
+      codeConfig: {}
 
     }
   },
@@ -179,7 +180,7 @@ export default {
     setDataFormItems() {
       this.dataFormItems = [
         {
-          prop: "sourceNo", label: "来源单号", value: "", type: "input", itemDisabled: true, itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          prop: "orderNo", label: "单号", value: "", type: "input", itemDisabled: true, itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
         {
@@ -187,18 +188,46 @@ export default {
           change: () => { this.$nextTick(() => { this.$refs.dataForm.$refs.main.validateField('inspectorId') }) }, sm: 12
         },
         { prop: "inspectionDate", label: "检验日期", value: undefined, type: "date", itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+
+        {
+          prop: "productDrawingNo", label: "品名规格", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "mainUnit", label: "单位", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "inspectionQuantity", label: "报检数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: "inspectionMethod", label: "检验方式", value: '', type: 'select', clearable: false,
+          change: this.inspectionMethodChange, itemRules: [{ required: true, trigger: 'change' }], sm: 12,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: [{ label: "免检", value: "exempt" }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
+        },
         // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
         {
-          prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 12, multiple: true,
-          render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+          prop: "samplingQuantity", label: "检验数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag, itemDisabled:(rowIndex) =>  this.dataForm.inspectionMethod == 'all'
         },
+        { prop: "inspectionResults", label: "检验结果", value: undefined, type: "select", options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+        {
+          prop: "unqualifiedQuantity", label: "不合格数量", value: "", type: "input", sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        // {
+        //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 12, multiple: true,
+        //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+        // },
         { prop: "remark", label: "备注", value: "", type: "textarea" }
       ]
     },
     // 设置子表结构
     setLinesListItems() {
       this.linesListItems = [
-        { prop: "sourceNo", label: "来源单号", type: 'view', minWidth: 180, render: this.inspectionType.indexOf('_batch') !== -1 || this.batchFlag },
+        { prop: "orderNo", label: "来源单号", type: 'view', minWidth: 180, render: this.inspectionType.indexOf('_batch') !== -1 || this.batchFlag },
         { prop: "productCode", label: "产品编码", value: "", type: 'view', minWidth: 140 },
         { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 140 },
         { prop: "productDrawingNo", label: "产品图号", value: "", type: 'view', minWidth: 140, render: ['procure', 'finished', 'sale_back', 'process', 'back_material', 'produce', 'external'].includes(this.inspectionType) },
@@ -210,7 +239,7 @@ export default {
           prop: "inspectionMethod", label: "检验方式", value: '', type: 'select', clearable: false,
           change: this.inspectionMethodChange, width: 140, itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: (rowIndex) => this.linesList[rowIndex].inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: [{ label: "免检", value: "exempt", disabled: true }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
+          options: [{ label: "免检", value: "exempt" }, { label: "抽检", value: "spot_check" }, { label: "全检", value: "all" }]
         },
         { prop: "inspectionQuantity", label: "报检数量", value: "", type: "view", minWidth: 150 },
         { prop: "mainUnit", label: "单位", value: "", type: "view", width: 130 },
@@ -254,11 +283,29 @@ export default {
       ]
       this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() })
     },
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        console.log(data, 'data')
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) { }
+    },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
       console.log(row, 'rrrrr')
       this.scope = { ...row }
       console.log(this.scope, 'sc')
+
+      this.fetchData(businessCode, true)
+      console.log(this.dataForm, 'form')
+      this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
+      this.dataForm.inspectionDate = new Date()
+      this.dataForm.productDrawingNo = row.productDrawingNo
+      this.dataForm.mainUnit = row.mainUnit
+      this.dataForm.inspectionQuantity = row.receivedQuantity
       this.ProductListRequestObjs = {
         code: this.scope.productCode,
         drawingNo: "",
@@ -298,7 +345,7 @@ export default {
       }
       if (typeof id === 'object' && inspectionType === 'process') { // 生产巡检
         let rowData = id
-        this.dataForm = { noticeId: rowData.id, sourceNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'process', submitMethod: 'add' }
+        this.dataForm = { noticeId: rowData.id, orderNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'process', submitMethod: 'add' }
         let tempLinesList = [{
           ordersLineId: rowData.id,
           productsId: rowData.productId,
@@ -330,7 +377,7 @@ export default {
         this.dataForm = { inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
         let tempLinesList = selectedData.map(rowData => {
           return {
-            sourceNo: rowData.orderNo,
+            orderNo: rowData.orderNo,
             ordersLineId: rowData.id,
             productsId: rowData.productsId,
             productCode: rowData.productCode,
@@ -374,10 +421,10 @@ export default {
             )
           })
         }
-        this.dataForm = { ...res.data, sourceNo: res.data.originOrderNo, approvalStatus: '' }
+        this.dataForm = { ...res.data, orderNo: res.data.originOrderNo, approvalStatus: '' }
         this.linesList = res.data.lines
         delete this.dataForm.lines
-        if (!this.dataForm.sourceNo) {
+        if (!this.dataForm.orderNo) {
           this.batchFlag = true
           this.setDataFormItems()
         }
@@ -400,7 +447,7 @@ export default {
           }
           this.dataForm = {
             ...res.data,
-            sourceNo: res.data.orderNo,
+            orderNo: res.data.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.id,
             approvalStatus: '',
@@ -462,7 +509,7 @@ export default {
           }
           this.dataForm = {
             ...res.data.notice,
-            sourceNo: res.data.notice.orderNo,
+            orderNo: res.data.notice.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.notice.id,
             notificationType: inspectionType,
@@ -505,7 +552,7 @@ export default {
           }
           this.dataForm = {
             ...res.data.collect,
-            sourceNo: res.data.collect.orderNo,
+            orderNo: res.data.collect.orderNo,
             inspectionDate: this.jnpf.getToday(),
             noticeId: res.data.collect.id,
             notificationType: inspectionType,
@@ -534,7 +581,7 @@ export default {
       } else if (inspectionType === 'finished') { // 完工
         console.log(id);
         let rowData = id
-        this.dataForm = { noticeId: rowData.id, sourceNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
+        this.dataForm = { noticeId: rowData.id, orderNo: rowData.orderNo, originOrderNo: rowData.orderNo, inspectionDate: this.jnpf.getToday(), notificationType: 'finished', submitMethod: 'add' }
         let tempLinesList = [{
           ordersLineId: rowData.id,
           productsId: rowData.productsId,
@@ -559,7 +606,7 @@ export default {
         this.setLinesListItems()
         this.formLoading = false
       }
-      this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
+
     },
     // 子表数据通用处理
     linesListFormat(linesList) {
@@ -664,8 +711,10 @@ export default {
           })
         }
         let dataObj = {
-          ...this.dataForm,
-          lines: this.linesList,
+          inspection: this.dataForm,
+          // lines: this.linesList,
+          causesList: this.linesListTwo,
+          itemList: this.inspectionList,
           attachmentList: this.datafilelist,
         }
         let modifyFlag = dataObj.submitMethod !== 'add'
@@ -686,22 +735,22 @@ export default {
           }
         }
 
-        formMethod(dataObj).then(res => {
-          let msg = res.msg
-          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-          this.visible = false
-          this.$emit('close', true)
-          this.$message({
-            message: msg,
-            type: 'success',
-            duration: 1500,
-            onClose: () => {
-              this.btnLoading = false
-            }
-          })
-        }).catch(() => {
-          this.btnLoading = false
-        })
+        // formMethod(dataObj).then(res => {
+        //   let msg = res.msg
+        //   if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+        //   this.visible = false
+        //   this.$emit('close', true)
+        //   this.$message({
+        //     message: msg,
+        //     type: 'success',
+        //     duration: 1500,
+        //     onClose: () => {
+        //       this.btnLoading = false
+        //     }
+        //   })
+        // }).catch(() => {
+        //   this.btnLoading = false
+        // })
       } else {
         this.btnLoading = false
       }
@@ -817,14 +866,14 @@ export default {
     // 检验方式更改
     inspectionMethodChange(val, scope) {
       if (val === 'exempt') { // 免检
-        this.linesList[scope.$index].inspectionResults = 'qualified'
-        this.linesList[scope.$index].samplingQuantity = this.linesList[scope.$index].inspectionQuantity
-        this.linesList[scope.$index].unqualifiedQuantity = 0
+        this.dataForm.inspectionResults = 'qualified'
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.unqualifiedQuantity = 0
         this.inspectionResultsChange('qualified', scope)
       } else if (val === 'spot_check') { // 抽检
 
       } else if (val === 'all') { // 全检
-        this.linesList[scope.$index].samplingQuantity = this.linesList[scope.$index].inspectionQuantity
+        this.dataForm.samplingQuantity = this.dataForm.inspectionQuantity
       }
     }
   },

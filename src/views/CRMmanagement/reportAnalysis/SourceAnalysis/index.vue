@@ -4,11 +4,10 @@
       <div class="vux-flexbox filtrate-content filtrate-bar vux-flex-row" style="justify-content: flex-start;">
         <div class="vux-flexbox title-box vux-flex-row" style="justify-content: flex-start;">
           <div class="icon-box"><i class="icon-ym icon-ym-tree-department"></i></div>
-          <div class="text-one-line">合同数量分析</div>
+          <div class="text-one-line">客户来源分析</div>
         </div>
-        <div class="xr-radio-menu-wrap">
-          <el-date-picker v-model="dataForm.year" type="year" value-format="yyyy" placeholder="选择年" :picker-options="pickerOptions">
-          </el-date-picker>
+        <div class="xr-radio-menu-wrap" style="width: 250px;">
+          <selectdate @change="datechange"></selectdate>
         </div>
         <div class="xr-radio-menu-wrap">
           <selectdepartment @change="departmentchange"></selectdepartment>
@@ -21,12 +20,12 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <div class="handle-bar">
+          <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
-          </div>
+          </div> -->
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
-              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="150">
+              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="120">
                 <template slot-scope="scope">
                   {{scope.row[item.prop]}}
                 </template>
@@ -41,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getcontractNumStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getportraitSource } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -51,11 +50,6 @@ export default {
   },
   data() {
     return {
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        }
-      },
       datas: [],
       headerCellStyle: {
         backgroundColor: '#f5f7fa',
@@ -65,8 +59,9 @@ export default {
       chartLoading: false,
       listLoading: false,
       dataForm: {
-        year: "",
-        type:'contractNum',
+        startTime: "",
+        endTime: "",
+        type: "year",
         userIds: []
       },
       tableList: [],
@@ -79,7 +74,6 @@ export default {
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
-    this.dataForm.year = this.jnpf.getToday('YYYY')
     this.initData()
   },
   mounted() {
@@ -109,19 +103,22 @@ export default {
     search() {
       this.initData()
     },
+    datechange(data) {
+      this.dataForm.startTime = data.dateStart
+      this.dataForm.endTime = data.dateEnd
+      this.dataForm.type = data.value
+    },
     departmentchange(data) {
       this.dataForm.userIds = data
     },
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      getcontractNumStats(this.dataForm).then(res1 => {
+      getportraitSource(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
-            }
+            trigger: 'item',
+            formatter: '{b} : {c}'
           },
           toolbox: {
             feature: {
@@ -129,89 +126,47 @@ export default {
             },
             showTitle: false
           },
+          title: [
+            {
+              text: '全部客户',
+              left: '25%',
+              bottom: 0,
+              textAlign: 'center'
+            },
+            {
+              text: '成交客户',
+              left: '75%',
+              bottom: 0,
+              textAlign: 'center'
+            }
+          ],
           grid: {
-            top: '13%',
+            top: '10%',
             left: '1%',
-            right: '3%',
+            right: '4%',
             bottom: '15%',
             containLabel: true
           },
-          color: ['#0065ff', '#00b8d9', '#36b37e'],
-          legend: {
-            data: ['当月合同数量', '环比增长', '同比增长'],
-            bottom: 10
-          },
-          xAxis: [{
-            type: 'category',
-            data: res1.data.map(item => item.type),
-            axisTick: {
-              alignWithLabel: true,
-              show: false
-            }
-          }],
-          yAxis: [{
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            name: '个',
-            type: 'value',
-            minInterval: 1
-          },
-          {
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              show: false
-            },
-            type: 'value',
-            axisLabel: {
-              formatter: '{value} %'
-            },
-            minInterval: 1
-          }],
           series: [
             {
-              name: '当月合同数量',
-              data: res1.data.map(item => item.mouthNum),
-              type: 'bar',
-              barWidth: '20%',
-              smooth: true,
-              markPoint: {
-                data: [
-                  { type: 'max', name: 'Max' },
-                  { type: 'min', name: 'Min' }
-                ]
-              }
+              name: '全部客户',
+              type: 'pie',
+              radius: ['50%', '70%'],
+              center: ['25%', '50%'],
+              avoidLabelOverlap: false,
+              data: res1.data.map(item => {
+                return { value: item.allCustomer, name: item.type }
+              })
             },
             {
-              name: '环比增长',
-              data: res1.data.map(item => item.lastYearGrowth),
-              type: 'line',
-              yAxisIndex: 1,
-              smooth: true,
-              markPoint: {
-                data: [
-                  { type: 'max', name: 'Max' },
-                  { type: 'min', name: 'Min' }
-                ]
-              }
-            },
-            {
-              name: '同比增长',
-              data: res1.data.map(item => item.lastMonthGrowth),
-              type: 'line',
-              yAxisIndex: 1,
-              smooth: true,
-              markPoint: {
-                data: [
-                  { type: 'max', name: 'Max' },
-                  { type: 'min', name: 'Min' }
-                ]
-              },
+              name: '成交客户',
+              type: 'pie',
+              radius: ['50%', '70%'],
+              center: ['75%', '50%'],
+              avoidLabelOverlap: false,
+              data: res1.data.map(item => {
+                return { value: item.dealCustomer, name: item.type }
+              })
             }
           ]
         }
@@ -229,21 +184,20 @@ export default {
       const columnObj1 = {}
       _this.tableList = []
       _this.columnsData = []
-      columnObj1.label = '日期'
+      columnObj1.label = '客户来源'
       columnObj1.prop = 'title'
       _this.columnsData.push(columnObj1)
-      _this.tableList.push({ 'title': '当月合同数量(个)' })
-      _this.tableList.push({ 'title': '环比增长(%)' })
-      _this.tableList.push({ 'title': '同比增长(%)' })
+      _this.tableList.push({ 'title': '全部客户(个)' })
+      _this.tableList.push({ 'title': '成交客户(个)' })
       var props = 'prop'
       _this.datas.forEach((item, index) => {
         const columnObj = {}
         columnObj.label = item.type
         columnObj.prop = props + index
         _this.columnsData.push(columnObj)
-        _this.$set(_this.tableList[0], columnObj.prop, item.mouthNum)
-        _this.$set(_this.tableList[1], columnObj.prop, item.lastYearGrowth)
-        _this.$set(_this.tableList[2], columnObj.prop, item.lastMonthGrowth)
+        _this.$set(_this.tableList[0], columnObj.prop, item.allCustomer)
+        _this.$set(_this.tableList[1], columnObj.prop, item.dealCustomer)
+
       })
     }
   }

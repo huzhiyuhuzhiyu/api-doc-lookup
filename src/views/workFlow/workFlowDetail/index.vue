@@ -53,14 +53,21 @@ export default {
         opType: item.type == 1 ? 0 : item.type == 2 ? 1 : item.type,
         taskNodeId: item.taskNodeId,
         taskId: item.taskOperatorId,
-        hideCancelBtn: true
+        hideCancelBtn: true,
+        businessId: item.businessId,
       }
       if (item.type == 2) {
         checkInfo(item.taskOperatorId).then(res => {
           this.formVisible = true
-          this.$nextTick(() => {
-            this.$refs.FlowBox.init(data)
-          })
+          if (res.data){
+            this.$nextTick(() => {
+              this.$refs.FlowBox.init(data)
+            })
+          }else{
+            this.$nextTick(() => {
+              this.$refs.FlowBox.init(data,true)
+            })
+          }
         }).catch(() => {
           this.formVisible = false
           this.closeForm()

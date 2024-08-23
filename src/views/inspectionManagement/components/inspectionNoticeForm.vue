@@ -210,7 +210,7 @@ export default {
         // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
         {
           prop: "samplingQuantity", label: "检验数量", value: "", type: "input", sm: 12,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag, itemDisabled: this.dataForm.inspectionMethod == 'all'
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag, itemDisabled:(rowIndex) =>  this.dataForm.inspectionMethod == 'all'
         },
         { prop: "inspectionResults", label: "检验结果", value: undefined, type: "select", options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
         {

@@ -455,7 +455,7 @@ export default {
         console.log(arr)
         prodOrderClose(arr).then(res => {
           console.log(555);
-          this.$message.sucess("关单成功")
+          this.$message.success("关单成功")
           this.search()
         }).catch(() => {
         })

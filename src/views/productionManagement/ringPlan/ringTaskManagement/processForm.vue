@@ -43,8 +43,6 @@
                 <div v-if="scope.row.processType == 'vibrate'">测震工序</div>
               </template>
             </el-table-column>
-            
-       
             <el-table-column prop="processingType" label="加工类型" width="180">
               <template slot-scope="scope">
                 <div v-if="scope.row.processingType == 'self_produced'">自制</div>

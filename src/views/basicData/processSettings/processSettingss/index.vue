@@ -71,7 +71,12 @@
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
-
+            <el-table-column prop="reportRulesFlag" label="按工艺顺序报工" align="center" sortable="custom" width="160">
+              <template slot-scope="scope">
+                <div v-if="scope.row.reportRulesFlag == '0'">否</div>
+                <div v-if="scope.row.reportRulesFlag == '1'">是</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
             <!-- <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180" /> -->
             <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
@@ -127,67 +132,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="工艺路线编码">
-              <el-input v-model="listQuery.code" placeholder="请输入工艺路线编码" clearable maxlength="20"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工艺路线名称">
-              <el-input v-model="listQuery.name" placeholder="请输入工艺路线名称" clearable maxlength="20"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工艺状态">
-              <el-select v-model="listQuery.state" placeholder="工艺状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="单据状态">
-              <el-select v-model="listQuery.documentStatus" placeholder="单据状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
 
-          <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="listQuery.approvalStatus" placeholder="审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <!-- <el-date-picker v-model="customerRecognitionTime" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
-                value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%;" :default-time="['00:00:00', '23:59:59']"
-                start-placeholder="开始时间" end-placeholder="结束时间" clearable :picker-options="global.timePickerOptions">
-              </el-date-picker> -->
-              <el-date-picker v-model="customerRecognitionTime" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间"
-                :picker-options="global.timePickerOptions" :default-time="['00:00:00', '23:59:59']"
-                clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索
-        </el-button>
-      </span>
-    </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -355,7 +300,7 @@ export default {
       detailLoading: false,
       visible: false,
       customerRecognitionTime: [],
-      columnList: ['reasonRejection', 'remark', 'createByName','createTime']
+      columnList: ['reasonRejection', 'remark', 'createByName', 'createTime']
     }
   },
   mounted() {
@@ -795,6 +740,7 @@ export default {
   margin-bottom: 5px;
   padding: 0 10px;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px !important
 }

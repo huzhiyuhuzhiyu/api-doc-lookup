@@ -53,7 +53,7 @@
             @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -269,47 +269,28 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if (this.activeName === 'dataTable') {
-        purPurchaseReceiptReturnGoodsDetailList(this.listQuery)
-          .then((res) => {
-            this.tableData = res.data.records
-            this.total = res.data.total
-            this.listLoading = false
-          })
-          .catch(() => {
-            this.listLoading = false
-          })
-      } else {
-        linesReceiptReturn(this.linesQuery)
-          .then((res) => {
-            this.linesTableData = res.data.records
-            this.linesTotal = res.data.total
-            this.listLoading = false
-          })
-          .catch(() => {
-            this.listLoading = false
-          })
-      }
+
+      purPurchaseReceiptReturnGoodsDetailList(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
+
       this.listLoading = true
     },
     search() {
       this.visible = false
-      if (this.activeName === 'dataTable') {
-        this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
-        Object.keys(this.listQuery).forEach((key) => {
-          this.listQuery[key] =
-            typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
-        })
-        this.listQuery.pageNum = 1
-      } else {
-        this.jnpf.searchTimeFormat(this.linesQuery, 'createTimeArr', 'startTime', 'endTime')
-        this.jnpf.searchTimeFormat(this.linesQuery, 'deliveryDate', 'deliverDateStart', 'deliverDateEnd')
-        Object.keys(this.linesQuery).forEach((key) => {
-          this.linesQuery[key] =
-            typeof this.linesQuery[key] === 'string' ? this.linesQuery[key].trim() : this.linesQuery[key]
-        })
-        this.linesQuery.pageNum = 1
-      }
+      this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
+      Object.keys(this.listQuery).forEach((key) => {
+        this.listQuery[key] =
+          typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
+      })
+      this.listQuery.pageNum = 1
+
       this.initData()
     },
     reset() {
@@ -322,12 +303,12 @@ export default {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row, 'look')
+          this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look')
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(row, readOnly, 'procure', 'notice','QCDH')
+          this.$refs.Form.init(row, readOnly, 'procure', 'notice', 'QCDH')
         })
       }
     },

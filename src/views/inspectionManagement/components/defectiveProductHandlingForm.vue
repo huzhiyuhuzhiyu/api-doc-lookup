@@ -969,6 +969,7 @@ export default {
         }
         this.dataForm.documentStatus = submitModel
         this.dataForm.businessCode = this.businessCode
+        this.dataForm.inspectionId = this.dataForm.id
         let formMethod = ''
         console.log(this.btnType, 'btn')
         if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
@@ -981,11 +982,11 @@ export default {
         let dataObj = {
           attachmentList: this.datafilelist,
           unqualified: this.dataForm,
-          lines: this.linesList,
-          form: form,
-          formNodeList,
-          nodeCondList: nodeJudg,
-          ccList: ccLists,
+          // lines: this.linesList,
+          // form: form,
+          // formNodeList,
+          // nodeCondList: nodeJudg,
+          // ccList: ccLists,
         }
 
 

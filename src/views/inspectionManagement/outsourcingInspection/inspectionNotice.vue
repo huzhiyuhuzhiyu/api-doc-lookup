@@ -103,8 +103,8 @@ export default {
         inspectionStatus: "unInspect", // 检验状态
         orderNo: "", // 收货单号
         purchaseOrderNo: "", // 业务单号
-        // notificationType: "external", // 通知单类型(采购 procure、外协 external、生产检验（入库检验） produce、退货检验 back、退料检验 back_material、在库检验 library、换料检验 refuelling、工序检验process)
-        notificationTypeList: ["external", "external_process"],
+        notificationType: "external", // 通知单类型(采购 procure、外协 external、生产检验（入库检验） produce、退货检验 back、退料检验 back_material、在库检验 library、换料检验 refuelling、工序检验process)
+        // notificationTypeList: ["external", "external_process"],
         pageNum: 1,
         pageSize: 20,
         receiptReturnType: 'receipt',
@@ -163,7 +163,7 @@ export default {
     addOrUpdateHandle(row, readOnly) {
       if (readOnly) {
         this.detailFormVisible = true
-        this.$nextTick(() => { this.$refs.DetailForm.init(row, 'look') })
+        this.$nextTick(() => { this.$refs.DetailForm.init(row.purchaseReceiptReturnGoodsId, 'look') })
       } else {
         this.formVisible = true
         this.$nextTick(() => { this.$refs.Form.init(row, readOnly, 'external', 'notice', 'QCDH') })

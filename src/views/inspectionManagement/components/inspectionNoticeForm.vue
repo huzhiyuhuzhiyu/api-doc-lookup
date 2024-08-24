@@ -293,6 +293,7 @@ export default {
     },
     // 初始化
     async init(row, readOnly, inspectionType, type, businessCode) {
+      console.log(row, 'rowe')
 
       this.scope = { ...row }
 

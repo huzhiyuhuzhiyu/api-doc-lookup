@@ -31,8 +31,7 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                  @click="visible = true">更多查询</el-button>
+            
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -98,65 +97,7 @@
         <!-- </el-tab-pane>
       </el-tabs>
     </div> -->
-    <el-dialog title="更多查询" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="生产订单号">
-              <el-input v-model="listQuery.productionOrderNo" placeholder="请输入生产订单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工单号">
-              <el-input v-model="listQuery.workNo" placeholder="请输入工单号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品图号">
-              <el-input v-model="listQuery.productDrawingNo" placeholder="请输入产品图号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工序编码">
-              <el-input v-model="listQuery.processCode" placeholder="请输入工序编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工序名称">
-              <el-input v-model="listQuery.processName" placeholder="请输入工序名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="工作令号">
-              <el-input v-model="listQuery.workOrderNo" placeholder="请输入工作令号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="开工状态">
-              <el-select v-model="listQuery.startingStatus" placeholder="请选择开工状态" filterable clearable>
-                <el-option v-for="(item, index) in startingStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">搜 索</el-button>
-      </span>
-    </el-dialog>
+
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" :startingStatusList="startingStatusList"
       :workOrderStatusList="workOrderStatusList" />

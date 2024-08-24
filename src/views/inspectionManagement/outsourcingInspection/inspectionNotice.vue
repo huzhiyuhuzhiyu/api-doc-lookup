@@ -166,7 +166,7 @@ export default {
         this.$nextTick(() => { this.$refs.DetailForm.init(row, 'look') })
       } else {
         this.formVisible = true
-        this.$nextTick(() => { this.$refs.Form.init(row, readOnly, 'external', 'notice', 'WXDJSHD') })
+        this.$nextTick(() => { this.$refs.Form.init(row, readOnly, 'external', 'notice', 'QCDH') })
       }
     },
     sortChange({ prop, order }) {

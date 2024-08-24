@@ -38,7 +38,7 @@
             @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true, scope.row)">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true, scope.row)">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -58,8 +58,7 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center"
-              fixed="right">
+            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <el-tag type="warning" disable-transitions v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
                 <el-tag type="success" disable-transitions v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
@@ -78,9 +77,7 @@
                 </el-table-column> -->
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"
-                  :editDisabled="scope.row.documentStatus === 'submit'"
-                  :delDisabled="scope.row.documentStatus === 'submit'">
+                <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="处理" :hasDel="false">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -88,7 +85,7 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true, scope.row)">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, true, scope.row)">
                         查看详情
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -104,14 +101,16 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <!-- <Form v-if="formVisible" ref="Form" @close="closeForm" /> -->
+    <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
   </div>
 </template>
 
 <script>
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
-import Form from '../components/inspectionNoticeForm.vue'
+// import Form from '../components/inspectionNoticeForm.vue'
+import Form from './defectiveProductHandlingForm.vue'
 export default {
   components: { Form },
   props: {
@@ -197,9 +196,10 @@ export default {
 
       this.initData()
     },
-    addOrUpdateHandle(id, readOnly, data) {
+    addOrUpdateHandle(row, readOnly, data) {
+      console.log(row, 'row0')
       this.formVisible = true
-      this.$nextTick(() => { this.$refs.Form.init(id, readOnly, this.pageData.type, data, this.pageData.businessCode) })
+      this.$nextTick(() => { this.$refs.Form.init(row, readOnly, this.pageData.type, data, this.pageData.businessCode) })
     },
     sortChange({ prop, order }) {
       let newProp
@@ -208,13 +208,13 @@ export default {
       else { newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase()); }
       this.listQuery.orderItems[0].asc = order !== 'descending'
       this.listQuery.orderItems[0].column = order === null ? "" : newProp
-      this.initData()
 
       this.initData()
     },
     closeForm(isRefresh) {
       this.formVisible = false
-      if (isRefresh) { this.initData() }
+      this.initData()
+      // if (isRefresh) { this.initData() }
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

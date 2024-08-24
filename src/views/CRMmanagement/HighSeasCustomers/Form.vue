@@ -165,7 +165,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="邮箱" prop="email">
-                        <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType=='look'=='look' ? true : false" maxlength="100" />
+                        <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType=='look' ? true : false" maxlength="100" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -203,6 +203,11 @@
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="行业类别" prop="industry">
+                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType=='look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -474,7 +479,7 @@ export default {
         type: "customer"
       },
       codeConfig: {},//单据规则配置
-      activeNames: ["basicInfo","FinanceInfo"],
+      activeNames: ["basicInfo", "FinanceInfo"],
       tableData: [],
       taxRateTypeList: [],
       loadingareafoundation: false,
@@ -493,6 +498,7 @@ export default {
       billingTypeList: [],
       paymentMethodList: [],
       modeTransportList: [],
+      industryoptions: [],
       channelList: [],
       contactsList: [],
       paymentCycleList: [],
@@ -549,6 +555,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        industry: '',
         nextTime: '',
         // 合作伙伴
         code: '',
@@ -642,6 +649,9 @@ export default {
     this.getDictionaryType()
   },
   methods: {
+    changeindustry(val) {
+      this.dataForm.industry = val[val.length - 1]
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
@@ -1020,9 +1030,17 @@ export default {
                   this.modeTransportList = response.data.list
                 })
               }
-
+              if (resp.enCode == "IndustryType") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 1
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.industryoptions = response.data.list
+                })
+              }
             });
-
           }
           if (item.enCode == "CWGL") {
             item.children.forEach(resp => {
@@ -1065,7 +1083,7 @@ export default {
         detailPartner(this.dataForm.id).then(res => {
           this.dataForm = res.data.cooperativePartner
           this.tableData = res.data.recordsList
-          this.dataForm.provincecityarea = []
+          this.dataForm.cooperativePartner.provincecityarea = []
           if (res.data.province) {
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.province)
             this.dataForm.provincecityarea.push(res.data.cooperativePartner.city)

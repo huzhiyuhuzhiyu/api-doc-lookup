@@ -7,7 +7,7 @@
           <div class="text-one-line">回款金额分析</div>
         </div>
         <div class="xr-radio-menu-wrap">
-          <el-date-picker v-model="dataForm.startDate" type="year" value-format="yyyy" placeholder="选择年" :picker-options="pickerOptions">
+          <el-date-picker v-model="dataForm.year" type="year" value-format="yyyy" placeholder="选择年" :picker-options="pickerOptions">
           </el-date-picker>
         </div>
         <div class="xr-radio-menu-wrap">
@@ -41,7 +41,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getCustomerconversionrate, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getcontractNumStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
@@ -64,13 +64,9 @@ export default {
       columnsData: [],
       chartLoading: false,
       listLoading: false,
-      // dataForm: {
-      //   startDate: "",
-      //   userIds: []
-      // },
       dataForm: {
-        type: 'year',
-        startDate: "",
+        year: "",
+        type:'receivables',
         userIds: []
       },
       tableList: [],
@@ -83,7 +79,7 @@ export default {
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
-    this.dataForm.startDate = this.jnpf.getToday('YYYY')
+    this.dataForm.year = this.jnpf.getToday('YYYY')
     this.initData()
   },
   mounted() {
@@ -119,7 +115,7 @@ export default {
     initData() {
       this.chartLoading = true
       this.listLoading = true
-      gettotalCustomerStats(this.dataForm).then(res1 => {
+      getcontractNumStats(this.dataForm).then(res1 => {
         this.option = {
           tooltip: {
             trigger: 'axis',
@@ -134,7 +130,7 @@ export default {
             showTitle: false
           },
           grid: {
-            top: '10%',
+            top: '13%',
             left: '1%',
             right: '3%',
             bottom: '15%',
@@ -180,8 +176,7 @@ export default {
           series: [
             {
               name: '当月回款金额',
-              data: [0, 25, 1, 21, 21, 45, 56, 5, 8, 6, 23, 85],
-              //res1.data.map(item => item.monthNum)
+              data: res1.data.map(item => item.mouthNum),
               type: 'bar',
               barWidth: '20%',
               smooth: true,
@@ -194,8 +189,7 @@ export default {
             },
             {
               name: '环比增长',
-              data: [0, 0, 0, 0, 0, 0, 230, 0, 0, 0, 0, 0],
-              // res1.data.map(item => item.prevYearNum),
+              data: res1.data.map(item => item.lastYearGrowth),
               type: 'line',
               yAxisIndex: 1,
               smooth: true,
@@ -208,8 +202,7 @@ export default {
             },
             {
               name: '同比增长',
-              data: [0, 0, 0, 0, 0, 0, 25, 200, 25, 0, 0, 0],
-              //res1.data.map(item => item.pervMonthNum),
+              data: res1.data.map(item => item.lastMonthGrowth),
               type: 'line',
               yAxisIndex: 1,
               smooth: true,
@@ -222,16 +215,13 @@ export default {
             }
           ]
         }
-        this.chartLoading = false
-      }).catch(() => {
-        this.chartLoading = false
-      })
-      getCustomerconversionrate(this.dataForm).then(res2 => {
-        this.datas = res2.data
+        this.datas = res1.data
         this.init()
         this.listLoading = false
+        this.chartLoading = false
       }).catch(() => {
         this.listLoading = false
+        this.chartLoading = false
       })
     },
     init() {
@@ -251,9 +241,9 @@ export default {
         columnObj.label = item.type
         columnObj.prop = props + index
         _this.columnsData.push(columnObj)
-        _this.$set(_this.tableList[0], columnObj.prop, item.monthNum)
-        _this.$set(_this.tableList[0], columnObj.prop, item.prevYearNum)
-        _this.$set(_this.tableList[0], columnObj.prop, item.pervMonthNum)
+        _this.$set(_this.tableList[0], columnObj.prop, item.mouthNum)
+        _this.$set(_this.tableList[1], columnObj.prop, item.lastYearGrowth)
+        _this.$set(_this.tableList[2], columnObj.prop, item.lastMonthGrowth)
       })
     }
   }

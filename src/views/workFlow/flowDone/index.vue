@@ -69,7 +69,7 @@
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
+        <!-- <div class="JNPF-common-head">
           <div></div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
@@ -77,7 +77,7 @@
                 @click="initData()" />
             </el-tooltip>
           </div>
-        </div>
+        </div> -->
         <JNPF-table v-loading="listLoading" :data="list" custom-column>
           <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
           <el-table-column prop="flowName" label="所属流程" width="130" />
@@ -250,7 +250,8 @@ export default {
         formType: item.formType,
         opType: 2,
         taskNodeId: item.thisStepId,
-        taskId: item.id
+        taskId: item.id,
+        businessId:item.businessId,
       }
       this.formVisible = true
       this.$nextTick(() => {

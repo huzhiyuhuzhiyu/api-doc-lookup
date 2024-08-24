@@ -159,3 +159,51 @@ export function getwin(data) {
     data
   })
 }
+//报表数据-合同分析
+export function getcontractNumStats(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/contractNumStats`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-合同汇总表
+export function gettotalContract(data) {
+  return request({
+    url: `/api/zgt/crm/report/data/totalContract`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-客户城市分布分析
+export function getaddressAnalyse(data) {
+  return request({
+    url: `/api/zgt/bi/rank/addressAnalyse`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-客户行业分析
+export function getportrait(data) {
+  return request({
+    url: `/api/zgt/bi/rank/portrait`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-客户级别分析
+export function getportraitLevel(data) {
+  return request({
+    url: `/api/zgt/bi/rank/portraitLevel`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-客户来源分析
+export function getportraitSource(data) {
+  return request({
+    url: `/api/zgt/bi/rank/portraitSource`,
+    method: 'POST',
+    data
+  })
+}

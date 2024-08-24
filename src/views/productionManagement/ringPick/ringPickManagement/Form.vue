@@ -185,7 +185,7 @@ export default {
       dataForm: {
         orderNo: "",
         receiveType: "",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         documentStatus: "",
         notifyType: "picking",
         operationDate: "",

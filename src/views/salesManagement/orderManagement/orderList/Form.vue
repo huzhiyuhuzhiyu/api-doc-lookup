@@ -447,7 +447,7 @@
 
 
             </el-tab-pane>
-            <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
+            <!-- <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
                   <el-col :span="4">
@@ -584,7 +584,7 @@
                 :limit.sync="scheduleForm.pageSize" @pagination="searchDetail" />
               <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
 
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>

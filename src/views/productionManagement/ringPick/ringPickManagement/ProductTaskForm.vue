@@ -10,19 +10,20 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="生产任务单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+                <el-select v-model="orderForm.orderType" placeholder="生产任务类型" style="width: 100%;">
+                  <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.processName" placeholder="工序名称" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -38,31 +39,36 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
-          @row-click="handleRowClick" hasC>
-           
-            <el-table-column prop="productDrawingNo" label="品名规格" ></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" ></el-table-column>
-            <el-table-column prop="processName" label="工序名称" ></el-table-column>
+          <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
+            <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom"> </el-table-column>
+            <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
+                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="inventoryQuantity" label="可领料数量"  />
-         
-     
+            <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column label="操作" width="100" fixed="right">
+              <template slot-scope="scope" >
+                <el-button type="text" @click="selectFun(scope.row)">选择</el-button>
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="getWorkListFun" />
+            @pagination="getbatchNumList" />
         </div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="customerVisible = false">{{ $t('common.cancelButton') }}</el-button>
-      <el-button type="primary" @click="submitFun()">
-        确认</el-button>
-    </span>
+
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum,getWorkList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -73,11 +79,10 @@ export default {
       customerVisible: false,
 
       orderForm: {
-        productDrawingNo: "",
-        productCode: "",
-        processName: "",
+        productsDrawingNo: "",
+        productionPlanNo: "",
+        orderType: "",
         pageNum: 1,
-        productionOrderId:"",
         pageSize: 20,
         superQuery: {
           condition: [],
@@ -89,36 +94,34 @@ export default {
         }, {
           asc: false,
           column: "create_time"
-        }], 
-        stockFlag: 1,
+        }],
+        classAttribute: "semi_finished",
+        pickingStatus: "not_finished",
+        orderStatus: "normal",
+        materialFlag: 1,
 
       },
       listLoading: false,
       total: 0,
       tableDataList: [],
-      selectArr:[],
+
 
     }
   },
   methods: {
-    init(id) {
+    init() {
       this.customerVisible = true
-      this.orderForm.productionOrderId = id
-      this.getWorkListFun()
-    },
-    selectmaterial(val){
-      this.selectArr = val
-
+      this.getbatchNumList()
     },
     // 选择批次
-    submitFun() {
-      this.$emit("selectProcessMaterial", this.selectArr,)
+    selectFun(row) {
+      this.$emit("selectProductTask", row,)
       this.customerVisible = false
     },
-    getWorkListFun() {
+    getbatchNumList() {
       this.listLoading = true
-      getWorkList(this.orderForm).then(res => {
-        console.log("工单", res);
+      ordershengchanList(this.orderForm).then(res => {
+        console.log("工艺路线", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -128,30 +131,21 @@ export default {
     },
 
     search() {
-      this.getWorkListFun()
+      this.getbatchNumList()
     },
     reset() {
       this.form = {
-        productDrawingNo: "",
-        productCode: "",
-        processName: "",
+        code: "",
+        name: "",
+        documentStatus: "submit",
         pageNum: 1,
-        productionOrderId: this.orderForm.productionOrderId,
         pageSize: 20,
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
         orderItems: [{
           asc: false,
           column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }], 
-        stockFlag: 1,
+        },],
       }
-      this.getWorkListFun()
+      this.init()
     },
   }
 }

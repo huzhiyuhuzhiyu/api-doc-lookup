@@ -867,6 +867,7 @@ export default {
     },
     // 更换地址
     changeAddress() {
+      if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.addressVisibled = true
 
       this.$nextTick(() => {
@@ -1063,6 +1064,7 @@ export default {
         this.dataForm.area = '',
         // this.dataForm.shipperId = '',
         this.dataForm.remark = ''
+        this.defaultAddress=""
     },
     // 选择客户
     seleceCustomer(e) {
@@ -1078,7 +1080,6 @@ export default {
               type: 'success',
               message: '切换成功'
             })
-            this.deletedata()
             this.dataFormTwo.data = []
             this.customerData = e
             this.dataForm.cooperativePartnerId = e.id
@@ -1087,6 +1088,7 @@ export default {
             this.dataForm.partnerName = e.name
             this.dataForm.code = e.code
             this.customerVisible = false
+            this.getAddressInfoFun(e.id)
 
           }).catch(() => {
             this.$message({
@@ -1105,16 +1107,18 @@ export default {
           this.dataForm.partnerName = e.name
           this.dataForm.code = e.code
           this.customerVisible = false
+          this.getAddressInfoFun(e.id)
 
         }
       })
-      this.getAddressInfoFun(e.id)
 
     },
     getAddressInfoFun(id) {
+      console.log(7777);
       getAddressInfo(id).then(row => {
         let dfaddress = row.data.filter(item => { return item.defaultFlag })
         if (dfaddress.length) {
+          console.log(6666);
           this.dataForm.recipient = dfaddress[0].recipient
           this.dataForm.phone = dfaddress[0].phone
           this.dataForm.country = dfaddress[0].country === '中国' ? 'CN' : dfaddress[0].country
@@ -1127,6 +1131,9 @@ export default {
           } else {
             this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
           }
+        }else{
+          this.deletedata()
+          
         }
       })
     },

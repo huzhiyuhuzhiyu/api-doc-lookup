@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="orderForm.orderType" placeholder="是否紧急" style="width: 100%;">
+                <el-select v-model="orderForm.orderType" placeholder="生产任务类型" style="width: 100%;">
                   <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
@@ -55,7 +55,7 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
+            :setColumnDisplayList="columnList" hasC @selection-change="selectFun">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
@@ -84,6 +84,12 @@
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+            <el-table-column label="操作" width="220" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="addition(scope.row)">创建领料单</el-button>
+                <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.id)">查看详情</el-button>
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />
@@ -91,56 +97,51 @@
       </div>
 
     </div>
-
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <PickForm v-if="pickVisible" ref="PickForm" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+  
   </div>
 </template>
 
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import Form from '@/views/productionManagement/assemblyplan/assemblyTaskManagement/Form.vue'
+import PickForm from '../ringPickManagement/Form.vue'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { excelExport } from '@/api/basicData/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  components: {  SuperQuery, ExportForm },
+  components: { SuperQuery,Form,PickForm },
   data() {
     return {
+      pickVisible:false,
       columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
       orderTypeList: [
         { label: "正常订单", value: "normal" },
         { label: "返工订单", value: "rework" },
       ],
-
-
       productDrawingNoS: "",
       orderNoS: "",
       superQueryVisible: false,
       exportFormVisible: false,
-
       btnLoading: false,
-
-      customList: [], // 列表中显示的自定义属性
       title: "更多查询",
       visible: false,
       tableData: [],
       listLoading: false,
-
       orderForm: {},
       orderFormlist: {
         productsDrawingNo: "",
-        productionPlanNo: "",
-        orderType:"",
+        orderNo: "",
+        orderType: "",
         pageNum: 1,
-        availableArrangeFlag: 1,
         pageSize: 20,
         superQuery: {
           condition: [],
@@ -153,14 +154,11 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute: "finish_product",
-        pickingStatus:"not_finished",
-        orderStatus:"normal",
-        materialFlag:1,
+        classAttribute: "semi_finished",
+        pickingStatus: "not_finished",
+        orderStatus: "normal",
+        materialFlag: 1,
       },
-
-
-
       total: 0,
       formVisible: false,
       selectArr: [],
@@ -307,7 +305,6 @@ export default {
           typeCode: "pa016"
         }
       ],
-
     }
   },
   created() {
@@ -323,17 +320,22 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    addition(data){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(data,'add','awit')
+      })
+    },
+    handleUserRelation(id){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(id)
+      })
+    },
     dispurchaseData(row) {
       return !row.selectFlag;
     },
-    // 编排
-    translateFun() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要生成编排的数据")
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(this.selectArr)
-      })
-    },
+     
     selectFun(val) {
       console.log(val);
       if (val.length) {
@@ -347,9 +349,7 @@ export default {
         this.tableData.forEach(item => {
           item.selectFlag = false
         });
-
       }
-
     },
     // 获取打字内容等
     getProductClassFun() {
@@ -397,12 +397,6 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-
-
-
-
-
-
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -492,42 +486,9 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
-
-
-
-
-
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    // 导出
-    exportForm(exportTableRef) {
-      this.exportTableRef = exportTableRef
-      this.exportFormVisible = true
-      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
-    },
-    download(data) {
-      this.exportFormVisible = false
-      let includeFieldMap = {}
-      for (let i = 0; i < data.selectKey.length; i++) {
-        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-      }
-      const targetListQuery = this.orderForm
-      let _data = {
-        ...targetListQuery,
-        exportType: "1210",
-        exportName: '生产计划',
-        includeFieldMap,
-        pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
-      }
-      excelExport(_data).then(res => {
-        this.exportFormVisible = false
-        if (!res.data.url) return
-        this.jnpf.downloadFile(res.data.url, res.data.name)
-      })
-    }
   }
 }
 </script>

@@ -149,6 +149,7 @@ export default {
           // this.total = res.data.total
           this.listLoading = false
         }).catch(() => {
+          this.tableDataList=[]
           this.listLoading = false
         })
      

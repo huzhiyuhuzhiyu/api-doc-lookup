@@ -25,6 +25,8 @@
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+         
+            
 
             <el-col :span="6">
               <el-form-item>
@@ -39,18 +41,17 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true" @selection-change="selectmaterial"
-          @row-click="handleRowClick" hasC>
-           
-            <el-table-column prop="productDrawingNo" label="品名规格" ></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" ></el-table-column>
-            <el-table-column prop="processName" label="工序名称" ></el-table-column>
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="inventoryQuantity" label="可领料数量"  />
-         
-     
+            @row-click="handleRowClick" hasC>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="140"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+            <el-table-column prop="processName" label="工序名称" min-width="140" />
+            <el-table-column prop="mainUnit" label="单位" min-width="140" />
+            <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
+            <el-table-column prop="waitReceiveQuantity" label="待领料数量" min-width="140" />
+
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="getWorkListFun" />
+            @pagination="getMaterialListFun" />
         </div>
       </div>
     </div>
@@ -62,7 +63,7 @@
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum,getWorkList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan, getMaterialList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -77,48 +78,47 @@ export default {
         productCode: "",
         processName: "",
         pageNum: 1,
-        productionOrderId:"",
         pageSize: 20,
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
+        productionOrderId:"",
+        reduceType: "picking",
         orderItems: [{
           asc: false,
           column: ""
         }, {
           asc: false,
           column: "create_time"
-        }], 
-        stockFlag: 1,
-
+        }],
       },
       listLoading: false,
       total: 0,
       tableDataList: [],
+      id: "",
       selectArr:[],
-
     }
   },
   methods: {
     init(id) {
       this.customerVisible = true
       this.orderForm.productionOrderId = id
-      this.getWorkListFun()
+      this.getMaterialListFun()
     },
     selectmaterial(val){
       this.selectArr = val
 
     },
-    // 选择批次
-    submitFun() {
-      this.$emit("selectProcessMaterial", this.selectArr,)
-      this.customerVisible = false
+     
+    submitFun () {
+     
+     this.$emit('selectOrderMaterial',this.selectArr)
+     this.customerVisible = false
+
+      // this.productData=[...this.productData,...this.selectArr]
     },
-    getWorkListFun() {
+ 
+    getMaterialListFun() {
       this.listLoading = true
-      getWorkList(this.orderForm).then(res => {
-        console.log("工单", res);
+      getMaterialList(this.orderForm).then(res => {
+        console.log("生产详情", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -126,32 +126,27 @@ export default {
         this.listLoading = false
       })
     },
-
     search() {
-      this.getWorkListFun()
+      this.getMaterialListFun(this.id)
     },
     reset() {
       this.form = {
-        productDrawingNo: "",
+        productsDrawingNo: "",
         productCode: "",
         processName: "",
+        reduceType: "picking",
         pageNum: 1,
-        productionOrderId: this.orderForm.productionOrderId,
         pageSize: 20,
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
+        productionOrderId: this.orderForm.productionOrderId,
         orderItems: [{
           asc: false,
           column: ""
         }, {
           asc: false,
           column: "create_time"
-        }], 
-        stockFlag: 1,
+        }],
       }
-      this.getWorkListFun()
+      this.getMaterialListFun()
     },
   }
 }

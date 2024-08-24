@@ -7,20 +7,20 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderNoS" placeholder="生产任务单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderNoS" placeholder="领料单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="orderForm.orderType" placeholder="是否紧急" style="width: 100%;">
-                  <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
+                <el-select v-model="orderForm.receiveType" placeholder="领料类型" style="width: 100%;">
+                  <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
                     :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+                <el-input v-model="personNameS" placeholder="领料人" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
@@ -38,7 +38,10 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <div> </div>
+            <topOpts @add="addSupplier('', 'add')">
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('dataTable')">导出</el-button>
+            </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -55,35 +58,55 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
-            <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
+            :setColumnDisplayList="columnList">
+            <el-table-column prop="productionOrderNo" label="生产任务单号" min-width="200" sortable="custom">
+            </el-table-column>
+            <el-table-column prop="orderNo" label="领料单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
+                <el-link type="primary" @click.native="viewDetailsFun(scope.row.id,'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
+            <el-table-column prop="receiveType" label="领料类型" min-width="160" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
-                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+                <div v-if="scope.row.receiveType == 'order'">订单物料</div>
+                <div v-if="scope.row.receiveType == 'process'">工序物料</div>
               </template>
             </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+
+            <el-table-column prop="personName" label="领料人" min-width="80" sortable="custom" />
+            <el-table-column prop="remark" label="备注" min-width="80" sortable="custom" />
+            <el-table-column prop="documentStatus" label="单据状态" min-width="140" sortable="custom"
+              :showOverflowTooltip="false" align="center">
+              <template slot-scope="scope">
+                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
+                <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+            <el-table-column label="操作" width="180" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                  @click="handleDel(scope.row.id)">删除</el-button>
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="viewDetailsFun(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />
@@ -96,14 +119,14 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 
-<script>
-import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
-import { UserListAll, } from '@/api/permission/user'
+<script> 
+import { WithdrawalList,deleteWithdrawal } from '@/api/productOrdes/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { getProductionPlanList } from '@/api/productionManagement/index'
+import Form from './Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { excelExport } from '@/api/basicData/index'
 import {
@@ -111,17 +134,16 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  components: {  SuperQuery, ExportForm },
+  components: { SuperQuery, ExportForm,Form },
   data() {
     return {
-      columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
-      orderTypeList: [
-        { label: "正常订单", value: "normal" },
-        { label: "返工订单", value: "rework" },
+      formVisible:false,
+      columnList: ["productionOrderNo", "createByName"],
+      receiveTypeList: [
+        { label: "订单物料", value: "order" },
+        { label: "工序物料", value: "process" },
       ],
-
-
-      productDrawingNoS: "",
+      personNameS: "",
       orderNoS: "",
       superQueryVisible: false,
       exportFormVisible: false,
@@ -136,11 +158,10 @@ export default {
 
       orderForm: {},
       orderFormlist: {
-        productsDrawingNo: "",
-        productionPlanNo: "",
-        orderType:"",
+        receiveType: "",
+        orderNo: "",
+        personName: "",
         pageNum: 1,
-        availableArrangeFlag: 1,
         pageSize: 20,
         superQuery: {
           condition: [],
@@ -153,117 +174,58 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute: "finish_product",
-        pickingStatus:"not_finished",
-        orderStatus:"normal",
-        materialFlag:1,
+        classAttribute: "semi_finished",
+        pickingStatus: "not_picked",
+        orderStatus: "normal",
+        notifyType: 'picking',
       },
 
 
 
-      total: 0,
-      formVisible: false,
+      total: 0, 
       selectArr: [],
 
       superQueryJson: [
         {
-          prop: 'productionPlanNo',
-          label: "生产计划单号",
+          prop: 'productionOrderNo',
+          label: "生产任务单号",
           type: 'input'
         },
 
         {
-          prop: 'productDrawingNo',
-          label: "品名规格",
+          prop: 'orderNo',
+          label: "领料单号",
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: "产品编码",
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: "单位",
-          type: 'input'
-        },
-        {
-          prop: 'planProductionQuantity',
-          label: "计划生产数量",
-          type: 'input'
-        },
-        {
-          prop: 'availableArrangeQuantity',
-          label: "可编排数量",
-          type: 'input'
-        },
-        {
-          prop: 'urgentFlag',
-          label: "是否紧急",
+          prop: 'receiveType',
+          label: "领料类型",
           type: 'select',
           options: [
-            { label: "是", value: true },
-            { label: "否", value: false },
+            { label: "订单物料", value: "order" },
+            { label: "工序物料", value: "process" },
           ]
         },
         {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: []
+          prop: 'personName',
+          label: "领料人",
+          type: 'input'
         },
 
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'specialRequire',
-          label: "特殊要求",
-          type: 'select',
-          options: []
-        },
         {
           prop: 'remark',
           label: "备注",
-          type: 'input',
-
+          type: 'input'
         },
-
-
-
+        {
+          prop: 'documentStatus',
+          label: "单据状态",
+          type: 'select',
+          options: [
+            { label: "草稿", value: "draft" },
+            { label: "提交", value: "submit" },
+          ]
+        },
         {
           prop: 'createTime',
           label: '创建时间',
@@ -278,35 +240,7 @@ export default {
           type: 'input'
         },
       ],
-      requestArr: [
-        {
-          prop: "sealingCoverTyping",
-          typeCode: "pa007"
-        }, {
-          prop: "accuracyLevel",
-          typeCode: "pa006"
-        },
-        {
-          prop: "vibrationLevel",
-          typeCode: "pa005"
-        },
-        {
-          prop: "oil",
-          typeCode: "pa002"
-        }, {
-          prop: "oilQuantity",
-          typeCode: "pa003"
-        }, {
-          prop: "clearance",
-          typeCode: "pa001"
-        }, {
-          prop: "packagingMethod",
-          typeCode: "pa015"
-        }, {
-          prop: "specialRequire",
-          typeCode: "pa016"
-        }
-      ],
+
 
     }
   },
@@ -314,98 +248,55 @@ export default {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search()
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+   
   mounted() {
-    this.getProductClassFun()
   },
   methods: {
-    dispurchaseData(row) {
-      return !row.selectFlag;
-    },
-    // 编排
-    translateFun() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要生成编排的数据")
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(this.selectArr)
+    // 新增
+    addSupplier(id,btnType){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(id,btnType,'pick')
       })
     },
-    selectFun(val) {
-      console.log(val);
-      if (val.length) {
-        this.tableData.forEach(item => {
-          if (item.id != val[0].id) {
-            item.selectFlag = true
-          }
-        });
-        this.selectArr = val
-      } else {
-        this.tableData.forEach(item => {
-          item.selectFlag = false
-        });
-
-      }
-
-    },
-    // 获取打字内容等
-    getProductClassFun() {
-      this.requestArr.forEach((item, index) => {
-        let obj1 = {
-          pageNum: -1,
-          pageSize: 20,
-          typeCode: item.typeCode,
-          orderItems: [
-            {
-              asc: false,
-              column: "",
-            },
-            {
-              asc: false,
-              column: "code",
-            },
-          ],
-        };
-        getbimProductAttributesList(obj1).then(res => {
-
-          let arr = []
-          res.data.records.forEach(items => {
-            let obj = {
-              label: items.name,
-              value: items.name,
-            }
-            arr.push(obj)
-          });
-          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
-          if (oilObj) {
-            // 将options赋值为5  
-            oilObj.options = JSON.parse(JSON.stringify(arr));
-          }
-        })
+    // 查看详情
+    viewDetailsFun(id,btnType){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        this.$refs.Form.init(id,btnType,'pick')
       })
-
-
-
-
     },
-
+    // 编辑
+    addOrUpdateHandle(id,btnType){
+      this.formVisible=true
+      this.$nextTick(()=>{
+        console.log(6666);
+        this.$refs.Form.init(id,btnType,'pick')
+      })
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
-
-
-
-
-
-
+    // 删除
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteWithdrawal(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -443,24 +334,24 @@ export default {
           )
         }
       }
-      if (this.productDrawingNoS) {
+      if (this.personNameS) {
         // this.orderForm.superQuery.condition.push(
         //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
         // )
         if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
-          filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("personName"));
+          filteredData.push({ "field": "personName", "fieldValue": this.personNameS, "symbol": "like" })
           this.orderForm.superQuery.condition = filteredData
         } else {
           this.orderForm.superQuery.condition.push(
-            { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+            { "field": "personName", "fieldValue": this.personNameS, "symbol": "like" }
           )
         }
       }
-      if (this.customerDrawingNumberS || this.productDrawingNoS) {
+      if (this.orderNoS || this.personNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
-      ordershengchanList(this.orderForm).then(res => {
+      WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false
         })
@@ -488,7 +379,7 @@ export default {
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
       this.orderNoS = ""
-      this.productDrawingNoS = ""
+      this.personNameS = ""
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
@@ -517,8 +408,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: "1210",
-        exportName: '生产计划',
+        exportType: "1094",
+        exportName: '装配领料',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

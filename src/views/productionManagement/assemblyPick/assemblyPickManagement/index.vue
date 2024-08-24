@@ -268,7 +268,11 @@ export default {
     },
     // 编辑
     addOrUpdateHandle(id,btnType){
-
+      this.formVisible=true
+      this.$nextTick(()=>{
+        console.log(6666);
+        this.$refs.Form.init(id,btnType,'pick')
+      })
     },
     superQuerySearch(query) {
       this.orderForm.superQuery = query

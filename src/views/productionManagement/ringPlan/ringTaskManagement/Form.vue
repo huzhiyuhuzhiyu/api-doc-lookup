@@ -75,54 +75,8 @@
                           <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称"  disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="打字内容" prop="sealingCoverTyping">
-                          <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容"  disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="精度等级" prop="accuracyLevel">
-                          <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级"  disabled></el-input>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级"  disabled></el-input>
-                         
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="油脂" prop="oil">
-                          <el-input v-model="dataForm.oil" placeholder="油脂"  disabled></el-input>
-                          
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-input v-model="dataForm.oilQuantity" placeholder="油脂量"  disabled></el-input>
-                         
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="游隙" prop="clearance">
-                          <el-input v-model="dataForm.clearance" placeholder="游隙"  disabled></el-input>
-                          
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
-                          <el-input v-model="dataForm.packagingMethod" placeholder="包装方式"  disabled></el-input>
-                          
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="特殊要求" prop="specialRequire">
-                          <el-input v-model="dataForm.specialRequire" placeholder="特殊要求"  disabled></el-input>
-                          
-                        </el-form-item>
-                      </el-col>
+                      
+ 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />

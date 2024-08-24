@@ -56,76 +56,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="打字内容" prop="sealingCoverTyping">
-                          <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="精度等级" prop="accuracyLevel">
-                          <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="油脂" prop="oil">
-                          <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="游隙" prop="clearance">
-                          <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
-                            <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="包装方式" prop="packagingMethod">
-                          <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="特殊要求" prop="specialRequire">
-                          <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
-                            style="width: 100%;">
-                            <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
-                              :value="item.name"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
+                      
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -141,7 +72,7 @@
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openselectProcessFun()">选择工序</el-button>|
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px;font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDeleteProcess">批量删除</el-button>|
                   </div>
@@ -262,9 +193,9 @@
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="领料日期" prop="operationDate">
-                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime" value-format="yyyy-MM-dd HH:mm:ss"
-                            style="width: 100%;" placeholder="领料日期" :disabled="btnType == 'look' ? true : false"
-                            @change="changDateFun">
+                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime"
+                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -291,8 +222,11 @@
                       <el-table-column prop="drawingNo" label="品名规格" />
                       <el-table-column prop="productCode" label="产品编码"></el-table-column>
                       <el-table-column prop="processName" label="工序名称">
+                        <template slot="header">
+                          <span class="required">*</span>工序名称
+                        </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
+                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'processName'"
                             :rules="productRules.processName">
                             <el-input v-model="scope.row.processName" readonly
                               @focus="selectCollectProcess(scope.$index)"></el-input>
@@ -301,14 +235,24 @@
                       </el-table-column>
                       <el-table-column prop="mainUnit" label="单位"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量">
+                        <template slot="header">
+                          <span class="required">*</span>投料数量
+                        </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'materialsUsedQuantity'"
+                          <el-form-item :prop="'collectData.' + scope.$index + '.' + 'materialsUsedQuantity'"
                             :rules="productRules.materialsUsedQuantity">
                             <el-input v-model="scope.row.materialsUsedQuantity" placeholder="投料数量" />
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <!-- <el-table-column prop="reduceType" label="扣减料方式">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.reduceType" placeholder="扣减料方式" style="width: 100%;">
+                            <el-option v-for="(item, index) in reduceTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column> -->
                     </el-table>
                   </el-form>
                 </el-collapse-item>
@@ -505,8 +449,7 @@ import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api
 import RoutingForm from "./RoutingForm.vue"
 import SelectProductForm from './selectProductForm.vue'
 import SelectProcrssForm from './processForm.vue'
-import CollectProductForm from './CollectProductForm.vue'
-import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
+import CollectProductForm from './CollectProductForm.vue' 
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
@@ -520,6 +463,11 @@ export default {
   },
   data() {
     return {
+      reduceTypeList: [
+        { label: "生成领料单", value: "picking" },
+        { label: "自动扣减料", value: "auto" },
+        { label: "都不是", value: "none" },
+      ],
       getBimProcessList,
       ProductMethodArr: [
         {
@@ -651,14 +599,7 @@ export default {
         ]
       },
       selectArr: [],
-      list1: [],
-      list2: [],
-      list3: [],
-      list4: [],
-      list5: [],
-      list6: [],
-      list7: [],
-      list8: [],
+     
       totalData: [],
       index: "",
       currentWorkgroupId: "",
@@ -683,7 +624,7 @@ export default {
       detailDataList: [],
       selectProcessArr: [],
       selectRows: [],
-      currentProductIndex:"",
+      currentProductIndex: "",
     }
   },
   computed: {
@@ -730,24 +671,26 @@ export default {
           item.processTypeName = '正常工序'
         } else if (item.processType == 'wait_assemble') {
           item.processTypeName = '待装配工序'
-        }else if (item.processType == 'vibrate') {
+        } else if (item.processType == 'vibrate') {
           item.processTypeName = '测震工序'
         }
-       return item
+        console.log("item", item)
+
+        return item
       })
       return treeData
     },
     // 打开选择领料清单产品的工序弹框
     selectCollectProcess(index) {
       this.$refs['ComSelect-page'].openDialog()
-      this.currentProductIndex=index
-      console.log("currentProductIndex",this.currentProductIndex);
+      this.currentProductIndex = index
+      console.log("currentProductIndex", this.currentProductIndex);
     },
-    submit(id,data) {
-      console.log("选择的工序", id, data,this.dataFormOne.collectData); 
-      let datas=data[0].all
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex],'processName',datas.name)
-      this.$set(this.dataFormOne.collectData[this.currentProductIndex],'processId',datas.id)
+    submit(id, data) {
+      console.log("选择的工序", id, data, this.dataFormOne.collectData);
+      let datas = data[0].all
+      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processName', datas.name)
+      this.$set(this.dataFormOne.collectData[this.currentProductIndex], 'processId', datas.id)
     },
 
     // 打开选择领料清单选择产品弹框
@@ -760,6 +703,9 @@ export default {
     // 选择的领料清单产品
     selectCollectProductFun(data) {
       console.log("领料产品", data);
+      data.forEach(item => {
+        this.$set(item, 'reduceType', 'picking')
+      });
       this.dataFormOne.collectData = data
     },
     //领料人
@@ -927,6 +873,9 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
+      detailProcess(id).then(res => {
+        this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
+      })
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1041,173 +990,7 @@ export default {
         this.$forceUpdate();
       });
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj1).then(res => {
-        this.list1 = res.data.records
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj2).then(res => {
-        this.list2 = res.data.records
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        this.list3 = res.data.records
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-        this.list4 = res.data.records
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        this.list5 = res.data.records
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        this.list6 = res.data.records
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        this.list7 = res.data.records
-      })
-      let obj8 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa016",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-        this.list8 = res.data.records
-      })
-
-
-
-    },
-
-
-    dateFormat(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? ('0' + m) : m
-      var d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      const time = y + '-' + m + '-' + d
-      return time
-    },
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
+ 
 
 
 
@@ -1220,9 +1003,10 @@ export default {
 
 
 
-    handleSelectionChangeAllPruduct(val) {
-      this.selectArr = val
-    },
+
+
+
+
 
 
 
@@ -1350,14 +1134,19 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
-          this.dataForm.productsId=this.dataForm.id
-          this.dataForm.planStartDate=this.dataForm.planDate[0]
-          this.dataForm.planEndDate=this.dataForm.planDate[1]
+          this.dataForm.productsId = this.dataForm.id
+          this.dataForm.planStartDate = this.dataForm.planDate[0]
+          this.dataForm.planEndDate = this.dataForm.planDate[1]
           let submitFlag = null;
           if (!this.dataFormTwo.data.length) {
             this.$message.error("至少需要一道工序")
             submitFlag = false;
             return
+          }
+
+          let hasPicking = this.collectData.some(item => item.reduceType === 'picking');
+          if (hasPicking && this.allocationFlag) {
+            this.dataForm.materialFlag = 1
           }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {
             const item = this.dataFormTwo.data[index];
@@ -1390,16 +1179,16 @@ export default {
             this.$set(item, 'workOrderResList', item.routingProResList)
           });
           let obj = {
-            collect: this.collect,
+            collect: this.dataFormTwo.data.length ? this.collect : null,
             materialList: this.dataFormOne.collectData,
-            prodOrder:this.dataForm,
-            workOrderList:this.dataFormTwo.data
+            prodOrder: this.dataForm,
+            workOrderList: this.dataFormTwo.data
           }
-           console.log("dataForm",this.dataForm);
-           console.log("dataFormTwo.data",this.dataFormTwo.data);
-           console.log("coll",this.collect);
-           console.log("dataFormOne.collectData",this.dataFormOne.collectData);
-           
+          console.log("dataForm", this.dataForm);
+          console.log("dataFormTwo.data", this.dataFormTwo.data);
+          console.log("coll", this.collect);
+          console.log("dataFormOne.collectData", this.dataFormOne.collectData);
+
           addProdOrder(obj).then(res => {
             this.btnLoading = false
             this.$message.success("新建返工任务成功")

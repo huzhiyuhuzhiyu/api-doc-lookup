@@ -66,7 +66,7 @@
           </el-table-column>
           <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="80" />
           <el-table-column prop="kitQuantity" key="kitQuantity" label="齐套数量" min-width="100" />
-          <el-table-column prop="inventoryQuantity" key="inventoryQuantity" label="库存数量" >
+          <el-table-column prop="inventoryQuantity" key="inventoryQuantity" label="库存数量" min-width="100" >
             <template slot-scope="scope">
               <div>{{ scope.row.inventoryQuantity?scope.row.inventoryQuantity:'0' }}</div>
             </template>

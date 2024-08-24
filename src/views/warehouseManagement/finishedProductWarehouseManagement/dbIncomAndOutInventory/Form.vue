@@ -647,7 +647,7 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       this.deliveryDateArr = []
-      if (this.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_external_send') {
+      if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'inbound_sale_return' || this.dataForm.businessType == 'outbound_external_send') {
         this.orderForm = { //获取产品数据
           cooperativePartnerId: "",
           drawingNo: "",        // customerProductNo: "",
@@ -663,6 +663,7 @@ export default {
             column: ""
           }],
         }
+        console.log("this.orderForm1",this.orderForm);
         if (this.deliveryDateArr.length) {
           this.orderForm.rdsDate = this.deliveryDateArr[0]
           this.orderForm.rdeDate = this.deliveryDateArr[1]
@@ -670,6 +671,7 @@ export default {
           this.orderForm.rdsDate = ""
           this.orderForm.rdeDate = ""
         }
+        console.log("this.orderForm2",this.orderForm);
         this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
         if (this.dataForm.businessType == 'inbound_sale_return') {
           this.orderForm.returnQueryFlag = 1
@@ -678,6 +680,7 @@ export default {
           this.orderForm.notifyType = this.productData[0].notifyType
 
         }
+        console.log("this.orderForm3",this.orderForm);
         getQuotationdatasenddatalist(this.orderForm).then(res => {
           console.log("产品", res);
           res.data.records.forEach(item => {

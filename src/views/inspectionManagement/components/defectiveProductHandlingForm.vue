@@ -18,16 +18,33 @@
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <el-tabs v-model="activeName">
               <el-tab-pane label="基础信息" name="jcInfo">
-                <div class="subtitle">
-                  <h5>基本信息</h5>
-                </div>
-                <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
-                  :btnType="btnType === 'setLoss' ? 'look' : btnType" />
-                <div class="subtitle">
-                  <h5>产品信息</h5>
-                </div>
-                <TableForm-product :value="linesList" @input="linesChange" ref="linesForm" :tableItems="linesListItems"
-                  :btnType="btnType === 'setLoss' ? 'look' : btnType" @openSide="openSide" @viewdrawings="viewdrawings"/>
+                <el-collapse v-model="activeNames">
+                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+
+                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                      :btnType="btnType === 'setLoss' ? 'look' : btnType" />
+                  </el-collapse-item>
+
+                  <el-collapse-item title="检验项目" name="inspectionInfo">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                        :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                        @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" />
+                    </el-row>
+
+                  </el-collapse-item>
+                  <el-collapse-item title="不良原因" name="adverseCausesInfo">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
+                        :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
+                        @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" />
+                    </el-row>
+
+                  </el-collapse-item>
+                </el-collapse>
+
+
+
               </el-tab-pane>
               <el-tab-pane label="附件" name="annex">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
@@ -145,15 +162,18 @@ import { getInspectionList } from '@/api/inspectionManagement/index' // 检验�
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import TableFormProduct from "./TableForm-product.vue"
 import workFlow from '@/components/WorkFlow/settingBus.vue'
+import TableFormWare from "./TableForm-ware.vue"
+import TableFormWareTwo from "./TableForm-ware-two.vue"
 import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
 export default {
-  components: { TableFormProduct, workFlow, WareSide, Preview },
+  components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo },
   data() {
     return {
       datafilelist: [],
       activeName: "jcInfo",
+      activeNames: ['productInfo', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
       title: "新建不良品处理单",
       inspectionTypeList,
       inspectionResultsList,
@@ -247,9 +267,47 @@ export default {
       getbimDrawingData,
       activeFile: {},
       previewVisible: false,
+      inspectionItems: this.initLinesListItems(),
+      inspectionList: [],
+      linesListTwo: [],
+      linesListItemsTwo: [
+        { prop: "name", label: "不良原因名称", value: "", type: 'view', minWidth: 180 },
+        {
+          prop: "unqualifiedQuantity", label: "不良品数量", value: "", type: "input", itemRules: [
+            { required: true, trigger: "blur" },
+            { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`不良品数量：${errMsg}`) }), trigger: 'blur' },
+            { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不良品数量：' + errMsg) }] }), trigger: 'blur' }
+          ], minWidth: 180
+        },
+        { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+      ],
+      productList: [],
+      codeConfig: {}
     }
   },
+  beforeCreate() {
+    this.initLinesListItems = () => [
+      { prop: "name", label: "检验项目", value: "", type: 'view', minWidth: 120 },
+      {
+        prop: "unqualifiedQuantity", label: "不合格数量", value: "0", type: "input", itemRules: [
+          { required: true, trigger: "blur" },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('不合格数量：' + errMsg) }] }), trigger: 'blur' }
+        ], minWidth: 180
+      },
+      { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
+    ]
+  },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.orderNo = data.number
+        }
+      } catch (error) { }
+    },
     currentChangelook(data) {
       this.activeFile = {
         filename: data.filepath,
@@ -280,33 +338,120 @@ export default {
     // 刷新主表结构
     refeshDataFormItems() {
       this.dataFormItems = [
-        { // 检验单号
-          prop: "inspectionOrderNo", label: "检验单号", value: "", type: "custom", customComponent: "ComSelect-page", placeholder: '请选择检验单',
-          dialogTitle: "选择检验单", renderTree: false, tableItems: [
-            { prop: "orderNo", label: "检验单号", minWidth: 200 },
-            { prop: "originOrderNo", label: "来源单号", minWidth: 200 },
-            { prop: "inspectorName", label: "检验人" },
-            { prop: "inspectionDate", label: "检验日期", width: 120 },
-            { prop: "remark", label: "备注" }
-          ],
-          searchList: [
-            { prop: "orderNo", label: "检验单号", type: "input" },
-            { prop: "originOrderNo", label: "来源单号", type: "input" }
-          ],
-          listMethod: getInspectionList, listRequestObj: this.dialogRequestObj,
-          listDataFormatting: (res) => {
-            let tempList = res.data.records
-            tempList = tempList.map(item => {
-              let inspectionMethod = this.inspectionMethodList.find(item2 => item2.value === item.inspectionMethod)
-              inspectionMethod = inspectionMethod ? inspectionMethod.label : item.inspectionMethod
-              return { ...item, inspectionMethod }
-            })
-            return tempList
-          },
-          change: this.inspectionOrderNoChange, placeholder: "请选择检验单", itemRules: [{ required: true, trigger: 'change' }], sm: 12
+        {
+          prop: 'orderNo',
+          label: '处理单号',
+          value: '',
+          type: 'input',
+          itemDisabled: true,
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12
         },
-        { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
-        { prop: "remark", label: "备注", value: "", type: "textarea" }
+        {
+          prop: 'inspectionOrderNo',
+          label: '检验单号',
+          value: '',
+          type: 'input',
+          itemDisabled: true,
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12
+        },
+        {
+          prop: 'inspectorId',
+          label: '检验人',
+          value: undefined,
+          type: 'custom',
+          customComponent: 'user-select',
+          itemRules: [{ required: true, trigger: 'change' }],
+          change: () => {
+            this.$nextTick(() => {
+              this.$refs.dataForm.$refs.main.validateField('inspectorId')
+            })
+          },
+          sm: 12
+        },
+        {
+          prop: 'inspectionDate',
+          label: '检验日期',
+          value: undefined,
+          type: 'date',
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12
+        },
+
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'inspectionQuantity',
+          label: '报检数量',
+          value: '',
+          type: 'input',
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+        },
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          value: '',
+          type: 'select',
+          clearable: false,
+          change: this.inspectionMethodChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: [
+            { label: '免检', value: 'exempt' },
+            { label: '抽检', value: 'spot_check' },
+            { label: '全检', value: 'all' }
+          ]
+        },
+        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          value: '',
+          type: 'input',
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+          change: this.inspectionResultsChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
+        },
+        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
+        { prop: "description", label: "处理说明", value: "", type: "textarea" }
       ]
     },
     // 刷新子表结构
@@ -433,7 +578,11 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(id, btnType, inspectionType, businessCode) {
+    init(row, btnType, inspectionType, businessCode) {
+      let id = row.id
+      this.inspectionOrderNoChange(row.id)
+      this.dataForm = row
+      this.dataForm.inspectionOrderNo = row.orderNo
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -443,6 +592,12 @@ export default {
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
 
       // this.$nextTick(() => { this.dataFormFlag = true })
+      this.fetchData('UQDH', true)
+      this.refeshDataFormItems()
+      this.refeshLinesListItems()
+      this.title = '新建不良品处理单'
+      this.getApproverData()
+      this.formLoading = false
       if (id) {
         if (btnType === 'anew') { // 重新提交
           this.title = '新建不良品处理单'
@@ -553,6 +708,7 @@ export default {
           })
         }
       } else {
+        this.fetchData('UQDH', true)
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建不良品处理单'
@@ -774,11 +930,11 @@ export default {
         });
       }
 
-      // 判断子表是否有效
-      if (!this.linesList.length && submitFlag) {
-        submitFlag = false
-        this.$message.error('请至少选择一个产品')
-      }
+      // // 判断子表是否有效
+      // if (!this.linesList.length && submitFlag) {
+      //   submitFlag = false
+      //   this.$message.error('请至少选择一个产品')
+      // }
 
       // 是否配置好审批
       if (submitModel === 'submit' && this.dataForm.approvalFlag && submitFlag) {
@@ -813,8 +969,10 @@ export default {
         }
         this.dataForm.documentStatus = submitModel
         this.dataForm.businessCode = this.businessCode
+        this.dataForm.inspectionId = this.dataForm.id
         let formMethod = ''
-        if (this.btnType === 'add' || this.btnType === 'anew') {
+        console.log(this.btnType, 'btn')
+        if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
           formMethod = addQcUnqualifiedData
         } else if (this.btnType === 'edit') {
           formMethod = updateQcUnqualifiedData
@@ -824,11 +982,11 @@ export default {
         let dataObj = {
           attachmentList: this.datafilelist,
           unqualified: this.dataForm,
-          lines: this.linesList,
-          form: form,
-          formNodeList,
-          nodeCondList: nodeJudg,
-          ccList: ccLists,
+          // lines: this.linesList,
+          // form: form,
+          // formNodeList,
+          // nodeCondList: nodeJudg,
+          // ccList: ccLists,
         }
 
 
@@ -894,12 +1052,13 @@ export default {
       }
     },
     // 检验单更改
-    inspectionOrderNoChange(val, data, paramsObj) {
-      this.$nextTick(() => { this.$refs.dataForm.$refs.main.validateField('inspectionOrderNo') })
-      this.dataForm.inspectionId = data[0].all.id
-      this.dataForm.inspectionOrderNo = data[0].all.orderNo
+    inspectionOrderNoChange(id) {
+
       this.formLoading = true
-      detailInspectionData(data[0].all.id).then(res => {
+      detailInspectionData(id).then(res => {
+        console.log(res, 'res123')
+        this.inspectionList = res.data.itemList
+        this.linesListTwo = res.data.causesList
         let tempLinesList = res.data.lines.filter(line => line.unqualifiedQuantity != '0')
         tempLinesList.forEach(line => {
           line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
@@ -1154,7 +1313,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px 30px;
+  padding: 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -1177,7 +1336,7 @@ export default {
   /* height: auto !important; */
   height: calc(100% - 47px) !important;
   overflow: auto !important;
-  padding: 0 20px;
+  // padding: 0 20px;
 }
 
 .required {
@@ -1205,5 +1364,41 @@ export default {
   min-height: 1045px !important;
   background-color: #f5f5f7 !important;
   color: #576a95;
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

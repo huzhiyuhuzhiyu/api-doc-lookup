@@ -7,7 +7,15 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="productionPlanNoS" placeholder="生产计划单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderNoS" placeholder="生产任务单号" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-select v-model="orderForm.orderType" placeholder="是否紧急" style="width: 100%;">
+                  <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -15,14 +23,7 @@
                 <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-select v-model="orderForm.urgentFlag" placeholder="是否紧急" style="width: 100%;">
-                  <el-option v-for="(item, index) in urgentFlagList" :key="index" :label="item.label"
-                    :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
+
 
             <el-col :span="6">
               <el-form-item>
@@ -37,15 +38,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
-                导出
-              </el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
-                生产编排
-              </el-button>
-
-            </div>
+            <div> </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -62,26 +55,33 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             header-cell-class-name="all-select" @sort-change="sortChange" custom-column
-            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" :checkSelectable="dispurchaseData">
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
-            <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
-            <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
-            <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
+            :setColumnDisplayList="columnList" hasC @selection-change="selectFun" >
+            <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
+                  scope.row.orderNo
+                }}</el-link>
               </template>
             </el-table-column>
+            <el-table-column prop="orderType" label="生产任务类型" min-width="160" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.orderType == 'normal'">正常订单</div>
+                <div v-if="scope.row.orderType == 'rework'">返工订单</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
-
-      
-
-            <el-table-column prop="arithmeticNo" label="运算单号" min-width="160" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="180" sortable="custom"></el-table-column>
-
+            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
+            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
           </JNPF-table>
@@ -92,7 +92,6 @@
 
     </div>
 
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -101,8 +100,8 @@
 </template>
 
 <script>
+import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from './Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -112,16 +111,21 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  components: { Form, SuperQuery, ExportForm },
+  components: {  SuperQuery, ExportForm },
   data() {
     return {
-      columnList: ["productCode", "arithmeticNo", "remark", "createByName",],
+      columnList: ["sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire",],
+      orderTypeList: [
+        { label: "正常订单", value: "normal" },
+        { label: "返工订单", value: "rework" },
+      ],
+
+
       productDrawingNoS: "",
-      productionPlanNoS: "",
+      orderNoS: "",
       superQueryVisible: false,
       exportFormVisible: false,
-      qxbtnLoading: false,
-      hbbtnLoading: false,
+
       btnLoading: false,
 
       customList: [], // 列表中显示的自定义属性
@@ -134,7 +138,7 @@ export default {
       orderFormlist: {
         productsDrawingNo: "",
         productionPlanNo: "",
-        urgentFlag: "",
+        orderType:"",
         pageNum: 1,
         availableArrangeFlag: 1,
         pageSize: 20,
@@ -149,20 +153,15 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute:"semi_finished",
-      },
-      urgentFlagList: [
-        { label: "是", value: true },
-        { label: "否", value: false },
-      ],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
+        classAttribute: "finish_product",
+        pickingStatus:"not_finished",
+        orderStatus:"normal",
+        materialFlag:1,
       },
 
+
+
       total: 0,
-      diagramVisible: false,
       formVisible: false,
       selectArr: [],
 
@@ -207,8 +206,55 @@ export default {
             { label: "否", value: false },
           ]
         },
-        
-        
+        {
+          prop: 'sealingCoverTyping',
+          label: "打字内容",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'accuracyLevel',
+          label: "精度等级",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'vibrationLevel',
+          label: "振动等级",
+          type: 'select',
+          options: []
+        },
+
+        {
+          prop: 'oil',
+          label: "油脂",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'oilQuantity',
+          label: "油脂量",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'clearance',
+          label: "游隙",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: "包装方式",
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: "特殊要求",
+          type: 'select',
+          options: []
+        },
         {
           prop: 'remark',
           label: "备注",
@@ -232,7 +278,36 @@ export default {
           type: 'input'
         },
       ],
-    
+      requestArr: [
+        {
+          prop: "sealingCoverTyping",
+          typeCode: "pa007"
+        }, {
+          prop: "accuracyLevel",
+          typeCode: "pa006"
+        },
+        {
+          prop: "vibrationLevel",
+          typeCode: "pa005"
+        },
+        {
+          prop: "oil",
+          typeCode: "pa002"
+        }, {
+          prop: "oilQuantity",
+          typeCode: "pa003"
+        }, {
+          prop: "clearance",
+          typeCode: "pa001"
+        }, {
+          prop: "packagingMethod",
+          typeCode: "pa015"
+        }, {
+          prop: "specialRequire",
+          typeCode: "pa016"
+        }
+      ],
+
     }
   },
   created() {
@@ -244,7 +319,8 @@ export default {
       this.search()
     }
   },
-  mounted() { 
+  mounted() {
+    this.getProductClassFun()
   },
   methods: {
     dispurchaseData(row) {
@@ -275,7 +351,46 @@ export default {
       }
 
     },
-   
+    // 获取打字内容等
+    getProductClassFun() {
+      this.requestArr.forEach((item, index) => {
+        let obj1 = {
+          pageNum: -1,
+          pageSize: 20,
+          typeCode: item.typeCode,
+          orderItems: [
+            {
+              asc: false,
+              column: "",
+            },
+            {
+              asc: false,
+              column: "code",
+            },
+          ],
+        };
+        getbimProductAttributesList(obj1).then(res => {
+
+          let arr = []
+          res.data.records.forEach(items => {
+            let obj = {
+              label: items.name,
+              value: items.name,
+            }
+            arr.push(obj)
+          });
+          let oilObj = this.superQueryJson.find(rs => rs.prop === item.prop);
+          if (oilObj) {
+            // 将options赋值为5  
+            oilObj.options = JSON.parse(JSON.stringify(arr));
+          }
+        })
+      })
+
+
+
+
+    },
 
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -316,15 +431,15 @@ export default {
 
 
 
-      if (this.productionPlanNoS) {
-       
+      if (this.orderNoS) {
+
         if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productionPlanNo"));
-          filteredData.push({ "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition=filteredData
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
+          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
         } else {
           this.orderForm.superQuery.condition.push(
-            { "field": "productionPlanNo", "fieldValue": this.productionPlanNoS, "symbol": "like" }
+            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
           )
         }
       }
@@ -335,7 +450,7 @@ export default {
         if (this.orderForm.superQuery.condition.length) {
           let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
           filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition=filteredData
+          this.orderForm.superQuery.condition = filteredData
         } else {
           this.orderForm.superQuery.condition.push(
             { "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
@@ -345,7 +460,7 @@ export default {
       if (this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
-      getProductionPlanList(this.orderForm).then(res => {
+      ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
           item.selectFlag = false
         })
@@ -372,7 +487,7 @@ export default {
 
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-      this.productionPlanNoS = ""
+      this.orderNoS = ""
       this.productDrawingNoS = ""
       this.$refs.SuperQuery.conditionList = []
       this.search()
@@ -420,12 +535,13 @@ export default {
 ::v-deep .all-select .cell .el-checkbox__inner {
   display: none;
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }
 </style>
- 
+
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

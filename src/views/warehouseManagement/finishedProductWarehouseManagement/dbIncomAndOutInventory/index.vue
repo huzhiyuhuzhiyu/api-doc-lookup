@@ -683,6 +683,7 @@ export default {
       if (this.categoryType == 'outbound_sale_send') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'delivery'
+        this.fhForm.classAttribute=this.classAttribute
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.fhTableList = res.data.records
           this.fhTotal = res.data.total
@@ -695,6 +696,7 @@ export default {
       if (this.categoryType == 'inbound_sale_return') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'back'
+        this.fhForm.classAttribute=this.classAttribute
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
           this.fhTotal = res.data.total
@@ -707,6 +709,7 @@ export default {
       if (this.categoryType == 'inbound_purchase') {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'receipt'
+        this.cgForm.classAttribute=this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -719,6 +722,7 @@ export default {
       if (this.categoryType == 'outbound_purchase') {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'back'
+        this.cgForm.classAttribute=this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -730,6 +734,7 @@ export default {
       // 外协发料
       if (this.categoryType == 'outbound_external_send') {
         this.listLoading = true
+        this.wxflForm.classAttribute=this.classAttribute
         getQuotationdatasendlist(this.wxflForm).then(res => {
           this.wxflTableList = res.data.records
           this.wxflTotal = res.data.total
@@ -741,6 +746,7 @@ export default {
       // 外协收货
       if (this.categoryType == 'inbound_external') {
         this.listLoading = true
+        this.wxshForm.classAttribute=this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
           this.wxshTableList = res.data.records
           this.wxshTotal = res.data.total

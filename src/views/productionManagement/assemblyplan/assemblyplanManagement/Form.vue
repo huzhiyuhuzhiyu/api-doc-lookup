@@ -953,6 +953,7 @@ export default {
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
+        this.dataForm.reportRulesFlag=res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {

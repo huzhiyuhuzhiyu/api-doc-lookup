@@ -152,8 +152,8 @@
                       icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo   hasC
-                      v-loading="tableloading">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
+                      fixedNo hasC v-loading="tableloading">
 
 
 
@@ -479,7 +479,7 @@ export default {
         { label: "内销", value: "domestic_market" },
         { label: "总成", value: "assembly" }
       ],
-      departMentList: [ 
+      departMentList: [
       ],
       paymentStatusList: [
         { label: "未付款", value: "no_pay", },
@@ -487,7 +487,15 @@ export default {
         { label: "已付清", value: "payed", },
       ],
       productRules: {
-        deliveryQuantity: [{ required: true, trigger: 'blur' }, { validator: this.formValidate('positiveNumber', '发货数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
+
+        deliveryQuantity: [
+
+          { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }), trigger: 'blur' },
+          { required: true, trigger: ['blur'] }
+
+        ],
       },
       ordersLineId: '',
       orderDateArr: [],
@@ -736,7 +744,7 @@ export default {
           this.departMentList.push(obj)
           let arr = []
 
-          
+
         });
       })
     },
@@ -1302,7 +1310,7 @@ export default {
         })
 
       }
-    
+
       if (this.btnType == 'edit') {
         this.fetchData("SSDH", false)
         this.btnText = "继续修改"

@@ -59,8 +59,7 @@
 
           </JNPF-table>
 
-          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize"
-            @pagination="initData">
+          <pagination :total="total" :page.sync="form.pageNum" :limit.sync="form.pageSize" @pagination="initData">
 
           </pagination>
 
@@ -95,8 +94,8 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
-      productCodeS:"",
-      productDrawingNoS:"",
+      productCodeS: "",
+      productDrawingNoS: "",
       columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productName", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -120,6 +119,10 @@ export default {
         }],
         pageNum: 1,
         pageSize: 20,
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
 
 
@@ -198,7 +201,7 @@ export default {
       this.$refs.dataTable.showDrawer()
     },
 
- 
+
 
 
 
@@ -244,33 +247,38 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if(this.productCodeS){
-       
+      if (this.productCodeS) {
+
         if (this.form.superQuery.condition.length) {
           let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("code"));
           filteredData.push({ "field": "code", "fieldValue": this.productCodeS, "symbol": "like" })
-          this.form.superQuery.condition=filteredData
+          this.form.superQuery.condition = filteredData
         } else {
           this.form.superQuery.condition.push(
             { "field": "code", "fieldValue": this.productCodeS, "symbol": "like" }
           )
         }
       }
-      if(this.productDrawingNoS){
-       
+      if (this.productDrawingNoS) {
+
         if (this.form.superQuery.condition.length) {
           let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("drawingNo"));
           filteredData.push({ "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.form.superQuery.condition=filteredData
+          this.form.superQuery.condition = filteredData
         } else {
           this.form.superQuery.condition.push(
             { "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
           )
         }
       }
-     
-      if(this.productCodeS||this.productDrawingNoS ){
-        this.$set(this.form.superQuery,'matchLogic','AND')
+
+      if (this.productCodeS || this.productDrawingNoS) {
+        this.$set(this.form.superQuery, 'matchLogic', 'AND')
+      } else {
+        this.form.superQuery = {
+          condition: [],
+          matchLogic: ""
+        }
       }
       getProducts(this.form).then(res => {
         this.tableData = res.data.records
@@ -310,20 +318,23 @@ export default {
         pageNum: 1,
         pageSize: 20,
 
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       }
       this.$refs.SuperQuery.conditionList = []
 
-      this.productCodeS="",
-      this.productDrawingNoS="",
-      this.search()
+      this.productCodeS = "",
+        this.productDrawingNoS = "",
+        this.search()
     },
-  
+
 
     addSupplier() {
       console.log(this.selectList);
       if (!this.selectList.length) return this.$message.error("请选择您要生成计划的数据")
-      this.formVisible=true
+      this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(this.selectList)
       })
@@ -385,7 +396,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

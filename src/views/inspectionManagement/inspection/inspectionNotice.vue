@@ -348,7 +348,7 @@ export default {
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(id, readOnly, 'finished', 'notice', 'metalworking')
+          this.$refs.Form.init(id, readOnly, 'finished', 'notice', 'QCDH','QCDH')
         })
       }
     },

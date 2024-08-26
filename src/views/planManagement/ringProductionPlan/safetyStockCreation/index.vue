@@ -275,6 +275,11 @@ export default {
 
       if (this.productCodeS || this.productDrawingNoS) {
         this.$set(this.form.superQuery, 'matchLogic', 'AND')
+      } else {
+        this.form.superQuery = {
+          condition: [],
+          matchLogic: ""
+        }
       }
       getProducts(this.form).then(res => {
         this.tableData = res.data.records

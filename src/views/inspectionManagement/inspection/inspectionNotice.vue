@@ -51,7 +51,7 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column @selection-change="currentChange" :setColumnDisplayList="columnList">
-          <el-table-column prop="orderNo" label="任务单号" min-width="200" sortable="custom">
+          <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.orderNo }}
@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import { getprodOrderList } from '@/api/productOrdes/finishedProductOrders' // 生产订单列表
+import { getWorkReportList } from "@/api/productOrdes/index"
 import Form from '../components/inspectionNoticeForm.vue'
 import DetailForm from '@/views/productionOrders/productOrdersMan/finishedOrdersManage/Form.vue'
 // import DetailForm from './DetailForm.vue'
@@ -126,8 +126,8 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'orderNo',
-          label: '单号',
+          prop: 'productionOrderNo',
+          label: '任务单号',
           type: 'input'
         },
         {
@@ -137,7 +137,7 @@ export default {
         },
         {
           prop: 'orderNo',
-          label: '单号',
+          label: '报工单号',
           type: 'input'
         },
         {
@@ -272,6 +272,8 @@ export default {
         planEsd: '',
         planEed: '',
         receiveStatus: '',
+        inspectionFlag: 0,
+        processingType: 'self_produced',
         businessCode: 'metalworking',
         // "productionStatus": "production_completed", // 生产状态：已完成
         // "orderStatus": "finish", // 订单状态：已完成
@@ -309,7 +311,7 @@ export default {
       })
       this.jnpf.searchTimeFormat(this.listQuery, this.planStartArr, 'planSsd', 'planSed')
       this.jnpf.searchTimeFormat(this.listQuery, this.planEndArr, 'planEsd', 'planEed')
-      getprodOrderList(this.listQuery)
+      getWorkReportList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records.map((row) => ({
             ...row,
@@ -348,7 +350,7 @@ export default {
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(id, readOnly, 'finished', 'notice', 'QCDH','QCDH')
+          this.$refs.Form.init(id, readOnly, 'finished', 'notice', 'QCDH', 'QCDH')
         })
       }
     },

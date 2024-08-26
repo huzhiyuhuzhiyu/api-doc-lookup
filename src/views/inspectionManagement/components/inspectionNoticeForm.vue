@@ -304,7 +304,14 @@ export default {
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), "yyyy-MM-dd")
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
-      this.dataForm.inspectionQuantity = row.receivedQuantity
+      if (inspectionType === 'procure' || inspectionType === 'external') {
+        this.dataForm.inspectionQuantity = row.receivedQuantity
+      } else if (inspectionType === 'process') {
+        this.dataForm.inspectionQuantity = row.productionQuantity
+      } else if (inspectionType === 'finished') {
+        this.dataForm.inspectionQuantity = Number(row.qualifiedQuantity) + Number(row.unqualifiedQuantity)
+      }
+
       this.ProductListRequestObjs = {
         code: this.scope.productCode,
         drawingNo: "",

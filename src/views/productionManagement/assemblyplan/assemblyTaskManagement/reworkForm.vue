@@ -659,9 +659,9 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: [(errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量：不能为空",(errMsg) => { this.$message.error(`返工生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '返工生产数量必须大于0', (errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`返工生产数量：${errMsg}`) }), trigger: 'blur' },
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }

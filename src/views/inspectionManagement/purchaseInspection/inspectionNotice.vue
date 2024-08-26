@@ -34,7 +34,12 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding:10px">
-            <div></div>
+            <div>
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                icon="el-icon-download" @click="exportForm">
+                导出
+              </el-button>
+            </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -108,23 +113,28 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
-import { purPurchaseReceiptReturnGoodsDetailList, linesReceiptReturn } from '@/api/purchasingManagement/purchaseInquirySheet'
+import {
+  purPurchaseReceiptReturnGoodsDetailList,
+  linesReceiptReturn
+} from '@/api/purchasingManagement/purchaseInquirySheet'
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/purchasingManagement/purchaseAndReceive/purchaseReceiptNote/Form.vue'
 import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, DetailForm, SuperQuery },
+  components: { Form, DetailForm, SuperQuery, ExportForm },
   data() {
     return {
       superQueryVisible: false,
+      exportFormVisible: false,
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -206,9 +216,9 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ],
-      columnList: ["partnerCode", "productCode", "productName", "createByName"],
+      columnList: ['partnerCode', 'productCode', 'productName', 'createByName'],
       visible: false,
       detailFormVisible: false,
       activeName: 'dataTable',
@@ -245,8 +255,7 @@ export default {
 
       linesTableData: [],
       linesTotal: 0,
-      linesQuery: {},
-
+      linesQuery: {}
     }
   },
   created() {
@@ -259,6 +268,42 @@ export default {
     }
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        console.log(includeFieldMap)
+        let _data = {
+          ...this.listQuery,
+          exportType: '1073',
+          exportName: '采购待检收货单',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          totalRowFlag: true
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
+      }
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -286,8 +331,7 @@ export default {
       this.visible = false
       this.jnpf.searchTimeFormat(this.listQuery, 'createTimeArr', 'startTime', 'endTime')
       Object.keys(this.listQuery).forEach((key) => {
-        this.listQuery[key] =
-          typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
+        this.listQuery[key] = typeof this.listQuery[key] === 'string' ? this.listQuery[key].trim() : this.listQuery[key]
       })
       this.listQuery.pageNum = 1
 

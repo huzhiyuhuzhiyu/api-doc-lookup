@@ -320,7 +320,7 @@ export default {
       }).catch(err => {
         this.loading = false
       })
-      await getInspectionItem({ id: this.scope.productsId, inspectionCategory: this.scope.notificationType }).then((res) => {
+      await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType }).then((res) => {
         this.inspectionList = res.data
         this.addOrDelInspectionItem(res.data)
 
@@ -339,10 +339,12 @@ export default {
       this.title.includes('生产巡检') ? this.title = this.title.replace('检验', '') : ''
       this.setDataFormItems()
       if (inspectionType === 'process') {
-        this.typeflag = true
-        detailordershengchan(typeof id === 'object' ? id.productionOrderId : type.productionOrderId).then(res => {
-          this.flowCard = res.data.flowCard ? res.data.flowCard : {}
-        })
+        this.dataForm.submitMethod = 'add'
+        this.formLoading = false
+        // this.typeflag = true
+        // detailordershengchan(typeof id === 'object' ? id.productionOrderId : type.productionOrderId).then(res => {
+        //   this.flowCard = res.data.flowCard ? res.data.flowCard : {}
+        // })
       }
       if (typeof id === 'object' && inspectionType === 'process') { // 生产巡检
         let rowData = id

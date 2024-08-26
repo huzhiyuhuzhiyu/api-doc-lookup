@@ -60,7 +60,7 @@
           </div>
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
-            custom-column>
+            custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
@@ -68,25 +68,19 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="200" />
-            <el-table-column prop="description" label="处理说明" min-width="180" />
-            <el-table-column prop="reasonRejection" label="驳回理由" min-width="120" />
-            <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom" />
-            <el-table-column prop="submitDate" label="提交时间" min-width="180" sortable="custom" />
-            <el-table-column prop="remark" label="备注" min-width="200" />
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center"
-              fixed="right">
-              <template slot-scope="scope">
-                <el-tag type="warning" disable-transitions v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
-                <el-tag type="success" disable-transitions v-else-if="scope.row.documentStatus == 'submit'">
-                  提交
-                </el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-              fixed="right">
+            <el-table-column prop="inspectionOrderNo" label="检验单号" min-width="200" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectionDate" label="检验日期" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectorName" label="检验人" min-width="180" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="180" />
+            <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
+            <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
+            <el-table-column prop="description" label="处理说明" min-width="180" sortable="custom" />
+            <el-table-column prop="treatmentResults" label="处理结果" min-width="180" sortable="custom" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
               <template slot-scope="scope">
                 <el-tag disable-transitions
                   v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
@@ -106,39 +100,17 @@
                 </el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="250" fixed="right">
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
-                  :editDisabled="scope.row.documentStatus === 'submit'"
-                  :delDisabled="scope.row.documentStatus === 'submit'">
+                <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
-                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'setLoss')"
-                      :disabled="scope.row.lossFlag">
-                      设置损失
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
                     </el-button>
                   </template>
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item
-                        v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                        @click.native="addOrUpdateHandle(scope.row.id, 'anew')">
-                        重新提交
-                      </el-dropdown-item>
-                      <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                        @click.native="withdrawnHandle(scope.row.id)">
-                        审批撤回
-                      </el-dropdown-item>
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
                 </tableOpts>
               </template>
             </el-table-column>
@@ -191,6 +163,15 @@ export default {
   },
   data() {
     return {
+      columnList: [
+        'partnerCode',
+        'productCode',
+        'inspectionDate',
+        'inspectorName',
+        'inspectionQuantity',
+        'samplingQuantity',
+        'createByName'
+      ],
       visible: false,
       activeName: 'dataTable',
       listLoading: false,
@@ -239,6 +220,9 @@ export default {
     }
   },
   methods: {
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     initData() {
       this.listLoading = true
       getQcUnqualifiedList(this.listQuery)

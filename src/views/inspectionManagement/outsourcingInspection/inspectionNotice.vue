@@ -7,18 +7,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="请输入收货单号" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.orderNo" placeholder="单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.purchaseOrderNo" placeholder="请输入外协单号" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.partnerName" placeholder="供应商名称" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.salesman" placeholder="请输入业务员" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                  clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -33,22 +34,48 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head" style="padding:10px">
+            <div>
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                icon="el-icon-download" @click="exportForm">
+                导出
+              </el-button>
+            </div>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="收货单号" min-width="200" sortable="custom">
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="purchaseOrderNo" label="外协单号" min-width="200" />
-            <el-table-column prop="partnerName" label="供应商名称" min-width="120" />
-            <el-table-column prop="salesman" label="业务员" min-width="120" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" min-width="120" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" min-width="120" sortable="custom" />
+            <el-table-column prop="warehouseName" label="仓库" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="120" />
+            <el-table-column prop="receivedQuantity" label="收货数量" min-width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column prop="remark" min-width="200" label="备注" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
+
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
@@ -77,6 +104,7 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -85,12 +113,16 @@ import { purPurchaseReceiptReturnGoodsDetailList, linesReceiptReturn } from '@/a
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/externalProcessManagement/productAcceptReturnGoods/outsourcingReceiptNote/Form.vue'
 import DetailForm from './DetailForm.vue'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, DetailForm },
+  components: { Form, DetailForm, ExportForm },
   data() {
     return {
+      columnList: ["partnerCode", "createByName"],
       visible: false,
       detailFormVisible: false,
+      exportFormVisible: false,
       activeName: "dataTable",
       listLoading: false,
       formVisible: false,
@@ -134,6 +166,36 @@ export default {
   },
   watch: { activeName() { this.initData() } },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        console.log(includeFieldMap);
+        let _data = {
+          ...this.listQuery,
+          exportType: '1073',
+          exportName: '外协待检收货单',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
     initData() {
       this.listLoading = true
 

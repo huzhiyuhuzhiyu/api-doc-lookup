@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.originOrderNo" placeholder="来源单号" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.originOrderNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
@@ -64,44 +64,24 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="originOrderNo" label="业务单号" min-width="200" />
+            <el-table-column prop="originOrderNo" label="业务单号" min-width="200" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" min-width="120" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
-            <el-table-column prop="reasonRejection" label="驳回理由" min-width="120" />
-            <el-table-column prop="approvalCompletionDate" label="审批完成时间" width="180" sortable="custom" />
-            <el-table-column prop="submitDate" label="提交时间" min-width="180" sortable="custom" />
-            <el-table-column prop="unqualifiedFlag" label="是否有不合格" min-width="140">
-              <template slot-scope="scope">
-                {{ scope.row.unqualifiedFlag ? '是' : '否' }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="handleFlag" label="不合格是否处理" min-width="140">
-              <template slot-scope="scope">
-                {{ scope.row.handleFlag ? '是' : '否' }}
-              </template>
-            </el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
+
+            <el-table-column prop="mainUnit" label="单位" min-width="180" />
+            <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
+
+            <el-table-column prop="inspectionMethod" label="检验方式" min-width="180" sortable="custom" />
+            <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectionResults" label="检验结果" min-width="180" sortable="custom" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
+            <el-table-column prop="processingStatus" label="处理状态" min-width="180" sortable="custom" />
+            <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="200" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom" align="center">
-              <template slot-scope="scope">
-                <el-tag type="warning" disable-transitions v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
-                <el-tag type="success" disable-transitions v-else-if="scope.row.documentStatus == 'submit'">
-                  提交
-                </el-tag>
-              </template>
-            </el-table-column>
-            <!-- <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <el-tag type="warning" disable-transitions
-                      v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
-                    <el-tag type="success" disable-transitions
-                      v-else-if="scope.row.approvalStatus == 'ok' && scope.row.documentStatus !== 'draft'">审批通过</el-tag>
-                    <el-tag type="danger" disable-transitions
-                      v-else-if="scope.row.approvalStatus == 'rebut' && scope.row.documentStatus !== 'draft'">审批拒绝</el-tag>
-                  </template>
-                </el-table-column> -->
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="处理" :hasDel="false">

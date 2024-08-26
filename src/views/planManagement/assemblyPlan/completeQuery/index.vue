@@ -45,9 +45,9 @@
           </div>
         </div>
           <JNPF-table v-loading="listLoading"  highlight-current-row  :data="tableDataList" :row-key="'id'" v-if="refreshTable" fixedNO  :setColumnDisplayList="columnList"
-          :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable"
+          :default-expand-all="expands" :tree-props="{ children: 'childrenList', hasChildren: '' }" ref="dataTable" show-overflow-tooltip
           >
-          <el-table-column prop="drawNo" label="品名规格" min-width="360">
+          <el-table-column prop="drawNo" label="品名规格"width="360" >
             <template slot-scope="scope">
               <i :class="[
                 scope.row.childrenList.length >= 1
@@ -57,7 +57,7 @@
               {{ scope.row.drawNo }}
             </template>
           </el-table-column>
-          <el-table-column prop="productName" key="productName" label="产品名称" min-width="140" />
+          <!-- <el-table-column prop="productName" key="productName" label="产品名称" min-width="140" /> -->
           <el-table-column prop="productCode" key="productCode" label="产品编码" min-width="100" />
           <el-table-column prop="productSource" key="productSource" label="产品来源" min-width="100">
             <template slot-scope="scope">

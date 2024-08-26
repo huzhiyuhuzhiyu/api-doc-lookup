@@ -121,7 +121,6 @@
               </JNPF-table>
               <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="initData">
-                <div class="text"><span>合计数量:{{ totalNum }}</span></div>
               </pagination>
             </div>
           </div>
@@ -144,7 +143,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="计划开始日期">
+                  <el-form-item label="创建时间">
                     <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd"
                       style="width: 100%;" :picker-options="pickerOptions" start-placeholder="开始日期"
                       end-placeholder="结束日期">
@@ -176,22 +175,9 @@
               </div>
               <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
                 @sort-change="sortChange" custom-column hasC @selection-change="selectWithdrawDataFun">
-                <el-table-column prop="orderNo" label="生产任务单号" min-width="180" sortable="custom">
-                  <template slot-scope="scope">
-                    <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
-                      scope.row.orderNo
-                    }}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="任务类型" label="订单类型" width="120" sortable="custom">
-                  <template slot-scope="scope">
-                    <div v-for="(item, index) in orderList" :key="index">
-                      <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="cooperativePartnerCode" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="cooperativePartnerName" label="产品编码" width="160" sortable="custom" />
+               
+                <el-table-column prop="cooperativePartnerCode" label="班组名称" width="160" sortable="custom" />
+                <el-table-column prop="cooperativePartnerName" label="班组编码" width="160" sortable="custom" />
               
                 <!-- <el-table-column prop="shipmentStatus" label="发货状态" width="120">
                   <template slot-scope="scope">
@@ -200,26 +186,11 @@
                     </div>
                   </template>
                 </el-table-column> -->
-                <el-table-column prop="salesName" label="产品分类" width="160" />
-                <el-table-column prop="departmentName" label="单位" width="160"></el-table-column>
-                <el-table-column prop="workOrderNo" label="总生产数" width="160"></el-table-column>
-                <el-table-column prop="sourceOrderNo" label="已完成数量" width="160"></el-table-column>
-                <el-table-column prop="orderDate" label="工艺路线名称" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="contractNo" label="工艺路线编码" width="160" sortable="custom"></el-table-column>
-                <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="特殊要求" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="生产计划单号" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="是否紧急" min-width="120" sortable="custom" />
-                
+               
               
                 
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
                 <!-- <el-table-column prop="approvalStatus" fixed="right" label="审批状态" width="120" sortable="custom"
                   :showOverflowTooltip="false" align="center">
                   <template slot-scope="scope">
@@ -244,7 +215,6 @@
               </JNPF-table>
               <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="initData">
-                <div class="text"><span>合计数量:{{ totalNum }}</span></div>
               </pagination>
             </div>
           </div>
@@ -279,8 +249,6 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-                  @click="moreQueriesDetail()">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -399,16 +367,7 @@
               </JNPF-table>
               <pagination :total="detailTotal" :page.sync="orderDetailForm.pageNum"
                 :limit.sync="orderDetailForm.pageSize" @pagination="initDataDetail" />
-              <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">总订单数量：{{ totalDataForm.num }}</span>
-                <span style="font-weight:500;margin-right:10px">总出库数量：{{ totalDataForm.outboundQuantity
-                  }}</span>
-                <span style="font-weight:500;margin-right:10px">总待出库数量：{{ totalDataForm.undeliveredQuantity
-                  }}</span>
-                <span style="font-weight:500;margin-right:10px">总退货数量：{{ totalDataForm.returnQuantity
-                  }}</span>
-                <span style="font-weight:500;margin-right:10px">总金额：{{ totalDataForm.totalAmount }}</span>
-              </div>
+              
             </div>
           </div>
         </el-tab-pane>
@@ -425,15 +384,12 @@
 import { UserListAll, } from '@/api/permission/user'
 import { excelExport } from '@/api/basicData/index'
 import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, batchRevokeorders } from '@/api/salesManagement/assemblyOrders'
-import Form from './Form'
-import OrderFollow from './orderFollow'
-import UserRelationList from './userRelation'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
   name: 'carrierProfile',
-  components: { Form, UserRelationList, ExportForm, OrderFollow },
+  components: {  ExportForm,},
   data() {
     return {
       orderFollowVisible: false,

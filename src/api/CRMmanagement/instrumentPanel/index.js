@@ -138,7 +138,7 @@ export function getproductCycle(data) {
 //报表数据-销售漏斗
 export function getsellFunnel(data) {
   return request({
-    url: `/biFunnel/sellFunnel`,
+    url: `/api/zgt/biFunnel/sellFunnel`,
     method: 'POST',
     data
   })
@@ -146,7 +146,7 @@ export function getsellFunnel(data) {
 //报表数据-新增商机分析
 export function getaddBusinessAnalyze(data) {
   return request({
-    url: `/biFunnel/addBusinessAnalyze`,
+    url: `/api/zgt/biFunnel/addBusinessAnalyze`,
     method: 'POST',
     data
   })
@@ -154,7 +154,7 @@ export function getaddBusinessAnalyze(data) {
 //报表数据-商机转化率分析
 export function getwin(data) {
   return request({
-    url: `/biFunnel/win`,
+    url: `/api/zgt/biFunnel/win`,
     method: 'POST',
     data
   })

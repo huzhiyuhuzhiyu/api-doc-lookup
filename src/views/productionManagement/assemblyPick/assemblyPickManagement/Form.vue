@@ -99,8 +99,8 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="waitReceiveQuantity" label="可领料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                      <el-table-column prop="num" label="领料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
+                        v-if="btnType != 'look' && dataForm.receiveType == 'process'"></el-table-column>
+                      <el-table-column prop="num" label="领料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
                           <span class="required">*</span>领料数量
                         </template>
@@ -249,6 +249,7 @@ export default {
     checkSelection() {
       this.isSame = this.dataForm.receiveType === this.previousReceiveType; // 判断是否相同  
       this.previousReceiveType = this.dataForm.receiveType; // 更新上一次选择
+      console.log(9999);
       if (!this.isSame && this.dataForm.productionOrderNo) {
         console.log(666);
         this.dataForm.productionOrderId = ""
@@ -470,7 +471,18 @@ export default {
         }
       }
       if (sourceType == 'awit') {
+        let data = id
         console.log("传递数据", id);
+        console.log(data);
+        this.dataForm.receiveType = 'order'
+        this.$nextTick(()=>{
+          console.log(666);
+          this.dataForm.productionOrderNo = data.orderNo
+        this.dataForm.productionOrderId = data.id
+        this.getCollectFun(this.dataForm.productionOrderId)
+      })
+        console.log(666);
+
       }
       this.btnType = btnType
 

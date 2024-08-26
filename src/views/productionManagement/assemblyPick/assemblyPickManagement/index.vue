@@ -350,6 +350,13 @@ export default {
       }
       if (this.orderNoS || this.personNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }else{
+        if (!this.orderForm.superQuery.condition.length) {
+          this.orderForm.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
       WithdrawalList(this.orderForm).then(res => {
         res.data.records.forEach(item => {

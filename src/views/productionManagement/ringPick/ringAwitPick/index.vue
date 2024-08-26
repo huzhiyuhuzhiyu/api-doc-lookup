@@ -321,9 +321,9 @@ export default {
   },
   methods: {
     addition(data){
-      this.formVisible=true
+      this.pickVisible=true
       this.$nextTick(()=>{
-        this.$refs.Form.init(data,'add','awit')
+        this.$refs.PickForm.init(data,'add','awit')
       })
     },
     handleUserRelation(id){

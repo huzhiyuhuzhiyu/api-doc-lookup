@@ -459,6 +459,13 @@ export default {
       }
       if (this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }else{
+        if (!this.orderForm.superQuery.condition.length) {
+          this.orderForm.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {

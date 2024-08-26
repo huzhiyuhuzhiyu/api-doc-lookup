@@ -160,7 +160,7 @@ export default {
         },
         {
           prop: 'inventoryQuantity',
-          label: "库存数量",
+          label: "可用库存",
           type: 'input'
         },
 
@@ -248,12 +248,12 @@ export default {
     initData() {
       this.listLoading = true
       if (this.productCodeS) {
-        
+
 
         if (this.form.superQuery.condition.length) {
           let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("code"));
           filteredData.push({ "field": "code", "fieldValue": this.productCodeS, "symbol": "like" })
-          this.form.superQuery.condition=filteredData
+          this.form.superQuery.condition = filteredData
         } else {
           this.form.superQuery.condition.push(
             { "field": "code", "fieldValue": this.productCodeS, "symbol": "like" }
@@ -264,7 +264,7 @@ export default {
         if (this.form.superQuery.condition.length) {
           let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("drawingNo"));
           filteredData.push({ "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.form.superQuery.condition=filteredData
+          this.form.superQuery.condition = filteredData
         } else {
           this.form.superQuery.condition.push(
             { "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
@@ -276,9 +276,11 @@ export default {
       if (this.productCodeS || this.productDrawingNoS) {
         this.$set(this.form.superQuery, 'matchLogic', 'AND')
       } else {
-        this.form.superQuery = {
-          condition: [],
-          matchLogic: ""
+        if (!this.form.superQuery.condition.length) {
+          this.form.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
         }
       }
       getProducts(this.form).then(res => {
@@ -397,7 +399,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
   margin-bottom: 5px;
 }
 

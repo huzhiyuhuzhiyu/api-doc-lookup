@@ -321,9 +321,9 @@ export default {
   },
   methods: {
     addition(data){
-      this.formVisible=true
+      this.pickVisible=true
       this.$nextTick(()=>{
-        this.$refs.Form.init(data,'add','awit')
+        this.$refs.PickForm.init(data,'add','awit')
       })
     },
     handleUserRelation(id){
@@ -417,6 +417,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.pickVisible=false
       this.search()
     },
     initData() {
@@ -453,6 +454,13 @@ export default {
       }
       if (this.customerDrawingNumberS || this.productDrawingNoS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      }else{
+        if (!this.orderForm.superQuery.condition.length) {
+          this.orderForm.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {

@@ -64,7 +64,7 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="partnerName" label="供应商名称" min-width="120" sortable="custom" />
+            <el-table-column prop="partnerName" label="供应商名称" min-width="160" sortable="custom" />
             <el-table-column prop="partnerCode" label="供应商编码" min-width="120" sortable="custom" />
             <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="120" sortable="custom" />
@@ -104,6 +104,9 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -113,12 +116,88 @@ import { purPurchaseReceiptReturnGoodsDetailList, linesReceiptReturn } from '@/a
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/externalProcessManagement/productAcceptReturnGoods/outsourcingReceiptNote/Form.vue'
 import DetailForm from './DetailForm.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import { getUnitData } from '@/api/basicData/materialSettings'
 export default {
-  components: { Form, DetailForm, ExportForm },
+  components: { Form, DetailForm, ExportForm, SuperQuery, ExportForm },
   data() {
     return {
+      superQueryVisible: false,
+      exportFormVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '单号',
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: '供应商名称',
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: '供应商编码',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '收货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'warehouseName',
+          label: '仓库',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'select'
+        },
+        {
+          prop: 'receivedQuantity',
+          label: '收货数量',
+          type: 'input'
+        },
+
+        {
+          prop: 'ordersNo',
+          label: '订单号',
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ],
       columnList: ["partnerCode", "createByName"],
       visible: false,
       detailFormVisible: false,
@@ -196,6 +275,15 @@ export default {
         }).catch(() => { })
       }
     },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+  
     initData() {
       this.listLoading = true
 
@@ -246,7 +334,8 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.detailFormVisible = false
-      if (isRefresh) { this.initData() }
+      this.initData()
+      // if (isRefresh) { this.initData() }
     },
   }
 }

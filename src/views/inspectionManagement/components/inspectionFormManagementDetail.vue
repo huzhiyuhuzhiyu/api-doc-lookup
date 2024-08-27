@@ -48,11 +48,15 @@
 
 
               </el-tab-pane>
+              <el-tab-pane label="图纸信息" name="drawingcard">
+                <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
+                  :openMode="openMode" />
+              </el-tab-pane>
               <el-tab-pane label="附件" name="annex">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
-           
+
             </el-tabs>
           </div>
         </div>
@@ -492,7 +496,7 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(row, btnType, inspectionType, businessCode) {
+    async init(row, btnType, inspectionType, businessCode) {
       console.log(row, 'row666')
       let id = row.id
       this.inspectionOrderNoChange(row.id)
@@ -505,7 +509,22 @@ export default {
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
-
+      this.ProductListRequestObjs = {
+        code: this.dataForm.productCode,
+        drawingNo: '',
+        name: this.dataForm.productName,
+        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
+        pageNum: 1,
+        pageSize: 20
+      }
+      await getbimDrawingData(this.ProductListRequestObjs)
+        .then((res) => {
+          this.productList = res.data.records
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
       // this.$nextTick(() => { this.dataFormFlag = true })
       this.fetchData('UQDH', true)
       this.refeshDataFormItems()

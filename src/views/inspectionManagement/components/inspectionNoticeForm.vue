@@ -587,12 +587,16 @@ export default {
 
       this.fetchData(businessCode, true)
       this.dataForm = row
+      this.dataForm.docId = row.id
+      this.dataForm.docLineId = row.ordersLineId
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
       if (inspectionType === 'procure' || inspectionType === 'external') {
         this.dataForm.inspectionQuantity = row.receivedQuantity
+      } else if (inspectionType === 'sale_back') {
+        this.dataForm.inspectionQuantity = row.deliveryQuantity
       } else if (inspectionType === 'process') {
         this.dataForm.inspectionQuantity = row.productionQuantity
       } else if (inspectionType === 'finished') {
@@ -807,47 +811,50 @@ export default {
         // })
         this.formLoading = false
       } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') {
+        this.dataForm.notificationType = inspectionType
         // 销售退货、外协退料
-        getQuotationsendlist(id).then((res) => {
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
-          this.dataForm = {
-            ...res.data.notice,
-            orderNo: res.data.notice.orderNo,
-            inspectionDate: this.jnpf.getToday(),
-            noticeId: res.data.notice.id,
-            notificationType: inspectionType,
-            approvalStatus: '',
-            originOrderNo: res.data.notice.orderNo,
-            id: '',
-            submitMethod: 'add'
-          }
-          let tempLinesList = res.data.noticeLineList.map((line) => {
-            return {
-              ...line,
-              ordersLineId: line.id,
-              inspectionQuantity: line.deliveryQuantity,
-              inspectionResults: '',
-              unqualifiedQuantity: '',
-              productsId: line.productId,
-              returnQuantity: 0
-              // samplingQuantity: line.productInspectionMethod === 'all' ? line.deliveryQuantity : ''
-            }
-          })
-          this.linesListFormat(tempLinesList)
-          this.linesList = tempLinesList
-          this.setLinesListItems()
-          this.formLoading = false
-        })
+        // getQuotationsendlist(id).then((res) => {
+        //   if (res.data.attachmentList) {
+        //     res.data.attachmentList.forEach((item) => {
+        //       this.datafilelist.push({
+        //         name: item.document.fullName,
+        //         fileSize: item.document.fileSize,
+        //         filename: item.document.filePath,
+        //         id: item.document.id,
+        //         url: item.url
+        //       })
+        //     })
+        //   }
+        //   this.dataForm = {
+        //     ...res.data.notice,
+        //     orderNo: res.data.notice.orderNo,
+        //     inspectionDate: this.jnpf.getToday(),
+        //     noticeId: res.data.notice.id,
+        //     notificationType: inspectionType,
+        //     approvalStatus: '',
+        //     originOrderNo: res.data.notice.orderNo,
+        //     id: '',
+        //     submitMethod: 'add'
+        //   }
+        //   let tempLinesList = res.data.noticeLineList.map((line) => {
+        //     return {
+        //       ...line,
+        //       ordersLineId: line.id,
+        //       inspectionQuantity: line.deliveryQuantity,
+        //       inspectionResults: '',
+        //       unqualifiedQuantity: '',
+        //       productsId: line.productId,
+        //       returnQuantity: 0
+        //       // samplingQuantity: line.productInspectionMethod === 'all' ? line.deliveryQuantity : ''
+        //     }
+        //   })
+        //   this.linesListFormat(tempLinesList)
+        //   this.linesList = tempLinesList
+        //   this.setLinesListItems()
+        //   this.formLoading = false
+        // })
+        this.dataForm.submitMethod = 'add'
+        this.formLoading = false
       } else if (inspectionType === 'produce') {
         // 生产退料
         detailWithdrawal(id).then((res) => {
@@ -1061,7 +1068,7 @@ export default {
         // dataObj.lines.forEach(line => { if (line.inspectionResults === 'qualified') { line.receiptQuantity = line.inspectionQuantity } })
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
-
+        console.log(dataObj, 'dataObj')
         if (location.hostname === 'localhost' || location.href.indexOf('mode=dev') !== -1) {
           // 调试
           let flag = await confirm('确定提交吗？')

@@ -23,8 +23,7 @@
         </el-form-item>
         <el-form-item label="类别图标" v-if="!dataForm.id">
           <template slot="label">
-            类别图标
-            <span class="required">*</span>
+            类别图标<span class="required">*</span>
           </template>
           <el-row type="flex">
             <div style="flex:1;">

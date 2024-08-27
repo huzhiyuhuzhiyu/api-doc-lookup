@@ -343,9 +343,8 @@ export default {
     addOrUpdateHandle(id, readOnly) {
       if (readOnly) {
         this.detailFormVisible = true
-        console.log(id)
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(id, readOnly)
+          this.$refs.DetailForm.init(row.id, readOnly)
         })
       } else {
         this.formVisible = true

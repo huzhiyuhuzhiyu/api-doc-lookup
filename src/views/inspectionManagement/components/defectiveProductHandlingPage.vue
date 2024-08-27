@@ -63,7 +63,7 @@
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -107,7 +107,7 @@
               <template slot-scope="scope">
                 <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
-                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">
                       查看详情
                     </el-button>
                   </template>
@@ -250,10 +250,10 @@ export default {
 
       this.initData()
     },
-    addOrUpdateHandle(id, btnType = 'add') {
+    addOrUpdateHandle(row, btnType = 'add') {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, this.pageData.type, this.pageData.businessCode)
+        this.$refs.Form.init(row, btnType, this.pageData.type, this.pageData.businessCode)
       })
     },
     sortChange({ prop, order }) {

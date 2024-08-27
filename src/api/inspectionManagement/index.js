@@ -60,7 +60,16 @@ export function getInspectionItem(data) {
     method: 'GET'
   })
 }
- 
+
+/**检验单 根据产品id获取默认抽检数量 */
+export function getSamplingQuantityByProductId(data) {
+  return request({
+    url: `/api/erp/products/sampling/rules/batch/cal/num`,
+    method: 'POST',
+    data
+  })
+}
+
 // 不合格品处理单 列表
 export function getQcUnqualifiedList(data) {
   return request({

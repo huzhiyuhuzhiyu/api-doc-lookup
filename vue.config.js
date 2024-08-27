@@ -46,6 +46,10 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           '^/dev': ''
+        },
+        secure: false,
+        onProxyReq(proxyReq) {
+          proxyReq.removeHeader('origin')
         }
       }
     }

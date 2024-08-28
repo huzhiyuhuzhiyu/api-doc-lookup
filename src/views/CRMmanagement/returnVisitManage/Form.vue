@@ -69,6 +69,33 @@
                         <el-input v-model="dataForm.feedback" placeholder="请输入客户反馈" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24" v-if="dataForm.returnVisitForm=='见面拜访'">
+                      <el-form-item label="定位" prop="visitGps">
+                        <el-input v-model="dataForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24" v-if="dataForm.returnVisitForm=='见面拜访'">
+                      <el-form-item label="现场照片" prop="visitPhoto">
+                        <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
+                          <i slot="default" class="el-icon-plus"></i>
+                          <div slot="file" slot-scope="{file}">
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
+                            <span class="el-upload-list__item-actions">
+                              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                                <i class="el-icon-zoom-in"></i>
+                              </span>
+                              <span class="el-upload-list__item-delete" @click="handleDownload(file)">
+                                <i class="el-icon-download"></i>
+                              </span>
+                              <span v-if="btntype !== 'look'" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                <i class="el-icon-delete"></i>
+                              </span>
+                            </span>
+                          </div>
+                          <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
+                        </el-upload>
+                      </el-form-item>
+                    </el-col>
                   </el-row>
                 </el-form>
               </el-collapse-item>
@@ -76,6 +103,9 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -89,6 +119,8 @@ import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmCo
 export default {
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       codeConfig: {},//单据规则配置
       getcrmContractlist,
       //合同列表字段
@@ -176,6 +208,9 @@ export default {
       },
       btntype: false,
       dataRule: {
+        returnVisitNo: [
+          { required: true, message: '请输入回访编号', trigger: 'blur' },
+        ],
         returnVisitTime: [
           { required: true, message: '请选择回访时间', trigger: 'blur' },
         ],
@@ -199,6 +234,16 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    handleRemove(file) {
+      console.log(file);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleDownload(file) {
+      console.log(file);
+    },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);

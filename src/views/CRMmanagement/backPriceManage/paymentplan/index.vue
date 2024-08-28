@@ -13,7 +13,7 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
-          <div style="min-width: 250px;">
+          <div style="min-width: 260px;">
             <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
@@ -92,7 +92,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
-            计划回款总金额：{{totalplanReceivablesMoney}}元 / 实际回款总金额：{{totalpracticeMoney}}元 / 未回款总金额：{{totalunreceivedMoney}}元
+            计划回款总金额：<span :style="{color:totalplanReceivablesMoney*1<0?'#e2231a':'#2b9939',marginRight:'5px'}">{{totalplanReceivablesMoney}}</span>元 / 实际回款总金额：<span :style="{color:totalpracticeMoney*1<0?'#e2231a':'#2b9939',marginRight:'5px'}">{{totalpracticeMoney}}</span>元 / 未回款总金额：<span :style="{color:totalunreceivedMoney*1<0?'#e2231a':'#2b9939',marginRight:'5px'}">{{totalunreceivedMoney}}</span>元
           </pagination>
         </div>
       </div>
@@ -462,6 +462,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.programmefrom = {}
       this.programmetitle = ''
       this.initData()
     },

@@ -80,7 +80,7 @@
             </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
-            商机金额：{{totalmoney}}元
+            商机金额：<span :style="{color:totalmoney*1<0?'#e2231a':'#2b9939',marginRight:'5px'}">{{totalmoney}}</span>元
           </pagination>
         </div>
       </div>
@@ -306,6 +306,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.programmefrom = {}
       this.programmetitle = ''
       this.initData()
     },

@@ -125,6 +125,7 @@ export default {
         ],
         price: [
           { required: true, message: '请输入价格', trigger: 'blur' },
+          { validator: this.formValidate({ type: 'decimal', params: [10, 2, ""] }), trigger: 'blur' }
         ],
         stackingFlag: [
           { required: true, message: '请选择是否上下架', trigger: 'blur' },

@@ -12,7 +12,7 @@
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
                 <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item> 
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -69,15 +69,12 @@
           <div class="JNPF-common-head">
             <topOpts @add="addSupplier('', 'add')" :isJudgePer="true" :addPerCode="'btn_add'">
               <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus"
-                @click="importProductFun">导入</el-button>
-              <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportForm">导出</el-button>
+              <el-button size="mini" type="primary" v-has="'btn_import'" icon="el-icon-plus" @click="importProductFun">导入</el-button>
+              <el-button v-has="'btn_export'" :disabled="tableData.length > 0 ? false : true" size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
                 <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -87,8 +84,7 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column hasC>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column hasC>
             <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">{{
@@ -97,7 +93,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
-           
+
             <el-table-column prop="taxId" label="税号" min-width="200" />
             <el-table-column prop="contacts" label="联系人" sortable="custom" min-width="100" />
             <el-table-column prop="phone" label="电话" sortable="custom" min-width="120" />
@@ -114,18 +110,15 @@
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column label="操作" width="220" fixed="right">
               <template slot-scope="scope">
-                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
-                  @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')">
+                <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'" @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')">
                   <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
-                  <el-button size="mini" type="text"
-                    @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">查看详情</el-button>
+                  <el-button size="mini" type="text" @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">查看详情</el-button>
 
                 </tableOpts>
               </template>
             </el-table-column>
           </JNPF-table>
-          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-            @pagination="initData">
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
 
           </pagination>
         </div>
@@ -148,13 +141,11 @@
     </el-dialog>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
-      :http-request="UploadProduct" />
+    <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <RecordForm v-if="recordFormVisible" ref="RecordForm" @close="closeForm" />
-     <!-- 高级查询 -->
-     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
   </div>
 </template>
 
@@ -171,10 +162,10 @@ import { mapGetters, mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'formalCustomer',
-  components: { Form, ExportForm, RecordForm ,SuperQuery,programme},
+  components: { Form, ExportForm, RecordForm, SuperQuery, programme },
   data() {
     return {
-      file:{},
+      file: {},
       uploadVisib: false,
       programmefrom: {},
       partentOrChild: 'partent',
@@ -201,7 +192,7 @@ export default {
       listLoading: false,
       salesList: [],
 
-      listQuery:{},
+      listQuery: {},
       dataForm: {
         partnerCategoryId: '',
         code: "",
@@ -226,7 +217,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        superQuery:{}
+        superQuery: {}
       },
 
 
@@ -427,7 +418,7 @@ export default {
         this.treeLoading = false
       })
     },
-    columnSetFun(){
+    columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
     exportType(data, ref) {
@@ -675,6 +666,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
+      this.programmefrom = {}
       this.programmetitle = ''
       this.filterText = ''
       this.getcategoryTree()
@@ -747,7 +739,6 @@ export default {
   padding-left: 10px;
 }
 
-
 .JNPF-common-search-box {
   padding-top: 8px;
   padding-bottom: 8px;
@@ -791,7 +782,7 @@ export default {
 }
 
 ::v-deep .icon-lingqu {
-  margin-right: 8px
+  margin-right: 8px;
 }
 </style>
 <style scoped lang="scss">

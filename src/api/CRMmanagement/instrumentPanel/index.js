@@ -31,6 +31,14 @@ export function getqueryPerformance(data) {
     data
   })
 }
+//报表数据-仪表盘排行榜
+export function getranking(data) {
+  return request({
+    url: `/api/zgt/bi/rank/ranking`,
+    method: 'POST',
+    data
+  })
+}
 //报表数据-仪表盘销售漏斗
 export function getsellFunneldata(data) {
   return request({

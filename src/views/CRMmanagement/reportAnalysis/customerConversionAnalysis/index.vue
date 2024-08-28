@@ -65,7 +65,7 @@ export default {
         endTime: "",
         type: "year",
         userIds: [],
-        chart: '3'
+        chart: '1'
       },
       optionschart: [
         { label: '线条', value: '1' },
@@ -110,6 +110,7 @@ export default {
   },
   methods: {
     chartchange(val) {
+      this.dataForm.chart = val
       if (val == '1') {
         this.option = {
           tooltip: {
@@ -282,68 +283,164 @@ export default {
     initData() {
       this.listLoading = true
       getCustomerconversionrate(this.dataForm).then(res => {
-        this.option = {
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'shadow'
+        this.datas = res.data
+        if (this.dataForm.chart == '1') {
+          this.option = {
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              },
+              formatter: '{b} : {c}%'
             },
-            formatter: '{b} : {c}%'
-          },
-          toolbox: {
-            feature: {
-              saveAsImage: {}
+            grid: {
+              top: '10%',
+              left: '1%',
+              right: '3%',
+              bottom: '15%',
+              containLabel: true
             },
-            showTitle: false
-          },
-          grid: {
-            top: '10%',
-            left: '1%',
-            right: '1%',
-            bottom: '15%',
-            containLabel: true
-          },
-          color: ['#42526e', '#0052cc'],
-          legend: {
-            show: false
-          },
-          xAxis: [
-            {
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
+            },
+            color: ['#0052cc', '#42526e'],
+            legend: {
+              show: false
+            },
+            xAxis: [{
               type: 'category',
               show: true,
-              data: res.data.map(item => item.type),
+              data: this.datas.map(item => item.type),
               axisTick: {
-                alignWithLabel: true,
                 show: false
               }
-            }
-          ],
-          yAxis: [
-            {
-              axisTick: {
-                show: false
-              },
-              axisLine: {
-                show: false
-              },
+            }],
+            yAxis: [{
               type: 'value',
               max: 100,
               splitNumber: 5,
               axisLabel: {
                 formatter: '{value}%'
+              },
+              axisLine: {
+                show: false
               }
-            }
-          ],
-          series: [
-            {
-              name: '客户转化率',
-              barWidth: '20%',
-              type: 'bar',
-              data: res.data.map(item => item.dealCustomerRate)
-            }
-          ]
+            }],
+            series: [
+              {
+                name: '客户转化率',
+                data: this.datas.map(item => item.dealCustomerRate),
+                type: 'line',
+                smooth: true
+              }
+            ]
+          }
+        } else if (this.dataForm.chart == '2') {
+          this.option = {
+            tooltip: {
+              trigger: 'item'
+            },
+            legend: {
+              show: true,
+              orient: 'horizontal',
+              bottom: "10",
+              type: "scroll"
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
+            },
+            xAxis: [{
+              show: false
+            }],
+            series: [
+              {
+                name: 'Access From',
+                type: 'pie',
+                radius: '50%',
+                data: this.datas.map(item => {
+                  return {
+                    value: item.dealCustomerRate, name: item.type
+                  }
+                }),
+                emphasis: {
+                  itemStyle: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+                }
+              }
+            ]
+          }
+        } else {
+          this.option = {
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                type: 'shadow'
+              },
+              formatter: '{b} : {c}%'
+            },
+            grid: {
+              top: '10%',
+              left: '1%',
+              right: '3%',
+              bottom: '15%',
+              containLabel: true
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              },
+              showTitle: false
+            },
+            color: ['#42526e', '#0052cc'],
+            legend: {
+              show: false
+            },
+            xAxis: [
+              {
+                type: 'category',
+                show: true,
+                data: this.datas.map(item => item.type),
+                axisTick: {
+                  alignWithLabel: true,
+                  show: false
+                }
+              }
+            ],
+            yAxis: [
+              {
+                axisTick: {
+                  show: false
+                },
+                axisLine: {
+                  show: false
+                },
+                type: 'value',
+                max: 100,
+                splitNumber: 5,
+                axisLabel: {
+                  formatter: '{value}%'
+                }
+              }
+            ],
+            series: [
+              {
+                name: '客户转化率',
+                barWidth: '20%',
+                type: 'bar',
+                data: this.datas.map(item => item.dealCustomerRate)
+              }
+            ]
+          }
         }
-        this.datas = res.data
         this.listLoading = false
         this.init()
       }).catch(() => {

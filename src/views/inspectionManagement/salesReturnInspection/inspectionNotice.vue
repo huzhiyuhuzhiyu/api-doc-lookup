@@ -227,8 +227,6 @@ export default {
           options: []
         },
 
-
-
         {
           prop: 'ordersNo',
           label: '订单号',
@@ -265,6 +263,7 @@ export default {
         // approvalStatus: 'ok', // 审批状态
         documentStatus: 'submit', // 单据状态
         // fullReceiptFlag: false, // 是否已全部收货 0否1是
+        returnDeliveryType: 'back',
         inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
         notifyType: 'sale', //	通知单类型 外协通知 external、销售通知 sale,可用值:external,external_process,picking,procure,sale
         // deliveryStatus: "not_returned", // 退发货状态 待发货 undelivered 、已发货 delivered 、待退货 not_returned 、已退货 returned
@@ -577,7 +576,6 @@ export default {
         pageSize: 100
       }
       getUnitData(obj8).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -598,7 +596,6 @@ export default {
         pageSize: 20
       }
       getbimProductsModelList(obj9).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -663,7 +660,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj11).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -695,7 +691,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj12).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -748,7 +743,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj14).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -780,7 +774,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj15).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -813,7 +806,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj16).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -846,7 +838,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj17).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -869,7 +860,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-
       })
     },
     initData() {

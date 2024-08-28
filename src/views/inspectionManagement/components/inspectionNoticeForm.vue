@@ -587,16 +587,20 @@ export default {
 
       this.fetchData(businessCode, true)
       this.dataForm = row
-      this.dataForm.docId = row.id
-      this.dataForm.docLineId = row.ordersLineId
+
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
       if (inspectionType === 'procure' || inspectionType === 'external') {
         this.dataForm.inspectionQuantity = row.receivedQuantity
+        this.dataForm.docId = row.purchaseReceiptReturnGoodsId
+        this.dataForm.docLineId = row.id
+        this.dataForm.docNo = row.orderNo
       } else if (inspectionType === 'sale_back') {
         this.dataForm.inspectionQuantity = row.deliveryQuantity
+        this.dataForm.docId = row.id
+        this.dataForm.docLineId = row.id
       } else if (inspectionType === 'process') {
         this.dataForm.inspectionQuantity = row.productionQuantity
       } else if (inspectionType === 'finished') {

@@ -97,14 +97,14 @@
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
           :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }">
-          <el-table-column prop="name" label="货位名称" fixed="left" min-width="180">
+          <el-table-column prop="name" label="货位名称"  min-width="180">
             <!-- <template slot-scope="scope">
               <i
                 :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{
                   scope.row.name }}
             </template> -->
           </el-table-column>
-          <el-table-column prop="code" label="货位编码" width="180" sortable="custom">
+          <el-table-column prop="code" label="货位编码" min-width="180" sortable="custom">
             <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
                 {{ scope.row.code }}
@@ -130,7 +130,7 @@
           </el-table-column> -->
           <!-- <el-table-column prop="goodsFrameRow" label="货架行" width="80" />
                     <el-table-column prop="goodsFrameCol" label="货架列" width="80" /> -->
-          <el-table-column prop="remark" label="备注" width="160" />
+          <el-table-column prop="remark" label="备注" min-width="160" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">

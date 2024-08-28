@@ -52,7 +52,7 @@
                       <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
                     </el-collapse-item>
 
-                    <el-collapse-item title="产品信息" name="productInfo">
+                    <el-collapse-item title="子件信息" name="productInfo">
                       <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                         :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
                         @deleteth="addOrDelLinesItem" customStyle />
@@ -330,7 +330,7 @@ export default {
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
         {
-          label: '物料分类',
+          label: '产品分类',
           classAttribute: 'material',
           method: getcategoryTree,
           requestObj: { classAttribute: 'material' }

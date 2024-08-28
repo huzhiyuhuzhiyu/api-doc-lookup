@@ -49,6 +49,11 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="visitName" label="拜访计划名称" min-width="160" />
             <el-table-column prop="visitTime" label="预计拜访时间" min-width="180" />
+            <el-table-column prop="visitForm" label="拜访形式" min-width="180">
+              <template slot-scope="scope">
+                {{visitFormfaction(scope.row.visitForm)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contactsName" label="联系人" min-width="180" />
             <el-table-column prop="businessName" label="商机名称" min-width="180" />
@@ -136,6 +141,7 @@ export default {
   },
   data() {
     return {
+      visitFormList: [],
       visitStatusList: [
         { label: '已完成', value: 'complete' },
         { label: '未完成', value: 'uncomplete' },
@@ -160,6 +166,12 @@ export default {
           startPlaceholder: '回访开始时间',
           endPlaceholder: '回访结束时间',
           pickerOptions: {}
+        },
+        { // 下拉选
+          prop: 'visitForm',
+          label: '拜访形式',
+          type: 'select',
+          options: []
         },
         {
           prop: 'customerName',
@@ -286,6 +298,10 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    visitFormfaction(val) {
+      let _data = this.visitFormList.filter(item => item.value == val)[0]
+      return _data ? _data.label : val
+    },
     visitStatusfaction(val) {
       let _data = this.visitStatusList.filter(item => item.value == val)[0]
       return _data ? _data.label : val
@@ -318,6 +334,23 @@ export default {
                   this.visitGoalList = response.data.list
                   this.superQueryJson.forEach(item => {
                     if (item.prop == 'visitAim') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+              if (resp.enCode == "Followupform") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.visitFormList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'visitForm') {
                       item.options = response.data.list.map(o => {
                         return { label: o.fullName, value: o.enCode }
                       })
@@ -447,6 +480,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.programmefrom = {}
       this.programmetitle = ''
       this.initData()
     },

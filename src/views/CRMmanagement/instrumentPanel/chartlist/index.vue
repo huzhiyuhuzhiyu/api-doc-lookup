@@ -42,29 +42,30 @@
           <span class="filter-tag">{{personnelcontent}}</span>
           <span class="filter-tag">{{daterangecontent}}</span>
           <div class="el-select">
-            <el-select v-model="rankingForm.titleType" placeholder="请选择" style="width: 100%;" @change="changeranking">
+            <el-select v-model="rankingForm.label" placeholder="请选择" style="width: 100%;" @change="changeranking">
               <el-option v-for="(item, index) in rankingFormlist" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
             </el-select>
           </div>
         </div>
-        <div v-if="true" class="ranking-table">
-          <div style="height: 320px;">
-            <JNPF-table ref="tabForm" :border="false" :data="tableList" custom-column row-key="id" :hasNO="false" :setColumnDisplayList="columnList">
-              <el-table-column prop="clueName" label="排名" min-width="100" />
-              <el-table-column prop="nextTime" label="姓名" width="120" />
-              <el-table-column prop="mobile6" label="回款金额(元)" min-width="140" v-if="rankingForm.titleType=='hkje'" />
-              <el-table-column prop="telephone" label="回款目标完成率(%)" min-width="170" v-if="rankingForm.titleType=='hkje'" />
-              <el-table-column prop="mobile" label="合同金额(元)" min-width="140" v-if="rankingForm.titleType=='htje'" />
-              <el-table-column prop="telephone5" label="合同目标完成率(%)" min-width="160" v-if="rankingForm.titleType=='htje'" />
-              <el-table-column prop="email1" label="合同数(个)" min-width="130" v-if="rankingForm.titleType=='hts'" />
-              <el-table-column prop="email2" label="新增客户数(个)" min-width="160" v-if="rankingForm.titleType=='xzkhs'" />
-              <el-table-column prop="email3" label="新增联系人(个)" min-width="160" v-if="rankingForm.titleType=='xzlxr'" />
-              <el-table-column prop="email4" label="新增跟进记录数(条)" min-width="170" v-if="rankingForm.titleType=='xzgjjls'" />
+        <div class="ranking-table" v-loading="rankloading">
+          <div :style="{'height': rankVO.userName?'304px':'346px'}">
+            <JNPF-table ref="tabForm" :border="true" :data="tableList" :key="Math.random()" custom-column row-key="id" :hasNO="false" :setColumnDisplayList="columnList" style="border:1px solid #ebeef5;border-right:none;">
+              <el-table-column prop="rank" label="排名" min-width="160" />
+              <el-table-column prop="userName" label="姓名" min-width="160" />
+              <el-table-column prop="rankMoney" label="回款金额(元)" min-width="160" v-if="rankingForm.label=='1'" />
+              <el-table-column prop="rankNum" label="回款目标完成率(%)" min-width="160" v-if="rankingForm.label=='1'" />
+              <el-table-column prop="rankMoney" label="合同金额(元)" min-width="160" v-if="rankingForm.label=='2'" />
+              <el-table-column prop="rankNum" label="合同目标完成率(%)" min-width="160" v-if="rankingForm.label=='2'" />
+              <el-table-column prop="rankNum" label="合同数(个)" min-width="160" v-if="rankingForm.label=='3'" />
+              <el-table-column prop="rankNum" label="新增客户数(个)" min-width="160" v-if="rankingForm.label=='4'" />
+              <el-table-column prop="rankNum" label="新增联系人(个)" min-width="160" v-if="rankingForm.label=='5'" />
+              <el-table-column prop="rankNum" label="新增跟进记录数(条)" min-width="160" v-if="rankingForm.label=='6'" />
             </JNPF-table>
+            <div class="my-ranking" v-if="rankVO.userName">
+              <div v-for="(value,key,index) in rankVO" :key="index"><span style="margin-left: 10px;font-weight:bold;">{{value}}</span></div>
+            </div>
           </div>
-          <!-- <div class="my-ranking"></div> -->
         </div>
-        <div v-else></div>
       </div>
     </div>
     <div v-else-if="type=='salesfunnel'">
@@ -163,7 +164,7 @@
 </template>
  
 <script>
-import { getsalesTrendList, getqueryDataInfo, getqueryPerformance, getsellFunneldata, getforgottenCustomerCount } from "@/api/CRMmanagement/instrumentPanel/index";
+import { getsalesTrendList, getqueryDataInfo, getqueryPerformance, getsellFunneldata, getforgottenCustomerCount, getranking } from "@/api/CRMmanagement/instrumentPanel/index";
 import forget from "./forget.vue";
 import datasummary from "./datasummary.vue";
 import moneychart from "./moneychart.vue";
@@ -189,6 +190,8 @@ export default {
   },
   data() {
     return {
+      rankloading: false,
+      rankVO: {},
       dataforget: {},
       charttitlefunnel: 'je',
       formancemoney: 0,
@@ -200,16 +203,14 @@ export default {
       charttitles: 'xt',
       saleloading: false,
       rankingFormlist: [
-        { fullName: '回款金额', enCode: 'hkje' },
-        { fullName: '合同金额', enCode: 'htje' },
-        { fullName: '合同数', enCode: 'hts' },
-        { fullName: '新增客户数', enCode: 'xzkhs' },
-        { fullName: '新增联系人', enCode: 'xzlxr' },
-        { fullName: '新增跟进记录数', enCode: 'xzgjjls' },
+        { fullName: '回款金额', enCode: '1' },
+        { fullName: '合同金额', enCode: '2' },
+        { fullName: '合同数', enCode: '3' },
+        { fullName: '新增客户数', enCode: '4' },
+        { fullName: '新增联系人', enCode: '5' },
+        { fullName: '新增跟进记录数', enCode: '6' },
       ],
-      rankingForm: {
-        titleType: 'hkje'
-      },
+      rankingForm: {},
       columnList: [],//隐藏表格列
       tableList: [],
       dataForm: {},
@@ -241,6 +242,9 @@ export default {
           this.initDatasalesfunnel()
         } else if (this.type == 'forgettingreminder') {
           this.initDataforget()
+        } else if (this.type == 'rankinglist') {
+          this.rankingForm = { ...newOption, label: '1' }
+          this.initDatarankinglist()
         }
       },
       deep: true,
@@ -267,6 +271,24 @@ export default {
     initDataforget() {
       getforgottenCustomerCount(this.Requestparameters).then(res => {
         this.dataforget = res.data
+      })
+    },
+    //排行榜
+    initDatarankinglist() {
+      this.rankloading = true
+      this.rankVO = {}
+      getranking(this.rankingForm).then(res => {
+        this.tableList = res.data.rankList
+        if (res.data.rankVO.userName) {
+          if (res.data.rankVO.rankMoney) {
+            this.rankVO = { rank: res.data.rankVO.rank, userName: res.data.rankVO.userName, rankMoney: res.data.rankVO.rankMoney, rankNum: res.data.rankVO.rankNum }
+          } else {
+            this.rankVO = { rank: res.data.rankVO.rank, userName: res.data.rankVO.userName, rankNum: res.data.rankVO.rankNum }
+          }
+        }
+        this.rankloading = false
+      }).catch(() => {
+        this.rankloading = false
       })
     },
     //销售漏斗
@@ -375,6 +397,7 @@ export default {
         this.optionperformance = {
           series: [
             {
+              radius: "82%",
               type: 'gauge',
               progress: {
                 show: true,
@@ -529,8 +552,8 @@ export default {
       })
     },
     changeranking(e) {
-      this.rankingForm.titleType = e
-      this.$refs.tabForm.$refs.JNPFTable.clearSelection()
+      this.rankingForm.label = e
+      this.initDatarankinglist()
     }
   }
 };
@@ -579,6 +602,20 @@ export default {
 .ranking-table {
   margin-top: 16px;
   width: 100%;
+  .my-ranking {
+    display: flex;
+    width: 100%;
+    font-size: 14px;
+    table-layout: fixed;
+    background-color: #ebecf0;
+    border: 1px solid #dfe1e6;
+    border-top: none;
+    justify-content: start;
+    div {
+      flex: 1;
+      line-height: 40px;
+    }
+  }
 }
 .sale-statistics {
   margin-top: 16px;
@@ -587,7 +624,7 @@ export default {
 }
 .performance-chart {
   width: 100%;
-  height: 260px;
+  height: 267px;
   margin-top: 10px;
   .info-box {
     position: absolute;

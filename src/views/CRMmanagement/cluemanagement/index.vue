@@ -13,8 +13,8 @@
             </el-dropdown>
           </span> -->
         </div>
-        <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
-          </el-input></div>
+        <!-- <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+          </el-input></div> -->
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-if="!leftFlag">
@@ -734,6 +734,7 @@ export default {
     },
     reset() {
       this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.programmefrom = {}
       this.programmetitle = ''
       this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
       this.listQuery.status = this.categoryId

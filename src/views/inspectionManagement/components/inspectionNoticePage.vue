@@ -9,18 +9,20 @@
                 <el-input v-model="listQuery.orderNo" placeholder="检验单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
+                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.originOrderNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.inspectorName" placeholder="检验人" @keyup.enter.native="search()"
-                  clearable />
-              </el-form-item>
-            </el-col>
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -64,7 +66,7 @@
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="originOrderNo" label="业务单号" min-width="200" sortable="custom" />
+            <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" min-width="120" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -108,9 +110,7 @@
       </div>
     </div>
 
-    <!-- <Form v-if="formVisible" ref="Form" @close="closeForm" /> -->
     <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
-
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
       :inspectionMethodList="inspectionMethodList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -150,7 +150,7 @@ export default {
       approvalStatusList, // 审批状态
       inspectionResultsList, // 检验结果
       inspectionMethodList, // 检验方法
-
+      time: null,
       tableData: [],
       listQuery: {},
       initListQuery: {
@@ -232,6 +232,13 @@ export default {
     },
     initData() {
       this.listLoading = true
+      if (this.time) {
+        this.listQuery.inspectionStartDate = this.time[0]
+        this.listQuery.inspectionEndDate = this.time[1]
+      } else {
+        this.listQuery.inspectionStartDate = ''
+        this.listQuery.inspectionEndDate = ''
+      }
       getInspectionList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records

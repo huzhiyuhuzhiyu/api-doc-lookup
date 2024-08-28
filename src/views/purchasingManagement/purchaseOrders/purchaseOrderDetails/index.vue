@@ -6,13 +6,13 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入采购单号" clearable
+                <el-input v-model.trim="listsQuery.orderNo" placeholder="采购单号" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
@@ -553,6 +553,7 @@ export default {
         deliveryStartDate: '',
         endTime: '',
         orderNo: '',
+        classAttribute: 'other',
         orderType: 'procure',
         orderItems: [
           {

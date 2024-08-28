@@ -65,9 +65,9 @@
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
 
           <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
-          <el-table-column prop="productType" label="物料分类" min-width="120" sortable="custom">
+          <el-table-column prop="classAttributeList" label="类别属性" min-width="120" sortable="custom">
             <template slot-scope="scope">
-              <div>{{ productType.getType(scope.row.productType) }}</div>
+              {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
@@ -95,9 +95,12 @@
 import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import productType from './productType.js'
+// import productType from './productType.js'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   name: 'purOrderNoPriceQuery',
   components: { ExportForm, SuperQuery },
@@ -134,9 +137,10 @@ export default {
           type: 'input'
         },
         {
-          prop: 'productType',
-          label: '物料分类',
-          type: 'input'
+          prop: 'classAttribute',
+          label: '类别属性',
+          type: 'select',
+          options: []
         },
 
         {
@@ -154,6 +158,7 @@ export default {
           type: 'input'
         }
       ],
+      classAttributeList: [],
       exportFormVisible: false,
       background: true, //分页器背景颜色
       tableDataList: [],
@@ -183,8 +188,8 @@ export default {
         createTimeArr: []
       },
       total: 0,
-      productType: productType,
-      columnList: ['name', 'createByName','createTime']
+      // productType: productType,
+      columnList: ['name', 'createByName', 'createTime']
     }
   },
   mounted() {
@@ -194,9 +199,11 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     // 查询类型 区分 无价格 无bom 无工艺
     this.listQuery.productWithout = this.searchType
+
     this.initData()
   },
   methods: {
+
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -431,6 +438,28 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
+      })
+
+      let obj = {
+        pageNum: 1,
+        pageSize: 20
+      }
+      getclassAttributeList(obj).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.code
+          }
+          arr.push(obj)
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'classAttribute')
+
+        if (oilObj) {
+          // 将options赋值为5
+          oilObj.options = arr
+        }
+        this.classAttributeList = arr
       })
     },
     add(item) {

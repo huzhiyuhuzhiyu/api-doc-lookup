@@ -46,8 +46,8 @@
           <el-col :span="4">
             <el-form-item>
               <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
+                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -101,8 +101,13 @@
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" hasC @sort-change="sortChange"
           custom-column ref="dataTable" :setColumnDisplayList="columnList" @selection-change="handeleProductInfoData">
           <el-table-column prop="drawingNo" label="品名规格" min-width="300" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
+          <!-- <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="code" label="产品编码" min-width="100"></el-table-column>
+          <el-table-column prop="classAttribute" label="类别属性" width="120" sortable="custom">
+            <template slot-scope="scope">
+              {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
+            </template>
+          </el-table-column>
           <el-table-column prop="productCategoryName" label="产品分类" width="100" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="120" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
@@ -120,57 +125,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <aiForm v-if="aiformVisible" ref="aiForm" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="品名规格">
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品来源">
-              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
-                <el-option v-for="item in productSourceList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品状态">
-              <el-select v-model="listQuery.productStatus" placeholder="请选择产品状态" clearable style="width: 100%;">
-                <el-option v-for="item in productStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="listQuery.createTimeArr" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 导入产品 -->
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct"
@@ -210,7 +165,9 @@ import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 import { mapState } from 'vuex'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'safetyInventoryWarning',
@@ -218,7 +175,7 @@ export default {
     return {
       columnList: [
         // 'code',
-        'productCategoryName',
+        'productCategoryName'
         // 'deputyUnit',
         // 'deputyAvailableQuantity',
         // 'deputyInventoryQuantity',
@@ -236,10 +193,22 @@ export default {
       loadingText: false,
       leftFlag: false,
       selectData: [], // 选中的数据 带到form页
+      classAttributeOptions: [
+        {
+          label: '成品',
+          value: 'finish_product'
+        },
+        {
+          label: '非成品',
+          value: 'other'
+        }
+      ],
+      classAttributeList: [],
       initListQuery: {
         code: '',
         name: '',
         safeInventoryWarnFlag: 1,
+        classAttribute: 'other',
         orderItems: [
           {
             asc: false,
@@ -258,8 +227,7 @@ export default {
         productCategoryId: '', // 类型id
         productStatus: '', // 产品状态
         customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: ''
+        createTimeArr: []
       },
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
@@ -280,25 +248,36 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
-          prop: 'code',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
         },
         {
-          prop: 'name',
-          label: '产品名称',
+          prop: 'code',
+          label: '产品编码',
+          type: 'input'
+        },
+
+        // {
+        //   prop: 'name',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
+        {
+          prop: 'classAttribute',
+          label: '类别属性',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'productCategoryName',
+          label: '产品分类',
           type: 'input'
         },
         {
           prop: 'mainUnit',
-          label: '主单位',
-          type: 'select',
-          options: []
+          label: '单位',
+          type: 'input',
         },
         {
           prop: 'safeInventory',
@@ -307,48 +286,20 @@ export default {
         },
         {
           prop: 'availableQuantity',
-          label: '可用库存(主)',
-          type: 'input'
-        },
-        {
-          prop: 'inventoryQuantity',
-          label: '库存数量(主)',
-          type: 'input'
-        },
-        {
-          prop: 'occupancyQuantity',
-          label: '占用数量(主)',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '副单位',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'deputyAvailableQuantity',
-          label: '可用库存(副)',
-          type: 'input'
-        },
-        {
-          prop: 'deputyInventoryQuantity',
-          label: '库存数量(副)',
-          type: 'input'
-        },
-        {
-          prop: 'deputyOccupancyQuantity',
-          label: '占用数量(副)',
+          label: '可用库存',
           type: 'input'
         }
       ],
       uploadVisib: false
     }
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   created() {
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    console.log(this.listQuery, 'qiery')
+
     this.initData()
   },
   computed: {
@@ -543,7 +494,7 @@ export default {
           // demandDelivery = maxDate.toISOString().split('T')[0];
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.Form.init(this.selectData)
+            this.$refs.Form.init(this.selectData, this.listQuery.classAttribute)
           })
         }
       }
@@ -592,7 +543,6 @@ export default {
     },
     // 上传产品
     UploadProduct(data) {
-      console.log(data.file, 'filr')
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -682,247 +632,29 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+
     getProductClassFun() {
-
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa007",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj1).then(res => {
-
+      let obj = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getclassAttributeList(obj).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.code
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa006",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-
-      getbimProductAttributesList(obj2).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa002",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa003",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa001",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-
-      getbimProductAttributesList(obj6).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa015",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
-        let arr = []
-        res.data.records.forEach(item => {
-          let obj = {
-            label: item.name,
-            value: item.name,
-          }
-          arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
-
-        if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
-        }
-      })
-
-
-      // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
-          item.taxRate = item.enCode.replace('%', '') * 1
         })
-        this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
-      })
+        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'classAttribute')
 
-    },
+        if (classAttributeObj) {
+          classAttributeObj.options = arr
+        }
+        this.classAttributeList = arr
+      })
+    }
   }
 }
 </script>

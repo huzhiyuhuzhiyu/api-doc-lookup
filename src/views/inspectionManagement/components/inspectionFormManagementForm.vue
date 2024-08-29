@@ -48,6 +48,10 @@
 
 
               </el-tab-pane>
+              <el-tab-pane label="图纸信息" name="drawingcard">
+                <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
+                  :openMode="openMode" />
+              </el-tab-pane>
               <el-tab-pane label="附件" name="annex">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
@@ -364,6 +368,7 @@ export default {
           value: undefined,
           type: 'custom',
           customComponent: 'user-select',
+          itemDisabled: true,
           itemRules: [{ required: true, trigger: 'change' }],
           change: () => {
             this.$nextTick(() => {
@@ -377,6 +382,7 @@ export default {
           label: '检验日期',
           value: undefined,
           type: 'date',
+          itemDisabled: true,
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12
         },
@@ -386,6 +392,7 @@ export default {
           label: '品名规格',
           value: '',
           type: 'input',
+          itemDisabled: true,
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
@@ -395,6 +402,7 @@ export default {
           label: '单位',
           value: '',
           type: 'input',
+          itemDisabled: true,
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
@@ -405,6 +413,7 @@ export default {
           value: '',
           type: 'input',
           sm: 12,
+          itemDisabled: true,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
         {
@@ -413,6 +422,7 @@ export default {
           value: '',
           type: 'select',
           clearable: false,
+          itemDisabled: true,
           change: this.inspectionMethodChange,
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12,
@@ -438,6 +448,7 @@ export default {
           label: '检验结果',
           value: undefined,
           type: 'select',
+          itemDisabled: true,
           options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
           change: this.inspectionResultsChange,
           itemRules: [{ required: true, trigger: 'change' }],
@@ -450,10 +461,10 @@ export default {
           type: 'input',
           sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
+          itemDisabled: true,
         },
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
-        { prop: "description", label: "处理说明", value: "", type: "textarea" }
+        { prop: "description", label: "处理说明", value: "", type: "textarea", itemDisabled: true, }
       ]
     },
     // 刷新子表结构
@@ -580,9 +591,9 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(row, btnType, inspectionType, businessCode) {
+    async init(row, btnType, inspectionType, businessCode) {
       let id = row.id
-      // this.inspectionOrderNoChange(row.id)
+      this.inspectionOrderNoChange(row.id)
       this.dataForm = row
       this.dataForm.inspectionOrderNo = row.orderNo
       this.visible = true
@@ -592,6 +603,22 @@ export default {
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
+      this.ProductListRequestObjs = {
+        code: this.dataForm.productCode,
+        drawingNo: '',
+        name: this.dataForm.productName,
+        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
+        pageNum: 1,
+        pageSize: 20
+      }
+      await getbimDrawingData(this.ProductListRequestObjs)
+        .then((res) => {
+          this.productList = res.data.records
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
 
       // this.$nextTick(() => { this.dataFormFlag = true })
       this.fetchData('UQDH', true)
@@ -610,73 +637,73 @@ export default {
         } else if (btnType === 'setLoss') {
           this.title = '损失上报'
         }
-        // 获取详情
-        detailQcUnqualifiedData(id).then(async res => {
-          console.log(res, 'res1998')
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
-            })
-          }
+        // // 获取详情
+        // detailQcUnqualifiedData(id).then(async res => {
+        //   console.log(res, 'res1998')
+        //   if (res.data.attachmentList) {
+        //     res.data.attachmentList.forEach((item) => {
+        //       this.datafilelist.push(
+        //         {
+        //           name: item.document.fullName,
+        //           fileSize: item.document.fileSize,
+        //           filename: item.document.filePath,
+        //           id: item.document.id,
+        //           url: item.url
+        //         }
+        //       )
+        //     })
+        //   }
 
-          this.dataForm = res.data.unqualified
-          this.inspectionList = res.data.itemList
-          this.linesListTwo = res.data.causesList
-          let tempLinesList = res.data.lines
+        //   this.dataForm = res.data.unqualified
+        //   this.inspectionList = res.data.itemList
+        //   this.linesListTwo = res.data.causesList
+        //   let tempLinesList = res.data.lines
 
-          tempLinesList.forEach(line => {
-            if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance' || line.treatmentResults === 'unqualified') {
-              line.qualifiedQuantityDisabled = true
-              line.unqualifiedQuantityDisabled = true
-            }
+        //   tempLinesList.forEach(line => {
+        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance' || line.treatmentResults === 'unqualified') {
+        //       line.qualifiedQuantityDisabled = true
+        //       line.unqualifiedQuantityDisabled = true
+        //     }
 
-            // 损失相关处理
-            if (this.inspectionType !== 'process') {
-              line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
-            } else {
-              line.lossUnitPrice = 0
-              line.lossAmount = 0
-            }
-            if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
-              line.otherLossAmount = 0
-              line.claimAmount = 0
-            } else {
-              if (btnType === 'setLoss') {
-                line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
-              }
-            }
-          })
+        //     // 损失相关处理
+        //     if (this.inspectionType !== 'process') {
+        //       line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
+        //     } else {
+        //       line.lossUnitPrice = 0
+        //       line.lossAmount = 0
+        //     }
+        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
+        //       line.otherLossAmount = 0
+        //       line.claimAmount = 0
+        //     } else {
+        //       if (btnType === 'setLoss') {
+        //         line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
+        //       }
+        //     }
+        //   })
 
 
-          if (btnType === 'look') {
-            if (!this.dataForm.lossFlag) { // 没有设置过损失，查看时损失相关显示为空内容
-              tempLinesList.forEach(line => {
-                line.lossUnitPrice = ' '
-                line.lossAmount = ' '
-                line.otherLossAmount = ' '
-                line.totalLossAmount = ' '
-                line.claimAmount = ' '
-              })
-            }
-          } else if (btnType === 'anew') { // 重新提交
-            this.$nextTick(() => { this.getApproverData() }) // 审批
-          }
+        //   if (btnType === 'look') {
+        //     if (!this.dataForm.lossFlag) { // 没有设置过损失，查看时损失相关显示为空内容
+        //       tempLinesList.forEach(line => {
+        //         line.lossUnitPrice = ' '
+        //         line.lossAmount = ' '
+        //         line.otherLossAmount = ' '
+        //         line.totalLossAmount = ' '
+        //         line.claimAmount = ' '
+        //       })
+        //     }
+        //   } else if (btnType === 'anew') { // 重新提交
+        //     this.$nextTick(() => { this.getApproverData() }) // 审批
+        //   }
 
-          this.linesList = tempLinesList
-          this.refeshDataFormItems()
-          this.refeshLinesListItems()
-          this.formLoading = false
-        }).catch(err => {
-          this.formLoading = false
-        })
+        //   this.linesList = tempLinesList
+        //   this.refeshDataFormItems()
+        //   this.refeshLinesListItems()
+        //   this.formLoading = false
+        // }).catch(err => {
+        //   this.formLoading = false
+        // })
 
         // 编辑或查看，获取保存的审批单详情
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {

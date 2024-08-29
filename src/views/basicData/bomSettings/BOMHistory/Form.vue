@@ -52,7 +52,7 @@
 
 
 
-                    <el-collapse-item title="产品信息" name="productInfo">
+                    <el-collapse-item title="子件信息" name="productInfo">
                       <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
                         :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
                         @deleteth="addOrDelLinesItem" customStyle />
@@ -1155,7 +1155,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px 30px;
+  padding: 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {

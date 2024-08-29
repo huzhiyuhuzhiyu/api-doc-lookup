@@ -834,7 +834,7 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       purchaseOrderReport(this.orderForm)
         .then((res) => {
-          console.log('产品', res)
+
           this.productList = res.data.page.records
           this.productTotal = res.data.page.total
           this.listLoading = false
@@ -892,7 +892,7 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-      console.log('this.dataFormTwo', this.dataFormTwo.productData)
+
     },
     // },
     // 获取所有订单列表数据
@@ -1284,8 +1284,8 @@ export default {
       } catch (error) { }
     },
     init() {
-      this.fetchData('CGTHDH')
-      console.log(666)
+      this.fetchData('CGTH')
+
       this.dataForm.salesman = this.userInfo.userName
     },
     goBack() {
@@ -1360,7 +1360,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-            console.log(item, 'it')
+
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
               purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
@@ -1414,7 +1414,7 @@ export default {
           let formMethod = null
 
           // obj.returnGoods.deliveryStatus = 'not_returned'
-          console.log(obj, 'obj')
+
           addpurPurchaseReceiptReturnGoods(obj)
             .then((res) => {
               let msg = ''

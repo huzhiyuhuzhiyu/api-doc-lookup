@@ -333,6 +333,9 @@ export default {
       },
       btntype: false,
       dataRule: {
+        no: [
+          { required: true, message: '请输入合同编码', trigger: 'blur' },
+        ],
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],

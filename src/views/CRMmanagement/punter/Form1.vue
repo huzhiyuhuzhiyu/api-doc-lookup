@@ -367,7 +367,7 @@
                   </el-input>
                 </template>
               </el-table-column>
-              <el-table-column prop="remark" label="备注">
+              <el-table-column prop="remark" label="备注" min-width="220">
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.remark" :disabled="btnType === 'look' ? true : false" maxlength="200" placeholder="请输入备注">{{
                       scope.row.remark }}
@@ -467,7 +467,7 @@
                   </el-select>
                 </template>
               </el-table-column>
-              <el-table-column prop="remark" label="备注">
+              <el-table-column prop="remark" label="备注" min-width="220">
                 <template slot-scope="scope">
                   <el-input v-model="scope.row.remark" :disabled="btnType === 'look' ? true : false" maxlength="200" placeholder="请输入备注">{{
                       scope.row.remark }}

@@ -104,10 +104,17 @@
           <el-table-column prop="scrapUnitPrice" label="废品单价" min-width="120" />
           <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="pricingTypeName" label="计价类型" width="180"> </el-table-column>
-          <el-table-column prop="processingType" label="加工类型" width="180" sortable="custom">
+          <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processingType == 'self_produced'">自制</div>
               <div v-if="scope.row.processingType == 'external_production'">外协</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="processType" label="工序类型" width="120" sortable="custom">
+            <template slot-scope="scope">
+              <div v-if="scope.row.processType == 'normal'">正常工序</div>
+              <div v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
+              <div v-if="scope.row.processType == 'vibrate'">测震工序</div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="创建人" width="180" />
@@ -265,7 +272,7 @@ export default {
         { fullName: "辅料", enCode: "accessories" },
         { fullName: "其他 ", enCode: "other" }
       ],
-      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice','createTime'],
+      columnList: ['unitPrice', 'createByName', 'rejectUnitPrice', 'scrapUnitPrice', 'createTime'],
       leftFlag: false,
     }
   },

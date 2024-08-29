@@ -48,91 +48,15 @@
 
 
               </el-tab-pane>
+              <el-tab-pane label="图纸信息" name="drawingcard">
+                <JNPF-col-table v-model="productList" ref="sleeveForm" :tableItems="ProductTableItemss"
+                  :openMode="openMode" />
+              </el-tab-pane>
               <el-tab-pane label="附件" name="annex">
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
-              <el-tab-pane label="流程信息" name="approvalFlow">
-                <workFlow v-if="workVisible" :nodeFirst="firstOneNode"
-                  :btnType="btnType === 'look' || btnType === 'setLoss'" :nodeConfig.sync="busNodeConfig"
-                  ref="workflowRef" />
-                <div class="noDataTip" v-if="!workVisible">
-                  <span class="el-table__empty-text">
-                    <div data-v-4d190d64="" class="el-empty">
-                      <div class="el-empty__image" style="width: 120px;"><svg viewBox="0 0 79 86" version="1.1"
-                          xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                          <defs>
-                            <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%"
-                              y2="100%">
-                              <stop stop-color="#FCFCFD" offset="0%"></stop>
-                              <stop stop-color="#EEEFF3" offset="100%"></stop>
-                            </linearGradient>
-                            <linearGradient id="linearGradient-2-48" x1="0%" y1="9.5%" x2="100%" y2="90.5%">
-                              <stop stop-color="#FCFCFD" offset="0%"></stop>
-                              <stop stop-color="#E9EBEF" offset="100%"></stop>
-                            </linearGradient>
-                            <rect id="path-3-48" x="0" y="0" width="17" height="36"></rect>
-                          </defs>
-                          <g id="Illustrations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g id="B-type" transform="translate(-1268.000000, -535.000000)">
-                              <g id="Group-2" transform="translate(1268.000000, 535.000000)">
-                                <path id="Oval-Copy-2"
-                                  d="M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z"
-                                  fill="#F7F8FC"></path>
-                                <polygon id="Rectangle-Copy-14" fill="#E5E7E9"
-                                  transform="translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) "
-                                  points="13 58 53 58 42 45 2 45"></polygon>
-                                <g id="Group-Copy"
-                                  transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)">
-                                  <polygon id="Rectangle-Copy-10" fill="#E5E7E9"
-                                    transform="translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) "
-                                    points="2.84078316e-14 3 18 3 23 7 5 7"></polygon>
-                                  <polygon id="Rectangle-Copy-11" fill="#EDEEF2"
-                                    points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"></polygon>
-                                  <rect id="Rectangle-Copy-12" fill="url(#linearGradient-1-48)"
-                                    transform="translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) "
-                                    x="38" y="7" width="17" height="36"></rect>
-                                  <polygon id="Rectangle-Copy-13" fill="#F8F9FB"
-                                    transform="translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) "
-                                    points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
-                                </g>
-                                <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                  height="36"></rect>
-                                <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
-                                  <mask id="mask-4-48" fill="white">
-                                    <use xlink:href="#path-3-48"></use>
-                                  </mask>
-                                  <use id="Mask" fill="#E0E3E9"
-                                    transform="translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) "
-                                    xlink:href="#path-3-48"></use>
-                                  <polygon id="Rectangle-Copy" fill="#D5D7DE" mask="url(#mask-4-48)"
-                                    transform="translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) "
-                                    points="7 0 24 0 20 18 -1.70530257e-13 16"></polygon>
-                                </g>
-                                <polygon id="Rectangle-Copy-18" fill="#F8F9FB"
-                                  transform="translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) "
-                                  points="62 45 79 45 70 58 53 58"></polygon>
-                              </g>
-                            </g>
-                          </g>
-                        </svg></div>
-                      <div class="el-empty__description">
-                        <p>暂无流程信息</p>
-                      </div><!---->
-                    </div>
-                  </span>
-                </div>
-              </el-tab-pane>
-              <el-tab-pane v-if="btnType === 'look' || btnType === 'setLoss'" label="流转记录" name="transferList">
-                <el-table v-loading="formLoading" :data="transferData">
-                  <el-table-column prop="businessName" label="审批业务名称" min-width="160" />
-                  <el-table-column prop="processedName" label="办理人名称" min-width="160" />
-                  <el-table-column prop="remark" label="备注" min-width="160" />
-                  <el-table-column prop="startDate" label="开始时间" min-width="160" />
-                  <el-table-column prop="endDate" label="结束时间" min-width="160" />
-                  <el-table-column prop="consumingTime" label="耗时" min-width="160" />
-                </el-table>
-              </el-tab-pane>
+
             </el-tabs>
           </div>
         </div>
@@ -176,7 +100,7 @@ export default {
       datafilelist: [],
       activeName: "jcInfo",
       activeNames: ['productInfo', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
-      title: "新建不良品处理单",
+      title: "查看检验单",
       inspectionTypeList,
       inspectionResultsList,
       inspectionMethodList,
@@ -191,7 +115,7 @@ export default {
       linesList: [],
       linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
       dialogRequestObj: {
-        inspectStatus: 'unInspect', // 排除已经生成不良品处理单的检验单
+        inspectStatus: 'unInspect', // 排除已经生成检验单的检验单
         handleFlag: false,
         unqualifiedFlag: true,
         approvalStatus: "ok",
@@ -340,18 +264,10 @@ export default {
     // 刷新主表结构
     refeshDataFormItems() {
       this.dataFormItems = [
-        {
-          prop: 'orderNo',
-          label: '处理单号',
-          value: '',
-          type: 'input',
-          itemDisabled: true,
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12
-        },
+
         {
           prop: 'inspectionOrderNo',
-          label: '检验单号',
+          label: '单号',
           value: '',
           type: 'input',
           itemDisabled: true,
@@ -580,9 +496,10 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(row, btnType, inspectionType, businessCode) {
+    async init(row, btnType, inspectionType, businessCode) {
+      console.log(row, 'row666')
       let id = row.id
-      // this.inspectionOrderNoChange(row.id)
+      this.inspectionOrderNoChange(row.id)
       this.dataForm = row
       this.dataForm.inspectionOrderNo = row.orderNo
       this.visible = true
@@ -592,132 +509,113 @@ export default {
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
-
+      this.ProductListRequestObjs = {
+        code: this.dataForm.productCode,
+        drawingNo: '',
+        name: this.dataForm.productName,
+        orderItems: [{ asc: false, column: '' }, { asc: false, column: 'create_time' }],
+        pageNum: 1,
+        pageSize: 20
+      }
+      await getbimDrawingData(this.ProductListRequestObjs)
+        .then((res) => {
+          this.productList = res.data.records
+          this.loading = false
+        })
+        .catch((err) => {
+          this.loading = false
+        })
       // this.$nextTick(() => { this.dataFormFlag = true })
       this.fetchData('UQDH', true)
       this.refeshDataFormItems()
       this.refeshLinesListItems()
-      this.title = '新建不良品处理单'
+      this.title = '查看检验单'
       this.getApproverData()
       this.formLoading = false
       if (id) {
         if (btnType === 'anew') { // 重新提交
-          this.title = '新建不良品处理单'
+          this.title = '新建检验单'
         } else if (btnType === 'edit') {
-          this.title = '编辑不良品处理单'
+          this.title = '编辑检验单'
         } else if (btnType === 'look') {
-          this.title = '查看不良品处理单'
+          this.title = '查看检验单'
         } else if (btnType === 'setLoss') {
           this.title = '损失上报'
         }
-        // 获取详情
-        detailQcUnqualifiedData(id).then(async res => {
-          console.log(res, 'res1998')
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push(
-                {
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                }
-              )
-            })
-          }
+        // // 获取详情
+        // detailQcUnqualifiedData(id).then(async res => {
+        //   console.log(res, 'res1998')
+        //   if (res.data.attachmentList) {
+        //     res.data.attachmentList.forEach((item) => {
+        //       this.datafilelist.push(
+        //         {
+        //           name: item.document.fullName,
+        //           fileSize: item.document.fileSize,
+        //           filename: item.document.filePath,
+        //           id: item.document.id,
+        //           url: item.url
+        //         }
+        //       )
+        //     })
+        //   }
 
-          this.dataForm = res.data.unqualified
-          this.inspectionList = res.data.itemList
-          this.linesListTwo = res.data.causesList
-          let tempLinesList = res.data.lines
+        //   this.dataForm = res.data.unqualified
+        //   this.inspectionList = res.data.itemList
+        //   this.linesListTwo = res.data.causesList
+        //   let tempLinesList = res.data.lines
 
-          tempLinesList.forEach(line => {
-            if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance' || line.treatmentResults === 'unqualified') {
-              line.qualifiedQuantityDisabled = true
-              line.unqualifiedQuantityDisabled = true
-            }
+        //   tempLinesList.forEach(line => {
+        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance' || line.treatmentResults === 'unqualified') {
+        //       line.qualifiedQuantityDisabled = true
+        //       line.unqualifiedQuantityDisabled = true
+        //     }
 
-            // 损失相关处理
-            if (this.inspectionType !== 'process') {
-              line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
-            } else {
-              line.lossUnitPrice = 0
-              line.lossAmount = 0
-            }
-            if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
-              line.otherLossAmount = 0
-              line.claimAmount = 0
-            } else {
-              if (btnType === 'setLoss') {
-                line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
-              }
-            }
-          })
+        //     // 损失相关处理
+        //     if (this.inspectionType !== 'process') {
+        //       line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
+        //     } else {
+        //       line.lossUnitPrice = 0
+        //       line.lossAmount = 0
+        //     }
+        //     if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
+        //       line.otherLossAmount = 0
+        //       line.claimAmount = 0
+        //     } else {
+        //       if (btnType === 'setLoss') {
+        //         line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
+        //       }
+        //     }
+        //   })
 
 
-          if (btnType === 'look') {
-            if (!this.dataForm.lossFlag) { // 没有设置过损失，查看时损失相关显示为空内容
-              tempLinesList.forEach(line => {
-                line.lossUnitPrice = ' '
-                line.lossAmount = ' '
-                line.otherLossAmount = ' '
-                line.totalLossAmount = ' '
-                line.claimAmount = ' '
-              })
-            }
-          } else if (btnType === 'anew') { // 重新提交
-            this.$nextTick(() => { this.getApproverData() }) // 审批
-          }
+        //   if (btnType === 'look') {
+        //     if (!this.dataForm.lossFlag) { // 没有设置过损失，查看时损失相关显示为空内容
+        //       tempLinesList.forEach(line => {
+        //         line.lossUnitPrice = ' '
+        //         line.lossAmount = ' '
+        //         line.otherLossAmount = ' '
+        //         line.totalLossAmount = ' '
+        //         line.claimAmount = ' '
+        //       })
+        //     }
+        //   } else if (btnType === 'anew') { // 重新提交
+        //     this.$nextTick(() => { this.getApproverData() }) // 审批
+        //   }
 
-          this.linesList = tempLinesList
-          this.refeshDataFormItems()
-          this.refeshLinesListItems()
-          this.formLoading = false
-        }).catch(err => {
-          this.formLoading = false
-        })
+        //   this.linesList = tempLinesList
+        //   this.refeshDataFormItems()
+        //   this.refeshLinesListItems()
+        //   this.formLoading = false
+        // }).catch(err => {
+        //   this.formLoading = false
+        // })
 
-        // 编辑或查看，获取保存的审批单详情
-        if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
-          getSaleBusDetail(id).then(res => {
-            if (res.data) {
-              this.firstOneNode = []
-              this.approvalForm = res.data.form
-              this.transferQuery.approvalFormId = this.approvalForm.id
-              this.firstOneNode.push({
-                name: res.data.form.createByName
-              })
-              let data = res.data.formNodeTree.childNode
-              if (data) {
-                this.addNodeTypeAndNodeName(data)
 
-                this.busNodeConfig.childNode = data
-                this.workVisible = true
-                // this.$nextTick(() => {
-                //   this.$refs.workflowRef.initData('busing', this.btnType)
-                // })
-              } else { // 新建草稿时没有设置审批流程
-                this.busNodeConfig.childNode = null
-                this.getApproverData()
-              }
-              if (this.btnType === 'look' || this.btnType === 'setLoss') {
-                this.transferQuery.documentId = id
-                approvalTransferList(this.transferQuery).then(res => {
-                  this.transferData = res.data.records // 流转记录
-                })
-              }
-            } else {
-              this.busNodeConfig.childNode = null
-              this.getApproverData() // 临时补偿 移动端保存的单据没有审批
-            }
-          })
-        }
       } else {
         this.fetchData('UQDH', true)
         this.refeshDataFormItems()
         this.refeshLinesListItems()
-        this.title = '新建不良品处理单'
+        this.title = '新建检验单'
         this.getApproverData()
         this.formLoading = false
       }
@@ -1026,37 +924,7 @@ export default {
       }
 
     },
-    // 对应子数据新增或删除行
-    addOrDelLinesItem(data) {
-      let paramType = Array.isArray(data) ? 'Array' : 'Object'
-      if (paramType === 'Object') {
-        this.linesList.splice(data.$index, 1)
-        this.spaceLines = this.spaceLines.filter(item => item.productsId !== data.row.productsId)
-      } else {
-        let tempList = JSON.parse(JSON.stringify(this.linesList))
-        let hasItemList = []
-        for (let i = 0; i < data.length; i++) {
-          let item = data[i];
-          item.remark = ""
-          item.productCode = item.code
-          item.productsId = item.id
-          const hasFlag = this.linesList.find(i => item.productId === i.productsId)
-          if (hasFlag) { hasItemList.push(item.productName) }
-          else { tempList.push(item) }
-          if (hasItemList.length) this.$message.error(`已经存在的产品：${hasItemList.join('、')}`)
-        }
-        this.linesList = tempList.map(item => { return { ...item, warehouseId: this.dataForm.warehouseId } })
-        this.$nextTick(() => { this.$refs.linesForm.setDefaultValue() });
-      }
-    },
-    // 子表数据更改
-    linesChange(dataOrIndex, prop, value) {
-      if (Array.isArray(dataOrIndex)) {
-        this.linesList = JSON.parse(JSON.stringify(dataOrIndex))
-      } else if (prop) {
-        this.linesList[dataOrIndex][prop] = value
-      }
-    },
+
     // 检验单更改
     inspectionOrderNoChange(id) {
 
@@ -1092,212 +960,8 @@ export default {
         this.formLoading = false
       }).catch(err => { this.formLoading = false })
     },
-    // 获取审批流参数递归处理
-    addNodeTypeAndNodeName(obj) {
-      if (obj) {
-        if (obj.name === "审核人") {
-          obj.nodeType = 1;
-          obj.nodeName = obj.name;
-          obj.directorLevel = obj.approvalType == "manager" ? obj.levelSupervisor : ''
-          obj.examineEndDirectorLevel = obj.approvalType == "multilevel" ? obj.levelSupervisor : ''
-        }
-        if (obj.name === "路由") {
-          obj.nodeType = 4;
-        }
-        if (obj.name === "抄送人") {
-          obj.nodeType = 2;
-          obj.nodeName = obj.name;
-        }
-        if (obj.childNode) {
-          this.addNodeTypeAndNodeName(obj.childNode);
-        } else {
-          if (obj.conditionNodes) {
-            for (let i = 0; i < obj.conditionNodes.length; i++) {
-              obj.conditionNodes[i].priorityLevel = obj.conditionNodes[i].priority
-              obj.conditionNodes[i].showName = obj.conditionNodes[i].name
-              obj.conditionNodes[i].nodeName = obj.conditionNodes[i].name
-              obj.conditionNodes[i].nodeType = 3
-              obj.conditionNodes[i].conditionList = obj.conditionNodes[i].conditionList.map(item => {
-                // this.approvalBusinessId = item.approvalBusinessId
-                if (item.optionNames && item.optionValues) {
-                  var optionNames = item.optionNames.split(','); // 如果习惯使用英文逗号，这里可以用 ','
-                  var optionValues = item.optionValues.split(',');
-                  var resultArr = [];
-                  if (optionNames.length === optionValues.length) {
-                    for (var i = 0; i < optionNames.length; i++) {
-                      var option = {
-                        label: optionNames[i],
-                        value: optionValues[i]
-                      };
-                      resultArr.push(option);
-                    }
-                  }
-                }
-                return {
-                  ...item,
-                  columnDbname: item.name,
-                  columnType: item.dataType,
-                  showName: item.name,
-                  tjCode: item.code,
-                  zdy1: item.comparisonValue,
-                  columnId: item.approvalBusinessId,
-                  options: resultArr,
-                  optType: item.dataType == 'number' ? (item.operationalFormula == 'lt' ? '1' : item.operationalFormula == 'gt' ? '2' : item.operationalFormula == 'eq' ? '4' : item.operationalFormula == 'ge' ? '5' : item.operationalFormula == 'le' ? '3' : '') : ''
 
-                }
-              })
-              this.addNodeTypeAndNodeName(obj.conditionNodes[i].childNode);
-            }
-          }
-        }
-      }
-    },
-    // 审批 提交参数递归处理
-    flattenNodes(node, flattenedNodes = [], previousCode = '') {
-      if (node) {
-        if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null });
-        if (node.type === 'node') {
 
-          if (node.childNode) {
-            node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
-          }
-          // delete node.childNode;
-        } else if (node.type === 'condition' && node.name === '路由') {
-          if (node.conditionNodes) {
-            for (let i = 0; i < node.conditionNodes.length; i++) {
-
-              // let previousCode = node.conditionNodes[i].code
-              node.conditionNodes[i].previousCode = previousCode
-              this.flattenNodes(node.conditionNodes[i], flattenedNodes, node.conditionNodes[i].code);
-            }
-          }
-          // if (node.childNode) {
-          //   this.flattenNodes(node.childNode, flattenedNodes,node.code);
-          // }
-        } else if (node.nodeType == 3) {
-          if (node.childNode) {
-            node.previousCode = previousCode
-            this.flattenNodes(node.childNode, flattenedNodes, node.code);
-          }
-        }
-      }
-      return flattenedNodes;
-    },
-    // 获取审批模版
-    getApproverData() {
-      this.firstOneNode = []
-      let condArr = ['>', '<', '>=', '<=', '=']
-      let state = ''
-      let condExpress = ''
-      let foundSymbol = ''  // 条件符号
-      let result = null     // 判断条件是否成立
-      let condList = []
-      let code
-      if (this.inspectionType === 'procure') code = 'b003'
-      else if (this.inspectionType === 'external') code = 'b004'
-      else if (this.inspectionType === 'produce') code = 'b008'
-      else if (this.inspectionType === 'sale_back') code = 'b006'
-      else if (this.inspectionType === 'back_material') code = 'b007'
-      else if (this.inspectionType === 'process') code = 'b005'
-      else if (this.inspectionType.replace('_batch', '') === 'finished') code = 'b022'
-      if (code) {
-        getBusDetail(code).then(res => {
-          state = res.data.business.state
-          condExpress = res.data.business.condExpress
-          // if (res.data.businessConditionList.length) {
-          //   res.data.businessConditionList.forEach(item => {
-          //     condList.push({
-          //       code: item.code,
-          //       val: item.code === 'numCode' ? this.totalNum : this.totalPrice
-          //     })
-          //   })
-          // }
-          if (state === 'condition') {
-            this.dataForm.approvalFlag = 1
-            for (var i = 0; i < condArr.length; i++) {
-              if (condExpress.includes(condArr[i])) {
-                foundSymbol = condArr[i];
-                break;
-              }
-            }
-            // 找到符号并进行销售报价业务判断
-            if (foundSymbol) {
-              const parts = condExpress.split(foundSymbol); // 使用 ">" 符号拆分字符串
-              const leftValue = parts[0]; // 提取 ">" 符号左边的值
-              const rightValue = parts[1]; // 提取 ">" 符号右边的值
-              // if (leftValue == 'numCode') {
-              //   const condition = `${this.totalNum} ${foundSymbol} ${this.totalPrice}`; // 构建条件表达式
-              //   result = eval(condition); // 执行条件判断
-              // } else {
-              //   const condition = `${this.totalPrice} ${foundSymbol} ${this.totalNum}`; // 构建条件表达式
-              //   result = eval(condition); // 执行条件判断
-              // }
-              if (result) {
-                let query = {
-                  businessCode: code,
-                  condList,
-                }
-                busApprovalFlowTree(query).then(res => {
-                  if (res.data) {
-                    this.firstOneNode = []
-                    this.approvalForm = res.data.template
-                    this.firstOneNode.push({
-                      name: this.userInfo.userName
-                    })
-                    let data = res.data.tempLineTree.childNode
-                    if (data) {
-                      this.addNodeTypeAndNodeName(data)
-                      this.busNodeConfig.childNode = data
-                      this.workVisible = true
-                      this.$nextTick(() => {
-                        this.$refs.workflowRef.initData('busing', this.type)
-                      })
-                    }
-                  } else {
-                    this.busNodeConfig.childNode = null
-                  }
-                })
-              } else {
-                this.busNodeConfig.childNode = null
-              }
-            }
-          }
-          if (state === 'enable') {
-            this.dataForm.approvalFlag = 1
-            let query = {
-              businessCode: code,
-              condList,
-            }
-            busApprovalFlowTree(query).then(res => {
-              if (res.data) {
-                this.firstOneNode = []
-                this.approvalForm = res.data.template
-                this.firstOneNode.push({
-                  name: this.userInfo.userName
-                })
-                let data = res.data.tempLineTree.childNode
-                if (data) {
-                  this.addNodeTypeAndNodeName(data)
-                  this.busNodeConfig.childNode = data
-                  this.workVisible = true
-                  this.$nextTick(() => {
-                    this.$refs.workflowRef.initData('busing', this.type)
-                  })
-                }
-              } else {
-                this.busNodeConfig.childNode = null
-              }
-            })
-          }
-          if (state === 'disabled') {
-            this.dataForm.approvalFlag = 0
-            this.busNodeConfig.childNode = null
-          }
-        })
-      }
-
-    },
     // 打开抽屉
     openSide(scope) {
       this.wareVisibled = true
@@ -1308,17 +972,16 @@ export default {
   },
   computed: {
     openMode() {
+      console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)')
       // return this.dataForm.submitFlag === 'add' ? '新建' : this.title.includes('查看') ? '只读' : '编辑'
-      if (this.title.includes('不良品')) {
+      if (this.title.includes('检验单')) {
         return this.title === '生产巡检' ? '新建' : '只读'
       }
+      console.log(this.title.substr(0, 2), 'this.title.substr(0, 2)33333333333333')
       return this.title.substr(0, 2) == '检验' ? '新建' : '只读'
     },
     rowNum() {
-      // this.$nextTick(() => { this.linesListItems = this.initLinesListItems() }) // rowNum发生改变，重新渲染linesListItems
-      // let tempUnqualifiedQuantity = this.$parent.title.includes('检') ? (this.scope.row ? this.scope.row.unqualifiedQuantity : 0) :
-      //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
-      // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
+
       return this.dataForm.unqualifiedQuantity
     },
     nowNum() {

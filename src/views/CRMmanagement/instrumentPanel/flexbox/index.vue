@@ -124,7 +124,7 @@ export default {
           if (obj1.hasOwnProperty(key) && obj2.hasOwnProperty(key)) {
             if (key !== 'type') {
               obj1[key + 'Percent'] = this.calculatePercentage(obj1, obj2, key);
-              if (obj1[key] > obj2[key]) {
+              if (obj1[key] * 1 > obj2[key] * 1) {
                 obj1[key + 'Buoyancy'] = 'up'
               } else {
                 obj1[key + 'Buoyancy'] = 'down'

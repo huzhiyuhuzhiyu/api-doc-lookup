@@ -81,7 +81,7 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                        <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                           <template slot="header">
                             <span class="required">*</span>
                             产品名称
@@ -92,7 +92,7 @@
                               <el-input v-model="scope.row.productName" placeholder="请输入含税单价" />
                             </el-form-item>
                           </template>
-                        </el-table-column>
+                        </el-table-column> -->
 
                         <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                           <template slot="header">
@@ -236,7 +236,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
+                          prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
                           <!-- <template slot="header">
                         <span class="required">*</span>打字内容
                       </template> -->
@@ -248,7 +249,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
+                          label="精度等级" width="120" :key="123">
                           <!-- <template slot="header">
                         <span class="required">*</span>精度等级
                       </template> -->
@@ -260,7 +262,8 @@
                           </template>
                         </el-table-column>
 
-                        <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="vibrationLevel"
+                          label="振动等级" width="120" :key="17">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -269,7 +272,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oil" label="油脂"
+                          width="120" :key="61">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -277,7 +281,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="oilQuantity" label="油脂量" width="160" :key="51">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="oilQuantity"
+                          label="油脂量" width="160" :key="51">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -285,7 +290,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="clearance" label="游隙" width="120" :key="100">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="clearance"
+                          label="游隙" width="120" :key="100">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                               <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -293,7 +299,8 @@
                             </el-select>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+                        <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="packagingMethod"
+                          label="包装方式" width="120" :key="101">
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -513,6 +520,7 @@ export default {
       productVisible: false,
       sourceFormVisible: false,
       activeName: 'jcInfo',
+      classAttributeFlag: '',
       dialogTitle: '',
       productVisibled: false,
       loading: false,
@@ -1210,8 +1218,9 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data) {
+    init(data, classAttributeFlag) {
       console.log(data, 'data')
+      this.dataForm.classAttribute = classAttributeFlag
       this.getProductClassFun()
       // data.forEach((item) => {
       //   item.productDrawingNo = item.drawingNo

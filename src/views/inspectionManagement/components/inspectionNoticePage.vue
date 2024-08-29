@@ -9,18 +9,20 @@
                 <el-input v-model="listQuery.orderNo" placeholder="检验单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
+                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="listQuery.originOrderNo" placeholder="品名规格" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.inspectorName" placeholder="检验人" @keyup.enter.native="search()"
-                  clearable />
-              </el-form-item>
-            </el-col>
+
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -59,12 +61,12 @@
             @sort-change="sortChange" custom-column>
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true, scope.row)">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-            <el-table-column prop="originOrderNo" label="业务单号" min-width="200" sortable="custom" />
+            <el-table-column prop="docNo" label="业务单号" min-width="200" sortable="custom" />
             <el-table-column prop="inspectorName" label="检验人" min-width="120" sortable="custom" />
             <el-table-column prop="inspectionDate" label="检验日期" width="120" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
@@ -93,7 +95,7 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, true, scope.row)">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, 'look')">
                         查看详情
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -108,9 +110,9 @@
       </div>
     </div>
 
-    <!-- <Form v-if="formVisible" ref="Form" @close="closeForm" /> -->
     <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
-     
+    <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
+      :inspectionMethodList="inspectionMethodList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
@@ -118,12 +120,12 @@
 <script>
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
-// import Form from '../components/inspectionNoticeForm.vue'
-import Form from './defectiveProductHandlingForm.vue'
+import Form from './inspectionFormManagementForm.vue'
+import DetailForm from './inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, ExportForm },
+  components: { Form, ExportForm, DetailForm },
   props: {
     pageData: {
       // 页面配置
@@ -142,12 +144,13 @@ export default {
       visible: false,
       activeName: 'dataTable',
       formVisible: false,
+      detailFormVisible: false,
       listLoading: false,
       documentStatusList, // 单据状态
       approvalStatusList, // 审批状态
       inspectionResultsList, // 检验结果
       inspectionMethodList, // 检验方法
-
+      time: null,
       tableData: [],
       listQuery: {},
       initListQuery: {
@@ -194,35 +197,48 @@ export default {
     // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
-        console.log(includeFieldMap);
+        console.log(includeFieldMap)
         let _data = {
           ...this.listQuery,
           exportType: '1097',
           exportName: '采购检验通知单',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
+          totalRowFlag: true
         }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
       }
     },
     initData() {
       this.listLoading = true
+      if (this.time) {
+        this.listQuery.inspectionStartDate = this.time[0]
+        this.listQuery.inspectionEndDate = this.time[1]
+      } else {
+        this.listQuery.inspectionStartDate = ''
+        this.listQuery.inspectionEndDate = ''
+      }
       getInspectionList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
@@ -250,12 +266,19 @@ export default {
 
       this.initData()
     },
-    addOrUpdateHandle(row, readOnly, data) {
-      console.log(row, 'row0')
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(row, readOnly, this.pageData.type, data, this.pageData.businessCode)
-      })
+    addOrUpdateHandle(row, btnType) {
+      if (btnType == 'look') {
+        this.detailFormVisible = true
+
+        this.$nextTick(() => {
+          this.$refs.DetailForm.init(row, btnType, this.pageData.type)
+        })
+      } else {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(row, btnType, this.pageData.type)
+        })
+      }
     },
     sortChange({ prop, order }) {
       let newProp
@@ -273,8 +296,8 @@ export default {
     },
     closeForm(isRefresh) {
       this.formVisible = false
+      this.detailFormVisible = false
       this.initData()
-      // if (isRefresh) { this.initData() }
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {

@@ -53,11 +53,11 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column>
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
                 {{ scope.row.productionOrderNo }}
               </el-link>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="workNo" label="工单单号" min-width="200" sortable="custom" />
           <!-- <el-table-column prop="orderNo" label="报工单号" min-width="200" sortable="custom">
@@ -95,7 +95,7 @@
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
-                <el-dropdown hide-on-click>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}
@@ -107,7 +107,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>
@@ -374,9 +374,8 @@ export default {
     addOrUpdateHandle(row, readOnly) {
       if (readOnly) {
         this.detailFormVisible = true
-        console.log(id)
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(id, readOnly)
+          this.$refs.DetailForm.init(row.id, readOnly)
         })
       } else {
         this.formVisible = true

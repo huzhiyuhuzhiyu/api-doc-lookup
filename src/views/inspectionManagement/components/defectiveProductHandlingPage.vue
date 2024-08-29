@@ -6,21 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="请输入处理单号" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.orderNo" placeholder="处理单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.inspectionOrderNo" placeholder="请输入检验单号" @keyup.enter.native="search()"
+                <el-input v-model="listQuery.inspectionOrderNo" placeholder="检验单号" @keyup.enter.native="search()"
                   clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-select v-model="listQuery.approvalStatus" placeholder="请选择审批状态" clearable style="width: 100%;">
-                  <el-option v-for="item in approvalStatusList" :key="item.value" :label="item.label"
-                    :value="item.value"></el-option>
-                </el-select>
+                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                  clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -37,7 +35,6 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding: 10px;">
-            <!-- <topOpts @add="addOrUpdateHandle()" /> -->
             <div>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
@@ -63,7 +60,7 @@
             custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
@@ -107,7 +104,7 @@
               <template slot-scope="scope">
                 <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
-                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">
+                    <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">
                       查看详情
                     </el-button>
                   </template>
@@ -250,10 +247,10 @@ export default {
 
       this.initData()
     },
-    addOrUpdateHandle(id, btnType = 'add') {
+    addOrUpdateHandle(row, btnType = 'add') {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType, this.pageData.type, this.pageData.businessCode)
+        this.$refs.Form.init(row, btnType, this.pageData.type, this.pageData.businessCode)
       })
     },
     sortChange({ prop, order }) {

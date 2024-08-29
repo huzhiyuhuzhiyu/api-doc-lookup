@@ -24,17 +24,9 @@
                     <!-- <ComSelect2 v-model="dataForm.partnerCategoryIdText" :isdisabled="isdisabled" placeholder="请选择所属分类"
                       auth isOnlyOrg @change="onOrganizeChange" :currOrgId="parentId" :parentId="parentId"
                       :type="dataForm.type" /> -->
-                      <ComSelect-list
-            :isdisabled="dataForm.id ? true : false"
-            v-model="dataForm.partnerCategoryIdText"
-            placeholder="请选择上级分类"
-            auth
-            @change="onOrganizeChange"
-            :title="'选择上级分类'"
-            :method="getcategoryTree"
-            :requestObj="requestObjTwo"
-            :paramsObj="{}"
-          />
+                    <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.partnerCategoryIdText"
+                      placeholder="请选择上级分类" auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree"
+                      :requestObj="requestObjTwo" :paramsObj="{}" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -117,8 +109,9 @@
                 </el-col>
                 <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="市" prop="city">
-                    <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;" @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
-                      :disabled="btnType ? true : false||!dataForm.province">
+                    <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;"
+                      @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
+                      :disabled="btnType ? true : false || !dataForm.province">
                       <el-option v-for="item in cities" size="small" :key="item.id" :label="item.fullName"
                         :value="item.id" @click.native="changeCity(item)">{{ item.fullName }}
                       </el-option>
@@ -127,9 +120,11 @@
                 </el-col>
                 <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                   <el-form-item label="区" prop="area">
-                    <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;" @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
-                      :disabled="btnType ? true : false||!dataForm.city">
-                      <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName" :value="item.id">
+                    <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;"
+                      @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
+                      :disabled="btnType ? true : false || !dataForm.city">
+                      <el-option v-for="item in area" size="small" :key="item.id" :label="item.fullName"
+                        :value="item.id">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -213,7 +208,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="对账开始日期" prop="reconciliationStartDate">
                     <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" format="yyyy-MM-dd"
-                      style="width: 100%;" value-format="yyyy-MM-dd"  placeholder="请选择对账开始日期"
+                      style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账开始日期"
                       :disabled="btnType ? true : false">
                     </el-date-picker>
                   </el-form-item>
@@ -221,7 +216,7 @@
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="对账结束日期" prop="reconciliationEndDate">
                     <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" format="yyyy-MM-dd"
-                      style="width: 100%;" value-format="yyyy-MM-dd"  placeholder="请选择对账结束日期"
+                      style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账结束日期"
                       :disabled="btnType ? true : false">
                     </el-date-picker>
                   </el-form-item>
@@ -247,8 +242,8 @@
                   <el-form-item label="付款方式" prop="paymentMethod">
                     <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
                       :disabled="btnType ? true : false">
-                      <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode" :label="item.fullName"
-                        :value="item.enCode">
+                      <el-option v-for="item in paymentMethodList" size="small" :key="item.enCode"
+                        :label="item.fullName" :value="item.enCode">
                       </el-option>
                     </el-select>
                   </el-form-item>
@@ -276,16 +271,18 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="税率%" prop="taxRate">
-                    <el-input v-model="dataForm.taxRate" maxlength="2" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入税率" :disabled="btnType ? true : false" />
+                    <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
+                      <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName" :value="item.enCode">
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="认定日期" prop="customerRecognitionTime">
 
                     <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd"
-                      style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions" placeholder="请选择认定日期"
-                      :disabled="btnType ? true : false">
+                      style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions"
+                      placeholder="请选择认定日期" :disabled="btnType ? true : false">
                     </el-date-picker>
                   </el-form-item></el-col>
                 <el-col :sm="8" :xs="24">
@@ -528,8 +525,8 @@
                   <span class="required">*</span>市
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)" :loading="loadingcity"
-                    :disabled="!scope.row.province ? true : btnType ? true : false">
+                  <el-select v-model="scope.row.city" placeholder="请选择城市" @focus="focusaction(scope.row)"
+                    :loading="loadingcity" :disabled="!scope.row.province ? true : btnType ? true : false">
                     <el-option v-for="item in cities1" :key="item.id" :label="item.fullName" :value="item.id"
                       @click.native="changeCity1(item, scope.row)"></el-option>
                   </el-select>
@@ -540,8 +537,8 @@
                   <span class="required">*</span>区
                 </template>
                 <template slot-scope="scope">
-                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)" :loading="loadingarea"
-                    :disabled="!scope.row.city ? true : btnType ? true : false">
+                  <el-select v-model="scope.row.area" placeholder="请选择区" @focus="focusactionarea(scope.row)"
+                    :loading="loadingarea" :disabled="!scope.row.city ? true : btnType ? true : false">
                     <el-option v-for="item in area1" :key="item.id" :label="item.fullName" :value="item.id"></el-option>
                   </el-select>
                 </template>
@@ -585,7 +582,7 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch == '1'">
             <UploadWj v-model="datafilelist" :disabled="!!btnType" :detailed="!!btnType"></UploadWj>
           </el-tab-pane>
         </el-tabs>
@@ -599,12 +596,13 @@ import { createOrganize, updateOrganize, getOrganizeInfo } from '@/api/permissio
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import {
   editPartner, addPartner, getcategoryTree
-  , getCooperativeInfo, getCounryData, checkCode,getBimBusinessInfo
+  , getCooperativeInfo, getCounryData, checkCode, getBimBusinessInfo
 } from '@/api/basicData/index'
 import formValidate from "@/utils/formValidate";
 import {
   getProvinceList,
 } from '@/api/system/province'
+import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   data() {
     return {
@@ -613,10 +611,10 @@ export default {
         pageSize: -1,
         type: 'outsourcing_suppliers'
       },
-      loadingareafoundation:false,
-      foundationloadingcity:false,
-      loadingarea:false,
-      loadingcity:false,
+      loadingareafoundation: false,
+      foundationloadingcity: false,
+      loadingarea: false,
+      loadingcity: false,
       datafilelist: [],
       btnType: undefined,
       areaList: [],
@@ -707,7 +705,7 @@ export default {
         partnerCategoryIdText: "",
         paymentMethod: "",
         type: "outsourcing_suppliers",
-        customerStatus:'formal',
+        customerStatus: 'formal',
         fax: "",
         zipCode: "",
         personResponsible: '',
@@ -716,15 +714,15 @@ export default {
         paymentCycle: "",
         // salespersonId: "",
         website: "",
-        reconciliationStartDate:'',
-        reconciliationEndDate:'',
+        reconciliationStartDate: '',
+        reconciliationEndDate: '',
         orderFreezeFlag: false,
         shipmentFreezeFlag: false,
         modeTransport: "",
         transportationTime: "",
         remark: ""
       },
-
+      taxRateList: [],
       parentId: '',
       pickerOptions: {
         disabledDate(time) {
@@ -742,9 +740,9 @@ export default {
           { validator: this.formValidate('enCode'), trigger: 'blur' },
           {
             validator: (rule, value, callback) => {
-             
+
               checkCode(value, this.dataForm.id, this.dataForm.type).then(res => {
-                
+
                 if (res.data) {
                   callback(new Error("编码重复"));
                 } else {
@@ -763,7 +761,7 @@ export default {
           // { validator: this.formValidate('enCode', '公司编码只能输入英文、数字和小数点且小数点不能放在首尾'), trigger: 'blur' },
           // { max: 50, message: '公司编码最多为50个字符！', trigger: 'blur' }
         ],
-        mobilePhone: [ { validator: formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' } ],
+        mobilePhone: [{ validator: formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' }],
 
         regionCode: [
           { required: true, message: '地区不能为空', trigger: 'change' }
@@ -793,8 +791,8 @@ export default {
           { required: true, message: '请输入联系人', trigger: 'blur' },
 
         ],
-        taxRate:[
-        { required: true, message: '请输入税率', trigger: 'blur' },
+        taxRate: [
+          { required: true, message: '请输入税率', trigger: 'blur' },
         ],
         includingTaxPrecision: [
           { required: true, message: '请输入含税计价精度', trigger: 'blur' },
@@ -817,7 +815,7 @@ export default {
           { required: true, message: '请选择对账结束日期', trigger: 'change' },
         ]
       },
-      isattachmentswitch:''
+      isattachmentswitch: ''
     }
   },
   created() {
@@ -825,15 +823,25 @@ export default {
     this.getProvinceList()
     this.getDictionaryType()
     // this.getCounryDatas()
+    this.getbimProductAttributes()
   },
   methods: {
-    getAttachmentswitch(){
-      getBimBusinessInfo('460918390082716396').then(res=>{
+    getAttachmentswitch() {
+      getBimBusinessInfo('460918390082716396').then(res => {
         this.isattachmentswitch = res.data.configValue1
       })
     },
+    getbimProductAttributes() {
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+      })
+    },
     //基础信息点击选择区
-    foundationfocusactionarea(val){
+    foundationfocusactionarea(val) {
       this.loadingareafoundation = true
       getProvinceList(val).then(res => {
         this.area = res.data.list
@@ -841,7 +849,7 @@ export default {
       })
     },
     //基础信息选择市
-    focusfoundation(val){
+    focusfoundation(val) {
       this.foundationloadingcity = true
       getProvinceList(val).then(res => {
         this.cities = res.data.list
@@ -849,7 +857,7 @@ export default {
       })
     },
     //点击选择市
-    focusaction(val){
+    focusaction(val) {
       this.loadingcity = true
       getProvinceList(val.province).then(res => {
         this.cities1 = res.data.list
@@ -857,7 +865,7 @@ export default {
       })
     },
     //点击选择区
-    focusactionarea(val){
+    focusactionarea(val) {
       this.loadingarea = true
       getProvinceList(val.city).then(res => {
         this.area1 = res.data.list
@@ -872,10 +880,10 @@ export default {
       }
     },
     changeCountry(e, index) {
-    
+
       this.dataForm.country = e.code
       if (this.dataForm.country != 'CN') {
-       
+
         this.deliveryAddressList[index].province = ''
         this.deliveryAddressList[index].city = ''
         this.deliveryAddressList[index].area = ''
@@ -914,7 +922,7 @@ export default {
     //   })
     // },
     handleAddress(e) {
-     
+
       if (e.row.defaultFlag) {
         this.deliveryAddressList.forEach((item, index) => {
           if (index != e.$index) {
@@ -925,7 +933,7 @@ export default {
       }
     },
     handleChange($event) {
-    
+
       if ($event == 'domestic') {
         // 国内
         this.countryList = [{
@@ -955,18 +963,18 @@ export default {
           "pageSize": -1
         }
         getCounryData(obj).then(res => {
-        
+
           // this.countryList = res.data.records
           this.countryList = res.data.records.filter((item) => {
             return item.name !== '中国'
           })
-       
+
         })
       }
     },
     // 切换table
     handleClick(tab, event) {
-      if(tab.label=='收货信息'){
+      if (tab.label == '收货信息') {
         // 国内
         this.countryList1 = [{
           code: "CN",
@@ -1037,12 +1045,12 @@ export default {
     },
     // 联系人信息删除当前行
     deltable(row, index) {
-    
+
       this.contactsList.splice(row.$index, 1)
     },
     // 根据选择的省份获取相应的城市数据
     changeProvince(item, row) {
-     
+
 
       if (row) {
         row.area = ''
@@ -1056,7 +1064,7 @@ export default {
       this.cities = []
       this.area = []
       getProvinceList(item.id).then(res => {
-    
+
         this.cities = res.data.list
       })
     },
@@ -1081,9 +1089,9 @@ export default {
         this.dataForm.area = []
         this.dataForm.area = ""
       }
-   
+
       getProvinceList(item.id).then(res => {
-       
+
         this.area = res.data.list
       })
     },
@@ -1098,7 +1106,7 @@ export default {
     // 获取省份数据
     getProvinceList() {
       getProvinceList(this.nodeId, this.listQuery).then(res => {
-      
+
         this.provinces = res.data.list
         this.init(id, parentId)
       }).catch(() => {
@@ -1112,7 +1120,7 @@ export default {
     // 获取等级、付款方式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
-     
+
         let data = res.data.list
         data.forEach(item => {
           if (item.enCode == "partnerArchives") {
@@ -1125,7 +1133,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-              
+
                   this.gradeList = response.data.list
                 })
               }
@@ -1136,7 +1144,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  
+
                   this.areaList = response.data.list
                 })
               }
@@ -1147,7 +1155,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  
+
                   this.paymentMethodList = response.data.list
                 })
               }
@@ -1304,7 +1312,7 @@ export default {
       this.$emit('close')
     },
     onOrganizeChange(val, data) {
-     
+
       this.$nextTick(() => {
         this.$refs['dataForm'].validateField('partnerCategoryIdText')
       })
@@ -1312,7 +1320,7 @@ export default {
       this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
     },
     handleConfirm() {
-     
+
       let flag = null;
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -1455,7 +1463,7 @@ export default {
             deliveryAddressList: this.deliveryAddressList,
             contactsList: this.contactsList
           }
-        
+
           if (flag === false) return
           this.btnLoading = true
           const formMethod = this.dataForm.id ? editPartner : addPartner

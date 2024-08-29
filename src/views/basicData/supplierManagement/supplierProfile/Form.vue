@@ -225,8 +225,10 @@
                 </el-col>
                 <el-col :sm="8" :xs="24">
                   <el-form-item label="税率%" prop="taxRate">
-                    <el-input v-model="dataForm.taxRate" maxlength="2" oninput="value = value.replace(/[^0-9]/g,'')"
-                      placeholder="请输入税率" :disabled="btnType ? true : false" />
+                    <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
+                      <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName" :value="item.enCode">
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="8" :xs="24">
@@ -560,6 +562,7 @@ import {
 } from '@/api/basicData/index'
 import formValidate from '@/utils/formValidate'
 import { getProvinceList } from '@/api/system/province'
+import { getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   data() {
     return {
@@ -666,6 +669,7 @@ export default {
         partnerCategoryIdText: '',
         paymentMethod: '',
         type: 'supplier',
+        customerStatus: 'formal',
         fax: '',
         zipCode: '',
         personResponsible: '',
@@ -683,6 +687,7 @@ export default {
         remark: '',
         id: ''
       },
+      taxRateList: [],
       codeConfig: {},
       parentId: '',
       pickerOptions: {
@@ -745,6 +750,7 @@ export default {
     // this.getAttachmentswitch()
     this.getProvinceList()
     this.getDictionaryType()
+    this.getbimProductAttributes()
   },
   methods: {
     getAttachmentswitch() {
@@ -1364,6 +1370,15 @@ export default {
         } else {
           this.activeName = 'jcInfo'
         }
+      })
+    },
+    getbimProductAttributes() {
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
       })
     }
   }

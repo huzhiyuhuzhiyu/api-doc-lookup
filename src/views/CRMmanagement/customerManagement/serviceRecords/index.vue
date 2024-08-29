@@ -32,8 +32,7 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addOrUpdateHandle('', 'add')">
-            </topOpts>
+            <div style="height: 34px;"><el-button size="mini" type="primary" @click="dialogVisible=true">标记跟进类型</el-button></div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -46,13 +45,22 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
-            <el-table-column prop="name" label="客户名称" sortable="custom" min-width="180" />
-            <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
-            <el-table-column prop="serviceDescription" label="跟进记录" min-width="160" />
+          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="[]" :fixedNO="true" custom-column>
+            <el-table-column prop="content" label="跟进内容" sortable="custom" min-width="180" />
+            <el-table-column prop="nextTime" label="下次联系时间" sortable="custom" min-width="180" />
+            <el-table-column prop="category" label="跟进方式" sortable="custom" min-width="180" />
+            <el-table-column prop="visitPlanName" label="拜访计划" sortable="custom" min-width="180" />
+            <el-table-column prop="createUser" label="相关客户" sortable="custom" min-width="180" />
+            <el-table-column prop="contactsName" label="相关联系人" sortable="custom" min-width="180" />
+            <el-table-column prop="business" label="相关商机" sortable="custom" min-width="180" />
+            <el-table-column prop="namerelationData" label="相关合同" sortable="custom" min-width="180" />
+            <el-table-column prop="relationData" label="相关回款" sortable="custom" min-width="180" />
+            <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" />
+            <el-table-column prop="activityType" label="跟进类型" sortable="custom" min-width="180" />
+            <el-table-column prop="createUserName" label="有效跟进人" sortable="custom" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <el-table-column label="操作" width="180">
+            <!-- <el-table-column label="操作" width="180">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>
@@ -69,13 +77,23 @@
                   </el-dropdown>
                 </tableOpts>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
           </pagination>
         </div>
       </div>
     </div>
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
+      <el-radio-group v-model="radio">
+        <el-radio :label="3">有效跟进</el-radio>
+        <el-radio :label="6">无效跟进</el-radio>
+      </el-radio-group>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
@@ -94,7 +112,9 @@ export default {
   components: { Form, programme, SuperQuery },
   data() {
     return {
-      datalist:[],
+      dialogVisible: false,
+      selectData: [],
+      datalist: [],
       superQueryJson: [
         {
           prop: 'name',
@@ -179,6 +199,9 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    handeleInfoData(val) {
+      this.selectData = val
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -264,6 +287,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.programmefrom = {}
       this.programmetitle = ''
       this.initData()
     },

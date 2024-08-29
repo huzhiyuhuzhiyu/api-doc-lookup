@@ -1386,7 +1386,7 @@ export default {
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('SRDH')
+          this.fetchData('CGTH')
         }, 500)
       }
       if (this.btnType == 'edit') {

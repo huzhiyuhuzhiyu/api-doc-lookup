@@ -122,13 +122,13 @@
                     <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
                     <!-- </el-table-column> -->
 
-                    <el-table-column prop="productCode" label="客户料号" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="customerProductDrawingNo" label="客户料号" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productCode" label="品名规格" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" min-width="160" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="productCode" label="单位" min-width="160" show-overflow-tooltip>
+                    <el-table-column prop="mainUnit" label="单位" min-width="160" show-overflow-tooltip>
                     </el-table-column>
 
                     <el-table-column prop="deliveryQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"

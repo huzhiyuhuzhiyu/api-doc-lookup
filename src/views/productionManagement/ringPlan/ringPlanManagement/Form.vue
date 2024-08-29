@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="生产编排" />
+          <el-page-header @back="goBack" content="编排" />
           <div class="options">
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>

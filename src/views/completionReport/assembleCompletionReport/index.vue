@@ -3,6 +3,21 @@
 
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-tabs v-model="activeName" @tab-click="handleClick" class="aaa">
+        <el-tab-pane label="扫码报工" name="scanCode" class="scanCode">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <div class="scanCodeTent">
+              <div class="searchregion">
+                <el-input v-model="scanResult" placeholder="请输入编码或单号,支持扫码" class="scanResultIpt"></el-input>
+                <el-button type="primary" size="mini" icon="el-icon-search" class="searchBtn" @click="searchResult()">
+                  {{ $t('common.search') }}</el-button>
+                <p style="margin-top: 10px;text-align: left;">说明：支持扫任务码、工序码、班组码、人员码。</p>
+                <div style="background: #55d47e;margin-top: 10px">
+                  <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="按生产任务报工" name="produce">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
@@ -22,7 +37,7 @@
                 </el-col>
 
                 <el-col :span="6">
-                  <el-form-item label="计划开始日期">
+                  <el-form-item>
                     <el-date-picker v-model="planDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                       :picker-options="pickerOptions" start-placeholder="开始日期" end-placeholder="结束日期">
                     </el-date-picker>
@@ -43,371 +58,119 @@
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <el-row :gutter="10" class="content_box">
-                <el-col :span="6">
+                <el-col :span="6" v-for="(item, index) in produceData" :key="index">
                   <el-card class="box-card" shadow="hover">
                     <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
+                      <span class="orderNo">单号：{{ item.orderNo }}</span>
                     </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
+                    <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
+                    <div class="label_title"> 总生产数量:{{ item.productionQuantity }}</div>
+                    <div class="label_title"> 已完成数量:{{ item.completedQuantity }}</div>
+                    <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
+                      <el-button style="color:red;" type="text">关单</el-button>
+                      <el-button type="primary" size="mini" @click='produceTaskReportFun(item)'>报 工</el-button>
+                      <el-button type="primary" size="mini" @click="viewTask(item)">查看任务</el-button>
                     </div>
                   </el-card>
 
                 </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
 
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
-                <el-col :span="6">
-                  <el-card class="box-card" shadow="hover">
-                    <div slot="header" class="clearfix">
-                      <span class="orderNo">单号：PROD202408240015</span>
-                      <el-button style="float: right;color:red; padding: 3px 0" type="text">关单</el-button>
-                    </div>
-                    <div class="label_title"> 订单类型:正常订单</div>
-                    <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:120</div>
-                    <div class="label_title"> 已完成数量:0</div>
-                    <div class="label_title"> 工艺路线名称:测试工艺路线</div>
-                    <div>
-                      <el-button type="primary" size="mini">报 工</el-button>
-                      <el-button type="primary" size="mini">查看报工记录</el-button>
-                    </div>
-                  </el-card>
-
-                </el-col>
 
               </el-row>
-              <pagination :total="total" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
+              <pagination :total="produceTotal" :page.sync="produceForm.pageNum" :limit.sync="produceForm.pageSize"
                 @pagination="searchProductData">
               </pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="按工序报工" name="process">
+          <div class="JNPF-common-layout">
+
+            <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+              <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
+                <div class="title_box">
+                  <h2>工艺路线</h2>
+                  <span class="options">
+                    <el-dropdown>
+                      <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item @click.native="getRoutingList()">刷新数据</el-dropdown-item>
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </span>
+                </div>
+                <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+                    style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+                  </el-input></div>
+              </div>
+
+              <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+                <el-tree ref="routingTreeBox" :data="routingList" :props="defaultProps" :default-expand-all="expands"
+                  highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClickRouting"
+                  class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
+                  <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+
+                    <span class="text" :title="data.name">{{ data.name }}</span>
+                  </span>
+                </el-tree>
+              </el-scrollbar>
+              <div v-if="!leftFlag" class="retract" style="position: absolute">
+                <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+              </div>
+              <div v-if="leftFlag" class="expand" style="position: absolute">
+                <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+              </div>
+            </div>
+            <div class="JNPF-common-layout-center JNPF-flex-main">
+              <el-row class="JNPF-common-search-box" :gutter="16">
+                <el-form @submit.native.prevent>
+
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model="processForm.name" @keyup.enter.native="searchProductData()" placeholder="工序名称"
+                        clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model="processForm.code" @keyup.enter.native="searchProductData()" placeholder="工序编码"
+                        clearable />
+                    </el-form-item>
+                  </el-col>
+
+                  <el-col :span="6">
+                    <el-form-item>
+                      <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProcessData()">
+                        {{ $t('common.search') }}</el-button>
+                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetProcessData()">{{
+                        $t('common.reset') }}
+                      </el-button>
+                    </el-form-item>
+                  </el-col>
+
+                </el-form>
+              </el-row>
+              <div class="JNPF-common-layout-main JNPF-flex-main">
+                <el-row :gutter="10" class="content_boxt">
+                  <el-col :span="3" v-for="(item, index) in ProcessData" :key="index">
+                    <el-card class="box-card" shadow="hover">
+
+                      <div class="label_title"> 工序名称:{{ item.name }}</div>
+                      <div class="label_title"> 工序编码:{{ item.code }}</div>
+                      <div style="margin-top: 10px;">
+                        <el-button type="primary" size="mini" @click="ProcessReportFun(item)">报 工</el-button>
+                      </div>
+                    </el-card>
+                  </el-col>
+
+
+                </el-row>
+                <pagination :total="processTotal" :page.sync="processForm.pageNum" :limit.sync="processForm.pageSize"
+                  @pagination="searchProcessData">
+                </pagination>
+              </div>
             </div>
           </div>
         </el-tab-pane>
@@ -429,7 +192,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
-                  <el-form-item label="创建时间">
+                  <el-form-item>
                     <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd hh:mm:ss"
                       value-format="yyyy-MM-dd hh:mm:ss" style="width: 100%;" start-placeholder="开始时间"
                       end-placeholder="结束时间" clearable>
@@ -680,7 +443,7 @@
                   </span>
                 </div>
                 <div>
-                  <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable
+                  <el-input placeholder="输入关键字" v-model="routingfilterText" suffix-icon="el-icon-search" clearable
                     style="width:200px;margin:10px auto;display:block" />
                 </div>
               </div>
@@ -782,38 +545,50 @@
     </div>
 
 
-
-    <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
+    <taskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="searchProductData" @close="closeForm"></taskForm>
+    <produceTaskReportForm v-if="produceTaskReportVisible" ref="produceTaskReportForm"
+      @refreshDataList="searchProductData" @close="closeForm"></produceTaskReportForm>
+    <ProcessReportForm v-if="ProcessReportVisible" ref="ProcessReportForm"
+      @refreshDataList="searchProcessData" @close="closeForm"></ProcessReportForm>
   </div>
 </template>
 
 <script>
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
-
+import taskForm from '@/views/productionManagement/assemblyplan/assemblyTaskManagement/Form.vue'
 import Diagram from '@/views/permission/user/Diagram.vue' // 树状列表-组织机构
 import { getGroupList } from '@/api/basicData/index.js'
+import { getProcessList, detailProcess } from '@/api/basicData/processSettingss.js'
+import { getBimProcessList } from "@/api/bimProcess/index.js"
 
-
-
-import { UserListAll, } from '@/api/permission/user'
-import { excelExport } from '@/api/basicData/index'
-import { getsaleOrderList, getsaleOrderDetailList, deleteOrders, getAttributeline, getSaleordersTotal, batchRevokeorders } from '@/api/salesManagement/assemblyOrders'
+import produceTaskReportForm from './produceTaskReportForm.vue'
 import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import ProcessReportForm from './processReportForm.vue'
 
 export default {
-  name: 'carrierProfile',
-  components: { ExportForm, Diagram },
+  name: 'assembleCompletionReport',
+  components: { ExportForm, Diagram, taskForm, produceTaskReportForm,ProcessReportForm },
   data() {
     return {
+      defaultProps: {
+        children: 'childrenList',
+        label: 'name'
+      },
+      ProcessReportVisible:false,
+      routingList: "",
+      treeLoading: false,
+      expands: true,
+      refreshTree: true,
+      produceTaskReportVisible: false,
+      scanResult: "",
       superQueryVisible: false,
-      activeName: "produce",
+      activeName: "scanCode",
       leftFlag: false,
 
       selectArr: [],
-
+      taskFormVisible: false,
       produceTotal: 0,
       produceData: [],
       produceForm: {
@@ -843,6 +618,25 @@ export default {
         { label: "正常订单", value: "normal" },
         { label: "返工订单", value: "rework" },
       ],
+
+      processForm: {
+        name: "",
+        code: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+
+      },
+      processTotal: 0,
+      ProcessData: [],
+
+
 
 
       personTotal: 0,
@@ -887,11 +681,28 @@ export default {
       treeLoading: false,
       treeData: [],
       filterText: "",
+      routingfilterText: "",
       defaultProps: {
         children: 'childrenList',
         label: 'name'
       },
 
+      routingForm: {
+        orderItems:
+          [
+            { "asc": false, "column": "" },
+            { "asc": false, "column": "create_time" }
+          ],
+        "pageNum": -1,
+        "pageSize": 20,
+        "code": "",
+        "name": "",
+        "state": "",
+        "approvalStatus": "",
+        "documentStatus": "",
+        "createEndTime": "",
+        "createStartTime": ""
+      }
 
 
 
@@ -902,32 +713,74 @@ export default {
   watch: {
     filterText(val) {
       this.$refs.treeBox.filter(val)
+    },
+    routingfilterText(val) {
+      this.$refs.routingTreeBox.filter(val)
+
     }
   },
 
   created() {
 
 
-    this.searchProductData()
+    // this.searchProductData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+
+
+    closeForm(flag) {
+      this.taskFormVisible = false
+      this.produceTaskReportVisible = false
+      this.ProcessReportVisible=false
+      if (flag) {
+        if (this.activeName == 'produce') {
+          this.searchProductData()
+        } else if (this.activeName == 'workgroup') {
+          this.getWorkGroupData()
+        } else {
+          this.getOrganizeList()
+
+        }
+      }
+
+    },
+    // 扫码报工页面  搜索
+    searchResult() {
+      if (this.scanResult && this.scanResult.length > 4) {
+        let keyWord = this.scanResult.substring(0, 4)
+        if (keyWord == 'PROD') {
+          let obj = {
+            orderNo: this.scanResult
+          }
+          ordershengchanList(obj).then(res => {
+            console.log("查找结果", res);
+            if (res.data.records.length) {
+              this.activeName = 'produce'
+              this.produceForm.orderNo = this.scanResult
+              this.searchProductData()
+            } else {
+              this.$message.error("无法查找到对应的数据，请重新输入")
+            }
+
+          })
+        }
+      }
+    },
     handleClick() {
       if (this.activeName == 'produce') {
         this.searchProductData()
+      } else if (this.activeName == 'process') {
+        this.searchProcessData()
+        this.getRoutingList()
       } else if (this.activeName == 'workgroup') {
         this.getWorkGroupData()
       } else {
         this.getOrganizeList()
-        if (localStorage.getItem("userReportFlag")) {
-          let userReportFlag = JSON.parse(localStorage.getItem('userReportFlag'))
-          this.expands = userReportFlag
-          console.log("userReportFlag", userReportFlag);
-          this.toggleExpand(userReportFlag)
 
-        }
       }
     },
+
     changeLeft() {
       this.leftFlag = !this.leftFlag
 
@@ -1014,8 +867,51 @@ export default {
         },
       }
     },
+    // 查看任务
+    viewTask(data) {
+      this.taskFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.taskForm.init(data.id)
+      })
+    },
+    // 工序
+    searchProcessData() {
+      getBimProcessList(this.processForm).then(res => {
+        this.ProcessData = res.data.records
+        this.processTotal = res.data.total
+      })
+    },
+    ProcessReportFun(row) {
+      this.ProcessReportVisible=true
+      this.$nextTick(()=>{
+        this.$refs.ProcessReportForm.init(row)
+      })
+    },
+    resetProcessData(){
+      this.processForm={
+        name: "",
+        code: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+      }
+      this.searchProcessData()
+      this.getRoutingList()
+    },
 
-
+    // 生产任务报工
+    produceTaskReportFun(data) {
+      this.produceTaskReportVisible = true
+      this.$nextTick(() => {
+        this.$refs.produceTaskReportForm.init(data)
+      })
+    },
     // 班组列表
     getWorkGroupData() {
 
@@ -1083,10 +979,31 @@ export default {
 
 
 
-
-
-
-
+    // 获取工艺路线
+    getRoutingList() {
+      getProcessList(this.routingForm).then(res => {
+   
+        this.routingList = res.data.records
+      })
+    },
+    filterNode(value, data) {
+      console.log(value, data);
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    },
+    // 点击左侧工艺路线查找对应的工序
+    handleNodeClickRouting(data, node) {
+      console.log("工艺信息", node);
+      detailProcess(node.data.id).then(res => {
+        console.log("工艺详情", res);
+        res.data.routingLineList.forEach(item => {
+          item.name=item.processName
+          item.code=item.processCode
+        });
+        this.ProcessData = res.data.routingLineList
+        this.processTotal = res.data.routingLineList.length
+      })
+    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'cooperativePartnerName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
@@ -1102,7 +1019,10 @@ export default {
       this.initData()
     },
 
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
 
+    },
 
   }
 }
@@ -1129,7 +1049,7 @@ export default {
 }
 
 .JNPF-common-search-box {
-  padding-top: 5px;
+  padding-top: 10px;
   padding-bottom: 10px;
   margin-bottom: 5px;
 }
@@ -1152,7 +1072,7 @@ export default {
 
 .aaa ::v-deep .el-tabs__header {
   padding: 0 !important;
-  padding-bottom: 10px !important;
+  padding-bottom: 0px !important;
   margin-bottom: 0;
   padding-left: 10px !important;
   background: #fff;
@@ -1177,17 +1097,19 @@ export default {
 .content_box {
   padding: 10px;
   overflow-y: auto;
-  height:100%
-
+  height: 100%
 }
-.content_boxt{
+
+.content_boxt {
   padding: 10px;
   overflow-y: auto;
-  height:100%
+  height: 100%
 }
+
 .content_boxt .el-col:nth-child(n+9) {
   margin-top: 10px;
 }
+
 .content_box::-webkit-scrollbar {
   display: none;
   /* Safari 和 Chrome */
@@ -1205,7 +1127,12 @@ export default {
 }
 
 .label_title {
-  margin-top: 10px
+  margin-top: 10px;
+  white-space: nowrap;
+  /* 不换行 */
+  overflow: hidden;
+  /* 隐藏超出的内容 */
+  text-overflow: ellipsis;
 }
 
 ::v-deep .el-card__body {
@@ -1227,5 +1154,71 @@ export default {
   padding-right: 10px;
   padding-top: 2px;
   padding-bottom: 2px;
+}
+
+.scanCode {
+  margin-top: 10px
+}
+
+.scanCode .JNPF-flex-main {
+  height: 100%;
+  display: inline-block;
+  width: 100%;
+}
+
+.scanCodeTent {
+  height: 100%;
+  background: #fff;
+  position: relative;
+}
+
+.searchregion {
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+  text-align: center;
+}
+
+.scanResultIpt {
+  width: 85%;
+  height: 60px;
+}
+
+.scanResultIpt ::v-deep .el-input__inner {
+  height: 100%;
+  font-size: 18px !important;
+}
+
+.searchBtn {
+  height: 60px;
+  font-size: 18px;
+}
+
+.scanImg {
+  scale: 1.5;
+  margin-top: 150px;
+  padding-bottom: 100px;
+}
+
+.orderNo {
+  font-weight: 600;
+}
+
+.title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 </style>

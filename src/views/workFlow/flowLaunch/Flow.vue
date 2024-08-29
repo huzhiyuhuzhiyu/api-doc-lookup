@@ -188,7 +188,7 @@ export default {
       >>> .el-card {
         border-radius: 10px;
       }
-      >>> .el-card__body {
+      ::v-deep .el-card__body {
         display: flex;
         align-items: center;
         padding: 15px;

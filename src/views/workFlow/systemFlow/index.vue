@@ -10,14 +10,10 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="listQuery.fullName" placeholder="请输入流程名称" clearable @keyup.enter.native="search()" />
+                <el-input v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-input v-model="listQuery.enCode" placeholder="请输入流程编码" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -30,7 +26,7 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="dialogVisible = true">
+            <topOpts @add="addFlow(3)">
               <!-- <upload-btn url="/api/workflow/Engine/FlowEngine/Actions/ImportData" @on-success="reset()" /> -->
             </topOpts>
             <div class="JNPF-common-head-right">
@@ -47,13 +43,8 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
-            <el-table-column prop="fullName" label="流程名称" min-width="150" />
-            <el-table-column prop="enCode" label="流程编码" min-width="200" />
-            <!-- <el-table-column prop="visibleType" label="可见范围" width="80">
-            <template slot-scope="scope">
-              <span>{{ scope.row.visibleType ==  0 ? "全部可见" : "部分可见" }}</span>
-            </template>
-          </el-table-column> -->
+            <el-table-column prop="fullName" label="流程名称" min-width="120" />
+            <el-table-column prop="enCode" label="流程编码" min-width="120" />
             <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" min-width="150" />
             <!-- <el-table-column prop="enabledMark" label="状态" min-width="80" align="center">
               <template slot-scope="scope">
@@ -68,9 +59,11 @@
                 </el-switch>
               </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column label="操作" fixed="right" width="280">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.formType)" @del="handleDel(scope.row.id)">
+                  <el-button size="mini" type="text"
+                    @click="addOrUpdateHandle(scope.row.id, scope.row.formType, 'flowDesign')">流程设计</el-button>
                   <el-dropdown>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
@@ -78,8 +71,6 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="preview(scope.row)">
-                        表单预览</el-dropdown-item>
                       <el-dropdown-item @click.native="copy(scope.row.id)">
                         复制流程</el-dropdown-item>
                       <el-dropdown-item @click.native="handleExport(scope.row.id)">
@@ -96,28 +87,6 @@
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <preview v-if="previewVisible" ref="preview" @close="previewVisible = false" />
-    <previewDialog :visible.sync="previewDialogVisible" :id="currRow.id" type="flow" @previewPc="previewPc" />
-    <el-dialog title="新建表单" :visible.sync="dialogVisible" class="JNPF-dialog JNPF-dialog_center" lock-scroll
-      width="600px">
-      <div class="add-main">
-        <div class="add-item add-item-sys" @click="addFlow(1)">
-          <i class="add-icon el-icon-document"></i>
-          <div class="add-txt">
-            <p class="add-title">系统表单</p>
-            <p class="add-desc">关联系统表单便捷设计</p>
-          </div>
-        </div>
-        <div class="add-item" @click="addFlow(2)">
-          <i class="add-icon icon-ym icon-ym-generator-company"></i>
-          <div class="add-txt">
-            <p class="add-title">自定义表单</p>
-            <p class="add-desc">自定义设计流程表单</p>
-          </div>
-        </div>
-      </div>
-    </el-dialog>
-
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />
@@ -125,14 +94,12 @@
 </template>
 
 <script>
-import { FlowEngineList, Delete, Release, Stop, Copy, exportData, getFlowEngineList,changeFlowSwitch } from '@/api/workFlow/FlowEngine'
+import { FlowEngineList, Delete, Release, Stop, Copy, exportData, getFlowEngineList, changeFlowSwitch } from '@/api/workFlow/FlowEngine'
 import Form from './Form'
-import preview from '../components/Preview'
-import previewDialog from '@/components/PreviewDialog'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  name: 'workFlow-flowEngine',
-  components: { Form, preview, previewDialog, SuperQuery },
+  name: 'workFlow-system',
+  components: { Form, SuperQuery },
   data() {
     return {
       activeName: 'all',
@@ -140,9 +107,7 @@ export default {
       listQuery: {},
       initListQuery: {
         category: '',
-        enCode: '',
-        fullName: '',
-        businessFlag: false,    // 1 是 3  0 是 1和2
+        businessFlag: true,    // 1 是 3  0 是 1和2
         createByName: "",
         creatorUserId: "",
         endTime: "",
@@ -164,10 +129,7 @@ export default {
       total: 0,
       list: [],
       listLoading: true,
-      dialogVisible: false,
       formVisible: false,
-      previewVisible: false,
-      previewDialogVisible: false,
       currRow: {},
       categoryList: [],
       superQueryJson: [
@@ -258,14 +220,13 @@ export default {
       }).catch(() => { });
     },
     addFlow(formType) {
-      this.dialogVisible = false
       this.addOrUpdateHandle('', formType)
     },
     // 新增 / 修改
-    addOrUpdateHandle(id, formType) {
+    addOrUpdateHandle(id, formType, flowDesign) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(this.categoryList, id, formType)
+        this.$refs.Form.init(this.categoryList, id, formType, flowDesign)
       })
     },
     copy(id) {
@@ -293,12 +254,7 @@ export default {
         })
       }).catch(() => { });
     },
-    preview(row) {
-      this.currRow = row
-      this.$nextTick(() => {
-        this.previewDialogVisible = true
-      })
-    },
+
     previewPc() {
       let data = {
         enCode: this.currRow.enCode,
@@ -348,70 +304,3 @@ export default {
 }
 </script>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
-<style lang="scss" scoped>
-.JNPF-dialog {
-  >>>.el-dialog__body {
-    padding: 50px 30px !important;
-  }
-}
-
-.add-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-
-  .add-item {
-    width: 230px;
-    height: 136px;
-    background: #eff9ff;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    padding-left: 20px;
-
-    &:hover {
-      opacity: 0.9;
-    }
-
-    &.add-item-sys {
-      background: #f1f5ff;
-
-      .add-icon {
-        background: #ccd9ff;
-        color: #537eff;
-      }
-    }
-
-    .add-icon {
-      width: 56px;
-      height: 56px;
-      margin-right: 10px;
-      background: #ceeaff;
-      border-radius: 10px;
-      color: #46adfe;
-      flex-shrink: 0;
-      font-size: 30px;
-      line-height: 56px;
-      text-align: center;
-    }
-
-    .add-txt {
-      height: 56px;
-
-      P {
-        line-height: 28px;
-      }
-
-      .add-title {
-        font-size: 18px;
-        font-weight: bold;
-      }
-
-      .add-desc {
-        color: #8d8989;
-        font-size: 12px;
-      }
-    }
-  }
-}
-</style>

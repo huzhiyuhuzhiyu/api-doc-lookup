@@ -8,6 +8,21 @@ export function FlowEngineList(data) {
     data
   })
 }
+// 获取流程引擎列表 post
+export function getFlowEngineList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/list`,
+    method: 'post',
+    data
+  })
+}
+// 更新流程状态
+export function changeFlowSwitch(id) {
+  return request({
+    url: `/api/workflow/Engine/FlowEngine/switch/${id}`,
+    method: 'get',
+  })
+}
 // 获取流程引擎信息
 export function FlowEngineInfo(id) {
   return request({
@@ -19,6 +34,13 @@ export function FlowEngineInfo(id) {
 export function getBusinessFlowInfo(businessFlow) {
   return request({
     url: `/api/workflow/Engine/FlowEngine/infoByBusinessFlow/${businessFlow}`,
+    method: 'get'
+  })
+}
+// 通过业务id 获取流程信息
+export function getBusinessFlowDetail(businessId) {
+  return request({
+    url: `/api/workflow/Engine/FlowBefore/infoByBusinessId/${businessId}`,
     method: 'get'
   })
 }

@@ -44,6 +44,10 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip> -->
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -113,18 +117,56 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
 import { getWarehouseList, deleteWarehouse, BuildQRCode, editWarehouseState } from '@/api/basicData/index'
-
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
 export default {
   name: 'warehouseArchives',
-  components: { Form },
+  components: { Form, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '仓库名称',
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: '仓库编码',
+          type: 'input'
+        },
+
+        {
+          prop: 'position',
+          label: '位置',
+          type: 'input'
+        },
+
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ],
       listQuery: {
         keyword: '',
         type: ''
@@ -163,6 +205,11 @@ export default {
     // this.buildQRCode()
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     buildQRCode() {
       BuildQRCode().then((res) => {
         console.log(res, 'res')
@@ -221,7 +268,7 @@ export default {
     },
     onHandle(row, state) {
       row.state = state
-      editWarehouseState(row).then(res => {
+      editWarehouseState(row).then((res) => {
         this.initData()
         this.$message({
           type: 'success',
@@ -232,7 +279,7 @@ export default {
     },
     offHandle(row, state) {
       row.state = state
-      editWarehouseState(row).then(res => {
+      editWarehouseState(row).then((res) => {
         this.initData()
         this.$message({
           type: 'success',
@@ -292,11 +339,13 @@ export default {
   margin-right: 6px;
   line-height: 23px;
 }
+
 .JNPF-common-head {
-  padding: 8px!important
+  padding: 8px !important;
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 0 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0 !important;
 }
 </style>

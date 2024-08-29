@@ -253,7 +253,7 @@ export default {
       process_typeList: [
         { label: '正常工序', value: 'normal' },
         { label: '待装配工序', value: 'wait_assemble' },
-        { label: '测震工序', value: 'vibrate' }
+        { label: '测振工序', value: 'vibrate' }
       ],
       getcategoryTree,
       configurationName: '',

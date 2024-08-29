@@ -7,8 +7,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="3">
               <el-form-item>
-                <el-input v-model=" orderNoS" @keyup.enter.native="search()" placeholder="订单号"
-                  clearable />
+                <el-input v-model="orderNoS" @keyup.enter.native="search()" placeholder="订单号" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -158,7 +157,7 @@ export default {
       treeLoading: false,
       listLoading: false,
       detailFlag: false,
-      orderNoS:"",
+      orderNoS: "",
       orderForm: {
 
         approvalStatus: "ok",
@@ -175,14 +174,14 @@ export default {
           column: ""
         },
         {
-          asc:false,
-          column:"t1.create_time"
+          asc: false,
+          column: "t1.create_time"
         }
-      ],
+        ],
 
         superQuery: {
-            condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
       },
 
@@ -259,7 +258,7 @@ export default {
           label: "数量",
           type: 'input'
         },
-        
+
         {
           prop: 'deliveryDate',
           label: "交货日期",
@@ -275,7 +274,7 @@ export default {
           prop: 'taxRate',
           label: "税率",
           type: 'select',
-          options:[]
+          options: []
         },
         {
           prop: 'totalAmount',
@@ -681,7 +680,7 @@ export default {
           oilObj.options = arr;
         }
       })
-      
+
 
       // 获取税率(数据字典)
       getbimProductAttributes("585438081021126405").then(res => {
@@ -833,14 +832,33 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if(this.orderNoS){
-        this.orderForm.superQuery.condition.push(
-          {"field":"orderNo","fieldValue":this.orderNoS,"symbol":"like"}
-        )
+   
+      if (this.orderNoS) {
+
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
+          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+          )
+        }
       }
-      
-      if(this.orderNoS){
-        this.$set(this.orderForm.superQuery,'matchLogic','AND')
+
+
+
+
+
+      if (this.orderNoS ) {
+        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      } else {
+        if (!this.orderForm.superQuery.condition.length) {
+          this.orderForm.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
       getsaleOrderDetailList(this.orderForm).then(res => {
         this.tableData = res.data.records
@@ -886,11 +904,11 @@ export default {
         }],
 
         superQuery: {
-            condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
       }
-      this.orderNoS=""
+      this.orderNoS = ""
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
@@ -963,8 +981,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType:  '1005',
-        exportName:  '延期发货预警',
+        exportType: '1005',
+        exportName: '延期发货预警',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -998,13 +1016,15 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }
-.JNPF-common-head{
+
+.JNPF-common-head {
   padding: 8px;
 }
+
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 0px !important;
 }
@@ -1040,7 +1060,8 @@ export default {
 .JNPF-common-layout-center .JNPF-common-layout-main {
   padding-bottom: 0;
 }
-.btnBox{
+
+.btnBox {
   padding: 7px 10px;
 }
 </style>

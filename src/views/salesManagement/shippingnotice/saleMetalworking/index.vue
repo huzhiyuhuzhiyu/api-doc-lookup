@@ -99,7 +99,8 @@
                 <div v-else-if="scope.row.delivery == 'collect_payment'">
                   <span>到付</span>
                 </div> -->
-                <div v-for="(item,index) in departMentList" :key="index">{{ scope.row.delivery==item.value?item.label:"" }}</div>
+                <div v-for="(item, index) in departMentList" :key="index">{{ scope.row.delivery == item.value ? item.label : ""
+                  }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="countryName" label="国家" width="160" />
@@ -336,7 +337,7 @@ export default {
           label: "发货方式",
           type: 'select',
 
-          options: [ ]
+          options: []
 
         },
         {
@@ -521,20 +522,48 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if (this.orderNoS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-        )
-      }
+
+
+
       if (this.partnerNameS) {
-        this.orderForm.superQuery.condition.push(
-          { "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" }
-        )
+
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("partnerName"));
+          filteredData.push({ "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" }
+          )
+        }
+      }
+
+      if (this.orderNoS) {
+
+        if (this.orderForm.superQuery.condition.length) {
+          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
+          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
+          this.orderForm.superQuery.condition = filteredData
+        } else {
+          this.orderForm.superQuery.condition.push(
+            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
+          )
+        }
       }
 
       if (this.orderNoS || this.partnerNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
+      } else {
+        if (!this.orderForm.superQuery.condition.length) {
+          this.orderForm.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
+
+
+
       getQuotationdatasendlist(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -638,8 +667,8 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType:  '1060',
-        exportName:  '销售发货通知单',
+        exportType: '1060',
+        exportName: '销售发货通知单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
@@ -657,9 +686,10 @@ export default {
   width: 440px;
   /* 自定义弹框宽度 */
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

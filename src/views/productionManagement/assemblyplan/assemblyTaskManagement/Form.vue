@@ -25,7 +25,7 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="任务类型" prop="orderType">
-                          <el-select v-model="dataForm.orderType" placeholder="精度等级" clearable style="width: 100%;" disabled>
+                          <el-select v-model="dataForm.orderType" placeholder="任务类型" clearable style="width: 100%;" disabled>
                             <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -55,13 +55,13 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="总生产数量" prop="productionQuantity">
-                          <el-input v-model="dataForm.productionQuantity" placeholder="计划生产数量" disabled>
+                          <el-input v-model="dataForm.productionQuantity" placeholder="总生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="已完成数量" prop="completedQuantity">
-                          <el-input v-model="dataForm.completedQuantity" placeholder="可编排数量" disabled>
+                          <el-input v-model="dataForm.completedQuantity" placeholder="已完成数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>

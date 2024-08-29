@@ -137,11 +137,11 @@
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="productInfo">
                   <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openselectProcessFun()">选择工序</el-button>|
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDeleteProcess">批量删除</el-button>|
                   </div>
@@ -274,11 +274,11 @@
                 </el-collapse-item>
                 <el-collapse-item title="领料清单" name="pickInfo">
                   <div>
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openselectcollectProductFun()">选择产品</el-button>|
                     <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                       @click="batchDelete">批量删除</el-button>|
                   </div>
@@ -314,7 +314,14 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+                      <!-- <el-table-column prop="reduceType" label="扣减料方式">
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.reduceType" placeholder="扣减料方式" style="width: 100%;">
+                            <el-option v-for="(item, index) in reduceTypeList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </template>
+                      </el-table-column> -->
                     </el-table>
                   </el-form>
                 </el-collapse-item>
@@ -455,7 +462,6 @@
             <el-table-column type="index" width="70" label="序号" />
             <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
             <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productName" label="产品名称" min-width="120"></el-table-column>
             <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
               show-overflow-tooltip></el-table-column>
             <el-table-column prop="processCode" label="工序编码" width="100" />
@@ -526,6 +532,11 @@ export default {
   },
   data() {
     return {
+      reduceTypeList: [
+        { label: "生成领料单", value: "picking" },
+        { label: "自动扣减料", value: "auto" },
+        { label: "都不是", value: "none" },
+      ],
       getBimProcessList,
       ProductMethodArr: [
         {
@@ -648,9 +659,9 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: [(errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量：不能为空",(errMsg) => { this.$message.error(`返工生产数量：${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
-          { validator: this.formValidate('positiveNumber', '返工生产数量必须大于0', (errMsg, index) => { this.$message.error(`返工生产数量：${errMsg}`) }), trigger: 'blur' }
+          { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`返工生产数量：${errMsg}`) }), trigger: 'blur' },
         ],
         routingName: [
           { required: true, message: '工艺路线不能为空', trigger: 'change' }
@@ -690,6 +701,8 @@ export default {
       selectProcessArr: [],
       selectRows: [],
       currentProductIndex: "",
+      isSame:false,
+      previousroutingId:"",
     }
   },
   computed: {
@@ -768,6 +781,9 @@ export default {
     // 选择的领料清单产品
     selectCollectProductFun(data) {
       console.log("领料产品", data);
+      data.forEach(item => {
+        this.$set(item, 'reduceType', 'picking')
+      });
       this.dataFormOne.collectData = data
     },
     //领料人
@@ -935,6 +951,17 @@ export default {
       console.log(data);
       this.dataForm.routingId = data.id
       this.dataForm.routingName = data.name
+      this.isSame = this.dataForm.routingId === this.previousroutingId; // 判断是否相同  
+      this.previousroutingId = this.dataForm.routingId; // 更新上一次选择
+      if (!this.isSame) {
+        console.log(666);
+        this.dataFormTwo.data = []
+
+      }
+
+      detailProcess(data.id).then(res => {
+        this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
+      })
     },
     // 选择班组
     selectWorkgroupFun(scope) {
@@ -1203,19 +1230,6 @@ export default {
     },
 
 
-    dateFormat(dateData) {
-      var date = new Date(dateData)
-      var y = date.getFullYear()
-      var m = date.getMonth() + 1
-      m = m < 10 ? ('0' + m) : m
-      var d = date.getDate()
-      d = d < 10 ? ('0' + d) : d
-      const time = y + '-' + m + '-' + d
-      return time
-    },
-    handeleProductInfoData(val) {
-      this.selectRows = val
-    },
 
 
 
@@ -1228,9 +1242,8 @@ export default {
 
 
 
-    handleSelectionChangeAllPruduct(val) {
-      this.selectArr = val
-    },
+
+
 
 
 
@@ -1281,6 +1294,7 @@ export default {
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
         console.log("工艺详情", res);
+        this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
           item.personId = "";
@@ -1367,6 +1381,10 @@ export default {
             submitFlag = false;
             return
           }
+
+          if (this.allocationFlag) {
+            this.dataForm.materialFlag = true
+          }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {
             const item = this.dataFormTwo.data[index];
             if (
@@ -1398,7 +1416,7 @@ export default {
             this.$set(item, 'workOrderResList', item.routingProResList)
           });
           let obj = {
-            collect: this.collect,
+            collect: this.dataFormTwo.data.length ? this.collect : null,
             materialList: this.dataFormOne.collectData,
             prodOrder: this.dataForm,
             workOrderList: this.dataFormTwo.data

@@ -28,6 +28,13 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
+                      <el-form-item label="拜访形式" prop="visitForm">
+                        <el-select v-model="dataForm.visitForm" placeholder="请选择拜访形式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                          <el-option v-for="(item, index) in visitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'">
                         </user-select>
@@ -62,6 +69,33 @@
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
+                    <el-col :sm="8" :xs="24" v-if="dataForm.visitForm=='见面拜访'">
+                      <el-form-item label="定位" prop="visitGps">
+                        <el-input v-model="dataForm.visitName2" placeholder="请在移动端进行定位" :disabled="true" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24" v-if="dataForm.visitForm=='见面拜访'">
+                      <el-form-item label="现场照片" prop="visitPhoto">
+                        <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
+                          <i slot="default" class="el-icon-plus"></i>
+                          <div slot="file" slot-scope="{file}">
+                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
+                            <span class="el-upload-list__item-actions">
+                              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
+                                <i class="el-icon-zoom-in"></i>
+                              </span>
+                              <span class="el-upload-list__item-delete" @click="handleDownload(file)">
+                                <i class="el-icon-download"></i>
+                              </span>
+                              <span v-if="btntype !== 'look'" class="el-upload-list__item-delete" @click="handleRemove(file)">
+                                <i class="el-icon-delete"></i>
+                              </span>
+                            </span>
+                          </div>
+                          <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
+                        </el-upload>
+                      </el-form-item>
+                    </el-col>
                   </el-row>
                 </el-form>
               </el-collapse-item>
@@ -69,6 +103,9 @@
           </el-tab-pane>
         </el-tabs>
       </div>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -82,6 +119,9 @@ import { addcrmVisit, detailcrmVisit, updatecrmVisit, getcrmBusinessList } from 
 export default {
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
+      visitFormList: [],
       businessSearchList: [
         { prop: 'businessName', label: '商机名称', type: 'input' },
       ],
@@ -147,6 +187,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        visitForm: '',
         visitName: '',
         visitTime: '',
         ownerUserId: '',
@@ -180,10 +221,20 @@ export default {
     this.getDictionaryType()
     this.dataForm.ownerUserId = this.userInfo.userId
   },
-  computed:{
+  computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    handleRemove(file) {
+      console.log(file);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleDownload(file) {
+      console.log(file);
+    },
     //商机选框传值
     businessChange(val, data) {
       if (data && data.length) { // 数据有效，进行更新
@@ -210,6 +261,16 @@ export default {
                 }
                 getDictionaryDataList(id, obj).then(response => {
                   this.visitGoalList = response.data.list
+                })
+              }
+              if (resp.enCode == "Followupform") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.visitFormList = response.data.list
                 })
               }
             })

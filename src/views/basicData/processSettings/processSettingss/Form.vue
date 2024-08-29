@@ -38,6 +38,16 @@
                               :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
+                        <el-col :span="12">
+                          <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
+                            <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
+                              <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                              </el-option>
+
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
                         <!-- <el-col :span="12">
                       <el-form-item label="工艺状态" prop="state">
                         <el-select v-model="dataForm.state" style="width:100%" :disabled="type == 'look'">
@@ -139,7 +149,7 @@
                           <div class="viewData">
                             <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
                             <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">测震工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">振工序</div>
                           </div>
                         </template>
                       </el-table-column>
@@ -333,6 +343,13 @@ export default {
       activeNames: ['modelInfo', 'processInfo'],
       datafilelist: [],
       getBimProcessList,
+      options: [{
+        value: 1,
+        label: '是'
+      }, {
+        value: 0,
+        label: '否'
+      }],
       ProductMethodArr: [
         {
           label: '工序分类',
@@ -386,6 +403,7 @@ export default {
         code: '', //  编码
         name: '', //  名称
         state: 'enable', //  状态
+        reportRulesFlag: 0,
         // status: "", //  状态
         documentStatus: '', //  状态
         reasonRejection: '', //  驳回原因
@@ -505,7 +523,7 @@ export default {
         } else if (item.processType == 'wait_assemble') {
           item.processTypeName = '待装配工序'
         } else if (item.processType == 'vibrate') {
-          item.processTypeName = '测震工序'
+          item.processTypeName = '测振工序'
         }
         return item
       })

@@ -225,6 +225,9 @@ export default {
         ],
       },
       dataRule: {
+        receivablesNo: [
+          { required: true, message: '请输入回款编号', trigger: 'blur' },
+        ],
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],

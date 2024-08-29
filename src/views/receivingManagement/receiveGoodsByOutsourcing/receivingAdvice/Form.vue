@@ -807,7 +807,7 @@ export default {
     },
     // 产品组件回调
     addth(id, data) {
-      console.log(data)
+
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -854,11 +854,10 @@ export default {
             }
             return true
           })
-          console.log(data, '删除后的数据')
-          console.log(deletedArray, '被删掉的数据')
+
         }
         this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
-        console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
+
         // 审批
         // this.$nextTick(() => { this.getApproverData() })
       }
@@ -1090,7 +1089,7 @@ export default {
       } catch (error) { }
     },
     init(id, btnType) {
-      console.log(id, btnType, '[[]]')
+
       this.dataForm.id = id || ''
 
       this.btnType = btnType
@@ -1150,7 +1149,7 @@ export default {
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('bm_wxsh_wxshtzd')
+          this.fetchData('WXSH')
         }, 500)
       }
       if (this.btnType == 'edit') {
@@ -1270,7 +1269,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-            console.log(item, 'oo')
+
             let dep = {
               accuracyLevel: item.accuracyLevel,
               billStatus: item.billStatus,
@@ -1354,7 +1353,7 @@ export default {
           } else if (this.btnType == 'add' || this.btnType == 'copy') {
             formMethod = addpurPurchaseReceiptReturnGoods
           }
-          console.log(obj, 'obj')
+
           formMethod(obj)
             .then((res) => {
               // let msg = "";

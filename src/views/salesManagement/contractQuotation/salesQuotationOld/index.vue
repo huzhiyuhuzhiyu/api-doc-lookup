@@ -351,23 +351,55 @@ export default {
     },
     initData() {
       this.listLoading = true
+
       if (this.quotationNoS) {
-        this.form.superQuery.condition.push(
-          { "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" }
-        )
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("quotationNo"));
+          filteredData.push({ "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" }
+          )
+        }
       }
+
+
       if (this.cooperativePartnerIdTextS) {
-        this.form.superQuery.condition.push(
-          { "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" }
-        )
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("cooperativePartnerIdText"));
+          filteredData.push({ "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" }
+          )
+        }
       }
+
       if (this.bidderS) {
-        this.form.superQuery.condition.push(
-          { "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" }
-        )
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("bidder"));
+          filteredData.push({ "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" }
+          )
+        }
       }
       if (this.quotationNoS || this.cooperativePartnerIdTextS || this.bidderS) {
         this.$set(this.form.superQuery, 'matchLogic', 'AND')
+      } else {
+        if (!this.form.superQuery.condition.length) {
+          this.form.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
       }
       getQuotationLists(this.form).then(res => {
         this.tableDataList = res.data.records
@@ -411,6 +443,7 @@ export default {
       this.quotationTime = [],
         this.submitDate = []
 
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
     addSupplier(id, type) {
@@ -527,7 +560,7 @@ export default {
 <style scoped>
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
 }
 
 .JNPF-common-head {

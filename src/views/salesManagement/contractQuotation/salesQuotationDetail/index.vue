@@ -6,20 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.quotationNo" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="quotationNoS" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
 
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.customerDrawingNumber" placeholder="请输入客户料号" clearable
+                <el-input v-model="customerDrawingNumberS" placeholder="请输入客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item>
-                <el-input v-model="form.productDrawingNo" placeholder="请输入品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-input v-model="productDrawingNoS" placeholder="请输入品名规格" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -32,14 +31,15 @@
 
               </el-form-item>
 
-            </el-col> 
+            </el-col>
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <!-- <el-dropdown> -->
             <topOpts @add="addSupplier('', 'add')">
-              <el-button type="primary" size="mini"  icon="el-icon-download" @click="exportForm('tableForm')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download"
+                @click="exportForm('tableForm')">导出</el-button>
             </topOpts>
 
             <div class="JNPF-common-head-right">
@@ -106,7 +106,7 @@
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="110" sortable="custom" />
 
-            
+
 
 
 
@@ -171,6 +171,9 @@ export default {
   components: { DepForm, SuperQuery, ExportForm },
   data() {
     return {
+      productDrawingNoS: "",
+      customerDrawingNumberS: "",
+      quotationNoS: "",
       columnList: ["cooperativePartnerCode", "validEnd", "createByName"],
       superQueryVisible: false,
 
@@ -198,7 +201,10 @@ export default {
         productDrawingNo: "",
         customerDrawingNumber: "",
         quotationNo: "",
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
       superQueryJson: [
         {
@@ -334,6 +340,57 @@ export default {
     },
     initData() {
       this.listLoading = true
+
+      if (this.quotationNoS) {
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("quotationNo"));
+          filteredData.push({ "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" }
+          )
+        }
+      }
+
+
+      if (this.customerDrawingNumberS) {
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("customerDrawingNumber"));
+          filteredData.push({ "field": "customerDrawingNumber", "fieldValue": this.customerDrawingNumberS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "customerDrawingNumber", "fieldValue": this.customerDrawingNumberS, "symbol": "like" }
+          )
+        }
+      }
+
+      if (this.productDrawingNoS) {
+
+        if (this.form.superQuery.condition.length) {
+          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("productDrawingNo"));
+          filteredData.push({ "field": "productDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
+          this.form.superQuery.condition = filteredData
+        } else {
+          this.form.superQuery.condition.push(
+            { "field": "productDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
+          )
+        }
+      }
+
+      if (this.productDrawingNoS || this.customerDrawingNumberS || this.quotationNoS) {
+        this.$set(this.form.superQuery, 'matchLogic', 'AND')
+      } else {
+        if (!this.form.superQuery.condition.length) {
+          this.form.superQuery = {
+            condition: [],
+            matchLogic: ""
+          }
+        }
+      }
       getQuotationmxLists(this.form).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false
@@ -359,7 +416,9 @@ export default {
       this.form = JSON.parse(JSON.stringify(this.formlist))
       this.quotationTime = [],
         this.submitDate = []
-
+      this.productDrawingNoS = ""
+      this.customerDrawingNumberS = ""
+      this.quotationNoS = ""
       this.search()
     },
     addSupplier(id, type) {
@@ -462,12 +521,13 @@ export default {
 }
 </script>
 <style scoped>
-  .JNPF-common-search-box{
-    padding: 8px 0 !important;
-    margin-left: 0!important;
-  }
-  .JNPF-common-head{
-    padding: 8px;
-  }
+.JNPF-common-search-box {
+  padding: 8px 0 !important;
+  margin-left: 0 !important;
+}
+
+.JNPF-common-head {
+  padding: 8px;
+}
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

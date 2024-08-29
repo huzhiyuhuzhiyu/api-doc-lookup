@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="生产编排" />
+          <el-page-header @back="goBack" content="编排" />
           <div class="options">
             <el-button type="primary" v-if="btnType != 'look'" :loading="btnLoading"
               @click="handleConfirm('submit')">提交</el-button>
@@ -72,8 +72,8 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
-                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                            start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
+                            style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -160,6 +160,36 @@
                             :rows="2" />
                         </el-form-item>
                       </el-col>
+                    </el-row>
+                  </el-form>
+                </el-collapse-item>
+                <el-collapse-item title="领料信息" name="pickbasicInfo" class="orderInfo" v-if="allocationFlag">
+                  <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
+                    label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料单号" prop="orderNo">
+                          <el-input v-model="collect.orderNo"
+                            :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料人" prop="personId">
+                          <user-select v-model="collect.personId" placeholder="请选择领料人" clearable style="width: 100%;"
+                            :disabled="btnType == 'look'" @change="hangleSelectSales">
+                          </user-select>
+
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="领料日期" prop="operationDate">
+                          <el-date-picker v-model="collect.operationDate" :default-value="new Date()" type="datetime"
+                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -251,7 +281,7 @@
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      
+
                     </JNPF-table>
 
                   </el-form>
@@ -358,7 +388,8 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
+          @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -440,13 +471,31 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
-import { detailProcess, getProcessList, getWorkListMap,addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   components: {
     RoutingForm
   },
   data() {
     return {
+      pickDataRule: {
+        orderNo: [
+          { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
+        ],
+        operationDate: [
+          { required: true, message: '领料日期不能为空', trigger: 'change' }
+        ],
+        personId: [
+          { required: true, message: '领料人不能为空', trigger: 'change' }
+        ],
+      },
+      collect: {
+        orderNo: "",
+        operationDate: "",
+        personId: "",
+      },
+      allocationFlag: false,
       activeNames: ["productInfo", "basicInfo"],
       routingVisible: false,
       dataForm: {
@@ -516,6 +565,7 @@ export default {
       personnelData: [],
       workstationList: [],
       lineList: [],
+
       codeConfig: {},
       dispatchSearchForm: {
         resIdList: [],
@@ -526,7 +576,8 @@ export default {
         processName: "",
       },
       detailDataList: [],
-      detailDiaFlag:false,
+      detailDiaFlag: false,
+      collectConfig:{}
     }
   },
   computed: {
@@ -536,9 +587,24 @@ export default {
 
   },
   mounted() {
-
+    console.log(2);
+    this.getPickingConfig()
   },
   methods: {
+    // 获取领料设置 领料是否自动生成领料单
+    getPickingConfig() {
+
+      let obj = { "pageSize": -1, "businessCode": "produce" }
+      getBimBusinessSwitchConfigList(obj).then(res => {
+        this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
+        if (this.allocationFlag) {
+          this.activeNames = ['basicInfo', 'pickbasicInfo','productInfo']
+          this.fetchData("PODH")
+        } else {
+          this.activeNames = ['basicInfo',"productInfo"]
+        }
+      })
+    },
     // 通过查询条件查询未完成的派工单
     dataFormSubmit() {
       if (this.daterangeList.length) {
@@ -953,6 +1019,7 @@ export default {
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
+        this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
@@ -981,7 +1048,7 @@ export default {
     },
     init(data) {
       console.log("传递数据", data);
-      this.$set(data[0],'productionQuantity','')
+      this.$set(data[0], 'productionQuantity', '')
       this.dataForm = data[0]
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
@@ -994,12 +1061,23 @@ export default {
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)
+
+
     },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        this.dataForm.orderNo = data.number
+
+        if (code == 'PROD') {
+          this.codeConfig = data
+          this.dataForm.orderNo = data.number
+
+        }
+        if (code == 'PODH') {
+          this.collectConfig = data
+          this.collect.orderNo = data.number
+
+        }
       } catch (error) {
       }
     },
@@ -1035,22 +1113,23 @@ export default {
           console.log("工序", this.dataFormTwo.data);
           if (submitFlag === false) return
           this.dataFormTwo.data.forEach(item => {
-              item.routingProResList.forEach(items=>{
-                items.processId=item.processId
-              })
-              this.$set(item,'workOrderResList',item.routingProResList)
-            });
-          let obj={
-            prodOrder:this.dataForm,
-            workOrderList:this.dataFormTwo.data
+            item.routingProResList.forEach(items => {
+              items.processId = item.processId
+            })
+            this.$set(item, 'workOrderResList', item.routingProResList)
+          });
+          let obj = {
+            prodOrder: this.dataForm,
+            workOrderList: this.dataFormTwo.data,
+            collect:this.collect.orderNo?this.collect:null
           }
-          addProdPlanArrange(obj).then(res=>{
+          addProdPlanArrange(obj).then(res => {
             this.btnLoading = false
             this.$message.success("生成编排成功")
             setTimeout(() => {
               this.$emit('close')
             }, 1500);
-          }).catch(error=>{
+          }).catch(error => {
             this.btnLoading = false
 
           })

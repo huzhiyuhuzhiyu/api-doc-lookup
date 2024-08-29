@@ -169,6 +169,7 @@ export default {
       },
       btntype: false,
       dataRule: {
+        mobile:[{ validator: this.formValidate('iphone'), trigger: 'blur' }],
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],

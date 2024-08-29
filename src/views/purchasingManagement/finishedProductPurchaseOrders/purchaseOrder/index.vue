@@ -118,7 +118,7 @@
                     <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
                       下载订货单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id,'P001')">
+                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id, 'P001')">
                       打印订货单
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -204,8 +204,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm"/>
-      
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+
   </div>
 </template>
 
@@ -230,15 +230,15 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getPrintBusInfo } from '@/api/system/printDev'
-import PrintBrowse from '@/components/PrintBrowse'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery , PrintBrowse },
+  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse },
   data() {
     return {
-      printBrowseVisible:false,
-      prindId:'',
-      formId:'',
+      printBrowseVisible: false,
+      prindId: '',
+      formId: '',
       exportFormVisible: false,
       superQueryVisible: false,
       superQueryJson: [
@@ -352,7 +352,7 @@ export default {
         endTime: '',
         orderNo: '', //订单号
         orderType: 'procure', //	订单类型 采购 procure、外协 external
-        classAttribute:'other',
+        classAttribute: 'finish_product',
         pageNum: 1,
         pageSize: 20,
         startTime: '',
@@ -722,16 +722,16 @@ export default {
       })
     },
     // 打印
-    printPurchaseOrder(id,enCode) {
-      getPrintBusInfo(enCode).then(res=>{
-        if (res.data){
+    printPurchaseOrder(id, enCode) {
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
           this.prindId = res.data.id
           this.formId = id
           this.printBrowseVisible = true
-        }else{
+        } else {
           this.$message.warning('未找到相应打印模版')
         }
-      }).catch(()=>{
+      }).catch(() => {
         this.printBrowseVisible = false
       });
     },

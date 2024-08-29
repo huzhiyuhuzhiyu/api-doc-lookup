@@ -3,7 +3,6 @@
     <div class="JNPF-preview-main user-form">
       <div class="JNPF-common-page-header">
         <el-page-header @back="goBack" content="组织架构图" />
-        <el-button @click="exportToPDF">导出为PDF</el-button>
         <div class="options">
           <el-button @click="goBack">{{ $t('common.cancelButton') }} </el-button>
         </div>

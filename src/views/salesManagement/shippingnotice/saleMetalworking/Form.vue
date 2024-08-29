@@ -152,8 +152,8 @@
                       icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData" fixedNo   hasC
-                      v-loading="tableloading">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
+                      fixedNo hasC v-loading="tableloading">
 
 
 
@@ -479,7 +479,7 @@ export default {
         { label: "内销", value: "domestic_market" },
         { label: "总成", value: "assembly" }
       ],
-      departMentList: [ 
+      departMentList: [
       ],
       paymentStatusList: [
         { label: "未付款", value: "no_pay", },
@@ -487,7 +487,15 @@ export default {
         { label: "已付清", value: "payed", },
       ],
       productRules: {
-        deliveryQuantity: [{ required: true, trigger: 'blur' }, { validator: this.formValidate('positiveNumber', '发货数量必须大于0', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：${errMsg}`) }), trigger: 'blur' }, { validator: this.calcValidate(), trigger: 'blur' }],
+
+        deliveryQuantity: [
+
+          { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`产品信息第${index + 1}行：发货数量${errMsg}`) }), trigger: 'blur' },
+          { required: true, trigger: ['blur'] }
+
+        ],
       },
       ordersLineId: '',
       orderDateArr: [],
@@ -736,7 +744,7 @@ export default {
           this.departMentList.push(obj)
           let arr = []
 
-          
+
         });
       })
     },
@@ -859,6 +867,7 @@ export default {
     },
     // 更换地址
     changeAddress() {
+      if(!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
       this.addressVisibled = true
 
       this.$nextTick(() => {
@@ -1055,6 +1064,7 @@ export default {
         this.dataForm.area = '',
         // this.dataForm.shipperId = '',
         this.dataForm.remark = ''
+        this.defaultAddress=""
     },
     // 选择客户
     seleceCustomer(e) {
@@ -1070,7 +1080,6 @@ export default {
               type: 'success',
               message: '切换成功'
             })
-            this.deletedata()
             this.dataFormTwo.data = []
             this.customerData = e
             this.dataForm.cooperativePartnerId = e.id
@@ -1079,6 +1088,7 @@ export default {
             this.dataForm.partnerName = e.name
             this.dataForm.code = e.code
             this.customerVisible = false
+            this.getAddressInfoFun(e.id)
 
           }).catch(() => {
             this.$message({
@@ -1097,16 +1107,18 @@ export default {
           this.dataForm.partnerName = e.name
           this.dataForm.code = e.code
           this.customerVisible = false
+          this.getAddressInfoFun(e.id)
 
         }
       })
-      this.getAddressInfoFun(e.id)
 
     },
     getAddressInfoFun(id) {
+      console.log(7777);
       getAddressInfo(id).then(row => {
         let dfaddress = row.data.filter(item => { return item.defaultFlag })
         if (dfaddress.length) {
+          console.log(6666);
           this.dataForm.recipient = dfaddress[0].recipient
           this.dataForm.phone = dfaddress[0].phone
           this.dataForm.country = dfaddress[0].country === '中国' ? 'CN' : dfaddress[0].country
@@ -1119,6 +1131,9 @@ export default {
           } else {
             this.defaultAddress = dfaddress[0].countryText + dfaddress[0].address
           }
+        }else{
+          this.deletedata()
+          
         }
       })
     },
@@ -1302,7 +1317,7 @@ export default {
         })
 
       }
-    
+
       if (this.btnType == 'edit') {
         this.fetchData("SSDH", false)
         this.btnText = "继续修改"

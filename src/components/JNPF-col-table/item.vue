@@ -9,7 +9,7 @@
       <el-form-item :prop="'data.' + scope.$index + '.' + item.prop" :rules='Rules'>
         <!-- 输入框 -->
         <el-input v-if="item.type === 'input' || item.jnpfKey === 'comInput' || item.jnpfKey === 'JNPFTableInput'"
-          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="item.disabled" :readonly="item.readonly"
+          v-bind="$attrs" v-on="$listeners" :placeholder="Placeholder" style="width:100%" :disabled="item.disabled ||readOnly" :readonly="item.readonly"
           :maxlength="item.maxlength || 20" :clearable="item.hasOwnProperty('clearable') ? item.clearable : true"
           @input="item.hasOwnProperty('input') ? item.input($event, scope) : ''"
           @change="item.hasOwnProperty('change') ? item.change($event, scope) : ''"

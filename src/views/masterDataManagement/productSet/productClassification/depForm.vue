@@ -23,13 +23,15 @@
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <template slot="label">
-            分类名称<span class="required">*</span>
+            分类名称
+            <span class="required">*</span>
           </template>
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
         </el-form-item>
         <el-form-item label="分类编码" prop="code">
           <template slot="label">
-            分类编码<span class="required">*</span>
+            分类编码
+            <span class="required">*</span>
           </template>
           <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
         </el-form-item>
@@ -135,7 +137,11 @@ export default {
           }
         ]
       },
-      classTypelist: [{ label: '包装物', value: 'packaging' }]
+      classTypelist: [
+        { label: '包装物', value: 'packaging' },
+        { label: '内圈毛坯', value: 'inner_ring_blank' },
+        { label: '外协毛坯', value: 'outer_ring_blank' }
+      ]
     }
   },
   created() {
@@ -147,8 +153,8 @@ export default {
         pageNum: 1,
         pageSize: -1
       }
-      getclassAttributeList(obj).then(res => {
-        this.categoryPropertList = res.data.records.map(item => {
+      getclassAttributeList(obj).then((res) => {
+        this.categoryPropertList = res.data.records.map((item) => {
           return {
             label: item.name,
             value: item.code
@@ -157,7 +163,6 @@ export default {
       })
     },
     init(id, parentId, btntype) {
-
       this.visible = true
       this.dataForm.id = id || ''
       this.dataForm.parentId = parentId || '-1'
@@ -185,7 +190,6 @@ export default {
       })
     },
     onOrganizeChange(val, data) {
-
       if (!data) {
         this.dataForm.parentId = ''
         this.dataForm.parentName = ''
@@ -227,10 +231,12 @@ export default {
   color: #303133;
   margin-left: -12px;
 }
+
 .required {
   color: red;
   margin-left: 4px;
 }
+
 .button-bottom {
   position: fixed;
   bottom: 10px;

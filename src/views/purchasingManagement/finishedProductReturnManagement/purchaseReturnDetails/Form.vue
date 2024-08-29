@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购退货通知单'
+          ? '新建成品采购退货通知单'
           : btnType == 'edit'
-            ? '编辑采购退货通知单'
+            ? '编辑成品采购退货通知单'
             : btnType == 'copy'
-              ? '新建采购退货通知单'
-              : '查看采购退货通知单'
+              ? '新建成品采购退货通知单'
+              : '查看成品采购退货通知单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -416,7 +416,6 @@ export default {
         endTime: '',
         orderNo: '',
         orderType: 'procure',
-        classAttribute: 'other',
         orderItems: [
           {
             asc: false,
@@ -612,7 +611,6 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-        classAttribute: 'other',
         receiptReturnType: 'back',
         notificationType: 'procure',
         salesman: '',

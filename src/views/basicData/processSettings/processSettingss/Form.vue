@@ -524,6 +524,8 @@ export default {
           item.processTypeName = '待装配工序'
         } else if (item.processType == 'vibrate') {
           item.processTypeName = '测振工序'
+        } else if (item.processType == 'heat_treatment') {
+          item.processTypeName = '热处理工序'
         }
         return item
       })

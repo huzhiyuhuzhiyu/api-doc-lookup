@@ -114,7 +114,7 @@
             <template slot-scope="scope">
               <div v-if="scope.row.processType == 'normal'">正常工序</div>
               <div v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-              <div v-if="scope.row.processType == 'vibrate'">测震工序</div>
+              <div v-if="scope.row.processType == 'vibrate'">测振工序</div>
             </template>
           </el-table-column>
           <el-table-column prop="createByName" label="创建人" width="180" />

@@ -130,6 +130,9 @@
               </el-collapse>
             </el-form>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -145,7 +148,9 @@ import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmCo
 export default {
   data() {
     return {
-      travelModeList:[],
+      isattachmentswitch: '1',
+      datafilelist: [],
+      travelModeList: [],
       dialogImageUrl: '',
       dialogVisible: false,
       codeConfig: {},//单据规则配置
@@ -379,6 +384,19 @@ export default {
               this.contactsIdList = res.data.records
               this.formLoading = false
             })
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
           })
         } else {
           this.formLoading = false
@@ -389,8 +407,19 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true;
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: 'customer',
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
           let obj = {
-            ...this.dataForm
+            ...this.dataForm,
+            attachmentList: this.datafilelist
           }
           let formMethod = this.dataForm.id ? updatecrmReturnVisit(obj) : addcrmReturnVisit(obj);
           formMethod.then(res => {

@@ -140,6 +140,9 @@
               </el-collapse>
             </el-form>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype === 'look'" :detailed="btntype === 'look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -155,6 +158,8 @@ import { addServiceRecords, detailServiceRecords, updateServiceRecords, getcrmBu
 export default {
   data() {
     return {
+      isattachmentswitch: '1',
+      datafilelist: [],
       receivablesNoSearchList: [
         { prop: 'receivablesNo', label: '回款编号', type: 'input' },
       ],
@@ -492,6 +497,19 @@ export default {
         if (this.dataForm.id) {
           detailServiceRecords(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             this.formLoading = false
           })
         } else {
@@ -503,8 +521,19 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true;
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: 'customer',
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
           let obj = {
-            ...this.dataForm
+            ...this.dataForm,
+            attachmentList: this.datafilelist,
           }
           let formMethod = this.dataForm.id ? updateServiceRecords(obj) : addServiceRecords(obj);
           formMethod.then(res => {

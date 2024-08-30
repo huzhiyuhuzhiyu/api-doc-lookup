@@ -66,7 +66,7 @@
             <el-table-column prop="unreceivedMoney" label="未回款金额" min-width="140" />
             <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">
               <template slot-scope="scope">
-                {{receivedStatusForm(scope.row.receivablesStatus)}}
+                <div><el-tag :type="receivedStatusForm(scope.row.receivablesStatus)=='待回款'?'danger':'success'">{{receivedStatusForm(scope.row.receivablesStatus)}}</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="200" />

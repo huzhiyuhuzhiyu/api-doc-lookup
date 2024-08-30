@@ -86,8 +86,8 @@
             <el-table-column prop="costPrice" label="成本价(元)" min-width="140" />
             <el-table-column prop="stackingFlag" label="是否上下架" min-width="130">
               <template slot-scope="scope">
-                <div v-if="scope.row.stackingFlag == '0'">否</div>
-                <div v-if="scope.row.stackingFlag == '1'">是</div>
+                <div v-if="scope.row.stackingFlag == '0'"><el-tag type="danger">否</el-tag></div>
+                <div v-if="scope.row.stackingFlag == '1'"><el-tag type="success">是</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" />

@@ -258,7 +258,10 @@ export default {
         ],
         businessName: [
           { required: true, message: '请输入商机名称', trigger: 'blur' },
-        ]
+        ],
+        money: [
+          { validator: this.formValidate('positiveNumber', '商机金额须大于0'), trigger: 'blur' }
+        ],
       },
     }
   },

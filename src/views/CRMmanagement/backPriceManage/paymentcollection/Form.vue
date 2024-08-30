@@ -71,13 +71,13 @@
                     <el-table-column prop="contractName" label="合同名称" width="160" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="contractMoney" label="合同金额" width="140" show-overflow-tooltip />
                     <el-table-column prop="unreceivedMoney" label="未回款金额" width="160" show-overflow-tooltip />
-                    <el-table-column prop="thisReceivablesMoney" label="本次回款金额" width="160">
+                    <el-table-column prop="thisReceivablesMoney" label="本次回款金额" width="170">
                       <template slot="header">
                         <span class="required">*</span>本次回款金额
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'thisReceivablesMoney'" :rules='productRules.thisReceivablesMoney'>
-                          <el-input v-model="scope.row.thisReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
+                          <el-input v-model="scope.row.thisReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 145px;">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -178,7 +178,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         type: "customer",
-        partnerCategoryId:'',
+        partnerCategoryId: '',
         orderItems: [{
           asc: false,
           column: ""
@@ -284,6 +284,7 @@ export default {
         no: val.contractNo,
         pageNum: 1,
         pageSize: -1,
+        receivablesStatus: 'unpayment'
       }
       this._index = index
       this.taxRateList = []

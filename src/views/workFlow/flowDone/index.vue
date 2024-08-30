@@ -14,30 +14,10 @@
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.flowId" placeholder="选择所属流程" clearable>
-                    <el-option-group v-for="group in flowEngineList" :key="group.id"
-                      :label="group.fullName + '【' + group.num + '】'">
-                      <el-option v-for="item in group.children" :key="item.id" :label="item.fullName" :value="item.id">
-                      </el-option>
-                    </el-option-group>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-
-              <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.urgent" placeholder="选择紧急程度" clearable>
-                    <el-option v-for="(item, i) in urgentList" :key="i" :label="item.fullName" :value="item.id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
             <el-col :span="6">
-              <el-form-item label="日期">
-                <el-date-picker v-model="pickerVal" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
-                  :picker-options="pickerOptions" value-format="timestamp" clearable :editable="false">
+              <el-form-item>
+                <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期" end-placeholder="流程结束日期"
+                  :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable :editable="false">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -70,26 +50,27 @@
           </div>
         </div>
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
-            <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
-            <el-table-column prop="flowName" label="所属流程" width="130" />
-            <el-table-column prop="startTime" label="发起时间" width="150" :formatter="jnpf.tableDateFormat" />
-            <el-table-column prop="flowUrgent" label="紧急程度" width="100" align="center">
+            <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="120" />
+            <el-table-column prop="flowName" label="所属流程" min-width="130" />
+            <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
+            <el-table-column prop="userName" label="发起人员" min-width="130" />
+            <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
               <template slot-scope="scope">
                 {{ scope.row.flowUrgent | urgentText() }}
               </template>
             </el-table-column>
-            <el-table-column prop="status" label="流程状态" width="130" align="center">
+            <el-table-column prop="status" label="流程状态" min-width="130" align="center">
               <template slot-scope="scope">
                 <el-tag type="success" v-if="scope.row.status == 1">通过</el-tag>
                 <el-tag type="danger" v-else>拒绝</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="creatorTime" label="办理时间" width="150">
+            <el-table-column prop="creatorTime" label="办理时间" min-width="150">
               <template slot-scope="scope">
                 {{ scope.row.creatorTime | toDate() }}
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="60" fixed="right">
+            <el-table-column label="操作" width="80" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="toDetail(scope.row)">详情</el-button>
               </template>
@@ -129,7 +110,6 @@ export default {
         creatorUserId: "",
         endTime: "",
         endUpdateTime: "",
-        flowCategory: "",
         flowId: "",
         orderItems: [{
           asc: false,
@@ -143,7 +123,6 @@ export default {
         startUpdateTime: "",
         totalRowFlag: false
       },
-      urgent: '',
       urgentList: [
         {
           id: 1,
@@ -184,13 +163,6 @@ export default {
           }
         }]
       },
-      keyword: '',
-      pickerVal: [],
-      startTime: '',
-      endTime: '',
-      flowId: '',
-      flowCategory: '',
-      creatorUserId: '',
       categoryList: [],
       flowEngineList: [],
       categoryIndex:-1,
@@ -199,27 +171,48 @@ export default {
       superQueryJson: [
         {
           prop: 'fullName',
-          label: "流程名称",
+          label: "流程标题",
           type: 'input'
         },
         {
-          prop: 'enCode',
-          label: "流程编码",
+          prop: 'flowName',
+          label: "所属流程",
           type: 'input'
+        },
+        {
+          prop: 'status',
+          label: "流程状态",
+          type: 'select',
+          options: [{
+            value: 1,
+            label: '等待审核'
+          }, {
+            value: 2,
+            label: '审核通过'
+          }, {
+            value: 3,
+            label: '审核驳回'
+          }, {
+            value: 4,
+            label: '流程撤回'
+          }, {
+            value: 5,
+            label: '审核终止'
+          }],
+        },
+        {
+          prop: 'creatorUserId',
+          label: "发起人员",
+          type: 'custom',
+          component: 'user-select',
         },
         {
           prop: 'creatorTime',
-          label: "创建时间",
+          label: "办理时间",
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
         },
-        {
-          prop: 'enabledMark',
-          label: "状态",
-          type: 'select',
-          options: [{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]
-        },
-      ]
+      ],
     }
   },
   filters: {

@@ -6,34 +6,30 @@
         <el-tab-pane label="自定义流程" name="custom" />
       </el-tabs>
       <div class="JNPF-common-layout-center" v-show="activeName">
-        <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding-left: 10px;">
+        <div class="tag-group JNPF-common-search-box treeBox_bot"
+          style="display:flex;align-items:center;padding-left: 10px;">
           <span class="tag-group__title text">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
-          <el-tag @click="changeCategory(item,index)" v-for="(item,index) in categoryList" :key="item.id" :type="index === categoryIndex ? '' : 'info'" effect="plain" style="height:26px;line-height:25px;margin-left:10px;cursor: pointer;">
+          <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
+            :type="index === categoryIndex ? '' : 'info'" effect="plain"
+            style="height:26px;line-height:25px;margin-left:10px;cursor: pointer;">
             {{ item.fullName }}
           </el-tag>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
-                    <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="4">
-                <el-form-item>
-                  <el-select v-model="listQuery.urgent" placeholder="请选择紧急程度" clearable>
-                    <el-option v-for="(item, i) in urgentList" :key="i" :label="item.fullName" :value="item.id">
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
+              <el-form-item>
+                <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
+                  <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-date-picker v-model="pickerVal" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
-                  :picker-options="pickerOptions" value-format="timestamp" clearable :editable="false">
+                <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
+                  end-placeholder="流程结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable
+                  :editable="false">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -49,7 +45,8 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head" :style="{'justify-content':activeName === 'system' ? 'flex-end' : 'space-between'}">
+          <div class="JNPF-common-head"
+            :style="{ 'justify-content': activeName === 'system' ? 'flex-end' : 'space-between' }">
             <topOpts @add="addFlow()" addText="新建流程" v-show="activeName === 'custom'"></topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
@@ -68,7 +65,6 @@
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
             <el-table-column prop="flowName" label="所属流程" width="130" />
             <el-table-column prop="startTime" label="发起时间" width="150" :formatter="jnpf.tableDateFormat" />
-            <el-table-column prop="thisStep" label="审批节点" width="150" />
             <el-table-column prop="flowUrgent" label="紧急程度" width="100" align="center">
               <template slot-scope="scope">
                 {{ scope.row.flowUrgent | urgentText() }}
@@ -126,10 +122,10 @@ import flow from './Flow'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'workFlow-flowLaunch',
-  components: { FlowBox, flow , SuperQuery },
+  components: { FlowBox, flow, SuperQuery },
   data() {
     return {
-      categoryIndex:-1,
+      categoryIndex: -1,
       list: [],
       total: 0,
       listLoading: false,
@@ -142,7 +138,6 @@ export default {
         creatorUserId: "",
         endTime: "",
         endUpdateTime: "",
-        flowCategory: "",
         flowId: "",
         orderItems: [{
           asc: false,
@@ -154,7 +149,8 @@ export default {
         pageSize: 20,
         startTime: "",
         startUpdateTime: "",
-        totalRowFlag: false
+        totalRowFlag: false,
+        pickerVal: []
       },
       formVisible: false,
       flowVisible: false,
@@ -216,39 +212,66 @@ export default {
           fullName: '紧急'
         }
       ],
-      keyword: '',
-      pickerVal: [],
-      startTime: '',
-      endTime: '',
-      flowId: '',
-      status: '',
-      urgent: '',
-      flowCategory: '',
       categoryList: [],
       flowEngineList: [],
       superQueryVisible: false,
       superQueryJson: [
         {
           prop: 'fullName',
-          label: "流程名称",
+          label: "流程标题",
           type: 'input'
         },
         {
-          prop: 'enCode',
-          label: "流程编码",
+          prop: 'flowName',
+          label: "所属流程",
           type: 'input'
         },
         {
-          prop: 'creatorTime',
-          label: "创建时间",
-          type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
+          prop: 'flowUrgent',
+          label: "紧急程度",
+          type: 'select',
+          options: [
+            {
+              value: 1,
+              label: '普通'
+            }, {
+              value: 2,
+              label: '重要'
+            }, {
+              value: 3,
+              label: '紧急'
+            }
+          ],
         },
+        // {
+        //   prop: 'creatorTime',
+        //   label: "创建时间",
+        //   type: 'daterange',
+        //   valueFormat: "yyyy-MM-dd",
+        // },
         {
-          prop: 'enabledMark',
+          prop: 'status',
           label: "状态",
           type: 'select',
-          options: [{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]
+          options: [{
+            value: 0,
+            label: '等待提交'
+          }, {
+            value: 1,
+            label: '等待审核'
+          }, {
+            value: 2,
+            label: '审核通过'
+          }, {
+            value: 3,
+            label: '审核驳回'
+          }, {
+            value: 4,
+            label: '流程撤回'
+          }, {
+            value: 5,
+            label: '审核终止'
+          }],
         },
       ]
     }
@@ -273,7 +296,7 @@ export default {
     }
   },
   methods: {
-    changeCategory(item,index){
+    changeCategory(item, index) {
       this.listQuery.flowCategory = item.enCode
       this.categoryIndex = index
       this.initData()
@@ -298,7 +321,7 @@ export default {
       this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
         this.categoryList = res
         console.log(this.categoryList);
-        
+
       })
     },
     initData() {
@@ -343,7 +366,7 @@ export default {
         enCode: item.enCode,
         flowId: item.id,
         formType: item.formType,
-        businessFlow:item.businessFlow,
+        businessFlow: item.businessFlow,
         opType: '-1'
       }
       this.formVisible = true
@@ -361,7 +384,7 @@ export default {
         opType,
         status: item.status,
         businessId: item.businessId,
-        businessFlow:item.businessFlow,
+        businessFlow: item.businessFlow,
       }
       this.formVisible = true
       this.$nextTick(() => {

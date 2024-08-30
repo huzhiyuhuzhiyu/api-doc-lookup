@@ -479,6 +479,7 @@ export default {
           backAmount: '',                      // 退货总金额
           receiptAmount: '',                   // 收货总金额
           brTotalAmount: '',                   // 收/退货总金额
+          approvalFlag:false, //
         }
         res.data.reconciliationLines.forEach(item => {
           if (item.noticeBillVO) {

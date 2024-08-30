@@ -8,11 +8,11 @@
       <div class="JNPF-common-layout-center">
         <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="6">
+            <!-- <el-col :span="6">
               <el-form-item label="关键词">
                 <el-input v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -40,15 +40,15 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
-            <el-table-column prop="toUserName" label="被委托人" width="150" />
-            <el-table-column prop="flowName" label="委托流程" width="200" />
-            <el-table-column prop="flowCategory" label="流程分类" width="100">
+            <el-table-column prop="toUserName" label="被委托人" min-width="100" />
+            <el-table-column prop="flowName" label="委托流程" min-width="140" />
+            <el-table-column prop="flowCategory" label="流程分类" min-width="100">
               <template slot-scope="scope">
                 {{ scope.row.flowCategory | getCategoryText(categoryList) }}
               </template>
             </el-table-column>
-            <el-table-column prop="startTime" label="开始时间" width="120" :formatter="jnpf.tableDateFormatDayTime" />
-            <el-table-column prop="endTime" label="结束时间" width="120" :formatter="jnpf.tableDateFormatDayTime" />
+            <el-table-column prop="startTime" label="开始时间" min-width="120" :formatter="jnpf.tableDateFormatDayTime" />
+            <el-table-column prop="endTime" label="结束时间" min-width="120" :formatter="jnpf.tableDateFormatDayTime" />
             <!-- <el-table-column prop="status" label="状态" width="100" align="center">
               <template slot-scope="scope">
                 <el-tag type="info" v-if='scope.row.status == 1'>未开始</el-tag>
@@ -56,7 +56,7 @@
                 <el-tag type="primary" v-else>委托中</el-tag>
               </template>
             </el-table-column> -->
-            <el-table-column prop="description" label="委托说明" />
+            <el-table-column prop="description" label="委托说明" min-width="160"/>
             <el-table-column label="操作" fixed="right" width="100">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.$index, scope.row.id)">

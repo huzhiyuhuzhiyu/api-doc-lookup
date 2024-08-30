@@ -121,10 +121,10 @@ export default {
         category: this.category == 0 ? '' : this.category
       }
       FlowEnginePageList(query).then((res) => {
-        if (res.data.list.length < this.listQuery.pageSize) {
+        if (res.data.length < this.listQuery.pageSize) {
           this.finish = true
         }
-        this.list = [...this.list, ...res.data.list]
+        this.list = [...this.list, ...res.data]
         this.total = res.data.pagination.total
         this.listLoading = false
       })

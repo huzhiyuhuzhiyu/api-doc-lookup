@@ -97,14 +97,14 @@
             <el-table-column prop="code" label="客户编码" sortable="custom" min-width="160" />
 
             <el-table-column prop="contacts" label="联系人" sortable="custom" width="120" />
-            <el-table-column prop="phone" label="电话" sortable="custom" width="120" />
-            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="120" />
-            <el-table-column prop="dealStatus" label="成交状态" width="120">
+            <el-table-column prop="phone" label="电话" sortable="custom" width="140" />
+            <el-table-column prop="mobilePhone" label="手机" sortable="custom" width="140" />
+            <!-- <el-table-column prop="dealStatus" label="成交状态" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.dealStatus=='0'">未成交</div>
-                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+                <div v-if="scope.row.dealStatus=='0'"><el-tag type="danger">未成交</el-tag></div>
+                <div v-else-if="scope.row.dealStatus=='1'"><el-tag type="success">成交</el-tag></div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column label="操作" width="180" fixed="right">

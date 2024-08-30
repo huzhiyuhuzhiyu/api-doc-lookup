@@ -58,7 +58,12 @@
             <el-table-column prop="contractNo" label="相关合同" sortable="custom" min-width="180" />
             <el-table-column prop="receivablesNo" label="相关回款" sortable="custom" min-width="180" />
             <!-- <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" /> -->
-            <el-table-column prop="recordsValid" label="跟进类型" sortable="custom" min-width="180" />
+            <el-table-column prop="recordsValid" label="跟进类型" sortable="custom" min-width="180">
+              <template slot-scope="scope">
+                <div v-if="scope.row.recordsValid=='0'"><el-tag type="danger">无效跟进</el-tag></div>
+                <div v-else-if="scope.row.recordsValid=='1'"><el-tag type="success">有效跟进</el-tag></div>
+              </template>
+            </el-table-column>
             <el-table-column prop="createUserName" label="有效跟进人" sortable="custom" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
@@ -87,13 +92,13 @@
       </div>
     </div>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
-      <el-radio-group v-model="radio">
-        <el-radio :label="3">有效跟进</el-radio>
-        <el-radio :label="6">无效跟进</el-radio>
+      <el-radio-group v-model="recordsValid">
+        <el-radio :label="1">有效跟进</el-radio>
+        <el-radio :label="0">无效跟进</el-radio>
       </el-radio-group>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="recordsValidactive">确 定</el-button>
       </span>
     </el-dialog>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -104,16 +109,19 @@
 </template>
 
 <script>
+
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
+import { updaterecordsValid } from '@/api/CRMmanagement/index'
 import Form from './Form'
 export default {
   name: 'serviceRecords',
   components: { Form, programme, SuperQuery },
   data() {
     return {
+      recordsValid: '',
       dialogVisible: false,
       selectData: [],
       datalist: [],
@@ -172,7 +180,10 @@ export default {
           prop: 'recordsValid',
           label: '跟进类型',
           type: 'select',
-          options: []
+          options: [
+            { label: '有效跟进', value: 1 },
+            { label: '无效跟进', value: 0 }
+          ]
         },
         {
           prop: 'createUserName',
@@ -247,6 +258,18 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    recordsValidactive() {
+      if (!this.recordsValid && this.recordsValid !== 0) return this.$message.error('请选择跟进类型')
+      let a = {
+        idList: this.selectData,
+        recordsValid: this.recordsValid
+      }
+      updaterecordsValid(a).then(res => {
+        this.$message.success('更新成功')
+        this.dialogVisible = false
+        this.closeForm(true)
+      })
+    },
     Tagtype() {
       if (!this.selectData.length) return this.$message.error('请先选择数据')
       this.dialogVisible = true

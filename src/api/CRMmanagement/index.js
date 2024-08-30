@@ -425,6 +425,14 @@ export function updateServiceRecords(data) {
     data
   })
 }
+// crm客户服务记录-跟进类型
+export function updaterecordsValid(data) {
+  return request({
+    url: `/api/erp/bimCustomerServiceRecords/modify/recordsValid`,
+    method: 'PUT',
+    data
+  })
+}
 // crm客户服务记录 新增
 export function addServiceRecords(data) {
   return request({

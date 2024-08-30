@@ -54,7 +54,7 @@ export default {
   },
   watch: {
     programmefrom(newtitle) {
-      if (newtitle) this.selectPlan(newtitle)
+      if (newtitle.conditionJson) this.selectPlan(newtitle)
     }
   },
   methods: {

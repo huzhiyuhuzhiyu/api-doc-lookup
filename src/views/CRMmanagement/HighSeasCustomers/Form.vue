@@ -427,7 +427,7 @@
                   </el-input>
                 </template>
               </el-table-column>
-              <el-table-column prop="defaultFlag" label="是否默认" width="140">
+              <el-table-column prop="defaultFlag" label="是否默认" width="110">
                 <template slot-scope="scope">
                   <el-select v-model="scope.row.defaultFlag" placeholder="请选择" :disabled="btnType=='look' ? true : false" @change="handleAddress(scope)">
                     <el-option v-for="item in defaultFlagList" :key="item.value" :label="item.text" :value="item.value"></el-option>
@@ -441,7 +441,7 @@
                   </el-input>
                 </template>
               </el-table-column>
-              <el-table-column label="操作" width="120">
+              <el-table-column label="操作" width="120" fixed="right">
                 <template slot-scope="scope">
                   <el-button @click="deleteth(scope)" type="text" style="color:rgb(245,108,108)" v-if="btnType!=='look'">删除</el-button>
                 </template>

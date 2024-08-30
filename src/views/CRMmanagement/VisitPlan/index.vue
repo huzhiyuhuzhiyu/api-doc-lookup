@@ -71,7 +71,7 @@
             <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
             <el-table-column prop="status" label="状态" min-width="180">
               <template slot-scope="scope">
-                {{visitStatusfaction(scope.row.status)}}
+                <div><el-tag :type="visitStatusfaction(scope.row.status)=='已完成'?'success':visitStatusfaction(scope.row.status)=='未完成'?'danger':'info'">{{visitStatusfaction(scope.row.status)}}</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" />

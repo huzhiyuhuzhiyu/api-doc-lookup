@@ -38,11 +38,11 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="exportForm('dataTable')">
+              <el-button size="mini" type="primary" icon="el-icon-download" @click.native="exportForm('dataTable')">
                 导出
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
-                生产编排
+                编排
               </el-button>
 
             </div>
@@ -69,6 +69,7 @@
             <el-table-column prop="mainUnit" label="单位" width="160" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
+            <el-table-column prop="arrangeOrderNum" label="已编排任务单数" min-width="160" sortable="custom" />
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
@@ -84,6 +85,13 @@
 
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
+            <el-table-column label="操作" width="220" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
+                  @click="addition(scope.row)">编排</el-button>
+
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
             @pagination="initData" />
@@ -249,6 +257,17 @@ export default {
   methods: {
     dispurchaseData(row) {
       return !row.selectFlag;
+    },
+    
+    addition(data) {
+      if (this.selectArr) {
+        this.selectArr = []
+        this.selectArr.push(data)
+        this.translateFun()
+      } else {
+        this.selectArr.push(data)
+        this.translateFun()
+      }
     },
     // 编排
     translateFun() {

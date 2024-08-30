@@ -12,9 +12,9 @@
       <div class="main">
         <el-tabs v-model="activeName">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+            <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="发票申请编号" prop="invoiceNo">
@@ -29,7 +29,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -56,55 +56,53 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="开票明细" name="productInfo">
-                <div v-if="btntype !== 'look'" key="11">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btntype == 'look' ? true : false" @click="openSeleceProductDialog()">选择合同</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btntype == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                </div>
-                <el-form :model="dataFormTwo" ref="productForm" class="data-form" v-loading="productVisible">
-                  <el-table class="TableForm table" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
-                    <el-table-column prop="contractNo" label="合同编号" width="160" show-overflow-tooltip />
-                    <el-table-column prop="contractMoney" label="合同金额" width="140" show-overflow-tooltip />
-                    <el-table-column prop="uninvoiceMoney" label="未开票金额" width="160" show-overflow-tooltip />
-                    <el-table-column prop="receivablesNo" label="回款编号" width="220">
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'receivablesNo'" :rules='productRules.receivablesNo'>
-                          <el-select v-model="scope.row.receivablesNo" placeholder="请选择回款编号" style="width: 100%;" :disabled="btntype == 'look'" @change="changeTaxRate" @focus="focusnum(scope.row,scope.$index)">
-                            <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="thisInvoiceMoney" label="本次开票金额" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>本次开票金额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'thisInvoiceMoney'" :rules='productRules.thisInvoiceMoney'>
-                          <el-input v-model="scope.row.thisInvoiceMoney" placeholder="请输入开票金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="remark" label="备注" min-width="230">
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btntype == 'look' ? true : false" maxlength="200" />
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="120" fixed="right" v-if="btntype != 'look'" key="111">
-                      <template slot-scope="scope">
-                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="发票信息" name="invoiceInfo">
-                <el-form ref="invoiceForm" v-loading="formLoading" :model="dataForm" :rules="invoicedataRule" label-position="top" label-width="120px">
+                </el-collapse-item>
+                <el-collapse-item title="开票明细" name="productInfo">
+                  <div v-if="btntype !== 'look'" key="11">
+                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btntype == 'look' ? true : false" @click="openSeleceProductDialog()">选择合同</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btntype == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                  </div>
+                  <el-form :model="dataFormTwo" ref="productForm" class="data-form" v-loading="productVisible">
+                    <el-table class="TableForm table" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
+                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
+                      <el-table-column prop="contractNo" label="合同编号" width="160" show-overflow-tooltip />
+                      <el-table-column prop="contractMoney" label="合同金额" width="140" show-overflow-tooltip />
+                      <el-table-column prop="uninvoiceMoney" label="未开票金额" width="160" show-overflow-tooltip />
+                      <el-table-column prop="receivablesNo" label="回款编号" width="220">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'lines.' + scope.$index + '.' + 'receivablesNo'" :rules='productRules.receivablesNo'>
+                            <el-select v-model="scope.row.receivablesNo" placeholder="请选择回款编号" style="width: 100%;" :disabled="btntype == 'look'" @change="changeTaxRate" @focus="focusnum(scope.row,scope.$index)">
+                              <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="thisInvoiceMoney" label="本次开票金额" width="160">
+                        <template slot="header">
+                          <span class="required">*</span>本次开票金额
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'lines.' + scope.$index + '.' + 'thisInvoiceMoney'" :rules='productRules.thisInvoiceMoney'>
+                            <el-input v-model="scope.row.thisInvoiceMoney" placeholder="请输入开票金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
+                            </el-input>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="remark" label="备注" min-width="230">
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btntype == 'look' ? true : false" maxlength="200" />
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="操作" width="120" fixed="right" v-if="btntype != 'look'" key="111">
+                        <template slot-scope="scope">
+                          <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-form>
+                </el-collapse-item>
+                <el-collapse-item title="发票信息" name="invoiceInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="抬头类型" prop="titleType">
@@ -124,8 +122,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.titleType=='dw'">
-                      <el-form-item label="开户行" prop="bank">
-                        <el-input v-model="dataForm.bank" placeholder="请输入开户行" :disabled="btntype == 'look' ? true : false" />
+                      <el-form-item label="开户银行" prop="bank">
+                        <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="dataForm.titleType=='dw'">
@@ -144,10 +142,8 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="邮寄信息" name="mailInfo">
-                <el-form ref="dataForm1" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+                </el-collapse-item>
+                <el-collapse-item title="邮寄信息" name="mailInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="联系人" prop="contacts">
@@ -170,9 +166,9 @@
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
+                </el-collapse-item>
+              </el-collapse>
+            </el-form>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btntype=='look'" :detailed="btntype=='look'"></UploadWj>
@@ -189,7 +185,7 @@ import { mapGetters } from 'vuex'
 import { getcrmReceivableslist, updatecrmInvoice, detailcrmInvoice, getcrmContractlist, addcrmInvoice, addcrmInvoiceInfo } from '@/api/CRMmanagement/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
+import { getCooperativeData } from '@/api/basicData/index'
 export default {
   data() {
     return {
@@ -245,8 +241,8 @@ export default {
         name: "",
         pageNum: 1,
         pageSize: 20,
-        customerStatus: 'private_sea',
-        totalRowFlag: false,
+        type: "customer",
+        partnerCategoryId: '',
         orderItems: [{
           asc: false,
           column: ""
@@ -265,7 +261,7 @@ export default {
       requestObj: {
         customerStatus: 'private_sea',
       },
-      getPartnerList,
+      getCooperativeData,
       activeName: "jcInfo",
       visible: false,
       formLoading: false,
@@ -452,16 +448,38 @@ export default {
     },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.categoryId === data.id) return listQuery
-      listQuery.categoryId = data.id
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
       return listQuery
     },
     // 客户选框传值
     partnerChange(val, data, paramsObj) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('customerName') }) // 校验操作的元素(name是组件绑定的value)
       if (data && data.length) { // 数据有效，进行更新
-        this.dataForm.customerName = data[0].all.name
-        this.dataForm.customerId = data[0].all.id
+        let obj = data[0].all
+        this.dataForm.customerName = obj.name
+        this.dataForm.customerId = obj.id
+        this.dataForm.invoiceType = obj.billingType ? obj.billingType : ''
+        if (this.dataForm.titleType == 'dw') {
+          this.dataForm.invoiceHeader = obj.name ? obj.name : ''
+          this.dataForm.identification = obj.taxId ? obj.taxId : ''
+          this.dataForm.bank = obj.bank ? obj.bank : ''
+          this.dataForm.bankAccount = obj.bankInfo ? obj.bankInfo : ''
+          this.dataForm.invoiceAddress = obj.provinceText ? obj.provinceText + obj.cityText + obj.areaText + obj.address : ''
+          this.dataForm.phone = obj.phone ? obj.phone : ''
+        }
+        this.dataForm.contacts = obj.contacts ? obj.contacts : ''
+        this.dataForm.contactsNumber = obj.mobilePhone ? obj.mobilePhone : ''
+        this.dataForm.province = obj.province ? obj.province : ''
+        this.dataForm.city = obj.city ? obj.city : ''
+        this.dataForm.area = obj.area ? obj.area : ''
+        this.dataForm.address = obj.address ? obj.address : ''
+        this.dataForm.provincecityarea = []
+        if (obj.province) {
+          this.dataForm.provincecityarea.push(obj.province)
+          this.dataForm.provincecityarea.push(obj.city)
+          this.dataForm.provincecityarea.push(obj.area)
+        }
         this.dataForm.contractNum = ""
         this.contractRequestObj.customerName = this.dataForm.customerName
         this.dataFormTwo.lines = []
@@ -479,7 +497,7 @@ export default {
       this.btntype = type
       this.dataForm.id = id || ''
       this.formLoading = true
-      if (this.btntype === 'add'||this.btntype === 'edit') this.fetchData('FPBH')
+      if (this.btntype === 'add' || this.btntype === 'edit') this.fetchData('FPBH')
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {

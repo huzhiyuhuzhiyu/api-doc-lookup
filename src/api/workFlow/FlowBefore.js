@@ -8,6 +8,22 @@ export function FlowBeforeList(category, data) {
     data
   })
 }
+// 获取待我审核 post
+export function getFlowBeforeList(category, data) {
+  return request({
+    url: `/api/workflow/Engine/FlowBefore/listByCond/${category}`,
+    method: 'post',
+    data
+  })
+}
+// 获取待我审核 post 数量
+export function getFlowBeforeCount(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowBefore/category/count`,
+    method: 'post',
+    data
+  })
+}
 // 获取待我审批信息
 export function FlowBeforeInfo(id, data) {
   return request({

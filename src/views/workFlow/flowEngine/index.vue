@@ -1,113 +1,111 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="流程分类">
-              <el-select v-model="category" placeholder="请选择流程分类" clearable>
-                <el-option v-for="item in categoryList" :key="item.enCode" :label="item.fullName"
-                  :value="item.enCode">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button  size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{$t('common.search')}}</el-button>
-              <el-button  size="mini" icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
-          <topOpts @add="dialogVisible=true">
-            <upload-btn url="/api/workflow/Engine/FlowEngine/Actions/ImportData"
-              @on-success="reset()" />
-          </topOpts>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()" />
-            </el-tooltip>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-tabs v-model="activeName" style="height:auto">
+        <el-tab-pane label="全部" name="all" />
+        <el-tab-pane :label="item.fullName" :name="item.enCode" v-for="item in categoryList" :key="item.enCode" />
+      </el-tabs>
+      <div class="JNPF-common-layout-center" v-show="activeName">
+        <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input v-model="listQuery.fullName" placeholder="请输入流程名称" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input v-model="listQuery.enCode" placeholder="请输入流程编码" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <topOpts @add="dialogVisible = true">
+              <!-- <upload-btn url="/api/workflow/Engine/FlowEngine/Actions/ImportData" @on-success="reset()" /> -->
+            </topOpts>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
-        </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
-          <el-table-column prop="fullName" label="流程名称" min-width="150" />
-          <el-table-column prop="enCode" label="流程编码" width="200" />
-          <el-table-column prop="category" label="流程分类" width="150" />
-          <el-table-column prop="formType" label="表单类型" width="120">
-            <template slot-scope="scope">
-              <span>{{ scope.row.formType == 1? "系统表单" : scope.row.formType == 2 ? "自定义表单" : '业务流程' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="type" label="流程类型" width="120">
-            <template slot-scope="scope">
-              <span>{{ scope.row.type == 0? "发起流程" : "功能流程" }}</span>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column prop="visibleType" label="可见范围" width="80">
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+            <el-table-column prop="fullName" label="流程名称" min-width="150" />
+            <el-table-column prop="enCode" label="流程编码" min-width="200" />
+            <!-- <el-table-column prop="visibleType" label="可见范围" width="80">
             <template slot-scope="scope">
               <span>{{ scope.row.visibleType ==  0 ? "全部可见" : "部分可见" }}</span>
             </template>
           </el-table-column> -->
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat"
-            width="150" />
-          <el-table-column prop="sortCode" label="排序" width="70" align="center" />
-          <el-table-column prop="enabledMark" label="状态" width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
-                {{scope.row.enabledMark==1?'启用':'禁用'}}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" fixed="right" width="180">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id,scope.row.formType)"
-                @del="handleDel(scope.row.id)">
-                <el-dropdown>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">{{$t('common.moreBtn')}}<i
-                        class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="preview(scope.row)">
-                      表单预览</el-dropdown-item>
-                    <el-dropdown-item @click.native="copy(scope.row.id)">
-                      复制流程</el-dropdown-item>
-                    <el-dropdown-item @click.native="handleExport(scope.row.id)">
-                      导出流程</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+            <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" min-width="150" />
+            <!-- <el-table-column prop="enabledMark" label="状态" min-width="80" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
+                  {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}</el-tag>
+              </template>
+            </el-table-column> -->
+            <el-table-column prop="enabledMark" label="状态" min-width="80" align="center">
+              <template slot-scope="scope">
+                <el-switch @change="changeState(scope.row.id)" v-model="scope.row.enabledMark == 1 ? true : false"
+                  active-color="#13ce66" inactive-color="#ff4949">
+                </el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" width="180">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.formType)" @del="handleDel(scope.row.id)">
+                  <el-dropdown>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
+                          class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item @click.native="preview(scope.row)">
+                        表单预览</el-dropdown-item>
+                      <el-dropdown-item @click.native="copy(scope.row.id)">
+                        复制流程</el-dropdown-item>
+                      <el-dropdown-item @click.native="handleExport(scope.row.id)">
+                        导出流程</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+            @pagination="initData" />
+        </div>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
-    <preview v-if="previewVisible" ref="preview" @close="previewVisible=false" />
-    <previewDialog :visible.sync="previewDialogVisible" :id="currRow.id" type="flow"
-      @previewPc="previewPc" />
-    <el-dialog title="新建表单" :visible.sync="dialogVisible" class="JNPF-dialog JNPF-dialog_center"
-      lock-scroll width="1000px">
+    <preview v-if="previewVisible" ref="preview" @close="previewVisible = false" />
+    <previewDialog :visible.sync="previewDialogVisible" :id="currRow.id" type="flow" @previewPc="previewPc" />
+    <el-dialog title="新建表单" :visible.sync="dialogVisible" class="JNPF-dialog JNPF-dialog_center" lock-scroll
+      width="600px">
       <div class="add-main">
         <div class="add-item add-item-sys" @click="addFlow(1)">
           <i class="add-icon el-icon-document"></i>
           <div class="add-txt">
             <p class="add-title">系统表单</p>
-            <p class="add-desc">关联系统原有表单，便捷设计</p>
+            <p class="add-desc">关联系统表单便捷设计</p>
           </div>
         </div>
         <div class="add-item" @click="addFlow(2)">
@@ -117,36 +115,51 @@
             <p class="add-desc">自定义设计流程表单</p>
           </div>
         </div>
-        <div class="add-item add-item-sys" @click="addFlow(3)">
-          <i class="add-icon icon-ym icon-ym-generator-company"></i>
-          <div class="add-txt">
-            <p class="add-title">业务流程</p>
-            <p class="add-desc">自定义设计业务流程</p>
-          </div>
-        </div>
       </div>
     </el-dialog>
+
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+      @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
-import { FlowEngineList, Delete, Release, Stop, Copy, exportData } from '@/api/workFlow/FlowEngine'
+import { FlowEngineList, Delete, Release, Stop, Copy, exportData, getFlowEngineList,changeFlowSwitch } from '@/api/workFlow/FlowEngine'
 import Form from './Form'
 import preview from '../components/Preview'
 import previewDialog from '@/components/PreviewDialog'
-
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'workFlow-flowEngine',
-  components: { Form, preview, previewDialog },
+  components: { Form, preview, previewDialog, SuperQuery },
   data() {
     return {
-      keyword: '',
-      category: '',
-      listQuery: {
-        currentPage: 1,
+      activeName: 'all',
+      superQueryVisible: false,
+      listQuery: {},
+      initListQuery: {
+        category: '',
+        enCode: '',
+        fullName: '',
+        businessFlag: false,    // 1 是 3  0 是 1和2
+        createByName: "",
+        creatorUserId: "",
+        endTime: "",
+        endUpdateTime: "",
+        flowCategory: "",
+        flowId: "",
+        orderItems: [{
+          asc: false,
+          column: "F_CreatorTime"
+        }],
+        keyword: "",
+        nodeCode: "",
+        pageNum: 1,
         pageSize: 20,
-        sort: 'desc',
-        sidx: ''
+        startTime: "",
+        startUpdateTime: "",
+        totalRowFlag: false
       },
       total: 0,
       list: [],
@@ -156,38 +169,73 @@ export default {
       previewVisible: false,
       previewDialogVisible: false,
       currRow: {},
-      categoryList: []
+      categoryList: [],
+      superQueryJson: [
+        {
+          prop: 'fullName',
+          label: "流程名称",
+          type: 'input'
+        },
+        {
+          prop: 'enCode',
+          label: "流程编码",
+          type: 'input'
+        },
+        {
+          prop: 'creatorTime',
+          label: "创建时间",
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+        },
+        {
+          prop: 'enabledMark',
+          label: "状态",
+          type: 'select',
+          options: [{ label: '启用', value: 1 }, { label: '禁用', value: 0 }]
+        },
+      ]
     }
   },
   created() {
     this.getDictionaryData()
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
+  watch: {
+    activeName() {
+      this.initData()
+    }
+  },
   methods: {
+    changeState(id) {
+      changeFlowSwitch(id).then(res => {
+        if (res.msg === 'Success') {
+          this.initData()
+        }
+      })
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     reset() {
-      this.keyword = ''
-      this.category = ''
+      this.activeName = 'all'
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.search()
     },
     search() {
-      this.listQuery = {
-        currentPage: 1,
-        pageSize: 20,
-        sort: 'desc',
-        sidx: ''
-      }
       this.initData()
     },
     initData() {
       this.listLoading = true
-      let query = {
-        ...this.listQuery,
-        keyword: this.keyword,
-        category: this.category
-      }
-      FlowEngineList(query).then((res) => {
-        this.list = res.data.list
-        this.total = res.data.pagination.total
+      this.listQuery.category = this.activeName === 'all' ? '' : this.activeName
+      getFlowEngineList(this.listQuery).then((res) => {
+        this.list = res.data.records
+        this.total = res.data.total
         this.listLoading = false
       })
     },
@@ -299,34 +347,41 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
 <style lang="scss" scoped>
 .JNPF-dialog {
-  >>> .el-dialog__body {
+  >>>.el-dialog__body {
     padding: 50px 30px !important;
   }
 }
+
 .add-main {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
+
   .add-item {
-    width: 255px;
+    width: 230px;
     height: 136px;
     background: #eff9ff;
     display: flex;
     align-items: center;
     cursor: pointer;
     padding-left: 20px;
+
     &:hover {
       opacity: 0.9;
     }
+
     &.add-item-sys {
       background: #f1f5ff;
+
       .add-icon {
         background: #ccd9ff;
         color: #537eff;
       }
     }
+
     .add-icon {
       width: 56px;
       height: 56px;
@@ -339,15 +394,19 @@ export default {
       line-height: 56px;
       text-align: center;
     }
+
     .add-txt {
       height: 56px;
+
       P {
         line-height: 28px;
       }
+
       .add-title {
         font-size: 18px;
         font-weight: bold;
       }
+
       .add-desc {
         color: #8d8989;
         font-size: 12px;

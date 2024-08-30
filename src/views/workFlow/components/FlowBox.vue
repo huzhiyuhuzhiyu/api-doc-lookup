@@ -61,15 +61,15 @@
               v-if="properties.hasRevokeBtn || properties.hasRevokeBtn===undefined">
               {{properties.revokeBtnText||'撤 回'}}</el-button>
           </template>
-          <el-button type="danger" v-if="setting.opType == 2 && properties.hasRevokeBtn"
+          <el-button type="danger" v-if="setting.opType == 2 && properties.hasRevokeBtn && flowTaskInfo.completion !== 100"
             @click="recall()">{{properties.revokeBtnText||'撤 回'}}</el-button>
           <template v-if="setting.opType == 4">
             <!-- 判断流程复活按钮和节点变更 -->
-            <el-button type="primary" @click="flowResurgence" v-if="flowTaskInfo.completion==100">
-              复 活</el-button>
-            <el-button type="primary" @click="flowResurgence"
+            <!-- <el-button type="primary" @click="flowResurgence" v-if="flowTaskInfo.completion==100">
+              复 活</el-button> -->
+            <!-- <el-button type="primary" @click="flowResurgence"
               v-if="flowTaskInfo.completion>0&&flowTaskInfo.completion<100&&(setting.status==1||setting.status==3)">
-              变 更</el-button>
+              变 更</el-button> -->
             <el-button type="primary" @click="openAssignBox"
               v-if="setting.status==1&&assignNodeList.length">指 派
             </el-button>
@@ -232,9 +232,12 @@ import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
 // 业务单据 审批页面引入
 import SaleQuoForm from '@/views/salesManagement/contractQuotation/salesQuotationOld/depForm.vue'
+import purReconciliationForm from '@/views/purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue'
+import outReconciliationForm from '@/views/externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue'
+import salesReconForm from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
 export default {
   components: { recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog ,
-    SaleQuoForm
+    SaleQuoForm , purReconciliationForm , outReconciliationForm , salesReconForm
   },
   data() {
     return {
@@ -316,7 +319,10 @@ export default {
       errorNodeList: [],
       isValidate: false,
       pageView:{
-        'b001':'SaleQuoForm'
+        'b001':'SaleQuoForm',
+        'b012':'purReconciliationForm',
+        'b013':'salesReconForm',
+        'b014':'outReconciliationForm',
       },
       messageFlag:false
     }
@@ -460,10 +466,10 @@ export default {
         } else if (data.formType == 2) {
           this.currentView = (resolve) => require([`@/views/workFlow/workFlowForm/dynamicForm`], resolve)
         } else{
-          console.log(this.pageView[data.enCode]);
+          console.log(this.pageView[data.businessFlow]);
           console.log(data);
           
-          this.currentView = this.pageView[data.enCode]
+          this.currentView = this.pageView[data.businessFlow]
           
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
@@ -985,5 +991,8 @@ export default {
   span:first-child {
     margin: 0 3px 0 10px;
   }
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
 }
 </style>

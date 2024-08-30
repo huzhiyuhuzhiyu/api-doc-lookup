@@ -1382,8 +1382,7 @@ export default {
             return
           }
 
-          let hasPicking = this.collectData.some(item => item.reduceType === 'picking');
-          if (hasPicking && this.allocationFlag) {
+          if (this.allocationFlag) {
             this.dataForm.materialFlag = true
           }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {

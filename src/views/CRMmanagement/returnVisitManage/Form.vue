@@ -12,9 +12,9 @@
       <div class="main">
         <el-tabs v-model="activeName">
           <el-tab-pane label="基础信息" name="jcInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+            <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+              <el-collapse v-model="activeNames">
+                <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="回访编号" prop="returnVisitNo">
@@ -69,12 +69,38 @@
                         <el-input v-model="dataForm.feedback" placeholder="请输入客户反馈" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="dataForm.returnVisitForm=='见面拜访'">
+                  </el-row>
+                </el-collapse-item>
+                <el-collapse-item title="行程信息" name="xcInfo" v-if="dataForm.returnVisitForm=='见面拜访'">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="出发地" prop="departure">
+                        <el-input v-model="dataForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="目的地" prop="destination">
+                        <el-input v-model="dataForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="里程数" prop="mileage">
+                        <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="出行方式" prop="travelMode">
+                        <el-select v-model="dataForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                          <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
                       <el-form-item label="定位" prop="visitGps">
                         <el-input v-model="dataForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="dataForm.returnVisitForm=='见面拜访'">
+                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
                       <el-form-item label="现场照片" prop="visitPhoto">
                         <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
                           <i slot="default" class="el-icon-plus"></i>
@@ -94,18 +120,18 @@
                           </div>
                           <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
                         </el-upload>
+                        <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
+                          <img width="100%" :src="dialogImageUrl" alt="">
+                        </el-dialog>
                       </el-form-item>
                     </el-col>
                   </el-row>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
+                </el-collapse-item>
+              </el-collapse>
+            </el-form>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
     </div>
   </transition>
 </template>
@@ -119,6 +145,7 @@ import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmCo
 export default {
   data() {
     return {
+      travelModeList:[],
       dialogImageUrl: '',
       dialogVisible: false,
       codeConfig: {},//单据规则配置
@@ -182,7 +209,7 @@ export default {
         { prop: 'name', label: '客户名称' },
         { prop: 'taxId', label: '税号' },
       ],
-      activeNames: ["basicInfo"],
+      activeNames: ["basicInfo", "xcInfo"],
       requestObj: {
         customerStatus: 'private_sea',
       },
@@ -288,6 +315,16 @@ export default {
                 }
                 getDictionaryDataList(id, obj).then(response => {
                   this.returnVisitFormList = response.data.list
+                })
+              }
+              if (resp.enCode == "Travelmode") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.travelModeList = response.data.list
                 })
               }
             })

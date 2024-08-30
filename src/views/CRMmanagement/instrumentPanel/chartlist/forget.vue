@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <div style="align-items: stretch;flex-wrap: wrap;" class="vux-flexbox vux-flex-row">
+    <div style="align-items: stretch;flex-wrap: wrap;justify-content: space-around;" class="vux-flexbox vux-flex-row">
       <div class="brief-wrap" v-for="item in forgetlist" :key="item.id">
         <div class="brief">
           <div class="title">

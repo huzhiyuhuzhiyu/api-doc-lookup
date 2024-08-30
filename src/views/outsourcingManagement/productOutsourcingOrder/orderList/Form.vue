@@ -3,7 +3,8 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="type === 'look' ? '查看外协订单' : '新建外协订单'" />
+          <el-page-header @back="goBack" :content="title" />
+          <!-- <el-page-header @back="goBack" :content="type === 'look' ? '查看外协订单' : '新建外协订单'" /> -->
           <div class="options" v-if="type !== 'look'">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -23,27 +24,27 @@
                       label-position="top">
                       <el-col :span="8" v-if="type === 'look'">
                         <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
-                          <el-input :disabled="type != 'add' ? true : false" type="text" v-model="dataForm.orderNo"
+                          <el-input :disabled="type == 'look'" type="text" v-model="dataForm.orderNo"
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                          <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
-                            @focus="openDialog"></el-input>
+                          <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
+                            placeholder="请选择供应商名称" @focus="openDialog"></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8">
                         <el-form-item label="交货日期" prop="deliveryDate">
-                          <el-date-picker disabled v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" :picker-options="dataPickerOptions2"
+                          <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
+                            value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
                             placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="8" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
                           <el-input type="text" v-model="dataForm.receivingStatus === 'receiving' ? '未完成' : '已完成'"
-                            placeholder="订单状态" :disabled="type != 'add' ? true : false"></el-input>
+                            placeholder="订单状态" :disabled="type == 'look'"></el-input>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -271,171 +272,11 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="进度跟踪" name="schedule" v-if="type === 'look'">
-              <el-row class="JNPF-common-search-box" :gutter="16">
-                <el-form @submit.native.prevent>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productCode" placeholder="请输入产品编码" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productName" placeholder="请输入产品名称" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
-                        {{ $t('common.search') }}
-                      </el-button>
-                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">
-                        {{ $t('common.reset') }}
-                      </el-button>
-                      <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-form>
-              </el-row>
-              <JNPF-table :partentOrChild="'child'" v-loading="formLoading" :data="scheduleData" custom-column
-                ref="scheduleRef">
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
-                <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-                <el-table-column prop="purchaseQuantity" label="订单数量(主)" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="requiredReceivedQuantity" label="待入库数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.requiredReceivedQuantity ? scope.row.requiredReceivedQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="schedule" label="订单进度" min-width="160">
-                  <template slot-scope="scope">
-                    <el-progress
-                      :percentage="Number(((scope.row.receiptQuantity / scope.row.purchaseQuantity) * 100).toFixed(2))"></el-progress>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="receivingStatus" label="收货状态" width="130" align="center">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag></div>
-                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
-                    <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="returnQuantity" label="已退货数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.returnQuantity ? scope.row.returnQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" />
-              </JNPF-table>
-              <pagination :total="total" :page.sync="scheduleForm.pageNum" :background="background"
-                :limit.sync="scheduleForm.pageSize" @pagination="initData()" />
-              <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-            </el-tab-pane>
+
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow">
-              <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
-                ref="workflowRef" />
-              <div class="noDataTip" v-if="!workVisible">
-                <span class="el-table__empty-text">
-                  <div data-v-4d190d64="" class="el-empty">
-                    <div class="el-empty__image" style="width: 120px;">
-                      <svg viewBox="0 0 79 86" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <defs>
-                          <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%" y2="100%">
-                            <stop stop-color="#FCFCFD" offset="0%"></stop>
-                            <stop stop-color="#EEEFF3" offset="100%"></stop>
-                          </linearGradient>
-                          <linearGradient id="linearGradient-2-48" x1="0%" y1="9.5%" x2="100%" y2="90.5%">
-                            <stop stop-color="#FCFCFD" offset="0%"></stop>
-                            <stop stop-color="#E9EBEF" offset="100%"></stop>
-                          </linearGradient>
-                          <rect id="path-3-48" x="0" y="0" width="17" height="36"></rect>
-                        </defs>
-                        <g id="Illustrations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                          <g id="B-type" transform="translate(-1268.000000, -535.000000)">
-                            <g id="Group-2" transform="translate(1268.000000, 535.000000)">
-                              <path id="Oval-Copy-2"
-                                d="M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z"
-                                fill="#F7F8FC"></path>
-                              <polygon id="Rectangle-Copy-14" fill="#E5E7E9"
-                                transform="translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) "
-                                points="13 58 53 58 42 45 2 45"></polygon>
-                              <g id="Group-Copy"
-                                transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)">
-                                <polygon id="Rectangle-Copy-10" fill="#E5E7E9"
-                                  transform="translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) "
-                                  points="2.84078316e-14 3 18 3 23 7 5 7"></polygon>
-                                <polygon id="Rectangle-Copy-11" fill="#EDEEF2"
-                                  points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"></polygon>
-                                <rect id="Rectangle-Copy-12" fill="url(#linearGradient-1-48)"
-                                  transform="translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) "
-                                  x="38" y="7" width="17" height="36"></rect>
-                                <polygon id="Rectangle-Copy-13" fill="#F8F9FB"
-                                  transform="translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) "
-                                  points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
-                              </g>
-                              <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                height="36">
-                              </rect>
-                              <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
-                                <mask id="mask-4-48" fill="white">
-                                  <use xlink:href="#path-3-48"></use>
-                                </mask>
-                                <use id="Mask" fill="#E0E3E9"
-                                  transform="translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) "
-                                  xlink:href="#path-3-48"></use>
-                                <polygon id="Rectangle-Copy" fill="#D5D7DE" mask="url(#mask-4-48)"
-                                  transform="translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) "
-                                  points="7 0 24 0 20 18 -1.70530257e-13 16"></polygon>
-                              </g>
-                              <polygon id="Rectangle-Copy-18" fill="#F8F9FB"
-                                transform="translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) "
-                                points="62 45 79 45 70 58 53 58"></polygon>
-                            </g>
-                          </g>
-                        </g>
-                      </svg>
-                    </div>
-                    <div class="el-empty__description">
-                      <p>暂无流程信息</p>
-                    </div>
-                    <!---->
-                  </div>
-                </span>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane v-if="type == 'look'" label="流转记录" name="transferList">
-              <el-table v-loading="formLoading" :data="transferData">
-                <el-table-column prop="businessName" label="审批业务名称" min-width="160" />
-                <el-table-column prop="processedName" label="办理人名称" min-width="160" />
-                <el-table-column prop="remark" label="备注" min-width="160" />
-                <el-table-column prop="startDate" label="开始时间" min-width="160" />
-                <el-table-column prop="endDate" label="结束时间" min-width="160" />
-                <el-table-column prop="consumingTime" label="耗时" min-width="160" />
-              </el-table>
-            </el-tab-pane>
+
           </el-tabs>
         </div>
       </div>
@@ -471,6 +312,7 @@ export default {
   },
   data() {
     return {
+      title: '',
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo', 'materialInfo'],
@@ -637,6 +479,15 @@ export default {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
+      if (id) {
+        if (this.type == 'edit') {
+          this.title = '编辑外协订单'
+        } else if (this.type == 'look') {
+          this.title = '查看外协订单'
+        }
+      } else {
+        this.title = '新建外协订单'
+      }
       this.$nextTick(() => {
         this.$refs['elForm'].resetFields()
         if (!this.dataForm.id) {
@@ -670,6 +521,7 @@ export default {
             this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
           })
           getSaleBusDetail(this.dataForm.id).then((res) => {
+            console.log(res, 'res')
             if (res.data) {
               this.firstOneNode = []
               this.approvalForm = res.data.form
@@ -893,11 +745,7 @@ export default {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
 
-      orderSchedule(this.scheduleForm).then((res) => {
-        this.scheduleData = res.data.records
-        this.total = res.data.total
-        this.formLoading = false
-      })
+    
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

@@ -32,7 +32,9 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <div style="height: 34px;"><el-button size="mini" type="primary" @click="dialogVisible=true">标记跟进类型</el-button></div>
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
+              <el-button size="mini" type="primary" @click="Tagtype">标记跟进类型</el-button>
+            </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -45,22 +47,22 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="[]" :fixedNO="true" custom-column>
-            <el-table-column prop="content" label="跟进内容" sortable="custom" min-width="180" />
+          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+            <el-table-column prop="serviceDescription" label="跟进内容" sortable="custom" min-width="180" />
             <el-table-column prop="nextTime" label="下次联系时间" sortable="custom" min-width="180" />
-            <el-table-column prop="category" label="跟进方式" sortable="custom" min-width="180" />
+            <el-table-column prop="visitForm" label="跟进方式" sortable="custom" min-width="180" />
             <el-table-column prop="visitPlanName" label="拜访计划" sortable="custom" min-width="180" />
-            <el-table-column prop="createUser" label="相关客户" sortable="custom" min-width="180" />
+            <el-table-column prop="name" label="相关客户" sortable="custom" min-width="180" />
             <el-table-column prop="contactsName" label="相关联系人" sortable="custom" min-width="180" />
-            <el-table-column prop="business" label="相关商机" sortable="custom" min-width="180" />
-            <el-table-column prop="namerelationData" label="相关合同" sortable="custom" min-width="180" />
-            <el-table-column prop="relationData" label="相关回款" sortable="custom" min-width="180" />
-            <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" />
-            <el-table-column prop="activityType" label="跟进类型" sortable="custom" min-width="180" />
+            <el-table-column prop="businessName" label="相关商机" sortable="custom" min-width="180" />
+            <el-table-column prop="contractNo" label="相关合同" sortable="custom" min-width="180" />
+            <el-table-column prop="receivablesNo" label="相关回款" sortable="custom" min-width="180" />
+            <!-- <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" /> -->
+            <el-table-column prop="recordsValid" label="跟进类型" sortable="custom" min-width="180" />
             <el-table-column prop="createUserName" label="有效跟进人" sortable="custom" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <!-- <el-table-column label="操作" width="180">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
                   <el-dropdown hide-on-click>
@@ -77,7 +79,7 @@
                   </el-dropdown>
                 </tableOpts>
               </template>
-            </el-table-column> -->
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData">
           </pagination>
@@ -117,18 +119,64 @@ export default {
       datalist: [],
       superQueryJson: [
         {
-          prop: 'name',
-          label: "客户名称",
-          type: 'input'
-        },
-        {
-          prop: 'code',
-          label: "客户编码",
-          type: 'input'
-        },
-        {
           prop: 'serviceDescription',
-          label: "跟进记录",
+          label: "跟进内容",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'nextTime',
+          label: '下次联系时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '下次联系开始时间',
+          endPlaceholder: '下次联系结束时间',
+          pickerOptions: {}
+        },
+        { // 下拉选
+          prop: 'visitForm',
+          label: '跟进方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'visitPlanName',
+          label: "拜访计划",
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: "相关客户",
+          type: 'input'
+        },
+        {
+          prop: 'contactsName',
+          label: "相关联系人",
+          type: 'input'
+        },
+        {
+          prop: 'businessName',
+          label: "相关商机",
+          type: 'input'
+        },
+        {
+          prop: 'contractNo',
+          label: "相关合同",
+          type: 'input'
+        },
+        {
+          prop: 'receivablesNo',
+          label: "相关回款",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'recordsValid',
+          label: '跟进类型',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'createUserName',
+          label: "有效跟进人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -199,6 +247,10 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    Tagtype() {
+      if (!this.selectData.length) return this.$message.error('请先选择数据')
+      this.dialogVisible = true
+    },
     handeleInfoData(val) {
       this.selectData = val
     },

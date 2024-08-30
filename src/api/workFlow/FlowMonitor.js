@@ -7,6 +7,14 @@ export function FlowMonitorList(data) {
     data
   })
 }
+
+export function getFlowMonitorList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowMonitor/list`,
+    method: 'post',
+    data
+  })
+}
 // 批量删除流程监控
 export function DeleteList(data) {
   return request({

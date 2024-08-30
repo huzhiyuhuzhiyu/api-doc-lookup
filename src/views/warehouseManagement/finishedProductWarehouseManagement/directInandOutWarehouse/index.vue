@@ -502,6 +502,8 @@ export default {
         id: "",
         warehouseType: "",
         inspectionResults: "",
+        partnerName:"",
+        cooperativePartnerId:"",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -695,6 +697,7 @@ export default {
         })
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
+        this.listQuery.classAttribute=this.classAttribute
         getProductList(this.listQuery)
           .then((res) => {
             console.log("res.", res);

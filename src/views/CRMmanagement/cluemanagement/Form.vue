@@ -29,14 +29,14 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="手机号" prop="mobile">
-                        <el-input v-model="dataForm.mobile" placeholder="请输入手机号" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="手机号" prop="mobile">
+                        <el-input v-model="dataForm.mobile" placeholder="请输入手机号" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -113,6 +113,9 @@
               </el-collapse-item>
             </el-collapse>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="btntype === 'look'" :detailed="btntype === 'look'"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -131,6 +134,8 @@ import { addCluemanagement, updateCluemanagement, getCluemanagementDetail } from
 export default {
   data() {
     return {
+      isattachmentswitch: '1',
+      datafilelist: [],
       activeNames: ["basicInfo"],
       listQuery: {
         keyword: ''
@@ -169,7 +174,7 @@ export default {
       },
       btntype: false,
       dataRule: {
-        mobile:[{ validator: this.formValidate('iphone'), trigger: 'blur' }],
+        mobile: [{ validator: this.formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' }],
         ownerUserId: [
           { required: true, message: '请选择负责人', trigger: 'blur' },
         ],
@@ -191,10 +196,18 @@ export default {
     })
     this.dataForm.ownerUserId = this.userInfo.userId
   },
-  computed:{
+  computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    // 电话 手机 二填一
+    validateField2(rule, value, callback) {
+      if (!this.dataForm.telephone && !value) {
+        callback(new Error('电话和手机号至少填一个'));
+      } else {
+        callback();
+      }
+    },
     actiompro(value) {
       if (value) {
         this.dataForm.province = value[0]
@@ -271,6 +284,19 @@ export default {
               this.dataForm.provincecityarea.push(res.data.city)
               this.dataForm.provincecityarea.push(res.data.area)
             }
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             // getProvinceList(res.data.province).then(res => {
             //   this.cities = res.data.list
             // })
@@ -288,8 +314,19 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.btnLoading = true;
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: 'customer',
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
           let obj = {
-            ...this.dataForm
+            ...this.dataForm,
+            attachmentList: this.datafilelist
           }
           let formMethod = this.dataForm.id ? updateCluemanagement(obj) : addCluemanagement(obj);
           formMethod.then(res => {

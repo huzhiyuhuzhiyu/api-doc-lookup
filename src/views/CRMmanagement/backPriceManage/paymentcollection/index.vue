@@ -47,9 +47,9 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-            <el-table-column prop="receivablesNo" label="回款编号" min-width="160" />
+            <el-table-column prop="receivablesNo" label="回款编号" min-width="180" />
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
-            <el-table-column prop="contractNo" label="合同编号" min-width="160" />
+            <el-table-column prop="contractNo" label="合同编号" min-width="180" />
             <el-table-column prop="receivablesData" label="回款日期" min-width="160" />
             <el-table-column prop="receivablesMoney" label="回款金额" min-width="140" />
             <el-table-column prop="receivablesType" label="回款方式" min-width="140">
@@ -380,6 +380,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.initData()

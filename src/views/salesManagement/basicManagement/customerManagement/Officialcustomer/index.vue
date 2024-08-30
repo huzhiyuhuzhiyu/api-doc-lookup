@@ -103,8 +103,8 @@
             <el-table-column prop="internalStaffIdText" label="内勤人员" min-width="120" />
             <el-table-column prop="dealStatus" label="成交状态" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.dealStatus=='0'">未成交</div>
-                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+                <div v-if="scope.row.dealStatus=='0'"><el-tag type="danger">未成交</el-tag></div>
+                <div v-else-if="scope.row.dealStatus=='1'"><el-tag type="success">成交</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
@@ -666,6 +666,7 @@ export default {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.createTimeArr = []
       this.listQuery = JSON.parse(JSON.stringify(this.dataForm))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.filterText = ''

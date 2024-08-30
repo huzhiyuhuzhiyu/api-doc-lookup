@@ -176,7 +176,7 @@ $bg-color: #fff;
     >>> .node-wrap-box.approver::before {
       background: #fff;
     }
-    >>> .flow-path-card {
+    ::v-deep .flow-path-card {
       &:hover {
         .title-text {
           border-bottom: none;

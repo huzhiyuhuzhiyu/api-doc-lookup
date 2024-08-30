@@ -203,7 +203,6 @@ export default {
     this.initData()
   },
   methods: {
-
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -465,7 +464,13 @@ export default {
     add(item) {
       this.$router.push({
         name: 'BOMCreate',
-        params: { id: item.id, name: item.name, drawNo: item.drawingNo }
+        params: {
+          id: item.id,
+          name: item.name,
+          drawNo: item.drawingNo,
+          classAttribute: item.classAttribute,
+          productSource: item.productSource
+        }
       })
     },
     columnSetFun() {

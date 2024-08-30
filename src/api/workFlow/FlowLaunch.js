@@ -8,6 +8,14 @@ export function FlowLaunchList(data) {
     data
   })
 }
+// 获取流程发起列表 post
+export function getFlowLaunchList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowLaunch/list`,
+    method: 'post',
+    data
+  })
+}
 // 删除流程发起
 export function Delete(id) {
   return request({

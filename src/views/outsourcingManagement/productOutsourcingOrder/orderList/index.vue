@@ -38,13 +38,13 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <!-- <topOpts @add="addSupplier('', 'add')"></topOpts> -->
-            <div>
+            <topOpts @add="addSupplier('', 'add')">
               <el-button :loading="btnLoading" size="mini" type="success" @click="handleBatch()">批量完成</el-button>
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
-            </div>
+            </topOpts>
+
 
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -64,18 +64,12 @@
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="外协单号" min-width="180" sortable="custom">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                  {{ scope.row.orderNo }}
-                </el-link>
-              </template>
+
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
 
-            <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
-                <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
-                  sortable="custom" /> -->
+
             <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
@@ -92,55 +86,7 @@
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
-            <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
-                  </template>
-                </el-table-column> -->
-            <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
-                  fixed="right">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
-                    <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
-                    <div v-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'"><el-tag
-                        type="warning">审批撤回</el-tag></div>
-                  </template>
-                </el-table-column> -->
-            <el-table-column label="操作" min-width="90" fixed="right">
-              <template slot-scope="scope">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                      @click.native="withdrawnAddHandle(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
-                      下载订货单
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                      打印订货单
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
+
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
@@ -314,8 +260,8 @@ export default {
       },
 
       total: 0,
-      computedValue:0,
-      computedValue2:0,
+      computedValue: 0,
+      computedValue2: 0,
       formVisible: false,
       createRequirementDate: [],
       deliveryDate: [],
@@ -622,12 +568,12 @@ export default {
       this.search()
     },
 
-    // addSupplier(id, type) {
-    //   this.formVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.JNPFForm.init(id, type)
-    //   })
-    // },
+    addSupplier(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.procureForm.init(id, type)
+      })
+    },
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle(id, type) {
       this.formVisible = true

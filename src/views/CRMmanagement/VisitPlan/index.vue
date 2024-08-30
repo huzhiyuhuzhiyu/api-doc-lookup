@@ -71,7 +71,7 @@
             <el-table-column prop="ownerUserName" label="负责人" min-width="180" />
             <el-table-column prop="status" label="状态" min-width="180">
               <template slot-scope="scope">
-                {{visitStatusfaction(scope.row.status)}}
+                <div><el-tag :type="visitStatusfaction(scope.row.status)=='已完成'?'success':visitStatusfaction(scope.row.status)=='未完成'?'danger':'info'">{{visitStatusfaction(scope.row.status)}}</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
@@ -265,7 +265,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        returnVisitNo: '',
+        visitName: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -480,6 +480,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.initData()

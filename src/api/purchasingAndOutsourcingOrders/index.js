@@ -85,6 +85,15 @@ export function insertOutOrder(data) {
     })
   }
 
+    // 库存管理明细-列表
+    export function inventoryList(data) {
+      return request({
+        url: `/api/wms/stock/inventory/line/list`,
+        method: 'post',
+        data
+      })
+    }
+
   // 供应商产品单价
   export function partnerProductPrice(data) {
     return request({

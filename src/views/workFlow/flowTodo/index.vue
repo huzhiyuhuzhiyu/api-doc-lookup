@@ -1,148 +1,163 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="日期">
-              <el-date-picker v-model="pickerVal" type="daterange" start-placeholder="开始日期"
-                end-placeholder="结束日期" :picker-options="pickerOptions" value-format="timestamp"
-                clearable :editable="false">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="所属分类">
-              <el-select v-model="flowCategory" placeholder="选择所属分类" clearable>
-                <el-option v-for="item in categoryList" :key="item.enCode" :label="item.fullName"
-                  :value="item.enCode">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <template v-if="showAll">
-            <el-col :span="6">
-              <el-form-item label="所属流程">
-                <el-select v-model="flowId" placeholder="选择所属流程" clearable>
-                  <el-option-group v-for="group in flowEngineList" :key="group.id"
-                    :label="group.fullName+'【'+group.num+'】'">
-                    <el-option v-for="item in group.children" :key="item.id" :label="item.fullName"
-                      :value="item.id">
-                    </el-option>
-                  </el-option-group>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="发起人员">
-                <user-select v-model="creatorUserId" placeholder="选择发起人员" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="紧急程度">
-                <el-select v-model="urgent" placeholder="选择紧急程度" clearable>
-                  <el-option v-for="(item,i) in urgentList" :key="i" :label="item.fullName"
-                    :value="item.id">
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-tabs v-model="activeName" style="height:auto">
+        <el-tab-pane label="系统流程" name="system" />
+        <el-tab-pane label="自定义流程" name="custom" />
+      </el-tabs>
+      <div class="JNPF-common-layout-center" v-show="activeName">
+        <div class="tag-group JNPF-common-search-box treeBox_bot"
+          style="display:flex;align-items:center;padding-left: 10px;">
+          <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
+          <div style="display:flex;flex-wrap: wrap;">
+            <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id">
+              <el-tag @click="changeCategory(item, index)" :type="index === categoryIndex ? '' : 'info'" effect="plain"
+                style="height:26px;line-height:25px;margin-left:15px;cursor: pointer;">
+                {{ item.fullName }}
+              </el-tag>
+            </el-badge>
+          </div>
+        </div>
+        <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="4">
+              <el-form-item>
+                <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
+                  <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-          </template>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{$t('common.search')}}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{$t('common.reset')}}
-              </el-button>
-              <el-button size="mini" type="text" icon="el-icon-arrow-down" @click="showAll=true"
-                v-if="!showAll">展开</el-button>
-              <el-button size="mini" type="text" icon="el-icon-arrow-up" @click="showAll=false" v-else>
-                收起</el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <!-- <div class="JNPF-common-head">
-          <div>
-            <el-button type="primary" icon="el-icon-finished" @click="goBatch">批量审批</el-button>
+            <el-col :span="6">
+              <el-form-item>
+                <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
+                  end-placeholder="流程结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable
+                  :editable="false">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <div></div>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()" />
-            </el-tooltip>
-          </div>
-        </div> -->
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
-          <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
-          <el-table-column prop="flowName" label="所属流程" min-width="130" />
-          <el-table-column prop="startTime" label="发起时间" min-width="150"
-            :formatter="jnpf.tableDateFormat" />
-          <el-table-column prop="userName" label="发起人员" min-width="130" />
-          <el-table-column prop="thisStep" label="审批节点" min-width="130" />
-          <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
-            <template slot-scope="scope">
-              {{ scope.row.flowUrgent | urgentText() }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="status" label="流程状态" min-width="130" align="center">
-            <template slot-scope="scope">
-              <el-tag type="success" v-if="scope.row.status==2">审核通过</el-tag>
-              <el-tag type="danger" v-else-if="scope.row.status==3">审核驳回</el-tag>
-              <el-tag type="info" v-else-if="scope.row.status==4">流程撤回</el-tag>
-              <el-tag type="info" v-else-if="scope.row.status==5">审核终止</el-tag>
-              <el-tag type="primary" v-else>等待审核</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="creatorTime" label="接收时间" min-width="150">
-            <template slot-scope="scope">
-              {{scope.row.creatorTime | toDate() }}
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" min-width="60" fixed="right">
-            <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="toDetail(scope.row)">审批</el-button>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+            <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
+            <el-table-column prop="flowName" label="所属流程" min-width="130" />
+            <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
+            <el-table-column prop="userName" label="发起人员" min-width="130" />
+            <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">
+              <template slot-scope="scope">
+                {{ scope.row.flowUrgent | urgentText() }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="status" label="流程状态" min-width="130" align="center">
+              <template slot-scope="scope">
+                <el-tag type="success" v-if="scope.row.status == 2">审核通过</el-tag>
+                <el-tag type="danger" v-else-if="scope.row.status == 3">审核驳回</el-tag>
+                <el-tag type="info" v-else-if="scope.row.status == 4">流程撤回</el-tag>
+                <el-tag type="info" v-else-if="scope.row.status == 5">审核终止</el-tag>
+                <el-tag type="primary" v-else>等待审核</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="creatorTime" label="接收时间" min-width="150">
+              <template slot-scope="scope">
+                {{ scope.row.creatorTime | toDate() }}
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" min-width="60" fixed="right">
+              <template slot-scope="scope">
+                <el-button size="mini" type="text" @click="toDetail(scope.row)">审批</el-button>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+            @pagination="initData" />
+        </div>
       </div>
     </div>
     <FlowBox v-if="formVisible" ref="FlowBox" @close="closeForm" />
-    <BatchList v-if="batchListVisible" :categoryList="categoryList" ref="BatchList"
-      @close="batchListVisible=false" />
+    <BatchList v-if="batchListVisible" :categoryList="categoryList" ref="BatchList" @close="batchListVisible = false" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+      @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
-import { FlowBeforeList } from '@/api/workFlow/FlowBefore'
+import { FlowBeforeList, getFlowBeforeList, getFlowBeforeCount } from '@/api/workFlow/FlowBefore'
 import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
 import FlowBox from '../components/FlowBox'
 import BatchList from './BatchList'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'workFlow-flowTodo',
-  components: { FlowBox, BatchList },
+  components: { FlowBox, BatchList, SuperQuery },
   data() {
     return {
       list: [],
       total: 0,
-      showAll: false,
       listLoading: true,
-      listQuery: {
-        currentPage: 1,
+      listQuery: {},
+      initListQuery: {
+        flowCategory: '',
+        businessFlag: true,    // 1 是 3  0 是 1和2
+        createByName: "",
+        creatorUserId: "",
+        endTime: "",
+        endUpdateTime: "",
+        flowCategory: "",
+        flowId: "",
+        orderItems: [{
+          asc: false,
+          column: "F_CreatorTime"
+        }],
+        keyword: "",
+        nodeCode: "",
+        pageNum: 1,
         pageSize: 20,
-        sort: 'desc',
-        sidx: ''
+        startTime: "",
+        startUpdateTime: "",
+        totalRowFlag: false,
+        pickerVal: []
       },
-      urgent: '',
+      statusList: [{
+        id: 1,
+        fullName: '等待审核'
+      }, {
+        id: 2,
+        fullName: '审核通过'
+      }, {
+        id: 3,
+        fullName: '审核驳回'
+      }, {
+        id: 4,
+        fullName: '流程撤回'
+      }, {
+        id: 5,
+        fullName: '审核终止'
+      }],
       urgentList: [
         {
           id: 1,
@@ -184,15 +199,57 @@ export default {
           }
         }]
       },
-      keyword: '',
-      pickerVal: [],
-      startTime: '',
-      endTime: '',
-      flowId: '',
-      flowCategory: '',
-      creatorUserId: '',
       categoryList: [],
-      flowEngineList: []
+      flowEngineList: [],
+      categoryIndex: -1,
+      activeName: 'system',
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'fullName',
+          label: "流程标题",
+          type: 'input'
+        },
+        {
+          prop: 'flowName',
+          label: "所属流程",
+          type: 'input'
+        },
+        {
+          prop: 'status',
+          label: "流程状态",
+          type: 'select',
+          options: [{
+            value: 1,
+            label: '等待审核'
+          }, {
+            value: 2,
+            label: '审核通过'
+          }, {
+            value: 3,
+            label: '审核驳回'
+          }, {
+            value: 4,
+            label: '流程撤回'
+          }, {
+            value: 5,
+            label: '审核终止'
+          }],
+        },
+        {
+          prop: 'creatorUserId',
+          label: "发起人员",
+          type: 'custom',
+          component: 'user-select',
+        },
+        {
+          prop: 'creatorTime',
+          label: "接收时间",
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+        },
+      ],
+      countItems: []
     }
   },
   filters: {
@@ -203,24 +260,40 @@ export default {
   },
   created() {
     this.getDictionaryData()
-    this.getFlowEngineList()
+    // this.getFlowEngineList()
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getCount()
     this.initData()
   },
+  watch: {
+    activeName() {
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
+      this.getCount()
+      this.initData()
+    }
+  },
   methods: {
+    getCount() {
+      getFlowBeforeCount(this.listQuery).then(res => {
+        console.log(res, 'sdasdas');
+        this.countItems = res.data.result
+      })
+    },
+    changeCategory(item, index) {
+      this.listQuery.flowCategory = item.enCode
+      this.categoryIndex = index
+      this.initData()
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     search() {
-      if (this.pickerVal && this.pickerVal.length) {
-        this.startTime = this.pickerVal[0]
-        this.endTime = this.pickerVal[1]
-      } else {
-        this.startTime = ''
-        this.endTime = ''
-      }
-      this.listQuery = {
-        currentPage: 1,
-        pageSize: 20,
-        sort: 'desc',
-        sidx: ''
-      }
       this.initData()
     },
     getFlowEngineList() {
@@ -235,21 +308,17 @@ export default {
     },
     initData() {
       this.listLoading = true
-      let query = {
-        ...this.listQuery,
-        keyword: this.keyword,
-        startTime: this.startTime,
-        endTime: this.endTime,
-        flowId: this.flowId,
-        flowUrgent: this.urgent,
-        flowCategory: this.flowCategory,
-        creatorUserId: this.creatorUserId
-      }
-      FlowBeforeList(1, query).then(async res => {
-        this.list = res.data.list
-        this.total = res.data.pagination.total
-        this.listLoading = false
+      this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      this.jnpf.searchTimeFormat(this.listQuery, 'pickerVal', 'startTime', 'endTime')
+      getFlowBeforeList(1, this.listQuery).then(res => {
+        this.list = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+      }).catch(() => this.listLoading = false)
     },
     toDetail(item) {
       let data = {
@@ -260,7 +329,8 @@ export default {
         opType: 1,
         taskNodeId: item.thisStepId,
         taskId: item.id,
-        businessId:item.businessId,
+        businessId: item.businessId,
+        businessFlow: item.businessFlow,
       }
       this.formVisible = true
       this.$nextTick(() => {
@@ -278,22 +348,20 @@ export default {
       if (isRefresh) this.refresh()
     },
     refresh() {
-      this.pickerVal = ''
-      this.startTime = ''
-      this.endTime = ''
-      this.keyword = ''
-      this.flowId = ''
-      this.urgent = ''
-      this.flowCategory = ''
-      this.creatorUserId = ''
-      this.listQuery = {
-        currentPage: 1,
-        pageSize: 20,
-        sort: 'desc',
-        sidx: ''
-      }
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
       this.initData()
     }
   }
 }
 </script>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+::v-deep .el-badge__content.is-fixed {
+  top: 3px !important;
+}
+::v-deep .el-badge__content {
+  line-height: 16px !important;
+}
+
+</style>

@@ -86,7 +86,7 @@
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="处理" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row,'add')" editText="处理" :hasDel="false">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -120,7 +120,7 @@
 <script>
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
-import Form from './inspectionFormManagementForm.vue'
+import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
@@ -271,12 +271,12 @@ export default {
         this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row, btnType, this.pageData.type)
+          this.$refs.DetailForm.init({...row,approvalFlag:false}, btnType, this.pageData.type)
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(row, btnType, this.pageData.type)
+          this.$refs.Form.init({...row,approvalFlag:false}, btnType, this.pageData.type)
         })
       }
     },

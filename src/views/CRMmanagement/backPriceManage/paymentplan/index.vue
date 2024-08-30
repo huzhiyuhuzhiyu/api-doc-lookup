@@ -35,6 +35,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="display:block;line-height:34px">
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
+              <el-button size="mini" type="danger" icon="el-icon-close" @click="closeFun">关闭</el-button>
             </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
@@ -48,9 +49,9 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+          <JNPF-table ref="dataTable" @selection-change="handleSelectionChange" hasC v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
-            <el-table-column prop="contractNo" label="合同编号" min-width="160" />
+            <el-table-column prop="contractNo" label="合同编号" min-width="180" />
             <el-table-column prop="num" label="期数" min-width="100" />
             <el-table-column prop="planReceivablesMoney" label="计划回款金额(元)" min-width="160" />
             <el-table-column prop="planReceivablesData" label="计划回款日期" min-width="160" />
@@ -64,11 +65,11 @@
             <el-table-column prop="practiceMoney" label="实际回款金额(元)" min-width="160" />
             <el-table-column prop="practiceTime" label="实际回款时间" min-width="180" />
             <el-table-column prop="unreceivedMoney" label="未回款金额" min-width="140" />
-            <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">
+            <!-- <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">
               <template slot-scope="scope">
-                {{receivedStatusForm(scope.row.receivablesStatus)}}
+                <div><el-tag :type="receivedStatusForm(scope.row.receivablesStatus)=='待回款'?'danger':'success'">{{receivedStatusForm(scope.row.receivablesStatus)}}</el-tag></div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
@@ -106,7 +107,7 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReceivablesPlan, getcrmReceivablesPlanlist } from '@/api/CRMmanagement/index'
+import { deletecrmReceivablesPlan, getcrmReceivablesPlanlist, updatecrmReceivablesPlanclose } from '@/api/CRMmanagement/index'
 import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -120,6 +121,7 @@ export default {
   },
   data() {
     return {
+      selectArr: [],
       deliveryDateArr: [],
       receivedStatusList: [
         { fullName: '待回款', enCode: 'unpayment' },
@@ -193,16 +195,16 @@ export default {
           label: "未回款金额",
           type: 'input'
         },
-        { // 下拉选
-          prop: 'receivablesStatus',
-          label: '回款状态',
-          type: 'select',
-          options: [
-            { label: '待回款', value: 'unpayment' },
-            // { label: '逾期', value: '2' },
-            { label: '回款完成', value: 'payment' }
-          ]
-        },
+        // { // 下拉选
+        //   prop: 'receivablesStatus',
+        //   label: '回款状态',
+        //   type: 'select',
+        //   options: [
+        //     { label: '待回款', value: 'unpayment' },
+        //     // { label: '逾期', value: '2' },
+        //     { label: '回款完成', value: 'payment' }
+        //   ]
+        // },
         {
           prop: 'remark',
           label: "备注",
@@ -234,6 +236,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
+        receivablesStatus: 'unpayment',
         planReceivablesDataEndTime: '',
         planReceivablesDataStartTime: '',
         customerName: '',
@@ -290,6 +293,17 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    closeFun() {
+      if (!this.selectArr.length) return this.$message.error('请先选择数据')
+      let a = this.selectArr.map(item => item.id)
+      updatecrmReceivablesPlanclose(a).then(res => {
+        this.$message.success('关闭成功')
+        this.closeForm(true)
+      })
+    },
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
     // 为近3天  
     btnsearch2() {
       const end = new Date();
@@ -462,6 +476,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.initData()

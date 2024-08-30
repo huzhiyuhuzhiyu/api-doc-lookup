@@ -1,89 +1,129 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="keyword" placeholder="请输入关键词查询" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                {{$t('common.search')}}</el-button>
-              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{$t('common.reset')}}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle()" addText="新建委托"></topOpts>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                @click="initData()" />
-            </el-tooltip>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-tabs v-model="activeName" style="height:auto">
+        <el-tab-pane label="全部" name="all" />
+        <el-tab-pane :label="item.fullName" :name="item.enCode" v-for="item in categoryList" :key="item.id" />
+      </el-tabs>
+      <div class="JNPF-common-layout-center">
+        <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="6">
+              <el-form-item>
+                <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <topOpts @add="addOrUpdateHandle()" addText="新建委托"></topOpts>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
+            <el-table-column prop="toUserName" label="被委托人" min-width="100" />
+            <el-table-column prop="flowName" label="委托流程" min-width="140" />
+            <el-table-column prop="flowCategory" label="流程分类" min-width="100">
+              <template slot-scope="scope">
+                {{ scope.row.flowCategory | getCategoryText(categoryList) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="startTime" label="开始时间" min-width="120" :formatter="jnpf.tableDateFormatDayTime" />
+            <el-table-column prop="endTime" label="结束时间" min-width="120" :formatter="jnpf.tableDateFormatDayTime" />
+            <!-- <el-table-column prop="status" label="状态" width="100" align="center">
+              <template slot-scope="scope">
+                <el-tag type="info" v-if='scope.row.status == 1'>未开始</el-tag>
+                <el-tag type="danger" v-else-if='scope.row.status == 2'>已失效</el-tag>
+                <el-tag type="primary" v-else>委托中</el-tag>
+              </template>
+            </el-table-column> -->
+            <el-table-column prop="description" label="委托说明" min-width="160"/>
+            <el-table-column label="操作" fixed="right" width="100">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.$index, scope.row.id)">
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+            @pagination="initData" />
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
-          <el-table-column prop="toUserName" label="被委托人" width="150" />
-          <el-table-column prop="flowName" label="委托流程" width="200" />
-          <el-table-column prop="flowCategory" label="流程分类" width="100">
-            <template slot-scope="scope">
-              {{ scope.row.flowCategory|getCategoryText(categoryList) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="startTime" label="开始时间" width="120"
-            :formatter="jnpf.tableDateFormatDayTime" />
-          <el-table-column prop="endTime" label="结束时间" width="120"
-            :formatter="jnpf.tableDateFormatDayTime" />
-          <el-table-column prop="status" label="状态" width="100" align="center">
-            <template slot-scope="scope">
-              <el-tag type="info" v-if='scope.row.status==1'>未开始</el-tag>
-              <el-tag type="danger" v-else-if='scope.row.status==2'>已失效</el-tag>
-              <el-tag type="primary" v-else>委托中</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" label="委托说明" />
-          <el-table-column label="操作" fixed="right" width="100">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)"
-                @del="handleDel(scope.$index,scope.row.id)">
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage"
-          :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="reset" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+      @close="superQueryVisible = false" />
   </div>
 </template>
 
 <script>
-import { FlowDelegateList, Delete } from '@/api/workFlow/FlowDelegate'
+import { FlowDelegateList, Delete, getFlowDelegateList } from '@/api/workFlow/FlowDelegate'
 import Form from './Form'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'workFlow-entrust',
-  components: { Form },
+  components: { Form,SuperQuery },
   data() {
     return {
       keyword: '',
       list: [],
       total: 0,
       listLoading: true,
-      listQuery: {
-        currentPage: 1,
+      activeName: 'all',
+      initListQuery: {
+        createByName: "",
+        endTime: "",
+        endUpdateTime: "",
+        keyword: "",
+        pageNum: 1,
         pageSize: 20,
-        sort: 'desc',
-        sidx: ''
+        startTime: "",
+        startUpdateTime: "",
+        totalRowFlag: false
       },
-      formVisible: false
+      listQuery: {},
+      formVisible: false,
+      categoryList: [],
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'flowName',
+          label: "委托流程",
+          type: 'input'
+        },
+        {
+          prop: 'creatorTime',
+          label: "创建时间",
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+        },
+        // {
+        //   prop: 'status',
+        //   label: "状态",
+        //   type: 'select',
+        //   options: [{ label: '未开始', value: 1 }, { label: '已失效', value: 2 }]
+        // },
+      ],
     }
   },
   filters: {
@@ -93,7 +133,14 @@ export default {
     }
   },
   created() {
+    this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.getDictionaryData()
+  },
+  watch: {
+    activeName() {
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.initData()
+    }
   },
   methods: {
     getDictionaryData() {
@@ -102,27 +149,31 @@ export default {
         this.initData()
       })
     },
+    changeCategory(item, index) {
+      this.listQuery.flowCategory = item.enCode
+      this.categoryIndex = index
+      this.initData()
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     search() {
-      this.listQuery = {
-        currentPage: 1,
-        pageSize: 20,
-        sort: 'desc',
-        sidx: ''
-      }
       this.initData()
     },
     reset() {
-      this.keyword = ''
+      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.search()
     },
     initData() {
       this.listLoading = true
-      let query = {
-        ...this.listQuery,
-        keyword: this.keyword
-      }
-      FlowDelegateList(query).then(res => {
-        this.list = res.data.list
+      this.listQuery.flowCategory = this.activeName === 'all' ? '' : this.activeName
+      getFlowDelegateList(this.listQuery).then(res => {
+        this.list = res.data.records
         let currTime = this.jnpf.toDate(new Date())
         for (let i = 0; i < this.list.length; i++) {
           let e = this.list[i];
@@ -141,9 +192,9 @@ export default {
           }
           e.status = status
         }
-        this.total = res.data.pagination.total
+        this.total = res.data.total
         this.listLoading = false
-      })
+      }).catch(() => this.listLoading = false)
     },
     handleDel(index, id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -174,3 +225,4 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

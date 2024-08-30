@@ -392,17 +392,15 @@ import {
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
-import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
+import { detailpurchaseOrderList } from '@/api/purchasingAndOutsourcingOrders/index'
 import {
   addpurPurchaseReceiptReturnGoods,
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
-import {
-  getclassAttributeList
-} from '@/api/masterDataManagement/index'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getWarehouseList } from '@/api/basicData/index'
-import { mapGetters } from "vuex"
+import { mapGetters } from 'vuex'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
@@ -419,26 +417,28 @@ export default {
       classAttributeList: [],
       provinces: [],
       orderForm: {
-        cooperativePartnerId: '',
-        customerProductDrawingNo: '',
-        returnQueryFlag: 1,
-        partnerName: '', // customerProductNo: "",
-        deliveryStartTime: '',
-        deliveryEndTime: '',
-        receiptReturnType: 'back',
-        notificationType: 'procure',
-        pageNum: 1,
-        pageSize: 20,
+        cooperativePartnerCode: '',
+        cooperativePartnerName: '',
+        createByName: '',
+        deliveryEndDate: '',
+        deliveryStartDate: '',
+        endTime: '',
+        orderNo: '',
+        orderType: 'procure',
+        classAttribute: 'other',
         orderItems: [
           {
             asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 't1.create_time'
+            column: 'createTime'
           }
-        ]
+        ],
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        productCode: '',
+        productName: '',
+
+        receivingStatus: 'received'
       },
       // orderList: [
       //   { label: "外协通知", value: "external" },
@@ -696,9 +696,9 @@ export default {
     getWarehouseList() {
       let obj = {
         type: 'virtually',
-        category: "warehouse",
+        category: 'warehouse'
       }
-      getWarehouseList(obj).then(res => {
+      getWarehouseList(obj).then((res) => {
         this.warehouseIdList = res.data
       })
     },
@@ -832,11 +832,10 @@ export default {
         this.orderForm.deliveryEndTime = ''
       }
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
-      purchaseOrderReport(this.orderForm)
+      detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-
-          this.productList = res.data.page.records
-          this.productTotal = res.data.page.total
+          this.productList = res.data.records
+          this.productTotal = res.data.total
           this.listLoading = false
         })
         .catch(() => {
@@ -892,7 +891,6 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-
     },
     // },
     // 获取所有订单列表数据
@@ -1064,17 +1062,15 @@ export default {
     // 获取类别属性字段 编排属性
     getClassAttribute() {
       let obj = {
-
         pageNum: 1,
         pageSize: -1
       }
       getclassAttributeList(obj).then((res) => {
-        this.classAttributeList = res.data.records.map(item => {
+        this.classAttributeList = res.data.records.map((item) => {
           return {
             label: item.name,
             value: item.code
           }
-
         })
       })
     },
@@ -1360,7 +1356,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
               purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',

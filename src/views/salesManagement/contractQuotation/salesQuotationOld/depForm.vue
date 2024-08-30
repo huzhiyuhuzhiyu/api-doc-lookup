@@ -15,7 +15,7 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading" ref="main" :element-loading-text="loadingText">
-        <el-tabs v-model="activeName" v-if="!approvalFlag">
+        <el-tabs v-model="activeName" v-if="!approvalFlag" class="JNPF-el_tabs">
           <el-tab-pane label="订单信息" name="orderInfo" class="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -232,18 +232,11 @@
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
-          <el-tab-pane label="流程信息" name="approvalFlow">
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look'" label="流转记录" name="transferList">
-            <el-table v-loading="formLoading" :data="transferData">
-              <el-table-column prop="businessName" label="审批业务名称" min-width="160" />
-              <el-table-column prop="processedName" label="办理人名称" min-width="160" />
-              <el-table-column prop="remark" label="备注" min-width="160" />
-              <el-table-column prop="startDate" label="开始时间" min-width="160" />
-              <el-table-column prop="endDate" label="结束时间" min-width="160" />
-              <el-table-column prop="consumingTime" label="耗时" min-width="160" />
-            </el-table>
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
@@ -574,11 +567,12 @@ import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSal
 // import errorDialog from '@/components/WorkFlow/dialog/errorDialog.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
-  components: { workFlow, ExportForm ,Process},
+  components: { workFlow, ExportForm ,Process , recordList},
   mixins: [busFlow],
   data() {
     return {
@@ -657,7 +651,8 @@ export default {
         // reasonRejection: '',
         documentStatus: '',
         // submitDate: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false
       },
       taxRateList: [],
       pickerOptions: {
@@ -702,47 +697,6 @@ export default {
 
       },
       activeNames: ["productInfo", "basicInfo"],
-      // 审批流需要字段
-      approvalBusinessId: '',
-      workVisible: false,
-      busNodeConfig: {
-        nodeName: "发起人",
-        nodeType: 0,
-        type: 'node',
-        priorityLevel: "",
-        approvalType: "appoint",
-        selectMode: "",
-        selectRange: "",
-        directorLevel: "",
-        examineMode: "",
-        whenEmpty: "",
-        examineEndDirectorLevel: "",
-        ccSelfSelectFlag: "",
-        conditionList: [],
-        nodeUserList: [],
-        childNode: null,
-        conditionNodes: []
-      },
-      approvalForm: {},
-      firstOneNode: [],
-      // 审批 转审记录参数
-      transferQuery: {
-        approvalFormId: '',
-        createByName: "",
-        documentId: '',
-        endTime: "",
-        keyword: "",
-        orderItems: [
-          {
-            "asc": true,
-            "column": ""
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: ""
-      },
-      transferData: [],
       customStyleData: {},
       tableVisible: true,
       loadingText: '',
@@ -775,6 +729,8 @@ export default {
       flowTemplateJson: {},
       flowData:{},
       approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   watch: {
@@ -1488,10 +1444,11 @@ export default {
               )
             })
           }
+          this.fetchData("XSBJ", true)
           // 审批
-          // this.$nextTick(() => {
-          //   this.getApproverData()
-          // })//暂时注释
+          this.$nextTick(() => {
+            this.getBusInfo()
+          })//暂时注释
           this.formLoading = false
           // })
         }).catch(err => {
@@ -1526,6 +1483,8 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
+        // 流程信息和流转记录
+        this.getFlowDetail(this.dataForm.id)
       }
     },
     async handleConfirm(value) {
@@ -1714,13 +1673,43 @@ export default {
       getBusinessFlowInfo('b001').then(res=>{
         console.log(res,'流程信息')
         if (res.data){
-          this.flowData = res.data
-          this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-          this.dataForm.approvalFlag = res.data.enabledMark
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }
         }else{
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
           this.$message.error('未找到审批流程！')
+        }
+      }).catch(()=>{})
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
         }
       }).catch(()=>{})
     },
@@ -1739,11 +1728,9 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
+  margin-bottom: 5px !important;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
 
 ::v-deep .workNode {
   background-color: #f5f5f7 !important;
@@ -1751,7 +1738,7 @@ export default {
 
 //.el-button--small {
 // padding: 1;
-//}</style>
+</style>
 <style scoped>
 ::v-deep .el-tabs {
   height: 100% !important;

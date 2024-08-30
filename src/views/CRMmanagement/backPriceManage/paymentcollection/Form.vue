@@ -29,7 +29,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                        <ComSelect-page key="partner" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -71,13 +71,13 @@
                     <el-table-column prop="contractName" label="合同名称" width="160" show-overflow-tooltip></el-table-column>
                     <el-table-column prop="contractMoney" label="合同金额" width="140" show-overflow-tooltip />
                     <el-table-column prop="unreceivedMoney" label="未回款金额" width="160" show-overflow-tooltip />
-                    <el-table-column prop="thisReceivablesMoney" label="本次回款金额" width="160">
+                    <el-table-column prop="thisReceivablesMoney" label="本次回款金额" width="170">
                       <template slot="header">
                         <span class="required">*</span>本次回款金额
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'thisReceivablesMoney'" :rules='productRules.thisReceivablesMoney'>
-                          <el-input v-model="scope.row.thisReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 135px;">
+                          <el-input v-model="scope.row.thisReceivablesMoney" placeholder="请输入回款金额" :disabled="btntype == 'look'" maxlength="20" style="width: 145px;">
                           </el-input>
                         </el-form-item>
                       </template>
@@ -120,13 +120,13 @@
 import { mapGetters } from 'vuex'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
+import { getCooperativeData } from '@/api/basicData/index'
 import { getcrmReceivablesPlanlist, updatecrmReceivables, detailcrmReceivables, getcrmContractlist, addcrmReceivables } from '@/api/CRMmanagement/index'
 export default {
   data() {
     return {
       isattachmentswitch: '1',
-      datafilelist:[],
+      datafilelist: [],
       codeConfig: {},//单据规则配置
       _index: '',
       taxRateList: [],
@@ -177,8 +177,8 @@ export default {
         name: "",
         pageNum: 1,
         pageSize: 20,
-        customerStatus: 'private_sea',
-        totalRowFlag: false,
+        type: "customer",
+        partnerCategoryId: '',
         orderItems: [{
           asc: false,
           column: ""
@@ -197,7 +197,7 @@ export default {
       requestObj: {
         customerStatus: 'private_sea',
       },
-      getPartnerList,
+      getCooperativeData,
       activeName: "jcInfo",
       visible: false,
       formLoading: false,
@@ -284,6 +284,7 @@ export default {
         no: val.contractNo,
         pageNum: 1,
         pageSize: -1,
+        receivablesStatus: 'unpayment'
       }
       this._index = index
       this.taxRateList = []
@@ -364,8 +365,8 @@ export default {
     },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.categoryId === data.id) return listQuery
-      listQuery.categoryId = data.id
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
       return listQuery
     },
     // 客户选框传值

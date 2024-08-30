@@ -94,11 +94,11 @@
 
             <el-table-column prop="lxr" label="联系人" sortable="custom" width="120" />
             <el-table-column prop="tel" label="电话" sortable="custom" width="140" />
-            <el-table-column prop="phone" label="手机" sortable="custom" width="160" />
+            <el-table-column prop="phone" label="手机" sortable="custom" width="140" />
             <el-table-column prop="dealStatus" label="成交状态" width="120">
               <template slot-scope="scope">
-                <div v-if="scope.row.dealStatus=='0'">未成交</div>
-                <div v-else-if="scope.row.dealStatus=='1'">成交</div>
+                <div v-if="scope.row.dealStatus=='0'"><el-tag type="danger">未成交</el-tag></div>
+                <div v-else-if="scope.row.dealStatus=='1'"><el-tag type="success">成交</el-tag></div>
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
@@ -406,6 +406,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.filterText = ''

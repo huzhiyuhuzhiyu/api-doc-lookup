@@ -185,10 +185,10 @@ import { getfinAccountList, getfinAccountDetail } from '@/api/ReconciliaRePaymen
 import JNPFForm from './Form'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-// import withdrawnForm from './withranForm'
+import withdrawnForm from './withranForm'
 export default {
   name: 'purchaseInquirySheet',
-  components: { JNPFForm, SuperQuery },
+  components: { JNPFForm, SuperQuery, withdrawnForm },
   data() {
     return {
       withdrawnVisible: false,
@@ -482,6 +482,7 @@ export default {
           backAmount: '',                      // 退货总金额
           receiptAmount: '',                   // 收货总金额
           brTotalAmount: '',                   // 收/退货总金额
+          approvalFlag:false,
         }
         res.data.reconciliationLines.forEach(item => {
           if (item.noticeBillVO) {

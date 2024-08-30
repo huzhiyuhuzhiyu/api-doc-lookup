@@ -518,6 +518,16 @@ export default {
     } else {
       this.dataForm.drawNo = ''
     }
+    if (this.$route.params.classAttribute) {
+      this.dataForm.classAttribute = this.$route.params.classAttribute
+    } else {
+      this.dataForm.classAttribute = ''
+    }
+    if (this.$route.params.productSource) {
+      this.dataForm.productSource = this.$route.params.productSource
+    } else {
+      this.dataForm.productSource = ''
+    }
   },
   methods: {
     async init(productId, btnType, approvalStatus, nodeData) {
@@ -1100,9 +1110,20 @@ export default {
     // 对应子数据新增或删除行
     addOrDelLinesItem(data) {
       let type = Array.isArray(data) ? 'Array' : 'Object'
+      console.log(type, 'type')
       if (type === 'Object') {
         this.linesList.splice(data.$index, 1)
       } else {
+        if (!this.dataForm.drawNo) return this.$message.error('请先选择品名规格')
+        console.log(this.linesList, ';ppppp')
+        if (this.dataForm.classAttribute == 'semi_finished' && this.dataForm.productSource == 'out') {
+          console.log(9999)
+          if (this.linesList.length == 0) {
+            if (data.length > 1) return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
+          } else {
+            return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
+          }
+        }
         let tempList = JSON.parse(JSON.stringify(this.linesList))
         let hasItemList = []
         for (let i = 0; i < data.length; i++) {
@@ -1126,13 +1147,16 @@ export default {
       }
     },
     ProductChange(val, data, paramsObj) {
+      console.log(data, ';')
       this.$nextTick(() => {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
       if (!data || !data.length) return
       this.dataForm[paramsObj.prop.slice(0, -4) + 'Id'] = data[0].id
       this.dataForm[paramsObj.prop] = data[0].name
+      this.dataForm.classAttribute = data[0].all.classAttribute
       this.dataForm.drawNo = data[0].all.drawingNo
+      this.dataForm.productSource = data[0].all.productSource
       this.dataForm.productId = data[0].id
     },
     goBack() {

@@ -1,0 +1,442 @@
+<template>
+  <el-dialog :visible.sync="visible" fullscreen lock-scroll class="JNPF-full-dialog" :show-close="false" :modal="false"
+    append-to-body>
+    <div class="JNPF-full-dialog-header">
+      <div class="header-title">
+        <el-image class="header-logo imagesClass" :src="define.comUrl + systemVO.iconUrl"
+          v-if="systemVO && systemVO.iconUrl">
+          <template slot="error">
+            <img class="header-logo" :class="headClass" src="@/assets/images/jnpf.png" alt="">
+          </template>
+        </el-image>
+        <img src="@/assets/images/jnpf.png" :class="headClass" class="header-logo" v-else />
+        <p class="header-txt"> · 代码生成</p>
+      </div>
+      <el-steps :active="activeStep" finish-status="success" simple class="steps" :class="flowDesign ? 'stepsCenter' : '' ">
+        <el-step title="基础信息" @click.native="stepChick(0)" v-if="!flowDesign" />
+        <el-step title="表单设计" v-if="formType !== '自定义业务流程'" @click.native="stepChick(1)" />
+        <el-step title="流程设计" @click.native="stepChick(2)" />
+      </el-steps>
+      <div class="options" style="width:auto;">
+        <el-button @click="prev"  :disabled="activeStep <= 0 || (flowDesign ? true : false)">{{ $t('common.prev') }}</el-button>
+        <el-button @click="next" :disabled="activeStep >= 2 || loading">{{ $t('common.next') }}
+        </el-button>
+        <el-button type="primary" @click="dataFormSubmit()" :disabled="activeStep < 2" :loading="btnLoading">{{
+          $t('common.confirmButton') }}</el-button>
+        <el-button @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
+      </div>
+    </div>
+    <div class="main" v-loading="loading">
+      <el-row type="flex" justify="center" align="middle" v-if="!activeStep" class="basic-box">
+        <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="10" class="basicForm">
+          <el-form :model="dataForm" :rules="dataRule" ref="dataForm" label-width="100px" @submit.native.prevent
+            label-position="right">
+            <el-form-item label="流程名称" prop="fullName">
+              <el-input v-model="dataForm.fullName" placeholder="流程名称" maxlength="50"></el-input>
+            </el-form-item>
+            <el-form-item label="流程编码" prop="enCode">
+              <el-input v-model="dataForm.enCode" placeholder="流程编码" maxlength="50"></el-input>
+            </el-form-item>
+            <el-form-item label="流程分类" prop="category">
+              <el-select v-model="dataForm.category" placeholder="选择分类">
+                <el-option :key="item.enCode" :label="item.fullName" :value="item.enCode" v-for="item in categoryList" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="表单类型" prop="formType" v-if="dataForm.formType !== 3">
+              <el-input v-model="formType" maxlength="50" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="业务流程" prop="businessFlow" v-if="dataForm.formType === 3">
+              <el-select v-model="dataForm.businessFlow" placeholder="选择业务">
+                <el-option :key="item.id" :label="item.fullName" :value="item.enCode" v-for="item in businessFlowList" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="业务回调" prop="busCallBack" v-if="dataForm.formType === 3">
+              <el-input v-model="dataForm.busCallBack" maxlength="50" />
+            </el-form-item>
+            <el-form-item label="流程类型" prop="type">
+              <el-select v-model="dataForm.type" placeholder="选择类型" @change="typeChange"
+                :disabled="!!dataForm.id || dataForm.formType !== 1">
+                <el-option label="发起流程" :value="0" />
+                <el-option label="功能流程" :value="1" />
+              </el-select>
+            </el-form-item>
+            <template v-if="dataForm.type == 0">
+              <el-form-item label="流程图标" prop="icon">
+                <el-row type="flex">
+                  <div style="flex:1;margin-right:10px">
+                    <el-input v-model="dataForm.icon" placeholder="请选择流程图标" readonly :suffix-icon="dataForm.icon">
+                      <el-button slot="append" @click="openIconBox()">选择</el-button>
+                    </el-input>
+                  </div>
+                  <el-color-picker v-model="dataForm.iconBackground" title="图标背景色"
+                    :predefine="['#008cff', '#35b8e0', '#00cc88', '#ff9d00', '#ff4d4d', '#5b69bc', '#ff8acc', '#3b3e47', '#282828']" />
+                </el-row>
+              </el-form-item>
+            </template>
+            <template v-if="dataForm.formType == 1">
+              <el-form-item label="Web地址" prop="formUrl">
+                <el-input v-model="dataForm.formUrl" placeholder="Web地址">
+                  <template slot="prepend">@/views/</template>
+                </el-input>
+              </el-form-item>
+              <!-- <el-form-item label="App地址" prop="appFormUrl">
+                <el-input v-model="dataForm.appFormUrl" placeholder="App地址" />
+              </el-form-item> -->
+              <el-form-item label="数据连接">
+                <el-select v-model="dataForm.dbLinkId" placeholder="请选择数据库" @change="onDbChange" clearable>
+                  <el-option-group v-for="group in dbOptions" :key="group.fullName" :label="group.fullName">
+                    <el-option v-for="item in group.children" :key="item.id" :label="item.fullName" :value="item.id" />
+                  </el-option-group>
+                </el-select>
+              </el-form-item>
+            </template>
+            <el-form-item label="流程排序" prop="sortCode">
+              <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode" controls-position="right" />
+            </el-form-item>
+            <el-form-item label="流程状态" prop="enabledMark">
+              <el-switch v-model="dataForm.enabledMark" :active-value="1" :inactive-value="0" />
+            </el-form-item>
+            <el-form-item label="流程说明" prop="description">
+              <el-input v-model="dataForm.description" placeholder="流程说明" type="textarea" :rows="3" />
+            </el-form-item>
+            <template v-if="dataForm.formType == 2">
+              <el-form-item label="数据连接">
+                <el-select v-model="dataForm.dbLinkId" placeholder="请选择数据库" @change="onDbChange" clearable>
+                  <el-option-group v-for="group in dbOptions" :key="group.fullName" :label="group.fullName">
+                    <el-option v-for="item in group.children" :key="item.id" :label="item.fullName" :value="item.id" />
+                  </el-option-group>
+                </el-select>
+              </el-form-item>
+              <el-table :data="tables" class="JNPF-common-table" empty-text="点击“新增”可选择1条(单表)或2条以上(多表)，未选择数据表时系统将会自动创建数据表">
+                <el-table-column type="index" label="序号" width="50" align="center" />
+                <el-table-column prop="typeId" label="类别" width="65">
+                  <template slot-scope="scope">
+                    <el-tag v-if="scope.row.typeId == '1'">主表</el-tag>
+                    <el-tag type="warning" v-else @click="changeTable(scope.row)" style="cursor:pointer"
+                      title="点击设置成主表">子表</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="table" label="表名">
+                  <template slot-scope="scope">
+                    <el-tooltip :content="scope.row.tableName || scope.row.table" placement="top">
+                      <span>{{ scope.row.table }}</span>
+                    </el-tooltip>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="tableField" label="外键字段">
+                  <template slot-scope="scope" v-if="scope.row.typeId !== '1'">
+                    <el-select v-model="scope.row.tableField" placeholder="请选择">
+                      <el-option v-for="item in scope.row.fields" :key="item.field" :label="item.field"
+                        :value="item.field">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <!-- <el-table-column prop="relationTable" label="关联主表" /> -->
+                <el-table-column prop="relationField" label="关联主键">
+                  <template slot-scope="scope" v-if="scope.row.typeId !== '1'">
+                    <el-select v-model="scope.row.relationField" placeholder="请选择">
+                      <el-option v-for="item in mainTableFields" :key="item.field" :label="item.field"
+                        :value="item.field">
+                      </el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <el-table-column label="操作" fixed="right" width="50">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                      @click="delItem(scope.row, scope.$index)">移除
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <div class="table-actions" @click="openTableBox">
+                <el-button type="text" icon="el-icon-plus">新增一行</el-button>
+              </div>
+            </template>
+          </el-form>
+        </el-col>
+      </el-row>
+      <template v-if="activeStep == 1">
+        <template v-if="dataForm.formType == 1">
+          <el-row type="flex" justify="center" align="middle" class="basic-box">
+            <el-col :xs="12" :sm="12" :md="12" :lg="12" :xl="10" class="basicForm">
+              <FieldForm ref="fieldForm" :conf="formData" :enCode="dataForm.enCode" />
+            </el-col>
+          </el-row>
+        </template>
+        <template v-if="dataForm.formType == 2">
+          <Generator ref="generator" :conf="formData" :modelType="6" :dbType="dbType" />
+        </template>
+      </template>
+      <template v-if="activeStep == 2">
+        <Process ref="processDesign" :conf="flowTemplateJson" @startNodeChange="onStartChange"
+          :flowType="dataForm.type" />
+      </template>
+    </div>
+    <icon-box :visible.sync="iconBoxVisible" ref="iconBox" :current="dataForm.icon" @choiceIcon="choiceIcon" />
+    <TableForm :visible.sync="formVisible" ref="tableForm" @closeForm="closeForm" :dbLinkId="dataForm.dbLinkId" />
+  </el-dialog>
+</template>
+
+<script>
+import { FlowEngineInfo, Update, Create } from '@/api/workFlow/FlowEngine'
+import { getDataSourceListAll } from '@/api/systemData/dataSource'
+import iconBox from '@/components/JNPF-iconBox'
+import Process from "@/components/Process"
+import Generator from '@/components/Generator/index/Home'
+import FieldForm from './FieldForm'
+import TableForm from '@/views/generator/TableForm'
+import mixin from '@/mixins/generator/common'
+import { getbimProductAttributes } from "@/api/masterDataManagement/index";
+export default {
+  mixins: [mixin],
+  components: { iconBox, Process, Generator, FieldForm, TableForm },
+  data() {
+    return {
+      visible: false,
+      activeStep: 0,
+      dataForm: {
+        id: '',
+        category: '',
+        fullName: '',
+        enCode: '',
+        type: 0,
+        formData: '',
+        description: '',
+        formUrl: '',
+        appFormUrl: '',
+        formType: 1,
+        dbLinkId: '0',
+        enabledMark: 1,
+        sortCode: 0,
+        icon: '',
+        iconBackground: '#008cff',
+        tables: '',
+        flowTemplateJson: '',
+        businessFlow: '',
+        busCallBack: '',
+      },
+      dataRule: {
+        fullName: [
+          { required: true, message: '流程名称不能为空', trigger: 'blur' }
+        ],
+        enCode: [
+          { required: true, message: '流程编码不能为空', trigger: 'blur' },
+          { pattern: /^\w+$/, message: '请输入正确的流程编码', trigger: 'blur' },
+        ],
+        category: [
+          { required: true, message: '流程分类不能为空', trigger: 'change' }
+        ],
+        businessFlow: [
+          { required: true, message: '业务流程不能为空', trigger: 'change' }
+        ],
+        type: [
+          { required: true, message: '流程类型不能为空', trigger: 'change' }
+        ],
+        formType: [
+          { required: true, message: '表单类型不能为空', trigger: 'blur' }
+        ],
+        busCallBack: [
+          { required: true, message: '业务回调不能为空', trigger: 'blur' }
+        ],
+        icon: [
+          { required: true, message: '流程图标不能为空', trigger: 'click' }
+        ],
+      },
+      tables: [],
+      defaultTable: [],
+      formVisible: false,
+      btnLoading: false,
+      mainTableFields: [],
+      relationTable: "",
+      flowTemplateJson: {},
+      formData: null,
+      iconBoxVisible: false,
+      loading: false,
+      categoryList: [],
+      formList: [],
+      dbType: "MySQL",
+      dbOptions: [],
+      formType: '系统表单',
+      businessFlowList: [],
+      flowDesign: ''
+    }
+  },
+  created() {
+    this.getBusType()
+  },
+  methods: {
+    getBusType() {
+      getbimProductAttributes('595515955027689669').then(res => {
+        this.businessFlowList = res.data.list
+      })
+    },
+    init(categoryList, id, formType, flowDesign) {
+      this.flowDesign = flowDesign
+      this.categoryList = categoryList
+      this.activeStep = 0
+      this.tables = []
+      this.defaultTable = []
+      this.dataForm.id = id || ''
+      this.getDbOptions()
+      this.visible = true
+      this.loading = true
+      this.$nextTick(() => {
+        if (this.dataForm.id) {
+          FlowEngineInfo(this.dataForm.id).then(res => {
+            this.dataForm = res.data
+            this.formType = this.dataForm.formType == 1 ? '系统表单' : this.dataForm.formType == 2 ? '自定义表单' : '自定义业务流程'
+            this.dataForm.flowTemplateJson && (this.flowTemplateJson = JSON.parse(this.dataForm.flowTemplateJson))
+            this.dataForm.dbLinkId = this.dataForm.dbLinkId || '0'
+            this.dataForm.formData && (this.formData = JSON.parse(this.dataForm.formData))
+            this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
+            this.defaultTable = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
+            this.updateFields()
+            if (this.flowDesign) {
+              this.activeStep = 2
+            }
+          }).catch(() => { this.loading = false })
+        } else {
+          this.dataForm.formType = formType
+          this.formType = formType == 1 ? '系统表单' : formType == 2 ? '自定义表单' : '自定义业务流程'
+          this.loading = false
+        }
+      })
+    },
+    dataFormSubmit() {
+      this.$refs['processDesign'].getData().then(res => {
+        this.btnLoading = true
+        this.flowTemplateJson = res.formData
+        this.dataForm.flowTemplateJson = JSON.stringify(this.flowTemplateJson)
+        if (this.dataForm.formType === 3) {
+          this.dataForm.formData = ''
+        } else {
+          this.dataForm.formData = JSON.stringify(this.formData)
+        }
+        this.dataForm.tables = JSON.stringify(this.tables)
+        const formMethod = this.dataForm.id ? Update : Create
+        formMethod(this.dataForm).then((res) => {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.btnLoading = false
+              this.closeDialog(true)
+            }
+          })
+        }).catch(() => { this.btnLoading = false })
+      }).catch(err => {
+        err.msg && this.$message.warning(err.msg)
+      })
+    },
+    next() {
+      if (this.activeStep < 1) {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            this.getDbType()
+            if (!this.tables.length) {
+              if (this.defaultTable.length) {
+                this.$message.warning('请至少选择一个数据表')
+                return
+              }
+              this.$store.commit('generator/SET_TABLE', false)
+              this.$store.commit('generator/SET_ALL_TABLE', [])
+              this.$store.commit('generator/UPDATE_FORMITEM_LIST', [])
+            } else {
+              if (!this.exist()) return
+              let subTable = this.tables.filter(o => o.typeId == '0')
+              this.$store.commit('generator/UPDATE_SUB_TABLE', subTable)
+              this.$store.commit('generator/SET_ALL_TABLE', this.tables)
+              this.$store.commit('generator/SET_DATABASE', this.dataForm.dbLinkId)
+              this.$store.commit('generator/SET_TABLE', true)
+              this.$store.commit('generator/UPDATE_FORMITEM_LIST', this.mainTableFields)
+            }
+            if (this.dataForm.formType === 3) {
+              this.activeStep += 2
+            } else {
+              this.activeStep += 1
+            }
+          }
+        })
+      } else {
+        let model = ''
+        if (this.dataForm.formType == 1) {
+          model = 'fieldForm'
+        } else {
+          model = 'generator'
+        }
+        this.$refs[model].getData().then(res => {
+          this.formData = res.formData
+          this.activeStep += 1
+        }).catch(err => {
+          err.msg && this.$message.warning(err.msg)
+        })
+      }
+    },
+    typeChange(val) {
+      if (val == 1) {
+        this.dataForm.icon = ''
+        this.dataForm.iconBackground = '#008cff'
+      }
+    },
+    openIconBox() { this.iconBoxVisible = true },
+    choiceIcon(value) {
+      this.dataForm.icon = value
+    },
+    onStartChange(node) {
+      // console.log(node);
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+::v-deep .left-scrollbar {
+  height: 100%;
+  overflow: hidden;
+}
+
+::v-deep .center-scrollbar {
+  width: 100%;
+}
+
+::v-deep .node-wrap-box::after {
+
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  border-radius: 4px;
+  /* border: 1px solid transparent; */
+  -webkit-transition: all .1s cubic-bezier(.645, .045, .355, 1);
+  transition: all .1s cubic-bezier(.645, .045, .355, 1);
+  box-shadow: none !important;
+  background: none !important;
+}
+
+::v-deep .node-wrap-box {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  position: relative;
+  width: 220px;
+  min-height: 72px;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  background: none !important;
+  border-radius: 4px;
+  cursor: pointer;
+}
+  .stepsCenter{
+    justify-content: center;
+  }
+</style>

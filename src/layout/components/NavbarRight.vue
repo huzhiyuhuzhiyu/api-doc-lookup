@@ -619,4 +619,7 @@ export default {
 .twinkle {
     animation: blink 0.5s linear infinite;
 }
+::v-deep .el-badge__content.is-fixed{
+    top:10px !important;
+}
 </style>

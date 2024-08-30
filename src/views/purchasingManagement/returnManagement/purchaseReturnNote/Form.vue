@@ -416,6 +416,7 @@ export default {
         endTime: '',
         orderNo: '',
         orderType: 'procure',
+        classAttribute: 'other',
         orderItems: [
           {
             asc: false,
@@ -611,6 +612,7 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
+        classAttribute: 'other',
         receiptReturnType: 'back',
         notificationType: 'procure',
         salesman: '',
@@ -1386,7 +1388,7 @@ export default {
         this.formLoading = true
         setTimeout(() => {
           this.formLoading = false
-          this.fetchData('SRDH')
+          this.fetchData('CGTH')
         }, 500)
       }
       if (this.btnType == 'edit') {

@@ -5,14 +5,16 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="请输入产品名称" clearable
-                @keyup.enter.native="search()" />
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性">
+                <el-option v-for="item in classAttributeOptions" :key="item.value" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -59,12 +61,14 @@
         <JNPF-table v-loading="listLoading" @selection-change="handeleProductInfoData" hasC highlight-current-row
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable">
-
-
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-          <!-- <el-table-column prop="spec" label="规格型号" min-width="180" sortable="custom" /> -->
+          <el-table-column prop="classAttribute" label="类别属性" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
+            </template>
+          </el-table-column>
 
           <el-table-column prop="immediatelyBuyFlag" label="立即采购" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -73,7 +77,7 @@
             </template>
           </el-table-column>
           <el-table-column prop="mainUnit" label="单位" min-width="80" />
-          <el-table-column prop="planDemandQuantity" label="计划需求数" min-width="130" sortable="custom" />
+          <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="150" sortable="custom" />
           <!-- <el-table-column prop="hasPrice" label="有无价格" width="90">
             <template slot-scope="scope">
               <div v-if="scope.row.hasPrice">有</div>
@@ -84,6 +88,8 @@
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" min-width="120" /> -->
 
           <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
+          <el-table-column prop="standardValue" label="规值" min-width="160" sortable="custom" />
+          <el-table-column prop="colour" label="颜色" min-width="160" sortable="custom" />
           <el-table-column prop="source" label="来源" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <!-- <div v-if="scope.row.source == 'procure'">请购单</div>
@@ -101,16 +107,17 @@
               </el-link>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
-          <!-- <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom" fixed="right">
+          <el-table-column prop="demandStatus" label="需求状态" width="120" align="center" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.demandStatus == 'not_finish'"><el-tag type="warning">未完成</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finishing'"><el-tag>完成中</el-tag></div>
               <div v-if="scope.row.demandStatus == 'finished'"><el-tag type="success">已完成</el-tag></div>
             </template>
-          </el-table-column> -->
+          </el-table-column>
+          <!-- <el-table-column prop="sourceOrderNo" label="来源单号" min-width="180" sortable="custom" /> -->
+          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">
@@ -237,6 +244,9 @@
     </el-dialog>
     <QuiryForm v-if="quiryVisible" ref="QuiryForm" @closePool="closePool" />
     <fixedForm v-if="fixedVisible" ref="fixedForm" @closePool="closePoolfix" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -246,16 +256,121 @@ import JNPFForm from './Form'
 import moment from 'moment'
 import QuiryForm from '@/views/purchasingManagement/priceAdjustmentInquiry/purchaseInquirySheet/Form.vue'
 import fixedForm from '@/views/purchasingManagement/priceAdjustmentInquiry/fixedPointPricing/Form.vue'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   name: 'fixedPointPricing',
-  components: { JNPFForm, QuiryForm, fixedForm },
+  components: { JNPFForm, QuiryForm, fixedForm, SuperQuery },
   data() {
     return {
-      columnList: [
-        'productCode',
-        'source',
-        'createByName',
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'drawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: '产品编码',
+          type: 'input'
+        },
+
+        // {
+        //   prop: 'name',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
+        {
+          prop: 'classAttribute',
+          label: '类别属性',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'immediatelyBuyFlag',
+          label: '立即采购',
+          type: 'select',
+          options: [
+            {
+              value: true,
+              label: '是'
+            },
+            { value: false, label: '否' }
+          ]
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'input'
+        },
+        {
+          prop: 'planDemandQuantity',
+          label: '计划需求数',
+          type: 'input'
+        },
+        {
+          prop: 'orderedQuantity',
+          label: '已下单数量',
+          type: 'input'
+        },
+        {
+          prop: 'deliveryDate',
+          label: '交货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'standardValue',
+          label: '规值',
+          type: 'input'
+        },
+        {
+          prop: 'colour',
+          label: '颜色',
+          type: 'input'
+        },
+        {
+          prop: 'source',
+          label: '来源',
+          type: 'select',
+          options: [
+            { label: '请购单', value: 'procure' },
+            { label: 'MRP下发', value: 'mrp' },
+            { label: '计划下达', value: 'plan' }
+          ]
+        },
+        {
+          prop: 'demandStatus',
+          label: '需求状态',
+          type: 'select',
+          options: [
+            { label: '未完成', value: 'not_finish' },
+            { label: '完成中', value: 'finishing' },
+            { label: '已完成', value: 'finished' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
       ],
+      columnList: ['productCode', 'source', 'createByName'],
       deliveryDateArr: [],
       sourceDialog: false,
       sourceList: [],
@@ -268,6 +383,17 @@ export default {
       formVisible: false,
       listLoading: false,
       sourceListData: [],
+      classAttributeOptions: [
+        {
+          label: '成品',
+          value: 'finish_product'
+        },
+        {
+          label: '非成品',
+          value: 'other'
+        }
+      ],
+      classAttributeList: [],
       listQuery: {
         orderItems: [
           {
@@ -286,6 +412,7 @@ export default {
         endTime: '',
         pageNum: 1,
         pageSize: 20,
+        classAttribute: 'other',
         // demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
@@ -368,6 +495,9 @@ export default {
       total: 0,
       formVisible: false
     }
+  },
+  mounted() {
+    this.getProductClassFun()
   },
   created() {
     this.initData()
@@ -579,7 +709,7 @@ export default {
           demandDelivery = maxDate.toISOString().split('T')[0]
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData, demandDelivery)
+            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute)
           })
         }
       }
@@ -704,6 +834,29 @@ export default {
           })
         }
       }
+    },
+
+    getProductClassFun() {
+      let obj = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getclassAttributeList(obj).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.code
+          }
+          arr.push(obj)
+        })
+        let classAttributeObj = this.superQueryJson.find((item) => item.prop === 'classAttribute')
+
+        if (classAttributeObj) {
+          classAttributeObj.options = arr
+        }
+        this.classAttributeList = arr
+      })
     }
   }
 }

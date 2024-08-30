@@ -25,7 +25,7 @@
             <el-col :span="8">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
@@ -166,7 +166,8 @@ export default {
         // approvalStatus: 'ok',
         // documentStatus: 'submit',
         // orderState: 'not_finish',
-        orderType:'procure',
+        classAttribute: 'other',
+        orderType: 'procure',
         deliveryEndDate: '',
         deliveryStartTime: '',
         // extensionFlag: 1,

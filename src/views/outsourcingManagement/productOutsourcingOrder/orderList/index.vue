@@ -109,36 +109,40 @@
                         type="warning">审批撤回</el-tag></div>
                   </template>
                 </el-table-column> -->
-            <el-table-column label="操作" min-width="90" fixed="right">
+            <el-table-column label="操作" min-width="180" fixed="right">
               <template slot-scope="scope">
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                      @click.native="withdrawnAddHandle(scope.row.id, 'add')">
-                      重新提交
-                    </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
-                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
-                      审批撤回
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
-                      下载订货单
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                      打印订货单
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
+                  :delDisabled="scope.row.documentStatus !== 'draft'">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item
+                        v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                        @click.native="withdrawnAddHandle(scope.row.id, 'add')">
+                        重新提交
+                      </el-dropdown-item>
+                      <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                        @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                        审批撤回
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
+                        下载订货单
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
+                        打印订货单
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
+
               </template>
             </el-table-column>
           </JNPF-table>
@@ -314,8 +318,8 @@ export default {
       },
 
       total: 0,
-      computedValue:0,
-      computedValue2:0,
+      computedValue: 0,
+      computedValue2: 0,
       formVisible: false,
       createRequirementDate: [],
       deliveryDate: [],

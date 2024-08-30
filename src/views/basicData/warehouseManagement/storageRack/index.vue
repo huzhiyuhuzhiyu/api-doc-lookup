@@ -17,7 +17,7 @@
         </span>
       </div>
       <div v-if="!leftFlag">
-        <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+        <el-input placeholder="输入关键字" v-model="filterText" style="width:200px;margin:10px auto;display:block"
           suffix-icon="el-icon-search" clearable></el-input>
       </div>
 
@@ -45,12 +45,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.name" placeholder="请输入货架/货位名称" clearable />
+              <el-input v-model="tableQuery.name" placeholder="货位名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.code" placeholder="请输入编码" clearable />
+              <el-input v-model="tableQuery.code" placeholder="货位编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -65,27 +65,15 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <!-- <el-dropdown> -->
           <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
             新建货位
           </el-button>
-          <!-- <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addSupplier('add')">新建库区</el-dropdown-item>
-              <el-dropdown-item @click.native="addSupplier('addShelves')">新建货架</el-dropdown-item>
-              <el-dropdown-item @click.native="addSupplier('addLocation')">新建货位</el-dropdown-item>
-            </el-dropdown-menu> -->
-          <!-- </el-dropdown> -->
+
           <div class="JNPF-common-head-right">
-            <!-- <el-tooltip effect="dark" content="展开" placement="top">
-                            <el-link v-show="!expandsTable" type="text"
-                                icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon" :underline="false"
-                                @click="toggleExpandTable()" />
-                        </el-tooltip>
-                        <el-tooltip effect="dark" content="折叠" placement="top">
-                            <el-link v-show="expandsTable" type="text"
-                                icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon" :underline="false"
-                                @click="toggleExpandTable()" />
-                        </el-tooltip> -->
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -97,89 +85,24 @@
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
           :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }">
-          <el-table-column prop="name" label="货位名称" fixed="left" min-width="180">
-            <!-- <template slot-scope="scope">
-              <i
-                :class="[scope.row.childrenList.length >= 1 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']"></i>{{
-                  scope.row.name }}
-            </template> -->
-          </el-table-column>
-          <el-table-column prop="code" label="货位编码" width="180" sortable="custom">
-            <!-- <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
-                {{ scope.row.code }}
-              </el-link>
-            </template> -->
-          </el-table-column>
-          <!-- <el-table-column prop="unitVolume" label="体积" width="150" />
-          <el-table-column prop="usedVolume" label="已使用体积" width="150" />
-          <el-table-column prop="residualVolume" label="剩余体积" width="150" />
-          <el-table-column prop="warehouseName" label="仓库名称" width="160" /> -->
-          <!-- <el-table-column prop="category" label="货位类型" width="100">
-            <template slot-scope="{ row }">
-              <template v-if="row.category == 'area'">
-                库区
-              </template>
-              <template v-else-if="row.category == 'shelves'">
-                货架
-              </template>
-              <template v-else-if="row.category == 'location'">
-                货位
-              </template>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column prop="goodsFrameRow" label="货架行" width="80" />
-                    <el-table-column prop="goodsFrameCol" label="货架列" width="80" /> -->
-          <el-table-column prop="remark" label="备注" width="160" />
+          <el-table-column prop="name" label="货位名称" min-width="180"></el-table-column>
+          <el-table-column prop="code" label="货位编码" min-width="180" sortable="custom"></el-table-column>
+
+          <el-table-column prop="remark" label="备注" min-width="160" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
-                <!-- <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown> -->
               </tableOpts>
-
-              <!-- <el-button type="text"
-                                @click="addOrUpdateHandle(scope.row.id, scope.row.warehouseId, 'edit')">编辑</el-button>
-                            <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
-                                style=" color: #ff3a3a">删除</el-button>
-                            <el-dropdown>
-                                <span class="el-dropdown-link">
-                                    <el-button type="text" size="mini">
-                                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                                    </el-button>
-                                </span>
-                                <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item
-                                        @click.native="handleUserRelation(scope.row.id, scope.row.warehouseId, 'look')">
-                                        查看详情
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </el-dropdown> -->
             </template>
           </el-table-column>
         </JNPF-table>
-        <!-- <pagination
-          :total="total"
-          :page.sync="tableQuery.pageNum"
-          :background="background"
-          :limit.sync="tableQuery.pageSize"
-          @pagination="initData"
-        /> -->
       </div>
     </div>
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -189,11 +112,33 @@ import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'storageRack',
-  components: { DepForm },
+  components: { DepForm, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: '货位名称',
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: '货位编码',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        }
+      ],
       selectedNodeKey: '',
       depFormVisible: false,
       background: true, //分页器背景颜色
@@ -522,7 +467,7 @@ export default {
 }
 
 .JNPF-common-head {
-  padding: 8px!important
+  padding: 8px !important;
 }
 
 .pagination-container {

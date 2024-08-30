@@ -350,3 +350,11 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+
+export function getLabel(list, id, value, label) {
+  if (id != '' && Array.isArray(list) && list.length != 0){
+    return !list.find(item => item[value] == id) ? id : list.find(item => item[value] == id)[label]
+  } else {
+    return id
+  }
+}

@@ -6,25 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                  @keyup.enter.native="search()" />
+                <el-date-picker v-model="orderDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
+                  start-placeholder="退货开始日期" end-placeholder="退货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -222,6 +216,7 @@ export default {
         endUpdateTime: '',
         inspectionStatus: '',
         keyword: '',
+        classAttribute: 'other',
         notificationType: 'procure',
         notificationTypeList: [],
         orderItems: [
@@ -500,11 +495,11 @@ export default {
     },
     search() {
       if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.rdsDate = this.orderDateArr[0]
-        this.orderForm.rdeDate = this.orderDateArr[1]
+        this.orderForm.deliverDateStart = this.orderDateArr[0]
+        this.orderForm.deliverDateEnd = this.orderDateArr[1]
       } else {
-        this.orderForm.rdsDate = ''
-        this.orderForm.rdeDate = ''
+        this.orderForm.deliverDateStart = ''
+        this.orderForm.deliverDateEnd = ''
       }
       if (this.createTimeArr && this.createTimeArr.length > 0) {
         this.orderForm.startTime = this.createTimeArr[0].replace(/ 0(?!0)/g, ' ')

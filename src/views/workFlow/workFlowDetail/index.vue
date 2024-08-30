@@ -55,6 +55,7 @@ export default {
         taskId: item.taskOperatorId,
         hideCancelBtn: true,
         businessId: item.businessId,
+        businessFlow:item.businessFlow,
       }
       if (item.type == 2) {
         checkInfo(item.taskOperatorId).then(res => {

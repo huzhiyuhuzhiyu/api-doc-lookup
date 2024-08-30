@@ -57,8 +57,8 @@
               <el-table-column prop="fullName" label="流程名称" />
               <el-table-column prop="enCode" label="流程编码" />
             </JNPF-table>
-            <pagination :total="total" :page.sync="listQuery.currentPage"
-              :limit.sync="listQuery.pageSize" @pagination="initData" />
+            <!-- <pagination :total="total" :page.sync="listQuery.currentPage"
+              :limit.sync="listQuery.pageSize" @pagination="initData" /> -->
           </div>
         </div>
       </div>
@@ -151,8 +151,8 @@ export default {
         category: this.category == '' ? '' : this.category
       }
       FlowEnginePageList(query).then((res) => {
-        this.list = res.data.list
-        this.total = res.data.pagination.total
+        this.list = res.data
+        // this.total = res.data.pagination.total
         this.listLoading = false
       }).catch(() => { this.listLoading = false })
     },

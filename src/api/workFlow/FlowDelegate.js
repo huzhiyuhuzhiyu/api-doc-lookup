@@ -8,6 +8,14 @@ export function FlowDelegateList(data) {
     data
   })
 }
+// 获取流程委托列表 post
+export function getFlowDelegateList(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowDelegate/list`,
+    method: 'post',
+    data
+  })
+}
 // 获取流程委托信息
 export function FlowDelegateInfo(id) {
   return request({

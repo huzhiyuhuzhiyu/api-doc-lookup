@@ -310,7 +310,7 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'purchaseOrder',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, PrintBrowse },
+  components: { JNPFForm, withdrawnForm, ExportForm, SuperQuery, PrintBrowse },
   data() {
     return {
       printBrowseVisible: false,
@@ -557,6 +557,7 @@ export default {
         deliveryStartDate: '',
         endTime: '',
         orderNo: '',
+        classAttribute: 'finish_product',
         orderType: 'procure',
         orderItems: [
           {

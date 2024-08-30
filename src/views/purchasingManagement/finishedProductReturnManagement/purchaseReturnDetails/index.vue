@@ -165,6 +165,7 @@ export default {
     return {
       superQueryVisible: false,
       columnList: ['createByName'],
+      orderDateArr: [],
       linesTotal: 0,
       linesTableData: [],
       createTimeArrfahuo: [],

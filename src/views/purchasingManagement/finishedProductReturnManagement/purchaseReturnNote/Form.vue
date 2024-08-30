@@ -416,7 +416,7 @@ export default {
         endTime: '',
         orderNo: '',
         orderType: 'procure',
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         orderItems: [
           {
             asc: false,
@@ -612,7 +612,7 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         receiptReturnType: 'back',
         notificationType: 'procure',
         salesman: '',

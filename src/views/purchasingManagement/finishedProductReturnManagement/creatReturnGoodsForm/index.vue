@@ -3,14 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购退货通知单'
-          : btnType == 'edit'
-            ? '编辑采购退货通知单'
-            : btnType == 'copy'
-              ? '新建采购退货通知单'
-              : '查看采购退货通知单'
-          " />
+        <div class="pageTitle">新建成品采购退货通知单</div>
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿
@@ -18,7 +11,7 @@
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
             保存并提交
           </el-button>
-          <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
+          <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
         </div>
       </div>
       <div class="main" v-loading="formLoading">
@@ -62,6 +55,15 @@
                           :disabled="btnType == 'look'"></el-input>
                       </el-form-item>
                     </el-col>
+                    <!-- <el-col :sm="6" :xs="24">
+                      <el-form-item label="类别属性" prop="classAttribute">
+                        <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
+                            :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col> -->
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="操作人" prop="salesman">
                         <el-input v-model="dataForm.salesman" placeholder="请选择操作人"
@@ -147,7 +149,7 @@
                     <!-- </el-table-column> -->
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                     <el-table-column prop="mainUnit" label="单位" width="160" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量数量" width="160" sortable="custom" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column prop="receiptQuantity" label="入库数量" width="160" sortable="custom" />
                     <el-table-column prop="receivedQuantity" label="退货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
@@ -158,7 +160,7 @@
                       <template slot-scope="scope">
                         <el-form-item :prop="'productData.' + scope.$index + '.' + 'receivedQuantity'"
                           :rules="productRules.receivedQuantity">
-                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入收货数量"
+                          <el-input v-model="scope.row.receivedQuantity" placeholder="请输入退货数量"
                             :disabled="btnType == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)"
                             style="width: 145px;">
                             {{ scope.row.receivedQuantity }}
@@ -166,6 +168,7 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -182,6 +185,13 @@
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
                     <el-table-column prop="remark" label="备注" width="160" />
                     <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+
+                    <el-table-column prop="remark" label="备注" min-width="200">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                          :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
+                      </template>
+                    </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -200,13 +210,13 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
+      <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
         :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="80%"
         append-to-body @close="handleClose">
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-left">
             <div class="JNPF-common-title">
-              <h2>供应商分类</h2>
+              <h2>客户分类</h2>
               <span class="options">
                 <el-dropdown>
                   <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
@@ -346,21 +356,19 @@
           </el-button>
         </span>
       </el-dialog>
-      <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      <!-- <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
         :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
         width="500px">
-        <div>
-          <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
-          <span class="import_t">{{ submitmethodsTitle }}啦！</span>
-          <span class="import_b">您还可以进行如下操作：</span>
-        </div>
+        <div><img src="@/assets/images/importSuccess.gif" alt="" style="width:100px"><span class="import_t">
+            {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
+
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
-          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
-          <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
+          <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()"> {{ btnText }}</el-button>
+          <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
-      </el-dialog>
+      </el-dialog> -->
     </div>
   </transition>
 </template>
@@ -390,14 +398,16 @@ import {
   editpurPurchaseReceiptReturnGoods,
   getpurPurchaseReceiptReturnGoodsdetail
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import {
+  getclassAttributeList
+} from '@/api/masterDataManagement/index'
 import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters } from "vuex"
-
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
-      tipsvisible: false,
+      // tipsvisible: false,
       submitmethodsTitle: '',
       btnText: '',
       productList: [],
@@ -406,6 +416,7 @@ export default {
       productTotal: 0,
       codeConfig: {},
       datafilelist: [],
+      classAttributeList: [],
       provinces: [],
       orderForm: {
         cooperativePartnerCode: '',
@@ -416,7 +427,7 @@ export default {
         endTime: '',
         orderNo: '',
         orderType: 'procure',
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         orderItems: [
           {
             asc: false,
@@ -612,10 +623,11 @@ export default {
         exchangeGoodsFlag: false,
         inspectionStatus: '',
         // orderCategory: "assembly",
-        classAttribute: 'other',
-        receiptReturnType: 'back',
-        notificationType: 'procure',
         salesman: '',
+        receiptReturnType: 'back',
+        classAttribute: 'finish_product',
+        notificationType: 'procure',
+        // notifyType: 'sale',
         logisticsCompany: '',
         ordersId: '',
         deliverDate: '',
@@ -642,7 +654,6 @@ export default {
       },
       dataRule: {
         partnerName: [{ required: true, message: '所属客户不能为空', trigger: 'change' }],
-        salesman: [{ required: true, message: '操作员不能为空', trigger: 'input' }],
         exchangeGoodsFlag: [{ required: true, message: '换货标识不能为空', trigger: 'change' }],
         orderNo: [{ required: true, message: '订单编号不能为空', trigger: 'change' }],
         deliverDate: [{ required: true, message: '退货日期不能为空', trigger: 'change' }],
@@ -675,9 +686,11 @@ export default {
     // this.handleChange()
     // this.getProvinceList()
     this.getAttributeline()
+    this.getClassAttribute()
     this.getWarehouseList()
   },
   mounted() {
+    this.init()
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
@@ -726,21 +739,7 @@ export default {
         }
       }
     },
-    // 选完客户订单数据后 渲染在列表上
-    // submitAllProduct() {
-    //   this.allProVisible = false
-    //   console.log(" this.selectArr", this.selectArr);
-    //   this.selectArr.forEach(item => {
-    //     console.log('订单...', item);
-    //     this.dataFormTwo.productData = []
-    //     getOrderDetail(item.id).then(res => {
-    //       console.log('订单详情', res);
-    //       res.data.orderLines.map((item) => {
-    //         this.dataFormTwo.productData.push(item)
-    //       })
-    //     })
-    //   });
-    // },
+
     dateFormat(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -751,58 +750,7 @@ export default {
       const time = y + '-' + m + '-' + d
       return time
     },
-    // handleChange($event) {
-    //   this.dataForm.country = ''
 
-    //   this.countryList = []
-    //   let obj = {
-    //     "keyword": "",
-    //     "orderItems": [
-    //       {
-    //         "asc": true,
-    //         "column": ""
-    //       }
-    //     ],
-    //     "pageNum": 1,
-    //     "pageSize": -1
-    //   }
-    //   getCounryData(obj).then(res => {
-    //     this.countryList = res.data.records
-    //   })
-    // },
-    // 根据选择的省份获取相应的城市数据
-    changeProvince(item, row) {
-      this.dataForm.city = ''
-      this.dataForm.area = ''
-      getProvinceList(item.id).then((res) => {
-        // this.changeCity()
-        this.cities = res.data.list
-      })
-    },
-    // 根据选择的城市获取各区的数据
-    changeCity(item, row) {
-      if (row) {
-        row.area = ''
-      } else {
-        this.dataForm.area = ''
-      }
-      getProvinceList(item.id).then((res) => {
-        this.areas = res.data.list
-      })
-    },
-    // 获取省份数据
-    getProvinceList() {
-      getProvinceList(this.nodeId, this.listQuery)
-        .then((res) => {
-          this.provinces = res.data.list
-          this.init(id, parentId)
-        })
-        .catch(() => {
-          this.listLoading = false
-          this.btnLoading = false
-          this.refreshTable = true
-        })
-    },
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val
@@ -841,10 +789,6 @@ export default {
       } else {
         this.dataFormTwo.productData.splice(data.$index, 1)
       }
-    },
-    // 选完客户产品数据后 渲染在列表上
-    submitCustomerProduct() {
-      this.productVisible = false
     },
 
     // 重置客户产品搜索条件
@@ -893,7 +837,7 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-          console.log('产品', res)
+
           this.productList = res.data.records
           this.productTotal = res.data.total
           this.listLoading = false
@@ -951,7 +895,7 @@ export default {
         }
       })
       this.dataFormTwo.productData = uniqueArr
-      console.log('this.dataFormTwo', this.dataFormTwo.productData)
+
     },
     // },
     // 获取所有订单列表数据
@@ -1074,42 +1018,42 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.orderDateArr = []
-      this.ProductListRequestObj = {
-        // neOrderState: 'finish',
-        orderNo: '',
-        cooperativePartnerName: '',
-        orderType: '',
-        salesName: '',
-        workOrderNo: '',
-        sourceOrderNo: '',
-        orderStartDate: '',
-        orderEndDate: '',
-        contractNo: '',
-        deliveryStartDate: '',
-        deliveryEndDate: '',
-        distributeStatus: 'distributed',
-        // orderCategory: "assembly",
-        shipmentStatus: '',
-        orderState: '',
-        productionStatus: '',
-        documentStatus: '',
-        approvalStatus: '',
-        startTime: '',
-        endTime: '',
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ]
-      }
-      this.searchAllProduct()
+        ; (this.ProductListRequestObj = {
+          // neOrderState: 'finish',
+          orderNo: '',
+          cooperativePartnerName: '',
+          orderType: '',
+          salesName: '',
+          workOrderNo: '',
+          sourceOrderNo: '',
+          orderStartDate: '',
+          orderEndDate: '',
+          contractNo: '',
+          deliveryStartDate: '',
+          deliveryEndDate: '',
+          distributeStatus: 'distributed',
+          // orderCategory: "assembly",
+          shipmentStatus: '',
+          orderState: '',
+          productionStatus: '',
+          documentStatus: '',
+          approvalStatus: '',
+          startTime: '',
+          endTime: '',
+          pageNum: 1,
+          pageSize: 20,
+          orderItems: [
+            {
+              asc: false,
+              column: ''
+            },
+            {
+              asc: false,
+              column: 'create_time'
+            }
+          ]
+        }),
+          this.searchAllProduct()
     },
     handleSelectionChangeAllPruduct(val) {
       this.selectArr = val
@@ -1118,6 +1062,23 @@ export default {
     getAttributeline() {
       getAttributeline('product').then((res) => {
         this.attributeLines = res.data
+      })
+    },
+    // 获取类别属性字段 编排属性
+    getClassAttribute() {
+      let obj = {
+
+        pageNum: 1,
+        pageSize: -1
+      }
+      getclassAttributeList(obj).then((res) => {
+        this.classAttributeList = res.data.records.map(item => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+
+        })
       })
     },
 
@@ -1152,12 +1113,12 @@ export default {
                 type: 'success',
                 message: '切换成功'
               })
-
               // this.dataForm = {
               //   exchangeGoodsFlag: false,
               //   // orderCategory: "assembly",
               //   receiptReturnType: 'back',
               //   notificationType: 'procure',
+              //   // notifyType: 'sale',
               //   logisticsCompany: '',
               //   ordersId: '',
               //   deliverDate: '',
@@ -1189,6 +1150,7 @@ export default {
           //   // orderCategory: "assembly",
           //   receiptReturnType: 'back',
           //   notificationType: 'procure',
+          //   // notifyType: 'sale',
           //   logisticsCompany: '',
           //   ordersId: '',
           //   orderNo: this.codeConfig.number,
@@ -1324,119 +1286,16 @@ export default {
         console.log('dataForm', this.dataForm)
       } catch (error) { }
     },
-    init(id, btnType) {
-      console.log('id', id, btnType)
-      this.dataForm.id = id || ''
+    init() {
+      this.fetchData('CGTH')
 
-      this.btnType = btnType
-      if (this.dataForm.id) {
-        getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
-          this.dataForm = res.data.notice
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
-          if (this.btnType == 'copy') {
-            this.dataForm.inspectionStatus = ''
-            this.dataForm.id = ''
-            this.dataForm.deliverDate = ''
-            this.datafilelist = []
-            this.dataForm.approvalStatus = ''
-            this.dataForm.packingStatus = 'unboxed'
-            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
-            //   res1.data.orderLines.map((item) => {
-            //     res.data.noticeLineList.map((item1) => {
-            //       if (item.productsId == item1.productId) {
-            //         item1.outboundQuantity = item.outboundQuantity
-            //         item1.returnQuantity = item.returnQuantity
-            //         item1.receivedQuantity = ''
-
-            //       }
-            //     })
-            //   })
-
-            // })
-            res.data.noticeLineList.forEach((item) => {
-              item.receivedQuantity = ''
-            })
-            this.dataFormTwo.productData = res.data.noticeLineList
-          } else if (this.btnType == 'edit') {
-            this.dataFormTwo.productData = res.data.noticeLineList
-            this.dataFormTwo.productData.forEach((item) => {
-              item.drawingNo = item.productDrawingNo
-            })
-          } else {
-            this.dataFormTwo.productData = res.data.noticeLineList
-            this.dataFormTwo.productData.forEach((item) => {
-              item.drawingNo = item.productDrawingNo
-            })
-          }
-        })
-
-        console.log(this.dataFormTwo.productData, 'data')
-      }
-      if (btnType == 'add' || btnType == 'copy') {
-        console.log(55555)
-        this.dataForm.salesman = this.userInfo.userName
-        this.formLoading = true
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('CGTH')
-        }, 500)
-      }
-      if (this.btnType == 'edit') {
-        this.btnText = '继续修改'
-      } else if (this.btnType == 'add' || this.btnType == 'copy') {
-        this.btnText = '继续新增'
-      }
+      this.dataForm.salesman = this.userInfo.userName
+      this.dataForm.classAttribute = 'finish_product'
     },
     goBack() {
       this.$emit('close', true)
     },
-    // 继续修改
-    continueEdit() {
-      this.init(this.oldId, this.oldType)
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
-    // 继续新增
-    continueAdd() {
-      this.dataFormTwo.productData = []
-      this.dataForm = {
-        exchangeGoodsFlag: false,
-        inspectionStatus: '',
-        // orderCategory: "assembly",
-        receiptReturnType: 'back',
-        notificationType: 'procure',
-        logisticsCompany: '',
-        ordersId: '',
-        deliverDate: '',
-        partnerName: '',
-        orderNo: '',
-        logisticsNumber: '',
-        //   phone: '',
-        //   country: '',
-        //   province: '',
-        //   city: '',
-        //   area: '',
-        //   address: '',
-        //   delivery: '',
-        //   shipperId: '',
-        cooperativePartnerId: '',
-        remark: ''
-      }
-      this.$refs.dataForm.resetFields()
-      this.init('', 'add')
-      this.tipsvisible = false
-      this.btnLoading = false
-    },
+
     handleConfirm(value) {
       this.$refs['productForm'].validate((valid) => {
         if (!valid) {
@@ -1470,7 +1329,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-            console.log(item, 'item123')
             if (!item.receivedQuantity) {
               this.iszhi = true
               this.$message({
@@ -1506,6 +1364,7 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
+
             let dep = {
               calculationDirection: item.calculationDirection ? item.calculationDirection : '',
               purchaseQuantity: item.purchaseQuantity ? item.purchaseQuantity : '',
@@ -1524,7 +1383,7 @@ export default {
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             let dep1 = {
@@ -1546,7 +1405,7 @@ export default {
               ratio: item.ratio ? item.ratio : '',
               receivedQuantity: item.receivedQuantity ? item.receivedQuantity : '',
               remark: item.remark ? item.remark : '',
-              purchaseReceiptReturnGoodsId: this.dataForm.id ? this.dataForm.id : '',
+              returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
               receivingQuantity: item.receivingQuantity ? item.receivingQuantity : ''
             }
             if (this.btnType == 'add' || this.btnType == 'copy') {
@@ -1557,41 +1416,50 @@ export default {
           })
           this.btnLoading = true
           let formMethod = null
-          console.log(obj, 'obj')
-          if (this.btnType == 'edit') {
-            formMethod = editpurPurchaseReceiptReturnGoods
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            // obj.notice.deliveryStatus = 'not_returned'
-            formMethod = addpurPurchaseReceiptReturnGoods
-          }
-          formMethod(obj).then(res => {
-            // let msg = "";
-            // if (formMethod == addQuotationsendlist) {
-            //   msg = "新建成功"
-            // } else if (value == 'draft') {
-            //   msg = "保存成功"
-            // } else if (value == 'submit') {
-            //   msg = '提交成功'
-            // }
-            if (value == 'draft') {
-              this.submitmethodsTitle = "保存成功"
-            } else if (value == 'submit') {
-              this.submitmethodsTitle = "提交成功"
-            }
-            this.tipsvisible = true
-            // this.$message({
-            //   message: msg,
-            //   type: 'success',
-            //   duration: 1500,
-            //   onClose: () => {
-            //     this.visible = false
-            //     this.btnLoading = false
-            //     this.$emit('close', true)
-            //   }
-            // })
-          }).catch(() => {
-            this.btnLoading = false
-          })
+
+          // obj.returnGoods.deliveryStatus = 'not_returned'
+
+          addpurPurchaseReceiptReturnGoods(obj)
+            .then((res) => {
+              let msg = ''
+              if (value == 'draft') {
+                msg = '保存成功'
+              } else if (value == 'submit') {
+                msg = '提交成功'
+              }
+
+              this.$message({
+                message: msg,
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  // this.visible = false
+                  this.btnLoading = false
+                  this.dataFormTwo.productData = []
+                  this.dataForm = {
+                    exchangeGoodsFlag: false,
+                    inspectionStatus: '',
+                    receiptReturnType: 'back',
+                    notificationType: 'procure',
+                    notifyType: 'sale',
+                    logisticsCompany: '',
+                    ordersId: '',
+                    deliverDate: '',
+                    partnerName: '',
+                    orderNo: '',
+                    logisticsNumber: '',
+
+                    cooperativePartnerId: '',
+                    remark: ''
+                  }
+                  this.$refs.dataForm.resetFields()
+                  this.init()
+                }
+              })
+            })
+            .catch(() => {
+              this.btnLoading = false
+            })
         }
       })
     }
@@ -1765,5 +1633,19 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+
+.options {
+  display: inline-block;
+  float: right;
+}
+
+.pageTitle {
+  display: inline-block;
+  font-size: 18px;
+  color: #303133;
+  height: 100%;
+  line-height: 36px;
+  font-weight: 700;
 }
 </style>

@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入外协单号" clearable
+                <el-input v-model.trim="listQuery.orderNo" placeholder="外协单号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -64,12 +64,18 @@
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="外协单号" min-width="180" sortable="custom">
-
+              <template slot-scope="scope">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                  {{ scope.row.orderNo }}
+                </el-link>
+              </template>
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
 
-
+            <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
+                <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
+                  sortable="custom" /> -->
             <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
             <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
@@ -86,7 +92,59 @@
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
+            <!-- <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120"
+                  fixed="right">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
+                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
+                  </template>
+                </el-table-column> -->
+            <!-- <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
+                  fixed="right">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
+                    <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
+                    <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
+                    <div v-if="scope.row.approvalStatus == 'withdrawn' && scope.row.documentStatus == 'submit'"><el-tag
+                        type="warning">审批撤回</el-tag></div>
+                  </template>
+                </el-table-column> -->
+            <el-table-column label="操作" min-width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
+                  :delDisabled="scope.row.documentStatus !== 'draft'">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item
+                        v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                        @click.native="withdrawnAddHandle(scope.row.id, 'add')">
+                        重新提交
+                      </el-dropdown-item>
+                      <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                        @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                        审批撤回
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                        查看详情
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
+                        下载订货单
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
+                        打印订货单
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown>
+                </tableOpts>
 
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
@@ -110,9 +168,8 @@
 </template>
 
 <script>
-// import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import {
-  purchaseOrderList,
+  inventoryList,
   detailpurchaseOrderList,
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
@@ -246,17 +303,18 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
-        orderType: 'external', //	订单类型 采购 procure、外协 external
+        // orderType: 'external', //	订单类型 采购 procure、外协 external
+        ringBlankQueryFlag: 1,
         pageNum: 1,
         pageSize: 20,
         startTime: '',
         orderItems: [
           {
             asc: false,
-            column: 'create_time'
+            column: 'createTime'
           }
         ],
-        receivingStatus: 'receiving'
+        // receivingStatus: 'receiving'
       },
 
       total: 0,
@@ -510,7 +568,7 @@ export default {
         this.listQuery.deliveryStartDate = ''
         this.listQuery.deliveryEndDate = ''
       }
-      purchaseOrderList(this.listQuery)
+      inventoryList(this.listQuery)
         .then((res) => {
           console.log(res, '外协订单列表')
           this.tableDataList = res.data.records

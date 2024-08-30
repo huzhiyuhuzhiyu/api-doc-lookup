@@ -261,7 +261,7 @@ export default {
     recordsValidactive() {
       if (!this.recordsValid && this.recordsValid !== 0) return this.$message.error('请选择跟进类型')
       let a = {
-        idList: this.selectData,
+        idList: this.selectData.map(item => item.id),
         recordsValid: this.recordsValid
       }
       updaterecordsValid(a).then(res => {
@@ -362,6 +362,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.initData()

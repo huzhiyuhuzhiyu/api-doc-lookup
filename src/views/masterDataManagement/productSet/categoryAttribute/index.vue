@@ -345,186 +345,189 @@ export default {
     },
     onHandle(row, btn) {
       this.warehouseFormVisible = true
-      if (row.warehouseCode) {
-        console.log(row, 'ooooo')
-        let obj = {
-          classAttribute: row,
-          directory: {
-            category: 'Web',
-            description: '',
-            enCode: row.warehouseCode,
-            enabledMark: 1,
-            fullName: row.warehouseName,
-            id: '',
-            isButtonAuthorize: 0,
-            isColumnAuthorize: 0,
-            isDataAuthorize: 0,
-            isFormAuthorize: 0,
-            linkTarget: '_self',
-            parentId: '568721982921638149',
-            propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-            systemId: '309228585019769285',
-            type: 1,
-            urlAddress: ''
-          },
-          menuList: [
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'dbIncomAndOutInventory',
-              enabledMark: 1,
-              fullName: `待办出入库`,
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 10,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' +
-                row.code +
-                '}/dbIncomAndOutInventory' +
-                '?' +
-                row.code
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'directInandOutWarehouse',
-              enabledMark: 1,
-              fullName: `直接出入库`,
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 20,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' +
-                row.code +
-                '}/directInandOutWarehouse' +
-                '?' +
-                row.code
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'inventoryList',
-              enabledMark: 1,
-              fullName: '出入库列表',
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 30,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' + row.code + '}/inventoryList' + '?' + row.code
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'inventoryDetaisList',
-              enabledMark: 1,
-              fullName: '出入库明细',
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 40,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' +
-                row.code +
-                '}/inventoryDetaisList' +
-                '?' +
-                row.code
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'transferManagement',
-              enabledMark: 1,
-              fullName: '调拨管理',
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 50,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' +
-                row.code +
-                '}/transferManagement' +
-                '?' +
-                row.code
-            },
-            {
-              category: 'Web',
-              description: '',
-              enCode: 'inventory',
-              enabledMark: 1,
-              fullName: '库存查询',
-              icon: 'icon-ym icon-ym-webForm',
-              id: '',
-              isButtonAuthorize: 1,
-              isColumnAuthorize: 1,
-              isDataAuthorize: 1,
-              isFormAuthorize: 1,
-              linkTarget: '_self',
-              parentId: '',
-              propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-              sortCode: 60,
-              systemId: '309228585019769285',
-              type: 2,
-              urlAddress:
-                'warehouseManagement/${' + row.code + '}/inventory' + '?' + row.code
-            }
-          ]
-        }
-        enableClassAttributeState(obj).then(res => {
-          this.$message({
-            type: 'success',
-            message: '开启成功',
-            duration: 1500
-          })
-          location.reload()
-        })
-      } else {
-        this.$nextTick(() => {
-          this.$refs.warehouseForm.init(row, btn)
-        })
-      }
+      this.$nextTick(() => {
+        this.$refs.warehouseForm.init(row, btn)
+      })
+      // if (row.warehouseCode) {
+      //   console.log(row, 'ooooo')
+      //   let obj = {
+      //     classAttribute: row,
+      //     directory: {
+      //       category: 'Web',
+      //       description: '',
+      //       enCode: row.warehouseCode,
+      //       enabledMark: 1,
+      //       fullName: row.warehouseName,
+      //       id: '',
+      //       isButtonAuthorize: 0,
+      //       isColumnAuthorize: 0,
+      //       isDataAuthorize: 0,
+      //       isFormAuthorize: 0,
+      //       linkTarget: '_self',
+      //       parentId: '568721982921638149',
+      //       propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //       systemId: '309228585019769285',
+      //       type: 1,
+      //       urlAddress: ''
+      //     },
+      //     menuList: [
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'dbIncomAndOutInventory',
+      //         enabledMark: 1,
+      //         fullName: `待办出入库`,
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 10,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' +
+      //           row.code +
+      //           '}/dbIncomAndOutInventory' +
+      //           '?' +
+      //           row.code
+      //       },
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'directInandOutWarehouse',
+      //         enabledMark: 1,
+      //         fullName: `直接出入库`,
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 20,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' +
+      //           row.code +
+      //           '}/directInandOutWarehouse' +
+      //           '?' +
+      //           row.code
+      //       },
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'inventoryList',
+      //         enabledMark: 1,
+      //         fullName: '出入库列表',
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 30,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' + row.code + '}/inventoryList' + '?' + row.code
+      //       },
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'inventoryDetaisList',
+      //         enabledMark: 1,
+      //         fullName: '出入库明细',
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 40,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' +
+      //           row.code +
+      //           '}/inventoryDetaisList' +
+      //           '?' +
+      //           row.code
+      //       },
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'transferManagement',
+      //         enabledMark: 1,
+      //         fullName: '调拨管理',
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 50,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' +
+      //           row.code +
+      //           '}/transferManagement' +
+      //           '?' +
+      //           row.code
+      //       },
+      //       {
+      //         category: 'Web',
+      //         description: '',
+      //         enCode: 'inventory',
+      //         enabledMark: 1,
+      //         fullName: '库存查询',
+      //         icon: 'icon-ym icon-ym-webForm',
+      //         id: '',
+      //         isButtonAuthorize: 1,
+      //         isColumnAuthorize: 1,
+      //         isDataAuthorize: 1,
+      //         isFormAuthorize: 1,
+      //         linkTarget: '_self',
+      //         parentId: '',
+      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+      //         sortCode: 60,
+      //         systemId: '309228585019769285',
+      //         type: 2,
+      //         urlAddress:
+      //           'warehouseManagement/${' + row.code + '}/inventory' + '?' + row.code
+      //       }
+      //     ]
+      //   }
+      //   enableClassAttributeState(obj).then(res => {
+      //     this.$message({
+      //       type: 'success',
+      //       message: '开启成功',
+      //       duration: 1500
+      //     })
+      //     location.reload()
+      //   })
+      // } else {
+      //   this.$nextTick(() => {
+      //     this.$refs.warehouseForm.init(row, btn)
+      //   })
+      // }
 
     },
     offHandle(id, btn) {

@@ -178,7 +178,8 @@ export default {
       flowTemplateJson: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      qualifiedQuantityDisabled: false,
     }
   },
   beforeCreate() {
@@ -233,6 +234,19 @@ export default {
     },
     // 刷新主表结构
     refeshDataFormItems() {
+      function generateTreatmentResultsList(inspectionType) { // 动态生成处理结果
+        // 采购收货、外协收货、外协退料、生产退料 不良处理结果：合格、不合格、让步接收、挑选
+        // 销售退货、生产巡检、生产完工检验 不良处理结果：合格、报废、返工返修、报废和返修
+        return [
+          { label: '合格', value: 'qualified', disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(inspectionType) },
+          { label: '不合格', value: 'unqualified', disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType) },
+          { label: '让步接收', value: 'concessive_acceptance', disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType) },
+          { label: '报废', value: 'discard', disabled: !['sale_back', 'process', 'finished'].includes(inspectionType) },
+          { label: '挑选', value: 'select', disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType) },
+          { label: '返工返修', value: 'repair', disabled: !['sale_back', 'process', 'finished'].includes(inspectionType) },
+          { label: '报废和返修', value: 'discard_repair', disabled: !['sale_back', 'process', 'finished'].includes(inspectionType) },
+        ].filter(o => !o.disabled)
+      }
       this.dataFormItems = [
         {
           prop: 'orderNo',
@@ -345,16 +359,47 @@ export default {
           itemDisabled: true,
         },
         {
+          prop: 'inspectionUnqualifiedQuantity',
+          label: '检验不合格数量',
+          value: '',
+          type: 'input',
+          sm: 12,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        },
+        {
+          prop: 'treatmentResults',
+          label: '处理结果',
+          value: undefined,
+          type: 'select',
+          options: generateTreatmentResultsList(this.inspectionType),
+          change: this.treatmentResultsChange,
+          render: this.userInfo.deptType === 'JSB',
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 12,
+        },
+        { prop: "description", label: "处理说明", value: "", type: "textarea" },
+
+        {
           prop: 'unqualifiedQuantity',
           label: '不合格数量',
           value: '',
           type: 'input',
           sm: 12,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
+          render: this.userInfo.deptType === 'JSB',
+          itemDisabled: this.unqualifiedQuantityDisabled
+        },
+        {
+          prop: 'qualifiedQuantity',
+          label: '合格数量',
+          value: '',
+          type: 'input',
+          sm: 12,
+          render: this.userInfo.deptType === 'JSB',
+          itemDisabled: this.qualifiedQuantityDisabled
         },
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
-        { prop: "description", label: "处理说明", value: "", type: "textarea", itemDisabled: true, }
+
       ]
     },
     // 刷新子表结构
@@ -486,6 +531,8 @@ export default {
 
       this.dataForm = row
       this.dataForm.inspectionOrderNo = row.orderNo
+      this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
+      this.dataForm.unqualifiedQuantity = 0
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -588,8 +635,8 @@ export default {
 
         // 编辑或查看，获取保存的审批单详情
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
-            // 流程信息和流转记录
-            this.getFlowDetail(this.dataForm.id)
+          // 流程信息和流转记录
+          this.getFlowDetail(this.dataForm.id)
         }
       } else {
         this.fetchData('UQDH', true)
@@ -599,6 +646,69 @@ export default {
         this.getBusInfo()
         this.formLoading = false
       }
+    },
+    // 处理结果更改
+    treatmentResultsChange(val, scope) {
+      // qualifiedQuantityDisabled   合格数量是否禁用
+      // unqualifiedQuantityDisabled 不合格数量是否禁用
+      // scrapQuantityDisabled       报废数量是否禁用
+      // repairQuantityDisabled      返工返修数量是否禁用
+      if (val === 'qualified' || val === 'concessive_acceptance') { // 合格、让步接收
+        this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = 0
+        this.dataForm.scrapQuantity = 0
+        this.dataForm.repairQuantity = 0
+        this.qualifiedQuantityDisabled = true
+        this.unqualifiedQuantityDisabled = true
+        this.dataForm.scrapQuantityDisabled = true
+        this.dataForm.repairQuantityDisabled = true
+      } else if (val === 'unqualified') { // 不合格
+        this.dataForm.qualifiedQuantity = 0
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.scrapQuantity = 0
+        this.dataForm.repairQuantity = 0
+        this.qualifiedQuantityDisabled = true
+        this.unqualifiedQuantityDisabled = true
+        this.dataForm.scrapQuantityDisabled = true
+        this.dataForm.repairQuantityDisabled = true
+      } else if (val === 'select') { // 挑选
+        this.dataForm.qualifiedQuantity = ''
+        this.dataForm.unqualifiedQuantity = ''
+        this.dataForm.scrapQuantity = 0
+        this.dataForm.repairQuantity = 0
+        this.qualifiedQuantityDisabled = false
+        this.unqualifiedQuantityDisabled = false
+        this.dataForm.scrapQuantityDisabled = true
+        this.dataForm.repairQuantityDisabled = true
+      } else if (val === 'discard') { // 报废
+        this.dataForm.qualifiedQuantity = 0
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.scrapQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.repairQuantity = 0
+        this.qualifiedQuantityDisabled = true
+        this.unqualifiedQuantityDisabled = true
+        this.dataForm.scrapQuantityDisabled = true
+        this.dataForm.repairQuantityDisabled = true
+      } else if (val === 'repair') { // 返工返修
+        this.dataForm.qualifiedQuantity = 0
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.scrapQuantity = 0
+        this.dataForm.repairQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.qualifiedQuantityDisabled = true
+        this.unqualifiedQuantityDisabled = true
+        this.dataForm.scrapQuantityDisabled = true
+        this.dataForm.repairQuantityDisabled = true
+      } else if (val === 'discard_repair') { // 报废和返修
+        this.dataForm.qualifiedQuantity = 0
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+
+        this.qualifiedQuantityDisabled = true
+        this.unqualifiedQuantityDisabled = true
+        this.dataForm.scrapQuantityDisabled = false
+        this.dataForm.repairQuantityDisabled = false
+      }
+      console.log(val);
+      this.refeshDataFormItems()
     },
     // 提交
     async handleConfirm(submitModel) {
@@ -677,7 +787,7 @@ export default {
         let dataObj = {
           attachmentList: this.datafilelist,
           unqualified: this.dataForm,
-          flowData:this.flowData
+          flowData: this.flowData
         }
 
 
@@ -778,7 +888,7 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      let code =  this.inspectionType === 'procure' ? 'b003' : this.inspectionType === 'sale_back' ? 'b006' : 'b004'
+      let code = this.inspectionType === 'procure' ? 'b003' : this.inspectionType === 'sale_back' ? 'b006' : 'b004'
       getBusinessFlowInfo(code).then(res => {
         console.log(res, '流程信息')
         if (res.data) {
@@ -836,15 +946,15 @@ export default {
       // let tempUnqualifiedQuantity = this.$parent.title.includes('检') ? (this.scope.row ? this.scope.row.unqualifiedQuantity : 0) :
       //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
       // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
-      return this.dataForm.unqualifiedQuantity
+      return this.dataForm.inspectionUnqualifiedQuantity
     },
     nowNum() {
       let tempNum = 0
       this.inspectionList.forEach((item) => {
-        tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
+        tempNum += item.inspectionUnqualifiedQuantity ? Number(item.inspectionUnqualifiedQuantity) : 0
       })
 
-      let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
+      let tempUnqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : 0
 
       let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
 
@@ -853,9 +963,9 @@ export default {
     nowNumTwo() {
       let tempNum = 0
       this.linesListTwo.forEach((item) => {
-        tempNum += item.unqualifiedQuantity ? Number(item.unqualifiedQuantity) : 0
+        tempNum += item.inspectionUnqualifiedQuantity ? Number(item.inspectionUnqualifiedQuantity) : 0
       })
-      let tempUnqualifiedQuantity = this.dataForm.unqualifiedQuantity ? this.dataForm.unqualifiedQuantity : 0
+      let tempUnqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : 0
       let newNumber = this.scope ? this.jnpf.math('subtract', [tempUnqualifiedQuantity, tempNum]) : 0
       return this.jnpf.numberFormat(newNumber, 4)
     },

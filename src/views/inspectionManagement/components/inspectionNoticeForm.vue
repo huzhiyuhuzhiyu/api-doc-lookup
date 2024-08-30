@@ -587,6 +587,7 @@ export default {
 
       this.fetchData(businessCode, true)
       this.dataForm = row
+      console.log(this.dataForm, 'form')
 
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
@@ -623,8 +624,10 @@ export default {
         .catch((err) => {
           this.loading = false
         })
+      console.log(this.scope.productsId, 'this.scope.productsId')
       await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType })
         .then((res) => {
+          console.log(res, 'oooooo000----')
           this.inspectionList = res.data
           this.addOrDelInspectionItem(res.data)
 

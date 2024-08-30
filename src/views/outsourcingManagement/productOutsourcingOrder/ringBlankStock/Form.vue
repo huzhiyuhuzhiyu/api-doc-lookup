@@ -53,6 +53,19 @@
 
                 <el-collapse-item title="产品信息" name="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
+                    <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProductDialog()">
+                        选择产品
+                      </el-button>
+                      |
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        批量删除
+                      </el-button>
+                      |
+                    </div>
                     <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="dataFormTwo.data"
                       :data="dataFormTwo.data" id="table">
                       <!-- <el-table-column type="selection" width="60" fixed="left" align="center" /> -->
@@ -276,9 +289,11 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-
           </el-tabs>
         </div>
+        <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品"
+          treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
+          :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
       </div>
     </transition>
     <!-- <Products-dialog v-if="productVisibled" ref="productRef" @productsSubmit="productsSubmit"></Products-dialog> -->
@@ -292,6 +307,8 @@ import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule } from '@/ap
 import { excelExport } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
+import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -316,6 +333,42 @@ export default {
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['productInfo', 'basicInfo', 'materialInfo'],
+      getProductList, // 产品选择弹出框树状列表请求api
+      ProductMethodArr: [
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        // { label: "其他分类", classAttribute: "other", method: getcategoryTree, requestObj: { classAttribute: "other" } }
+      ], // 产品选择弹出框树状列表
+      ProductListRequestObj: {
+        classAttribute: '',
+        classAttributeList: ['raw_material', 'semi_finished', 'finish_product', 'accessories'],
+        productCategoryId: '',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productStatus: 'enable',
+        productSource: 'out',
+        pageNum: 1,
+        pageSize: 20
+        // queryType: 3
+      }, // 产品选择弹出框列表请求参数
+      ProductTableItems: [
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
+        // { prop: 'name', label: '产品名称', sortable: 'custom' },
+        { prop: 'code', label: '产品编码', sortable: 'custom' },
+        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+      ], // 产品选择弹出框表单展示字段
+      ProductTableSearchList: [
+        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        // { prop: 'name', label: '产品名称', type: 'input' },
+        { prop: 'code', label: '产品编码', type: 'input' }
+      ], // 产品选择弹出框搜索条件
       dialogTitle: '',
       productVisibled: false,
       loading: false,
@@ -438,6 +491,75 @@ export default {
     // 打开选择供应商弹窗
     openDialog() {
       this.$refs['SupplierRef'].openDialog()
+    },
+    // 产品弹窗
+    openSeleceProductDialog() {
+      this.$refs['ComSelect-page'].openDialog()
+      // this.productVisibled = true
+      // this.$nextTick(() => {
+      //   this.$refs.productRef.initData2()
+      // })
+    },
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        this.dataForm.orderNo = data.number
+        this.$set(this.dataForm, 'orderNo', data.number)
+        console.log('dataForm', this.dataForm)
+      } catch (error) { }
+    },
+    // 产品组件回调
+    addth(id, data) {
+      console.log(data)
+      if (data.length) {
+        let selectArr = []
+        let list = data.map((item) => item.all)
+        list.forEach((item, index) => {
+          selectArr.push({
+            productSource: item.productSource, // 产品来源 采购
+            classAttribute: item.classAttribute,
+            productsId: item.id, // 产品id
+            productName: item.name, // 产品名称
+            productCode: item.code, // 产品编码
+            productDrawingNo: item.drawingNo, // 品名规格
+            ratio: item.ratio, // 转换系数
+            calculationDirection: item.calculationDirection, // 计算方向
+            mainUnit: item.mainUnit, // 主单位
+            purchaseQuantity: item.purchaseQuantity, // 数量
+            price: item.price, // 含税单价
+            totalAmount: item.totalAmount, // 金额(含税)
+            taxRate: item.taxRate, // 税率
+            excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
+            taxAmount: item.taxAmount, // 税额
+            excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)
+            deputyUnit: item.deputyUnit, // 副单位
+            planQuantity: '', //计划数量主
+            planQuantity2: '', //计划数量副
+            remark: item.remark,
+            deliveryDate: '' // 交期
+          })
+        })
+        if (this.dataFormTwo.data.length) {
+          const deletedArray = []
+          selectArr = selectArr.filter((item1) => {
+            const index = this.dataFormTwo.data.findIndex((item2) => item2.productsId === item1.productsId)
+            if (index !== -1) {
+              deletedArray.push(item1.productName)
+              if (deletedArray.length) {
+                this.$message.error(`已经添加过的产品：${deletedArray.join('、')}`)
+              }
+              return false
+            }
+            return true
+          })
+          console.log(data, '删除后的数据')
+          console.log(deletedArray, '被删掉的数据')
+        }
+        this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
+        // 审批
+        // this.$nextTick(() => { this.getApproverData() })
+      }
     },
     supplierdata(data) {
       if (data.length === 0) {
@@ -745,8 +867,6 @@ export default {
     initData() {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
-
-
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

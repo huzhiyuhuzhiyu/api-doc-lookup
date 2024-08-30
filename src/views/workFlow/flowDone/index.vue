@@ -7,10 +7,14 @@
       </el-tabs>
       <div class="JNPF-common-layout-center" v-show="activeName">
         <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding-left: 10px;">
-          <span class="tag-group__title text">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
-          <el-tag @click="changeCategory(item,index)" v-for="(item,index) in categoryList" :key="item.id" :type="index === categoryIndex ? '' : 'info'" effect="plain" style="height:26px;line-height:25px;margin-left:10px;cursor: pointer;">
-            {{ item.fullName }}
-          </el-tag>
+          <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：'}}</span>
+          <div style="display:flex;flex-wrap: wrap;">
+            <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
+              :type="index === categoryIndex ? '' : 'info'" effect="plain"
+              style="height:26px;line-height:25px;margin:5px 0 5px 10px;cursor: pointer;">
+              {{ item.fullName }}
+            </el-tag>
+          </div>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
@@ -298,6 +302,7 @@ export default {
     },
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
       this.initData()
     }
   }

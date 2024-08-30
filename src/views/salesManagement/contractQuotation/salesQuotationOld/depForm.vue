@@ -1444,10 +1444,11 @@ export default {
               )
             })
           }
+          this.fetchData("XSBJ", true)
           // 审批
-          // this.$nextTick(() => {
-          //   this.getApproverData()
-          // })//暂时注释
+          this.$nextTick(() => {
+            this.getBusInfo()
+          })//暂时注释
           this.formLoading = false
           // })
         }).catch(err => {

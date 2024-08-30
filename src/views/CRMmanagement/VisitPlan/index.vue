@@ -265,7 +265,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        returnVisitNo: '',
+        visitName: '',
         pageNum: 1,
         pageSize: 20,
         orderItems: [{

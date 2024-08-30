@@ -688,6 +688,7 @@ export default {
     .card-title-center {
       -webkit-box-flex: 1;
       flex: 1;
+      line-height: 1.15;
       font-size: 16px;
       font-weight: 700;
     }

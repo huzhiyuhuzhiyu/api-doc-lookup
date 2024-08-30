@@ -417,3 +417,26 @@ export function checkCategoryCode(data) {
     method: 'GET'
   })
 }
+// crm客户服务记录-编辑
+export function updateServiceRecords(data) {
+  return request({
+    url: `/api/erp/bimCustomerServiceRecords/modify`,
+    method: 'PUT',
+    data
+  })
+}
+// crm客户服务记录 新增
+export function addServiceRecords(data) {
+  return request({
+    url: `/api/erp/bimCustomerServiceRecords/add`,
+    method: 'POST',
+    data
+  })
+}
+// crm客户服务记录 详情
+export function detailServiceRecords(id) {
+  return request({
+    url: `/api/erp/bimCustomerServiceRecords/detail/${id}`,
+    method: 'GET'
+  })
+}

@@ -120,7 +120,7 @@ export default {
         prodOrderStatus: 'normal',
         workReportFlag: true,
         processingType: "self_produced",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         processId: "",
         "orderItems": [
           {
@@ -166,20 +166,13 @@ export default {
       if (flag) this.getWorkListFun()
     },
     // 点击报工
-    reportFun(row) {
-      if (row.vibrateReportFlag) {
+    reportFun(row) { 
         this.vibrateFormVisible = true
         this.$nextTick(() => {
           this.$refs.VibrateForm.init(row)
 
         })
-      } else {
-        this.normalFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.normalForm.init(row)
-
-        })
-      }
+       
     },
     reportRecordsFun(row) {
       this.recordFormVisible=true

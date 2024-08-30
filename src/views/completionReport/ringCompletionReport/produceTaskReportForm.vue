@@ -278,9 +278,9 @@ export default {
     closeForm(flag){
       if(flag)  this.getRoutingDetailFun(this.dataForm.routingId)
     },
-    init(id) {
-      this.id = id
-      detailordershengchan(id).then(res => {
+    init(data) {
+      this.id = data.id
+      detailordershengchan(data.id).then(res => {
         this.dataForm = res.data.prodOrder
         this.getRoutingDetailFun(this.dataForm.routingId)
       })

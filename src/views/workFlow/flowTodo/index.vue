@@ -8,13 +8,15 @@
       <div class="JNPF-common-layout-center" v-show="activeName">
         <div class="tag-group JNPF-common-search-box treeBox_bot"
           style="display:flex;align-items:center;padding-left: 10px;">
-          <span class="tag-group__title text">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
-          <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id">
-            <el-tag @click="changeCategory(item, index)" :type="index === categoryIndex ? '' : 'info'" effect="plain"
-              style="height:26px;line-height:25px;margin-left:15px;cursor: pointer;">
-              {{ item.fullName }}
-            </el-tag>
-          </el-badge>
+          <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
+          <div style="display:flex;flex-wrap: wrap;">
+            <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id">
+              <el-tag @click="changeCategory(item, index)" :type="index === categoryIndex ? '' : 'info'" effect="plain"
+                style="height:26px;line-height:25px;margin-left:15px;cursor: pointer;">
+                {{ item.fullName }}
+              </el-tag>
+            </el-badge>
+          </div>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
@@ -347,6 +349,7 @@ export default {
     },
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
       this.initData()
     }
   }
@@ -357,4 +360,8 @@ export default {
 ::v-deep .el-badge__content.is-fixed {
   top: 3px !important;
 }
+::v-deep .el-badge__content {
+  line-height: 16px !important;
+}
+
 </style>

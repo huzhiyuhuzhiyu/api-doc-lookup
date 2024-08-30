@@ -482,6 +482,8 @@ export default {
           approvalFlag:false, //
         }
         res.data.reconciliationLines.forEach(item => {
+          item.returnDeliveryType=item.businessType=='inbound_sale_return'?'back':'delivery'
+          item.receiptReturnType=item.businessType
           if (item.noticeBillVO) {
             dataFormTwo.push(item.noticeBillVO)
           } else {

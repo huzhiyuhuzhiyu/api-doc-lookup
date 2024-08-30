@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-          <el-page-header @back="goBack" content="查看任务" />
+          <el-page-header @back="goBack" :content="title" />
           <div class="options">
 
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -12,9 +12,9 @@
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-            <el-tab-pane label="任务信息" name="orderInfo">
+            <el-tab-pane label="任务信息" name="orderInfo" v-if="btnType == 'all' ">
               <el-collapse v-model="activeNames1">
-                <el-collapse-item title="任务信息" name="basicInfo"  >
+                <el-collapse-item title="任务信息" name="basicInfo">
 
                   <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -25,7 +25,8 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="任务类型" prop="orderType">
-                          <el-select v-model="dataForm.orderType" placeholder="任务类型" clearable style="width: 100%;" disabled>
+                          <el-select v-model="dataForm.orderType" placeholder="任务类型" clearable style="width: 100%;"
+                            disabled>
                             <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -67,60 +68,60 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
-                          <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled ></el-input>
+                          <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="工艺路线编码" prop="routingCode">
-                          <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称"  disabled></el-input>
+                          <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
-                          <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容"  disabled></el-input>
+                          <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
-                          <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级"  disabled></el-input>
+                          <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
                         </el-form-item>
                       </el-col>
 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
-                          <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级"  disabled></el-input>
-                         
+                          <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="油脂" prop="oil">
-                          <el-input v-model="dataForm.oil" placeholder="油脂"  disabled></el-input>
-                          
+                          <el-input v-model="dataForm.oil" placeholder="油脂" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
-                          <el-input v-model="dataForm.oilQuantity" placeholder="油脂量"  disabled></el-input>
-                         
+                          <el-input v-model="dataForm.oilQuantity" placeholder="油脂量" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
-                          <el-input v-model="dataForm.clearance" placeholder="游隙"  disabled></el-input>
-                          
+                          <el-input v-model="dataForm.clearance" placeholder="游隙" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
-                          <el-input v-model="dataForm.packagingMethod" placeholder="包装方式"  disabled></el-input>
-                          
+                          <el-input v-model="dataForm.packagingMethod" placeholder="包装方式" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
-                          <el-input v-model="dataForm.specialRequire" placeholder="特殊要求"  disabled></el-input>
-                          
+                          <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
+
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
@@ -130,7 +131,8 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="状态" prop="orderStatus">
-                          <el-select v-model="dataForm.orderStatus" placeholder="精度等级" clearable style="width: 100%;" disabled>
+                          <el-select v-model="dataForm.orderStatus" placeholder="精度等级" clearable style="width: 100%;"
+                            disabled>
                             <el-option v-for="(item, index) in orderStatusList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -153,7 +155,8 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="是否紧急" prop="urgentFlag">
-                          <el-select v-model="dataForm.urgentFlag" placeholder="精度等级" clearable style="width: 100%;" disabled>
+                          <el-select v-model="dataForm.urgentFlag" placeholder="精度等级" clearable style="width: 100%;"
+                            disabled>
                             <el-option v-for="(item, index) in urgentFlagList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -164,7 +167,7 @@
                           <el-date-picker v-model="dataForm.createTime" placeholder="创建时间" type="datetime" disabled
                             value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;">
                           </el-date-picker>
-                        </el-form-item> 
+                        </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="创建人" prop="createByName">
@@ -180,7 +183,7 @@
 
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="工单信息" name="workOrderInfo">
+            <el-tab-pane label="工单信息" name="workOrderInfo" v-if="btnType == 'all' || btnType == 'work'">
               <el-collapse v-model="activeNames2">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
                   <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
@@ -193,18 +196,18 @@
                         </div>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                    <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
+
                     <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
                     <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-                    <el-table-column prop="completedQuantity" label="完成数量" min-width="100"></el-table-column>
-                    <el-table-column prop="industrialWasteQuantity" label="工废数量" min-width="100"></el-table-column>
-                    <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="100"></el-table-column>
-                    <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="100"></el-table-column>
+                    <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
+                    <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+                    <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
+                    <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
                     <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
                     <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
                         <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -242,17 +245,44 @@
               </el-collapse>
             </el-tab-pane>
 
-            <el-tab-pane label="投料信息" name="feedInfo">
+            <el-tab-pane label="投料信息" name="feedInfo" v-if="btnType == 'all' || btnType == 'feed'">
               <el-collapse v-model="activeNames3">
-                <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm" >
-                  <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading">
-                    <el-table-column prop="productDrawingNo" label="品名规格" ></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码"  />
-                    <el-table-column prop="processName" label="工序名称"/>
-                    <el-table-column prop="mainUnit" label="单位"/>
-                    <el-table-column prop="qty" label="基本数量" v-if="dataForm.orderType!='rework'"/>
-                    <el-table-column prop="materialsUsedQuantity" label="投料数量"/>
-                    <el-table-column prop="receivedQuantity" label="已领数量"/>
+                <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
+                  <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
+                    <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
+                    <el-table-column prop="productCode" label="用料编码" />
+                    <el-table-column prop="processName" label="工序名称" />
+                    <el-table-column prop="mainUnit" label="单位" />
+                    <el-table-column prop="qty" label="单位用量" v-if="dataForm.orderType != 'rework'" />
+                    <el-table-column prop="materialsUsedQuantity" label="计划用量" />
+                    <el-table-column prop="receivedQuantity" label="已领数量" />
+                    <el-table-column prop="inventoryQuantity" label="库存数量" />
+
+
+
+                  </JNPF-table>
+
+                </el-collapse-item>
+              </el-collapse>
+            </el-tab-pane>
+            <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType  == 'report'">
+              <el-collapse v-model="activeNames4">
+                <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
+                  <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
+                    <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
+                    <el-table-column prop="orderNo" label="报工单号" min-width="180"></el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="180"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" width="160" />
+                    <el-table-column prop="reportingTime" label="报工时间" min-width="160" />
+                    <el-table-column prop="producerName" label="生产人" min-width="160" />
+                    <el-table-column prop="mainUnit" label="单位" min-width="160" />
+                    <el-table-column prop="reportingQuantity" label="报工数量" min-width="160" />
+                    <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="160" />
+                    <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" />
+                    <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" />
+                    <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" />
+                    <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" />
+                    <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
 
 
 
@@ -271,9 +301,10 @@
 
 <script>
 
-import{detailordershengchan} from '@/api/productOrdes/index.js'
+import { detailordershengchan } from '@/api/productOrdes/index.js'
+import { getWorkReportList } from "@/api/productOrdes/index.js"
 export default {
- 
+
   data() {
     return {
       orderTypeList: [
@@ -290,38 +321,78 @@ export default {
         { label: "是", value: true, },
         { label: "否", value: false, },
       ],
-
+      recoredsData: [],
       activeNames1: ["basicInfo"],
       activeNames2: ["workOrderInfoForm"],
       activeNames3: ["feedInfoForm"],
-      activeName:'orderInfo',
+      activeNames4: ['record'],
+      activeName: 'orderInfo',
       feedData: [],
       workOrderData: [],
       dataForm: {},
-      formLoading:false,
+      formLoading: false,
+      btnType: "",
+      title: "",
     }
   },
- 
+
   mounted() {
 
   },
   methods: {
-    handleClick(){
+    handleClick() {
 
     },
-    goBack(){
+    goBack() {
       this.$emit('close')
     },
-    init(id){
-      detailordershengchan(id).then(res=>{
-        console.log("生产任务详情",res);
-        this.dataForm=res.data.prodOrder
-        this.feedData=res.data.materialList
-        this.workOrderData=res.data.workOrderList
-      })
+    init(id, btnType) {
+      this.btnType = btnType
+      if (btnType == 'report') {
+        this.title = "报工记录"
+        this.activeName = 'reportRecords'
+      } else if (btnType == 'work') {
+        this.title = "工单信息"
+        this.activeName = 'workOrderInfo'
+      } else if (btnType == 'feed') {
+        this.title = "投料信息"
+        this.activeName = 'feedInfo'
+      }else{
+        this.title="查看任务"
+      }
+      if (btnType != 'report') {
+
+        detailordershengchan(id).then(res => {
+          console.log("生产任务详情", res);
+          this.dataForm = res.data.prodOrder
+          this.feedData = res.data.materialList
+          this.workOrderData = res.data.workOrderList
+        })
+      } else {
+        let obj = {
+          productionOrderNo: id,
+          classAttribute: "finish_product",
+          processId: "",
+          "orderItems": [
+            {
+              "asc": false,
+              "column": ""
+            },
+            {
+              "asc": false,
+              "column": "create_time"
+            }
+          ],
+          pageNum: -1,
+          pageSize: 20,
+        }
+        getWorkReportList(obj).then(res => {
+          this.recoredsData = res.data.records
+        })
+      }
     },
 
-      
+
   }
 }
 </script>
@@ -346,10 +417,8 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  padding-bottom: 10px!important;
+  padding-bottom: 10px !important;
 }
-
- 
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -538,9 +607,11 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
-.feedInfoForm ::v-deep.el-collapse-item__wrap ,.workOrderInfoForm ::v-deep.el-collapse-item__wrap{
-  padding: 0!important;
-  border-top: 1px solid  #dcdfe6;
-  border-right: 0!important;
+
+.feedInfoForm ::v-deep.el-collapse-item__wrap,
+.workOrderInfoForm ::v-deep.el-collapse-item__wrap {
+  padding: 0 !important;
+  border-top: 1px solid #dcdfe6;
+  border-right: 0 !important;
 }
 </style>

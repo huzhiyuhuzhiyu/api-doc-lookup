@@ -43,7 +43,7 @@
           </el-col>
           <el-col :sm="8" :xs="24">
             <el-form-item label="振动等级">
-              <el-input v-model="form.vibrationLevel" placeholder="振动等级" disabled />
+              <el-input v-model="form.apertureList" placeholder="振动等级" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -87,7 +87,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :sm="8" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index">
+          <el-col :sm="8" :xs="24" v-for="(item, index) in apertureList" :key="index">
             <el-form-item :label="item.name + '(合格数量)'" :prop="item.name">
               <el-input v-model="form.item[item.name]" placeholder="合格数量" @input="forceUpdata"
                 @blur="handleBlur(item, form.item[item.name])" />
@@ -108,6 +108,12 @@
               <el-input v-model="form.materialWasteQuantity" placeholder="料废数量" disabled />
             </el-form-item>
           </el-col>
+          <el-col :sm="8" :xs="24">
+            <el-form-item label="料废数量">
+              <el-input v-model="form.utilizeQuantity" placeholder="料废数量" disabled />
+            </el-form-item>
+          </el-col>
+          
           <el-col :sm="8" :xs="24">
             <el-form-item label="返工数量">
               <el-input v-model="form.reworkQuantity" placeholder="返工数量" />
@@ -197,7 +203,7 @@ export default {
         productionQuantity: "",
         sealingCoverTyping: "",
         accuracyLevel: "",
-        vibrationLevel: "",
+        apertureList: "",
         oil: "",
         oilQuantity: "",
         clearance: "",
@@ -215,6 +221,7 @@ export default {
         equipmentId: "",
         remark: "",
         workOrderNo: "",
+        utilizeQuantity:0,
         item: {},
       },
       selectArr: [],
@@ -224,7 +231,7 @@ export default {
       id: "",
       processData: [],
       codeConfig: {},
-      vibrationLevelList: [],
+      apertureList: [],
       totalReportNum: 0,
     }
   },
@@ -237,7 +244,7 @@ export default {
       let total = Object.values(this.form.item)
         .map(Number) // 将每个值转换为数字  
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity,this.form.utilizeQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
     init(workData) {
@@ -254,7 +261,7 @@ export default {
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa005",
+        typeCode: "pa009",
         orderItems: [
           {
             asc: false,
@@ -267,8 +274,8 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
-        console.log("振动等级数据", res);
-        this.vibrationLevelList = res.data.records
+        console.log("孔径数据", res);
+        this.apertureList = res.data.records
         res.data.records.forEach(item => {
           this.form.item[item.name] = ""
         });
@@ -327,8 +334,8 @@ export default {
           }
           if (submitFlag === false) return
           let arr = []
-          if (this.vibrationLevelList.length) {
-            this.vibrationLevelList.forEach((item, index) => {
+          if (this.apertureList.length) {
+            this.apertureList.forEach((item, index) => {
               let obj = {}
               if (index == 0) {
                 obj.classAttribute = this.form.classAttribute
@@ -350,7 +357,8 @@ export default {
                 obj.reportingQuantity =  this.jnpf.numberFormat(this.jnpf.math('add', [this.form.item[item.name], this.form.unqualifiedQuantity,this.form.reworkQuantity]), 6)
                 obj.reportingType = "normal"
                 obj.unqualifiedQuantity = this.form.unqualifiedQuantity
-                obj.vibrationLevel = item.name
+                obj.utilizeQuantity = this.form.utilizeQuantity
+                obj.apertureList = item.name
                 obj.workOrderId = this.form.id
                 arr.push(obj)
               } else {
@@ -372,8 +380,9 @@ export default {
                 obj.qualifiedQuantity = this.form.item[item.name]
                 obj.reportingQuantity = this.form.item[item.name]
                 obj.reportingType = "normal"
+                obj.utilizeQuantity = this.form.utilizeQuantity
                 obj.unqualifiedQuantity = 0
-                obj.vibrationLevel = item.name
+                obj.apertureList = item.name
                 obj.workOrderId = this.form.id
                 arr.push(obj)
               }

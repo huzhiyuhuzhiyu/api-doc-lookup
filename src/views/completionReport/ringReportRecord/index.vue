@@ -61,18 +61,18 @@
             <el-table-column prop="productionOrderNo" label="任务单号" min-width="180" sortable="custom" />
             <el-table-column prop="workNo" label="工单单号" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="orderNo" label="报工单号" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
             <el-table-column prop="productCategoryName" label="产品分类" min-width="120" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
-            <el-table-column prop="reportingTime" label="报工时间" min-width="160" sortable="custom" />
-            <el-table-column prop="producerName" label="生产人" min-width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="160" />
-            <el-table-column prop="reportingQuantity" label="报工数量" min-width="160" sortable="custom" />
-            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="160" sortable="custom" />
-            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="160" sortable="custom" />
-            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="160" sortable="custom" />
-            <el-table-column prop="reworkQuantity" label="返工数量" min-width="160" sortable="custom" />
+            <el-table-column prop="reportingTime" label="报工时间" min-width="180" sortable="custom" />
+            <el-table-column prop="producerName" label="生产人" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="80" />
+            <el-table-column prop="reportingQuantity" label="报工数量" min-width="120" sortable="custom" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+            <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="120" sortable="custom" />
+            <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column label="操作" width="220" fixed="right">

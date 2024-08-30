@@ -8,11 +8,11 @@
       <div class="JNPF-common-layout-center">
         <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="6">
-              <el-form-item label="关键词">
-                <el-input v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
+            <el-col :span="6">
+              <el-form-item>
+                <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
               </el-form-item>
-            </el-col> -->
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">

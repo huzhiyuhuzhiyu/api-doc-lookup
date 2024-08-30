@@ -448,3 +448,11 @@ export function detailServiceRecords(id) {
     method: 'GET'
   })
 }
+// crm回款计划-关闭
+export function updatecrmReceivablesPlanclose(data) {
+  return request({
+    url: `/api/zgt/crmReceivablesPlan/close`,
+    method: 'PUT',
+    data
+  })
+}

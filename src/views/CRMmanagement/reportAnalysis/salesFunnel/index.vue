@@ -110,7 +110,9 @@ export default {
         this.option = {
           tooltip: {
             trigger: 'item',
-            formatter: '{b}({c}元)<br/>'
+            formatter: function (params) {
+              return params.data.name + '(' + params.data.value + '元)' + '<br>商机个数: ' + params.data.businessNum + '个'
+            }
           },
           toolbox: {
             feature: {
@@ -147,7 +149,7 @@ export default {
                 borderWidth: 1
               },
               data: res1.data.map(item => {
-                return { value: item.businessMoney, name: item.settingName }
+                return { value: item.businessMoney, name: item.settingName, businessNum: item.businessNum }
               })
             }
           ]

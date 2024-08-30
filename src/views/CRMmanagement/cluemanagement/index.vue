@@ -734,6 +734,7 @@ export default {
     },
     reset() {
       this.$refs['tabForm'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.$refs.SuperQuery.conditionList = []
       this.programmefrom = {}
       this.programmetitle = ''
       this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))

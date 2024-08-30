@@ -13,11 +13,11 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
-          <div style="min-width: 260px;">
+          <!-- <div style="min-width: 260px;">
             <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
             <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
-          </div>
+          </div> -->
           <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
             <div v-if="programmelist.length">
               <span class="text">方案：</span>
@@ -34,8 +34,7 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="display:block;line-height:34px">
-            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
-              <el-button size="mini" type="danger" icon="el-icon-close" @click="closeFun">关闭</el-button>
+            <topOpts :isJudgePer="true" :addPerCode="false" @add="addOrUpdateHandle('','add')">
             </topOpts>
             <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
@@ -49,13 +48,13 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" @selection-change="handleSelectionChange" hasC v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
             <el-table-column prop="customerName" label="客户名称" min-width="180" />
             <el-table-column prop="contractNo" label="合同编号" min-width="180" />
             <el-table-column prop="num" label="期数" min-width="100" />
             <el-table-column prop="planReceivablesMoney" label="计划回款金额(元)" min-width="160" />
             <el-table-column prop="planReceivablesData" label="计划回款日期" min-width="160" />
-            <el-table-column prop="remindInAdvance" label="提前几天提醒" min-width="130" />
+            <!-- <el-table-column prop="remindInAdvance" label="提前几天提醒" min-width="130" /> -->
             <el-table-column prop="receivablesType" label="回款方式" min-width="140">
               <template slot-scope="scope">
                 {{returnTypeVisitForm(scope.row.receivablesType)}}
@@ -65,29 +64,18 @@
             <el-table-column prop="practiceMoney" label="实际回款金额(元)" min-width="160" />
             <el-table-column prop="practiceTime" label="实际回款时间" min-width="180" />
             <el-table-column prop="unreceivedMoney" label="未回款金额" min-width="140" />
-            <!-- <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">
+            <el-table-column prop="receivablesStatus" label="回款状态" min-width="120">
               <template slot-scope="scope">
-                <div><el-tag :type="receivedStatusForm(scope.row.receivablesStatus)=='待回款'?'danger':'success'">{{receivedStatusForm(scope.row.receivablesStatus)}}</el-tag></div>
+                <div><el-tag :type="receivedStatusForm(scope.row.receivablesStatus)=='回款完成'?'success':'danger'">{{receivedStatusForm(scope.row.receivablesStatus)}}</el-tag></div>
               </template>
-            </el-table-column> -->
+            </el-table-column>
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="90" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)" :editDisabled="scope.row.receivablesStatus=='payment'">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                <tableOpts :hasEdit="false" @del="handleDel(scope.row.id)">
+                  <!-- <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">查看详情</el-button> -->
                 </tableOpts>
               </template>
             </el-table-column>
@@ -98,7 +86,7 @@
         </div>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <!-- <Form v-if="formVisible" ref="Form" @close="closeForm" /> -->
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
@@ -107,8 +95,8 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
-import { deletecrmReceivablesPlan, getcrmReceivablesPlanlist, updatecrmReceivablesPlanclose } from '@/api/CRMmanagement/index'
-import Form from './Form'
+import { deletecrmReceivablesPlan, getcrmReceivablesPlanlist } from '@/api/CRMmanagement/index'
+// import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
@@ -117,15 +105,13 @@ export default {
   components: {
     SuperQuery,
     programme,
-    Form
+    // Form
   },
   data() {
     return {
-      selectArr: [],
       deliveryDateArr: [],
       receivedStatusList: [
-        { fullName: '待回款', enCode: 'unpayment' },
-        // { fullName: '逾期', enCode: '2' },
+        { fullName: '已关闭', enCode: 'close' },
         { fullName: '回款完成', enCode: 'payment' }
       ],
       datalist: [],
@@ -195,16 +181,15 @@ export default {
           label: "未回款金额",
           type: 'input'
         },
-        // { // 下拉选
-        //   prop: 'receivablesStatus',
-        //   label: '回款状态',
-        //   type: 'select',
-        //   options: [
-        //     { label: '待回款', value: 'unpayment' },
-        //     // { label: '逾期', value: '2' },
-        //     { label: '回款完成', value: 'payment' }
-        //   ]
-        // },
+        { // 下拉选
+          prop: 'receivablesStatus',
+          label: '回款状态',
+          type: 'select',
+          options: [
+            { label: '已关闭', value: 'close' },
+            { label: '回款完成', value: 'payment' }
+          ]
+        },
         {
           prop: 'remark',
           label: "备注",
@@ -236,7 +221,7 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        receivablesStatus: 'unpayment',
+        receivablesStatus: 'payment',
         planReceivablesDataEndTime: '',
         planReceivablesDataStartTime: '',
         customerName: '',
@@ -293,47 +278,36 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
-    closeFun() {
-      if (!this.selectArr.length) return this.$message.error('请先选择数据')
-      let a = this.selectArr.map(item => item.id)
-      updatecrmReceivablesPlanclose(a).then(res => {
-        this.$message.success('关闭成功')
-        this.closeForm(true)
-      })
-    },
-    handleSelectionChange(val) {
-      this.selectArr = val
-    },
-    // 为近3天  
-    btnsearch2() {
-      const end = new Date();
-      const start = "";
-      end.setDate(end.getDate() + 3);
-      this.deliveryDateArr = ["", end];
-      this.listQuery.planReceivablesDataStartTime = ""
-      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
-    // 为近7天  
-    btnsearch3() {
-      let end = new Date()
-      let start = ""
-      end.setDate(end.getDate() + 7);
-      this.deliveryDateArr = ["", end];
-      this.listQuery.planReceivablesDataStartTime = ""
-      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
-    // 为近30天  
-    btnsearch4() {
-      let end = new Date()
-      let start = ""
-      end.setDate(end.getDate() + 30);
-      this.deliveryDateArr = ["", end];
-      this.listQuery.planReceivablesDataStartTime = ""
-      this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
-      this.search()
-    },
+    // // 为近3天  
+    // btnsearch2() {
+    //   const end = new Date();
+    //   const start = "";
+    //   end.setDate(end.getDate() + 3);
+    //   this.deliveryDateArr = ["", end];
+    //   this.listQuery.planReceivablesDataStartTime = ""
+    //   this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+    //   this.search()
+    // },
+    // // 为近7天  
+    // btnsearch3() {
+    //   let end = new Date()
+    //   let start = ""
+    //   end.setDate(end.getDate() + 7);
+    //   this.deliveryDateArr = ["", end];
+    //   this.listQuery.planReceivablesDataStartTime = ""
+    //   this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+    //   this.search()
+    // },
+    // // 为近30天  
+    // btnsearch4() {
+    //   let end = new Date()
+    //   let start = ""
+    //   end.setDate(end.getDate() + 30);
+    //   this.deliveryDateArr = ["", end];
+    //   this.listQuery.planReceivablesDataStartTime = ""
+    //   this.listQuery.planReceivablesDataEndTime = this.dateFun(this.deliveryDateArr[1])
+    //   this.search()
+    // },
     dateFun(dateStr) {
       const date = new Date(dateStr);
       // 获取年份、月份和日期  

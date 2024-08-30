@@ -196,7 +196,7 @@ export default {
       })
     },
     dataFormSubmit() {
-      if (!this.dataForm.icon) return this.$message.error('仓库图标未选择')
+      if (!this.dataForm.icon && !this.dataForm.id) return this.$message.error('仓库图标未选择')
       this.$refs['dataForm'].validate((valid) => {
         let obj = {
           classAttribute: this.dataForm,

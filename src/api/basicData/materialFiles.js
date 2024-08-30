@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 产品档案 查询
 export function getProductList(data) {
   return request({
-    url: `/api/erp/products/list`,
+    url: `/api/zgt/product/list`,
     method: 'POST',
     data
   })

@@ -100,10 +100,15 @@
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
 
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
+                    <el-button type="text" size="mini"
+                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      @click.native="withdrawnAddHandle(scope.row, 'add')"> 重新提交</el-button>
+                    <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing'"
+                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')"> 审批撤回</el-button>
                     <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">
                       查看详情
                     </el-button>
@@ -293,6 +298,14 @@ export default {
     treatmentResultsFormat(row) {
       let option = this.processingresults.find((item) => item.value === row.treatmentResults)
       return option ? option.label : row.treatmentResults
+    },
+    withdrawnAddHandle(row, btnType) {
+
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
+      })
+
     },
     withdrawnHandle(formId) {
       let _data = {

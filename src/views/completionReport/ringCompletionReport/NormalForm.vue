@@ -29,7 +29,16 @@
               <el-input v-model="form.processName" placeholder="加工工序" disabled />
             </el-form-item>
           </el-col>
-
+          <el-col :sm="8" :xs="24">
+            <el-form-item label="加工数量">
+              <el-input v-model="form.productionQuantity" placeholder="加工数量" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :sm="8" :xs="24">
+            <el-form-item label="可报工数量">
+              <el-input v-model="form.waitReportNum" placeholder="可报工数量" disabled />
+            </el-form-item>
+          </el-col>
 
           <el-col :sm="8" :xs="24">
             <el-form-item label="打字内容">
@@ -71,28 +80,14 @@
               <el-input v-model="form.specialRequire" placeholder="特殊要求" disabled />
             </el-form-item>
           </el-col>
-          <el-col :sm="8" :xs="24">
-            <el-form-item label="加工数量">
-              <el-input v-model="form.productionQuantity" placeholder="加工数量" disabled />
-            </el-form-item>
-          </el-col>
-          <el-col :sm="8" :xs="24">
-            <el-form-item label="可报工数量">
-              <el-input v-model="form.waitReportNum" placeholder="可报工数量" disabled />
-            </el-form-item>
-          </el-col>
-          <el-col :sm="8" :xs="24">
-            <el-form-item label="报工数量">
-              <el-input v-model="form.reportingQuantity" placeholder="报工数量" disabled />
-            </el-form-item>
-          </el-col>
 
-          <el-col :sm="8" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index">
-            <el-form-item :label="item.name + '(合格数量)'" :prop="item.name">
-              <el-input v-model="form.item[item.name]" placeholder="合格数量" @input="forceUpdata"
-                @blur="handleBlur(item, form.item[item.name])" />
+          <el-col :sm="8" :xs="24">
+            <el-form-item label="合格数量" prop="qualifiedQuantity">
+              <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" />
             </el-form-item>
           </el-col>
+    
+          
           <el-col :sm="8" :xs="24">
             <el-form-item label="不合格数量">
               <el-input v-model="form.unqualifiedQuantity" placeholder="不合格数量" disabled />
@@ -161,9 +156,7 @@
 <script>
 import { detailordershengchan, getWorkList, addWorkReport, detailWorkData } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+
 export default {
   data() {
     return {
@@ -203,7 +196,7 @@ export default {
         clearance: "",
         packagingMethod: "",
         specialRequire: "",
-        qualifiedQuantity: "",
+        qualifiedQuantity: 0,
         unqualifiedQuantity: "",
         responsibilityWasteQuantity: "",
         materialWasteQuantity: "",
@@ -215,7 +208,6 @@ export default {
         equipmentId: "",
         remark: "",
         workOrderNo: "",
-        item: {},
       },
       selectArr: [],
       listLoading: false,
@@ -224,56 +216,25 @@ export default {
       id: "",
       processData: [],
       codeConfig: {},
-      vibrationLevelList: [],
-      totalReportNum: 0,
+      vibrationLevelList: []
     }
   },
   methods: {
-    forceUpdata() {
-      this.$forceUpdate()
-    },
-    handleBlur(item, data) {
-      console.log("item", item, data, this.form.item);
-      let total = Object.values(this.form.item)
-        .map(Number) // 将每个值转换为数字  
-        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
-      this.$set(this.form, 'reportingQuantity', this.totalReportNum)
-    },
+ 
     init(workData) {
       console.log("workData", workData);
       this.customerVisible = true
 
       this.getDetailWorkDataFun(workData.id)
-
+      this.fetchData("RRDH")
     },
-
-    // 获取振动等级数据
-    getvibrationLevelFun() {
-
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: "pa005",
-        orderItems: [
-          {
-            asc: false,
-            column: "",
-          },
-          {
-            asc: false,
-            column: "code",
-          },
-        ]
-      };
-      getbimProductAttributesList(obj3).then(res => {
-        console.log("振动等级数据", res);
-        this.vibrationLevelList = res.data.records
-        res.data.records.forEach(item => {
-          this.form.item[item.name] = ""
-        });
-        console.log(666666, this.form);
-      })
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.form.orderNo = data.number
+      } catch (error) {
+      }
     },
     // 获取工单详情
     getDetailWorkDataFun(id) {
@@ -282,11 +243,9 @@ export default {
         res.data.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [res.data.materialWasteQuantity, res.data.responsibilityWasteQuantity]), 6)
         this.form = res.data
         this.$set(this.form, 'workOrderNo', this.form.orderNo)
-        this.$set(this.form, 'item', {})
+        this.$set(this.form, 'qualifiedQuantity', 0)
         console.log("form", this.form);
-        this.getvibrationLevelFun()
         this.producePersonListFun(res.data.id)
-
         const end = new Date();//获取当前的日期
         this.form.reportingTime = this.dateFormat(end)
       })
@@ -316,71 +275,47 @@ export default {
     },
     // 提交报工
     submitReportFun() {
-      console.log("this.form", this.form);
+
       this.$refs['reportRef'].validate((valid) => {
         if (valid) {
           let submitFlag = null
-          if (this.totalReportNum > Number(this.form.waitReportNum)) {
+          let totalNum = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.unqualifiedQuantity, this.form.qualifiedQuantity]), 6)
+          if (totalNum > Number(this.form.waitReportNum)) {
             this.submitFlag = false
             this.$message.error("合格数量加上不合格数量不能超过可报工数量")
             return
           }
           if (submitFlag === false) return
           let arr = []
-          if (this.vibrationLevelList.length) {
-            this.vibrationLevelList.forEach((item, index) => {
-              let obj = {}
-              if (index == 0) {
-                obj.classAttribute = this.form.classAttribute
-                obj.orderType = this.form.orderType
-                obj.productDrawingNo = this.form.productDrawingNo
-                obj.processName = this.form.processName
-                obj.productionQuantity = this.form.productionQuantity
-                obj.equipmentId = this.form.equipmentId
-                obj.remark = this.form.remark
-                obj.reportingTime = this.form.reportingTime
-                obj.reworkQuantity = this.form.reworkQuantity
-                obj.responsibilityWasteQuantity = this.form.responsibilityWasteQuantity
-                obj.materialWasteQuantity = this.form.materialWasteQuantity
-                obj.pricingType = this.form.pricingType
-                obj.processId = this.form.processId
-                obj.producerId = this.form.producerId
-                obj.productionOrderId = this.form.productionOrderId
-                obj.qualifiedQuantity = this.form.item[item.name] 
-                obj.reportingQuantity =  this.jnpf.numberFormat(this.jnpf.math('add', [this.form.item[item.name], this.form.unqualifiedQuantity,this.form.reworkQuantity]), 6)
-                obj.reportingType = "normal"
-                obj.unqualifiedQuantity = this.form.unqualifiedQuantity
-                obj.vibrationLevel = item.name
-                obj.workOrderId = this.form.id
-                arr.push(obj)
-              } else {
-                obj.classAttribute = this.form.classAttribute
-                obj.orderType = this.form.orderType
-                obj.productDrawingNo = this.form.productDrawingNo
-                obj.processName = this.form.processName
-                obj.productionQuantity = this.form.productionQuantity
-                obj.equipmentId = this.form.equipmentId
-                obj.remark = this.form.remark
-                obj.reportingTime = this.form.reportingTime
-                obj.reworkQuantity = 0
-                obj.responsibilityWasteQuantity = this.form.responsibilityWasteQuantity
-                obj.materialWasteQuantity = this.form.materialWasteQuantity
-                obj.pricingType = this.form.pricingType
-                obj.processId = this.form.processId
-                obj.producerId = this.form.producerId
-                obj.productionOrderId = this.form.productionOrderId
-                obj.qualifiedQuantity = this.form.item[item.name]
-                obj.reportingQuantity = this.form.item[item.name]
-                obj.reportingType = "normal"
-                obj.unqualifiedQuantity = 0
-                obj.vibrationLevel = item.name
-                obj.workOrderId = this.form.id
-                arr.push(obj)
-              }
-            });
+          let obj = {
+            "classAttribute": this.form.classAttribute,
+            orderType: this.form.orderType,
+            productDrawingNo: this.form.productDrawingNo,
+            processName: this.form.processName,
+            productionQuantity: this.form.productionQuantity,
+            equipmentId: this.form.equipmentId,
+            remark: this.form.remark,
+            reportingTime: this.form.reportingTime,
+            reworkQuantity: this.form.reworkQuantity,
+            responsibilityWasteQuantity: this.form.responsibilityWasteQuantity,
+            reworkQuantity: this.form.reworkQuantity,
+            "materialWasteQuantity": this.form.materialWasteQuantity,
+            "orderNo": this.form.orderNo,
+            "pricingType": this.form.pricingType,
+            "processId": this.form.processId,
+            "producerId": this.form.producerId,
+            "productionOrderId": this.form.productionOrderId,
+            "qualifiedQuantity": this.form.qualifiedQuantity,
+            "reportingQuantity": this.form.qualifiedQuantity,
+            "reportingType": "normal ",
+            "unqualifiedQuantity": this.form.unqualifiedQuantity,
+            "vibrationLevel": this.form.vibrationLevel,
+            "workOrderId": this.form.id,
+
           }
+          arr.push(obj)
           addWorkReport(arr).then(res => {
-            this.customerVisible = false 
+            this.customerVisible = false
             this.$message.success("报工成功")
             this.$emit('close', true)
           })

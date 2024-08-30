@@ -481,6 +481,8 @@ export default {
           brTotalAmount: '',                   // 收/退货总金额
         }
         res.data.reconciliationLines.forEach(item => {
+          item.returnDeliveryType=item.businessType=='inbound_sale_return'?'back':'delivery'
+          item.receiptReturnType=item.businessType
           if (item.noticeBillVO) {
             dataFormTwo.push(item.noticeBillVO)
           } else {

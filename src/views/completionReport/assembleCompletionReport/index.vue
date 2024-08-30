@@ -70,7 +70,7 @@
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
                       <el-button style="color:red;" type="text">关单</el-button>
-                      <el-button type="primary" size="mini" @click='produceTaskReportFun(item)'>报 工</el-button>
+                      <el-button type="primary" size="mini" @click='produceTaskReportFun(item.id)'>报 工</el-button>
                       <el-button type="primary" size="mini" @click="viewTask(item)">查看任务</el-button>
                     </div>
                   </el-card>
@@ -87,7 +87,6 @@
         </el-tab-pane>
         <el-tab-pane label="按工序报工" name="process">
           <div class="JNPF-common-layout">
-
             <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
               <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
                 <div class="title_box">
@@ -101,16 +100,16 @@
                     </el-dropdown>
                   </span>
                 </div>
-                <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+                <div> <el-input placeholder="输入关键字进行过滤" v-model="routingfilterText"
                     style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
                   </el-input></div>
               </div>
 
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-                <el-tree ref="routingTreeBox" :data="routingList" :props="defaultProps" :default-expand-all="expands"
+                <el-tree ref="routingTreeBox" :data="routingList" :props="defaultPropsPerson" :default-expand-all="true"
                   highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClickRouting"
-                  class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-                  <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+                  class="JNPF-common-el-tree" :filter-node-method="filterNode">
+                  <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.name">
 
                     <span class="text" :title="data.name">{{ data.name }}</span>
                   </span>
@@ -154,7 +153,7 @@
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
                 <el-row :gutter="10" class="content_boxt">
-                  <el-col :span="3" v-for="(item, index) in ProcessData" :key="index">
+                  <el-col :span="4" v-for="(item, index) in ProcessData" :key="index">
                     <el-card class="box-card" shadow="hover">
 
                       <div class="label_title"> 工序名称:{{ item.name }}</div>
@@ -164,6 +163,7 @@
                       </div>
                     </el-card>
                   </el-col>
+
 
 
                 </el-row>
@@ -202,7 +202,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getWorkGroupData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkGroupData()">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetWorkGroup()">{{ $t('common.reset')
                       }}
@@ -215,209 +215,21 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
 
               <el-row :gutter="10" class="content_boxt">
-                <el-col :span="3">
+                <el-col :span="4" v-for="(item, index) in groupData" :key="index">
                   <el-card class="box-card" shadow="hover">
 
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
+                    <div class="label_title"> 班组名称:{{ item.name }}</div>
+                    <div class="label_title"> 班组编码:{{ item.code }}</div>
                     <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
+                      <el-button type="primary" size="mini" @click="groupReportFun(item)">报 工</el-button>
                     </div>
                   </el-card>
                 </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col> <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col> <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col> <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="3">
-                  <el-card class="box-card" shadow="hover">
-
-                    <div class="label_title"> 名称:一号班组</div>
-                    <div class="label_title"> 编码:1686764</div>
-                    <div style="margin-top: 10px;">
-                      <el-button type="primary" size="mini">报 工</el-button>
-                    </div>
-                  </el-card>
-                </el-col>
-
 
 
               </el-row>
-              <pagination :total="workGroupTotal" :page.sync="workGroupForm.pageNum"
-                :limit.sync="workGroupForm.pageSize" @pagination="getWorkGroupData">
+              <pagination :total="groupTotal" :page.sync="workGroupForm.pageNum" :limit.sync="workGroupForm.pageSize"
+                @pagination="getWorkGroupData">
               </pagination>
             </div>
           </div>
@@ -427,7 +239,7 @@
             <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
               <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
                 <div class="title_box">
-                  <h5>{{ $t('common.organization') }}</h5>
+                  <h2>组织机构</h2>
                   <span class="options">
                     <el-dropdown>
                       <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
@@ -442,19 +254,19 @@
                     </el-dropdown>
                   </span>
                 </div>
-                <div>
-                  <el-input placeholder="输入关键字" v-model="routingfilterText" suffix-icon="el-icon-search" clearable
-                    style="width:200px;margin:10px auto;display:block" />
-                </div>
+                <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText"
+                    style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
+                  </el-input></div>
               </div>
 
               <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-                <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands"
-                  highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-                  class="JNPF-common-el-tree" v-if="refreshTree">
-                  <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
-                    <i :class="data.icon" />
-                    <span class="text" :title="data.fullName">{{ node.label }}</span>
+                <el-tree ref="routingTreeBox" :data="filteredTree" :props="defaultPropsPerson"
+                  :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id"
+                  @node-click="handleNodeClickPerson" class="JNPF-common-el-tree" v-if="refreshTree"
+                  :filter-node-method="filterNodePerson">
+                  <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
+
+                    <span class="text" :title="data.fullName">{{ data.fullName }}</span>
                   </span>
                 </el-tree>
               </el-scrollbar>
@@ -468,76 +280,55 @@
             <div class="JNPF-common-layout-center JNPF-flex-main">
               <el-row class="JNPF-common-search-box" :gutter="16">
                 <el-form @submit.native.prevent>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model="personForm.realName" placeholder="姓名" clearable
-                        @keyup.enter.native="searchPerson()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model="personForm.account" placeholder="账号" clearable
-                        @keyup.enter.native="searchPerson()" />
-                    </el-form-item>
-                  </el-col>
 
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model="personForm.realName" @keyup.enter.native="searchPersonData()" placeholder="姓名"
+                        clearable />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-form-item>
+                      <el-input v-model="personForm.account" @keyup.enter.native="searchPersonData()" placeholder="账号"
+                        clearable />
+                    </el-form-item>
+                  </el-col>
 
                   <el-col :span="6">
                     <el-form-item>
-                      <el-button size="mini" type="primary" icon="el-icon-search" @click="searchPerson()">{{
-                        $t('common.search')
-                      }}</el-button>
-                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetPerson()">{{ $t('common.reset')
-                        }}</el-button>
+                      <el-button type="primary" size="mini" icon="el-icon-search" @click="searchPersonData()">
+                        {{ $t('common.search') }}</el-button>
+                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetPersonData()">{{
+                        $t('common.reset') }}
+                      </el-button>
                     </el-form-item>
                   </el-col>
 
                 </el-form>
               </el-row>
               <div class="JNPF-common-layout-main JNPF-flex-main">
-                <div class="JNPF-common-head" style="padding:6px 10px">
-                  <div></div>
-                  <div class="JNPF-common-head-right">
-                    <el-tooltip content="高级查询" placement="top" v-if="true">
-                      <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                        @click="superQueryVisible = true" />
-                    </el-tooltip>
-                    <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                      <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                        @click="columnSetFun()" />
-                    </el-tooltip>
-                    <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                      <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                        @click="searchPerson()" />
-                    </el-tooltip>
-                  </div>
-                </div>
-                <JNPF-table v-loading="listLoading" :data="personData" custom-column fixedNO @sort-change="sortChange"
-                  ref="personRef" :setColumnDisplayList="columnList">
-                  <el-table-column prop="realName" label="姓名" width="100" sortable="custom"></el-table-column>
-                  <el-table-column prop="账号" label="账户" width="100" sortable="custom" />
-                  <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
-                    <template slot-scope="scope">
-                      <span>{{ scope.row.gender == 1 ? '男' : (scope.row.gender == 2 ? '女' : '保密') }}</span>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="organizeName" label="所属部门" min-width="280" sortable="custom" />
-                  <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180"
-                    sortable="custom" />
-                  <el-table-column label="操作" width="180" fixed="right">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" @click="handleReport(scope.row, 'person')">报工</el-button>
-                    </template>
-                  </el-table-column>
-                </JNPF-table>
+
+                <el-row :gutter="10" class="content_boxt">
+                  <el-col :span="4" v-for="(item, index) in personData" :key="index">
+                    <el-card class="box-card" shadow="hover">
+
+                      <div class="label_title"> 名称:{{ item.realName }}</div>
+                      <div class="label_title"> 账号:{{ item.account }}</div>
+                      <div style="margin-top: 10px;">
+                        <el-button type="primary" size="mini" @click="personReportFun(item)">报 工</el-button>
+                      </div>
+                    </el-card>
+                  </el-col>
+
+
+                </el-row>
                 <pagination :total="personTotal" :page.sync="personForm.pageNum" :limit.sync="personForm.pageSize"
-                  @pagination="searchPerson" />
+                  @pagination="searchPersonData">
+                </pagination>
               </div>
             </div>
-
-
-
           </div>
+
 
         </el-tab-pane>
 
@@ -548,14 +339,18 @@
     <taskForm v-if="taskFormVisible" ref="taskForm" @refreshDataList="searchProductData" @close="closeForm"></taskForm>
     <produceTaskReportForm v-if="produceTaskReportVisible" ref="produceTaskReportForm"
       @refreshDataList="searchProductData" @close="closeForm"></produceTaskReportForm>
-    <ProcessReportForm v-if="ProcessReportVisible" ref="ProcessReportForm"
-      @refreshDataList="searchProcessData" @close="closeForm"></ProcessReportForm>
+    <ProcessReportForm v-if="ProcessReportVisible" ref="ProcessReportForm" @refreshDataList="searchProcessData"
+      @close="closeForm"></ProcessReportForm>
+    <GroupReportForm v-if="groupReportVisible" ref="GroupReportForm" @refreshDataList="searchWorkGroupData"
+      @close="closeForm"></GroupReportForm>
+    <PersonReportForm v-if="personReportVisible" ref="PersonReportForm" @refreshDataList="searchPersonData"
+      @close="closeForm"></PersonReportForm>
   </div>
 </template>
 
 <script>
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
-import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, getscanResultData } from '@/api/productOrdes/index.js'
 import taskForm from '@/views/productionManagement/assemblyplan/assemblyTaskManagement/Form.vue'
 import Diagram from '@/views/permission/user/Diagram.vue' // 树状列表-组织机构
 import { getGroupList } from '@/api/basicData/index.js'
@@ -566,17 +361,22 @@ import produceTaskReportForm from './produceTaskReportForm.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import ProcessReportForm from './processReportForm.vue'
-
+import GroupReportForm from './groupReprotForm.vue'
+import PersonReportForm from './personReportForm.vue'
+import { getDepartmentSelectorByAuth } from '@/api/permission/department'
+import { getUserListPost } from '@/api/permission/user'
 export default {
   name: 'assembleCompletionReport',
-  components: { ExportForm, Diagram, taskForm, produceTaskReportForm,ProcessReportForm },
+  components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm },
   data() {
     return {
-      defaultProps: {
-        children: 'childrenList',
-        label: 'name'
+      defaultPropsPerson: {
+        children: 'children',
+        label: 'fullName'
       },
-      ProcessReportVisible:false,
+      personReportVisible: false,
+      groupReportVisible: false,
+      ProcessReportVisible: false,
       routingList: "",
       treeLoading: false,
       expands: true,
@@ -641,25 +441,9 @@ export default {
 
       personTotal: 0,
       personData: [],
-      personForm: {
-        realName: "",
-        account: "",
-        organizeId: "",
-        pageNum: 1,
-        pageSize: 20,
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-      },
 
+      groupTotal: 0,
+      groupData: [],
       workGroupForm: {
         code: "",
         name: "",
@@ -672,12 +456,28 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        superQuery: {
-          condition: [],
-          matchLogic: ""
-        },
-      },
 
+      },
+      personForm: {
+        organizeId: "",
+        account: "",
+        realName: "",
+        employeeStatus: "on_job",
+        employeeType: "",
+        orderItems: [
+          {
+            asc: true,
+            column: ""
+          },
+          {
+            asc: false,
+            column: "f_entrydate"
+          }
+        ],
+        organizeId: "",
+        pageNum: 1,
+        pageSize: 20,
+      },
       treeLoading: false,
       treeData: [],
       filterText: "",
@@ -702,8 +502,8 @@ export default {
         "documentStatus": "",
         "createEndTime": "",
         "createStartTime": ""
-      }
-
+      },
+      filteredTree: [],
 
 
 
@@ -712,7 +512,14 @@ export default {
   },
   watch: {
     filterText(val) {
-      this.$refs.treeBox.filter(val)
+      this.filterTree();
+    },
+    // 监听树形数据变化
+    treeData: {
+      handler: function (val) {
+        this.filterTree();
+      },
+      deep: true,
     },
     routingfilterText(val) {
       this.$refs.routingTreeBox.filter(val)
@@ -732,14 +539,19 @@ export default {
     closeForm(flag) {
       this.taskFormVisible = false
       this.produceTaskReportVisible = false
-      this.ProcessReportVisible=false
+      this.ProcessReportVisible = false
+      this.groupReportVisible = false
+      this.personReportVisible = false
       if (flag) {
         if (this.activeName == 'produce') {
           this.searchProductData()
+        } else if (this.activeName == 'process') {
+          this.searchProcessData()
         } else if (this.activeName == 'workgroup') {
-          this.getWorkGroupData()
+          this.searchWorkGroupData()
         } else {
           this.getOrganizeList()
+          this.searchPersonData()
 
         }
       }
@@ -747,24 +559,26 @@ export default {
     },
     // 扫码报工页面  搜索
     searchResult() {
-      if (this.scanResult && this.scanResult.length > 4) {
-        let keyWord = this.scanResult.substring(0, 4)
-        if (keyWord == 'PROD') {
-          let obj = {
-            orderNo: this.scanResult
-          }
-          ordershengchanList(obj).then(res => {
-            console.log("查找结果", res);
-            if (res.data.records.length) {
-              this.activeName = 'produce'
-              this.produceForm.orderNo = this.scanResult
-              this.searchProductData()
-            } else {
-              this.$message.error("无法查找到对应的数据，请重新输入")
-            }
+      if (this.scanResult) {
 
-          })
-        }
+        getscanResultData({ code: this.scanResult,classAttribute:"finish_product" }).then(res => {
+          console.log("扫码查找数据", res);
+          if (res.data) {
+            if (res.data.type == 'prod_order') {
+              this.produceTaskReportFun(res.data.docId)
+            } else if (res.data.type == 'process') {
+              this.ProcessReportFun(res.data.docId)
+
+            } else if (res.data.type == 'personnel') {
+              this.personReportFun(res.data.docId)
+
+            } else if (res.data.type == 'work_group') {
+              this.groupReportFun(res.data.docId)
+
+            }
+          }
+        })
+     
       }
     },
     handleClick() {
@@ -774,9 +588,10 @@ export default {
         this.searchProcessData()
         this.getRoutingList()
       } else if (this.activeName == 'workgroup') {
-        this.getWorkGroupData()
+        this.searchWorkGroupData()
       } else {
         this.getOrganizeList()
+        this.searchPersonData()
 
       }
     },
@@ -871,7 +686,14 @@ export default {
     viewTask(data) {
       this.taskFormVisible = true
       this.$nextTick(() => {
-        this.$refs.taskForm.init(data.id)
+        this.$refs.taskForm.init(data.id,'all')
+      })
+    },
+    // 生产任务报工
+    produceTaskReportFun(id) {
+      this.produceTaskReportVisible = true
+      this.$nextTick(() => {
+        this.$refs.produceTaskReportForm.init(id)
       })
     },
     // 工序
@@ -882,13 +704,13 @@ export default {
       })
     },
     ProcessReportFun(row) {
-      this.ProcessReportVisible=true
-      this.$nextTick(()=>{
+      this.ProcessReportVisible = true
+      this.$nextTick(() => {
         this.$refs.ProcessReportForm.init(row)
       })
     },
-    resetProcessData(){
-      this.processForm={
+    resetProcessData() {
+      this.processForm = {
         name: "",
         code: "",
         pageNum: 1,
@@ -905,40 +727,85 @@ export default {
       this.getRoutingList()
     },
 
-    // 生产任务报工
-    produceTaskReportFun(data) {
-      this.produceTaskReportVisible = true
-      this.$nextTick(() => {
-        this.$refs.produceTaskReportForm.init(data)
+
+    // 班组列表
+    searchWorkGroupData() {
+      getGroupList(this.workGroupForm).then(res => {
+        console.log("班组", res);
+        this.groupData = res.data.records
+        this.groupTotal = res.data.total
       })
     },
-    // 班组列表
-    getWorkGroupData() {
-      
-    },
     resetWorkGroup() {
+      this.workGroupForm = {
+        code: "",
+        name: "",
+        pageNum: 1,
+        pageSize: 20,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
 
+      }
+      this.searchWorkGroupData()
+    },
+    // 班组  点击报工
+    groupReportFun(data) {
+      this.groupReportVisible = true
+      this.$nextTick(() => {
+        this.$refs.GroupReportForm.init(data)
+      })
     },
 
 
-
-
+    personReportFun(data) {
+      this.personReportVisible = true
+      this.$nextTick(() => {
+        this.$refs.PersonReportForm.init(data)
+      })
+    },
     // 人员列表
-    searchPerson() {
-
+    searchPersonData() {
+      getUserListPost(this.personForm).then(res => {
+        this.personData = res.data.records
+        this.personTotal = res.data.total
+      })
     },
-    resetPerson() {
-
+    resetPersonData() {
+      this.personForm = {
+        organizeId: "",
+        account: "",
+        realName: "",
+        employeeStatus: "on_job",
+        employeeType: "",
+        orderItems: [
+          {
+            asc: true,
+            column: ""
+          },
+          {
+            asc: false,
+            column: "f_entrydate"
+          }
+        ],
+        organizeId: "",
+        pageNum: 1,
+        pageSize: 20,
+      },
+        this.searchPersonData()
     },
     // 人员  ——左侧数据
     getOrganizeList() {
-      this.filterText = ''
+      this.routfi = ''
       this.treeLoading = true
       this.personForm.organizeId = ''
       getDepartmentSelectorByAuth().then(res => {
         this.treeData = res.data.list
         this.treeLoading = false
-        this.initData()
       }).catch(() => {
         this.treeLoading = false
       })
@@ -965,8 +832,37 @@ export default {
     },
 
 
-
-
+    filterNodePerson(value, data) {
+      return !value || data.fullName.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    },
+    filterNodes(node) {
+      let matched = this.filterNode(this.filterText, node);
+      if (!matched && node.children) {
+        node.children = node.children.filter(childNode => {
+          const matchedChild = this.filterNodes(childNode);
+          return matchedChild;
+        });
+        matched = node.children.length > 0;
+      }
+      return matched;
+    },
+    filterTree() {
+      if (!this.filterText) {
+        // 如果搜索框内容为空，展示全部树形结构数据
+        this.filteredTree = this.treeData;
+        console.log("object", this.filteredTree);
+        return;
+      }
+      const filteredTreeData = JSON.parse(JSON.stringify(this.treeData));
+      this.filteredTree = filteredTreeData.filter(node => {
+        return this.filterNodes(node);
+      });
+    },
+    handleNodeClickPerson(data) {
+      if (this.listQuery.organizeId === data.id) return
+      this.personForm.organizeId = data.id
+      this.searchPersonData()
+    },
 
 
 
@@ -982,7 +878,7 @@ export default {
     // 获取工艺路线
     getRoutingList() {
       getProcessList(this.routingForm).then(res => {
-   
+
         this.routingList = res.data.records
       })
     },
@@ -997,8 +893,8 @@ export default {
       detailProcess(node.data.id).then(res => {
         console.log("工艺详情", res);
         res.data.routingLineList.forEach(item => {
-          item.name=item.processName
-          item.code=item.processCode
+          item.name = item.processName
+          item.code = item.processCode
         });
         this.ProcessData = res.data.routingLineList
         this.processTotal = res.data.routingLineList.length
@@ -1022,6 +918,16 @@ export default {
     changeLeft() {
       this.leftFlag = !this.leftFlag
 
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
     },
 
   }
@@ -1106,7 +1012,11 @@ export default {
   height: 100%
 }
 
-.content_boxt .el-col:nth-child(n+9) {
+.content_boxt .el-col:nth-child(n+7) {
+  margin-top: 10px;
+}
+
+.content_boxts .el-col:nth-child(n+7) {
   margin-top: 10px;
 }
 

@@ -2,7 +2,7 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <div class="pageTitle">工序报工</div>
+        <div class="pageTitle">班组报工</div>
         <div class="options">
 
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -30,7 +30,7 @@
                     </div>
                   </div>
                   <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
-                    :setColumnDisplayList="columnList" custom-column style="height: auto; max-height: 600px;">
+                    @sort-change="sortChange" :setColumnDisplayList="columnList" custom-column class="groupBox">
                     <el-table-column prop="processName" label="工序名称" min-width="160"
                       sortable="custom"></el-table-column>
                     <el-table-column prop="processCode" label="工序编码" min-width="160"
@@ -80,6 +80,7 @@
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
     <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
+
   </div>
 </template>
 
@@ -94,6 +95,7 @@ import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
+
 export default {
 
   components: {
@@ -116,12 +118,10 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       form: {
-        processId: "",
+        workGroupId: "",
         prodOrderStatus: 'normal',
         workReportFlag: true,
         processingType: "self_produced",
-        classAttribute: "finish_product",
-        processId: "",
         "orderItems": [
           {
             "asc": false,
@@ -132,6 +132,7 @@ export default {
             "column": "plan_start_date"
           }
         ],
+        classAttribute: "finish_product",
       },
 
       currentProcess: {},
@@ -151,19 +152,17 @@ export default {
     init(row) {
       console.log("供需信息", row);
       this.processData = row
-      this.form.processId = row.id
+      this.form.workGroupId = row.id
       this.getWorkListFun()
     },
     getWorkListFun() {
       getWorkList(this.form).then(res => {
         this.workList = res.data.records
+        if (!res.data.records.length) return this.$message.warning("暂无可报工数据")
       })
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
-    },
-    closeForm(flag) {
-      if (flag) this.getWorkListFun()
     },
     // 点击报工
     reportFun(row) {
@@ -182,13 +181,29 @@ export default {
       }
     },
     reportRecordsFun(row) {
-      this.recordFormVisible=true
-      this.$nextTick(()=>{
+      this.recordFormVisible = true
+      this.$nextTick(() => {
         this.$refs.recordForm.init(row.orderNo)
       })
     },
     goBack() {
-      this.$emit('close')
+      this.$emit('close', true)
+    },
+    sortChange({ prop, order }) {
+      let newProp;
+      if (prop === 'partnerCode' || prop === 'processName' || prop === 'workstationName' || prop === 'workGroupName'||prop=='productionLineName') {
+        if (prop === 'createByName') {
+          newProp = 'create_by'
+        } else {
+          newProp = prop
+        }
+      } else {
+        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      }
+      this.form.orderItems[0].asc = order !== "descending"
+      this.form.orderItems[0].column = order === null ? "" : newProp
+
+      this.getWorkListFun()
     },
   }
 }
@@ -212,12 +227,12 @@ export default {
 // padding: 1;
 //}</style>
 ::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0;
+height: auto !important;
+padding: 0;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
-  padding: 9px 10px;
+padding: 9px 10px;
 }
 </style>
 <style scoped lang="scss">
@@ -401,5 +416,9 @@ export default {
 
 box-card:nth-child(n+3) {
   margin-top: 10px
+}
+
+.groupBox ::v-deep .el-table__body-wrapper {
+  height: auto !important;
 }
 </style>

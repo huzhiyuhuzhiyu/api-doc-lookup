@@ -37,14 +37,6 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
             <div>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
-                新建返工任务
-              </el-button>
-              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
-              </el-button>
-
             </div>
 
             <div class="JNPF-common-head-right">
@@ -62,8 +54,7 @@
             </div>
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
-            :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
-            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
@@ -78,16 +69,36 @@
               </template>
             </el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
-            <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-            <el-table-column prop="prodSchedule" label="完成进度" min-width="140"  >
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="orderStatus" label="任务状态" min-width="140" sortable="custom">
               <template slot-scope="scope">
-                <el-progress
-                  :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
+                <div v-if="scope.row.orderStatus == 'normal'">进行中</div>
+                <div v-if="scope.row.orderStatus == 'suspend'">暂停</div>
+                <div v-if="scope.row.orderStatus == 'closed'">关闭</div>
+                <div v-if="scope.row.orderStatus == 'finish'">已完成</div>
               </template>
             </el-table-column>
+
+
+            <el-table-column prop="processSchedule" label="工单进度条" min-width="780">
+              <template slot-scope="scope">
+                <div v-for="(item, index) in scope.row.processScheduleList" :key="index" style="width:100px;display: inline-block;">
+                  <div style="position: relative;">
+                    <div class="processSchedule_top" :class="item==0?'noValue':item=='100'?'sucess':'normal'">{{ item }}%</div>
+                    <p style="margin-top: 10px;">序号{{ index + 1 }}</p>
+                    <img v-if="index!=scope.row.processScheduleList.length-1" style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;" src="../../../../assets/images/right.png" alt="">
+                  </div>
+                  
+                </div>
+              </template>
+            </el-table-column>
+
+
+            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="productionQuantity" label="生产数量" min-width="140" sortable="custom" />
+            <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
+
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -102,8 +113,7 @@
 
 
 
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
+
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
@@ -118,25 +128,7 @@
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'work')">工单信息</el-button>
                 <el-button size="mini" type="text"
                   @click="handleUserRelation(scope.row.orderNo, 'report')">报工信息</el-button>
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addition1(scope.row)">
-                      追加生产
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="reassignmentFun1(scope.row.id)">
-                      改派
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
-                      查看详情
-                    </el-dropdown-item>
-
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看详情</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -146,40 +138,10 @@
       </div>
 
     </div>
-    <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
-          <el-col :span="24">
-            <el-form-item label="生产任务单号" prop="orderNo">
-              <el-input v-model="form.orderNo" placeholder="生产任务单号" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="原生产数" prop="productionQuantity">
-              <el-input v-model="form.productionQuantity" placeholder="原生产数" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="追加数量" prop="appendQuantity">
-              <el-input v-model="form.appendQuantity" placeholder="追加数量" clearable />
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
-          提交</el-button>
-      </span>
-    </el-dialog>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
   </div>
 </template>
 
@@ -187,17 +149,17 @@
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from './Form'
-import ReworkForm from './reworkForm.vue'
+import Form from '../ringTaskManagement/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm },
+  components: { SuperQuery, Form },
   data() {
     return {
+      columnList: ["orderType", "routingCode", "productionPlanNo", "createByName"],
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -221,7 +183,7 @@ export default {
         productionPlanNo: "",
         orderNo: "",
         orderStatus: "normal",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         pageNum: 1,
         pageSize: 20,
         superQuery: {
@@ -618,6 +580,10 @@ export default {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
       ordershengchanList(this.orderForm).then(res => {
+        res.data.records.forEach(item => {
+          item.processScheduleList = item.processSchedule.split(',')
+        });
+        console.log("表格数据", res);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -682,6 +648,24 @@ export default {
   margin-left: 0 !important;
 
   margin-bottom: 5px;
+} 
+.processSchedule_top{
+  width: 50px;
+    height: 50px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    line-height: 50px;
+    text-align: center;
+}
+.noValue{
+  border-color:#ccc;
+  
+}
+.normal{
+  border-color:#409eff
+}
+.sucess{
+  border-color:#67c23A
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

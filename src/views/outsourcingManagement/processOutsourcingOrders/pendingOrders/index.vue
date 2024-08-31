@@ -25,7 +25,7 @@
             <el-col :span="8">
               <el-form-item>
                 <el-button class="btnBox" size="mini" @click="btnsearch1()">已延期</el-button>
-                <el-button class="btnBox" size="mini" @click="btnsearch2()">近3天</el-button>
+                <el-button class="btnBox" size="mini" @click="btnsearch2()">近三天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch3()">近7天</el-button>
                 <el-button class="btnBox" size="mini" @click="btnsearch4()">近30天</el-button>
               </el-form-item>
@@ -135,7 +135,7 @@ import {
   getSaleordersTotal,
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
-import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
+import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import Form from './Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
@@ -161,7 +161,7 @@ export default {
       detailFlag: false,
 
       orderForm: {
-        orderType: 'external',
+        orderType: 'external_process',
         deliveryEndDate: '',
         deliveryStartTime: '',
         pageNum: 1,
@@ -352,9 +352,9 @@ export default {
     const end = new Date()
     const start = new Date()
     end.setDate(end.getDate() + 3)
-    // this.deliveryDateArr = ['', end]
-    // this.orderForm.deliveryStartTime = ''
-    // this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
+    this.deliveryDateArr = ['', end]
+    this.orderForm.deliveryStartTime = ''
+    this.orderForm.deliveryEndDate = this.dateFun(this.deliveryDateArr[1])
     this.dataFormSubmit()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -477,7 +477,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      shipmentReport(this.orderForm)
+      purchaseOrderReport(this.orderForm)
         .then((res) => {
           this.tableData = res.data.page.records
           this.getOrderLineReportFun()

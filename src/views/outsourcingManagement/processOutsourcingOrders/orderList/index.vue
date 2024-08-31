@@ -265,7 +265,7 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
-        orderType: 'external', //	订单类型 采购 procure、外协 external
+        orderType: 'external_process', //	订单类型 采购 procure、外协 external
         pageNum: 1,
         pageSize: 20,
         startTime: '',
@@ -580,7 +580,7 @@ export default {
         deliveryDate: '',
         endTime: '',
         orderNo: '', //订单号
-        orderType: 'external', //	订单类型 采购 procure、外协 external
+        orderType: 'external_process', //	订单类型 采购 procure、外协 external
         startTime: ''
       }
       this.createRequirementDate = []
@@ -591,7 +591,7 @@ export default {
 
     addSupplier(id, type) {
       this.$router.push({
-        path: '/outsourcingManagement/productOutsourcingOrder/orderCreation'
+        path: '/outsourcingManagement/processOutsourcingOrders/orderCreation'
       })
     },
     // 生成采购订单 将选中的数据传递过去
@@ -639,7 +639,7 @@ export default {
           cooperativePartnerCode: res.data.cooperativePartnerCode, //供应商名称
           cooperativePartnerId: res.data.cooperativePartnerId, //供应商名称
           deliveryDate: res.data.deliveryDate, //交货日期.
-          orderType: 'external',
+          orderType: 'external_process',
           purchaseOrderLines: res.data.purchaseOrderLineVOList.map((item) => {
             return {
               ...item,

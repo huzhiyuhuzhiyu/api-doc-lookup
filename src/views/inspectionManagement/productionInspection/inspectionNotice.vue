@@ -8,18 +8,18 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productionOrderNo" placeholder="请输入生产订单号" @keyup.enter.native="search()"
+              <el-input v-model="listQuery.productionOrderNo" placeholder="生产订单号" @keyup.enter.native="search()"
                 clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.workNo" placeholder="请输入工单号" @keyup.enter.native="search()" clearable />
+              <el-input v-model="listQuery.workNo" placeholder="工单号" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.orderNo" placeholder="请输入派工单号" @keyup.enter.native="search()" clearable />
+              <el-input v-model="listQuery.orderNo" placeholder="派工单号" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -35,7 +35,8 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <!-- <el-button size="mini" @click="handleBatch()" type="primary">批量检验</el-button> -->
+                <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">导出</el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -51,7 +52,7 @@
           </div>
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
-          custom-column>
+          custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
             <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
@@ -59,7 +60,7 @@
               </el-link>
             </template> -->
           </el-table-column>
-          <el-table-column prop="workNo" label="工单单号" min-width="200" sortable="custom" />
+          <el-table-column prop="orderNo" label="工单单号" min-width="200" sortable="custom" />
           <!-- <el-table-column prop="orderNo" label="报工单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, true)">
@@ -73,7 +74,7 @@
           <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
           <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
 
-          <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="120" sortable="custom" />
+          <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130" sortable="custom" />
 
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" min-width="120" sortable="custom" />
           <el-table-column prop="materialWasteQuantity" label="料废数量" min-width="140" sortable="custom" />
@@ -126,6 +127,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    ] 
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -135,8 +138,10 @@ import Form from '../components/inspectionNoticeForm.vue'
 import DetailForm from '@/views/productionOrders/dispatchTicketInquiry/finish_product/Form.vue'
 // import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, DetailForm, SuperQuery },
+  components: { Form, DetailForm, SuperQuery, ExportForm },
   data() {
     return {
       columnList: [
@@ -147,8 +152,9 @@ export default {
         'oilQuantity',
         'clearance',
         'packagingMethod',
-        'createByName'
+        'createByName',
       ],
+      columnList: [],
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -294,6 +300,7 @@ export default {
           type: 'input'
         }
       ],
+      exportFormVisible: false,
       visible: false,
       detailFormVisible: false,
       activeName: 'dataTable',
@@ -344,6 +351,36 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        console.log(includeFieldMap);
+        let _data = {
+          ...this.listQuery,
+          exportType: '1018',
+          exportName: '生产巡检待检工单',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
     },
     initData() {
       this.listLoading = true

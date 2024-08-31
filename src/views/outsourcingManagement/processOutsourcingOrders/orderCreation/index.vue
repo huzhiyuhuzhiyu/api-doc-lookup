@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
           <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle" />
-          <div style="font-size:18px" v-else>新建外协订单</div>
+          <div style="font-size:18px" v-else>新建工序外协订单</div>
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿
@@ -823,7 +823,7 @@ export default {
     this.getProductClassFun()
   },
   created() {
-    this.fetchData('WXDH')
+    this.fetchData('EPDH')
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -1465,7 +1465,7 @@ export default {
           formNodeList,
           nodeCondList: nodeJudg,
           ccList: ccLists,
-          orderType: 'external'
+          orderType: 'external_process'
         }
       }
       if (this.type === 'edit' || this.type === 'look') {
@@ -1481,7 +1481,7 @@ export default {
           formNodeList,
           nodeCondList: nodeJudg,
           ccList: ccLists,
-          orderType: 'external'
+          orderType: 'external_process'
         }
       }
       console.log(_data, '参数')

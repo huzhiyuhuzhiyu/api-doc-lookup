@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="type === 'look' ? '查看外协订单' : '新建外协订单'" />
+          <el-page-header @back="goBack" :content="type === 'look' ? '查看采购订单' : '新建采购订单'" />
           <div class="options" v-if="type !== 'look'">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
@@ -22,9 +22,9 @@
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="8" v-if="type === 'look'">
-                        <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
+                        <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
                           <el-input :disabled="type != 'add' ? true : false" type="text" v-model="dataForm.orderNo"
-                            placeholder="外协单号">
+                            placeholder="采购单号">
                           </el-input>
                         </el-form-item>
                       </el-col>
@@ -75,7 +75,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'">
                             <div class="viewData">
@@ -83,7 +83,7 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="drawingNo" label="产品图号" min-width="200" show-overflow-tooltip>
                         <template slot-scope="scope">
@@ -119,7 +119,7 @@
 
 
 
-                      <el-table-column prop="purchaseQuantity" label="订单数量" min-width="160">
+                      <el-table-column prop="purchaseQuantity" label="采购数量" min-width="160">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules='productRules.purchaseQuantity'>
@@ -298,12 +298,12 @@
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="4">
+                  <!-- <el-col :span="4">
                     <el-form-item>
                       <el-input v-model.trim="scheduleForm.productName" placeholder="请输入产品名称" clearable
                         @keyup.enter.native="searchDetail()" />
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                   <el-col :span="4">
                     <el-form-item>
                       <el-input v-model.trim="scheduleForm.productDrawingNo" placeholder="请输入产品图号" clearable
@@ -325,10 +325,10 @@
               <JNPF-table :partentOrChild="'child'" v-loading="formLoading" :data="scheduleData" custom-column
                 ref="scheduleRef">
                 <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="180" />
+                <!-- <el-table-column prop="productName" label="产品名称" min-width="160" /> -->
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" />
                 <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-                <el-table-column prop="purchaseQuantity" label="订单数量" min-width="140">
+                <el-table-column prop="purchaseQuantity" label="采购数量(主)" min-width="140">
                   <template slot-scope="scope">
                     <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
                   </template>
@@ -343,12 +343,12 @@
                     <div>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <!-- <el-table-column prop="schedule" label="收货进度" min-width="160">
+                <el-table-column prop="schedule" label="收货进度" min-width="160">
                   <template slot-scope="scope">
                     <el-progress
                       :percentage="Number((scope.row.receiptQuantity / scope.row.purchaseQuantity * 100).toFixed(2))"></el-progress>
                   </template>
-                </el-table-column> -->
+                </el-table-column>
                 <el-table-column prop="receivingStatus" label="收货状态" width="130" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
@@ -371,7 +371,7 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <!-- <el-tab-pane label="流程信息" name="approvalFlow">
+            <el-tab-pane label="流程信息" name="approvalFlow">
               <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
                 ref="workflowRef" />
               <div class="noDataTip" v-if="!workVisible">
@@ -436,7 +436,7 @@
                       </svg></div>
                     <div class="el-empty__description">
                       <p>暂无流程信息</p>
-                    </div>
+                    </div><!---->
                   </div>
                 </span>
               </div>
@@ -450,7 +450,7 @@
                 <el-table-column prop="endDate" label="结束时间" min-width="160" />
                 <el-table-column prop="consumingTime" label="耗时" min-width="160" />
               </el-table>
-            </el-tab-pane> -->
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -878,7 +878,7 @@ export default {
         let _data = {
           ...this.scheduleForm,
           exportType: '1104',
-          exportName: '外协订单进度跟踪',
+          exportName: '采购订单进度跟踪',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.scheduleForm.pageSize : -1
         }
@@ -901,7 +901,12 @@ export default {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
       console.log(this.scheduleForm, '参数');
-
+      orderSchedule(this.scheduleForm).then(res => {
+        console.log(res, '订单跟踪');
+        this.scheduleData = res.data.records
+        this.total = res.data.total
+        this.formLoading = false
+      })
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

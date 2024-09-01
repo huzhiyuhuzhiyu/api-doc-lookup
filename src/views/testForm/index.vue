@@ -209,7 +209,7 @@ export default {
         category: "",
       },
       total: 0,
-      sort: 'webDesign',
+      sort: 'businessType',
       previewDialogVisible: false,
       releaseDialogVisible: false,
       releaseBtnLoading: false,

@@ -35,7 +35,8 @@
                     </el-col>
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="检验工具编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入检验工具编码" maxlength="20" :disabled="disabled"
+                        <el-input v-model="dataForm.code" placeholder="请输入检验工具编码" maxlength="20"
+                          :disabled="disabled ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"
                           oninput="value = value.replace(/[\p{P}\p{C}\p{S}\p{M}]/gu,'')" />
                       </el-form-item>
                     </el-col>
@@ -50,9 +51,9 @@
                       <el-form-item label="图号" prop="drawingNo">
                         <el-input v-model="dataForm.drawingNo" placeholder="请输入图号" maxlength="50" :disabled="disabled">
                           <template slot="append">KG</template>
-                        </el-input>
-                      </el-form-item>
-                    </el-col> -->
+</el-input>
+</el-form-item>
+</el-col> -->
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="长" prop="equLong">
                         <el-input v-model="dataForm.equLong" placeholder="请输入长" :disabled="disabled">
@@ -169,7 +170,7 @@ export default {
       visible: false,
       btnLoading: false,
       formLoading: false,
-
+      codeConfig: {},
       dataForm: {
         state: 'normal',
         id: "",
@@ -259,6 +260,16 @@ export default {
 
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     getuserDepartment(r, s) {
       console.log(r, s);
       this.parentId = s.parentId
@@ -299,6 +310,7 @@ export default {
         this.disabled = disabled
       }
       if (this.dataForm.id) {
+        this.fetchData("JYGJ", false)
         getEquEquipmentInfo(this.dataForm.id).then(res => {
           this.$nextTick(() => {
             this.dataForm = res.data
@@ -317,6 +329,8 @@ export default {
             }
           })
         })
+      } else {
+        this.fetchData("JYGJ", true)
       }
     },
     goBack() {

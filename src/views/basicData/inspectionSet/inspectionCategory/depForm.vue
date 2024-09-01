@@ -18,7 +18,8 @@
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
         </el-form-item>
         <el-form-item label="分类编码" prop="code">
-          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20" />
+          <el-input v-model="dataForm.code" placeholder="请输入分类编码" maxlength="20"
+            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
         </el-form-item>
 
         <el-form-item label="备注" prop="remark">
@@ -54,6 +55,7 @@ export default {
         remark: '',
         classAttribute: "inspection_items"
       },
+      codeConfig: {},
       autoCode: '',
       dataRule: {
         name: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
@@ -77,6 +79,16 @@ export default {
     }
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     init(id, parentId) {
       this.visible = true
       this.dataForm.id = id || ''
@@ -85,12 +97,14 @@ export default {
       this.formLoading = true
       this.$nextTick(() => {
         if (this.dataForm.id) {
+          this.fetchData("JYXMFL", false)
           detailCategory(this.dataForm.id).then(res => {
             this.dataForm = res.data
             this.autoCode = res.data.code
             this.formLoading = false
           })
         } else {
+          this.fetchData("JYXMFL", true)
           this.formLoading = false
         }
       })

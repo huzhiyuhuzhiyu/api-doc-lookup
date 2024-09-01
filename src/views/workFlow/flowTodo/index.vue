@@ -249,7 +249,8 @@ export default {
           valueFormat: "yyyy-MM-dd",
         },
       ],
-      countItems: []
+      countItems: [],
+      flowType:'businessType'
     }
   },
   filters: {

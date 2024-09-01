@@ -148,7 +148,7 @@ export default {
     getcategoryTree() {
       this.treeLoading = true
       this.listLoading = true
-      getbimProductAttributes('765929a127f44a5b80e773d65d58f96c').then(res => {
+      getbimProductAttributes('306427078100678661').then(res => {
         this.treeData = res.data.list.length ? res.data.list : []
         this.listLoading = false
         this.$nextTick(() => {

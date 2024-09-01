@@ -91,10 +91,10 @@
             </el-table-column>
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="toDetail(scope.row, '-1')"
+                <el-button v-if="!listQuery.businessFlag" size="mini" type="text" @click="toDetail(scope.row, '-1')"
                   :disabled="[1, 2, 4, 5].indexOf(scope.row.status) > -1">编辑
                 </el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                <el-button v-if="!listQuery.businessFlag" size="mini" type="text" class="JNPF-table-delBtn"
                   @click="handleDel(scope.$index, scope.row.id)"
                   :disabled="[1, 2, 3, 5].indexOf(scope.row.status) > -1">删除
                 </el-button>
@@ -275,7 +275,8 @@ export default {
             label: '审核终止'
           }],
         },
-      ]
+      ],
+      flowType:'businessType'
     }
   },
   filters: {
@@ -285,9 +286,9 @@ export default {
     }
   },
   created() {
-    this.getDictionaryData()
-    this.getFlowEngineList()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getDictionaryData(this.flowType)
+    this.getFlowEngineList()
     this.initData()
   },
   watch: {
@@ -295,6 +296,7 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
       this.initData()
+      this.getDictionaryData(this.flowType)
     }
   },
   methods: {
@@ -319,8 +321,8 @@ export default {
         this.flowEngineList = res.data.list
       })
     },
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
+    getDictionaryData(type) {
+      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
         this.categoryList = res
         console.log(this.categoryList);
 
@@ -329,6 +331,7 @@ export default {
     initData() {
       this.listLoading = true
       this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+      this.flowType = this.listQuery.businessFlag ? 'businessType' : 'WorkFlowCategory'
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item

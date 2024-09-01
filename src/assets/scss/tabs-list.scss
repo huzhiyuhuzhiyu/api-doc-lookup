@@ -46,7 +46,9 @@
   margin-bottom: 0;
   background: #fff;
 }
-
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
 .el-button--small {
   padding: 1;
 }

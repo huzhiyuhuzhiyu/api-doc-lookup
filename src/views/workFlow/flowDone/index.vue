@@ -217,6 +217,7 @@ export default {
           valueFormat: "yyyy-MM-dd",
         },
       ],
+      flowType:'businessType'
     }
   },
   filters: {
@@ -226,9 +227,9 @@ export default {
     }
   },
   created() {
-    this.getDictionaryData()
-    this.getFlowEngineList()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getDictionaryData(this.flowType)
+    this.getFlowEngineList()
     this.initData()
   },
   watch: {
@@ -236,6 +237,7 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
       this.initData()
+      this.getDictionaryData(this.flowType)
     }
   },
   methods: {
@@ -260,14 +262,15 @@ export default {
         this.flowEngineList = res.data.list
       })
     },
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
+    getDictionaryData(type) {
+      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
         this.categoryList = res
       })
     },
     initData() {
       this.listLoading = true
       this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+      this.flowType = this.listQuery.businessFlag ? 'businessType' : 'WorkFlowCategory'
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item

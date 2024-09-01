@@ -100,10 +100,19 @@
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
 
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
+                    <el-button type="text" size="mini"
+                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      @click.native="withdrawnAddHandle(scope.row, 'add')">
+                      重新提交
+                    </el-button>
+                    <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing'"
+                      @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
+                      审批撤回
+                    </el-button>
                     <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row, 'look')">
                       查看详情
                     </el-button>
@@ -119,6 +128,9 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -131,8 +143,10 @@ import {
 import Form from './defectiveProductHandlingForm.vue'
 import { approvalStatusList, inspectionMethodList, inspectionResultsList } from '../data.js'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-  components: { Form },
+  components: { Form, SuperQuery },
   props: {
     pageData: {
       type: Object,
@@ -160,6 +174,105 @@ export default {
   },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '处理单号',
+          type: 'input'
+        },
+        {
+          prop: 'inspectionOrderNo',
+          label: '检验单号',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'inspectionDate',
+          label: '检验日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'inspectorName',
+          label: '检验人',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'input'
+        },
+        {
+          prop: 'inspectionQuantity',
+          label: '报检数量',
+          type: 'input'
+        },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          type: 'input'
+        },
+        {
+          prop: 'description',
+          label: '处理说明',
+          type: 'input'
+        },
+        {
+          prop: 'treatmentResults',
+          label: '处理结果',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
+          prop: 'qualifiedQuantity',
+          label: '合格数量',
+          type: 'input'
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          type: 'input'
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
+      ],
       columnList: [
         'partnerCode',
         'productCode',
@@ -217,6 +330,11 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -294,6 +412,12 @@ export default {
       let option = this.processingresults.find((item) => item.value === row.treatmentResults)
       return option ? option.label : row.treatmentResults
     },
+    withdrawnAddHandle(row, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
+      })
+    },
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -318,4 +442,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->

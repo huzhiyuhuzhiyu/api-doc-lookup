@@ -17,6 +17,16 @@ export function insertOutOrder(data) {
     data
   })
 }
+
+  // 外协订单修改
+  export function editOutOrder(data) {
+    return request({
+      url: `/api/erp/purPurchaseOrder/modifyOutOrder`,
+      method: 'put',
+      data
+    })
+  }
+
   // 列表
   export function purchaseOrderList(data) {
     return request({

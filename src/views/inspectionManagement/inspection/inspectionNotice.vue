@@ -34,7 +34,10 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-            <!-- <el-button size="mini" @click="handleBatch()" type="primary">批量检验</el-button> -->
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -65,7 +68,7 @@
           <el-table-column prop="processName" label="工序名称" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width="120" />
           <el-table-column prop="productionQuantity" label="生产数量" width="120" sortable="custom" />
-          <el-table-column prop="completedQuantity" label="已完成数量" width="120" />
+          <!-- <el-table-column prop="completedQuantity" label="已完成数量" width="120" /> -->
           <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
           <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="120" sortable="custom" />
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" width="120" sortable="custom" />
@@ -108,18 +111,22 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
-import { getWorkReportList } from "@/api/productOrdes/index"
+import { getWorkReportList } from '@/api/productOrdes/index'
 import Form from '../components/inspectionNoticeForm.vue'
 import DetailForm from '@/views/productionOrders/productOrdersMan/finishedOrdersManage/Form.vue'
 // import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
 export default {
-  components: { Form, DetailForm, SuperQuery },
+  components: { Form, DetailForm, SuperQuery, ExportForm },
   data() {
     return {
       columnList: ['productCode', 'planStartDate', 'planEndDate'],
@@ -230,7 +237,7 @@ export default {
           pickerOptions: this.global.timePickerOptions
         }
       ],
-
+      exportFormVisible: false,
       visible: false,
       detailFormVisible: false,
       activeName: 'dataTable',
@@ -302,6 +309,42 @@ export default {
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
+    },
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        console.log(includeFieldMap)
+        let _data = {
+          ...this.listQuery,
+          exportType: '1020',
+          exportName: '完工检验待检工单',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          totalRowFlag: true
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
+      }
     },
     initData() {
       this.listLoading = true

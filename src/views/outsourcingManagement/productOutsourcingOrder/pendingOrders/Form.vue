@@ -343,12 +343,12 @@
                     <div>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="schedule" label="收货进度" min-width="160">
+                <!-- <el-table-column prop="schedule" label="收货进度" min-width="160">
                   <template slot-scope="scope">
                     <el-progress
                       :percentage="Number((scope.row.receiptQuantity / scope.row.purchaseQuantity * 100).toFixed(2))"></el-progress>
                   </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column prop="receivingStatus" label="收货状态" width="130" align="center">
                   <template slot-scope="scope">
                     <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
@@ -371,7 +371,7 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow">
+            <!-- <el-tab-pane label="流程信息" name="approvalFlow">
               <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
                 ref="workflowRef" />
               <div class="noDataTip" v-if="!workVisible">
@@ -436,7 +436,7 @@
                       </svg></div>
                     <div class="el-empty__description">
                       <p>暂无流程信息</p>
-                    </div><!---->
+                    </div>
                   </div>
                 </span>
               </div>
@@ -450,7 +450,7 @@
                 <el-table-column prop="endDate" label="结束时间" min-width="160" />
                 <el-table-column prop="consumingTime" label="耗时" min-width="160" />
               </el-table>
-            </el-tab-pane>
+            </el-tab-pane> -->
           </el-tabs>
         </div>
       </div>
@@ -901,12 +901,7 @@ export default {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
       console.log(this.scheduleForm, '参数');
-      orderSchedule(this.scheduleForm).then(res => {
-        console.log(res, '订单跟踪');
-        this.scheduleData = res.data.records
-        this.total = res.data.total
-        this.formLoading = false
-      })
+
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

@@ -127,7 +127,12 @@ import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/purchasingManagement/purchaseAndReceive/purchaseReceiptNote/Form.vue'
 import DetailForm from './DetailForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import {
+  getbimProductAttributesList,
+  getbimProductAttributes,
+  getbimProductsModelList
+} from '@/api/masterDataManagement/index'
+import { getCooperativeData } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getUnitData } from '@/api/basicData/materialSettings'
@@ -357,8 +362,8 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-     getProductClassFun() {
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
       let obj1 = {
         pageNum: -1,
         pageSize: 20,
@@ -584,7 +589,6 @@ export default {
         pageSize: 100
       }
       getUnitData(obj8).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -605,7 +609,6 @@ export default {
         pageSize: 20
       }
       getbimProductsModelList(obj9).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -670,7 +673,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj11).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -702,7 +704,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj12).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -755,7 +756,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj14).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -787,7 +787,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj15).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -820,7 +819,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj16).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -853,7 +851,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj17).then((res) => {
-
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {
@@ -876,7 +873,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-
       })
     },
     initData() {

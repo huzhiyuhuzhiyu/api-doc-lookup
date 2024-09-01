@@ -6,11 +6,13 @@
           <el-page-header @back="goBack" :content="title" />
           <!-- <el-page-header @back="goBack" :content="type === 'look' ? '查看外协订单' : '新建外协订单'" /> -->
           <div class="options" v-if="type !== 'look'">
-            <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
-              保存草稿</el-button> -->
-            <!-- <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
-              保存并提交</el-button>
-            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
+            <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
+              保存草稿
+            </el-button>
+            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
+              保存并提交
+            </el-button>
+            <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
 
@@ -288,7 +290,7 @@
 <script>
 // import ProductsDialog from './products-dialog.vue'
 // import SupplierDialog from './supplier-dialog.vue'
-import { insertPurchaseOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
+import { editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
 import { excelExport } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
@@ -520,6 +522,7 @@ export default {
             }
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+            this.dataFormTwo.data[0].outShipmentList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
           })
           getSaleBusDetail(this.dataForm.id).then((res) => {
             console.log(res, 'res')
@@ -559,59 +562,369 @@ export default {
       })
     },
     // 表单提交
-    dataFormSubmit() {
-      this.request()
+    dataFormSubmit(type) {
+      this.request(type)
     },
 
-    async request() {
+    async request(type) {
+      let _data
+      let hasCostPrice = true
       this.btnLoading = true
-      this.dataFormTwo.data = this.dataFormTwo.data.map((obj) => {
-        return { ...obj, procurementDemandPoolId: obj.id, id: null }
-      })
-      this.dataForm.purchaseOrderLines = this.dataFormTwo.data
-      let form_2 = this.$refs['productForm']
-      let valid_2 = await form_2.validate().catch((err) => false)
+      // 审批条件参数列表
+      let nodeCondList = []
+      // 审批抄送人列表
+      let ccList = []
+      let ccLists = []
+      let nodeJudg = []
+      // 业务审批单流程节点列表
+      let formNodeList = []
+      // 业务审批单
+      let form = {}
+      let templateLineList = []
+      if (this.type == 'add') {
+        if (this.busNodeConfig.childNode) {
+          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
+          let flattenedNodes = this.flattenNodes(data)
+          flattenedNodes.splice(0, 1)
+          flattenedNodes = flattenedNodes.map((item) => {
+            return {
+              ...item,
+              nodeUserList: item.nodeUserList ? item.nodeUserList : []
+            }
+          })
+          templateLineList = flattenedNodes.filter((item) => item.nodeName === '审核人')
+          // 抄送人节点数组 ccList
+          ccList = flattenedNodes.filter((item) => item.nodeName === '抄送人')
 
-      this.$refs['elForm'].validate((valid) => {
-        if (valid) {
-          if (!valid_2) {
-            this.btnLoading = false
-            for (let i = 0; i < this.dataFormTwo.data.length; i++) {
-              const item = this.dataFormTwo.data[i]
-              if (!item.deliveryDate) {
-                this.$message({
-                  type: 'error',
-                  message: '请选择第' + (i + 1) + '行的交货日期',
-                  duration: 1500
-                })
-                break
+          for (var i = 0; i < ccList.length; i++) {
+            var nodeUserList = ccList[i].nodeUserList
+            ccLists = ccLists.concat(nodeUserList)
+          }
+
+          if (templateLineList.length && type === 'submit') {
+            hasCostPrice = templateLineList.every((item) => item.nodeUserList.length)
+            if (!hasCostPrice) {
+              this.$message.error('审核人不能为空！')
+              this.btnLoading = false
+              return
+            }
+          }
+          if (ccList.length && type === 'submit') {
+            hasCostPrice = ccList.every((item) => item.nodeUserList.length)
+            if (!hasCostPrice) {
+              this.$message.error('抄送人不能为空！')
+              this.btnLoading = false
+              return
+            }
+          }
+          // 条件节点数组 nodeJudgmentList
+          nodeCondList = flattenedNodes.filter((item) => item.type === 'condition')
+          // 业务审批单流程节点参数
+          formNodeList = flattenedNodes.map((item, index) => {
+            return {
+              ...item,
+              approvalStatus: item.name == '审核人' ? 'no' : '',
+              adminId: '',
+              id: '',
+              previousCode:
+                item.type === 'condition' ? item.previousCode : index === 0 ? '' : flattenedNodes[index - 1].code,
+              name: item.nodeName,
+              designatedMembersId: item.designatedMembersId
+                ? item.designatedMembersId
+                : item.nodeUserList.length
+                  ? item.nodeUserList[0].targetId
+                  : ''
+            }
+          })
+          // 抄送人
+          ccLists = ccLists.map((item) => {
+            return {
+              ...item,
+              approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
+              ccToId: item.targetId,
+              approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
+              id: '',
+              defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1
+            }
+          })
+          // 条件列表
+          if (nodeCondList.length) {
+            nodeJudg = nodeCondList.map((item) => {
+              return {
+                ...item,
+                approvalFormNodeCode: item.code,
+                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
+                code: item.conditionList[0].tjCode,
+                dataType: item.conditionList[0].dataType,
+                id: item.conditionList[0].id ? item.conditionList[0].id : ''
+              }
+            })
+          }
+          // 业务审批单
+          form = {
+            ...this.approvalForm,
+            approvalTemplateId: this.approvalForm.id,
+            documentStatus: type,
+            documentId: '',
+            id: ''
+          }
+        }
+      }
+      if (this.type === 'edit' || this.type === 'look') {
+        if (this.busNodeConfig.childNode) {
+          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
+          let flattenedNodes = this.flattenNodes(data)
+          flattenedNodes.splice(0, 1)
+          flattenedNodes = flattenedNodes.map((item) => {
+            return {
+              ...item,
+              nodeUserList: item.nodeUserList ? item.nodeUserList : []
+            }
+          })
+          templateLineList = flattenedNodes.filter((item) => item.nodeName === '审核人')
+          // 抄送人节点数组 ccList
+          ccList = flattenedNodes.filter((item) => item.nodeName === '抄送人')
+          for (var i = 0; i < ccList.length; i++) {
+            var nodeUserList = ccList[i].nodeUserList
+            ccLists = ccLists.concat(nodeUserList)
+          }
+          if (templateLineList.length && type === 'submit') {
+            hasCostPrice = templateLineList.every((item) => item.nodeUserList.length)
+            if (!hasCostPrice) {
+              this.$message.error('审核人不能为空！')
+              this.btnLoading = false
+              return
+            }
+          }
+          if (ccList.length && type === 'submit') {
+            hasCostPrice = ccList.every((item) => item.nodeUserList.length)
+            if (!hasCostPrice) {
+              this.$message.error('抄送人不能为空！')
+              this.btnLoading = false
+              return
+            }
+          }
+          // return
+          // 条件节点数组 nodeJudgmentList
+          nodeCondList = flattenedNodes.filter((item) => item.type === 'condition')
+          // 业务审批单流程节点参数
+          formNodeList = flattenedNodes.map((item, index) => {
+            return {
+              ...item,
+              // previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
+              // name: item.nodeName,
+              designatedMembersId: item.designatedMembersId
+                ? item.designatedMembersId
+                : item.nodeUserList.length
+                  ? item.nodeUserList[0].targetId
+                  : ''
+            }
+          })
+          // 抄送人
+          ccLists = ccLists.map((item) => {
+            return {
+              ...item,
+              approvalFormId: item.approvalFormId ? item.approvalFormId : this.approvalForm.id,
+              approvalFormNodeCode: item.approvalFormNodeCode ? item.approvalFormNodeCode : item.code,
+              ccToId: item.targetId,
+              id: item.id ? item.id : ''
+            }
+          })
+          // 条件列表
+          if (nodeCondList.length) {
+            nodeJudg = nodeCondList.map((item) => {
+              return {
+                ...item,
+                approvalFormNodeCode: item.code,
+                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
+                code: item.conditionList[0].tjCode,
+                dataType: item.conditionList[0].dataType,
+                id: item.conditionList[0].id ? item.conditionList[0].id : ''
+              }
+            })
+          }
+          // 业务审批单
+          form = {
+            ...this.approvalForm,
+            approvalTemplateId: this.approvalForm.id,
+            documentStatus: type
+          }
+        }
+      }
+      if (type === 'submit' && this.dataForm.approvalFlag) {
+        if (!this.busNodeConfig.childNode) {
+          hasCostPrice = false
+          this.btnLoading = false
+          this.$message.error('未找到匹配的审批流程，请联系管理员！')
+        }
+        if (formNodeList.length) {
+          formNodeList.forEach((item) => {
+            if (item.approvalType === 'option') {
+              if (!item.designatedMembersId) {
+                hasCostPrice = false
+                this.btnLoading = false
+                this.$message.error('未配置发起人自选！')
               }
             }
-            return
-          } else {
-            this.btnLoading = true
-            insertPurchaseOrder(this.dataForm)
-              .then((res) => {
-                if (res.msg === 'Success') res.msg = '保存成功'
-                this.btnLoading = false
-                this.$message({
-                  message: res.msg,
-                  type: 'success',
-                  duration: 1000,
-                  onClose: () => {
-                    this.btnLoading = false
-                    this.$emit('close', true)
-                  }
-                })
-              })
-              .catch(() => {
-                this.btnLoading = false
-              })
-          }
-        } else {
-          this.btnLoading = false
+          })
         }
+      }
+      this.dataForm.documentStatus = type
+      console.log(this.dataForm.documentStatus, 'this.dataForm.documentStatus')
+      if (this.datafilelist.length) {
+        this.datafilelist.map((item, index) => {
+          item.bimAttachments = {
+            businessType: '',
+            documentId: item.id,
+            fileFlag: '',
+            sort: index
+          }
+        })
+      }
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.taxAmount * 1
       })
+      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
+      if (this.type == 'add') {
+        _data = {
+          ...this.dataForm,
+          attachmentList: this.datafilelist,
+          purProcurementRequirements: this.dataForm,
+          purchaseOrderLines: this.dataFormTwo.data,
+          form: this.dataForm,
+          formNodeList,
+          nodeCondList: nodeJudg,
+          ccList: ccLists,
+          orderType: 'external'
+        }
+      }
+      if (this.type === 'edit' || this.type === 'look') {
+        // this.dataFormTwo.data.forEach((item, index) => {
+        //   this.dataFormTwo.data[index].inquirySheetId = this.dataForm.id
+        // })
+        _data = {
+          ...this.dataForm,
+          attachmentList: this.datafilelist,
+          purProcurementRequirements: this.dataForm,
+          purchaseOrderLines: this.dataFormTwo.data,
+          form: this.dataForm,
+          formNodeList,
+          nodeCondList: nodeJudg,
+          ccList: ccLists,
+          orderType: 'external'
+        }
+      }
+      console.log(_data, '参数')
+      let msg = ''
+      if (this.dataForm.documentStatus === 'draft') {
+        msg = '保存成功'
+      } else {
+        msg = '提交成功'
+      }
+      let form_2 = this.$refs['productForm']
+      let valid_2 = await form_2.validate().catch((err) => false)
+      if (hasCostPrice) {
+        this.$refs['elForm'].validate((valid) => {
+          if (valid) {
+            if (this.dataFormTwo.data.length === 0) {
+              this.btnLoading = false
+              this.$message.error('请至少选择一项产品')
+            } else {
+              if (!valid_2) {
+                console.log(1)
+                this.btnLoading = false
+                for (let i = 0; i < this.dataFormTwo.data.length; i++) {
+                  const item = this.dataFormTwo.data[i]
+                  if (!item.planQuantity) {
+                    this.$message({
+                      type: 'error',
+                      message: '请输入第' + (i + 1) + '行的主数量',
+                      duration: 1500
+                    })
+                    break
+                  }
+                  if (!item.deliveryDate) {
+                    this.$message({
+                      type: 'error',
+                      message: '请选择第' + (i + 1) + '行的交货日期',
+                      duration: 1500
+                    })
+                    break
+                  }
+                }
+                return
+              } else {
+                this.btnLoading = true
+
+                if (this.type === 'add') {
+                  insertOutOrder(_data)
+                    .then((res) => {
+                      if (res.msg === 'Success') res.msg = '新建成功'
+                      if (!this.dialogTitle) {
+                        this.$message({
+                          message: msg,
+                          type: 'success',
+                          duration: 1000,
+                          onClose: () => {
+                            this.btnLoading = false
+                            this.datafilelist = []
+                            this.dataFormTwo.data = []
+                            this.dataForm = {
+                              applicationReason: '',
+                              approvalCompletionDate: '',
+                              // approvalStatus: "",
+                              documentStatus: '',
+                              id: '',
+                              orderNo: '',
+                              reasonRejection: '',
+                              submitDate: ''
+                            }
+                            this.workVisible = false
+                          }
+                        })
+                        return
+                      }
+                      this.$message({
+                        message: msg,
+                        type: 'success',
+                        duration: 1000,
+                        onClose: () => {
+                          this.btnLoading = false
+                          this.$emit('close', true)
+                        }
+                      })
+                    })
+                    .catch(() => {
+                      this.btnLoading = false
+                    })
+                } else {
+                  editOutOrder(_data)
+                    .then((res) => {
+                      if (res.msg === 'Success') res.msg = '修改成功'
+                      this.$message({
+                        message: msg,
+                        type: 'success',
+                        duration: 1000,
+                        onClose: () => {
+                          this.btnLoading = false
+                          this.$emit('close', true)
+                        }
+                      })
+                    })
+                    .catch(() => {
+                      this.btnLoading = false
+                    })
+                }
+              }
+            }
+          } else {
+            this.btnLoading = false
+          }
+        })
+      } else {
+        this.btnLoading = false
+      }
     },
 
     // 删除项

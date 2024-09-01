@@ -17,7 +17,7 @@
               <el-collapse-item title="工单信息" name="productInfo">
 
 
-                <div >
+                <div>
                   <div class="JNPF-common-head">
                     <div></div>
                     <div class="JNPF-common-head-right">
@@ -29,9 +29,10 @@
 
                     </div>
                   </div>
-                  <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true" :setColumnDisplayList="columnList"
-                    custom-column>
-                    <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
+                  <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
+                    :setColumnDisplayList="columnList" custom-column style="height: auto; max-height: 600px;">
+                    <el-table-column prop="processName" label="工序名称" min-width="160"
+                      sortable="custom"></el-table-column>
                     <el-table-column prop="processCode" label="工序编码" min-width="160"
                       sortable="custom"></el-table-column>
                     <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
@@ -78,6 +79,7 @@
     </div>
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
+    <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
   </div>
 </template>
 
@@ -91,13 +93,15 @@ import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productO
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
+import recordForm from './recordForm.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm
+    NormalForm, VibrateForm,recordForm
   },
   data() {
     return {
+      recordFormVisible:false,
       columnList: ["processCode"],
       normalFormVisible: false,
       vibrateFormVisible: false,
@@ -116,6 +120,7 @@ export default {
         prodOrderStatus: 'normal',
         workReportFlag: true,
         processingType: "self_produced",
+        classAttribute: "finish_product",
         processId: "",
         "orderItems": [
           {
@@ -134,8 +139,8 @@ export default {
       currentProcessId: "",
       id: "",
       sort: "",//测震工序序号
-      tableData:[],
-      processData:{},
+      tableData: [],
+      processData: {},
     }
   },
 
@@ -144,9 +149,12 @@ export default {
 
   methods: {
     init(row) {
-      console.log("供需信息",row);
-      this.processData=row
+      console.log("供需信息", row);
+      this.processData = row
       this.form.processId = row.id
+      this.getWorkListFun()
+    },
+    getWorkListFun() {
       getWorkList(this.form).then(res => {
         this.workList = res.data.records
       })
@@ -154,24 +162,30 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+    closeForm(flag) {
+      if (flag) this.getWorkListFun()
+    },
     // 点击报工
     reportFun(row) {
-      if(row.processType=='vibrate'){
+      if (row.vibrateReportFlag) {
         this.vibrateFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.VibrateForm.init(row)
+        this.$nextTick(() => {
+          this.$refs.VibrateForm.init(row)
 
-          })
-      }else{
+        })
+      } else {
         this.normalFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.normalForm.init(item)
+        this.$nextTick(() => {
+          this.$refs.normalForm.init(row)
 
-          })
+        })
       }
     },
     reportRecordsFun(row) {
-
+      this.recordFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.recordForm.init(row.orderNo)
+      })
     },
     goBack() {
       this.$emit('close')
@@ -197,7 +211,6 @@ export default {
 //.el-button--small {
 // padding: 1;
 //}</style>
-<style scoped>
 ::v-deep .el-tabs__content {
   height: auto !important;
   padding: 0;

@@ -346,11 +346,11 @@ export default {
                 obj.processId = this.form.processId
                 obj.producerId = this.form.producerId
                 obj.productionOrderId = this.form.productionOrderId
-                obj.qualifiedQuantity = this.form.item[item.name]
-                obj.reportingQuantity = this.form.qualifiedQuantity
+                obj.qualifiedQuantity = this.form.item[item.name] 
+                obj.reportingQuantity =  this.jnpf.numberFormat(this.jnpf.math('add', [this.form.item[item.name], this.form.unqualifiedQuantity,this.form.reworkQuantity]), 6)
                 obj.reportingType = "normal"
                 obj.unqualifiedQuantity = this.form.unqualifiedQuantity
-                obj.vibrationLevel = this.form.vibrationLevel
+                obj.vibrationLevel = item.name
                 obj.workOrderId = this.form.id
                 arr.push(obj)
               } else {
@@ -370,10 +370,10 @@ export default {
                 obj.producerId = this.form.producerId
                 obj.productionOrderId = this.form.productionOrderId
                 obj.qualifiedQuantity = this.form.item[item.name]
-                obj.reportingQuantity = this.form.qualifiedQuantity
+                obj.reportingQuantity = this.form.item[item.name]
                 obj.reportingType = "normal"
                 obj.unqualifiedQuantity = 0
-                obj.vibrationLevel = this.form.vibrationLevel
+                obj.vibrationLevel = item.name
                 obj.workOrderId = this.form.id
                 arr.push(obj)
               }

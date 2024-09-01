@@ -445,4 +445,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+

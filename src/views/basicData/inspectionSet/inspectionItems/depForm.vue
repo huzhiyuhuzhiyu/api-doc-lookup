@@ -30,7 +30,7 @@
             <el-col :span="12">
               <el-form-item label="项目编码" prop="code">
                 <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20"
-                  :disabled="btntype ? true : false" />
+                  :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -150,6 +150,7 @@ export default {
         equipmentName: '',
         equipmentId: ''
       },
+      codeConfig: {},
       categoryIdProps: {
         'label': 'name',
         'value': 'id',
@@ -202,6 +203,16 @@ export default {
   created() {
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     hangleWay(e) {
       console.log(e);
       // this.dataForm.inspectionMethod = e
@@ -299,8 +310,9 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
-
+          this.fetchData("JYXM", false)
         } else {
+          this.fetchData("JYXM", true)
           this.formLoading = false
         }
       })

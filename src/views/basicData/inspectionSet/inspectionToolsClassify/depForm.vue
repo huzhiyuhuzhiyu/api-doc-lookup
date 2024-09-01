@@ -147,7 +147,7 @@ export default {
   line-height: 24px;
   font-size: 18px;
   color: #303133;
-  margin-left: -52px;
+  margin-left: -10px;
 }
 
 .required {

@@ -5,7 +5,7 @@
       <div class="left-content card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
-            合同金额目标及完成情况
+            {{dataForm.label==1?'合同金额':'回款金额'}}目标及完成情况
           </div>
           <div class="card-title-right">
             <div class="wk-toggle-button__bd">

@@ -682,19 +682,13 @@ export default {
       }).catch(() => { })
     },
     handleUserRelation(data, btnType) {
-      console.log(data, btnType);
-      // 订单创建计划
-          this.orderFormVisible = true
-          if (data.planType == 'order_plan') {
-        detailPlanList(data.id).then(res => {
-          console.log("订单计划详情", res);
-          this.$nextTick(() => {
-            this.$refs.orderForm.init(data.id, btnType, res.data, 'order_plan')
-          })
+      detailPlanList(data.id).then(res => {
+        console.log("订单计划详情", res);
+        this.orderFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
         })
-        // init(id, btnType, productData, planType)
-
-      }
+      })
 
     },
     // 导出

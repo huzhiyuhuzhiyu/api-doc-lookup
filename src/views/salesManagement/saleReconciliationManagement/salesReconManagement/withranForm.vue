@@ -23,6 +23,13 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
+                  <el-col :sm="6" :xs="24">
+                      <el-form-item label="对账单号" prop="quotationNo">
+                        <el-input v-model="dataForm.orderNo" placeholder="对账单号"
+                          :disabled=" codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                          maxlength="50" />
+                      </el-form-item>
+                    </el-col>
                   <el-col :span="6">
                     <el-form-item label="客户名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择客户名称">
@@ -384,6 +391,7 @@ export default {
       endTime: 0,
       formLoading: false,
       flowData:{},
+      codeConfig:{},
     }
   },
   created() {
@@ -487,6 +495,15 @@ export default {
     },
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        this.dataForm.orderNo = data.number
+
+      } catch (error) {
+      }
+    },
     addAdjustmentBtn() {
       console.log(234, this.dataFormTwo.data);
       this.dataFormTwo.data.push({
@@ -527,6 +544,8 @@ export default {
     },
     init(row, data, type) {
       this.dataFormTwo.data = []
+    this.fetchData('DZDH')
+
       // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
       let excludingTaxAmount, includingTaxAmount;
       console.log(55555);
@@ -556,13 +575,16 @@ export default {
           mainUnit: item.mainUnit,
           ordersLineId: item.ordersLineId,
           ordersId: item.ordersId,
-          productsId: item.productId,
+          moveId: item.moveId,
+          moveLineId: item.moveLineId,
+          productsId: item.productsId, 
           productName: item.productName,
           productCode: item.productCode,
           productDrawingNo: item.drawingNo,
           orderNo:item.stockMoveOrderNo,
           ratio: item.ratio,
           reconciliationUnitPrice: item.reconciliationUnitPrice,
+          receiptReturnType:item.receiptReturnType,
           remark: item.remark,
           excludingTaxPrice: this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1 / 100)), 2),
           excludingTaxAmount: excludingTaxAmount,

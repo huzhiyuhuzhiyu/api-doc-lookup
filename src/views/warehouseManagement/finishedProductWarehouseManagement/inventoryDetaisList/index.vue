@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;">
+              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -63,7 +63,7 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="sourceType" label="业务类型" sortable="custom" width="120">
+          <el-table-column prop="sourceType" label="业务类型" sortable="custom" min-width="120">
             <template slot-scope="scope">
               <div v-if="scope.row.sourceType == 'outbound_sale_send'">销售发货</div>
               <div v-if="scope.row.sourceType == 'inbound_sale_return'">销售退货</div>
@@ -85,30 +85,29 @@
           </el-table-column>
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
-          <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-          <el-table-column prop="num" label="数量(主)" sortable="custom" min-width="140" />
+          <el-table-column prop="mainUnit" label="单位" min-width="140" />
+          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
 
           <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
           <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
-          <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" />
-          <el-table-column prop="deputyNum" label="数量(副)" min-width="140" />
+ 
           <el-table-column prop="taxRate" label="税率(%)" sortable="custom" min-width="140" />
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211"></el-table-column>
-          <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123"></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17"></el-table-column>
-          <el-table-column prop="oil" label="油脂" width="120" :key="61"></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51"> </el-table-column>
-          <el-table-column prop="clearance" label="游隙" width="120" :key="101"></el-table-column>
-          <el-table-column prop="aperture" label="孔径" width="120" :key="102"></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="103"></el-table-column>
-          <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="104"></el-table-column>
-          <el-table-column prop="processName" label="工序" width="120" :key="105"></el-table-column>
-          <el-table-column prop="documentStatus" label="单据状态" min-width="120" fixed="right">
+          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"  ></el-table-column>
+          <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"  ></el-table-column>
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" ></el-table-column>
+          <el-table-column prop="oil" label="油脂" min-width="120"  ></el-table-column>
+          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"  > </el-table-column>
+          <el-table-column prop="clearance" label="游隙" min-width="120"  ></el-table-column>
+          <el-table-column prop="aperture" label="孔径" min-width="120" ></el-table-column>
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  ></el-table-column>
+          <el-table-column prop="specialRequire" label="特殊要求" min-width="120"  ></el-table-column>
+          <el-table-column prop="processName" label="工序" min-width="120"  ></el-table-column>
+          <el-table-column prop="documentStatus" label="单据状态" min-width="120"  >
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
@@ -117,7 +116,7 @@
           </el-table-column>
 
           <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
-          <el-table-column prop="createByName" label="创建人" width="120" />
+          <el-table-column prop="createByName" label="创建人" min-width="120" />
           <el-table-column label="操作" min-width="200" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
@@ -142,7 +141,7 @@
           @pagination="initData">
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">数量(主):{{ num }}</span>
+            <span style="margin-left: 10px">数量:{{ num }}</span>
             <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
             <span style="margin-left: 10px">总金额(含税):{{ totalAmount }}</span>
             <span style="margin-left: 10px">总金额(不含税):{{ excludingTaxTotalAmount }}</span>
@@ -176,7 +175,7 @@ export default {
   },
   data() {
     return {
-      columnList: ["partnerCode", 'productCode', "productName", "deputyUnit", "deputyNum", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      columnList: ["partnerCode", 'productCode', "productName",  "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,

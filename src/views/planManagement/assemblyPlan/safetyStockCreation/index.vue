@@ -96,7 +96,7 @@ export default {
     return {
       productCodeS: "",
       productDrawingNoS: "",
-      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productName", "productCode", "createTime", 'createByName'],
+      columnList: ["cooperativePartnerName", "cooperativePartnerCode",   "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],

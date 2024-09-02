@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="customerDrawingNumberS"  placeholder="客户料号" clearable
+                <el-input v-model="customerProductNoS"  placeholder="客户料号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -182,8 +182,9 @@ export default {
     return {
       orderNoS: "",
       partnerNameS: "",
-      customerDrawingNumber: "",
+      customerProductNoS: "",
       productDrawingNoS: "",
+      
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -851,9 +852,9 @@ export default {
           {"field":"partnerName","fieldValue":this.partnerNameS,"symbol":"like"}
         )
       }
-      if(this.customerDrawingNumberS){
+      if(this.customerProductNoS){
         this.orderForm.superQuery.condition.push(
-          {"field":"customerDrawingNumber","fieldValue":this.customerDrawingNumberS,"symbol":"like"}
+          {"field":"customerProductNo","fieldValue":this.customerProductNoS,"symbol":"like"}
         )
       }
       if(this.productDrawingNoS){
@@ -861,8 +862,13 @@ export default {
           {"field":"productDrawingNo","fieldValue":this.productDrawingNoS,"symbol":"like"}
         )
       }
-      if(this.orderNoS||this.partnerNameS||this.customerDrawingNumberS||this.productDrawingNoS){
+      if(this.orderNoS||this.partnerNameS||this.customerProductNoS||this.productDrawingNoS){
         this.$set(this.orderForm.superQuery,'matchLogic','AND')
+      }else {
+        this.orderForm.superQuery = {
+          condition: [],
+          matchLogic: ""
+        }
       }
       getQuotationdatasenddatalist(this.orderForm).then(res => {
         this.tableData = res.data.records
@@ -911,7 +917,7 @@ export default {
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
       this.orderNoS= ""
       this.partnerNameS= ""
-      this.customerDrawingNumberS= ""
+      this.customerProductNoS= ""
       this.productDrawingNoS= ""
       this.$refs.SuperQuery.conditionList = []
       this.search()

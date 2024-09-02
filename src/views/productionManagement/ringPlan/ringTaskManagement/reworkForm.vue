@@ -1087,8 +1087,7 @@ export default {
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.$set(this.dataForm, 'planDate', [])
-      this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
+      this.$refs.dataForm.clearValidate('planDate'); 
       if (btnType == 'edit') {
         this.fetchData("PROD", false)
         this.fetchData("PODH", false)

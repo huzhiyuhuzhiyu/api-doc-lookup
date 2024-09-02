@@ -1444,10 +1444,11 @@ export default {
               )
             })
           }
+          this.fetchData("XSBJ", true)
           // 审批
-          // this.$nextTick(() => {
-          //   this.getApproverData()
-          // })//暂时注释
+          this.$nextTick(() => {
+            this.getBusInfo()
+          })//暂时注释
           this.formLoading = false
           // })
         }).catch(err => {
@@ -1482,8 +1483,8 @@ export default {
         }).catch(err => {
           this.formLoading = false
         })
-        // 流程信息和流转记录
-        this.getFlowDetail(this.dataForm.id)
+          // 流程信息和流转记录
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
       }
     },
     async handleConfirm(value) {
@@ -1670,17 +1671,19 @@ export default {
     // 测试审批流
     getBusInfo(){
       getBusinessFlowInfo('b001').then(res=>{
-        console.log(res,'流程信息')
         if (res.data){
           if (res.data.enabledMark){
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
           }
         }else{
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
-          this.$message.error('未找到审批流程！')
         }
       }).catch(()=>{})
     },

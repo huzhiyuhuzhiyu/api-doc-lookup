@@ -201,7 +201,7 @@
 
                           <div v-if="item.processingType == 'self_produced' && item.reportFlag == true">
                             <el-button type="primary" size="mini" @click='report(item)'>报 工</el-button>
-                            <el-button type="primary" size="mini" @click="viewReportRecords(item)">查看报工记录</el-button>
+                            <el-button type="primary" size="mini" @click="reportRecordsFun(item)">查看报工记录</el-button>
                           </div>
                         </el-card>
                       </el-col>
@@ -225,6 +225,8 @@
     </div>
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm"  @close="closeForm"></VibrateForm>
+    <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
+
   </div>
 </template>
 
@@ -238,13 +240,15 @@ import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productO
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
+import recordForm from './recordForm.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm
+    NormalForm, VibrateForm,recordForm
   },
   data() {
     return {
+      recordFormVisible:false,
       normalFormVisible: false,
       vibrateFormVisible: false,
       activeName: 'orderInfo',
@@ -274,9 +278,9 @@ export default {
     closeForm(flag){
       if(flag)  this.getRoutingDetailFun(this.dataForm.routingId)
     },
-    init(data) {
-      this.id = data.id
-      detailordershengchan(data.id).then(res => {
+    init(id) {
+      this.id = id
+      detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
         this.getRoutingDetailFun(this.dataForm.routingId)
       })
@@ -304,7 +308,8 @@ export default {
     },
     getWorkListFun() {
       let obj = {
-        processId: this.currentProcessId
+        processId: this.currentProcessId,
+        productionOrderId:this.dataForm.id
       }
       getWorkList(obj).then(res => {
         this.workList = res.data.records
@@ -317,14 +322,20 @@ export default {
     viewReportRecords(item) {
       console.log("item记录", item);
     },
+    reportRecordsFun(row) {
+      this.recordFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.recordForm.init(row.orderNo)
+      })
+    },
     // 报工
     report(item) {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
         console.log('scort',this.sort,this.currentProcess.sort);
-      if (this.sort.length) {
-        if (Number(this.currentProcess.sort) >= this.sort) { 
+      
+        if (item.vibrateReportFlag) { 
           this.vibrateFormVisible = true
           this.$nextTick(() => {
             this.$refs.VibrateForm.init(item)
@@ -337,7 +348,7 @@ export default {
 
           })
         }
-      }
+      
       // let arr = [];
       // let obj = {
       //   "classAttribute": item.classAttribute,

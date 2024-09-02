@@ -45,13 +45,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-
-                      <el-col :sm="6" :xs="24">
-                        <el-form-item label="产品名称" prop="productName">
-                          <el-input v-model="planForm.productName" placeholder="请输入产品名称" disabled>
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
+ 
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productCode">
                           <el-input v-model="planForm.productCode" placeholder="请输入产品编码" disabled>

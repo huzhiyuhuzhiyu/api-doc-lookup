@@ -587,24 +587,35 @@ export default {
 
       this.fetchData(businessCode, true)
       this.dataForm = row
+      console.log(this.dataForm, 'form')
+      console.log(this.dataForm.inspectorId, 'productDrawingNo')
 
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
       this.dataForm.mainUnit = row.mainUnit
       if (inspectionType === 'procure' || inspectionType === 'external') {
-        this.dataForm.inspectionQuantity = row.receivedQuantity
-        this.dataForm.docId = row.purchaseReceiptReturnGoodsId
-        this.dataForm.docLineId = row.id
-        this.dataForm.docNo = row.orderNo
+        this.dataForm.inspectionQuantity = this.scope.receivedQuantity
+        this.dataForm.docId = this.scope.purchaseReceiptReturnGoodsId
+        this.dataForm.docLineId = this.scope.id
+        this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'sale_back') {
-        this.dataForm.inspectionQuantity = row.deliveryQuantity
-        this.dataForm.docId = row.id
-        this.dataForm.docLineId = row.id
+        this.dataForm.inspectionQuantity = this.scope.deliveryQuantity
+        this.dataForm.docId = this.scope.returnDeliveryNoticeId
+        this.dataForm.docLineId = this.scope.id
+        this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'process') {
-        this.dataForm.inspectionQuantity = row.productionQuantity
+        console.log(row, 'ppp998898989')
+        console.log(this.scope, 'this.scope')
+        this.dataForm.inspectionQuantity = this.scope.productionQuantity
+        this.dataForm.docId = this.scope.productionOrderId
+        this.dataForm.docLineId = this.scope.id
+        this.dataForm.docNo = this.scope.orderNo
       } else if (inspectionType === 'finished') {
-        this.dataForm.inspectionQuantity = Number(row.qualifiedQuantity) + Number(row.unqualifiedQuantity)
+        this.dataForm.inspectionQuantity = Number(this.scope.qualifiedQuantity) + Number(this.scope.unqualifiedQuantity)
+        this.dataForm.docId = this.scope.productionOrderId
+        this.dataForm.docLineId = this.scope.id
+        this.dataForm.docNo = this.scope.orderNo
       }
 
       this.ProductListRequestObjs = {
@@ -623,8 +634,11 @@ export default {
         .catch((err) => {
           this.loading = false
         })
+      console.log(this.scope.productsId, 'this.scope.productsId')
+      console.log(inspectionType, 'inspectionType**************************')
       await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType })
         .then((res) => {
+          console.log(res, 'oooooo000----')
           this.inspectionList = res.data
           this.addOrDelInspectionItem(res.data)
 
@@ -651,45 +665,49 @@ export default {
         //   this.flowCard = res.data.flowCard ? res.data.flowCard : {}
         // })
       }
-      if (typeof id === 'object' && inspectionType === 'process') {
+      if (inspectionType === 'process') {
+
         // 生产巡检
-        let rowData = id
-        this.dataForm = {
-          noticeId: rowData.id,
-          orderNo: rowData.orderNo,
-          originOrderNo: rowData.orderNo,
-          inspectionDate: this.jnpf.getToday(),
-          notificationType: 'process',
-          submitMethod: 'add'
-        }
-        let tempLinesList = [
-          {
-            ordersLineId: rowData.id,
-            productsId: rowData.productId,
-            productCode: rowData.productCode,
-            productName: rowData.productName,
-            productDrawingNo: rowData.productDrawingNo,
-            productCategoryName: rowData.productCategoryName,
-            productSpec: rowData.productSpec,
-            inspectionQuantity: rowData.dispatchQuantity,
-            inspectionMethod: rowData.productInspectionMethod,
-            mainUnit: rowData.mainUnit,
-            inspectionResults: '',
-            routingId: rowData.routingId,
-            routingCode: rowData.routingCode,
-            routingName: rowData.routingName,
-            processId: rowData.processId,
-            processCode: rowData.processCode,
-            processName: rowData.processName,
-            returnQuantity: 0
-            // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ? rowData.dispatchQuantity : ''
-          }
-        ]
-        this.linesListFormat(tempLinesList)
-        this.linesList = tempLinesList
-        this.setLinesListItems()
+        // let rowData = id
+        // this.dataForm = {
+        //   noticeId: rowData.id,
+        //   orderNo: rowData.orderNo,
+        //   originOrderNo: rowData.orderNo,
+        //   inspectionDate: this.jnpf.getToday(),
+        //   notificationType: 'process',
+        //   submitMethod: 'add'
+        // }
+        // let tempLinesList = [
+        //   {
+        //     ordersLineId: rowData.id,
+        //     productsId: rowData.productId,
+        //     productCode: rowData.productCode,
+        //     productName: rowData.productName,
+        //     productDrawingNo: rowData.productDrawingNo,
+        //     productCategoryName: rowData.productCategoryName,
+        //     productSpec: rowData.productSpec,
+        //     inspectionQuantity: rowData.dispatchQuantity,
+        //     inspectionMethod: rowData.productInspectionMethod,
+        //     mainUnit: rowData.mainUnit,
+        //     inspectionResults: '',
+        //     routingId: rowData.routingId,
+        //     routingCode: rowData.routingCode,
+        //     routingName: rowData.routingName,
+        //     processId: rowData.processId,
+        //     processCode: rowData.processCode,
+        //     processName: rowData.processName,
+        //     returnQuantity: 0
+        //     // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ? rowData.dispatchQuantity : ''
+        //   }
+        // ]
+        // this.linesListFormat(tempLinesList)
+        // this.linesList = tempLinesList
+        // this.setLinesListItems()
+        // this.formLoading = false
+        this.dataForm.notificationType = inspectionType
+        this.dataForm.submitMethod = 'add'
         this.formLoading = false
-        return
+
       } else if (typeof id === 'object' && inspectionType === 'finished_batch') {
         // 批量完工检验
         let selectedData = id
@@ -751,7 +769,7 @@ export default {
       } else if (inspectionType === 'procure' || inspectionType === 'external') {
         // 采购收货、外协收货
 
-        this.dataForm.submitMethod = 'add'
+
         // getpurPurchaseReceiptReturnGoodsdetail(id).then(res => {
         //   if (res.data.attachmentList) {
         //     res.data.attachmentList.forEach((item) => {
@@ -813,9 +831,11 @@ export default {
         // }).catch(errpr => {
         //   this.formLoading = false
         // })
+        this.dataForm.notificationType = inspectionType
+        this.dataForm.submitMethod = 'add'
         this.formLoading = false
       } else if (inspectionType === 'sale_back' || inspectionType === 'back_material') {
-        this.dataForm.notificationType = inspectionType
+        console.log(inspectionType, 'ppppppp')
         // 销售退货、外协退料
         // getQuotationsendlist(id).then((res) => {
         //   if (res.data.attachmentList) {
@@ -857,8 +877,10 @@ export default {
         //   this.setLinesListItems()
         //   this.formLoading = false
         // })
+        this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
+        console.log(this.dataForm, 'form123')
       } else if (inspectionType === 'produce') {
         // 生产退料
         detailWithdrawal(id).then((res) => {
@@ -901,46 +923,50 @@ export default {
           this.setLinesListItems()
           this.formLoading = false
         })
-      } else if (inspectionType === 'finished') {
+      }
+      else if (inspectionType === 'finished') {
         // 完工
 
-        let rowData = id
-        this.dataForm = {
-          noticeId: rowData.id,
-          orderNo: rowData.orderNo,
-          originOrderNo: rowData.orderNo,
-          inspectionDate: this.jnpf.getToday(),
-          notificationType: 'finished',
-          submitMethod: 'add'
-        }
-        let tempLinesList = [
-          {
-            ordersLineId: rowData.id,
-            productsId: rowData.productsId,
-            productCode: rowData.productCode,
-            productName: rowData.productName,
-            productDrawingNo: rowData.productDrawingNo,
-            productSpec: rowData.productSpec,
-            productCategoryName: rowData.productCategoryName,
-            mainUnit: rowData.mainUnit,
-            inspectionMethod: rowData.productInspectionMethod,
-            routingCode: rowData.routingCode,
-            routingName: rowData.routingName,
-            routingLineId: rowData.routingLineId,
-            inspectionQuantity: this.jnpf.math('subtract', [
-              rowData.completedQuantity,
-              rowData.qualifiedQuantity,
-              rowData.underInspectionQuantity
-            ]), // 检验数量 = 生产数量 - 合格数量 - 检验中数量
-            inspectionResults: '',
-            returnQuantity: 0
-            // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ?
-            //   this.jnpf.math('subtract', [rowData.completedQuantity, rowData.qualifiedQuantity, rowData.underInspectionQuantity]) : ''
-          }
-        ]
-        this.linesListFormat(tempLinesList)
-        this.linesList = tempLinesList
-        this.setLinesListItems()
+        // let rowData = id
+        // this.dataForm = {
+        //   noticeId: rowData.id,
+        //   orderNo: rowData.orderNo,
+        //   originOrderNo: rowData.orderNo,
+        //   inspectionDate: this.jnpf.getToday(),
+        //   notificationType: 'finished',
+        //   submitMethod: 'add'
+        // }
+        // let tempLinesList = [
+        //   {
+        //     ordersLineId: rowData.id,
+        //     productsId: rowData.productsId,
+        //     productCode: rowData.productCode,
+        //     productName: rowData.productName,
+        //     productDrawingNo: rowData.productDrawingNo,
+        //     productSpec: rowData.productSpec,
+        //     productCategoryName: rowData.productCategoryName,
+        //     mainUnit: rowData.mainUnit,
+        //     inspectionMethod: rowData.productInspectionMethod,
+        //     routingCode: rowData.routingCode,
+        //     routingName: rowData.routingName,
+        //     routingLineId: rowData.routingLineId,
+        //     inspectionQuantity: this.jnpf.math('subtract', [
+        //       rowData.completedQuantity,
+        //       rowData.qualifiedQuantity,
+        //       rowData.underInspectionQuantity
+        //     ]), // 检验数量 = 生产数量 - 合格数量 - 检验中数量
+        //     inspectionResults: '',
+        //     returnQuantity: 0
+        //     // samplingQuantity: rowData.productInspectionMethod === 'all' || !rowData.productInspectionMethod ?
+        //     //   this.jnpf.math('subtract', [rowData.completedQuantity, rowData.qualifiedQuantity, rowData.underInspectionQuantity]) : ''
+        //   }
+        // ]
+        // this.linesListFormat(tempLinesList)
+        // this.linesList = tempLinesList
+        // this.setLinesListItems()
+        // this.formLoading = false
+        this.dataForm.notificationType = inspectionType
+        this.dataForm.submitMethod = 'add'
         this.formLoading = false
       }
     },
@@ -1073,14 +1099,7 @@ export default {
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
         console.log(dataObj, 'dataObj')
-        if (location.hostname === 'localhost' || location.href.indexOf('mode=dev') !== -1) {
-          // 调试
-          let flag = await confirm('确定提交吗？')
-          if (!flag) {
-            this.btnLoading = false
-            return
-          }
-        }
+
 
         formMethod(dataObj)
           .then((res) => {

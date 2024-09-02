@@ -689,6 +689,7 @@ export default {
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.$refs.SuperQuery.conditionList = []
       this.deliveryDateArr = []
       this.orderForm = {
         classAttribute: "finish_product",

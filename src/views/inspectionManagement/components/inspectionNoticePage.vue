@@ -12,8 +12,7 @@
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="检验开始日期"
-                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd">
-                </el-date-picker>
+                  end-placeholder="检验结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="4">
@@ -58,7 +57,7 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column>
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="检验单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -75,19 +74,39 @@
             <el-table-column prop="mainUnit" label="单位" min-width="180" />
             <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
 
-            <el-table-column prop="inspectionMethod" label="检验方式" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectionMethod" label="检验方式" min-width="180" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionMethod == 'exempt'">免检</div>
+                <div v-if="scope.row.inspectionMethod == 'spot_check'">抽检</div>
+                <div v-if="scope.row.inspectionMethod == 'all'">全检</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectionResults" label="检验结果" min-width="180" sortable="custom" />
+            <el-table-column prop="inspectionResults" label="检验结果" min-width="180" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
+                <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+              </template>
+            </el-table-column>
             <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
-            <el-table-column prop="processingStatus" label="处理状态" min-width="180" sortable="custom" />
-            <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" />
+            <el-table-column prop="processingStatus" label="处理状态" min-width="180" sortable="custom">
+              <template slot-scope="scope">
+                <div v-if="scope.row.processingStatus == 'untreated'">未处理</div>
+                <div v-if="scope.row.processingStatus == 'processing'">处理中</div>
+                <div v-if="scope.row.processingStatus == 'processed'">已处理</div>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column prop="samplingQuantity" label="处理结果" min-width="180" sortable="custom" /> -->
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row,'add')" editText="处理" :hasDel="false">
-                  <el-dropdown hide-on-click>
+                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasDel="false">
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
+                    查看详情
+                  </el-button>
+                  <!-- <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
                         {{ $t('common.moreBtn') }}
@@ -99,7 +118,7 @@
                         查看详情
                       </el-dropdown-item>
                     </el-dropdown-menu>
-                  </el-dropdown>
+                  </el-dropdown> -->
                 </tableOpts>
               </template>
             </el-table-column>
@@ -114,6 +133,9 @@
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
       :inspectionMethodList="inspectionMethodList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -124,8 +146,12 @@ import Form from './defectiveProductHandlingForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
-  components: { Form, ExportForm, DetailForm },
+  components: { Form, ExportForm, DetailForm, SuperQuery },
   props: {
     pageData: {
       // 页面配置
@@ -141,6 +167,91 @@ export default {
   },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '单号',
+          type: 'input'
+        },
+        {
+          prop: 'partnerName',
+          label: '客户名称',
+          type: 'input'
+        },
+        {
+          prop: 'deliverDate',
+          label: '退货日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'customerProductNo',
+          label: '客户料号',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'input'
+        },
+        {
+          prop: 'deliveryQuantity',
+          label: '退货数量',
+          type: 'input'
+        },
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
+          prop: 'approvalStatus',
+          label: '审批状态',
+          type: 'select',
+          options: [
+            { label: '审批中', value: 'ing' },
+            { label: '审批通过', value: 'ok' },
+            { label: '审批拒绝', value: 'rebut' },
+            { label: '审批撤回', value: 'withdrawn' }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
+        },
+      ],
+      columnList: ["remark", "productCode", "processingStatus", "createByName"],
       visible: false,
       activeName: 'dataTable',
       formVisible: false,
@@ -194,6 +305,14 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -271,12 +390,12 @@ export default {
         this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init({...row,approvalFlag:false}, btnType, this.pageData.type)
+          this.$refs.DetailForm.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init({...row,approvalFlag:false}, btnType, this.pageData.type)
+          this.$refs.Form.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
         })
       }
     },
@@ -326,4 +445,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+

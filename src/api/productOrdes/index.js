@@ -224,3 +224,12 @@ export function addOrderNum(data) {
     data
   })
 }
+  // 扫码报工 获取数据
+  
+  export function getscanResultData(data) {
+    return request({
+      url: `/api/mrp/work/scan/getDocId`,
+      method: 'get',
+      data
+    })
+  }

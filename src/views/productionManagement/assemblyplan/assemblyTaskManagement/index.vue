@@ -40,11 +40,13 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addTaskFun('', 'add')">
                 新建返工任务
               </el-button>
-              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()">
-                关单
+              <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
+              <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
 
             </div>
+
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -59,12 +61,12 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList">
+          <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
+            :fixedNO="true" :checkSelectable="checkSelectable" @selection-change="handleSelectionChange" hasC
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.id)">{{
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -80,6 +82,12 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
+            <el-table-column prop="prodSchedule" label="完成进度" min-width="140"  >
+              <template slot-scope="scope">
+                <el-progress
+                  :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
+              </template>
+            </el-table-column>
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
@@ -103,12 +111,13 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="220" fixed="right">
+            <el-table-column label="操作" width="320" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
-                  @click="addition(scope.row)">追加生产</el-button>
-                <el-button size="mini" type="text" @click="handleDel(scope.row.id)">改派</el-button>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'feed')">投料信息</el-button>
+                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'work')">工单信息</el-button>
+                <el-button size="mini" type="text"
+                  @click="handleUserRelation(scope.row.orderNo, 'report')">报工信息</el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -116,7 +125,13 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id)">
+                    <el-dropdown-item @click.native="addition1(scope.row)">
+                      追加生产
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="reassignmentFun1(scope.row.id)">
+                      改派
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
                       查看详情
                     </el-dropdown-item>
 
@@ -180,11 +195,15 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form,ReworkForm },
+  components: { SuperQuery, Form, ReworkForm },
   data() {
     return {
-      form: { },
-      reworkVisible:false,
+      form: {
+        appendQuantity: "",
+        productionQuantity: "",
+        orderNo: ""
+      },
+      reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       orderNoS: "",
@@ -193,8 +212,8 @@ export default {
       superQueryVisible: false,
       btnLoading: false,
       title: "更多查询",
-      tableData: [], 
-      listLoading: false, 
+      tableData: [],
+      listLoading: false,
       detailFlag: false,
       orderForm: {},
       orderFormlist: {
@@ -397,17 +416,44 @@ export default {
   },
   methods: {
     // 新建返工
-    addTaskFun(id,type){
-      this.reworkVisible=true
-      this.$nextTick(()=>{
-        this.$refs.reworkForm.init(id,type)
+    addTaskFun(id, type) {
+      this.reworkVisible = true
+      this.$nextTick(() => {
+        this.$refs.reworkForm.init(id, type)
       })
     },
-    addition(data) {
-      this.form = data
+    // 追加
+    addition2() {
+      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
+      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
+      this.form = this.selectArr[0]
       this.addOrderVisible = true
     },
-    // 追加生产数量
+    addition1(data) {
+      this.form = data
+      this.addOrderVisible = true
+
+
+
+    },
+    reassignmentFun2() {
+      console.log(this.selectArr);
+      if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
+      this.reassignmentVisible = true
+      this.$nextTick(() => {
+        this.$refs.reassignmentForm.init(this.selectArr[0].id)
+      })
+    },
+    reassignmentFun1(data) {
+
+      this.reassignmentVisible = true
+      this.$nextTick(() => {
+        this.$refs.reassignmentForm.init(id)
+      })
+    },
+    // 追加生产数量 提交
     submitFun() {
       this.$refs['diaForm'].validate((valid) => {
         if (valid) {
@@ -527,7 +573,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.reworkVisible=false
+      this.reworkVisible = false
       this.search()
     },
     initData() {
@@ -616,10 +662,10 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id) {
+    handleUserRelation(id, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id)
+        this.$refs.Form.init(id, btnType)
       })
     },
 

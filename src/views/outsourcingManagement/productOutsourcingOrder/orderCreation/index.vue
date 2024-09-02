@@ -26,10 +26,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                              ? true
+                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                                ? false
+                                : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -144,8 +144,9 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
-                            <el-input @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)"
-                              v-model="scope.row.purchaseQuantity" maxlength="20" placeholder="请输入主数量"></el-input>
+                            <el-input v-model="scope.row.purchaseQuantity"
+                              @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
+                              placeholder="请输入主数量"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -265,12 +266,14 @@
 
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
-                            @click="handlerOpenSource(scope.$index, 'source')">查看发料清单</el-button>
+                            @click="handlerOpenSource(scope.$index, 'source')">
+                            查看发料清单
+                          </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                            v-if="dataFormTwo.data.length > 1"
-                            @click="delequipment_process_relList(scope.$index)">删除</el-button>
+                            v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
+                            删除
+                          </el-button>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -401,13 +404,19 @@ import {
 import { insertOutOrder } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
+import {
+  getcategoryTrees,
+  getcooperativeProduct,
+  getOrderDetail,
+  getsaleOrderDetailList
+} from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { mapGetters, mapState } from 'vuex'
 
 export default {
   components: {
-    workFlow, SourceArea
+    workFlow,
+    SourceArea
   },
   data() {
     return {
@@ -783,8 +792,7 @@ export default {
       this.dataForm.purchaseQuantity = this.jnpf.numberFormat(count)
 
       return this.dataForm.purchaseQuantity
-    },
-
+    }
   },
   watch: {
     'dataFormTwo.data': {
@@ -892,44 +900,48 @@ export default {
     },
     // 配置资源
     handlerOpenSource(index, type) {
+      console.log(this.dataFormTwo.data[index].purchaseQuantity, 'this.dataFormTwo.data[index].id')
+      if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
       console.log(index, 'index')
       this.sourceVisibled = true
       this.index = index
       console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
       let obj = {
         productsId: this.dataFormTwo.data[index].productsId,
-        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity,
+        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
       }
       // 通过需求池id 获取明细的数据
-      getShipmentList(obj).then(res => {
-        console.log(res, '清单数据');
+      getShipmentList(obj).then((res) => {
+        console.log(res, '清单数据')
         this.sourceData = res.data
         if (this.dataFormTwo.data[this.index].outShipmentList) {
-
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
             this.sourceData[ind].demandQuantity1 = item.demandQuantity1
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
-
           })
         } else {
           this.sourceData.forEach((item, index) => {
-            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity < 0 ? 0 : item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity)
+            this.$set(
+              this.sourceData[index],
+              'demandQuantity1',
+              item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity < 0
+                ? 0
+                : item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity
+            )
           })
         }
-        console.log(this.sourceData, '1111');
+        console.log(this.sourceData, '1111')
 
         if (this.sourceData.length === 0) {
           this.sourceDisabled = true
         } else {
           this.sourceDisabled = false
         }
+        console.log(this.dataFormTwo.data, 'daaaa')
         this.$nextTick(() => {
-
           this.$refs['sourceRef'].init(this.sourceData, '')
         })
       })
-
-
     },
 
     // 弹窗节点的点击
@@ -1079,8 +1091,21 @@ export default {
     },
     //下单数量输入事件
     changePurchaseQuantity(index, val) {
+      console.log(val, 'kkk')
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
+      console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
+      let obj = {
+        productsId: this.dataFormTwo.data[index].productsId,
+        purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
+      }
+      // 通过需求池id 获取明细的数据
+      getShipmentList(obj).then((res) => {
+        console.log(res, '清单数据')
+        this.dataFormTwo.data[index].outShipmentList = res.data
+
+        console.log(this.dataFormTwo.data, 'daaaa')
+      })
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
         this.dataFormTwo.data[index].purchaseQuantity2 = this.numberFormat(
@@ -1884,10 +1909,10 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 </style>

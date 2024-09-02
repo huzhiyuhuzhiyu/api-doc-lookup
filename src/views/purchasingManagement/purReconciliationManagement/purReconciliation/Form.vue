@@ -531,7 +531,7 @@ export default {
             this.mainLoading = false
           })
           // 流程信息和流转记录
-          this.getFlowDetail(this.dataForm.id)
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       })
     },

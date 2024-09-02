@@ -146,7 +146,7 @@ export default {
     }
   },
   created() {
-     let obj = this.lineData.find(item=>item.prop === 'taxRate')
+     let obj = this.lineData ? this.lineData.find(item=>item.prop === 'taxRate') :{}
      this.options = obj.options
   },
   mounted() {

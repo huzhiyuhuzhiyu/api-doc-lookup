@@ -86,7 +86,24 @@
             <el-table-column prop="remark" min-width="140" label="备注" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" />
+            <el-table-column label="操作" min-width="180" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
+                  :editDisabled="scope.row.documentStatus !== 'draft'"
+                  :delDisabled="scope.row.documentStatus !== 'draft'">
+                  <el-dropdown hide-on-click>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">
+                        {{ $t('common.moreBtn') }}
+                        <i class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
 
+                  </el-dropdown>
+                </tableOpts>
+
+              </template>
+            </el-table-column>
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
@@ -99,7 +116,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
+    <CreateForm v-if="createFormVisible" ref="createForm" @refresh="refresh" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -129,12 +146,14 @@ import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { CreateForm } from "../orderCreation/index.vue";
 export default {
   name: 'orderList',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery },
+  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, CreateForm },
   data() {
     return {
       exportFormVisible: false,
+      createFormVisible: false,
       superQueryVisible: false,
       superQueryJson: [
         {
@@ -484,6 +503,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.withdrawnVisible = false
+      this.createFormVisible = false
       if (isRefresh) {
         this.initData()
       }
@@ -491,6 +511,7 @@ export default {
     refresh() {
       this.formVisible = false
       this.withdrawnVisible = false
+      this.createFormVisible = false
       this.reset()
     },
 
@@ -569,9 +590,8 @@ export default {
     },
 
     addSupplier(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
+      this.$router.push({
+        path: '/outsourcingManagement/productOutsourcingOrder/orderCreation'
       })
     },
     // 生成采购订单 将选中的数据传递过去

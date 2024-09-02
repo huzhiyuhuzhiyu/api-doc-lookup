@@ -250,9 +250,9 @@ export default {
       linesList: [],
 
       linesListItems: [
-        { prop: 'drawingNo', label: '品名规格', value: '', type: 'view', minWidth: 340 },
+        { prop: 'drawingNo', label: '子件规格', value: '', type: 'view', minWidth: 340 },
         // { prop: "productName", label: "产品名称", value: "", type: 'view', minWidth: 160 },
-        { prop: 'productCode', label: '产品编码', value: '', type: 'view', minWidth: 160 },
+        { prop: 'productCode', label: '子件编码', value: '', type: 'view', minWidth: 160 },
         {
           prop: 'qty',
           label: '数量',

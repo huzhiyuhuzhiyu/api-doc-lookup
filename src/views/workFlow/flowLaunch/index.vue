@@ -8,12 +8,14 @@
       <div class="JNPF-common-layout-center" v-show="activeName">
         <div class="tag-group JNPF-common-search-box treeBox_bot"
           style="display:flex;align-items:center;padding-left: 10px;">
-          <span class="tag-group__title text">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
-          <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
-            :type="index === categoryIndex ? '' : 'info'" effect="plain"
-            style="height:26px;line-height:25px;margin-left:10px;cursor: pointer;">
-            {{ item.fullName }}
-          </el-tag>
+          <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：'}}</span>
+          <div style="display:flex;flex-wrap: wrap;">
+            <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
+              :type="index === categoryIndex ? '' : 'info'" effect="plain"
+              style="height:26px;line-height:25px;margin:5px 0 5px 10px;cursor: pointer;">
+              {{ item.fullName }}
+            </el-tag>
+          </div>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
@@ -89,10 +91,10 @@
             </el-table-column>
             <el-table-column label="操作" width="150" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="toDetail(scope.row, '-1')"
+                <el-button v-if="!listQuery.businessFlag" size="mini" type="text" @click="toDetail(scope.row, '-1')"
                   :disabled="[1, 2, 4, 5].indexOf(scope.row.status) > -1">编辑
                 </el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                <el-button v-if="!listQuery.businessFlag" size="mini" type="text" class="JNPF-table-delBtn"
                   @click="handleDel(scope.$index, scope.row.id)"
                   :disabled="[1, 2, 3, 5].indexOf(scope.row.status) > -1">删除
                 </el-button>
@@ -273,7 +275,8 @@ export default {
             label: '审核终止'
           }],
         },
-      ]
+      ],
+      flowType:'businessType'
     }
   },
   filters: {
@@ -283,9 +286,9 @@ export default {
     }
   },
   created() {
-    this.getDictionaryData()
-    this.getFlowEngineList()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    this.getDictionaryData(this.flowType)
+    this.getFlowEngineList()
     this.initData()
   },
   watch: {
@@ -293,6 +296,7 @@ export default {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.categoryIndex = -1
       this.initData()
+      this.getDictionaryData(this.flowType)
     }
   },
   methods: {
@@ -317,8 +321,8 @@ export default {
         this.flowEngineList = res.data.list
       })
     },
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
+    getDictionaryData(type) {
+      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
         this.categoryList = res
         console.log(this.categoryList);
 
@@ -327,6 +331,7 @@ export default {
     initData() {
       this.listLoading = true
       this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+      this.flowType = this.listQuery.businessFlag ? 'businessType' : 'WorkFlowCategory'
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
@@ -397,6 +402,7 @@ export default {
     },
     refresh() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
       this.initData()
     }
   }

@@ -481,7 +481,8 @@ export default {
           brTotalAmount: '',                   // 收/退货总金额
           approvalFlag:false, //
         }
-        res.data.reconciliationLines.forEach(item => {
+        res.data.reconciliationLines.forEach(item => { 
+          item.receiptReturnType=item.businessType
           if (item.noticeBillVO) {
             dataFormTwo.push(item.noticeBillVO)
           } else {

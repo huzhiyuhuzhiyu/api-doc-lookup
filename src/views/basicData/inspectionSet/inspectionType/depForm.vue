@@ -13,179 +13,178 @@
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName">
           <!-- <el-tab-pane label="检验信息" name="orderInfo"> -->
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                <el-form ref="dataForm" :model="dataForm" :rules="dataRules" label-width="160px" label-position="top">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :span="12">
-                      <el-form-item label="检验类型编码" prop="code">
-                        <el-input v-model="dataForm.code" placeholder="请输入类型编码" maxlength="20"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="检验类型名称" prop="name">
-                        <el-input v-model="dataForm.name" placeholder="请输入类型名称" maxlength="50"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
-                      <el-form-item label="产品图号" prop="productDrawingNo">
-                        <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入产品图号"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="检验种类" prop="inspectionCategory">
-                        <el-select v-model="dataForm.inspectionCategory" placeholder="请选择检验种类" style="width: 100%;"
-                          :disabled="btntype ? true : false" @change="changeType1">
-                          <el-option v-for="(item, index) in inspectionTypeList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="类型名称" prop="inspectionType">
-                        <el-select @change="changeType" v-model="dataForm.inspectionType" placeholder="请选择类型名称"
-                          style="width: 100%;" :disabled="btntype ? true : false">
-                          <el-option v-for="(item, index) in typeList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="dataForm.inspectionType === 'product'">
-                      <el-form-item label="产品名称" prop="productName">
-                        <ComSelect-page :searchList="ProductTableSearchList" :isdisabled="btntype ? true : false"
-                          v-model="dataForm.productName" placeholder="请选择产品名称" auth @change="onOrganizeChange"
-                          :title="'选择产品'" :listMethod="getProductList" :requestObj="requestObj"
-                          :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
-                          :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
-                      <el-form-item label="产品编码" prop="productCode">
-                        <el-input v-model.trim="dataForm.productCode" placeholder="请输入产品编码"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="dataForm.inspectionType === 'product_category'">
-                      <el-form-item label="产品分类名称" prop="productCategoryName">
-                        <ComSelect-list :isdisabled="btntype ? true : false" :value="dataForm.productCategoryName"
-                          placeholder="请选择产品分类" auth @change="onOrganizeChangeThree" :title="'选择产品分类'"
-                          :method="getcategoryTree" :requestObj="productParams" :paramsObj="{}" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product_category'">
-                      <el-form-item label="产品分类编码" prop="productCategoryCode">
-                        <el-input v-model.trim="dataForm.productCategoryCode" placeholder="请输入产品分类编码"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input type="textarea" v-model.trim="dataForm.remark" placeholder="请输入备注" maxlength="200"
-                          :disabled="btntype ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
-              </el-collapse-item>
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRules" label-width="160px" label-position="top">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :span="12">
+                    <el-form-item label="检验类型编码" prop="code">
+                      <el-input v-model="dataForm.code" placeholder="请输入类型编码" maxlength="20"
+                        :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="检验类型名称" prop="name">
+                      <el-input v-model="dataForm.name" placeholder="请输入类型名称" maxlength="50"
+                        :disabled="btntype ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
+                    <el-form-item label="产品图号" prop="productDrawingNo">
+                      <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入产品图号"
+                        :disabled="btntype ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="检验种类" prop="inspectionCategory">
+                      <el-select v-model="dataForm.inspectionCategory" placeholder="请选择检验种类" style="width: 100%;"
+                        :disabled="btntype ? true : false" @change="changeType1">
+                        <el-option v-for="(item, index) in inspectionTypeList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="类型名称" prop="inspectionType">
+                      <el-select @change="changeType" v-model="dataForm.inspectionType" placeholder="请选择类型名称"
+                        style="width: 100%;" :disabled="btntype ? true : false">
+                        <el-option v-for="(item, index) in typeList" :key="index" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12" v-if="dataForm.inspectionType === 'product'">
+                    <el-form-item label="产品名称" prop="productName">
+                      <ComSelect-page :searchList="ProductTableSearchList" :isdisabled="btntype ? true : false"
+                        v-model="dataForm.productName" placeholder="请选择产品名称" auth @change="onOrganizeChange"
+                        :title="'选择产品'" :listMethod="getProductList" :requestObj="requestObj"
+                        :methodArr="ProductMethodArr" :listRequestObj="ProductListRequestObj"
+                        :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
+                    <el-form-item label="产品编码" prop="productCode">
+                      <el-input v-model.trim="dataForm.productCode" placeholder="请输入产品编码"
+                        :disabled="btntype ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12" v-if="dataForm.inspectionType === 'product_category'">
+                    <el-form-item label="产品分类名称" prop="productCategoryName">
+                      <ComSelect-list :isdisabled="btntype ? true : false" :value="dataForm.productCategoryName"
+                        placeholder="请选择产品分类" auth @change="onOrganizeChangeThree" :title="'选择产品分类'"
+                        :method="getcategoryTree" :requestObj="productParams" :paramsObj="{}" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product_category'">
+                    <el-form-item label="产品分类编码" prop="productCategoryCode">
+                      <el-input v-model.trim="dataForm.productCategoryCode" placeholder="请输入产品分类编码"
+                        :disabled="btntype ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input type="textarea" v-model.trim="dataForm.remark" placeholder="请输入备注" maxlength="200"
+                        :disabled="btntype ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
 
-              <el-collapse-item title="项目信息" name="productInfo">
-                <div v-if="!btntype">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                    icon="el-icon-plus" :disabled="btntype ? true : false" @click="openSeleceProductDialog">
-                    选择项目
-                  </el-button>
-                  |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                    :disabled="btntype ? true : false" icon="el-icon-delete" @click="batchDelete">
-                    批量删除
-                  </el-button>
-                  |
-                </div>
-                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-                  <el-table ref="product" :data="dataFormTwo.productData" hasC hasNO fixedNO
-                    @selection-change="handeleProductInfoData">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="!btntype" key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" key="21" />
-                    <el-table-column prop="inspectionItemsCode" label="项目编码" min-width="160" key="22">
-                      <template slot-scope="{ row }">
-                        <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
-                          <el-form-item prop="inspectionItemsCode" :style="row.cssObj" ref="inspectionItemsCode">
-                            <el-input disabled v-model="row.inspectionItemsCode" placeholder="请选择项目编码" clearable
-                              maxlength="20"></el-input>
-                          </el-form-item>
-                        </el-form>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="inspectionItemsIdText" label="项目名称" min-width="160"
-                      key="23"></el-table-column>
-                    <el-table-column prop="inspectionBasis" label="检验要求" min-width="160" key="24">
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.inspectionBasis" placeholder="请输入检验要求"
-                          :disabled="btntype || scope.row.inspectionMethod == 'measure'" maxlength="200"
-                          show-overflow-tooltip />
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="normalValue" label="正常值" width="180" key="25">
-                      <!-- <template slot="header">
+            <el-collapse-item title="项目信息" name="productInfo">
+              <div v-if="!btntype">
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  icon="el-icon-plus" :disabled="btntype ? true : false" @click="openSeleceProductDialog">
+                  选择项目
+                </el-button>
+                |
+                <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                  :disabled="btntype ? true : false" icon="el-icon-delete" @click="batchDelete">
+                  批量删除
+                </el-button>
+                |
+              </div>
+              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                <el-table ref="product" :data="dataFormTwo.productData" hasC hasNO fixedNO
+                  @selection-change="handeleProductInfoData">
+                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="!btntype" key="1" />
+                  <el-table-column type="index" width="60" label="序号" align="center" key="21" />
+                  <el-table-column prop="inspectionItemsCode" label="项目编码" min-width="160" key="22">
+                    <template slot-scope="{ row }">
+                      <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                        <el-form-item prop="inspectionItemsCode" :style="row.cssObj" ref="inspectionItemsCode">
+                          <el-input disabled v-model="row.inspectionItemsCode" placeholder="请选择项目编码" clearable
+                            maxlength="20"></el-input>
+                        </el-form-item>
+                      </el-form>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="inspectionItemsIdText" label="项目名称" min-width="160" key="23"></el-table-column>
+                  <el-table-column prop="inspectionBasis" label="检验要求" min-width="160" key="24">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.inspectionBasis" placeholder="请输入检验要求"
+                        :disabled="btntype || scope.row.inspectionMethod == 'measure'" maxlength="200"
+                        show-overflow-tooltip />
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="normalValue" label="正常值" width="180" key="25">
+                    <!-- <template slot="header">
                     <span class="required">*</span>正常值
                   </template> -->
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'normalValue'"
-                          :rules="productRules.normalValue">
-                          <el-input v-model="scope.row.normalValue" placeholder="请输入正常值"
-                            :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
-                            style="width: 155px;">
-                            {{ scope.row.normalValue }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="minimum" label="最低值" width="180" key="26">
-                      <!-- <template slot="header">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'normalValue'"
+                        :rules="productRules.normalValue">
+                        <el-input v-model="scope.row.normalValue" placeholder="请输入正常值"
+                          :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
+                          style="width: 155px;">
+                          {{ scope.row.normalValue }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="minimum" label="最低值" width="180" key="26">
+                    <!-- <template slot="header">
                     <span class="required">*</span>最低值
                   </template> -->
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'minimum'"
-                          :rules="productRules.minimum">
-                          <el-input v-model="scope.row.minimum" placeholder="请输入最低值"
-                            :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
-                            style="width: 155px;">
-                            {{ scope.row.minimum }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="maximum" label="最高值" width="180" key="27">
-                      <!-- <template slot="header">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'minimum'"
+                        :rules="productRules.minimum">
+                        <el-input v-model="scope.row.minimum" placeholder="请输入最低值"
+                          :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
+                          style="width: 155px;">
+                          {{ scope.row.minimum }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="maximum" label="最高值" width="180" key="27">
+                    <!-- <template slot="header">
                     <span class="required">*</span>最高值
                   </template> -->
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'maximum'"
-                          :rules="productRules.maximum">
-                          <el-input v-model="scope.row.maximum" placeholder="请输入最高值"
-                            :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
-                            style="width: 155px;">
-                            {{ scope.row.maximum }}
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="60" v-if="!btntype" key="28">
-                      <template slot-scope="scope">
-                        <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="btntype ? true : false"
-                          v-if="!btntype" @click="deltable(scope.$index)">
-                          删除
-                        </el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'productData.' + scope.$index + '.' + 'maximum'"
+                        :rules="productRules.maximum">
+                        <el-input v-model="scope.row.maximum" placeholder="请输入最高值"
+                          :disabled="btntype || scope.row.inspectionMethod == 'other'" maxlength="11"
+                          style="width: 155px;">
+                          {{ scope.row.maximum }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="60" v-if="!btntype" key="28">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="text" class="JNPF-table-delBtn" :disabled="btntype ? true : false"
+                        v-if="!btntype" @click="deltable(scope.$index)">
+                        删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
           <!-- </el-tab-pane> -->
         </el-tabs>
       </div>
@@ -219,6 +218,7 @@ export default {
       visible: false,
       formLoading: false,
       btnLoading: false,
+      codeConfig: {},
       searchList: [
         { prop: 'code', label: '项目编码', type: 'input' },
         { prop: 'name', label: '项目名称', type: 'input' }
@@ -438,6 +438,16 @@ export default {
   //   }
   // },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+      } catch (error) {
+      }
+    },
     calcValidate() {
       return (rule, value, callback) => {
         return callback()
@@ -793,6 +803,7 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
+          this.fetchData("JYLX", false)
           bimInspectionTypedetail(this.dataForm.id).then((res) => {
             this.dataForm = res.data.inspectionTypes
             this.dataFormTwo.productData = res.data.returnLines.map((item) => {
@@ -824,6 +835,7 @@ export default {
             this.loading = false
           })
         } else {
+          this.fetchData("JYLX", true)
           this.formLoading = false
           this.dataFormTwo.productData = []
         }

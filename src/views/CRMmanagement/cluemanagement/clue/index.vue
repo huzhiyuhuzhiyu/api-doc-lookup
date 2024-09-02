@@ -1,37 +1,5 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
-        <div class="title_box">
-          <h2>线索</h2>
-          <!-- <span class="options" v-if="!leftFlag">
-            <el-dropdown>
-              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </span> -->
-        </div>
-        <!-- <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
-          </el-input></div> -->
-      </div>
-
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="data" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-
-            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
-          </span>
-        </el-tree>
-      </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute">
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
-      </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute">
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
-      </div>
-    </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
@@ -63,13 +31,12 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="display: block;line-height:34px">
-            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')" v-if="categoryId=='clue'">
+            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
               <el-button size="mini" type="success" @click="DemandPoolaction">放入线索池</el-button>
               <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
               <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="importProductFun">导入</el-button>
               <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
             </topOpts>
-            <el-button v-if="categoryId=='pool'" size="mini" type="success" @click="Demandaction">分配线索</el-button>
             <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -164,8 +131,7 @@
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
-    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" @goto="gotopool" />
-    <fpForm v-if="clueVisiblefp" ref="fpForm" @close="cluerefreshDataList" @gotoclue="gotoclue" />
+    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList"/>
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -178,18 +144,16 @@ import { getCluemanagementlist, deleteCluemanagement, saleCluemanagementpoolMode
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import programme from "../components/programme.vue";
+import programme from "../../components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from './Form'
 import depForm from './depForm'
-import fpForm from './fpForm'
 import Sortable from 'sortablejs'
 export default {
   name: 'cluemanagement',
   components: {
     Form,
     depForm,
-    fpForm,
     ExportForm,
     SuperQuery,
     programme
@@ -292,10 +256,9 @@ export default {
       total: 0,
       btnLoading: false,
       listLoading: true,
-      categoryId: '',
       listQuery: {},
       listQuery1: {
-        status: '',
+        status: 'clue',
         clueName: '',
         pageNum: 1,
         pageSize: 20,
@@ -335,15 +298,10 @@ export default {
     },
     ...mapState('user', ['token']),
   },
-  watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val);
-    }
-  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
     this.getDictionaryType()
-    this.getcategoryTree()
+    this.initData()
   },
   // mounted() {
   //   // this.rowDrop(); //声明表格拖动排序方法
@@ -514,25 +472,6 @@ export default {
     downNoProduct(res) {
       this.jnpf.downloadFile(res.url, res.name)
     },
-    //去线索池
-    gotopool() {
-      this.clueVisible = false
-      this.$nextTick(() => {
-        this.$refs.treeBox.setCurrentKey('pool')
-        this.categoryId = 'pool'
-        this.listQuery.status = 'pool'
-        this.search();
-      })
-    },
-    gotoclue() {
-      this.clueVisiblefp = false
-      this.$nextTick(() => {
-        this.$refs.treeBox.setCurrentKey('clue')
-        this.categoryId = 'clue'
-        this.listQuery.status = 'clue'
-        this.search();
-      })
-    },
     async switchStyle() {
       await this.$nextTick();
       const programmes = this.$refs.programmes ? this.$refs.programmes.offsetWidth : 0
@@ -666,19 +605,6 @@ export default {
       if (!value) return true;
       return data.fullName.indexOf(value) !== -1;
     },
-    handleNodeClick(data, node) {
-      this.categoryId = node.data.id
-      this.listQuery.status = node.data.id
-      this.search();
-    },
-    getcategoryTree() {
-      this.$nextTick(() => {
-        this.$refs.treeBox.setCurrentKey('clue') // 默认选中节点第一个
-        this.categoryId = 'clue'
-        this.listQuery.status = 'clue'
-        this.initData()
-      })
-    },
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
@@ -738,7 +664,6 @@ export default {
       this.programmefrom = {}
       this.programmetitle = ''
       this.listQuery = JSON.parse(JSON.stringify(this.listQuery1))
-      this.listQuery.status = this.categoryId
       this.search()
     }
   }

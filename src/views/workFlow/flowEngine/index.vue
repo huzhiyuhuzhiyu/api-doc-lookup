@@ -1,10 +1,10 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-tabs v-model="activeName" style="height:auto">
-        <el-tab-pane label="全部" name="all" />
-        <el-tab-pane :label="item.fullName" :name="item.enCode" v-for="item in categoryList" :key="item.enCode" />
-      </el-tabs>
+      <el-radio-group v-model="activeName" style="margin-bottom:5px;background-color:#fff;padding-left:8px">
+        <el-radio-button label="all" style="margin:5px 0">全部</el-radio-button>
+        <el-radio-button style="margin:5px 0" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+      </el-radio-group>
       <div class="JNPF-common-layout-center" v-show="activeName">
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
@@ -54,38 +54,19 @@
               <span>{{ scope.row.visibleType ==  0 ? "全部可见" : "部分可见" }}</span>
             </template>
           </el-table-column> -->
-            <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" min-width="150" />
-            <!-- <el-table-column prop="enabledMark" label="状态" min-width="80" align="center">
-              <template slot-scope="scope">
-                <el-tag :type="scope.row.enabledMark == 1 ? 'success' : 'danger'" disable-transitions>
-                  {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}</el-tag>
-              </template>
-            </el-table-column> -->
-            <el-table-column prop="enabledMark" label="状态" min-width="80" align="center">
+            <el-table-column prop="enabledMark" label="启用状态" min-width="80" align="center">
               <template slot-scope="scope">
                 <el-switch @change="changeState(scope.row.id)" v-model="scope.row.enabledMark == 1 ? true : false"
                   active-color="#13ce66" inactive-color="#ff4949">
                 </el-switch>
               </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" width="180">
+            <el-table-column label="操作" fixed="right" width="400">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.formType)" @del="handleDel(scope.row.id)">
-                  <el-dropdown>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
-                          class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="preview(scope.row)">
-                        表单预览</el-dropdown-item>
-                      <el-dropdown-item @click.native="copy(scope.row.id)">
-                        复制流程</el-dropdown-item>
-                      <el-dropdown-item @click.native="handleExport(scope.row.id)">
-                        导出流程</el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                  <el-button size="mini" type="text" @click.native="preview(scope.row)">表单预览</el-button>
+                  <el-button size="mini" type="text" @click.native="copy(scope.row.id)">复制流程</el-button>
+                  <el-button size="mini" type="text" @click.native="handleExport(scope.row.id)">导出流程</el-button>
                 </tableOpts>
               </template>
             </el-table-column>

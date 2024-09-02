@@ -394,11 +394,9 @@ export default {
       if (this.quotationNoS || this.cooperativePartnerIdTextS || this.bidderS) {
         this.$set(this.form.superQuery, 'matchLogic', 'AND')
       } else {
-        if (!this.form.superQuery.condition.length) {
-          this.form.superQuery = {
-            condition: [],
-            matchLogic: ""
-          }
+        this.form.superQuery = {
+          condition: [],
+          matchLogic: ""
         }
       }
       getQuotationLists(this.form).then(res => {

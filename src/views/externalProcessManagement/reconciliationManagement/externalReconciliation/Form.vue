@@ -529,8 +529,8 @@ export default {
             this.dataFormTwo.data = res.data.reconciliationLines
             this.mainLoading = false
           })
-          // 流程信息和流转记录
-          this.getFlowDetail(this.dataForm.id)
+           // 流程信息和流转记录
+           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       })
     },

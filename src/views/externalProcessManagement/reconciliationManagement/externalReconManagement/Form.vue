@@ -736,11 +736,14 @@ export default {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
           }
         } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
-          this.$message.error('未找到审批流程！')
         }
       }).catch(() => { })
     },

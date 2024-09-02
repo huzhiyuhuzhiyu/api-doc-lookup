@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入外协单号" clearable
+                <el-input v-model.trim="listQuery.orderNo" placeholder="外协单号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>

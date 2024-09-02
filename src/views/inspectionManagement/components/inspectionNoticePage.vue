@@ -331,7 +331,7 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
-        console.log(includeFieldMap)
+
         let _data = {
           ...this.listQuery,
           exportType: '1097',
@@ -393,9 +393,10 @@ export default {
           this.$refs.DetailForm.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
         })
       } else {
+
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
+          this.$refs.Form.init(row.id, btnType, this.pageData.type)
         })
       }
     },
@@ -445,4 +446,3 @@ export default {
   }
 }
 </script>
-

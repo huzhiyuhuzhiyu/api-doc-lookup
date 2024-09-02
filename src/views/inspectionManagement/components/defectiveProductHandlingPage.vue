@@ -365,10 +365,10 @@ export default {
 
       this.initData()
     },
-    addOrUpdateHandle(row, btnType = 'add') {
+    addOrUpdateHandle(row, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(row, btnType, this.pageData.type, this.pageData.businessCode)
+        this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type, this.pageData.businessCode)
       })
     },
     sortChange({ prop, order }) {
@@ -415,7 +415,7 @@ export default {
     withdrawnAddHandle(row, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
+        this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type)
       })
     },
     withdrawnHandle(formId) {

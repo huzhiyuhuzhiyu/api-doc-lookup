@@ -43,6 +43,24 @@ export default {
   watch: {
     activeName() {
       this.initData()
+    },
+    'dataForm.work_exceed_report': {
+      handler(newVal, oldVal) {
+        //todo
+
+        this.tabs[0].tabContent.forEach(tc => {
+          tc.row.forEach((row, index) => {
+            if (row.prop == "configValue2") {
+              if (newVal == '1') {
+                row.render = true
+              } else {
+                row.render = false
+              }
+            }
+
+          })
+        })
+      }
     }
   },
   created() {
@@ -50,17 +68,25 @@ export default {
     this.tabs.forEach(tab => {
       tab.tabContent.forEach(tc => {
         tc.row.forEach(row => {
+
           this.dataForm[row.prop] = row.value || ""; // 设置默认value
+
+
         })
       })
     })
   },
   methods: {
     initData() {
-      if (this.activeName === 'warehouse') {
+      if (this.activeName === 'produce') {
+        this.listQuery.pageSize = -1
+        this.listQuery.businessCode = 'produce'
+        this.getData(0)
+
+      } else if (this.activeName === 'warehouse') {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'warehouse'
-        this.getData(0)
+        this.getData(1)
       }
       // else if (this.activeName === 'financialSet') {
       //   this.listQuery.codeFlag = 0
@@ -70,10 +96,6 @@ export default {
       else if (this.activeName === 'attachment') {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'attachment'
-        this.getData(1)
-      }  else if (this.activeName === 'produce') {
-        this.listQuery.pageSize = -1
-        this.listQuery.businessCode = 'produce'
         this.getData(2)
       }
       // else if (this.activeName === 'mrp') {
@@ -94,11 +116,20 @@ export default {
           tab.row.forEach(item => {
             data.forEach(row => {
               row.row.forEach(dataItem => {
-                  if (item.prop === dataItem.configKey) {
+
+
+                if (item.prop === dataItem.configKey) {
+
                   item.value = dataItem.configValue1;
                   item.businessCode = dataItem.businessCode;
                   item.id = dataItem.id
                   item.change = this.switchChange
+                }
+                if (dataItem.configKey == 'work_exceed_report') {
+
+                  this.dataForm.configValue2 = dataItem.configValue2
+                  // this.$set(this.dataForm, 'configValue2', dataItem.configValue2)
+
                 }
               })
             })
@@ -107,7 +138,16 @@ export default {
         });
         this.tabs[index].tabContent.forEach(tc => {
           tc.row.forEach((row, index) => {
-            this.dataForm[row.prop] = row.value || ""; // 设置默认value
+            if (row.prop == "configValue2") {
+              if (this.dataForm.work_exceed_report == '1') {
+                row.render = true
+              } else {
+                row.render = false
+              }
+            } else {
+              this.dataForm[row.prop] = row.value || ""; // 设置默认value
+            }
+
           })
         })
       }).catch(() => this.formLoading = false);
@@ -118,9 +158,11 @@ export default {
       let _data = []
       let query = {
         ...item,
-        configKey:item.prop,
-        configValue1: e, 
+        configKey: item.prop,
+        configValue1: e,
+        configValue2: this.dataForm.configValue2
       }
+
       _data.push(query)
       this.formLoading = true
       editBimBusinessData(_data).then(res => {

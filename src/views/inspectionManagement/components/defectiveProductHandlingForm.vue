@@ -112,27 +112,20 @@ import {
   detailInspectionData,
   lossQcUnqualifiedData
 } from '@/api/inspectionManagement/index' // 产品检验项目列表
-import { getInspectionList } from '@/api/inspectionManagement/index' // 检验单
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import TableFormWare from './TableForm-ware.vue'
 import TableFormWareTwo from './TableForm-ware-two.vue'
-import {
-  getApprovalTemplate,
-  getApprovalDetailTree,
-  busApprovalFlowTree,
-  getSaleBusDetail,
-  getBusDetail,
-  approvalTransferList
-} from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import busFlow from '@/mixins/generator/busFlow';
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
+  mixins: [busFlow],
   data() {
     return {
       datafilelist: [],

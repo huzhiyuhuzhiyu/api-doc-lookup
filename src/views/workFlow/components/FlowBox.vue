@@ -319,6 +319,7 @@ export default {
         { label: 'b005', value: 'process' },
         { label: 'b022', value: 'finished' },
       ],
+      inspectionType:'',
       messageFlag: false
     }
   },
@@ -516,10 +517,10 @@ export default {
           this.$nextTick(() => {
             if (data.formType === 3) {
               console.log(data, 'data');
+              console.log(this.$refs.form, 'this.$refs.form');
               let targetPage =  this.inspectionTypeList.find(item=>item.label === data.businessFlow)
-              let inspectionType = targetPage ? targetPage.value : ''
-              this.$refs.form && this.$refs.form.init(data.businessId, 'look', true,inspectionType)
-              // this.$refs.form && this.$refs.form.init('1826164119768203265','look',true)
+              this.inspectionType = targetPage ? targetPage.value : ''
+              this.$refs.form && this.$refs.form.init(data.businessId, 'look', true,this.inspectionType)
               this.loading = false
             } else {
               this.$refs.form && this.$refs.form.init(data)
@@ -529,7 +530,7 @@ export default {
       }).catch(() => { this.loading = false })
     },
     eventLauncher(eventType) {
-      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent)
+      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form)
     },
     eventReceiver(formData, eventType) {
       this.formData = formData

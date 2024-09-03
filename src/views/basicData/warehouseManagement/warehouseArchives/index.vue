@@ -5,17 +5,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入仓库名称" clearable />
+              <el-input v-model="form.name" placeholder="仓库名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入仓库编码" clearable />
+              <el-input v-model="form.code" placeholder="仓库编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item prop="type">
-              <el-select v-model="form.type" placeholder="请选择类型" style="width: 100%;">
+              <el-select v-model="form.type" placeholder="类型" style="width: 100%;">
                 <el-option v-for="(item, index) in typeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -84,7 +84,7 @@
           <el-table-column prop="goodsAllocationNum" label="库位数" width="100" /> -->
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column label="操作" min-width="240" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">

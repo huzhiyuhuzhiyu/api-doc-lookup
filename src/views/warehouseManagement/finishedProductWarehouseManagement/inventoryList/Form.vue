@@ -391,6 +391,8 @@ export default {
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" },
+        { label: "直接入库", value: "inbound_other" },
+        { label: "直接出库", value: "outbound_other" },
       ],
       inspectionResultsList: [//检验下拉框数据
         { label: "合格", value: "qualified" },

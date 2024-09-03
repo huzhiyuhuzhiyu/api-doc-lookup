@@ -236,8 +236,8 @@ export default {
           type: 'input'
         },
         {
-          prop: '最高库存',
-          label: "maxInventory",
+          prop: 'maxInventory',
+          label: "最高库存",
           type: 'input'
         },
          

@@ -424,8 +424,8 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px">
-          <el-row class="JNPF-common-search-box" :gutter="5">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
+          <el-row class="JNPF-common-search-box" :gutter="5" >
             <el-form @submit.native.prevent>
               <el-col :span="5">
                 <el-form-item>
@@ -537,6 +537,7 @@ export default {
         { label: "自动扣减料", value: "auto" },
         { label: "都不是", value: "none" },
       ],
+      workOrderList:false,
       getBimProcessList,
       ProductMethodArr: [
         {
@@ -703,6 +704,7 @@ export default {
       currentProductIndex: "",
       isSame:false,
       previousroutingId:"",
+      detailDiaFlag:false,
     }
   },
   computed: {

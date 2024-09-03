@@ -233,3 +233,14 @@ export function addOrderNum(data) {
       data
     })
   }
+
+  // 改派
+  
+export function changProdWork(data) {
+  return request({
+    url: `/api/mrp/prod/order/change`,
+    method: 'POST',
+    data
+  })
+}
+  

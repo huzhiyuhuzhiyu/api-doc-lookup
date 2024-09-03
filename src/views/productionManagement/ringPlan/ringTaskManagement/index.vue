@@ -128,7 +128,7 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="reassignmentFun1(scope.row.id)">
+                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)">
                       改派
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
@@ -188,6 +188,7 @@ import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
+import BatchDispatchForm from './batchDispatchForm.vue'
 import ReworkForm from './reworkForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
@@ -195,7 +196,7 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm },
+  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm },
   data() {
     return {
       form: {
@@ -437,22 +438,23 @@ export default {
 
 
     },
+      // 改派
+      updataDispatch(id){
+      this.BatchDispatchVisible=true
+      this.$nextTick(()=>{
+        this.$refs.BatchDispatchForm.init(id,'all')
+      })
+    },
     reassignmentFun2() {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(this.selectArr[0].id)
+      this.BatchDispatchVisible=true
+      this.$nextTick(()=>{
+        this.$refs.BatchDispatchForm.init(id,'all')
       })
     },
-    reassignmentFun1(data) {
-
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(id)
-      })
-    },
+  
     // 追加生产数量 提交
     submitFun() {
       this.$refs['diaForm'].validate((valid) => {

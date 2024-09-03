@@ -86,7 +86,7 @@
                 <div v-for="(item, index) in scope.row.processScheduleList" :key="index" style="width:100px;display: inline-block;">
                   <div style="position: relative;">
                     <div class="processSchedule_top" :class="item==0?'noValue':item=='100'?'sucess':'normal'">{{ item }}%</div>
-                    <p style="margin-top: 10px;">序号{{ index + 1 }}</p>
+                    <p style="margin-top: 10px;">工序{{ index + 1 }}</p>
                     <img v-if="index!=scope.row.processScheduleList.length-1" style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;" src="../../../../assets/images/right.png" alt="">
                   </div>
                   

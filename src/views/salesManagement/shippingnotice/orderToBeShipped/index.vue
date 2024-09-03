@@ -275,32 +275,7 @@ export default {
           endPlaceholder: '结束日期',
         },
 
-        {
-          prop: 'price',
-          label: "单价(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: "税率",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'totalAmount',
-          label: "金额(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: "单价(不含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: "金额(不含税)",
-          type: 'input'
-        },
+        
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",
@@ -355,12 +330,7 @@ export default {
           label: "备注",
           type: 'input'
         },
-        {
-          prop: 'documentStatus',
-          label: "单据状态",
-          type: 'select',
-          options: [{ label: "草稿", value: "draft" }, { label: "提交", value: "submit" }]
-        },
+    
         {
           prop: 'createTime',
           label: '创建时间',

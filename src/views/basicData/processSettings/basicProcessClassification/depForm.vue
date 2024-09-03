@@ -11,7 +11,7 @@
         label-position="top" label-width="120px" :hide-required-asterisk="true">
         <!-- <el-form-item label="上级分类" prop="parentName">
         <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
-          :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
+          :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.type" />
       </el-form-item> -->
         <el-form-item label="分类编码" prop="code">
           <template slot="label">
@@ -57,7 +57,7 @@ export default {
         code: '',
         name: '',
         remark: '',
-        classAttribute: 'process'
+        type: 'process'
       },
       autoCode: '',
       title: '',
@@ -78,7 +78,7 @@ export default {
                 checkCategoryCode({
                   code: value,
                   parentId: this.dataForm.parentId,
-                  classAttribute: this.dataForm.classAttribute
+                  classAttribute: this.dataForm.type
                 })
                   .then((res) => {
                     if (!res.data) {

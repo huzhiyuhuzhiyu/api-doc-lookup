@@ -54,13 +54,13 @@ export default {
         remark: '',
         parentId: '',
         parentName: '',
-        classAttribute: 'ispection_tools'
+        type: 'ispection_tools'
       },
       requestObjTwo: {
         page: 1,
         limit: 999,
         keyword: '',
-        classAttribute: 'ispection_tools'
+        type: 'ispection_tools'
       },
       parentId: '',
       organizeIdTree: [],

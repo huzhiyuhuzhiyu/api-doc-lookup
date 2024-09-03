@@ -874,7 +874,7 @@ export default {
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res,'oooo')
+              console.log(res, 'oooo')
               if (res.data.attachmentList) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
@@ -888,6 +888,8 @@ export default {
               }
 
               this.dataForm = res.data.unqualified
+              this.dataForm.inspectionResults = res.data.inspection.inspectionResults
+              this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
               this.inspectionList = res.data.itemList
               this.linesListTwo = res.data.causesList
               let tempLinesList = res.data.lines
@@ -972,7 +974,7 @@ export default {
       // repairQuantityDisabled      返工返修数量是否禁用
       if (val === 'qualified' || val === 'concessive_acceptance') {
         // 合格、让步接收
-        this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.qualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.unqualifiedQuantity = 0
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
@@ -983,7 +985,7 @@ export default {
       } else if (val === 'unqualified') {
         // 不合格
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
@@ -1035,6 +1037,11 @@ export default {
     },
     // 提交
     async handleConfirm(submitModel) {
+      if (this.dataForm.treatmentResults == 'select') {
+        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
+        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验单报检数量。');
+      }
+
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 

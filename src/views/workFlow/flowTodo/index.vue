@@ -26,7 +26,7 @@
               <el-badge :value="total">
                 <el-radio-button label="" style="margin:5px 0">全部</el-radio-button>
               </el-badge>
-              <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id" style="z-index: 9999;">
+              <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id">
               <el-radio-button style="margin:2px 0;" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
             </el-badge>
             </el-radio-group>

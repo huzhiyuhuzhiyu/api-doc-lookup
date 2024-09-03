@@ -15,20 +15,20 @@
         <el-tabs v-model="activeName">
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>基本信息</h5>
-            </div>
-            <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
-          <el-tab-pane label="权限信息" name="sleeve" id="sleeve">
+          <!-- <el-tab-pane label="权限信息" name="sleeve" id="sleeve">
             <div
               style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
               <h5>权限信息</h5>
             </div>
             <JNPF-col-table v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
               :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-          </el-tab-pane>
+          </el-tab-pane> -->
         </el-tabs>
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
@@ -56,6 +56,7 @@ export default {
       datafilelist: [],
       getWarehouseList,
       activeName: 'basicInfo',
+      activeNames: ['productInfo', 'basicInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -131,10 +132,18 @@ export default {
                 this.parentId = data ? data[0].id : ''
                 this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
                 this.dataForm.type = data ? data[0].all.type : ''
+                console.log(this.dataForm.type, 'o')
+                if (this.dataForm.type == 'line_edge') {
+                  this.tabs[0].tabContent.forEach((tc) => {
+                    if (tc.prop == 'workshop') {
+                      tc.render = true
+                    }
+                  })
+                }
                 if (this.dataForm.type == 'scrap') {
                   this.tabs[0].tabContent.forEach((tc) => {
                     if (tc.prop == 'type') {
-                      tc.options = [{ label: '报废', value: 'scrap' }]
+                      tc.options = [{ label: '报废仓库', value: 'scrap' }]
                     }
                   })
                 } else if (this.dataForm.type == 'virtually') {
@@ -150,7 +159,8 @@ export default {
                         { label: '正常仓库', value: 'normal' },
                         { label: '中转仓库', value: 'temp' },
                         { label: '不良品仓库', value: 'unqualified' },
-                        { label: '报废', value: 'scrap' },
+                        { label: '报废仓库', value: 'scrap' },
+                        { label: "线边仓库", value: "line_edge" }
                       ]
                     }
                   })
@@ -279,7 +289,7 @@ export default {
           if (this.dataForm.type == 'scrap') {
             this.tabs[0].tabContent.forEach((tc) => {
               if (tc.prop == 'type') {
-                tc.options = [{ label: '报废', value: 'scrap' }]
+                tc.options = [{ label: '报废仓库', value: 'scrap' }]
               }
             })
           } else if (this.dataForm.type == 'virtually') {
@@ -294,7 +304,7 @@ export default {
                 tc.options = [
                   { label: '正常仓库', value: 'normal' },
                   { label: '中转仓库', value: 'temp' },
-                  { label: '不良品仓库', value: 'unqualified' },
+                  { label: '不良品仓库', value: 'unqualified' }
                 ]
               }
             })
@@ -434,7 +444,7 @@ export default {
 
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
-  padding: 0px 20px;
+  // padding: 0px 20px;
 }
 
 ::v-deep .JNPF-common-page-header {
@@ -452,5 +462,41 @@ export default {
 .required {
   color: red;
   margin-right: 4px;
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

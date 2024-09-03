@@ -75,8 +75,21 @@ export default {
           label: '销货',
           value: '3'
         },
-      ]
+      ],
+      categoryList:[]
     }
+  },
+  created() {
+    this.getDictionaryData()
+  },
+  methods: {
+    getDictionaryData() {
+      this.$store.dispatch('base/getDictionaryData', { sort: 'PrintingBusiness' }).then((res) => {
+        this.categoryList = res
+        console.log(this.categoryList);
+        
+      })
+    },
   },
 }
 </script>

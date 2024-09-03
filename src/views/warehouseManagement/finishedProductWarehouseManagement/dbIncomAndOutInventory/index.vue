@@ -112,7 +112,7 @@
           <el-col :span="8">
             <el-form-item>
               <el-date-picker v-model="wxshDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="收货开始日期" end-placeholder="c收货结束日期" clearable>
+                start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable>
               </el-date-picker>
             </el-form-item>
           </el-col>
@@ -312,7 +312,8 @@
           <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom" v-if="categoryType == 'outbound_purchase'"></el-table-column>
+          <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom" v-if="categoryType == 'inbound_purchase'"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -644,17 +645,7 @@ export default {
             }
             if (item.businessType == 'inbound_external') {
               item.fullName = '外协收货'
-            }
-            //     <!-- { label: "销售发货", value: "outbound_sale_send" },
-            // { label: "销售退货", value: "inbound_sale_return" },
-            // { label: "采购收货", value: "inbound_purchase" },
-            // { label: "采购退货", value: "outbound_purchase" },
-            // { label: "生产领料", value: "outbound_pick_out" },
-            // { label: "生产退料", value: "inbound_return_materials" },
-            // { label: "外协发料", value: "outbound_external_send" },
-            // { label: "外协退料", value: "inbound_external_return" },
-            // { label: "外协收货", value: "inbound_external" },
-            // { label: "外协退货", value: "outbound_external" }, -->
+            } 
           });
         }
         this.$nextTick(() => {
@@ -709,6 +700,7 @@ export default {
       if (this.categoryType == 'inbound_purchase') {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'receipt'
+        // this.$set(this.cgForm,'receiptInboundFlag',1)
         this.cgForm.classAttribute=this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
@@ -746,6 +738,10 @@ export default {
       // 外协收货
       if (this.categoryType == 'inbound_external') {
         this.listLoading = true
+        this.$set(this.wxshForm,'receiptInboundFlag',1)
+        this.$set(this.wxshForm,'inspectionStatus','inspected')
+
+         
         this.wxshForm.classAttribute=this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
           this.wxshTableList = res.data.records
@@ -980,7 +976,7 @@ export default {
           returnDeliveryType: 'delivery',
           deliveryStatus: "not_finished",
           documentStatus: "sibmit",
-          notifyType: "external",
+          notificationType: "external",
           rdeDate: "",
           rdsDate: "",
           orderItems: [{

@@ -350,7 +350,7 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+            <JNPF-table v-loading="listLoading" :data="productList" hasC
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
@@ -635,6 +635,8 @@ export default {
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("批次号数据", data, index);
+      this.$set(this.productData[index], 'areaId', data.areaId)
+      this.$set(this.productData[index], 'goodsShelvesId', data.goodsShelvesId)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -656,6 +658,8 @@ export default {
       console.log("库位信息", data);
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'shelfSpaceName', data.name)
+      this.$set(this.productData[index], 'areaId', data.areaId)
+      this.$set(this.productData[index], 'goodsShelvesId', data.goodsShelvesId)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.id)
     },

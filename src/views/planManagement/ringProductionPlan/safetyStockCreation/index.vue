@@ -96,7 +96,7 @@ export default {
     return {
       productCodeS: "",
       productDrawingNoS: "",
-      columnList: ["cooperativePartnerName", "cooperativePartnerCode",  "productCode", "createTime", 'createByName'],
+      columnList: ["cooperativePartnerName", "cooperativePartnerCode", "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
       tableData: [],
@@ -276,11 +276,9 @@ export default {
       if (this.productCodeS || this.productDrawingNoS) {
         this.$set(this.form.superQuery, 'matchLogic', 'AND')
       } else {
-        if (!this.form.superQuery.condition.length) {
-          this.form.superQuery = {
-            condition: [],
-            matchLogic: ""
-          }
+        this.form.superQuery = {
+          condition: [],
+          matchLogic: ""
         }
       }
       getProducts(this.form).then(res => {

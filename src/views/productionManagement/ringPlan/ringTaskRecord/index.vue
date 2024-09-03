@@ -268,7 +268,6 @@ export default {
   },
 
   mounted() {
-    this.getProductClassFun()
   },
   methods: {
    
@@ -374,7 +373,7 @@ export default {
     handleUserRelation(id) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id)
+        this.$refs.Form.init(id, 'all')
       })
     },
 

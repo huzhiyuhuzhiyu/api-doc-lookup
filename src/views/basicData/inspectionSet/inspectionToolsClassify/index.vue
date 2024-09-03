@@ -62,7 +62,7 @@ export default {
   data() {
     return {
       listQuery: {
-        classAttribute: "ispection_tools",
+        type: "ispection_tools",
         orderItems: [{
           asc: false,
           column: ""
@@ -121,7 +121,7 @@ export default {
     },
     reset() {
       this.listQuery = {
-        classAttribute: "ispection_tools",
+        type: "ispection_tools",
         orderItems: [{
           asc: false,
           column: ""

@@ -9,18 +9,23 @@
     <div style="padding:10px">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
         label-position="top" label-width="120px" hide-required-asterisk="fasle">
-        <el-form-item label="上级分类" prop="parentName">
-          <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.parentName" placeholder="请选择上级分类"
-            auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
-            :paramsObj="{}" />
-        </el-form-item>
         <el-form-item label="类别属性" prop="classAttribute" v-if="!dataForm.parentName">
+          <template slot="label">
+            类别属性
+            <span class="required">*</span>
+          </template>
           <el-select v-model="dataForm.classAttribute" placeholder="请选择类别属性" clearable style="width: 100%;"
             :disabled="dataForm.id ? true : false">
             <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="上级分类" prop="parentName">
+          <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.parentName" placeholder="请选择上级分类"
+            auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
+            :paramsObj="{}" />
+        </el-form-item>
+
         <el-form-item label="分类名称" prop="name">
           <template slot="label">
             分类名称
@@ -83,7 +88,8 @@ export default {
         code: '',
         name: '',
         remark: '',
-        classAttribute: ''
+        classAttribute: '',
+        type: 'material'
       },
       categoryPropertList: [
         {
@@ -135,7 +141,8 @@ export default {
             },
             trigger: 'blur'
           }
-        ]
+        ],
+        classAttribute: [{ required: true, message: '请输入类别属性', trigger: 'blur' }]
       },
       classTypelist: [
         { label: '包装物', value: 'packaging' },

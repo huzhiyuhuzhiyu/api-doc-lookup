@@ -367,9 +367,16 @@ export default {
     },
     addOrUpdateHandle(row, btnType) {
       this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type, this.pageData.businessCode)
-      })
+      if (btnType == 'look') {
+        this.$nextTick(() => {
+          this.$refs.Form.init(row.id, btnType, this.pageData.type, this.pageData.businessCode)
+        })
+      } else {
+        this.$nextTick(() => {
+          this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type, this.pageData.businessCode)
+        })
+      }
+
     },
     sortChange({ prop, order }) {
       let newProp

@@ -203,6 +203,31 @@ export default {
 
     // 设置主表结构
     setDataFormItems() {
+      function generateInspectionMethodList(inspectionType) {
+        // 动态生成处理结果
+        // 采购收货、外协收货、外协退料、生产退料 不良处理结果：合格、不合格、让步接收、挑选
+        // 销售退货、生产巡检、生产完工检验 不良处理结果：合格、报废、返工返修、报废和返修
+        return [
+          {
+            label: '全检',
+            value: 'all',
+            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(
+              inspectionType
+            )
+          },
+          {
+            label: '抽检',
+            value: 'spot_check',
+            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          },
+          {
+            label: '免检',
+            value: 'exempt',
+            disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
+          },
+
+        ].filter((o) => !o.disabled)
+      }
       this.dataFormItems = [
         {
           prop: 'orderNo',
@@ -273,11 +298,12 @@ export default {
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12,
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: [
-            { label: '免检', value: 'exempt' },
-            { label: '抽检', value: 'spot_check' },
-            { label: '全检', value: 'all' }
-          ]
+          options: generateInspectionMethodList(this.inspectionType),
+          // options: [
+          //   { label: '免检', value: 'exempt' },
+          //   { label: '抽检', value: 'spot_check' },
+          //   { label: '全检', value: 'all' }
+          // ]
         },
         // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
         {

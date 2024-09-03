@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="btnType !== 'look'">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')"
@@ -15,7 +15,7 @@
       <div class="contain">
         <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <el-tabs v-model="activeName" style="padding-right: 10px;">
+            <el-tabs v-model="activeName" style="padding-right: 10px;" v-if="!approvalFlag">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -57,6 +57,29 @@
                 <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
               </el-tab-pane>
             </el-tabs>
+            <el-collapse v-model="activeNames" v-else>
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                  :btnType="btnType === 'setLoss' ? 'look' : btnType" />
+              </el-collapse-item>
+
+              <el-collapse-item title="检验项目" name="inspectionInfo">
+                <el-row :gutter="30" style="padding:0 15px">
+                  <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                    :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                    @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                    :nowNum="nowNum" />
+                </el-row>
+              </el-collapse-item>
+              <el-collapse-item title="不良原因" name="adverseCausesInfo">
+                <el-row :gutter="30" style="padding:0 15px">
+                  <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
+                    :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
+                    @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                    :nowNum="nowNumTwo" />
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
           </div>
         </div>
       </div>
@@ -89,27 +112,20 @@ import {
   detailInspectionData,
   lossQcUnqualifiedData
 } from '@/api/inspectionManagement/index' // 产品检验项目列表
-import { getInspectionList } from '@/api/inspectionManagement/index' // 检验单
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
 import workFlow from '@/components/WorkFlow/settingBus.vue'
 import TableFormWare from './TableForm-ware.vue'
 import TableFormWareTwo from './TableForm-ware-two.vue'
-import {
-  getApprovalTemplate,
-  getApprovalDetailTree,
-  busApprovalFlowTree,
-  getSaleBusDetail,
-  getBusDetail,
-  approvalTransferList
-} from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import busFlow from '@/mixins/generator/busFlow';
 export default {
   components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
+  mixins: [busFlow],
   data() {
     return {
       datafilelist: [],
@@ -217,7 +233,7 @@ export default {
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
-      qualifiedQuantityDisabled: false
+      qualifiedQuantityDisabled: false,
     }
   },
   beforeCreate() {
@@ -459,7 +475,8 @@ export default {
           change: this.treatmentResultsChange,
           render: this.userInfo.deptType === 'JSB',
           itemRules: [{ required: true, trigger: 'change' }],
-          sm: 12
+          sm: 12,
+          itemDisabled: false
         },
         { prop: 'description', label: '处理说明', value: '', type: 'textarea' },
 
@@ -832,7 +849,7 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(id, btnType, inspectionType, businessCode) {
+    init(id, btnType, approvalFlag, inspectionType) {
       // let id = row.id
 
       // this.dataForm = row
@@ -844,9 +861,7 @@ export default {
       this.btnType = btnType
       let option = this.inspectionTypeList.find((o) => o.value === inspectionType)
       this.inspectionType = inspectionType
-      this.businessCode = businessCode
-      this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
-
+      this.approvalFlag = approvalFlag
       // this.$nextTick(() => { this.dataFormFlag = true })
 
       if (id) {
@@ -856,8 +871,6 @@ export default {
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
-
-          this.getBusInfo()
           this.formLoading = false
         }
         if (btnType === 'anew') {
@@ -868,13 +881,13 @@ export default {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
           this.fetchData('UQDH', false)
-          this.refeshDataFormItems()
+          // this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '查看不良品处理单'
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res,'oooo')
+              console.log(res, 'oooo')
               if (res.data.attachmentList) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
@@ -888,8 +901,14 @@ export default {
               }
 
               this.dataForm = res.data.unqualified
+              this.dataForm.inspectionResults = res.data.inspection.inspectionResults
+              this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
               this.inspectionList = res.data.itemList
               this.linesListTwo = res.data.causesList
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+              this.refeshDataFormItems()
+              this.refeshLinesListItems()
               let tempLinesList = res.data.lines
 
               tempLinesList.forEach((line) => {
@@ -938,8 +957,7 @@ export default {
               }
 
               this.linesList = tempLinesList
-              this.refeshDataFormItems()
-              this.refeshLinesListItems()
+
               this.formLoading = false
             })
             .catch((err) => {
@@ -953,7 +971,7 @@ export default {
 
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
           // 流程信息和流转记录
-          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+          // if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       } else {
         this.fetchData('UQDH', true)
@@ -972,7 +990,7 @@ export default {
       // repairQuantityDisabled      返工返修数量是否禁用
       if (val === 'qualified' || val === 'concessive_acceptance') {
         // 合格、让步接收
-        this.dataForm.qualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.qualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.unqualifiedQuantity = 0
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
@@ -983,7 +1001,7 @@ export default {
       } else if (val === 'unqualified') {
         // 不合格
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.scrapQuantity = 0
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
@@ -1035,6 +1053,11 @@ export default {
     },
     // 提交
     async handleConfirm(submitModel) {
+      if (this.dataForm.treatmentResults == 'select') {
+        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
+        if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验单报检数量。');
+      }
+
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
@@ -1098,7 +1121,6 @@ export default {
           })
         }
         this.dataForm.documentStatus = submitModel
-        this.dataForm.businessCode = this.businessCode
         this.dataForm.inspectionId = this.dataForm.id
         let formMethod = ''
 
@@ -1183,13 +1205,15 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
-          this.dataForm = res.data.inspection
+          this.dataForm = { ...res.data.inspection, approvalFlag: false }
 
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
           this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
 
           this.inspectionList = res.data.itemList
           this.linesListTwo = res.data.causesList
+          // 获取审批模版
+          this.getBusInfo()
           let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
 
           tempLinesList.forEach((line) => {
@@ -1213,10 +1237,6 @@ export default {
           }
 
           this.linesList = tempLinesList
-          // 获取审批模版
-          this.$nextTick(() => {
-            this.getBusInfo()
-          })
           this.formLoading = false
         })
         .catch((err) => {
@@ -1241,6 +1261,8 @@ export default {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
+              console.log(this.dataForm.approvalFlag);
+
             } else {
               this.flowTemplateJson = {}
               this.dataForm.approvalFlag = false

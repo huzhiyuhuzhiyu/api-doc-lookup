@@ -124,8 +124,8 @@ export default {
       orderForm: {
         orderNo: "",
         drawingNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
+        deliveryEndTime:"",
+        deliveryStartTime:"",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,
@@ -652,13 +652,12 @@ export default {
       })
 
       if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
       } else {
-        this.orderForm.deliveryStartDate = ""
-        this.orderForm.deliveryEndDate = ""
+        this.orderForm.deliveryStartTime = ""
+        this.orderForm.deliveryEndTime = ""
       }
-
       this.initData()
 
     },
@@ -696,8 +695,8 @@ export default {
       this.orderForm = {
         orderNo: "",
         drawingNo: "",
-        deliveryStartTime: "",
-        deliveryEndTime: "",
+        deliveryEndTime:"",
+        deliveryStartTime:"",
         planStatus: "not_generated",
         pageNum: 1,
         pageSize: 20,

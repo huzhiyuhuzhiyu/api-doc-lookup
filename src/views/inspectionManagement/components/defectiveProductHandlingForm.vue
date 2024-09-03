@@ -832,12 +832,12 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(row, btnType, inspectionType, businessCode) {
-      let id = row.id
+    init(id, btnType, inspectionType, businessCode) {
+      // let id = row.id
 
-      this.dataForm = row
-      this.dataForm.inspectionOrderNo = row.orderNo
-      this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
+      // this.dataForm = row
+      // this.dataForm.inspectionOrderNo = row.orderNo
+      // this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true
       this.formLoading = true
@@ -846,7 +846,7 @@ export default {
       this.inspectionType = inspectionType
       this.businessCode = businessCode
       this.dialogRequestObj = { ...this.dialogRequestObj, notificationType: option.value, businessCode }
-
+      this.inspectionOrderNoChange(id)
       // this.$nextTick(() => { this.dataFormFlag = true })
 
       if (id) {
@@ -855,7 +855,7 @@ export default {
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
-          this.inspectionOrderNoChange(row.id)
+
           this.getBusInfo()
           this.formLoading = false
         }
@@ -865,86 +865,90 @@ export default {
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
+          this.fetchData('UQDH', false)
+          this.refeshDataFormItems()
+          this.refeshLinesListItems()
           this.title = '查看不良品处理单'
           // 获取详情
-          detailQcUnqualifiedData(id)
-            .then(async (res) => {
-              console.log(res, 'res1998')
-              if (res.data.attachmentList) {
-                res.data.attachmentList.forEach((item) => {
-                  this.datafilelist.push({
-                    name: item.document.fullName,
-                    fileSize: item.document.fileSize,
-                    filename: item.document.filePath,
-                    id: item.document.id,
-                    url: item.url
-                  })
-                })
-              }
+          // detailQcUnqualifiedData(id)
+          //   .then(async (res) => {
 
-              this.dataForm = res.data.unqualified
-              this.inspectionList = res.data.itemList
-              this.linesListTwo = res.data.causesList
-              let tempLinesList = res.data.lines
+          //     if (res.data.attachmentList) {
+          //       res.data.attachmentList.forEach((item) => {
+          //         this.datafilelist.push({
+          //           name: item.document.fullName,
+          //           fileSize: item.document.fileSize,
+          //           filename: item.document.filePath,
+          //           id: item.document.id,
+          //           url: item.url
+          //         })
+          //       })
+          //     }
 
-              tempLinesList.forEach((line) => {
-                if (
-                  line.treatmentResults === 'qualified' ||
-                  line.treatmentResults === 'concessive_acceptance' ||
-                  line.treatmentResults === 'unqualified'
-                ) {
-                  line.qualifiedQuantityDisabled = true
-                  line.unqualifiedQuantityDisabled = true
-                }
+          //     this.dataForm = res.data.unqualified
+          //     this.inspectionList = res.data.itemList
+          //     this.linesListTwo = res.data.causesList
+          //     let tempLinesList = res.data.lines
 
-                // 损失相关处理
-                if (this.inspectionType !== 'process') {
-                  line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
-                } else {
-                  line.lossUnitPrice = 0
-                  line.lossAmount = 0
-                }
-                if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
-                  line.otherLossAmount = 0
-                  line.claimAmount = 0
-                } else {
-                  if (btnType === 'setLoss') {
-                    line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
-                  }
-                }
-              })
+          //     tempLinesList.forEach((line) => {
+          //       if (
+          //         line.treatmentResults === 'qualified' ||
+          //         line.treatmentResults === 'concessive_acceptance' ||
+          //         line.treatmentResults === 'unqualified'
+          //       ) {
+          //         line.qualifiedQuantityDisabled = true
+          //         line.unqualifiedQuantityDisabled = true
+          //       }
 
-              if (btnType === 'look') {
-                if (!this.dataForm.lossFlag) {
-                  // 没有设置过损失，查看时损失相关显示为空内容
-                  tempLinesList.forEach((line) => {
-                    line.lossUnitPrice = ' '
-                    line.lossAmount = ' '
-                    line.otherLossAmount = ' '
-                    line.totalLossAmount = ' '
-                    line.claimAmount = ' '
-                  })
-                }
-              } else if (btnType === 'anew') {
-                // 重新提交
-                this.$nextTick(() => {
-                  this.getBusInfo()
-                }) // 审批
-              }
+          //       // 损失相关处理
+          //       if (this.inspectionType !== 'process') {
+          //         line.lossAmount = this.jnpf.numberFormat(line.lossUnitPrice * line.unqualifiedQuantity, 6)
+          //       } else {
+          //         line.lossUnitPrice = 0
+          //         line.lossAmount = 0
+          //       }
+          //       if (line.treatmentResults === 'qualified' || line.treatmentResults === 'concessive_acceptance') {
+          //         line.otherLossAmount = 0
+          //         line.claimAmount = 0
+          //       } else {
+          //         if (btnType === 'setLoss') {
+          //           line.otherLossAmount = '' // 设置损失时，其他损失金额默认空，需要手动输入
+          //         }
+          //       }
+          //     })
 
-              this.linesList = tempLinesList
-              this.refeshDataFormItems()
-              this.refeshLinesListItems()
-              this.formLoading = false
-            })
-            .catch((err) => {
-              this.formLoading = false
-            })
+          //     if (btnType === 'look') {
+          //       if (!this.dataForm.lossFlag) {
+          //         // 没有设置过损失，查看时损失相关显示为空内容
+          //         tempLinesList.forEach((line) => {
+          //           line.lossUnitPrice = ' '
+          //           line.lossAmount = ' '
+          //           line.otherLossAmount = ' '
+          //           line.totalLossAmount = ' '
+          //           line.claimAmount = ' '
+          //         })
+          //       }
+          //     } else if (btnType === 'anew') {
+          //       // 重新提交
+          //       this.$nextTick(() => {
+          //         this.getBusInfo()
+          //       }) // 审批
+          //     }
+
+          //     this.linesList = tempLinesList
+          //     this.refeshDataFormItems()
+          //     this.refeshLinesListItems()
+          //     this.formLoading = false
+          //   })
+          //   .catch((err) => {
+          //     this.formLoading = false
+          //   })
         } else if (btnType === 'setLoss') {
           this.title = '损失上报'
         }
 
         // 编辑或查看，获取保存的审批单详情
+
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
           // 流程信息和流转记录
           if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
@@ -1024,7 +1028,7 @@ export default {
         this.dataForm.scrapQuantityDisabled = false
         this.dataForm.repairQuantityDisabled = false
       }
-      console.log(val)
+
       this.refeshDataFormItems()
     },
     // 提交
@@ -1095,7 +1099,7 @@ export default {
         this.dataForm.businessCode = this.businessCode
         this.dataForm.inspectionId = this.dataForm.id
         let formMethod = ''
-        console.log(this.btnType, 'btn')
+
         if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
           formMethod = addQcUnqualifiedData
         } else if (this.btnType === 'edit') {
@@ -1177,10 +1181,15 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
-          console.log(res, 'res123')
+          this.dataForm = res.data.inspection
+
+          this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
+          this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
+
           this.inspectionList = res.data.itemList
           this.linesListTwo = res.data.causesList
           let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
+
           tempLinesList.forEach((line) => {
             line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
             line.qualifiedQuantity = ''
@@ -1225,7 +1234,6 @@ export default {
       let code = this.inspectionType === 'procure' ? 'b003' : this.inspectionType === 'sale_back' ? 'b006' : 'b004'
       getBusinessFlowInfo(code)
         .then((res) => {
-          console.log(res, '流程信息')
           if (res.data) {
             if (res.data.enabledMark) {
               this.flowData = res.data
@@ -1294,7 +1302,8 @@ export default {
       // let tempUnqualifiedQuantity = this.$parent.title.includes('检') ? (this.scope.row ? this.scope.row.unqualifiedQuantity : 0) :
       //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
       // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
-      return this.dataForm.inspectionUnqualifiedQuantity
+
+      return this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : 0
     },
     nowNum() {
       let tempNum = 0

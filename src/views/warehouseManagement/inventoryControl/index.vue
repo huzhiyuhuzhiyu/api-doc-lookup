@@ -52,14 +52,10 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+         
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
@@ -74,6 +70,10 @@
         <div class="JNPF-common-head" style="padding:6px 10px">
           <el-button icon="el-icon-s-tools" type="primary" size="mini" @click="setStock">设置库存</el-button>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -88,16 +88,14 @@
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
-          <el-table-column prop="name" label="产品名称" min-width="120" align="center" sortable="custom">
-
-          </el-table-column>
+      
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width=" 80" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom" />
           <el-table-column prop="maxInventory" label="最高库存" min-width="120" sortable="custom" />
 
           <el-table-column prop="createTime" label="创建时间" width="180" align="center" sortable="custom">
-
+           
           </el-table-column>
 
         </JNPF-table>
@@ -123,11 +121,15 @@
           提交</el-button>
       </span>
     </el-dialog>
+     <!-- 高级查询 -->
+     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 <script>
 import { getcategoryTree, batchUpdataProductIncentory } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   updateUserState,
   unlockUser,
@@ -138,9 +140,12 @@ import {
 
 export default {
   name: 'permission-user',
-
+  components: {
+    SuperQuery
+  },
   data() {
     return {
+      superQueryVisible: false,
       formLoading: false,
       btnLoading: false,
       linesQuery: {},
@@ -160,8 +165,7 @@ export default {
       listLoading: true,
       total: 0,
       type: '',
-      visible: false,
-      filterText: '',
+      visible: false, 
       refreshTree: true,
       defaultProps: {
         children: 'childrenList',
@@ -184,8 +188,8 @@ export default {
       ,
       treeData: [],
       initListQuery: {
-        code: '',
-        name: '',
+        productDrawingNo: '',
+        productCode: '',
         orderItems: [
           {
             asc: false,
@@ -198,22 +202,66 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        drawingNo: '', // 图号
-        productSource: '', // 产品来源
-        startAndEndTime: [], // 创建时间
-        productCategoryId: '', // 类型id
-        productStatus: '', // 产品状态
-        customerQueryFields: [],
-        createTimeArr: [],
-        classAttribute: ''
+        superQuery:{
+           condition: [],
+          matchLogic: ""
+        }
       },
+ 
+      superQueryJson: [
+        {
+          prop: 'drawingNo',
+          label: "品名规格",
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: "产品编码",
+          type: 'input'
+        },
+  
+        {
+          prop: 'productCategoryName',
+          label: "产品分类",
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: "单位",
+          type: 'input'
+        },
+        {
+          prop: 'safeInventory',
+          label: "安全库存",
+          type: 'input'
+        },
+        {
+          prop: '最高库存',
+          label: "maxInventory",
+          type: 'input'
+        },
+         
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '创建开始时间',
+          endPlaceholder: '创建结束时间',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+
+
+      ],
+      listQuery:{},
       inventoryVisible: false,
     }
   },
   watch: {
     filterText(val) {
-      this.filterTree();
-    },
+      this.$refs.treeBox.filter(val)
+    }
 
   },
   created() {
@@ -221,6 +269,11 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     // 获取指定树状列表
     getcategoryTree() {
       this.listLoading = true
@@ -322,6 +375,7 @@ export default {
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.$refs.SuperQuery.conditionList = []
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.selectedKeys = [];
       this.search()

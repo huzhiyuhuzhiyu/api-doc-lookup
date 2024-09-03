@@ -8,11 +8,7 @@
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getWarehouseTree(true)">刷新数据</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+                <el-dropdown-item @click.native="getWarehouseTree(true)">刷新数据</el-dropdown-item> 
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -268,10 +264,8 @@ export default {
   created() {
     this.getWarehouseTree(true)
     if (localStorage.getItem("warehouseInventoryFlag")) {
-      let warehouseInventoryFlag = JSON.parse(localStorage.getItem('warehouseInventoryFlag'))
-      this.expands = warehouseInventoryFlag
-      console.log("warehouseInventoryFlag", warehouseInventoryFlag);
-      this.toggleExpand(warehouseInventoryFlag)
+      let warehouseInventoryFlag = JSON.parse(localStorage.getItem('warehouseInventoryFlag')) 
+      console.log("warehouseInventoryFlag", warehouseInventoryFlag); 
 
     }
   },
@@ -320,17 +314,7 @@ export default {
       })
     },
    
-    // // 设置默认展开
-    setexpand(expands) {
-      console.log("expands", expands);
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        localStorage.setItem("warehouseInventoryFlag", expands)
-
-      })
-    },
+   
     changeLeft() {
       this.leftFlag = !this.leftFlag
 
@@ -339,16 +323,7 @@ export default {
       this.$refs.tabForm.showDrawer()
     },
 
-    toggleExpand(expands) {
-      this.refreshTree = false
-      this.expands = expands
-      this.$nextTick(() => {
-        this.refreshTree = true
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.companyId)
-        })
-      })
-    },
+     
     filterNode(value, data) {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;

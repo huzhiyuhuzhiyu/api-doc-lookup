@@ -4,27 +4,28 @@ import context from '@/main'
 import define from '@/utils/define'
 import { message } from '@/utils/message';
 import { create, all } from "mathjs"
-import { BillNumber,getBillRuleConfig } from '@/api/system/billRule'
+import { BillNumber, getBillRuleConfig } from '@/api/system/billRule'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 const STORAGEPREFIX = 'jnpf_'
 const STORAGETYPE = window.localStorage
 const mathjs = create(all, { number: "BigNumber", precision: 20 });
 
 const jnpf = {
-  getBillRuleConfigFun(code){
-    let obj={
-      code:code
+  getBillRuleConfigFun(code) {
+    let obj = {
+      code: code
     }
     return new Promise((resolve, reject) => {
-      getBillRuleConfig(obj).then(res=>{ 
+      getBillRuleConfig(obj).then(res => {
         resolve(res.data)
       }).catch(error => {
         reject(error)
       })
-      
-     })
-    
+
+    })
+
   },
- 
+
   toDateText(dateTimeStamp) {
     if (!dateTimeStamp) return ''
     let result = ''
@@ -520,6 +521,16 @@ const jnpf = {
     const minutes = ('0' + dateTime.getMinutes()).slice(-2);
     const seconds = ('0' + dateTime.getSeconds()).slice(-2);
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+  },
+  // 获取审批模版
+  getBusInfo(code) {
+    return new Promise((resolve, reject) => {
+      getBusinessFlowInfo(code).then(res => {
+        resolve(res.data)
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 }
 export default jnpf

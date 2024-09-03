@@ -57,7 +57,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column v-if="tableDataList.length">
             <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -82,7 +82,7 @@
                 <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
                   <el-tag>审批中</el-tag>
@@ -313,10 +313,17 @@ export default {
       bidderS: "",
       cooperativePartnerIdTextS: "",
       quotationNoS: "",
+      showAppCodeFlag:true
     }
   },
-  created() {
+  async created() {
     this.form = JSON.parse(JSON.stringify(this.formlist))
+    const res = await this.jnpf.getBusInfo('b001')
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
+    }
     this.search()
   },
 

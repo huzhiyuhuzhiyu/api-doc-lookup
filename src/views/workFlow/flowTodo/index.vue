@@ -6,7 +6,7 @@
         <el-tab-pane label="自定义流程" name="custom" />
       </el-tabs>
       <div class="JNPF-common-layout-center" v-show="activeName">
-        <div class="tag-group JNPF-common-search-box treeBox_bot"
+        <!-- <div class="tag-group JNPF-common-search-box treeBox_bot"
           style="display:flex;align-items:center;padding-left: 10px;">
           <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：' }}</span>
           <div style="display:flex;flex-wrap: wrap;">
@@ -16,6 +16,20 @@
                 {{ item.fullName }}
               </el-tag>
             </el-badge>
+          </div>
+        </div> -->
+
+        <div class="tag-group JNPF-common-search-box treeBox_bot"
+          style="display:flex;align-items:center;padding-left: 10px;">
+          <div style="display:flex;flex-wrap: wrap;">
+            <el-radio-group v-model="listQuery.flowCategory" style="margin-bottom:5px;background-color:#fff;">
+              <el-badge :value="total">
+                <el-radio-button label="" style="margin:5px 0">全部</el-radio-button>
+              </el-badge>
+              <el-badge :value="item.num" :max="99" v-for="(item, index) in countItems" :key="item.id" style="z-index: 9999;">
+              <el-radio-button style="margin:2px 0;" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+            </el-badge>
+            </el-radio-group>
           </div>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
@@ -360,6 +374,7 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .el-badge__content.is-fixed {
   top: 3px !important;
+  right: 27px;
 }
 ::v-deep .el-badge__content {
   line-height: 16px !important;

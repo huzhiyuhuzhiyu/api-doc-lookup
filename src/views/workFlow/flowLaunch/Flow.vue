@@ -125,7 +125,7 @@ export default {
           this.finish = true
         }
         this.list = [...this.list, ...res.data]
-        this.total = res.data.pagination.total
+        // this.total = res.data.pagination.total
         this.listLoading = false
       })
     },

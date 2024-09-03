@@ -832,12 +832,12 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    init(row, btnType, inspectionType, businessCode) {
-      let id = row.id
+    init(id, btnType, inspectionType, businessCode) {
+      // let id = row.id
 
-      this.dataForm = row
-      this.dataForm.inspectionOrderNo = row.orderNo
-      this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
+      // this.dataForm = row
+      // this.dataForm.inspectionOrderNo = row.orderNo
+      // this.dataForm.inspectionUnqualifiedQuantity = row.unqualifiedQuantity
       this.dataForm.unqualifiedQuantity = 0
       this.visible = true
       this.formLoading = true
@@ -851,25 +851,30 @@ export default {
 
       if (id) {
         if (btnType === 'add') {
+          this.inspectionOrderNoChange(id)
           this.fetchData('UQDH', true)
           this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '新建不良品处理单'
-          this.inspectionOrderNoChange(row.id)
+
           this.getBusInfo()
           this.formLoading = false
         }
         if (btnType === 'anew') {
           // 重新提交
+          this.inspectionOrderNoChange(id)
           this.title = '新建不良品处理单'
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
+          this.fetchData('UQDH', false)
+          this.refeshDataFormItems()
+          this.refeshLinesListItems()
           this.title = '查看不良品处理单'
           // 获取详情
           detailQcUnqualifiedData(id)
             .then(async (res) => {
-              console.log(res, 'res1998')
+              console.log(res,'oooo')
               if (res.data.attachmentList) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
@@ -945,9 +950,10 @@ export default {
         }
 
         // 编辑或查看，获取保存的审批单详情
+
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
           // 流程信息和流转记录
-          this.getFlowDetail(this.dataForm.id)
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       } else {
         this.fetchData('UQDH', true)
@@ -1024,7 +1030,7 @@ export default {
         this.dataForm.scrapQuantityDisabled = false
         this.dataForm.repairQuantityDisabled = false
       }
-      console.log(val)
+
       this.refeshDataFormItems()
     },
     // 提交
@@ -1095,7 +1101,7 @@ export default {
         this.dataForm.businessCode = this.businessCode
         this.dataForm.inspectionId = this.dataForm.id
         let formMethod = ''
-        console.log(this.btnType, 'btn')
+
         if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
           formMethod = addQcUnqualifiedData
         } else if (this.btnType === 'edit') {
@@ -1177,10 +1183,15 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
-          console.log(res, 'res123')
+          this.dataForm = res.data.inspection
+
+          this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
+          this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
+
           this.inspectionList = res.data.itemList
           this.linesListTwo = res.data.causesList
           let tempLinesList = res.data.lines.filter((line) => line.unqualifiedQuantity != '0')
+
           tempLinesList.forEach((line) => {
             line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
             line.qualifiedQuantity = ''
@@ -1225,17 +1236,19 @@ export default {
       let code = this.inspectionType === 'procure' ? 'b003' : this.inspectionType === 'sale_back' ? 'b006' : 'b004'
       getBusinessFlowInfo(code)
         .then((res) => {
-          console.log(res, '流程信息')
           if (res.data) {
             if (res.data.enabledMark) {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
             }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
         })
         .catch(() => { })
@@ -1291,7 +1304,8 @@ export default {
       // let tempUnqualifiedQuantity = this.$parent.title.includes('检') ? (this.scope.row ? this.scope.row.unqualifiedQuantity : 0) :
       //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
       // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
-      return this.dataForm.inspectionUnqualifiedQuantity
+
+      return this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : 0
     },
     nowNum() {
       let tempNum = 0

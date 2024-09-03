@@ -128,7 +128,7 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="reassignmentFun1(scope.row.id)">
+                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)">
                       改派
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
@@ -180,6 +180,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
+    <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
   </div>
 </template>
 
@@ -189,15 +190,17 @@ import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
 import ReworkForm from './reworkForm.vue'
+import BatchDispatchForm from './batchDispatchForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm },
+  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm },
   data() {
     return {
+      BatchDispatchVisible:false,
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -415,6 +418,13 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    // 改派
+    updataDispatch(id){
+      this.BatchDispatchVisible=true
+      this.$nextTick(()=>{
+        this.$refs.BatchDispatchForm.init(id,'all')
+      })
+    },
     // 新建返工
     addTaskFun(id, type) {
       this.reworkVisible = true
@@ -437,20 +447,21 @@ export default {
 
 
     },
+    
     reassignmentFun2() {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      this.reassignmentVisible = true
+      this.BatchDispatchVisible = true
       this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(this.selectArr[0].id)
+        this.$refs.BatchDispatchForm.init(this.selectArr[0].id,'all')
       })
     },
     reassignmentFun1(data) {
 
-      this.reassignmentVisible = true
+      this.BatchDispatchVisible = true
       this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(id)
+        this.$refs.BatchDispatchForm.init(id,'all')
       })
     },
     // 追加生产数量 提交
@@ -478,10 +489,8 @@ export default {
     //禁用复选框
     checkSelectable(row) {
       if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
-        console.log(222);
         return false
       } else {
-        console.log(333);
         return true
 
       }
@@ -574,6 +583,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
+      this.BatchDispatchVisible=false
       this.search()
     },
     initData() {

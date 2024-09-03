@@ -12,7 +12,7 @@
         label-position="top" label-width="120px">
         <el-form-item label="上级分类" prop="parentName">
           <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
-            :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.classAttribute" />
+            :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.type" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
@@ -53,7 +53,7 @@ export default {
         code: '',
         name: '',
         remark: '',
-        classAttribute: "inspection_items"
+        type: "inspection_items"
       },
       codeConfig: {},
       autoCode: '',
@@ -67,7 +67,7 @@ export default {
               if (!value) { callback() }
               else if (value === this.autoCode) { callback() }
               else {
-                checkCategoryCode({ code: value, parentId: this.dataForm.parentId, classAttribute: this.dataForm.classAttribute }).then((res) => {
+                checkCategoryCode({ code: value, parentId: this.dataForm.parentId, classAttribute: this.dataForm.type }).then((res) => {
                   if (!res.data) { callback() }
                   else { callback(new Error('此分类编码已存在')) }
                 }).catch((err) => { callback(new Error(" ")) })

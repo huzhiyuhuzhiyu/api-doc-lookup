@@ -112,7 +112,7 @@ export default {
       columnList: ["createByName"],
       listQuery: {
         keyword: '',
-        classAttribute: "inspection_items",
+        type: "inspection_items",
         orderItems: [
           {
             asc: true,
@@ -175,7 +175,18 @@ export default {
       });
     },
     reset() {
-      this.listQuery.keyword = ''
+      this.listQuery = {
+        keyword: '',
+        type: "inspection_items",
+        orderItems: [
+          {
+            asc: true,
+            column: ""
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      }
       this.initData()
     },
     addOrUpdateHandle(id, parentId) {

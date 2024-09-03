@@ -1155,7 +1155,7 @@ export default {
         // 拼接为YYYY-MM-DD格式
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.deliverDate = formattedDate;
-        this.fetchData("FLDH")
+        this.fetchData("WXFL")
 
       }
       if (this.btnType == 'edit') {

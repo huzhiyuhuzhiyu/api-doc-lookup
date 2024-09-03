@@ -16,7 +16,7 @@
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
 
                       <el-col :sm="8" :xs="24">
@@ -233,7 +233,7 @@
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
 
                       <el-col :sm="8" :xs="24">
@@ -450,10 +450,12 @@ import { mapGetters, mapState } from 'vuex'
 import Process from '@/components/Process/Preview'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import busFlow from '@/mixins/generator/busFlow';
 export default {
   components: {
     Process, recordList
   },
+  mixins: [busFlow],
   data() {
     return {
       activeNames: ["productInfo", "basicInfo"],
@@ -517,7 +519,7 @@ export default {
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else {
@@ -528,9 +530,9 @@ export default {
             this.dataForm = res.data
             this.dataFormTwo.data = res.data.reconciliationLines
             this.mainLoading = false
+           // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
-          // 流程信息和流转记录
-          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       })
     },

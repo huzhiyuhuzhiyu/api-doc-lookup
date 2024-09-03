@@ -947,7 +947,7 @@ export default {
         // 编辑或查看，获取保存的审批单详情
         if (btnType === 'edit' || btnType === 'look' || btnType === 'setLoss') {
           // 流程信息和流转记录
-          this.getFlowDetail(this.dataForm.id)
+          if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       } else {
         this.fetchData('UQDH', true)
@@ -1231,11 +1231,14 @@ export default {
               this.flowData = res.data
               this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
               this.dataForm.approvalFlag = res.data.enabledMark
+            }else{
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
             }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
         })
         .catch(() => { })

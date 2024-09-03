@@ -1,8 +1,8 @@
 <template>
-  <div class="JNPF-common-layout">
+  <div class="JNPF-common-layout crmDashboard">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="crm-workbench__hd">
-        <div class="el-dropdown">
+        <div class="el-dropdown" @click="aaaa">
           CRM仪表盘
         </div>
       </div>
@@ -14,6 +14,7 @@
           <div style="margin-left: 8px;">
             <selectdepartment @change="departmentchange" @inputcontent="depinputcontent"></selectdepartment>
           </div>
+          <el-button style="margin-left: auto;" size="mini" icon="el-icon-more" @click="dialogVisible=true"></el-button>
         </div>
       </div>
       <div style="padding-top:16px;">
@@ -22,16 +23,48 @@
       <div class="vux-flex-row section vux-flexbox1">
         <div class="left">
           <draggable v-model="list" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list" :key="item.id" :type="item.typechart" :Requestparameters="dataForm"></chartlist>
+            <chartlist v-for="item in list" :key="item.id" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
         <div class="right">
           <draggable v-model="list1" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list1" :key="item.id" :type="item.typechart" :Requestparameters="dataForm"></chartlist>
+            <chartlist v-for="item in list1" :key="item.id" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
       </div>
     </div>
+    <el-dialog title="仪表盘模块设置" :visible.sync="dialogVisible" width="30%" custom-class="no-padding-dialog" :close-on-click-modal="false">
+      <div class="handle-box">
+        <div class="reminder-wrapper">
+          <div class="vux-flexbox reminder-body vux-flex-row">
+            <i style="margin-right: 8px;font-size: 16px;color: #ff8b00;" class="el-icon-warning"></i>
+            <div style="font-size:14px">点击开启/关闭按钮可设置模块是否在仪表盘显示，点击保存按钮即可生效</div>
+          </div>
+        </div>
+        <div class="vux-flexbox section vux-flex-row">
+          <div class="left">
+            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.left" :key="index">
+              <div style="flex:1;">{{item.name}}</div>
+              <div>
+                <el-switch v-model="item.value"></el-switch>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.right" :key="index">
+              <div style="flex:1;">{{item.name}}</div>
+              <div>
+                <el-switch v-model="item.value"></el-switch>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -51,6 +84,19 @@ export default {
   },
   data() {
     return {
+      crmlist: {
+        left: [
+          { name: '合同/回款金额目标及完成情况', value: false },
+          { name: '排行榜', value: false },
+          { name: '销售漏斗', value: false }
+        ],
+        right: [
+          { name: '数据汇总', value: false },
+          { name: '业绩指标完成率', value: false },
+          { name: '遗忘提醒', value: false }
+        ]
+      },
+      dialogVisible: false,
       dataForm: {
         startTime: "",
         endTime: "",
@@ -60,16 +106,14 @@ export default {
         personnelcontent: ''
       },
       list: [
-        { name: '合同金额目标及完成情况', id: '1', typechart: 'contractamount' },
-        { name: '排行榜', id: '2', typechart: 'rankinglist' },
-        { name: '销售漏斗', id: '3', typechart: 'salesfunnel' },
-
+        { name: '合同金额目标及完成情况', id: '1', typeChart: 'contractamount' },
+        { name: '排行榜', id: '2', typeChart: 'rankinglist' },
+        { name: '销售漏斗', id: '3', typeChart: 'salesfunnel' }
       ],
       list1: [
-        { name: '数据汇总', id: '11', typechart: 'datasummary' },
-        { name: '目标完成率', id: '22', typechart: 'targetcompletionrate' },
-        { name: '客户遗忘提醒', id: '33', typechart: 'forgettingreminder' },
-
+        { name: '数据汇总', id: '11', typeChart: 'datasummary' },
+        { name: '目标完成率', id: '22', typeChart: 'targetcompletionrate' },
+        { name: '客户遗忘提醒', id: '33', typeChart: 'forgettingreminder' }
       ]
     }
   },
@@ -80,6 +124,9 @@ export default {
     ...mapGetters(['userInfo']),
   },
   methods: {
+    aaaa() {
+      console.log(this.list, this.list1, '11111111+++');
+    },
     depinputcontent(value) {
       this.dataForm.personnelcontent = value
     },
@@ -99,6 +146,44 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.crmDashboard {
+  ::v-deep .no-padding-dialog .el-dialog__body {
+    padding: 0;
+  }
+  .handle-box {
+    padding: 16px;
+    .reminder-wrapper {
+      overflow: hidden;
+      .reminder-body {
+        width: auto;
+        padding: 4px 16px 4px 8px;
+        line-height: 1.5;
+        background-color: #fffae6;
+        border-radius: 3px;
+      }
+    }
+    .section {
+      margin-top: 12px;
+      user-select: none;
+      overflow: auto;
+      .sort-item {
+        padding: 16px;
+        background-color: #ebecf0;
+        border-radius: 3px;
+      }
+      .sort-item + .sort-item {
+        margin-top: 16px;
+      }
+      .left {
+        width: calc(50% - 6px);
+        margin-right: 16px;
+      }
+      .right {
+        width: calc(50% - 6px);
+      }
+    }
+  }
+}
 .JNPF-common-layout-center {
   overflow: initial;
 }
@@ -119,7 +204,7 @@ export default {
   -webkit-box-orient: horizontal;
   flex-direction: row;
   &.section {
-    padding-bottom: 40px;
+    padding-bottom: 0;
     margin-top: 18px;
     align-items: stretch;
     .wk-toggle-button__bd {

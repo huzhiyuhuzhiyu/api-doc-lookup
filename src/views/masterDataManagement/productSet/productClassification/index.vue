@@ -16,8 +16,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.classAttribute" placeholder="产品来源" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in classAttributeList" :key="index" :label="item.label"
+              <el-select v-model="listQuery.classAttribute" placeholder="类别属性" clearable style="width: 100%;">
+                <el-option v-for="(item, index) in categoryPropertList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -76,16 +76,13 @@
           <!-- <el-table-column prop="integger" label="分类编码" min-width="120" /> -->
           <el-table-column prop="classAttribute" label="类别属性" min-width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.classAttribute == 'raw_material'">原材料</div>
-              <div v-if="scope.row.classAttribute == 'semi_finished'">半成品</div>
-              <div v-if="scope.row.classAttribute == 'finish_product'">成品</div>
-              <div v-if="scope.row.classAttribute == 'accessories'">辅料</div>
+              {{ $getLabel(categoryPropertList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
 
           <el-table-column prop="classType" label="类型" min-width="130">
             <template slot-scope="scope">
-              <div v-if="scope.row.classType == 'packaging'">包装物</div>
+              {{ $getLabel(classTypelist, scope.row.classType, 'value', 'label') }}
             </template>
           </el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" />
@@ -123,6 +120,9 @@ import { getcategoryTree, deleteCategory, updateCategory, productPlmSync } from 
 import DepForm from './depForm'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   components: { DepForm, SuperQuery },
 
@@ -130,6 +130,7 @@ export default {
     return {
       listQuery: {
         classAttribute: '',
+        type: 'material',
         orderItems: [
           {
             asc: false,
@@ -143,6 +144,11 @@ export default {
         pageNum: 1,
         pageSize: 20
       },
+      classTypelist: [
+        { label: '包装物', value: 'packaging' },
+        { label: '内圈毛坯', value: 'inner_ring_blank' },
+        { label: '外协毛坯', value: 'outer_ring_blank' }
+      ],
       treeList: [],
       treeDataAll: [],
       expands: true,
@@ -150,12 +156,7 @@ export default {
       btnLoading: false,
       listLoading: true,
       depFormVisible: false,
-      classAttributeList: [
-        { label: '原材料', value: 'raw_material' },
-        { label: '半成品', value: 'semi_finished' },
-        { label: '成品', value: 'finish_product' },
-        { label: '辅料', value: 'accessories' }
-      ],
+      categoryPropertList: [],
       columnList: ['classAttribute', 'classType', 'createTime', 'createByName', 'remark'],
       superQueryVisible: false,
       superQueryJson: [
@@ -210,12 +211,27 @@ export default {
     }
   },
   mounted() {
+    this.getclassAttributeList()
     this.getProductClassFun()
   },
   created() {
     this.initData()
   },
   methods: {
+    getclassAttributeList() {
+      let obj = {
+        pageNum: 1,
+        pageSize: -1
+      }
+      getclassAttributeList(obj).then((res) => {
+        this.categoryPropertList = res.data.records.map((item) => {
+          return {
+            label: item.name,
+            value: item.code
+          }
+        })
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false

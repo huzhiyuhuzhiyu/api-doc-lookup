@@ -6,21 +6,21 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入出入库单号" clearable
+              <el-input v-model.trim="listQuery.orderNo" placeholder="出入库单号" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
+              <el-input v-model.trim="listQuery.partnerName" placeholder="客户名称" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item>
               <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions">
+                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="创建开始时间"
+                end-placeholder="创建结束时间" clearable :picker-options="global.timePickerOptions">
               </el-date-picker>
             </el-form-item>
           </el-col>

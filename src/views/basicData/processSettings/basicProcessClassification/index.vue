@@ -145,7 +145,7 @@ export default {
       ],
       exportFormVisible: false,
       listQuery: {
-        classAttribute: 'process',
+        type: 'process',
         orderItems: [
           {
             asc: false,
@@ -509,7 +509,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.listQuery = {
-        classAttribute: 'process',
+        type: 'process',
         orderItems: [
           {
             asc: false,

@@ -2,10 +2,17 @@
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-tabs v-model="activeName" style="height:auto">
-        <el-tab-pane label="全部" name="all" />
-        <el-tab-pane :label="item.fullName" :name="item.enCode" v-for="item in categoryList" :key="item.id" />
+        <el-tab-pane label="系统流程" name="system" />
+        <el-tab-pane label="自定义流程" name="custom" />
       </el-tabs>
       <div class="JNPF-common-layout-center">
+        <div class="tag-group JNPF-common-search-box treeBox_bot"
+          style="display:flex;align-items:center;padding-left: 10px;">
+          <el-radio-group v-model="listQuery.flowCategory" style="margin-bottom:5px;background-color:#fff;">
+            <el-radio-button label="" style="margin:5px 0">全部</el-radio-button>
+            <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+          </el-radio-group>
+        </div>
         <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="6">
@@ -89,8 +96,10 @@ export default {
       list: [],
       total: 0,
       listLoading: true,
-      activeName: 'all',
+      activeName: 'system',
       initListQuery: {
+        businessFlag: true,    // 1 是 3  0 是 1和2
+        flowCategory: '',
         createByName: "",
         endTime: "",
         endUpdateTime: "",
@@ -124,6 +133,7 @@ export default {
         //   options: [{ label: '未开始', value: 1 }, { label: '已失效', value: 2 }]
         // },
       ],
+      flowType:'businessType'
     }
   },
   filters: {
@@ -134,19 +144,24 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.getDictionaryData()
+    this.getDictionaryData(this.flowType)
+    this.initData()
   },
   watch: {
     activeName() {
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.categoryIndex = -1
       this.initData()
-    }
+      this.getDictionaryData(this.flowType)
+    },
+    'listQuery.flowCategory':function(newVal){
+      this.initData()
+    },
   },
   methods: {
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'WorkFlowCategory' }).then((res) => {
+    getDictionaryData(type) {
+      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
         this.categoryList = res
-        this.initData()
       })
     },
     changeCategory(item, index) {
@@ -171,7 +186,8 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.listQuery.flowCategory = this.activeName === 'all' ? '' : this.activeName
+      this.listQuery.businessFlag = this.activeName === 'system' ? true : false
+      this.flowType = this.listQuery.businessFlag ? 'businessType' : 'WorkFlowCategory'
       getFlowDelegateList(this.listQuery).then(res => {
         this.list = res.data.records
         let currTime = this.jnpf.toDate(new Date())

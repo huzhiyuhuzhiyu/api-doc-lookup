@@ -7,14 +7,18 @@
       </el-tabs>
       <div class="JNPF-common-layout-center" v-show="activeName">
         <div class="tag-group JNPF-common-search-box treeBox_bot" style="display:flex;align-items:center;padding-left: 10px;">
-          <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：'}}</span>
+          <el-radio-group v-model="listQuery.flowCategory" style="margin-bottom:5px;background-color:#fff;">
+            <el-radio-button label="" style="margin:5px 0">全部</el-radio-button>
+            <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+          </el-radio-group>
+          <!-- <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：'}}</span>
           <div style="display:flex;flex-wrap: wrap;">
             <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
               :type="index === categoryIndex ? '' : 'info'" effect="plain"
               style="height:26px;line-height:25px;margin:5px 0 5px 10px;cursor: pointer;">
               {{ item.fullName }}
             </el-tag>
-          </div>
+          </div> -->
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>
@@ -238,7 +242,10 @@ export default {
       this.categoryIndex = -1
       this.initData()
       this.getDictionaryData(this.flowType)
-    }
+    },
+    'listQuery.flowCategory':function(newVal){
+      this.initData()
+    },
   },
   methods: {
     changeCategory(item,index){

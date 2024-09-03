@@ -6,20 +6,21 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="外协单号" clearable
+                <el-input v-model.trim="listQuery.productDrawingNo" placeholder="毛坯规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
+                <el-input v-model.trim="listQuery.batchNumber" placeholder="批次号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
-                  @keyup.enter.native="search()" />
+                <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
+                  end-placeholder="结束日期">
+                </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -32,17 +33,15 @@
                 </el-button>
               </el-form-item>
             </el-col>
-
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <topOpts @add="addSupplier('', 'add')">
+            <topOpts @add="addSupplier('', 'add')" addText="生成外协订单">
               <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('tableForm')">
                 导出
               </el-button>
             </topOpts>
-
 
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -61,8 +60,7 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="productDrawingNo" label="毛坯规格" min-width="180" sortable="custom">
-            </el-table-column>
+            <el-table-column prop="productDrawingNo" label="毛坯规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productCode" label="毛坯编码" min-width="180" sortable="custom" />
             <!-- <el-table-column prop="productName" label="毛坯名称" min-width="180" sortable="custom" /> -->
             <el-table-column prop="productCategoryName" label="毛坯分类" min-width="180" sortable="custom" />
@@ -70,7 +68,7 @@
             <el-table-column prop="mainUnit" label="单位" min-width="180" />
             <el-table-column prop="inventoryQuantity" label="库存数量" min-width="180" sortable="custom" />
             <el-table-column prop="latestStorageTime" label="入库日期" min-width="180" sortable="custom" />
-            <el-table-column label="操作" min-width="180" fixed="right">
+            <!-- <el-table-column label="操作" min-width="180" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
                   :delDisabled="scope.row.documentStatus !== 'draft'">
@@ -86,7 +84,7 @@
                 </tableOpts>
 
               </template>
-            </el-table-column>
+</el-table-column> -->
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
@@ -99,7 +97,6 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -251,10 +248,10 @@ export default {
             asc: false,
             column: ''
           }
-        ],
+        ]
         // receivingStatus: 'receiving'
       },
-
+      time: null,
       total: 0,
       computedValue: 0,
       computedValue2: 0,
@@ -322,7 +319,6 @@ export default {
         count += item.purchaseQuantity * 1
       })
       this.computedValue = this.jnpf.numberFormat(count2)
-
     },
     // 导出
     exportForm(exportTableRef) {
@@ -490,22 +486,74 @@ export default {
     },
 
     addSupplier(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
-      })
+      if (this.selectData.length === 0) {
+        return this.$message({
+          message: '请选择你要生成的外协订单',
+          type: 'error',
+          duration: 1500
+        })
+      } else {
+        let msg = true
+        let tempList = JSON.parse(JSON.stringify(this.selectData))
+        let hasItemList = []
+        for (let i = 0; i < this.selectData.length; i++) {
+          let item = this.selectData[i]
+
+          if (!item.externalProductsId) {
+            this.$message.error(`请配置毛坯产品所对就主产品的BOM！`)
+            msg = false
+          } else {
+            msg = true
+          }
+        }
+        if (msg) {
+          this.selectData.forEach((item, index) => {
+            item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
+            if (item.calculationDirection === 'multiplication') {
+              this.$set(
+                this.selectData[index],
+                'purchaseQuantity2',
+                this.jnpf.numberFormat(item.purchaseQuantity * item.ratio)
+              )
+            } else {
+              this.$set(
+                this.selectData[index],
+                'purchaseQuantity2',
+                this.jnpf.numberFormat(item.purchaseQuantity / item.ratio)
+              )
+            }
+          })
+          // var maxDate = null; // 最大日期初始值设为null
+          // // 遍历列表中的数据 找到最大交期
+          // for (var i = 0; i < this.selectData.length; i++) {
+          //   var currentDate = new Date(this.selectData[i].deliveryDate);
+          //   if (maxDate === null || currentDate > maxDate) {
+          //     maxDate = currentDate;
+          //   }
+          // }
+          // let demandDelivery = null
+          // demandDelivery = maxDate.toISOString().split('T')[0];
+          // this.formVisible = true
+          this.$nextTick(() => {
+            // this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute)
+            this.$router.push({
+              path: '/outsourcingManagement/productOutsourcingOrder/orderCreation',
+              query: { data: JSON.stringify(this.selectData) }
+            })
+          })
+        }
+      }
     },
+
     // 生成采购订单 将选中的数据传递过去
     addOrUpdateHandle(id, type) {
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.procureForm.init(id, type)
       })
-    },
-
-
+    }
   }
 }
 </script>
 
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->

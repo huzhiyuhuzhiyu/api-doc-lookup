@@ -26,10 +26,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -777,6 +777,7 @@ export default {
       // 在这里计算第三个输入框的值
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
+        console.log(item.totalAmount, 'item.totalAmount')
         count += item.totalAmount * 1
       })
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
@@ -819,11 +820,41 @@ export default {
       deep: true
     }
   },
-  mounted() {
-    this.getProductClassFun()
-  },
+  mounted() { },
   created() {
     this.fetchData('WXDH')
+    console.log(this.$route.query.data, 'data')
+    const data = JSON.parse(this.$route.query.data)
+    console.log(data, 'pppppppppp')
+    if (data) {
+      // 解析 JSON 字符串
+      data.forEach((item) => {
+        item.productSource = item.productSource // 产品来源 采购
+        item.classAttribute = item.classAttribute
+        item.productsId = item.id // 产品id
+        item.productName = item.name // 产品名称
+        item.productCode = item.code // 产品编码
+        item.productDrawingNo = item.productDrawingNo // 品名规格
+        item.ratio = item.ratio // 转换系数
+        item.calculationDirection = item.calculationDirection // 计算方向
+        item.mainUnit = item.mainUnit // 主单位
+        item.purchaseQuantity = item.inventoryQuantity // 数量
+        item.price = item.price // 含税单价
+        item.totalAmount = item.totalAmount // 金额(含税)
+        item.taxRate = item.taxRate // 税率
+        item.excludingTaxPrice = item.excludingTaxPrice // 不含税单价
+        item.taxAmount = item.taxAmount // 税额
+        item.excludingTaxAmount = item.excludingTaxAmount // 金额(不含税)
+        item.deputyUnit = item.deputyUnit // 副单位
+        item.planQuantity = '' //计划数量主
+        item.planQuantity2 = '' //计划数量副
+        item.remark = item.remark
+        item.deliveryDate = '' // 交期
+      })
+      this.dataFormTwo.data = data
+      console.log(this.dataFormTwo.data, 'two')
+      this.getProductClassFun()
+    }
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
@@ -849,6 +880,7 @@ export default {
     // 产品组件回调
     addth(id, data) {
       console.log(data)
+      this.getProductClassFun()
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -1873,7 +1905,7 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
+  /* padding-left: 10px !important; */
   padding-bottom: 10px !important;
   margin-bottom: 0 !important;
   background: #fff;

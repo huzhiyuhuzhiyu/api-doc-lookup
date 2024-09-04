@@ -65,9 +65,19 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
+          <!-- <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
             新建库位
-          </el-button>
+          </el-button> -->
+          <el-dropdown style="margin-right:10px;">
+            <el-button size="mini" type="primary" icon="el-icon-plus">
+              新建
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="addSupplier('add')">普通新建</el-dropdown-item>
+              <el-dropdown-item @click.native="aiAdd()">批量新建</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -108,6 +118,7 @@
     </div>
 
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
+    <AiForm v-if="aiFormVisible" ref="aiForm" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -118,13 +129,14 @@
 import { deleteStockGoodsShelves, getStockGoodsShelves, getList } from '@/api/basicData/stockGoodsShelves'
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
+import AiForm from "./AiForm.vue";
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'storageRack',
-  components: { DepForm, SuperQuery },
+  components: { DepForm, AiForm, SuperQuery },
   data() {
     return {
       superQueryVisible: false,
@@ -173,6 +185,7 @@ export default {
       columnList: ['warehouseName', 'createTime', 'createByName'],
       selectedNodeKey: '',
       depFormVisible: false,
+      aiFormVisible: false,
       background: true, //分页器背景颜色
       visible: false,
       treeData: [],
@@ -253,6 +266,7 @@ export default {
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
+      this.aiFormVisible = false
       if (isRefresh) {
         this.getWarehouseList(true)
       }
@@ -416,6 +430,18 @@ export default {
           warehouseName: this.warehouseName
         }
         this.$refs.depForm.init(row)
+      })
+    },
+    aiAdd() {
+      this.aiFormVisible = true
+      this.$nextTick(() => {
+        let row = {
+          id: '',
+          warehouseId: this.tableQuery.warehouseId,
+          btntype: 'add',
+          warehouseName: this.warehouseName
+        }
+        this.$refs.aiForm.init(row)
       })
     },
     addOrUpdateHandle(row) {

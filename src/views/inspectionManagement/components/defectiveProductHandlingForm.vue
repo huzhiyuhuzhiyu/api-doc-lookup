@@ -473,10 +473,10 @@ export default {
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
-          render: this.userInfo.deptType === 'JSB',
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 12,
-          itemDisabled: false
+          itemDisabled: this.dataForm.approvalStatus === 'ok' ? true : false
         },
         { prop: 'description', label: '处理说明', value: '', type: 'textarea' },
 
@@ -486,8 +486,8 @@ export default {
           value: '',
           type: 'input',
           sm: 12,
-          render: this.userInfo.deptType === 'JSB',
-          itemDisabled: this.unqualifiedQuantityDisabled
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
         {
           prop: 'qualifiedQuantity',
@@ -495,8 +495,8 @@ export default {
           value: '',
           type: 'input',
           sm: 12,
-          render: this.userInfo.deptType === 'JSB',
-          itemDisabled: this.qualifiedQuantityDisabled
+          render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         }
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
       ]

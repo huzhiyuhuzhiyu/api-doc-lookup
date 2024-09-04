@@ -58,7 +58,7 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :fixedNO="true" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }">
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
@@ -78,7 +78,12 @@
               </el-popover>
             </template>
           </el-table-column>
-          <!-- <el-table-column prop="typeName" label="类型" width="120"></el-table-column> -->
+          <el-table-column prop="state" label="状态" width="80">
+            <template slot-scope="scope">
+              <div v-if="scope.row.state == 'enable'">启用</div>
+              <div v-if="scope.row.state == 'disabled'">禁用</div>
+            </template>
+          </el-table-column>
           <el-table-column prop="position" label="位置" min-width="120"></el-table-column>
           <!-- <el-table-column prop="goodsShelvesNum" label="货架数" width="100" />
           <el-table-column prop="goodsAllocationNum" label="库位数" width="100" /> -->
@@ -167,6 +172,7 @@ export default {
           type: 'input'
         }
       ],
+      columnList: ['position', 'remark'],
       listQuery: {
         keyword: '',
         type: ''

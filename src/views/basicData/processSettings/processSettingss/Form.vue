@@ -344,10 +344,10 @@ export default {
       datafilelist: [],
       getBimProcessList,
       options: [{
-        value: 1,
+        value: true,
         label: '是'
       }, {
-        value: 0,
+        value: false,
         label: '否'
       }],
       ProductMethodArr: [
@@ -403,7 +403,7 @@ export default {
         code: '', //  编码
         name: '', //  名称
         state: 'enable', //  状态
-        reportRulesFlag: 0,
+        reportRulesFlag: false,
         // status: "", //  状态
         documentStatus: '', //  状态
         reasonRejection: '', //  驳回原因
@@ -613,10 +613,10 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(rowData, type) {
+    init(id, type) {
       // rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
-      this.dataForm.id = rowData.id || ''
+      this.dataForm.id = id || ''
       this.visible = true
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type

@@ -198,7 +198,8 @@ export default {
       treeQuery: {
         code: '',
         name: '',
-        category: 'warehouse'
+        category: 'warehouse',
+        state: 'enable'
       },
       tableQuery: {
         areaId: '',

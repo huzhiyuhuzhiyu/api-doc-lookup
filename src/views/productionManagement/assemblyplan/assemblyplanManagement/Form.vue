@@ -481,7 +481,7 @@ export default {
     return {
       pickDataRule: {
         orderNo: [
-          { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
+          { required: true, message: '领料单号不能为空', trigger: 'blur' }
         ],
         operationDate: [
           { required: true, message: '领料日期不能为空', trigger: 'change' }
@@ -577,7 +577,7 @@ export default {
       },
       detailDataList: [],
       detailDiaFlag: false,
-      collectConfig:{}
+      collectConfig: {}
     }
   },
   computed: {
@@ -598,10 +598,10 @@ export default {
       getBimBusinessSwitchConfigList(obj).then(res => {
         this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
         if (this.allocationFlag) {
-          this.activeNames = ['basicInfo', 'pickbasicInfo','productInfo']
+          this.activeNames = ['basicInfo', 'pickbasicInfo', 'productInfo']
           this.fetchData("PODH")
         } else {
-          this.activeNames = ['basicInfo',"productInfo"]
+          this.activeNames = ['basicInfo', "productInfo"]
         }
       })
     },
@@ -1090,49 +1090,54 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
-          if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
-          let submitFlag = null;
-          for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-            const item = this.dataFormTwo.data[index];
-            if (
-              !item.workGroupId &&
-              !item.personId &&
-              !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
-              item.processingType == "self_produced"
-            ) {
-              submitFlag = false;
-              this.btnLoading = false;
-              this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                type: "error",
+          this.$refs['collectForm'].validate((valid2) => {
+            if (valid2) {
+              if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
+              let submitFlag = null;
+              for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+                const item = this.dataFormTwo.data[index];
+                if (
+                  !item.workGroupId &&
+                  !item.personId &&
+                  !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
+                  item.processingType == "self_produced"
+                ) {
+                  submitFlag = false;
+                  this.btnLoading = false;
+                  this.$message({
+                    message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                    type: "error",
+                  });
+                  break;
+                }
+              }
+              console.log("表单", this.dataForm);
+              console.log("工序", this.dataFormTwo.data);
+              if (submitFlag === false) return
+              this.dataFormTwo.data.forEach(item => {
+                item.routingProResList.forEach(items => {
+                  items.processId = item.processId
+                })
+                this.$set(item, 'workOrderResList', item.routingProResList)
               });
-              break;
-            }
-          }
-          console.log("表单", this.dataForm);
-          console.log("工序", this.dataFormTwo.data);
-          if (submitFlag === false) return
-          this.dataFormTwo.data.forEach(item => {
-            item.routingProResList.forEach(items => {
-              items.processId = item.processId
-            })
-            this.$set(item, 'workOrderResList', item.routingProResList)
-          });
-          let obj = {
-            prodOrder: this.dataForm,
-            workOrderList: this.dataFormTwo.data,
-            collect:this.collect.orderNo?this.collect:null
-          }
-          addProdPlanArrange(obj).then(res => {
-            this.btnLoading = false
-            this.$message.success("生成编排成功")
-            setTimeout(() => {
-              this.$emit('close')
-            }, 1500);
-          }).catch(error => {
-            this.btnLoading = false
+              let obj = {
+                prodOrder: this.dataForm,
+                workOrderList: this.dataFormTwo.data,
+                collect: this.collect.orderNo ? this.collect : null
+              }
+              addProdPlanArrange(obj).then(res => {
+                this.btnLoading = false
+                this.$message.success("生成编排成功")
+                setTimeout(() => {
+                  this.$emit('close')
+                }, 1500);
+              }).catch(error => {
+                this.btnLoading = false
 
+              })
+            }
           })
+
 
         }
       })

@@ -45,9 +45,6 @@
               <el-table-column prop="productCode" label="产品编码" width="120" />
               <el-table-column prop="mainUnit" label="单位" width="80" />
               <el-table-column prop="inventoryQuantity" label="库存数量" width="120" sortable="custom" />
-              <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom" />
-              <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
-              <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
@@ -68,8 +65,6 @@
               <div class="text">
                 <span>合计：</span>
                 <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
-                <span style="margin-left: 10px">可用数量：{{ totalData.totalAvailable }}</span>
-                <span style="margin-left: 10px">占用数量：{{ totalData.totalOccupancy }}</span>
               </div>
             </pagination>
           </div>

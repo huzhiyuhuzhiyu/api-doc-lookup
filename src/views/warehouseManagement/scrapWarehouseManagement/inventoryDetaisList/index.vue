@@ -65,36 +65,15 @@
           </el-table-column>
           <el-table-column prop="sourceType" label="业务类型" sortable="custom" min-width="120">
             <template slot-scope="scope">
-              <div v-if="scope.row.sourceType == 'outbound_sale_send'">销售发货</div>
-              <div v-if="scope.row.sourceType == 'inbound_sale_return'">销售退货</div>
-              <div v-if="scope.row.sourceType == 'inbound_purchase'">采购收货</div>
-              <div v-if="scope.row.sourceType == 'outbound_purchase'">采购退货</div>
-              <div v-if="scope.row.sourceType == 'outbound_pick_out'">生产领料</div>
-              <div v-if="scope.row.sourceType == 'inbound_return_materials'">生产退料</div>
-              <div v-if="scope.row.sourceType == 'outbound_external_send'">外协发料</div>
-              <div v-if="scope.row.sourceType == 'inbound_external_return'">外协退料</div>
-              <div v-if="scope.row.sourceType == 'inbound_external'">外协收货</div>
-              <div v-if="scope.row.sourceType == 'outbound_external'">外协退货</div>
+              <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
+              <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
-
-          </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="180">
-
-          </el-table-column>
+       
           <el-table-column prop="drawingNo" label="品名规格" sortable="custom" min-width="120" />
           <el-table-column prop="productCode" label="产品编码" sortable="custom" min-width="120" />
           <el-table-column prop="mainUnit" label="单位" min-width="140" />
-          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" />
-
-          <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
-          <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
- 
-          <el-table-column prop="taxRate" label="税率(%)" sortable="custom" min-width="140" />
-          <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
-          <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
-          <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
+          <el-table-column prop="num" label="数量" sortable="custom" min-width="140" /> 
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
           <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"  ></el-table-column>
@@ -141,10 +120,7 @@
           @pagination="initData">
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">数量:{{ num }}</span>
-            <span style="margin-left: 10px">税额:{{ taxAmount }}</span>
-            <span style="margin-left: 10px">总金额(含税):{{ totalAmount }}</span>
-            <span style="margin-left: 10px">总金额(不含税):{{ excludingTaxTotalAmount }}</span>
+            <span style="margin-left: 10px">数量:{{ num }}</span> 
           </div>
         </pagination>
       </div>
@@ -188,16 +164,8 @@ export default {
       tableData: [],
       listLoading: false,
       list: [
-        { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" },
+      { label: "直接入库", value: "inbound_other" },
+      { label: "直接出库", value: "outbound_other" },
       ],
 
       initListQuery: {
@@ -213,6 +181,7 @@ export default {
           asc: false,
           column: "createTime"
         }],
+        warehouseType:"scrap",
       },
       listQuery: {},
       total: 0,
@@ -229,27 +198,12 @@ export default {
           prop: 'sourceType',
           label: "业务类型",
           type: 'select',
-          options: [{ label: "销售发货", value: "outbound_sale_send" },
-          { label: "销售退货", value: "inbound_sale_return" },
-          { label: "采购收货", value: "inbound_purchase" },
-          { label: "采购退货", value: "outbound_purchase" },
-          { label: "生产领料", value: "outbound_pick_out" },
-          { label: "生产退料", value: "inbound_return_materials" },
-          { label: "外协发料", value: "outbound_external_send" },
-          { label: "外协退料", value: "inbound_external_return" },
-          { label: "外协收货", value: "inbound_external" },
-          { label: "外协退货", value: "outbound_external" },],
+          options: [ 
+          { label: "直接入库", value: "inbound_other" },
+          { label: "直接出库", value: "outbound_other" },
+        ],
         },
-        {
-          prop: 'partnerName',
-          label: "客户/供应商",
-          type: 'input'
-        },
-        {
-          prop: 'partnerCode',
-          label: "客户/供应商编码",
-          type: 'input'
-        },
+         
         {
           prop: 'productDrawingNo',
           label: "品名规格",
@@ -271,39 +225,9 @@ export default {
           label: "数量",
           type: 'input'
         },
-        {
-          prop: 'costPrice',
-          label: "单价(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: "总金额(含税)",
-          type: 'input'
-        },
-
-        {
-          prop: 'taxRate',
-          label: "税率(%)",
-          type: 'select',
-          options: [],
-        },
-        {
-          prop: 'excludingTaxCostPrice',
-          label: "单价(不含税)",
-          type: 'input'
-        },
-
-        {
-          prop: 'taxAmount',
-          label: "税额",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: "总金额(不含税)",
-          type: 'input'
-        },
+        
+    
+         
         {
           prop: 'standardValue',
           label: "规值",

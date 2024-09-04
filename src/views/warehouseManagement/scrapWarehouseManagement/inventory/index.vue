@@ -74,23 +74,6 @@
             </template>
 
           </el-table-column>
-          <el-table-column prop="availableQuantity" label="可用数量" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'availableFlag', scope.row.warehouseId)">
-                {{ scope.row.availableQuantity }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-link type="primary"
-                @click.native="viewFun(scope.row.productsId, 'occupancyFlag', scope.row.warehouseId)">
-                {{ scope.row.occupancyQuantity }}
-              </el-link>
-            </template>
-          </el-table-column>
-          <el-table-column prop="safeInventory" label="安全库存" width="120" sortable="custom" />
           <el-table-column prop="warehouseName" label="仓库名称" min-width="120" sortable="custom" />
           <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" sortable="custom" />
 
@@ -99,9 +82,7 @@
           @pagination="initData">
           <div class="text">
             <span>合计：</span>
-            <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span>
-            <span style="margin-left: 10px">可用数量：{{ totalData.totalAvailable }}</span>
-            <span style="margin-left: 10px">占用数量：{{ totalData.totalOccupancy }}</span>
+            <span style="margin-left: 10px">库存数量：{{ totalData.totalInventory }}</span> 
           </div>
         </pagination>
       </div>
@@ -161,7 +142,7 @@ export default {
         warehouseName: "",
         pageNum: 1,
         pageSize: 20,
-        scrapFlag: false,
+        scrapFlag: true,
         virtuallyFlag: false,
         warehouseId: '',
         productDrawingNo: "",

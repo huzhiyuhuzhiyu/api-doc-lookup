@@ -368,7 +368,7 @@
         </JNPF-table>
         <!-- 外协发料 -->
         <JNPF-table v-loading="listLoading" :data="wxflTableList" v-if="categoryType == 'outbound_external_send'"
-          custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
+          custom-column ref="wxfltabForm" :fixedNo="true"  :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"

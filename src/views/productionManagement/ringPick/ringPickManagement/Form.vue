@@ -74,7 +74,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <div v-if="btnType != 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px;  font-size:14px!important"
-                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>||
+                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>|
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </div>

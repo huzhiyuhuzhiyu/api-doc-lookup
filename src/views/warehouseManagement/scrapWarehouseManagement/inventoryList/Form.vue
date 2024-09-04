@@ -38,22 +38,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24"
-                        v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
-                        <el-form-item label="客户" prop="cooperativePartnerId">
-                          <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" readonly @focus="openDialog"
-                            :disabled="btnType == 'look' ? true : false">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :sm="6" :xs="24"
-                        v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external' || dataForm.businessType == 'inbound_external'">
-                        <el-form-item label="供应商" prop="cooperativePartnerId">
-                          <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                            :disabled="btnType == 'look' ? true : false">
-                          </el-input>
-                        </el-form-item>
-                      </el-col>
+                     
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="仓库" prop="warehouseName">
                           <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
@@ -66,20 +51,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="jyFlag">
-                        <el-form-item label="检验标志" prop="inspectionResults">
-                          <el-select v-model="dataForm.inspectionResults" placeholder="检验结果" clearable
-                            style="width: 100%;" :disabled="btnType == 'look'" filterable>
-                            <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-
-
-
-
-
-                        </el-form-item>
-                      </el-col>
+                      
 
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
@@ -155,10 +127,7 @@
                           v-model="scope.row.num" placeholder="数量"></el-input>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="costPrice" label="单价(含税)" width="120" :key="110"></el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
-                    <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
-                    <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
+                  
                     <el-table-column prop="originalBatchNumber" label="原产品批次号" width="140" :key="1255"
                       v-if="dataForm.businessType == 'inbound_sale_return'">
                       <template slot-scope="scope">

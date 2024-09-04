@@ -68,16 +68,16 @@ export default {
       sleeveItems: [
         {
           prop: 'name',
-          label: '货区名称',
+          label: '库位名称',
           type: 'input',
-          itemRules: [{ required: true, message: '请输入货区编码', trigger: 'blur' }]
+          itemRules: [{ required: true, message: '请输入库位编码', trigger: 'blur' }]
         },
         {
           prop: 'code',
-          label: '货区编码',
+          label: '库位编码',
           type: 'input',
           itemRules: [
-            { required: true, message: '请输入货区编码', trigger: 'blur' },
+            { required: true, message: '请输入库位编码', trigger: 'blur' },
             {
               validator: (rule, value, callback) => {
                 if (this.autoCode == value) {
@@ -176,7 +176,7 @@ export default {
   },
   computed: {
     openMode() {
-      return this.title === '新建库区' || '新建货架' || '新建货位'
+      return this.title === '新建库区' || '新建货架' || '新建库位'
         ? '新建'
         : this.title === '编辑库区'
           ? '编辑'
@@ -193,7 +193,7 @@ export default {
 
       // if (row.id) {
       //   this.dataForm.id = id
-      //   // this.title = btnType ? '查看货架/货位' : '编辑货架/货位'
+      //   // this.title = btnType ? '查看货架/库位' : '编辑货架/库位'
       //   // 获取详情
       //   detailProductionResourceData(id).then((res) => {
       //     // 记录编码和图号，用于校验唯一性
@@ -232,7 +232,7 @@ export default {
         }
       } else if (this.btnType == 'edit') {
         this.isdisabled = false
-        this.title = '编辑货位'
+        this.title = '编辑库位'
         this.tableFlag = false
         console.log(row, 'id')
         if (row.id) {
@@ -253,7 +253,7 @@ export default {
         }
       } else if (this.btnType == 'add') {
         console.log('库区', row)
-        this.title = '新建货位'
+        this.title = '新建库位'
         this.isdisabled = false
         this.editFlag = false
         this.dataForm.type = 'normal'
@@ -286,7 +286,7 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        if (this.title == '新建货位') {
+        if (this.title == '新建库位') {
           for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
             this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
             this.stockLimitsAuthorities[i].category = 'location'

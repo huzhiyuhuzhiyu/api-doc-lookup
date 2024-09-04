@@ -45,12 +45,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.name" placeholder="货位名称" clearable />
+              <el-input v-model="tableQuery.name" placeholder="库位名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="tableQuery.code" placeholder="货位编码" clearable />
+              <el-input v-model="tableQuery.code" placeholder="库位编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -66,7 +66,7 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
-            新建货位
+            新建库位
           </el-button>
 
           <div class="JNPF-common-head-right">
@@ -84,11 +84,19 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
           :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }">
-          <el-table-column prop="name" label="货位名称" min-width="180"></el-table-column>
-          <el-table-column prop="code" label="货位编码" min-width="180" sortable="custom"></el-table-column>
-
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
+          <el-table-column prop="name" label="库位名称" min-width="180"></el-table-column>
+          <el-table-column prop="code" label="库位编码" min-width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="state" label="状态" min-width="180">
+            <template slot-scope="scope">
+              <div v-if="scope.row.state == 'enable'">启用</div>
+              <div v-if="scope.row.state == 'disabled'">禁用</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="160" />
+          <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
@@ -113,9 +121,7 @@ import DepForm from './Form'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'storageRack',
   components: { DepForm, SuperQuery },
@@ -125,20 +131,46 @@ export default {
       superQueryJson: [
         {
           prop: 'name',
-          label: '货位名称',
+          label: '库位名称',
           type: 'input'
         },
         {
           prop: 'code',
-          label: '货位编码',
+          label: '库位编码',
+          type: 'input'
+        },
+        {
+          prop: 'code',
+          label: '状态',
+          type: 'select',
+          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
+        },
+        {
+          prop: 'warehouseName',
+          label: '所属仓库',
           type: 'input'
         },
         {
           prop: 'remark',
           label: '备注',
           type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
         }
       ],
+      columnList: ['warehouseName', 'createTime', 'createByName'],
       selectedNodeKey: '',
       depFormVisible: false,
       background: true, //分页器背景颜色
@@ -297,7 +329,7 @@ export default {
             // } else if (item.category == 'shelves') {
             //   item.category = '货架'
             // } else if (item.category == 'location') {
-            //   item.category = '货位'
+            //   item.category = '库位'
             // }
           })
 
@@ -392,7 +424,6 @@ export default {
 
       row.btntype = 'edit'
 
-
       if (row.id) {
         // setTimeout(() => {
         this.$nextTick(() => {
@@ -440,7 +471,7 @@ export default {
         newBtnType = 'areaEdit'
       } else if (btntype == '货架') {
         newBtnType = 'shelvesEdit'
-      } else if (btntype == '货位') {
+      } else if (btntype == '库位') {
         newBtnType = 'locationEdit'
       }
       this.$nextTick(() => {

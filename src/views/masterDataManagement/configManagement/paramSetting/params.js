@@ -60,17 +60,45 @@ export default () => [
   //     },
   //   ]
   // },
+  // {
+  //   tabCode: "sale",
+  //   tabName: "销售设置",
+  //   tabContent: [
+  //     {
+  //       row: [
+  //         { prop: "arrange_auto_sale", clearable: false, label: "销售发货允许超发", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+  //         // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+  //       ]
+  //     },
+
+  //   ]
+  // },
+  {
+    tabCode: "produce",
+    tabName: "生产设置",
+    tabContent: [
+      {
+        row: [
+          { prop: "arrange_auto_picking", clearable: false, label: "生产是否自动生成生产单", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          { prop: "work_exceed_report", clearable: false, label: "是否完工报工超报", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          { prop: "configValue2", clearable: true, label: "范围值", value: '0', sm: 6, type: 'input', itemRules: [{ required: true, trigger: "blur" },], render: false },
+          // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+        ]
+      },
+
+    ]
+  },
   {
     tabCode: "warehouse",
     tabName: "仓库设置",
     tabContent: [
       {
         row: [
-          { prop: "allocation", clearable: false, label: "库存是否管到库位", value: '0', sm: 6, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          { prop: "allocation", clearable: false, label: "库存是否管到库位", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
           // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
         ]
       },
-     
+
     ]
   },
 
@@ -80,29 +108,17 @@ export default () => [
     tabContent: [
       {
         row: [
-          { prop: "fj_zskh", clearable: false, label: "正式客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
-          { prop: "fj_wdkh", clearable: false, label: "我的客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
-          { prop: "fj_qzkh", clearable: false, label: "潜在客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
-          { prop: "fj_ghkh", clearable: false, label: "公海客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
-          { prop: "fj_cggysgl", clearable: false, label: "采购供应商管理", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
-          { prop: "fj_wxgysgl", clearable: false, label: "外协供应商管理", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }]},
+          { prop: "fj_zskh", clearable: false, label: "正式客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
+          { prop: "fj_wdkh", clearable: false, label: "我的客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
+          { prop: "fj_qzkh", clearable: false, label: "潜在客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
+          { prop: "fj_ghkh", clearable: false, label: "公海客户", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
+          { prop: "fj_cggysgl", clearable: false, label: "采购供应商管理", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
+          { prop: "fj_wxgysgl", clearable: false, label: "外协供应商管理", value: '0', sm: 6, type: 'switch', options: [{ label: "关", value: '0' }, { label: "开", value: '1' }], itemRules: [{ required: true, trigger: "blur" }] },
         ]
       },
-    ]
-  },  
-  {
-    tabCode: "produce",
-    tabName: "领料设置",
-    tabContent: [
-      {
-        row: [
-          { prop: "arrange_auto_picking", clearable: false, label: "领料是否自动生成领料单", value: '0', sm: 6, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
-          // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
-        ]
-      },
-     
     ]
   },
+
   // {
   //   tabCode: "mrp",
   //   tabName: "MRP设置",

@@ -84,6 +84,7 @@
 import { FlowEngineList, Delete, Release, Stop, Copy, exportData, getFlowEngineList, changeFlowSwitch } from '@/api/workFlow/FlowEngine'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getChildrenList } from '@/api/systemData/dictionary'
 export default {
   name: 'workFlow-system',
   components: { Form, SuperQuery },
@@ -146,7 +147,7 @@ export default {
     }
   },
   created() {
-    this.getDictionaryData()
+    this.getChildrenListData()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -188,9 +189,9 @@ export default {
         this.listLoading = false
       })
     },
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'businessType' }).then((res) => {
-        this.categoryList = res
+    getChildrenListData(){
+      getChildrenList('600602988351917829').then(res=>{
+        this.categoryList = res.data
       })
     },
     handleDel(id) {

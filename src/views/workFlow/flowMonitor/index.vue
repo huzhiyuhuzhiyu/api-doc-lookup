@@ -40,7 +40,7 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;float: right;">
+            <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;float: right;align-items:center;line-height: 34px;">
                 <el-tooltip content="高级查询" placement="top">
                   <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px"
                     @click="superQueryVisible = true" />

@@ -37,6 +37,7 @@ export default () => [
         maxlength: 100,
         itemRules: [{ required: true, trigger: 'blur' }]
       },
+      { prop: "state", label: "状态", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }] },
       {
         prop: 'workshop',
         label: '车间',

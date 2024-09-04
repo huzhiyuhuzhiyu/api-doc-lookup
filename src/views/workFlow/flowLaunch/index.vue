@@ -131,6 +131,7 @@ import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
 import FlowBox from '../components/FlowBox'
 import flow from './Flow'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getChildrenList } from '@/api/systemData/dictionary'
 export default {
   name: 'workFlow-flowLaunch',
   components: { FlowBox, flow, SuperQuery },
@@ -334,11 +335,15 @@ export default {
       })
     },
     getDictionaryData(type) {
-      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
-        this.categoryList = res
-        console.log(this.categoryList);
-
-      })
+      if (type === 'businessType'){
+        getChildrenList('600602988351917829').then(res=>{
+          this.categoryList = res.data
+        })
+      }else{
+        this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
+          this.categoryList = res
+        })
+      }
     },
     initData() {
       this.listLoading = true

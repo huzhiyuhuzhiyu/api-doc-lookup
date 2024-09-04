@@ -897,7 +897,7 @@ export default {
       console.log(this.list);
       this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addForm.init("", btntype, this.list)
+        this.$refs.addForm.init("", btntype,false, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

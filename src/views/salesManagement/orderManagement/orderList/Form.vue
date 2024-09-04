@@ -2,7 +2,7 @@
   <transition name="el-zoom-in-center">
     <div>
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
+        <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售订单' : btnType == 'edit' ? '编辑销售订单' : btnType == 'look' ? '查看销售订单' : '新建销售订单'" />
           <div class="options">
@@ -17,7 +17,7 @@
         </div>
         <div class="main" v-loading="formLoading" :element-loading-text="loadingText">
 
-          <el-tabs v-model="activeName" @tab-click="handleClick">
+          <el-tabs v-model="activeName"  v-if="!approvalFlag" @tab-click="handleClick">
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -447,148 +447,439 @@
 
 
             </el-tab-pane>
-            <!-- <el-tab-pane label="进度跟踪" name="schedule" v-if="btnType === 'look'" ref="orderInfos">
-              <el-row class="JNPF-common-search-box" :gutter="16">
-                <el-form @submit.native.prevent>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.customerProductNo" placeholder="请输入客户料号" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productsDrawingNo" placeholder="请输入品名规格" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
-                        {{ $t('common.search') }}</el-button>
-                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">{{
-                        $t('common.reset') }}
-                      </el-button>
-                      <el-button size="mini" type="primary" icon="el-icon-download" @click="exportForm">导出</el-button>
-                    </el-form-item>
-                  </el-col>
-
-                </el-form>
-              </el-row>
-              <JNPF-table v-loading="formLoading" :data="scheduleData" custom-column ref="scheduleRef"
-                :style="{ height: customStyleData + 'px' }">
-                <el-table-column prop="customerProductNo" label="客户料号" min-width="160" />
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="180" />
-                <el-table-column prop="mainUnit" label="单位" min-width="140" />
-                <el-table-column prop="num" label="数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.num ? scope.row.num : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="utilizationQuantity" label="利用库存数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.utilizationQuantity ? scope.row.utilizationQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="productionQuantity" label="需生产数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.productionQuantity ? scope.row.productionQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="purchaseQuantity" label="需采购数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="outsourcingQuantity" label="需外协数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.outsourcingQuantity ? scope.row.outsourcingQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="planFlag" label="是否转计划" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.planFlag ? '是' : '否' }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="calFlag" label="是否运算" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.calFlag ? '是' : '否' }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="sendDownFlag" label="是否下达生产" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.sendDownFlag ? '是' : '否' }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="completedQuantity" label="生产完成数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.completedQuantity ? scope.row.completedQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="prodSchedule" label="生产进度" min-width="160">
-                  <template slot-scope="scope">
-                    <el-progress
-                      :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="packingCount" label="生产已装箱数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.packingCount ? scope.row.packingCount : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="receivedQuantity" label="生产已入库数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.receivedQuantity ? scope.row.receivedQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="undeliveredQuantity" label="发货待出数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.undeliveredQuantity ? scope.row.undeliveredQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="outboundQuantity" label="发货已出数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.outboundQuantity ? scope.row.outboundQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="deliverSchedule" label="发货进度" min-width="160">
-                  <template slot-scope="scope">
-                    <el-progress
-                      :percentage="Number((scope.row.outboundQuantity / scope.row.num * 100).toFixed(2)) || 0"></el-progress>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="shipmentStatus" label="发货状态" width="130" align="center">
-                  <template slot-scope="scope">
-                    <el-tag type="warning" v-if="scope.row.shipmentStatus == 'not_finish'">未完成</el-tag>
-                    <el-tag type="success" v-else-if="scope.row.shipmentStatus == 'finish'">已完成</el-tag>
-                    <el-tag type="danger" v-else-if="scope.row.shipmentStatus == 'stopped'">已停止</el-tag>
-                  </template>
-
-                </el-table-column>
-                <el-table-column prop="returnQuantity" label="已退货数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.returnQuantity ? scope.row.returnQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="replacementQuantity" label="已换货数量" min-width="120">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.replacementQuantity ? scope.row.replacementQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" />
-              </JNPF-table>
-              <pagination :total="total" :page.sync="scheduleForm.pageNum" :background="background"
-                :limit.sync="scheduleForm.pageSize" @pagination="searchDetail" />
-              <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-
-            </el-tab-pane> -->
+         
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
+            <el-tab-pane v-if="btnType == 'look'" label="流转记录" name="transferList">
+              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            </el-tab-pane>
           </el-tabs>
+          <el-collapse v-model="activeNames" v-else>
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="订单编号" prop="orderNo">
+                          <el-input v-model="dataForm.orderNo" placeholder="请输入订单编号"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"
+                            maxlength="300" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="订单类型" prop="orderType">
+                          <el-select v-model="dataForm.orderType" placeholder="请选择订单类型" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="(item, index) in orderList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="所属客户" prop="cooperativePartnerId">
+                          <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择所属客户" readonly
+                            @focus="openDialog" :disabled="btnType == 'look' ? true : false">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="所属部门" prop="departmentId">
+                          <ComSelect v-model="organizeIdTrees" :disabled="isdisabled" placeholder="请选择所属部门" auth
+                            @change="onOrganizeChangeHandle" :currOrgId="dataForm.departmentId || '0'" />
+                        </el-form-item>
+
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="所属销售" prop="salesName">
+                          <el-select v-model="dataForm.salesName" placeholder="请选择所属销售人员" clearable style="width: 100%;"
+                            :disabled="salesFlag" filterable @change="selectsales">
+                            <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+                    
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="订单日期" prop="orderDate">
+                          <el-date-picker v-model="dataForm.orderDate" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" :picker-options="pickerOptions" placeholder="请选择订单日期"
+                            :disabled="btnType == 'look' ? true : false">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="交货日期" prop="deliveryDate">
+                          <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                            style="width: 100%;" placeholder="请选择交货日期" :disabled="btnType == 'look' ? true : false"
+                            @change="changDateFun">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
+
+
+
+
+                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="发货单号" prop="deliveryNoteNumber">
+                          <el-input v-model="dataForm.deliveryNoteNumber" placeholder="请输入发货单号"
+                            :disabled="btnType == 'look' ? true : false" maxlength="300" />
+                        </el-form-item>
+                      </el-col> -->
+
+
+                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="订单状态" prop="orderState">
+                          <el-select v-model="dataForm.orderState" placeholder="请选择订单状态" style="width: 100%;"
+                            :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="item in orderStateList" size="small" :key="item.id" :label="item.label"
+                              :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+
+                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="含税总金额" prop="totalAmount">
+                          <el-input v-model="dataForm.totalAmount" placeholder="请输入含税总金额"
+                            :disabled="btnType == 'look' ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="不含税总金额" prop="excludingTaxTotalAmount">
+                          <el-input v-model="dataForm.excludingTaxTotalAmount" placeholder="请输入不含税总金额"
+                            :disabled="btnType == 'look' ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="税额" prop="taxAmount">
+                          <el-input v-model="dataForm.taxAmount" placeholder="请输入税额"
+                            :disabled="btnType == 'look' ? true : false" />
+                        </el-form-item>
+                      </el-col>
+
+                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="变更次数" prop="changesCount">
+                          <el-input v-model="dataForm.changesCount" placeholder="请输入变更次数"
+                            :disabled="btnType == 'look' ? true : false" maxlength="4" />
+                        </el-form-item>
+                      </el-col> -->
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" type="textarea" :rows="2" maxlength="200" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+
+
+                  </el-form>
+                </el-collapse-item>
+
+
+
+                <el-collapse-item title="产品信息" name="productInfo">
+                  <div v-if="btnType !== 'look'">
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                      @click="openSeleceProductDialog()">选择产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="importProductFun()"
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">导入产品 </el-button><text
+                      v-if="dataForm.orderType == 'normal' || dataForm.orderType == 'urgent'">|</text>
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
+                      @click="batchDelete">批量删除</el-button>
+
+                  </div>
+                  <div style="height:530px;display:flex;" ref="boxresiz" v-if="btnType == 'look'">
+
+                    <el-table ref="product" :data="productData" :fixedNO="false" border height="100%" :key="191"
+                      style="width: 100%;height:100%">
+
+                      <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                      <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
+
+
+                      </el-table-column>
+
+                      <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+
+                      </el-table-column>
+                      <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                      <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
+                      <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
+                        <template slot-scope="scope">
+                          <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
+
+                        </template>
+</el-table-column> -->
+
+                      <el-table-column prop="num" label="数量" width="100" :key="7">
+
+                      </el-table-column>
+                      <el-table-column prop="price" label="单价(含税)" width="120" :key="11">
+
+                      </el-table-column>
+                      <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+
+
+                      </el-table-column>
+                      <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+
+                      <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
+                      <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                        <template slot-scope="scope">
+                          <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="131"></el-table-column>
+                      <el-table-column prop="contractNo" label="合同号" width="180" :key="132"></el-table-column>
+
+                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+
+                      </el-table-column>
+                      <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+
+                      </el-table-column>
+
+                      <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+
+                      </el-table-column>
+                      <el-table-column prop="oil" label="油脂" width="120" :key="61">
+
+                      </el-table-column>
+                      <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+
+                      </el-table-column>
+                      <el-table-column prop="clearance" label="游隙" width="120" :key="100">
+
+                      </el-table-column>
+                      <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101"> </el-table-column>
+                      <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="1012"></el-table-column>
+
+                      <el-table-column prop="remark" label="备注" width="200" :key="128">
+
+                      </el-table-column>
+
+
+                    </el-table>
+
+                  </div>
+                  <el-table ref="product" v-else :data="productData" :fixedNO="true"
+                    @selection-change="handeleProductInfoData" border height="460" @row-click="rowclick" :key="165"
+                    style="width: 100%;">
+                    <el-table-column type="selection" width="55" fixed="left" :key="2">
+                    </el-table-column>
+                    <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                    <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
+
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.customerProductNo" placeholder="请输入"
+                          @keyup.enter.native="searchCustomerProduct(scope)">{{
+                            scope.row.customerProductNo }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6">
+                      <template slot="header">
+                        <span class="required">*</span>品名规格
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.drawingNo" placeholder="请输入"
+                          @keyup.enter.native="searchDrawingNoProduct(scope.row, scope.$index)">{{
+                            scope.row.drawingNo }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
+                    <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
+                    <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
+                      <template slot-scope="scope">
+                        <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
+
+                      </template>
+                    </el-table-column> -->
+
+                    <el-table-column prop="num" label="数量" width="100" :key="7">
+                      <template slot="header">
+                        <span class="required">*</span>数量
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.num" :disabled="btnType == 'look' ? true : false"
+                          @input="watchNum(scope.row, scope.$index)" placeholder="请输入"
+                          @blur="checkNum(scope.row, scope.$index)">{{
+                            scope.row.num }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="price" label="单价(含税)" width="120" :key="110">
+                      <template slot="header">
+                        <span class="required">*</span>单价(含税)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.price" :disabled="btnType == 'look' ? true : false"
+                          @input="watchPrice(scope.row, scope.$index)" placeholder="请输入"
+                          @blur="checkPrice(scope.row, scope.$index)">{{
+                            scope.row.price }}
+                        </el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171">
+                      <template slot="header">
+                        <span class="required">*</span>税率(%)
+                      </template>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;"
+                          @change="changeTaxRate(scope.row, scope.$index)">
+                          <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.enCode"
+                            :value="item.taxRate"></el-option>
+                        </el-select>
+                      </template>
+
+                    </el-table-column>
+                    <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="140"></el-table-column>
+
+                    <el-table-column prop="totalAmount" label="金额(含税)" width="120" :key="125"></el-table-column>
+                    <el-table-column prop="excludingTaxAmount" label="金额(不含税)" width="140" :key="126">
+                      <template slot-scope="scope">
+                        <div>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="deliveryDate" label="交货日期" width="180" :key="13">
+                      <template slot="header">
+                        <span class="required">*</span>交货日期
+                      </template>
+                      <template slot-scope="scope">
+                        <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
+                          :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
+                        </el-date-picker>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="contractNo" label="客户合同号" width="120" :key="116">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.contractNo">{{ scope.row.contractNo }} </el-input>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                      <!-- <template slot="header">
+                        <span class="required">*</span>打字内容
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          style="width: 100%;">
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
+                      <!-- <template slot="header">
+                        <span class="required">*</span>精度等级
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
+                      <!-- <template slot="header">
+                        <span class="required">*</span>振动等级
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oil" label="油脂" width="120" :key="61">
+                      <!-- <template slot="header">
+                        <span class="required">*</span>油脂
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="oilQuantity" label="油脂量" width="120" :key="51">
+
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="clearance" label="游隙" width="120" :key="100">
+                      <!-- <template slot="header">
+                        <span class="required">*</span>游隙
+                      </template> -->
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="packagingMethod" label="包装方式" width="120" :key="101">
+
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="specialRequire" label="特殊要求" width="120" :key="101">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;">
+                          <el-option v-for="(item, index) in list8" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark" placeholder="请输入" maxlength="200" />
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column label="操作" width="120" fixed="right" :key="15">
+                      <template slot-scope="scope">
+
+                        <el-button type="text" @click="handleDel(scope)" style=" color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
+                    <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
+                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
+                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
+                  </div>
+                </el-collapse-item>
+
+          </el-collapse>
         </div>
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
@@ -821,12 +1112,15 @@ import { BillNumber } from '@/api/system/billRule'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
-import { log } from 'mathjs'
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 
 export default {
-
+  mixins: [busFlow],
   components: {
-    changeAddress, VueDraggableResizable, ExportForm
+    changeAddress, VueDraggableResizable, ExportForm,Process , recordList
   },
   data() {
     return {
@@ -1078,6 +1372,7 @@ export default {
         cooperativePartnerName: "",
         departmentName: "",
         cooperativePartnerCode: "",
+        approvalFlag:false,
       },
       codeConfig: {},//单据规则配置
       defaultAddress: "",
@@ -1126,6 +1421,11 @@ export default {
       list8: [],
       taxRateList: [],
       // productFormVisible: false
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   computed: {
@@ -2357,9 +2657,10 @@ export default {
       this.tipsvisible = false
       this.btnLoading = false
     },
-    init(id, btnType) {
+    init(id, btnType,approvalFlag) {
       this.dataForm.id = id || ''
       this.btnType = btnType
+      this.approvalFlag = approvalFlag
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       if (this.dataForm.id) {
@@ -2385,7 +2686,8 @@ export default {
 
             this.dataForm.address = res.data.order.address
             this.defaultAddress = res.data.order.region.countryName + res.data.order.region.provinceName + res.data.order.region.cityName + res.data.order.region.areaName + res.data.order.address
-
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             this.$nextTick(() => {
               res.data.order.approvalStatus = ""
               this.dataForm = res.data.order
@@ -2485,6 +2787,7 @@ export default {
 
             }
             this.$refs.dataForm.resetFields()
+            this.getBusInfo()
           })
         }
 
@@ -2524,6 +2827,7 @@ export default {
           cooperativePartnerName: "",
           departmentName: "",
           cooperativePartnerCode: "",
+          approvalFlag:false,
         },
           this.dataForm.departmentId = this.userInfo.departmentId
         this.dataForm.salesName = this.userInfo.userName
@@ -2554,14 +2858,13 @@ export default {
         // 拼接为YYYY-MM-DD格式
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.orderDate = formattedDate;
-
+        this.getBusInfo()
       }
       if (btnType != 'look') {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.productData.push(obj)
 
       }
-
 
 
 
@@ -2614,6 +2917,7 @@ export default {
             attachmentList: this.datafilelist,
             order: this.dataForm,
             orderLineList: [],
+            flowData:this.flowData
           }
           if (this.productData.length < 1) {
             submitFlag = false
@@ -2795,7 +3099,53 @@ export default {
         }
       })
     },
-
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b025').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
+        }
+      }).catch(()=>{})
+    },    
   }
 }
 </script>

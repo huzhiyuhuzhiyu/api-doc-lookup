@@ -38,7 +38,7 @@
               <el-input v-model="dataForm.enCode" placeholder="流程编码" maxlength="50"></el-input>
             </el-form-item>
             <el-form-item label="流程分类" prop="category">
-              <el-select v-model="dataForm.category" placeholder="选择分类">
+              <el-select v-model="dataForm.category" placeholder="选择分类" @change="changeCategory">
                 <el-option :key="item.enCode" :label="item.fullName" :value="item.enCode" v-for="item in categoryList" />
               </el-select>
             </el-form-item>
@@ -46,7 +46,7 @@
               <el-input v-model="formType" maxlength="50" disabled></el-input>
             </el-form-item>
             <el-form-item label="业务流程" prop="businessFlow" v-if="dataForm.formType === 3">
-              <el-select v-model="dataForm.businessFlow" placeholder="选择业务">
+              <el-select v-model="dataForm.businessFlow" placeholder="选择业务" :disabled="!dataForm.category">
                 <el-option :key="item.id" :label="item.fullName" :value="item.enCode" v-for="item in businessFlowList" />
               </el-select>
             </el-form-item>
@@ -264,12 +264,16 @@ export default {
     }
   },
   created() {
-    this.getBusType()
+    // this.getBusType()
   },
   methods: {
-    getBusType() {
-      getbimProductAttributes('595515955027689669').then(res => {
-        this.businessFlowList = res.data.list
+    changeCategory(val){
+      this.dataForm.businessFlow = ''
+      this.getBusType(val)
+    },
+    getBusType(val) {
+      this.$store.dispatch('base/getDictionaryData', { sort: val }).then((res) => {
+        this.businessFlowList = res
       })
     },
     init(categoryList, id, formType, flowDesign) {
@@ -292,6 +296,7 @@ export default {
             this.dataForm.formData && (this.formData = JSON.parse(this.dataForm.formData))
             this.tables = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
             this.defaultTable = this.dataForm.tables && JSON.parse(this.dataForm.tables) || []
+            this.getBusType(this.dataForm.category)
             this.updateFields()
             if (this.flowDesign) {
               this.activeStep = 2

@@ -101,7 +101,7 @@
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.productId, 'look')">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.productCode }}
               </el-link>
             </template>
@@ -142,7 +142,7 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <el-button type="text" @click.native="addOrUpdateHandle(scope.row.productId, 'look', scope.row)">
+              <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look', scope.row)">
                 查看详情
               </el-button>
             </template>
@@ -420,10 +420,10 @@ export default {
       this.filterText = ''
       this.getcategoryTree()
     },
-    addOrUpdateHandle(productId, btnType, approvalStatus) {
+    addOrUpdateHandle(id, btnType, approvalStatus) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(productId, btnType || 'add', approvalStatus)
+        this.$refs.Form.init(id, btnType || 'add', approvalStatus)
       })
     },
     add() {

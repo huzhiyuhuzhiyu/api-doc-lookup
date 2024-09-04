@@ -276,6 +276,7 @@ export default {
           this.dataForm.id = res.data.id
           this.dataForm.name = res.data.name
           this.dataForm.parentId = res.data.parentId
+          this.dataForm.state = res.data.state
           this.dataForm.position = res.data.position
           this.dataForm.remark = res.data.remark
           this.dataForm.sort = res.data.sort

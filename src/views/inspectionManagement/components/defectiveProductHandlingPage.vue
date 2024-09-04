@@ -369,11 +369,11 @@ export default {
       this.formVisible = true
       if (btnType == 'look') {
         this.$nextTick(() => {
-          this.$refs.Form.init(row.id, btnType, this.pageData.type, this.pageData.businessCode)
+          this.$refs.Form.init(row.id, btnType, false, this.pageData.type, this.pageData.businessCode)
         })
       } else {
         this.$nextTick(() => {
-          this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type, this.pageData.businessCode)
+          this.$refs.Form.init(row.inspectionId, btnType, false, this.pageData.type, this.pageData.businessCode)
         })
       }
 

@@ -2,7 +2,7 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+        <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack"
             :content="btnType == 'add' ? '新建销售发货通知单' : btnType == 'edit' ? '编辑销售发货通知单' : btnType == 'qrsh' ? '确认收货' : btnType == 'copy' ? '新建销售发货通知单' : '查看销售发货通知单'" />
@@ -16,7 +16,7 @@
         </div>
         <div class="main" v-loading="formLoading">
 
-          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
+          <el-tabs v-model="activeName"  v-if="!approvalFlag" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="订单信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -222,7 +222,213 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
+            <el-tab-pane v-if="btnType == 'look'" label="流转记录" name="transferList">
+              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            </el-tab-pane>
           </el-tabs>
+          <el-collapse v-model="activeNames" v-else>
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+
+                  <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="单号" prop="orderNo">
+                          <el-input v-model="dataForm.orderNo"
+                            :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="换货标识" prop="exchangeGoodsFlag">
+                          <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
+                            :disabled="btnType == 'look' || Flagtype" @change="changeclick">
+                            <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="客户名称" prop="partnerName">
+                          <el-input v-model="dataForm.partnerName" placeholder="请选择客户" :disabled="btnType == 'look'"
+                            readonly @focus="openDialog">
+                          </el-input>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="发货日期" prop="deliverDate">
+                          <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择发货日期" type="date"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
+                            style="width: 100%;">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                        <el-form-item label="收件人" prop="recipient">
+                          <el-input v-model="dataForm.recipient" placeholder="请输入收件人"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="20" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                        <el-form-item label="收件人电话" prop="phone">
+                          <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'" />
+                        </el-form-item>
+                      </el-col>
+                      <!-- <el-col :sm="6" :xs="24">
+                    <el-form-item label="发货人" prop="shipperId">
+                      <user-select v-model="dataForm.shipperId" placeholder="请选择发货人" clearable style="width: 100%;"
+                        :disabled="btnType == 'look' || btnType == 'qrsh'" @change="hangleSelectSales">
+                      </user-select>
+
+                    </el-form-item>
+                  </el-col> -->
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="发货方式" prop="delivery">
+                          <el-select v-model="dataForm.delivery" placeholder="请选择发货方式" clearable style="width: 100%;"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'">
+                            <el-option v-for="(item, index) in departMentList" :key="index" :label="item.label"
+                              @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="发货状态" prop="deliveryStatus">
+                          <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发货状态" clearable
+                            style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                            <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="发货完成时间" prop="deliveryCompletionDate">
+                          <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime"
+                            placeholder="请选择发货完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="创建时间" prop="createTime">
+                          <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
+                            :disabled="btnType == 'look'" style="width: 100%;" clearable>
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24" v-if="btnType == 'look'">
+                        <el-form-item label="创建人" prop="createByName">
+                          <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
+                            maxlength="20" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                        <el-form-item label="收件地址" prop="address">
+                          <template slot="label">
+                            <span>地址</span>
+                            <span>>></span>
+                            <el-button :disabled="btnType == 'look'" type="text" @click="changeAddress">更换地址</el-button>
+                          </template>
+                          <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'"
+                            type="textarea" maxlength="50" :rows="2" />
+                        </el-form-item>
+                      </el-col>
+                      <!-- <el-col :sm="12" :xs="24" v-if="btnType == 'look'">
+                    <el-form-item label="驳回理由" prop="reasonRejection">
+                      <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" :disabled="btnType == 'look'"
+                        type="textarea" maxlength="200" :rows="2" />
+                    </el-form-item>
+                  </el-col> -->
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' || btnType == 'qrsh'" type="textarea" maxlength="200"
+                            :rows="2" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                  </el-form>
+                </el-collapse-item>
+                <el-collapse-item title="产品信息" name="productInfo">
+
+
+                  <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
+
+                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                      icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
+                    <el-button type="text" style="margin-right:8px;margin-left:8px ; font-size:14px!important"
+                      icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
+                  </div>
+                  <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                    <JNPF-table ref="product" :data="dataFormTwo.data" @selection-change="handeleProductInfoData"
+                      fixedNo hasC v-loading="tableloading">
+
+
+
+                      <el-table-column prop="customerProductNo" label="客户料号" width="160" show-overflow-tooltip
+                        key="166">
+                      </el-table-column>
+
+                      <el-table-column prop="productDrawingNo" label="品名规格" width="290" key="3" show-overflow-tooltip>
+                      </el-table-column>
+
+                      <el-table-column prop="mainUnit" label="单位" width="80" key="13" show-overflow-tooltip>
+                      </el-table-column>
+                      <el-table-column prop="ordersNum" label="订单数量" width="120" key="4"
+                        show-overflow-tooltip></el-table-column>
+                      <el-table-column prop="waitDeliverNum" label="待发货数量" v-if="btnType != 'look'" width="120" key="6"
+                        show-overflow-tooltip>
+                      </el-table-column>
+                      <el-table-column prop="deliveryQuantity" label="发货数量" width="170"
+                        v-if="!dataForm.exchangeGoodsFlag" key="21">
+                        <template slot="header">
+                          <span class="required">*</span>发货数量
+                        </template>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryQuantity'"
+                            :rules='productRules.deliveryQuantity'>
+                            <el-input v-model="scope.row.deliveryQuantity" placeholder="请输入发货数量"
+                              :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="11"
+                              @input="watchnums(scope.row, scope.$index)" style="width: 145px;">
+                            </el-input>
+                          </el-form-item>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-input v-model="scope.row.remark" placeholder="请输入备注"
+                            :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="deliveryDate" label="交货日期" width="160" />
+                      <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" />
+                      <el-table-column prop="accuracyLevel" label="精度等级" width="160" />
+                      <el-table-column prop="vibrationLevel" label="振动等级" width="160" />
+                      <el-table-column prop="oil" label="油脂" width="160" />
+                      <el-table-column prop="oilQuantity" label="油脂量" width="160" />
+                      <el-table-column prop="clearance" label="游隙" width="160" />
+                      <el-table-column prop="packagingMethod" label="包装方式" width="160" />
+                      <el-table-column prop="specialRequire" label="特殊要求" width="160" />
+                      <el-table-column prop="orderNo" label="订单号" width="160" />
+                      <el-table-column prop="workOrderNo" label="工作令号" width="160" />
+                      <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
+                        <template slot-scope="scope">
+                          <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                        </template>
+                      </el-table-column>
+                    </JNPF-table>
+                    <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
+                      <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
+                      <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">总待发货数量：{{
+                        totalWaitDeliverNum }}</span>
+                      <span style="font-weight:500;margin:0 10px">总发货数量：{{ totalDeliveryQuantity }}</span>
+                    </div>
+                  </el-form>
+                </el-collapse-item>
+          </el-collapse>
         </div>
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
           :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
@@ -397,14 +603,6 @@
 </template>
 
 <script>
-import {
-  editPartner, addPartner,
-  getCounryData, checkCode
-} from '@/api/basicData/index'
-import {
-  getProvinceList,
-} from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
@@ -412,10 +610,14 @@ import { getcategoryTrees, getcooperativeProduct, getOrderDetail, getsaleOrderDe
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import changeAddress from "./changeAddress.vue"
-// import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
+  mixins: [busFlow],
   components: {
-    changeAddress
+    changeAddress,Process , recordList
   },
   data() {
     return {
@@ -637,7 +839,8 @@ export default {
         delivery: 'deliver_goods',
         // shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false,
       },
       defaultAddress: "",
       parentId: '',
@@ -695,6 +898,11 @@ export default {
 
       },
       selectArr: [],
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   computed: {
@@ -1243,7 +1451,8 @@ export default {
     // 切换table
     handleClick(tab, event) {
     },
-    init(id, btnType, data) {
+    init(id, btnType,approvalFlag, data) {
+      this.approvalFlag = approvalFlag
       if (data && data.length) {
         // this.seleceCustomer(data[0])
         data.forEach(item => {
@@ -1312,6 +1521,8 @@ export default {
 
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
+             // 流程信息和流转记录
+             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           }
 
         })
@@ -1334,6 +1545,7 @@ export default {
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.deliverDate = formattedDate;
         this.fetchData("SSDH", true)
+        this.getBusInfo()
       }
       this.formLoading = false
 
@@ -1440,7 +1652,8 @@ export default {
             attachmentList: this.datafilelist,
             notice: this.dataForm,
             noticeLineList: [],
-            sourceNoticeList: this.btnType == 'add' ? this.dataFormTwo.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormTwo.data
+            sourceNoticeList: this.btnType == 'add' ? this.dataFormTwo.data.map(item => { return { ordersId: item.ordersId, cooperativePartnerId: item.cooperativePartnerId, returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '' } }) : this.dataFormTwo.data,
+            flowData:this.flowData
           }
           this.dataFormTwo.data.forEach((item, index) => {
             let dep1 = {
@@ -1594,7 +1807,54 @@ export default {
           }
         }
       })
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b026').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
+        }
+      }).catch(()=>{})
+    },    
   }
 }
 </script>

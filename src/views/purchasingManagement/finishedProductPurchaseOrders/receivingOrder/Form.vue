@@ -289,85 +289,7 @@
 
 
             </el-tab-pane>
-            <el-tab-pane label="进度跟踪" name="schedule" v-if="type === 'look'">
-              <el-row class="JNPF-common-search-box" :gutter="16">
-                <el-form @submit.native.prevent>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productCode" placeholder="请输入产品编码" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productName" placeholder="请输入产品名称" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="4">
-                    <el-form-item>
-                      <el-input v-model.trim="scheduleForm.productDrawingNo" placeholder="请输入产品图号" clearable
-                        @keyup.enter.native="searchDetail()" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
-                        {{ $t('common.search') }}</el-button>
-                      <el-button size="mini" icon="el-icon-refresh-right" @click="resetDetail()">{{
-                        $t('common.reset') }}
-                      </el-button>
-                      <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
-                    </el-form-item>
-                  </el-col>
-                </el-form>
-              </el-row>
-              <JNPF-table :partentOrChild="'child'" v-loading="formLoading" :data="scheduleData" custom-column
-                ref="scheduleRef">
-                <el-table-column prop="productCode" label="产品编码" min-width="160" />
-                <el-table-column prop="productName" label="产品名称" min-width="160" />
-                <el-table-column prop="productDrawingNo" label="产品图号" min-width="180" />
-                <el-table-column prop="mainUnit" label="单位(主)" min-width="140" />
-                <el-table-column prop="purchaseQuantity" label="采购数量(主)" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.purchaseQuantity ? scope.row.purchaseQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="requiredReceivedQuantity" label="待入库数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.requiredReceivedQuantity ? scope.row.requiredReceivedQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="receiptQuantity" label="已入库数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.receiptQuantity ? scope.row.receiptQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="schedule" label="收货进度" min-width="160">
-                  <template slot-scope="scope">
-                    <el-progress
-                      :percentage="Number((scope.row.receiptQuantity / scope.row.purchaseQuantity * 100).toFixed(2))"></el-progress>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="receivingStatus" label="收货状态" width="130" align="center">
-                  <template slot-scope="scope">
-                    <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag> </div>
-                    <div v-if="scope.row.receivingStatus == 'received'"><el-tag type="success">已完成</el-tag></div>
-                    <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="returnQuantity" label="已退货数量" min-width="140">
-                  <template slot-scope="scope">
-                    <div>{{ scope.row.returnQuantity ? scope.row.returnQuantity : 0 }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="deliveryDate" label="交货日期" min-width="180" />
-
-              </JNPF-table>
-              <pagination :total="total" :page.sync="scheduleForm.pageNum" :background="background"
-                :limit.sync="scheduleForm.pageSize" @pagination="initData()" />
-              <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-            </el-tab-pane>
+        
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
@@ -699,9 +621,9 @@ export default {
 
                 this.busNodeConfig.childNode = data
                 this.workVisible = true
-                // this.$nextTick(() => {
-                //   this.$refs.workflowRef.initData('busing', this.btnType)
-                // })
+                this.$nextTick(() => {
+                  this.$refs.workflowRef.initData('busing', this.btnType)
+                })
               }
               if (this.type == 'look') {
                 console.log(this.approvalForm, '++++++++++');
@@ -901,12 +823,7 @@ export default {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
       console.log(this.scheduleForm, '参数');
-      orderSchedule(this.scheduleForm).then(res => {
-        console.log(res, '订单跟踪');
-        this.scheduleData = res.data.records
-        this.total = res.data.total
-        this.formLoading = false
-      })
+
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

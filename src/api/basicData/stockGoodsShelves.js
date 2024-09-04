@@ -10,6 +10,16 @@ export function addStockGoodsShelves(data) {
     data
   })
 }
+
+// 批量新增
+export function addBatchStockGoodsShelves(data) {
+  return request({
+    url: `/api/wms/stockGoodsShelves/add/batch`,
+    method: 'post',
+    data
+  })
+}
+
 // 详情
 
 export function detailProductionResourceData(id) {

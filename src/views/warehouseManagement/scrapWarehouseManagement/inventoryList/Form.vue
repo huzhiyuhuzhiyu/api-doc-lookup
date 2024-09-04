@@ -921,21 +921,21 @@ export default {
           { label: "直接入库", value: "inbound_other" },
           { label: "直接出库", value: "outbound_other" },
         ]
-      }else{
-        this.sourceTypeList=[ //业务类型
-        { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        // { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        // { label: "外协退货", value: "outbound_external" },
-        { label: "直接入库", value: "inbound_other" },
-        { label: "直接出库", value: "outbound_other" },
-      ]
+      } else {
+        this.sourceTypeList = [ //业务类型
+          { label: "销售发货", value: "outbound_sale_send" },
+          { label: "销售退货", value: "inbound_sale_return" },
+          { label: "采购收货", value: "inbound_purchase" },
+          { label: "采购退货", value: "outbound_purchase" },
+          { label: "生产领料", value: "outbound_pick_out" },
+          { label: "生产退料", value: "inbound_return_materials" },
+          { label: "外协发料", value: "outbound_external_send" },
+          // { label: "外协退料", value: "inbound_external_return" },
+          { label: "外协收货", value: "inbound_external" },
+          // { label: "外协退货", value: "outbound_external" },
+          { label: "直接入库", value: "inbound_other" },
+          { label: "直接出库", value: "outbound_other" },
+        ]
       }
     },
     // 继续修改

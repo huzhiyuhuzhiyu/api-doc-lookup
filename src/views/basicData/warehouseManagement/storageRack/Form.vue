@@ -199,11 +199,9 @@ export default {
   },
   methods: {
     init(row) {
-      console.log(row, 'oooooooo')
       this.visible = true
       this.formLoading = true
       this.btnType = row.btntype
-      console.log(this.btnType, 'bttttttt')
 
       // if (row.id) {
       //   this.dataForm.id = id
@@ -248,7 +246,12 @@ export default {
         this.isdisabled = false
         this.title = '编辑库位'
         this.tableFlag = false
-        console.log(row, 'id')
+
+        this.sleeveItems.forEach((tc) => {
+          if (tc.prop == 'code') {
+            tc.itemDisabled = true
+          }
+        })
         if (row.id) {
           this.dataForm.id = row.id
 
@@ -266,7 +269,6 @@ export default {
           })
         }
       } else if (this.btnType == 'add') {
-        console.log('库区', row)
         this.title = '新建库位'
         this.isdisabled = false
         this.editFlag = false
@@ -285,16 +287,17 @@ export default {
       let submitFlag = true // 提交可行性判断
 
       // 校验tabs渲染表单
+      this.stockLimitsAuthorities.forEach((item, index) => {
+        if (!item.name) {
+          submitFlag = false
+          return this.$message.error(`第${index + 1}行库区名称为空`)
+        }
+        if (!item.code) {
+          submitFlag = false
+          return this.$message.error(`第${index + 1}行库区编码为空`)
+        }
+      })
 
-      // let form = this.$refs['dataForm'].$refs.main
-      // let valid_1 = await form.validate().catch(err => false)
-
-      console.log(this.$refs['sleeveForm'], 'this.$refs')
-      if (!valid_1 && submitFlag) {
-        submitFlag = false
-        this.activeName = this.tabs[i].tabCode
-        this.jnpf.focusErrValidItem(form.fields)
-      }
       // for (let i = 0; i < this.$refs['dataForm'].length; i++) {
       //   const item = this.$refs['dataForm'][i]
       //   const form = item.$refs.main

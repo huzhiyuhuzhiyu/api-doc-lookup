@@ -67,7 +67,8 @@
             :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="updateHandle(scope.row, 'look')">{{ scope.row.code }}</el-link>
+                <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">{{ scope.row.code
+                  }}</el-link>
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />

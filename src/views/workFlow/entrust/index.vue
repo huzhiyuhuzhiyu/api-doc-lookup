@@ -87,6 +87,7 @@
 import { FlowDelegateList, Delete, getFlowDelegateList } from '@/api/workFlow/FlowDelegate'
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getChildrenList } from '@/api/systemData/dictionary'
 export default {
   name: 'workFlow-entrust',
   components: { Form,SuperQuery },
@@ -160,9 +161,15 @@ export default {
   },
   methods: {
     getDictionaryData(type) {
-      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
-        this.categoryList = res
-      })
+      if (type === 'businessType'){
+        getChildrenList('600602988351917829').then(res=>{
+          this.categoryList = res.data
+        })
+      }else{
+        this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
+          this.categoryList = res
+        })
+      }
     },
     changeCategory(item, index) {
       this.listQuery.flowCategory = item.enCode

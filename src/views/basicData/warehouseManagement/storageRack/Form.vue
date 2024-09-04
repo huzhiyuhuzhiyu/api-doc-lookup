@@ -70,7 +70,21 @@ export default {
           prop: 'name',
           label: '库位名称',
           type: 'input',
-          itemRules: [{ required: true, message: '请输入库位编码', trigger: 'blur' }]
+          itemRules: [
+            { required: true, message: '库位名称不能为空', trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '不能为空',
+                  (errMsg, index) => {
+                    this.$message.error(`基础信息第${index + 1}，库位名称${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ]
         },
         {
           prop: 'code',
@@ -271,18 +285,28 @@ export default {
       let submitFlag = true // 提交可行性判断
 
       // 校验tabs渲染表单
-      for (let i = 0; i < this.$refs['dataForm'].length; i++) {
-        const item = this.$refs['dataForm'][i]
-        const form = item.$refs.main
 
-        const valid_1 = await form.validate().catch(() => false)
+      // let form = this.$refs['dataForm'].$refs.main
+      // let valid_1 = await form.validate().catch(err => false)
 
-        if (!valid_1 && submitFlag) {
-          submitFlag = false
-          this.activeName = this.tabs[i].tabCode
-          this.jnpf.focusErrValidItem(form.fields)
-        }
+      console.log(this.$refs['sleeveForm'], 'this.$refs')
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.activeName = this.tabs[i].tabCode
+        this.jnpf.focusErrValidItem(form.fields)
       }
+      // for (let i = 0; i < this.$refs['dataForm'].length; i++) {
+      //   const item = this.$refs['dataForm'][i]
+      //   const form = item.$refs.main
+
+      //   const valid_1 = await form.validate().catch(() => false)
+
+      //   if (!valid_1 && submitFlag) {
+      //     submitFlag = false
+      //     this.activeName = this.tabs[i].tabCode
+      //     this.jnpf.focusErrValidItem(form.fields)
+      //   }
+      // }
 
       // 判断条件后发送请求
       if (submitFlag) {

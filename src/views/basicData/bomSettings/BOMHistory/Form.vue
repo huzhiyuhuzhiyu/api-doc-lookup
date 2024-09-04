@@ -129,7 +129,7 @@
                           </svg></div>
                         <div class="el-empty__description">
                           <p>暂无流程信息</p>
-                        </div><!---->
+                        </div>
                       </div>
                     </span>
                   </div>
@@ -346,7 +346,7 @@ export default {
     })
   },
   methods: {
-    async init(productId, btnType, approvalStatus, nodeData) {
+    async init(id, btnType, approvalStatus, nodeData) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
@@ -354,12 +354,12 @@ export default {
       this.approvalStatus = approvalStatus ? approvalStatus.approvalStatus : ''
       this.statusFlag = this.approvalStatus == 'rebut' || this.approvalStatus == 'withdrawn' || this.approvalStatus == 'ing' ? true : false
       let loadTotal = 0
-      if (productId && this.btnType != 'add' && !this.statusFlag) {
+      if (id && this.btnType != 'add' && !this.statusFlag) {
         console.log('12121212')
-        this.firstId = this.firstId ? this.firstId : productId
+        this.firstId = this.firstId ? this.firstId : id
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         // 获取详情
-        let bomId = (await getBomByProductId(productId)).data
+        let bomId = id
         detailBomData(bomId).then(res => {
           this.autoCode = res.data.bom.code
           this.dataForm = JSON.parse(JSON.stringify(res.data.bom))

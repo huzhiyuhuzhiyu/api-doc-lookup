@@ -41,7 +41,7 @@
                 </el-form-item>
               </el-col>
 
-              <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end" v-if="listQuery.businessFlag">
+              <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;line-height: 34px;" v-if="listQuery.businessFlag">
                 <el-tooltip content="高级查询" placement="top">
                   <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px"
                     @click="superQueryVisible = true" />

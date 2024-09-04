@@ -1,10 +1,15 @@
 <template>
   <div class="JNPF-common-layout">
     <div class="JNPF-common-layout-center JNPF-flex-main">
-      <el-radio-group v-model="activeName" style="margin-bottom:5px;background-color:#fff;padding-left:8px">
-        <el-radio-button label="all" style="margin:5px 0">全部</el-radio-button>
-        <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
-      </el-radio-group>
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
+        <el-radio-group v-model="activeName" style="background-color:#fff;">
+          <el-radio-button label="all" style="margin:3px 0">全部</el-radio-button>
+          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+            :key="item.enCode" :label="item.enCode">{{ item.fullName }}
+          </el-radio-button>
+        </el-radio-group>
+      </div>
       <div class="JNPF-common-layout-center" v-show="activeName">
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
           <el-form @submit.native.prevent>

@@ -7,51 +7,56 @@
       </el-tabs>
       <div class="JNPF-common-layout-center" v-show="activeName">
         <div class="tag-group JNPF-common-search-box treeBox_bot"
-          style="display:flex;align-items:center;padding-left: 10px;">
-          <el-radio-group v-model="listQuery.flowCategory" style="margin-bottom:5px;background-color:#fff;">
-            <el-radio-button label="" style="margin:5px 0">全部</el-radio-button>
+          style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 0px 0">
+          <el-radio-group v-model="listQuery.flowCategory" style="background-color:#fff;">
+            <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
             <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
           </el-radio-group>
-          <!-- <span class="tag-group__title text" :style="{ 'minWidth' : listQuery.businessFlag ? '112px' : '80px'}">{{ activeName === 'system' ? '业务流程分类：' : '流程分类：'}}</span>
-          <div style="display:flex;flex-wrap: wrap;">
-            <el-tag @click="changeCategory(item, index)" v-for="(item, index) in categoryList" :key="item.id"
-              :type="index === categoryIndex ? '' : 'info'" effect="plain"
-              style="height:26px;line-height:25px;margin:5px 0 5px 10px;cursor: pointer;">
-              {{ item.fullName }}
-            </el-tag>
-          </div> -->
         </div>
-        <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
-          <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
-                  <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
-                  end-placeholder="流程结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable
-                  :editable="false">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
+        <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16" style="margin-top:5px">
+            <el-form @submit.native.prevent>
+              <el-col :span="4">
+                <el-form-item>
+                  <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
+                    <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
+                    end-placeholder="流程结束日期" :picker-options="pickerOptions" value-format="yyyy-MM-dd" clearable
+                    :editable="false">
+                  </el-date-picker>
+                </el-form-item>
+              </el-col>
+  
+              <el-col :span="6">
+                <el-form-item>
+                  <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                    {{ $t('common.search') }}</el-button>
+                  <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{ $t('common.reset') }}
+                  </el-button>
+                </el-form-item>
+              </el-col>
 
-            <el-col :span="6">
-              <el-form-item>
-                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="refresh()">{{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
-          </el-form>
+              <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;line-height: 34px;" v-if="listQuery.businessFlag">
+                <el-tooltip content="高级查询" placement="top">
+                  <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px"
+                    @click="superQueryVisible = true" />
+                </el-tooltip>
+                <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                  <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="columnSetFun()" />
+                </el-tooltip>
+                <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                  <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" style="margin-left:12px" :underline="false" @click="initData()" />
+                </el-tooltip>
+              </el-col>
+            </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head"
+          <div class="JNPF-common-head" v-if="!listQuery.businessFlag"
             :style="{ 'justify-content': activeName === 'system' ? 'flex-end' : 'space-between' }">
             <topOpts @add="addFlow()" addText="新建流程" v-show="activeName === 'custom'"></topOpts>
             <div class="JNPF-common-head-right">

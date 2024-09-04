@@ -27,7 +27,7 @@ export default () => [
         type: 'input',
         itemRules: [{ required: true, trigger: 'blur' }, { validator: formValidate('enCode'), trigger: 'blur' }],
         render: true,
-        itemDisabled: false
+        // itemDisabled: false
       },
       {
         prop: 'name',

@@ -13,19 +13,18 @@
       <div class="main" v-loading="formLoading">
         <!-- 使用对象结合自定义组件渲染内容 -->
         <el-tabs v-model="activeName">
-          <div
-            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-            <h5>基本信息</h5>
-          </div>
           <!-- 普通属性 -->
           <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
+                <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm"
+                  :tableItems="sleeveItems" :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
+                <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+                  :openMode="openMode" />
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
-
-          <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-            :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-          <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-            :openMode="openMode" />
         </el-tabs>
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
@@ -51,6 +50,7 @@ export default {
       datafilelist: [],
       getWarehouseList,
       activeName: 'basicInfo',
+      activeNames: ['productInfo', 'basicInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -66,13 +66,18 @@ export default {
         category: 'warehouse'
       },
       sleeveItems: [
-        { prop: 'name', label: '库区名称', type: 'input' },
+        {
+          prop: 'name',
+          label: '库位名称',
+          type: 'input',
+          itemRules: [{ required: true, message: '请输入库位编码', trigger: 'blur' }]
+        },
         {
           prop: 'code',
-          label: '库区编码',
+          label: '库位编码',
           type: 'input',
           itemRules: [
-            { required: true, message: '请输入仓库编码', trigger: 'blur' },
+            { required: true, message: '请输入库位编码', trigger: 'blur' },
             {
               validator: (rule, value, callback) => {
                 if (this.autoCode == value) {
@@ -171,7 +176,7 @@ export default {
   },
   computed: {
     openMode() {
-      return this.title === '新建库区' || '新建货架' || '新建货位'
+      return this.title === '新建库区' || '新建货架' || '新建库位'
         ? '新建'
         : this.title === '编辑库区'
           ? '编辑'
@@ -188,7 +193,7 @@ export default {
 
       // if (row.id) {
       //   this.dataForm.id = id
-      //   // this.title = btnType ? '查看货架/货位' : '编辑货架/货位'
+      //   // this.title = btnType ? '查看货架/库位' : '编辑货架/库位'
       //   // 获取详情
       //   detailProductionResourceData(id).then((res) => {
       //     // 记录编码和图号，用于校验唯一性
@@ -206,7 +211,6 @@ export default {
       // }
 
       if (this.btnType == 'areaLook') {
-    
         this.isdisabled = false
         this.title = '查看库区'
         this.tableFlag = false
@@ -227,9 +231,8 @@ export default {
           })
         }
       } else if (this.btnType == 'edit') {
-    
         this.isdisabled = false
-        this.title = '编辑货位'
+        this.title = '编辑库位'
         this.tableFlag = false
         console.log(row, 'id')
         if (row.id) {
@@ -250,23 +253,20 @@ export default {
         }
       } else if (this.btnType == 'add') {
         console.log('库区', row)
-        this.title = '新建货位'
+        this.title = '新建库位'
         this.isdisabled = false
         this.editFlag = false
         this.dataForm.type = 'normal'
         this.dataForm.warehouseName = row.warehouseName
         this.dataForm.warehouseId = row.warehouseId
 
-
-
         this.formLoading = false
 
         // this.$forceUpdate()
       }
-
     },
     async handleConfirm() {
-      if (this.stockLimitsAuthorities.length == 0) return this.$message.error(`请添加${this.title.slice(-2)}`);
+      if (this.stockLimitsAuthorities.length == 0) return this.$message.error(`请添加${this.title.slice(-2)}`)
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
 
@@ -286,13 +286,12 @@ export default {
 
       // 判断条件后发送请求
       if (submitFlag) {
-        if (this.title == '新建货位') {
+        if (this.title == '新建库位') {
           for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
             this.stockLimitsAuthorities[i].warehouseId = this.dataForm.warehouseId
             this.stockLimitsAuthorities[i].category = 'location'
 
             this.stockLimitsAuthorities[i].parentId = this.dataForm.warehouseId
-
           }
         }
 
@@ -326,7 +325,7 @@ export default {
               this.btnLoading = false
             })
         } else {
-          addStockGoodsShelves(obj)
+          addStockGoodsShelves(this.dataForm)
             .then((res) => {
               let msg = res.msg
               if (res.msg === 'Success') {
@@ -364,7 +363,6 @@ export default {
       this.dataForm.type = data ? data[0].all.type : ''
       this.requestObj5.warehouseId = data[0].id
     },
-
 
     // 对应套筒新增行
     addSleeveList() {
@@ -421,7 +419,7 @@ export default {
 
 ::v-deep .el-tabs__content {
   height: calc(100% - 40px);
-  padding: 0px 20px;
+  // padding: 0px 20px;
 }
 
 ::v-deep .JNPF-common-page-header {
@@ -439,5 +437,40 @@ export default {
 .required {
   color: red;
   margin-right: 4px;
+}
+
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
+}
+
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
+}
+
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 </style>

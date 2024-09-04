@@ -61,7 +61,16 @@
           </el-table-column>
           <el-table-column prop="businessType" label="业务类型" sortable="custom" width="120">
             <template slot-scope="scope">
-            
+              <div v-if="scope.row.businessType == 'outbound_sale_send'">销售发货</div>
+              <div v-if="scope.row.businessType == 'inbound_sale_return'">销售退货</div>
+              <div v-if="scope.row.businessType == 'inbound_purchase'">采购收货</div>
+              <div v-if="scope.row.businessType == 'outbound_purchase'">采购退货</div>
+              <div v-if="scope.row.businessType == 'outbound_pick_out'">生产领料</div>
+              <div v-if="scope.row.businessType == 'inbound_return_materials'">生产退料</div>
+              <div v-if="scope.row.businessType == 'outbound_external_send'">外协发料</div>
+              <div v-if="scope.row.businessType == 'inbound_external_return'">外协退料</div>
+              <div v-if="scope.row.businessType == 'inbound_external'">外协收货</div>
+              <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
               <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
             </template> 

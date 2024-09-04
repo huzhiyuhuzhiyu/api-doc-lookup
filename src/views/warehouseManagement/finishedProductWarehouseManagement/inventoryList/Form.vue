@@ -66,20 +66,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="jyFlag">
-                        <el-form-item label="检验标志" prop="inspectionResults">
-                          <el-select v-model="dataForm.inspectionResults" placeholder="检验结果" clearable
-                            style="width: 100%;" :disabled="btnType == 'look'" filterable>
-                            <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-
-
-
-
-
-                        </el-form-item>
-                      </el-col>
+                     
 
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
@@ -108,7 +95,7 @@
 
                   <el-table ref="product" :data="productData" :fixedNO="true" @selection-change="handeleProductInfoData"
                     border :key="165" style="width: 100%;">
-                    <el-table-column type="selection" width="55" fixed="left" :key="2">
+                    <el-table-column type="selection" width="55" fixed="left" :key="2" v-if="btnType!='look'">
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212">
@@ -159,7 +146,7 @@
                     <el-table-column prop="taxRate" label="税率(%)" width="120" :key="171"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="120" :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120" :key="125"></el-table-column>
-                    <el-table-column prop="originalBatchNumber" label="原产品批次号" width="140" :key="1255"
+                    <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
                       v-if="dataForm.businessType == 'inbound_sale_return'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
@@ -388,9 +375,9 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
+        // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" },
+        // { label: "外协退货", value: "outbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
       ],

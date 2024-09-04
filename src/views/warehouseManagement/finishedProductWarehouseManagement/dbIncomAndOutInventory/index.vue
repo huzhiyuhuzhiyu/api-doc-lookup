@@ -109,7 +109,7 @@
               <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item>
               <el-date-picker v-model="wxshDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
                 start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable>
@@ -184,7 +184,7 @@
         <!-- 销售发货通知单列表 -->
         <JNPF-table v-loading="listLoading" :data="fhTableList" v-show="categoryType == 'outbound_sale_send'"
           custom-column ref="fhtabForm" :fixedNo="true" :setColumnDisplayList="fhcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
@@ -193,12 +193,12 @@
             </template>
           </el-table-column>
           <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
-          <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="发货日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-          <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
+          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="发货日期" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="recipient" label="收件人" min-width="140" sortable="custom" />
+          <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
 
-          <el-table-column prop="delivery" label="发货方式" width="160">
+          <el-table-column prop="delivery" label="发货方式"min-width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.delivery == 'deliver_goods'">
                 <span>送货</span>
@@ -217,12 +217,12 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="countryName" label="国家" width="160" />
+          <el-table-column prop="countryName" label="国家"min-width="140" />
           <el-table-column prop="provinceName" label="省" width="160" />
           <el-table-column prop="cityName" label="市" width="160" />
           <el-table-column prop="areaName" label="区" width="160" />
           <el-table-column prop="address" label="地址" min-width="300" />
-          <el-table-column prop="exchangeGoodsFlag" label="发货标识" width="120" sortable="custom">
+          <el-table-column prop="exchangeGoodsFlag" label="发货标识" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.exchangeGoodsFlag">
                 换货发货
@@ -248,7 +248,7 @@
         <!-- 销售退货货通知单列表 -->
         <JNPF-table v-loading="listLoading" :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
           custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'THREFForm', thFormVisible = true)">{{
@@ -256,10 +256,10 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
+          <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
+          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="exchangeGoodsFlag" label="退货标识" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.exchangeGoodsFlag">
                 换货
@@ -297,7 +297,7 @@
         <JNPF-table v-loading="listLoading" :data="cgTableList"
           v-show="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'" custom-column
           ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
@@ -309,11 +309,11 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-          <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom" v-if="categoryType == 'outbound_purchase'"></el-table-column>
-          <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom" v-if="categoryType == 'inbound_purchase'"></el-table-column>
+          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom" v-if="categoryType == 'outbound_purchase'"></el-table-column>
+          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom" v-if="categoryType == 'inbound_purchase'"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -334,7 +334,7 @@
         <!-- 外协收货 -->
         <JNPF-table v-loading="listLoading" :data="wxshTableList" v-if="categoryType == 'inbound_external'"
           custom-column ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <!-- <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
@@ -347,9 +347,9 @@
             </template>
           </el-table-column>
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-          <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
-          <el-table-column prop="salesman" label="操作员" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="收货日期" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
+          <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -369,7 +369,7 @@
         <!-- 外协发料 -->
         <JNPF-table v-loading="listLoading" :data="wxflTableList" v-if="categoryType == 'outbound_external_send'"
           custom-column ref="wxfltabForm" :fixedNo="true"  :setColumnDisplayList="wxflcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">{{
@@ -377,12 +377,12 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+          <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
-          <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-          <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
-          <el-table-column prop="delivery" label="发料方式" width="160" sortable="custom">
+          <el-table-column prop="deliverDate" label="发料日期" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="recipient" label="收件人" min-width="140" sortable="custom" />
+          <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
+          <el-table-column prop="delivery" label="发料方式" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.delivery == 'deliver_goods'">
                 <span>送货</span>
@@ -687,6 +687,7 @@ export default {
       if (this.categoryType == 'inbound_sale_return') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'back'
+        this.$set(this.fhForm,'inspectionStatus','inspected')
         this.fhForm.classAttribute=this.classAttribute
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
@@ -739,7 +740,6 @@ export default {
       if (this.categoryType == 'inbound_external') {
         this.listLoading = true
         this.$set(this.wxshForm,'receiptInboundFlag',1)
-        this.$set(this.wxshForm,'inspectionStatus','inspected')
 
          
         this.wxshForm.classAttribute=this.classAttribute

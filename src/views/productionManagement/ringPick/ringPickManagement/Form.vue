@@ -19,7 +19,7 @@
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="通知单信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -187,7 +187,7 @@ export default {
         receiveType: "",
         classAttribute: "semi_finished",
         documentStatus: "",
-        notifyType: "picking",
+        notifyType: "back",
         operationDate: "",
         personId: "",
         productionOrderId: "",

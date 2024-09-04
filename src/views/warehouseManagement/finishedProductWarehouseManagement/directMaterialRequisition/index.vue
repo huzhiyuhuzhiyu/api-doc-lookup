@@ -8,14 +8,14 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="form.orderNo" @keyup.enter.native="search()" placeholder="调拨单号" clearable />
+                <el-input v-model="form.orderNo" @keyup.enter.native="search()" placeholder="领料单号" clearable />
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="pickingDateArr" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                  start-placeholder="调拨开始日期" end-placeholder="调拨结束日期" clearable>
+                  start-placeholder="领料开始日期" end-placeholder="领料结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -61,14 +61,14 @@
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
             :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="调拨单号" min-width="180" sortable="custom"> 
+            <el-table-column prop="orderNo" label="领料单号" min-width="180" sortable="custom"> 
               <template slot-scope="scope">
               <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
                 scope.row.orderNo
               }}</el-link>
             </template>
             </el-table-column>
-            <el-table-column prop="pickingDate" label="调拨日期" min-width="160" sortable="custom" />
+            <el-table-column prop="pickingDate" label="领料日期" min-width="160" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="160" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" min-width="160" sortable="custom">
               <template slot-scope="scope">
@@ -172,12 +172,12 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "调拨单号",
+          label: "领料单号",
           type: 'input'
         },
         {
           prop: 'deliverDate',
-          label: '调拨日期',
+          label: '领料日期',
           type: 'daterange',
           valueFormat: "yyyy-MM-dd",
           startPlaceholder: '开始日期',
@@ -417,8 +417,8 @@ export default {
       const targetListQuery = this.form
       let _data = {
         ...targetListQuery,
-        exportType: '1005',
-        exportName: '销售订单明细',
+        exportType: '1086',
+        exportName: '直接领料',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

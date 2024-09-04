@@ -150,8 +150,11 @@
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
                     <el-table-column prop="availableBatchNumber" label="批次可用数量" width="140" :key="7"
                       v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
-
-                    <el-table-column prop="num" label="数量" width="140" :key="77">
+                       
+                      <el-table-column prop="undeliveredQuantity" :label="inOroundTitle" width="140" :key="777" v-if="dataForm.businessType=='outbound_sale_send'||dataForm.businessType=='inbound_sale_return'||dataForm.businessType=='outbound_external_send'||dataForm.businessType=='inbound_external_return'"> </el-table-column>
+                      <el-table-column prop="requiredReceivedQuantity" :label="inOroundTitle" width="140" :key="777" v-if="dataForm.businessType=='inbound_purchase'||dataForm.businessType=='outbound_purchase'||dataForm.businessType=='inbound_external'||dataForm.businessType=='outbound_external'"> </el-table-column>
+                    
+                      <el-table-column prop="num" label="数量" width="140" :key="77">
                       <template slot="header">
                         <span class="required">*</span>{{ numTitle }}
                       </template>
@@ -168,7 +171,7 @@
                       v-if="dataForm.businessType != 'outbound_external_send'" :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120"
                       v-if="dataForm.businessType != 'outbound_external_send'" :key="125"></el-table-column>
-                    <el-table-column prop="originalBatchNumber" label="原产品批次号" width="140" :key="1255"
+                    <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
                       v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_external'">
                       <template slot-scope="scope">
                         <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
@@ -472,6 +475,7 @@ export default {
       warehouseRequestObj:{
          type: 'normal', state: 'enable' 
       },
+      inOroundTitle:"",
       numTitle:"",
       batchNumVisible: false,
       wareHouseVisible: false,
@@ -1003,6 +1007,7 @@ export default {
         this.selectcustomerObj.type = 'customer'
         this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
         this.warehouseRequestObj.virtuallyFlag=false
+        this.warehouseRequestObj.type=""
       }
       if (businessType == 'inbound_purchase') {
         this.selectcustomerObj.type = 'supplier'
@@ -1033,7 +1038,8 @@ export default {
         this.dataForm.businessType == 'inbound_external_return' ||
         this.dataForm.businessType == 'inbound_external') {
         this.jyFlag = true
-        this.numTitle="待入库数量"
+        this.numTitle="入库数量"
+        this.inOroundTitle="待入库数量"
         if (this.btnType == 'edit') {
           this.fetchData("RKDH", false)
 
@@ -1045,7 +1051,8 @@ export default {
         this.title = '新建入库单'
       }
       if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
-        this.numTitle="待出库数量"
+        this.numTitle="出库数量"
+        this.inOroundTitle="待出库数量"
         this.jyFlag = false
         if (this.btnType == 'edit') {
           this.fetchData("CKDH", false)
@@ -1068,6 +1075,7 @@ export default {
               item.classAttribute = this.classAttribute
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
+              item.costPrice = item.price
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

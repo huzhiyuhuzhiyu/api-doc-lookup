@@ -58,15 +58,7 @@
                           placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="jyFlag">
-                      <el-form-item label="检验标志" prop="inspectionResults">
-                        <el-select v-model="dataForm.inspectionResults" placeholder="检验结果" clearable
-                          style="width: 100%;" filterable>
-                          <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
+                    
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">

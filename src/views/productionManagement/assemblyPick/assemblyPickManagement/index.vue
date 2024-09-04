@@ -175,8 +175,7 @@ export default {
           column: "create_time"
         }],
         classAttribute: "finish_product",
-        pickingStatus: "not_picked",
-        orderStatus: "normal",
+        pickingStatus: "not_finished",
         notifyType: 'picking',
       },
 

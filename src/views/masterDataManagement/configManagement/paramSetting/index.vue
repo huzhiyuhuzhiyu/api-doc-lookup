@@ -34,10 +34,10 @@ export default {
       productForm: {},
       formLoading: false,
       listQuery: {
-        pageSize: 1,    // 1是编码 0是财务
-        businessCode: "",//attachment——附件   warehouse——仓库   
+        pageSize: 1, // 1是编码 0是财务
+        businessCode: '' //attachment——附件   warehouse——仓库
       },
-      codeSetData: [],
+      codeSetData: []
     }
   },
   watch: {
@@ -48,16 +48,32 @@ export default {
       handler(newVal, oldVal) {
         //todo
 
-        this.tabs[0].tabContent.forEach(tc => {
+        this.tabs[0].tabContent.forEach((tc) => {
           tc.row.forEach((row, index) => {
-            if (row.prop == "configValue2") {
+            if (row.prop == 'configValue2') {
               if (newVal == '1') {
                 row.render = true
               } else {
                 row.render = false
               }
             }
+          })
+        })
+      }
+    },
+    'dataForm.collect_exceed_picking': {
+      handler(newVal, oldVal) {
+        //todo
 
+        this.tabs[0].tabContent.forEach((tc) => {
+          tc.row.forEach((row, index) => {
+            if (row.prop == 'collectValue') {
+              if (newVal == '1') {
+                row.render = true
+              } else {
+                row.render = false
+              }
+            }
           })
         })
       }
@@ -65,13 +81,10 @@ export default {
   },
   created() {
     this.initData()
-    this.tabs.forEach(tab => {
-      tab.tabContent.forEach(tc => {
-        tc.row.forEach(row => {
-
-          this.dataForm[row.prop] = row.value || ""; // 设置默认value
-
-
+    this.tabs.forEach((tab) => {
+      tab.tabContent.forEach((tc) => {
+        tc.row.forEach((row) => {
+          this.dataForm[row.prop] = row.value || '' // 设置默认value
         })
       })
     })
@@ -82,7 +95,6 @@ export default {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'produce'
         this.getData(0)
-
       } else if (this.activeName === 'warehouse') {
         this.listQuery.pageSize = -1
         this.listQuery.businessCode = 'warehouse'
@@ -106,76 +118,86 @@ export default {
     },
     getData(index) {
       this.formLoading = true
-      getBimBusinessSwitchConfigList(this.listQuery).then(res => {
-        this.formLoading = false
-        let data = Object.keys(res.data).map((key) => {
-          return { row: res.data[key] }
-        });
-        // 将接口中的value值赋值给tab
-        this.tabs[index].tabContent = this.tabs[index].tabContent.map(tab => {
-          tab.row.forEach(item => {
-            data.forEach(row => {
-              row.row.forEach(dataItem => {
-
-
-                if (item.prop === dataItem.configKey) {
-
-                  item.value = dataItem.configValue1;
-                  item.businessCode = dataItem.businessCode;
-                  item.id = dataItem.id
-                  item.change = this.switchChange
-                }
-                if (dataItem.configKey == 'work_exceed_report') {
-
-                  this.dataForm.configValue2 = dataItem.configValue2
-                  // this.$set(this.dataForm, 'configValue2', dataItem.configValue2)
-
-                }
+      getBimBusinessSwitchConfigList(this.listQuery)
+        .then((res) => {
+          this.formLoading = false
+          let data = Object.keys(res.data).map((key) => {
+            return { row: res.data[key] }
+          })
+          // 将接口中的value值赋值给tab
+          this.tabs[index].tabContent = this.tabs[index].tabContent.map((tab) => {
+            tab.row.forEach((item) => {
+              data.forEach((row) => {
+                row.row.forEach((dataItem) => {
+                  if (item.prop === dataItem.configKey) {
+                    item.value = dataItem.configValue1
+                    item.businessCode = dataItem.businessCode
+                    item.id = dataItem.id
+                    item.change = this.switchChange
+                  }
+                  if (dataItem.configKey == 'work_exceed_report') {
+                    this.dataForm.configValue2 = dataItem.configValue2
+                  } else if (dataItem.configKey == 'collect_exceed_picking') {
+                    this.dataForm.collectValue = dataItem.configValue2
+                  }
+                })
               })
             })
+            return tab
           })
-          return tab
-        });
-        this.tabs[index].tabContent.forEach(tc => {
-          tc.row.forEach((row, index) => {
-            if (row.prop == "configValue2") {
-              if (this.dataForm.work_exceed_report == '1') {
-                row.render = true
+          this.tabs[index].tabContent.forEach((tc) => {
+            tc.row.forEach((row, index) => {
+              if (row.prop == 'configValue2') {
+              } else if (row.prop == 'collectValue') {
               } else {
-                row.render = false
+                this.dataForm[row.prop] = row.value || '' // 设置默认value
               }
-            } else {
-              this.dataForm[row.prop] = row.value || ""; // 设置默认value
-            }
-
+            })
           })
         })
-      }).catch(() => this.formLoading = false);
+        .catch(() => (this.formLoading = false))
     },
     switchChange(e, item) {
-
+      console.log(item, 'iiiiii')
       // return
       let _data = []
-      let query = {
-        ...item,
-        configKey: item.prop,
-        configValue1: e,
-        configValue2: this.dataForm.configValue2
+      let query = {}
+      if (item.prop == 'work_exceed_report') {
+        query = {
+          ...item,
+          configKey: item.prop,
+          configValue1: e,
+          configValue2: this.dataForm.configValue2
+        }
+      } else if (item.prop == 'collect_exceed_picking') {
+        query = {
+          ...item,
+          configKey: item.prop,
+          configValue1: e,
+          configValue2: this.dataForm.collectValue
+        }
+      } else {
+        query = {
+          ...item,
+          configKey: item.prop,
+          configValue1: e
+        }
       }
 
       _data.push(query)
       this.formLoading = true
-      editBimBusinessData(_data).then(res => {
-        if (res.msg === 'success') {
-          this.formLoading = false
-          this.initData()
-        } else {
-          this.formLoading = false
-        }
-      }).catch(() => this.formLoading = false)
-    },
-  },
-
+      editBimBusinessData(_data)
+        .then((res) => {
+          if (res.msg === 'success') {
+            this.formLoading = false
+            this.initData()
+          } else {
+            this.formLoading = false
+          }
+        })
+        .catch(() => (this.formLoading = false))
+    }
+  }
 }
 </script>
 
@@ -186,9 +208,7 @@ export default {
 
   .el-scrollbar__wrap {
     height: 100%;
-
   }
-
 }
 
 ::v-deep .el-scrollbar__view {

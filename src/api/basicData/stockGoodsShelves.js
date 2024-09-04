@@ -5,7 +5,7 @@ import request from '@/utils/request'
 // 新增
 export function addStockGoodsShelves(data) {
   return request({
-    url: `/api/wms/stockGoodsShelves/add/batch`,
+    url: `/api/wms/stockGoodsShelves/add`,
     method: 'post',
     data
   })

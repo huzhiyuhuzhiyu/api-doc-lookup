@@ -84,7 +84,7 @@
           <el-table-column prop="goodsAllocationNum" label="库位数" width="100" /> -->
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" min-width="240" fixed="right">
+          <el-table-column label="操作" min-width="270" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
@@ -175,8 +175,9 @@ export default {
         { label: '正常仓库', value: 'normal' },
         { label: '中转仓库', value: 'temp' },
         { label: '不良品仓库', value: 'unqualified' },
-        { label: '报废', value: 'scrap' },
-        { label: '虚拟仓库', value: 'virtually' }
+        { label: '报废仓库', value: 'scrap' },
+        { label: '虚拟仓库', value: 'virtually' },
+        { label: '线边仓库', value: 'line_edge' }
       ],
       treeList: [],
       expands: true,

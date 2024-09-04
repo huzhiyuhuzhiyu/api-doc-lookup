@@ -107,7 +107,7 @@
 </template>
 
 <script>
-import { deleteStockGoodsShelves, getStockGoodsShelves, getListTree } from '@/api/basicData/stockGoodsShelves'
+import { deleteStockGoodsShelves, getStockGoodsShelves, getList } from '@/api/basicData/stockGoodsShelves'
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import moment from 'moment'
@@ -286,11 +286,11 @@ export default {
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
 
-      getListTree(this.tableQuery)
+      getList(this.tableQuery)
         .then((res) => {
           //
 
-          this.tableDataList = res.data
+          this.tableDataList = res.data.records
           this.tableDataList.forEach((item) => {
             // if (item.category == 'area') {
             //   item.category = '库区'
@@ -301,7 +301,7 @@ export default {
             // }
           })
 
-          if (this.tableDataList.length > 0) this.setTableIndex(this.tableDataList)
+          // if (this.tableDataList.length > 0) this.setTableIndex(this.tableDataList)
 
           this.total = res.data.total
           this.listLoading = false
@@ -389,9 +389,9 @@ export default {
     addOrUpdateHandle(row) {
       console.log(row, 'row')
       this.depFormVisible = true
-      if (row.category == 'location') {
-        row.btntype = 'edit'
-      }
+
+      row.btntype = 'edit'
+
 
       if (row.id) {
         // setTimeout(() => {

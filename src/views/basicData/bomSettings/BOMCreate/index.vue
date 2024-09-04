@@ -415,6 +415,7 @@ export default {
     } else {
       this.dataForm.productSource = ''
     }
+    this.dataForm.approvalFlag = false
     this.getBusInfo()
   },
   methods: {

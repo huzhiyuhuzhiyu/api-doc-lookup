@@ -2,7 +2,7 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
+        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <el-page-header @back="goBack" :content="dialogTitle + `工艺`" />
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
@@ -17,7 +17,7 @@
         </div>
 
         <div class="main">
-          <el-tabs v-model="activeName">
+          <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo" style="padding:10px 0">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
@@ -310,7 +310,208 @@
             <el-tab-pane label="附件" name="annex" style="padding:10px 0">
               <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
             </el-tab-pane>
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
+            <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            </el-tab-pane>
           </el-tabs>
+          <el-collapse v-model="activeNames" v-else>
+                <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
+                  <el-row :gutter="15" class="">
+                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                      label-position="top">
+                      <template v-if="!loading">
+                        <el-col :span="12">
+                          <el-form-item label="工艺路线编码" prop="code" ref="code">
+                            <el-input v-model="dataForm.code" placeholder="请输入工艺路线编码" clearable
+                              :style="{ width: '100%' }" maxlength="20"
+                              :disabled="type == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                          <el-form-item label="工艺路线名称" prop="name" ref="name">
+                            <el-input v-model="dataForm.name" placeholder="请输入工艺路线名称" clearable
+                              :style="{ width: '100%' }" maxlength="20" :disabled="type == 'look'"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                          <el-form-item label="按工艺顺序报工" prop="reportRulesFlag">
+                            <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
+                              <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                              </el-option>
+
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="24">
+                          <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
+                            <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
+                              maxlength="200" :disabled="type == 'look'"></el-input>
+                          </el-form-item>
+                        </el-col>
+
+                        <el-col :span="24">
+                          <el-form-item label="备注" prop="remark">
+                            <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
+                              maxlength="200" :disabled="type == 'look'"></el-input>
+                          </el-form-item>
+                        </el-col>
+                      </template>
+                    </el-form>
+                  </el-row>
+                </el-collapse-item>
+                <el-collapse-item title="工序信息" name="processInfo">
+                  <el-col :span="24">
+                    <div v-if="type !== 'look'">
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
+                        选择工序
+                      </el-button>
+                      |
+                      <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                        批量删除
+                      </el-button>
+                      |
+                    </div>
+                    <!-- <el-form-item label-width="0" ref="tableForm">  -->
+                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
+                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
+                      size="mini" id="table">
+                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                      <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
+                        <template slot="header">
+                          <span class="required">*</span>
+                          工序名称
+                        </template>
+                        <template slot-scope="scope">
+                          <div class="viewData">
+                            <span>{{ scope.row.name }}</span>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="code" label="工序编码" min-width="140" />
+
+                      <el-table-column prop="processType" label="工序类型" width="180">
+                        <template slot-scope="scope">
+                          <div class="viewData">
+                            <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">振工序</div>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="processingType" label="加工类型" width="180">
+                        <template slot-scope="scope">
+                          <div class="viewData">
+                            <span v-if="scope.row.processingType === 'self_produced'">自制</span>
+                            <span v-if="scope.row.processingType === 'external_production'">外协</span>
+                          </div>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="firstFlag" label="是否首道工序" min-width="140">
+                        <template slot-scope="scope">
+                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row">
+                            <el-form-item prop="firstFlag" ref="firstFlag">
+                              <el-checkbox :label="true" v-model="scope.row.firstFlag" :true-label="1" disabled>
+                                {{ scope.row.firstFlag ? '是' : '否' }}
+                              </el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="pickingFlag" label="是否领料" min-width="130">
+                        <template slot-scope="{ row }">
+                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                            <el-form-item prop="pickingFlag" ref="pickingFlag">
+                              <el-checkbox v-model="row.pickingFlag" :true-label="1" :disabled="type == 'look'"
+                                :false-label="0"></el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="firstInspection" label="是否首检" min-width="130">
+                        <template slot-scope="{ row }">
+                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                            <el-form-item prop="firstInspection" ref="firstInspection">
+                              <el-checkbox v-model="row.firstInspection" :true-label="1"
+                                :disabled="type == 'look' || row.processingType === 'external_production'"
+                                :false-label="0"></el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="checkFlag" label="是否检验" min-width="130">
+                        <template slot-scope="{ row }">
+                          <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
+                            <el-form-item prop="checkFlag" ref="checkFlag">
+                              <el-checkbox v-model="row.checkFlag" :true-label="1"
+                                :disabled="type == 'look' || row.processingType === 'external_production'"
+                                :false-label="0"></el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="reportFlag" label="是否报工" min-width="130">
+                        <template slot-scope="scope">
+                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
+                            <el-form-item prop="reportFlag" ref="reportFlag">
+                              <el-checkbox v-model="scope.row.reportFlag" :true-label="1" :disabled="scope.row.defaultReport ||
+                                scope.row.defaultFlag ||
+                                scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look'
+                                " :false-label="0"></el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="stockFlag" label="是否入库" min-width="130">
+                        <template slot-scope="scope">
+                          <el-form :ref="`tableForm_1_${scope.$index}`" :model="scope.row" :rules="rulesTwo">
+                            <el-form-item prop="stockFlag" ref="stockFlag">
+                              <el-checkbox v-model="scope.row.stockFlag" :true-label="1" :disabled="scope.row.defaultFlag ||
+                                scope.$index === dataFormTwo.length - 1 ||
+                                type === 'look' ||
+                                scope.row.processingType === 'external_production'
+                                " :false-label="0"></el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+
+                      <el-table-column prop="lastFlag" label="是否末道工序" min-width="140">
+                        <template slot-scope="scope">
+                          <el-form :ref="`tableForm_1_${scope.row.index}`" :model="scope.row">
+                            <el-form-item prop="lastFlag" ref="lastFlag">
+                              <el-checkbox :label="true" v-model="scope.row.lastFlag" disabled>
+                                {{ scope.row.lastFlag ? '是' : '否' }}
+                              </el-checkbox>
+                            </el-form-item>
+                          </el-form>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="操作" min-width="180" fixed="right">
+                        <template slot-scope="scope">
+                          <el-button type="text" class="JNPF-table-delBtn"
+                            :disabled="type !== 'add' && dataForm.documentStatus == 'submit'"
+                            @click="delequipment_process_relList(scope.$index)">
+                            删除
+                          </el-button>
+                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                            工艺资源配置
+                          </el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-col>
+                </el-collapse-item>
+          </el-collapse>
         </div>
       </div>
     </transition>
@@ -323,19 +524,22 @@
   </div>
 </template>
 <script>
-import { updateApproval } from '@/api/basicData/approvalBusinessConditions'
 import { addProcess, detailProcess, checkBimRoutingCode, updateProcess } from '@/api/basicData/processSettingss'
 import ProcessDialog from './process-dialog.vue'
 import SourceArea from './source.vue'
-import { getOrganizeInfo, getOrganizeList } from '@/api/permission/organize'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { getBimProcessList, getBimProcessDetail } from '@/api/bimProcess/index'
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: {
     ProcessDialog,
-    SourceArea
+    SourceArea, Process , recordList
   },
+  mixins: [busFlow],
   props: [],
   data() {
     return {
@@ -408,7 +612,8 @@ export default {
         documentStatus: '', //  状态
         reasonRejection: '', //  驳回原因
         personName: '', // 人员试验
-        remark: ''
+        remark: '',
+        approvalFlag:false
       },
       requestObj2: {
         orderItems: [
@@ -496,7 +701,12 @@ export default {
       types: '',
       sourceData: [],
       processArr: [],
-      responseLoading: false
+      responseLoading: false,
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   created() { },
@@ -613,10 +823,11 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type) {
+    init(id, type,approvalFlag) {
       // rowData = JSON.parse(rowData)
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
+      this.approvalFlag = approvalFlag
       this.visible = true
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
@@ -626,6 +837,7 @@ export default {
         if (!this.dataForm.id) {
           this.clearData()
           this.fetchData('bm_gy_gylx', true)
+          this.getBusInfo()
         } else {
           this.loading = true
           // this.dataForm = rowData
@@ -655,33 +867,8 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            // this.dataFormTwo.forEach((item, index) => {
-            //   if (item.departmentName) {
-            //     this.dataFormTwo[index].departmentName = [
-            //       item.departmentName
-            //         .replace('[', '')
-            //         .replace(']', '')
-            //         .replace(/, /g, '/')
-            //     ]
-            //   }
-            //   if (item.supplierName) {
-            //     this.dataFormTwo[index].cooperativePartnerName = item.supplierName
-            //   }
-            //   if (item.processingType === 'external_production') {
-            //     if (index != 0 && this.dataFormTwo[index - 1].processingType != 'external_production') {
-            //       this.dataFormTwo[index - 1].defaultFlag = true
-            //     }
-            //     this.dataFormTwo[index].defaultReport = true
-            //   } else {
-            //     item.defaultReport = false
-            //     item.defaultFlag = false
-            //   }
-            // })
-
-            // let ind = 0
-            // this.dataFormTwo.forEach((item) => {
-            //   item.index = ind++
-            // })
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             this.loading = false
             // if (res.data.attachmentList) {
             //   res.data.attachmentList.forEach((item) => {
@@ -873,228 +1060,13 @@ export default {
           }
         })
       }
-
-      // Filter out the routingLine information if no bimRoutingProcessResourceDTOList exists
-      // newArr = newArr.map((item) => {
-      //   if (item.routingProcResList.length === 0) {
-      //     delete item.routingLine // Optional step to clean up
-      //   }
-      //   return item
-      // })
-
-      // let arr = [
-      //   {
-      //     index: 0,
-      //     name: '工序3',
-      //     code: '工序3',
-      //     processType: 'normal',
-      //     processId: '1816731039093555202',
-      //     reportFlag: false,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: false,
-      //     firstInspection: 0,
-      //     firstFlag: true,
-      //     lastFlag: false,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ],
-      //     sort: 0,
-      //     nextId: '1816730955354275842'
-      //   },
-      //   {
-      //     index: 1,
-      //     name: '工序2',
-      //     code: 'gongxu2',
-      //     processType: 'normal',
-      //     processId: '1816730955354275842',
-      //     reportFlag: false,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: false,
-      //     firstInspection: 0,
-      //     firstFlag: false,
-      //     lastFlag: false,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     sort: 1,
-      //     nextId: '1816439653391728641',
-      //     previousId: '1816731039093555202',
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     index: 2,
-      //     name: '工序',
-      //     code: 'gongxu',
-      //     processType: 'normal',
-      //     processId: '1816439653391728641',
-      //     reportFlag: true,
-      //     checkFlag: 0,
-      //     processingType: 'self_produced',
-      //     cooperativePartnerId: null,
-      //     cooperativePartnerName: '',
-      //     departmentId: null,
-      //     stockFlag: true,
-      //     firstInspection: 0,
-      //     firstFlag: false,
-      //     lastFlag: true,
-      //     defaultFlag: false,
-      //     defaultReport: false,
-      //     sort: 2,
-      //     previousId: '1816730955354275842'
-      //   }
-      // ]
-      // 变成 newArr = [
-      //   {
-      //     routingLine: {
-      //       index: 0,
-      //       name: '工序3',
-      //       code: '工序3',
-      //       processType: 'normal',
-      //       processId: '1816731039093555202',
-      //       reportFlag: false,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: false,
-      //       firstInspection: 0,
-      //       firstFlag: true,
-      //       lastFlag: false,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-
-      //       sort: 0,
-      //       nextId: '1816730955354275842'
-      //     },
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     routingLine: {
-      //       index: 1,
-      //       name: '工序2',
-      //       code: 'gongxu2',
-      //       processType: 'normal',
-      //       processId: '1816730955354275842',
-      //       reportFlag: false,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: false,
-      //       firstInspection: 0,
-      //       firstFlag: false,
-      //       lastFlag: false,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-      //       sort: 1,
-      //       nextId: '1816439653391728641',
-      //       previousId: '1816731039093555202'
-      //     },
-      //     routingProcResList: [
-      //       { index: 0, resourceId: 'admin', resourceName: '管理员', jobNumber: 'admin', resourceType: 'personnel' },
-      //       {
-      //         index: 1,
-      //         resourceId: '364336330752131525',
-      //         resourceName: 'iot',
-      //         jobNumber: null,
-      //         resourceType: 'personnel'
-      //       },
-      //       {
-      //         index: 2,
-      //         resourceId: '486912121137796677',
-      //         resourceName: '胡辉',
-      //         jobNumber: '15641684168',
-      //         resourceType: 'personnel'
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     routingLine: {
-      //       index: 2,
-      //       name: '工序',
-      //       code: 'gongxu',
-      //       processType: 'normal',
-      //       processId: '1816439653391728641',
-      //       reportFlag: true,
-      //       checkFlag: 0,
-      //       processingType: 'self_produced',
-      //       cooperativePartnerId: null,
-      //       cooperativePartnerName: '',
-      //       departmentId: null,
-      //       stockFlag: true,
-      //       firstInspection: 0,
-      //       firstFlag: false,
-      //       lastFlag: true,
-      //       defaultFlag: false,
-      //       defaultReport: false,
-      //       sort: 2,
-      //       previousId: '1816730955354275842'
-      //     }
-      //   }
-      // ]
       this.dataForm.documentStatus = type
       let _data = {
         routing: this.dataForm,
         // documentStatus: type,
         routingLineList: newArr,
-        attachmentList: this.datafilelist
+        attachmentList: this.datafilelist,
+        flowData:this.flowData
       }
 
       let msgs = ''
@@ -1156,15 +1128,7 @@ export default {
         })
       }
     },
-    // checkRepart(dataTwo,data){
-    //   dataTwo.forEach((item,index)=>{
-    //     data.forEach((e)=>{
-    //       if (item.processId === e.id){
-    //         this.dataFormTwo.splice(index,1)
-    //       }
-    //     })
-    //   })
-    // },
+
     submit(id, data) {
       let list = data.map((item) => item.all)
       if (list.length) {
@@ -1328,7 +1292,54 @@ export default {
         tBody.style.height = 'auto'
         tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
       })
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b024').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
+        }
+      }).catch(()=>{})
+    },    
   }
 }
 </script>

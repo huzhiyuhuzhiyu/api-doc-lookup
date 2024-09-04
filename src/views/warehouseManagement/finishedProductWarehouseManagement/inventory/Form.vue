@@ -59,7 +59,7 @@
                   <div>{{ scope.row.warehouseName+'/'+scope.row.shelfSpaceName }}</div>
                 </template> -->
               </el-table-column>
-              <el-table-column prop="shelfSpaceName" label="货位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>

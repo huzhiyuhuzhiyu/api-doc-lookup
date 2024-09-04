@@ -704,7 +704,7 @@ export default {
     selectCollectProductFun(data) {
       console.log("领料产品", data);
       data.forEach(item => {
-        this.$set(item, 'reduceType', 'picking')
+        this.$set(item, 'reduceType', 'auto')
       });
       this.dataFormOne.collectData = data
     },

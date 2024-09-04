@@ -15,7 +15,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="form.shelfSpaceName" placeholder="请输入货位" clearable />
+                <el-input v-model="form.shelfSpaceName" placeholder="请输入库位" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -32,7 +32,7 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
-            <el-table-column prop="shelfSpaceName" label="货位" sortable="custom" min-width="120"/>
+            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>

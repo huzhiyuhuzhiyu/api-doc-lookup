@@ -58,15 +58,7 @@
                           placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="jyFlag">
-                      <el-form-item label="检验标志" prop="inspectionResults">
-                        <el-select v-model="dataForm.inspectionResults" placeholder="检验结果" clearable
-                          style="width: 100%;" filterable>
-                          <el-option v-for="(item, index) in inspectionResultsList" :key="index" :label="item.label"
-                            :value="item.value"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
+                    
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -110,14 +102,14 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="shelfSpaceName" label="货位" width="140" :key="10112" v-if="allocationFlag">
+                  <el-table-column prop="shelfSpaceName" label="库位" width="140" :key="10112" v-if="allocationFlag">
 
                     <template slot="header" v-if="dataForm.documentType == 'inbound'">
-                      <span class="required">*</span>货位
+                      <span class="required">*</span>库位
                     </template>
                     <template slot-scope="scope">
                       <el-input v-model="scope.row.shelfSpaceName" readonly v-if="dataForm.documentType == 'inbound'"
-                        @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="货位">
+                        @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                       </el-input>
                       <div v-if="dataForm.documentType == 'outbound'"> {{ scope.row.shelfSpaceName }}</div>
                     </template>
@@ -350,7 +342,7 @@
             </el-form>
           </el-row>
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <JNPF-table v-loading="listLoading" :data="productList" hasC
+            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
               @selection-change="handleSelectionChangeAllPruduct" @sort-change="sortChange">
               <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom"
                 v-if="dataForm.documentType == 'outbound'" />
@@ -422,7 +414,7 @@
     </el-dialog>
     <!-- 选客户 -->
     <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
-    <!-- 选货位 -->
+    <!-- 选库位 -->
     <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
     </WareHouseForm>
     <!-- 选批次号 -->
@@ -635,8 +627,6 @@ export default {
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("批次号数据", data, index);
-      this.$set(this.productData[index], 'areaId', data.areaId)
-      this.$set(this.productData[index], 'goodsShelvesId', data.goodsShelvesId)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -644,7 +634,7 @@ export default {
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
-    // 打开选择货位弹框
+    // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
       this.wareHouseVisible = true
@@ -653,13 +643,11 @@ export default {
       })
       this.currentProductIndex = index
     },
-    // 所选的货位信息
+    // 所选的库位信息
     selectWareHouseFun(data) {
-      console.log("货位信息", data);
+      console.log("库位信息", data);
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'areaId', data.areaId)
-      this.$set(this.productData[index], 'goodsShelvesId', data.goodsShelvesId)
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.id)
     },
@@ -1134,7 +1122,7 @@ export default {
             this.productData.forEach((item, index) => {
               if (!item.shelfSpaceId) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行货位不能为空")
+                this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
               }
             })
           }

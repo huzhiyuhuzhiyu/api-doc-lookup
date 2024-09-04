@@ -70,7 +70,21 @@ export default {
           prop: 'name',
           label: '库位名称',
           type: 'input',
-          itemRules: [{ required: true, message: '请输入库位编码', trigger: 'blur' }]
+          itemRules: [
+            { required: true, message: '库位名称不能为空', trigger: 'blur' },
+            {
+              validator: this.formValidate({
+                type: 'noEmtry',
+                params: [
+                  '不能为空',
+                  (errMsg, index) => {
+                    this.$message.error(`基础信息第${index + 1}，库位名称${errMsg}`)
+                  }
+                ]
+              }),
+              trigger: 'blur'
+            }
+          ]
         },
         {
           prop: 'code',
@@ -185,11 +199,9 @@ export default {
   },
   methods: {
     init(row) {
-      console.log(row, 'oooooooo')
       this.visible = true
       this.formLoading = true
       this.btnType = row.btntype
-      console.log(this.btnType, 'bttttttt')
 
       // if (row.id) {
       //   this.dataForm.id = id
@@ -234,7 +246,12 @@ export default {
         this.isdisabled = false
         this.title = '编辑库位'
         this.tableFlag = false
-        console.log(row, 'id')
+
+        this.sleeveItems.forEach((tc) => {
+          if (tc.prop == 'code') {
+            tc.itemDisabled = true
+          }
+        })
         if (row.id) {
           this.dataForm.id = row.id
 
@@ -252,7 +269,6 @@ export default {
           })
         }
       } else if (this.btnType == 'add') {
-        console.log('库区', row)
         this.title = '新建库位'
         this.isdisabled = false
         this.editFlag = false
@@ -271,18 +287,29 @@ export default {
       let submitFlag = true // 提交可行性判断
 
       // 校验tabs渲染表单
-      for (let i = 0; i < this.$refs['dataForm'].length; i++) {
-        const item = this.$refs['dataForm'][i]
-        const form = item.$refs.main
-
-        const valid_1 = await form.validate().catch(() => false)
-
-        if (!valid_1 && submitFlag) {
+      this.stockLimitsAuthorities.forEach((item, index) => {
+        if (!item.name) {
           submitFlag = false
-          this.activeName = this.tabs[i].tabCode
-          this.jnpf.focusErrValidItem(form.fields)
+          return this.$message.error(`第${index + 1}行库区名称为空`)
         }
-      }
+        if (!item.code) {
+          submitFlag = false
+          return this.$message.error(`第${index + 1}行库区编码为空`)
+        }
+      })
+
+      // for (let i = 0; i < this.$refs['dataForm'].length; i++) {
+      //   const item = this.$refs['dataForm'][i]
+      //   const form = item.$refs.main
+
+      //   const valid_1 = await form.validate().catch(() => false)
+
+      //   if (!valid_1 && submitFlag) {
+      //     submitFlag = false
+      //     this.activeName = this.tabs[i].tabCode
+      //     this.jnpf.focusErrValidItem(form.fields)
+      //   }
+      // }
 
       // 判断条件后发送请求
       if (submitFlag) {

@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择生产任务" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择订单物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -47,7 +47,7 @@
             <el-table-column prop="processName" label="工序名称" min-width="140" />
             <el-table-column prop="mainUnit" label="单位" min-width="140" />
             <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="140" />
-            <el-table-column prop="waitReceiveQuantity" label="待领料数量" min-width="140" />
+            <el-table-column prop="waitReceiveQuantity" label="待退料数量" min-width="140" />
 
           </JNPF-table>
           <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"

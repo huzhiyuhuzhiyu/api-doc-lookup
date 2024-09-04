@@ -91,6 +91,7 @@
             </template>
 
           </el-table-column>
+
           <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -152,7 +153,7 @@ export default {
   },
   data() {
     return {
-      columnList: ["partnerCode", "documentStatus", "remark", "createByName",],
+      columnList: ["partnerCode","inspectionResults", "documentStatus", "remark", "createByName",],
 
       exportFormVisible: false,
       visible: false,

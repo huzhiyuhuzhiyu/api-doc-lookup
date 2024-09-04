@@ -417,8 +417,8 @@ export default {
       const targetListQuery = this.form
       let _data = {
         ...targetListQuery,
-        exportType: '1005',
-        exportName: '销售订单明细',
+        exportType: '1086',
+        exportName: '调拨管理',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }

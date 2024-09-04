@@ -171,6 +171,9 @@
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+          </el-tab-pane>
         </el-tabs>
       </div>
       <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
@@ -337,17 +340,15 @@
 </template>
 
 <script>
-import {
-  getProvinceList,
-} from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { editQuotationMsendlist, addQuotationsendlist, getQuotationsendlist, editReceiptnoticelist } from "@/api/salesManagement/index";
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees, getAttributeline, getcooperativeProduct, getOrderDetail, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData } from '@/api/basicData/index'
-// import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
 export default {
+  components: { Process },
   data() {
     return {
       tipsvisible: false,
@@ -568,7 +569,8 @@ export default {
         //   delivery: '',
         //   shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false
       },
       defaultAddress: "",
       parentId: '',
@@ -597,7 +599,9 @@ export default {
       },
       customerData: {},
       treeLoading: false,
-      selectRows: []
+      selectRows: [],
+      flowTemplateJson: {},
+      flowData:{},
     }
   },
   computed: {
@@ -1178,6 +1182,7 @@ export default {
     },
     init() {
       this.fetchData("SRDH")
+      this.getBusInfo()
       console.log(666);
     },
     goBack() {
@@ -1229,7 +1234,8 @@ export default {
           let obj = {
             attachmentList: this.datafilelist,
             notice: this.dataForm,
-            noticeLineList: []
+            noticeLineList: [],
+            flowData:this.flowData
           }
           if (!this.dataFormTwo.productData.length) {
             this.$message({
@@ -1329,7 +1335,26 @@ export default {
 
         }
       })
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b027').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },    
   }
 }
 </script>

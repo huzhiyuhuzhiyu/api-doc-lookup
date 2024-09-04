@@ -482,7 +482,7 @@ export default {
     })
   },
   methods: {
-    async init(productId, btnType, approvalStatus, nodeData) {
+    async init(id, btnType, approvalStatus, nodeData) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
@@ -493,14 +493,16 @@ export default {
           ? true
           : false
       let loadTotal = 0
-      if (productId && this.btnType != 'add' && !this.statusFlag) {
+      if (id && this.btnType != 'add' && !this.statusFlag) {
         console.log('12121212')
-        this.firstId = this.firstId ? this.firstId : productId
+
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         // 获取详情
-        let bomId = (await getBomByProductId(productId)).data
+        let bomId = id
+        console.log(id, 'id')
         detailBomData(bomId)
           .then((res) => {
+            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // btnType !== 'look' ? this.getApproverData() : ''
@@ -588,10 +590,11 @@ export default {
           this.formLoading = false
         }
       } else if (productId && this.btnType != 'add' && this.statusFlag) {
-        this.firstId = this.firstId ? this.firstId : productId
+
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         detailBomData(approvalStatus.id)
           .then((res) => {
+            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // btnType !== 'look' ? this.getApproverData() : ''

@@ -103,6 +103,7 @@ import { FlowBeforeList ,getFlowBeforeList} from '@/api/workFlow/FlowBefore'
 import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
 import FlowBox from '../components/FlowBox'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getChildrenList } from '@/api/systemData/dictionary'
 export default {
   name: 'workFlow-flowCirculate',
   components: { FlowBox,SuperQuery },
@@ -288,9 +289,15 @@ export default {
       })
     },
     getDictionaryData(type) {
-      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
-        this.categoryList = res
-      })
+      if (type === 'businessType'){
+        getChildrenList('600602988351917829').then(res=>{
+          this.categoryList = res.data
+        })
+      }else{
+        this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
+          this.categoryList = res
+        })
+      }
     },
     initData() {
       this.listLoading = true

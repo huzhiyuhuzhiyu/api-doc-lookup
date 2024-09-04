@@ -67,7 +67,8 @@
             :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="updateHandle(scope.row, 'look')">{{ scope.row.code }}</el-link>
+                <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">{{ scope.row.code
+                  }}</el-link>
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
@@ -104,7 +105,7 @@
             <el-table-column label="操作" min-width="180" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
-                <el-button size="mini" type="text" @click="updateHandle(scope.row, 'edit')">编辑</el-button>
+                <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">编辑</el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
                   :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'"
                   @click="handleDel(scope.$index, scope.row.id)">
@@ -118,7 +119,7 @@
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="updateHandle(scope.row, 'look')">
+                    <el-dropdown-item @click.native="updateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>

@@ -153,8 +153,8 @@
           </el-table-column>
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.productId, 'edit', scope.row)"
-                @del="handleDel(scope.row.id)" :delDisabled="scope.row.documentStatus !== 'draft'">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)"
+                :delDisabled="scope.row.documentStatus !== 'draft'">
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -165,14 +165,14 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
                       v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                      @click.native="addOrUpdateHandle(scope.row.productId, 'add', scope.row)">
+                      @click.native="addOrUpdateHandle(scope.row.id, 'add', scope.row)">
                       重新提交
                     </el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.productId, 'look', scope.row)">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look', scope.row)">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -308,7 +308,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName','createTime']
+      columnList: ['productName', 'pickingWay', 'createByName', 'createTime']
     }
   },
   watch: {
@@ -451,10 +451,10 @@ export default {
       this.filterText = ''
       this.getcategoryTree()
     },
-    addOrUpdateHandle(productId, btnType, approvalStatus) {
+    addOrUpdateHandle(id, btnType, approvalStatus) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(productId, btnType || 'add', approvalStatus)
+        this.$refs.Form.init(id, btnType || 'add', approvalStatus)
       })
     },
     add() {

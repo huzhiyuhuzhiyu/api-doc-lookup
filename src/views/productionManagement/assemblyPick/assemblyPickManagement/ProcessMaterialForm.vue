@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择生产任务" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -90,7 +90,7 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        stockFlag: 1,
+        pickingProductFlag: 1, 
 
       },
       listLoading: false,
@@ -149,7 +149,7 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        stockFlag: 1,
+        pickingProductFlag: 1,
       }
       this.getWorkListFun()
     },

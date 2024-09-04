@@ -75,6 +75,8 @@
               <div v-if="scope.row.sourceType == 'inbound_external_return'">外协退料</div>
               <div v-if="scope.row.sourceType == 'inbound_external'">外协收货</div>
               <div v-if="scope.row.sourceType == 'outbound_external'">外协退货</div>
+              <div v-if="scope.row.sourceType == 'inbound_other'">直接入库</div>
+              <div v-if="scope.row.sourceType == 'outbound_other'">直接出库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -187,7 +189,7 @@ export default {
       visible: false,
       tableData: [],
       listLoading: false,
-      list: [
+      list: [ //业务类型
         { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -195,9 +197,11 @@ export default {
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
         { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
+        // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" },
+        // { label: "外协退货", value: "outbound_external" },
+        { label: "直接入库", value: "inbound_other" },
+        { label: "直接出库", value: "outbound_other" },
       ],
 
       initListQuery: {

@@ -83,18 +83,18 @@
                           @change="changeWarehousex"></ComSelect-list>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="inShelfSpaceName" label="目标货位" width="160" :key="10112" v-if="allocationFlag">
+                    <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112" v-if="allocationFlag">
                       <template slot="header">
-                        <span class="required">*</span>目标货位
+                        <span class="required">*</span>目标库位
                       </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.inShelfSpaceName" readonly :disabled="btnType == 'look'"
-                          @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="货位">
+                          @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                         </el-input>
                       </template>
                     </el-table-column>
                     <el-table-column prop="warehouseName" label="原仓库" width="160" :key="889"></el-table-column>
-                    <el-table-column prop="shelfSpaceName" label="原货位" width="160" :key="888"></el-table-column>
+                    <el-table-column prop="shelfSpaceName" label="原库位" width="160" :key="888"></el-table-column>
                     <el-table-column prop="standardValue" label="规值" width="120" :key="211"> </el-table-column>
                     <el-table-column prop="colour" label="颜色" width="120" :key="216"> </el-table-column>
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="2111"></el-table-column>
@@ -176,7 +176,7 @@
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
                   v-if="btnType != 'look'" />
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
-                <el-table-column prop="shelfSpaceName" label="货位" sortable="custom" min-width="120" />
+                <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
                 <el-table-column prop="standardValue" label="规值" width="120" :key="211" sortable="custom"
                   min-width="120">
                 </el-table-column>
@@ -227,7 +227,7 @@
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
       </el-dialog>
-      <!-- 选货位 -->
+      <!-- 选库位 -->
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
 
@@ -447,7 +447,7 @@ export default {
 
 
 
-    // 打开选择货位弹框
+    // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
       if (!row.inWarehouseId) return this.$message.error("请先选择目标仓库!")
       this.wareHouseVisible = true
@@ -456,9 +456,9 @@ export default {
       })
       this.currentProductIndex = index
     },
-    // 所选的货位信息
+    // 所选的库位信息
     selectWareHouseFun(data) {
-      console.log("货位信息", data);
+      console.log("库位信息", data);
       let index = this.currentProductIndex
       this.$set(this.productData[index], 'inShelfSpaceName', data.name)
       this.$set(this.productData[index], 'inAreaId', data.areaId)
@@ -630,7 +630,7 @@ export default {
               }
               if (!item.inShelfSpaceId&&allocationFlag) {
                 submitFlag = false
-                this.$message.error("产品信息第" + (index + 1) + "行目标货位不能为空")
+                this.$message.error("产品信息第" + (index + 1) + "行目标库位不能为空")
                 break
               }
             }

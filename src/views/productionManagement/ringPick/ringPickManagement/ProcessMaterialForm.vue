@@ -90,7 +90,8 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        stockFlag: 1,
+        pickingProductFlag: 1,
+
 
       },
       listLoading: false,
@@ -149,7 +150,7 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        stockFlag: 1,
+        pickingProductFlag: 1, 
       }
       this.getWorkListFun()
     },

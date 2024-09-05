@@ -187,7 +187,7 @@ export default {
         receiveType: "",
         classAttribute: "semi_finished",
         documentStatus: "",
-        notifyType: "back",
+        notifyType: "picking",
         operationDate: "",
         personId: "",
         productionOrderId: "",
@@ -382,9 +382,10 @@ export default {
       detailordershengchan(id).then(res => {
         console.log("清单信息", res);
         let arr = []
-        let filteredData = res.data.materialList.filter(item => item.reduceType === 'picking');
+        let filteredData = res.data.materialList.filter(item => item.reduceType === 'picking'&&item.pickingStatus=='not_finished');
         filteredData.forEach(item => {
           this.$set(item, 'num', JSON.parse(JSON.stringify(item.waitReceiveQuantity)))
+          this.$set(item,'materialListId',item.id)
           arr.push(item)
         });
         if (this.dataFormTwo.data.length) {
@@ -786,5 +787,8 @@ $footerPadding: '10px';
 .active {
   background-color: #5d9bd5;
   color: #fff;
+}
+::v-deep .UploadFile-container{
+  margin-top: 10px;
 }
 </style>

@@ -72,8 +72,8 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
-                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                            start-placeholder="开始日期" end-placeholder="结束日期" clearable>
+                          <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
+                            style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -84,7 +84,7 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                     
+
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -94,7 +94,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="工序信息" name="productInfo">
+                <el-collapse-item title="工序信息" name="productInfo" class="productInfo">
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading">
                       <el-table-column prop="processCode" label="工序编码" width="130"></el-table-column>
@@ -182,7 +182,7 @@
                           <div>{{ scope.row.stockFlag ? "是" : "否" }}</div>
                         </template>
                       </el-table-column>
-                      
+
                     </JNPF-table>
 
                   </el-form>
@@ -289,7 +289,8 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
+          @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -370,7 +371,7 @@ import {
 } from "@/api/productOrdes/finishedProductOrders";
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
-import { detailProcess, getProcessList, getWorkListMap,addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 export default {
   components: {
     RoutingForm
@@ -426,7 +427,7 @@ export default {
         ]
       },
       selectArr: [],
- 
+
       totalData: [],
       index: "",
       currentWorkgroupId: "",
@@ -449,7 +450,7 @@ export default {
         processName: "",
       },
       detailDataList: [],
-      detailDiaFlag:false,
+      detailDiaFlag: false,
     }
   },
   computed: {
@@ -645,7 +646,7 @@ export default {
         this.$forceUpdate();
       });
     },
-    
+
 
 
     dateFormat(dateData) {
@@ -725,7 +726,7 @@ export default {
     // 获取工艺详情
     getRoutingDetail(id) {
       detailProcess(id).then(res => {
-        this.dataForm.reportRulesFlag=res.data.routing.reportRulesFlag
+        this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         console.log("工艺详情", res);
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
@@ -754,7 +755,7 @@ export default {
     },
     init(data) {
       console.log("传递数据", data);
-      this.$set(data[0],'productionQuantity','')
+      this.$set(data[0], 'productionQuantity', '')
       this.dataForm = data[0]
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
@@ -763,7 +764,6 @@ export default {
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)
@@ -808,22 +808,22 @@ export default {
           console.log("工序", this.dataFormTwo.data);
           if (submitFlag === false) return
           this.dataFormTwo.data.forEach(item => {
-              item.routingProResList.forEach(items=>{
-                items.processId=item.processId
-              })
-              this.$set(item,'workOrderResList',item.routingProResList)
-            });
-          let obj={
-            prodOrder:this.dataForm,
-            workOrderList:this.dataFormTwo.data
+            item.routingProResList.forEach(items => {
+              items.processId = item.processId
+            })
+            this.$set(item, 'workOrderResList', item.routingProResList)
+          });
+          let obj = {
+            prodOrder: this.dataForm,
+            workOrderList: this.dataFormTwo.data
           }
-          addProdPlanArrange(obj).then(res=>{
+          addProdPlanArrange(obj).then(res => {
             this.btnLoading = false
             this.$message.success("生成编排成功")
             setTimeout(() => {
               this.$emit('close')
             }, 1500);
-          }).catch(error=>{
+          }).catch(error => {
             this.btnLoading = false
 
           })
@@ -983,6 +983,11 @@ $footerPadding: '10px';
 
 }
 
+.productInfo ::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  padding: 0
+}
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
@@ -1003,6 +1008,10 @@ $footerPadding: '10px';
   vertical-align: top;
   margin-top: 43px;
   display: inline-block;
+}
+
+.orderInfo {
+  margin-top: 10px;
 }
 
 .orderInfo ::v-deep .el-collapse-item__wrap {

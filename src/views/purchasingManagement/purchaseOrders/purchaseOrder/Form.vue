@@ -35,8 +35,10 @@
                       </el-col>
                       <el-col :span="8" v-if="type === 'look'">
                         <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-input type="text" v-model="dataForm.receivingStatus === 'receiving' ? '未完成' : '已完成'"
-                            placeholder="收货状态" :disabled="type != 'add' ? true : false"></el-input>
+                          <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                            <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
+                              :value="item.value" ></el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -220,7 +222,6 @@
                           </el-input>
                         </template>
                       </el-table-column>
-
                     </el-table>
                   </el-form>
 
@@ -233,7 +234,6 @@
                   </div>
                 </el-collapse-item>
               </el-collapse>
-
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
@@ -242,7 +242,7 @@
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
@@ -271,8 +271,10 @@
                   </el-col>
                   <el-col :span="8" v-if="type === 'look'">
                     <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
-                      <el-input type="text" v-model="dataForm.receivingStatus === 'receiving' ? '未完成' : '已完成'"
-                        placeholder="收货状态" :disabled="type != 'add' ? true : false"></el-input>
+                      <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                        <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
+                          :value="item.value"></el-option>
+                      </el-select>
                     </el-form-item>
                   </el-col>
                 </el-form>
@@ -386,7 +388,6 @@
                     </template>
                   </el-table-column>
 
-
                   <el-table-column prop="taxAmount" label="税额" min-width="120">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
@@ -433,14 +434,11 @@
                       </el-input>
                     </template>
                   </el-table-column>
-
                 </el-table>
               </el-form>
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">
-                  总金额：{{ dataForm.excludingTaxTotalAmount }}
-                </span>
+                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span>
                 <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
                 <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
               </div>
@@ -491,6 +489,20 @@ export default {
         taxAmount: '', // 税额
         approvalFlag: false
       },
+      receivingStatusOptions: [
+        {
+          value: 'not_finished',
+          label: '未完成'
+        },
+        {
+          value: 'finished',
+          label: '已完成'
+        },
+        {
+          value: 'stopped',
+          label: '已停止'
+        }
+      ],
       dataPickerOptions: {
         // 日期区间选择器通用选项
         disabledDate(time) {

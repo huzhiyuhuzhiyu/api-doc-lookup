@@ -219,7 +219,7 @@ import {
   purPurchaseBatch,
   purPurchaseBatchLine
 } from '@/api/purchasingAndOutsourcingOrders/index'
-import JNPFForm from './Form'
+import JNPFForm from '../../purchaseOrders/purchaseOrder/Form.vue'
 import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'

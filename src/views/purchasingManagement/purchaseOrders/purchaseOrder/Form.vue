@@ -534,7 +534,6 @@ export default {
   },
   created() { },
   computed: {
-    ...mapGetters(['userInfo']),
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0

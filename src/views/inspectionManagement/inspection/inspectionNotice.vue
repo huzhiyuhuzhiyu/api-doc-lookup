@@ -70,7 +70,7 @@
           <el-table-column prop="productionQuantity" label="生产数量" width="120" sortable="custom" />
           <!-- <el-table-column prop="completedQuantity" label="已完成数量" width="120" /> -->
           <el-table-column prop="qualifiedQuantity" label="合格数量" width="120" sortable="custom" />
-          <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="120" sortable="custom" />
+          <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="140" sortable="custom" />
           <el-table-column prop="responsibilityWasteQuantity" label="责废数量" width="120" sortable="custom" />
           <el-table-column prop="materialWasteQuantity" label="料废数量" width="120" sortable="custom" />
           <el-table-column prop="utilizeQuantity" label="利用数量" width="120" sortable="custom" />

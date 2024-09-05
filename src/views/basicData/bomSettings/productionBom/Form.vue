@@ -482,7 +482,7 @@ export default {
     })
   },
   methods: {
-    async init(id, btnType, approvalStatus, nodeData) {
+    async init(id, btnType, approvalStatus) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
@@ -519,14 +519,6 @@ export default {
             }
 
             // 整理BOM树
-            // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
-            // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
-            // if (!nodeData) {
-            //   this.selectedNodeKey = this.firstId
-            //   this.treeData = [tempObj]
-            // }
-            // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
-
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
                 this.datafilelist.push({
@@ -577,7 +569,7 @@ export default {
         if (!this.treeData.length) {
           getBomTree(bomId).then((res) => {
             this.treeData = res.data
-            if (!nodeData) this.selectedNodeKey = this.firstId
+            this.selectedNodeKey = this.firstId
             if (++loadTotal === 2) {
               this.formLoading = false
               this.treeLoading = false
@@ -589,7 +581,7 @@ export default {
         } else {
           this.formLoading = false
         }
-      } else if (productId && this.btnType != 'add' && this.statusFlag) {
+      } else if (id && this.btnType != 'add' && this.statusFlag) {
 
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         detailBomData(approvalStatus.id)
@@ -657,14 +649,15 @@ export default {
             this.busNodeConfig.childNode = null
           }
         })
-      } else if (productId && this.btnType == 'add') {
-        this.firstId = this.firstId ? this.firstId : productId
+      } else if (id && this.btnType == 'add') {
+
         this.title = '新建BOM'
         this.isDoubleFlag = true
         // 获取详情
         // let bomId = (await getBomByProductId(productId)).data
         detailBomData(approvalStatus.id)
           .then((res) => {
+            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // this.getApproverData()
@@ -687,13 +680,7 @@ export default {
             this.dataForm.documentStatus = ''
 
             // 整理BOM树
-            // let tempObj = JSON.parse(JSON.stringify(this.dataForm))
-            // tempObj.children = JSON.parse(JSON.stringify(res.data.lines))
-            // if (!nodeData) {
-            //   this.selectedNodeKey = this.firstId
-            //   this.treeData = [tempObj]
-            // }
-            // else if (!nodeData.children) { this.$set(nodeData, 'children', tempObj.children) }
+    
 
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
@@ -716,7 +703,7 @@ export default {
         if (!this.treeData.length) {
           getBomTree(approvalStatus.id).then((res) => {
             this.treeData = res.data
-            if (!nodeData) this.selectedNodeKey = this.firstId
+            this.selectedNodeKey = this.firstId
             if (++loadTotal === 2) {
               this.formLoading = false
               this.treeLoading = false

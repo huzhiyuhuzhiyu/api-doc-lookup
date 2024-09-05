@@ -68,35 +68,13 @@
             <el-table-column prop="mainUnit" label="单位" min-width="180" />
             <el-table-column prop="inventoryQuantity" label="库存数量" min-width="180" sortable="custom" />
             <el-table-column prop="latestStorageTime" label="入库日期" min-width="180" sortable="custom" />
-            <!-- <el-table-column label="操作" min-width="180" fixed="right">
-              <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"
-                  :delDisabled="scope.row.documentStatus !== 'draft'">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-
-                  </el-dropdown>
-                </tableOpts>
-
-              </template>
-</el-table-column> -->
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
             :limit.sync="listQuery.pageSize" @pagination="initData">
-            <!-- <div style="height: 40px; line-height: 40px; background: #f5f7fa;margin-top: -13px" class="text">
-              <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue }}</span>
-              <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
-            </div> -->
           </pagination>
         </div>
       </div>
     </div>
-    <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
@@ -108,22 +86,15 @@
 <script>
 import {
   inventoryList,
-  detailpurchaseOrderList,
-  purPurchaseOrderExport,
-  purPurchaseOrderdetail,
-  purPurchaseBatch,
-  purPurchaseBatchLine
 } from '@/api/purchasingAndOutsourcingOrders/index'
-import JNPFForm from './Form'
 import moment from 'moment'
 
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'orderList',
-  components: { JNPFForm, ExportForm, SuperQuery },
+  components: { ExportForm, SuperQuery },
   data() {
     return {
       exportFormVisible: false,
@@ -210,7 +181,6 @@ export default {
       detailTableData: [],
       flag: true,
       activeName: 'orderList',
-      formVisible: false,
       listLoading: false,
       statusList: [
         {
@@ -255,7 +225,6 @@ export default {
       total: 0,
       computedValue: 0,
       computedValue2: 0,
-      formVisible: false,
       createRequirementDate: [],
       deliveryDate: [],
       pickerOptions: {
@@ -307,19 +276,6 @@ export default {
   },
 
   methods: {
-    // 获取合计数据
-    getOrderLineReportFun() {
-      let count = 0
-      this.dataFormTwo.data.forEach((item) => {
-        count += item.totalAmount * 1
-      })
-      this.computedValue = this.jnpf.numberFormat(count)
-      let count2 = 0
-      this.dataFormTwo.data.forEach((item) => {
-        count += item.purchaseQuantity * 1
-      })
-      this.computedValue = this.jnpf.numberFormat(count2)
-    },
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
@@ -365,22 +321,7 @@ export default {
     handeleFinshData(val) {
       this.selectData = val
     },
-    // 点击切换明细
-    handleClick(e) {
-      console.log(e)
-      if (e.index == '0') {
-        this.initData()
-      } else {
-        this.detailData()
-      }
-      this.selectData = []
-    },
-    moreQueries() {
-      this.visible = true
-    },
-    moreQueriesDetail() {
-      this.detailVisible = true
-    },
+
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
     },
@@ -397,19 +338,7 @@ export default {
       this.initData()
     },
 
-    // 关闭新建、编辑页面
-    closeForm(isRefresh) {
-      this.formVisible = false
-      this.withdrawnVisible = false
-      if (isRefresh) {
-        this.initData()
-      }
-    },
-    refresh() {
-      this.formVisible = false
-      this.withdrawnVisible = false
-      this.reset()
-    },
+
 
     initData() {
       this.listLoading = true
@@ -433,7 +362,6 @@ export default {
           this.tableDataList = res.data.records
 
           this.total = res.data.total
-          this.getOrderLineReportFun()
           this.listLoading = false
           this.visible = false
         })
@@ -523,19 +451,7 @@ export default {
               )
             }
           })
-          // var maxDate = null; // 最大日期初始值设为null
-          // // 遍历列表中的数据 找到最大交期
-          // for (var i = 0; i < this.selectData.length; i++) {
-          //   var currentDate = new Date(this.selectData[i].deliveryDate);
-          //   if (maxDate === null || currentDate > maxDate) {
-          //     maxDate = currentDate;
-          //   }
-          // }
-          // let demandDelivery = null
-          // demandDelivery = maxDate.toISOString().split('T')[0];
-          // this.formVisible = true
           this.$nextTick(() => {
-            // this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute)
             this.$router.push({
               path: '/outsourcingManagement/productOutsourcingOrder/orderCreation',
               query: { data: JSON.stringify(this.selectData) }
@@ -544,16 +460,6 @@ export default {
         }
       }
     },
-
-    // 生成采购订单 将选中的数据传递过去
-    addOrUpdateHandle(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.procureForm.init(id, type)
-      })
-    }
   }
 }
 </script>
-
-<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->

@@ -323,7 +323,6 @@ export default {
       detailTableData: [],
       flag: true,
       activeName: 'orderList',
-      formVisible: false,
       listLoading: false,
       statusList: [
         {

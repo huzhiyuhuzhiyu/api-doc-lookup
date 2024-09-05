@@ -198,6 +198,12 @@
           <el-tab-pane label="附件" name="annex">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>
+          <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+          </el-tab-pane>
+          <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+          </el-tab-pane>
         </el-tabs>
       </div>
       <el-dialog title="选择供应商" :close-on-click-modal="false" :close-on-press-escape="false"
@@ -367,13 +373,6 @@
 
 <script>
 import { getProvinceList } from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
-import {
-  editQuotationMsendlist,
-  addQuotationsendlist,
-  getQuotationsendlist,
-  editReceiptnoticelist
-} from '@/api/salesManagement/index'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import {
@@ -392,9 +391,13 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getWarehouseList } from '@/api/basicData/index'
 import { mapGetters } from "vuex"
-
-// import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
+  components: { Process , recordList},
+  mixins: [busFlow],
   data() {
     return {
       tipsvisible: false,
@@ -629,7 +632,8 @@ export default {
         //   delivery: '',
         //   shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false
       },
       defaultAddress: '',
       parentId: '',
@@ -650,7 +654,12 @@ export default {
       customerData: {},
       treeLoading: false,
       selectRows: [],
-      warehouseIdList: []
+      warehouseIdList: [],
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   computed: {
@@ -1428,7 +1437,8 @@ export default {
         //   delivery: '',
         //   shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false,
       }
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
@@ -1457,7 +1467,8 @@ export default {
           let obj = {
             attachmentList: this.datafilelist,
             returnGoods: this.dataForm,
-            lines: []
+            lines: [],
+            flowData:this.flowData
           }
           if (!this.dataFormTwo.productData.length) {
             this.$message({
@@ -1592,7 +1603,54 @@ export default {
           })
         }
       })
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b029').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
+        }
+      }).catch(()=>{})
+    },      
   }
 }
 </script>

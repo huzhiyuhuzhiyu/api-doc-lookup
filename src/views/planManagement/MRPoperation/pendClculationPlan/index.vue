@@ -99,8 +99,8 @@
             <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="80" />
             <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="qualificationRate" label="合格率(%)" min-width="120" sortable="custom" />
-            <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="120" sortable="custom" />
+            <el-table-column prop="qualificationRate" label="合格率(%)" min-width="160" sortable="custom" />
+            <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="160" sortable="custom" />
             <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
@@ -181,7 +181,10 @@ export default {
           column: "create_time"
         }],
 
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
       mrpForm:false,
 
@@ -192,7 +195,7 @@ export default {
       superQueryJson: [
         {
           prop: 'planNo',
-          label: "订单号",
+          label: "计划单号",
           type: 'input'
         },
         {
@@ -772,9 +775,12 @@ export default {
           column: "create_time"
         }],
 
-        superQuery: {},
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
-
+      this.$refs.SuperQuery.conditionList = []
       this.search()
     },
 

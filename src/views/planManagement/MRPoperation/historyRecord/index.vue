@@ -395,9 +395,9 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getouteData()">
                       {{ $t("common.search") }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetOuData()">{{ $t("common.reset") }}
                     </el-button>
                   </el-form-item>
                 </el-col>
@@ -526,6 +526,7 @@ import {
   getMaterialDemandReport
 } from "@/api/calculationList/MRPOperation";
 
+import { getbimProductAttributesList, getbimProductAttributes } from "@/api/masterDataManagement/index";
 import Form from "./Form";
 import ComplateSetForm from "./complateSetForm";
 import moment from "moment";
@@ -1246,7 +1247,7 @@ export default {
       this.planDateArr = []
       this.assembleForm = {
         demandType: "assemble",
-        demandState: "not_finish",
+        demandState: "finished",
         documentStatus: "submit",
         productDrawingNo: "",
         planNo: "",
@@ -1324,7 +1325,7 @@ export default {
       this.planDateArr = []
       this.produceForm = {
         demandType: "produce",
-        demandState: "not_finish",
+        demandState: "finished",
         documentStatus: "submit",
         productDrawingNo: "",
         planNo: "",
@@ -1343,9 +1344,7 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      },
-        this.produceFormFormSQ.planNo = ""
-      this.produceFormFormSQ.productDrawingNo = ""
+      }, 
       this.$refs.SuperQuery.conditionList = []
       this.getproduceData()
     },
@@ -1398,7 +1397,7 @@ export default {
         planNo: "",
         immediatelyBuyFlag: "",
         demandType: "purchase",
-        demandState: "not_finish",
+        demandState: "finished",
         documentStatus: "submit",
         orderItems: [{
           asc: false,
@@ -1473,7 +1472,7 @@ export default {
       this.planDateArr = []
       this.outForm = {
         demandType: "out",
-        demandState: "not_finish",
+        demandState: "finished",
         documentStatus: "submit",
         productDrawingNo: "",
         planNo: "",
@@ -1486,6 +1485,12 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        pageNum: 1,
+        pageSize: 20,
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
       },
         this.outFormSQ.planNo = ""
       this.outFormSQ.productDrawingNo = ""

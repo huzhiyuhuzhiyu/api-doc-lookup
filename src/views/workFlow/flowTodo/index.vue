@@ -269,7 +269,10 @@ export default {
       this.categoryIndex = -1
       this.getCount()
       this.initData()
-    }
+    },
+    'listQuery.flowCategory':function(newVal){
+      this.initData()
+    },
   },
   methods: {
     getCount() {

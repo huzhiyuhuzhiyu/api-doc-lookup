@@ -213,7 +213,7 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="fhTableList" v-show="categoryType == 'outbound_sale_send'"
+        <JNPF-table v-loading="listLoading"  :data="fhTableList" v-show="categoryType == 'outbound_sale_send'"
           custom-column ref="fhtabForm" :fixedNo="true" :setColumnDisplayList="fhcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -277,7 +277,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table v-loading="listLoading" :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
+        <JNPF-table v-loading="listLoading"  :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
           custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -325,7 +325,7 @@
         { label: "外协退货", value: "outbound_external" }, -->
 
         <!-- 采购收/退货 -->
-        <JNPF-table v-loading="listLoading" :data="cgTableList"
+        <JNPF-table v-loading="listLoading"   :data="cgTableList"
           v-show="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'" custom-column
           ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
@@ -365,7 +365,7 @@
         </JNPF-table>
 
         <!-- 外协收货 -->
-        <JNPF-table v-loading="listLoading" :data="wxshTableList" v-if="categoryType == 'inbound_external'"
+        <JNPF-table v-loading="listLoading"  :data="wxshTableList" v-show="categoryType == 'inbound_external'"
           custom-column ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -400,7 +400,7 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table v-loading="listLoading" :data="wxflTableList" v-if="categoryType == 'outbound_external_send'"
+        <JNPF-table v-loading="listLoading" :key="3" :data="wxflTableList" v-show="categoryType == 'outbound_external_send'"
           custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -452,19 +452,23 @@
         </JNPF-table>
 
         <!-- 装配/套圈领料 outbound_pick_out -->
-        <JNPF-table v-loading="listLoading" :data="pickingTableList" v-if="categoryType == 'outbound_pick_out'"
+        <JNPF-table v-loading="listLoading" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
           custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
           <el-table-column prop="orderNo" label="领料单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
-                @click.native="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">{{
+                @click.native="viewFun(scope.row.id, 'look', 'PickREFForm', pickFormVisible = true)">{{
                   scope.row.orderNo
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="partnerName" label="领料类型" min-width="140" sortable="custom" />
-          <el-table-column prop="partnerCode" label="任务单号" min-width="140" sortable="custom" />
-          <el-table-column prop="deliverDate" label="领料人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="receiveType" label="领料类型" min-width="140" sortable="custom"  >
+            <template slot-scope="scope">
+              <div>{{ scope.row.receiveType=='order'?'订单物料':"工序物料" }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productionOrderNo" label="任务单号" min-width="140" sortable="custom" />
+          <el-table-column prop="personName" label="领料人" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
@@ -472,7 +476,7 @@
               <el-button size="mini" type="text"
                 @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'picking')">出库</el-button>
               <el-button size="mini" type="text"
-                @click="viewFun(scope.row.id, 'look', 'PickForm', pickFormVisible = true)">查看详情</el-button>
+                @click="viewFun(scope.row.id, 'look', 'PickREFForm', pickFormVisible = true)">查看详情</el-button>
             </template>
           </el-table-column>
         </JNPF-table>
@@ -505,7 +509,7 @@
     <CGSHREFForm v-if="cgshFormVisible" ref="CGSHREFForm" @close="closeForm" />
     <WXFLREFForm v-if="wxflFormVisible" ref="WXFLREFForm" @close="closeForm" />
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
-    <PickForm v-if="pickFormVisible" ref="PickForm" @close="closeForm" />
+    <PickForm v-if="pickFormVisible" ref="PickREFForm" @close="closeForm" />
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -667,7 +671,7 @@ export default {
       pickForm: {
         pageNum: 1,
         pageSize: 20,
-        classAttribute: "",
+        productClassAttribute: "",
         pickingFlag: 1,
         receiveType: "",
         orderNo: "",
@@ -687,6 +691,7 @@ export default {
       defaultProps: {
         children: "",
         label: "fullName",
+        key: "businessType"
       },
       listQuery: {
 
@@ -785,6 +790,7 @@ export default {
     // 根据左侧分类  点击不同的分类  请求不同的数据
     getTabdataList() {
       // 发货通知单
+      this.$forceUpdate()
       if (this.categoryType == 'outbound_sale_send') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'delivery'
@@ -869,9 +875,11 @@ export default {
       if (this.categoryType == 'outbound_pick_out') {
         this.listLoading = true
         console.log(555);
-        this.pickForm.classAttribute = this.classAttribute
+        this.pickForm.productClassAttribute = this.classAttribute
         WithdrawalList(this.pickForm).then(res => {
           console.log("领料", res);
+          this.pickingTableList = res.data.records
+          this.pickTotal = res.data.total
           this.listLoading = false
         })
       }
@@ -1118,7 +1126,7 @@ export default {
         this.pickForm = {
           pageNum: 1,
           pageSize: 20,
-          classAttribute: this.classAttribute,
+          productClassAttribute: this.classAttribute,
           pickingFlag: 1,
           receiveType: "",
           orderNo: "",
@@ -1142,7 +1150,13 @@ export default {
     viewFun(id, btnType, ref, visible) {
       console.log(id, btnType, ref, visible);
       this.$nextTick(() => {
-        this.$refs[ref].init(id, btnType)
+        if(ref=='picktabForm'){
+
+          this.$refs[ref].init(id, btnType,'pick')
+        }else{
+          this.$refs[ref].init(id, btnType)
+
+        }
       })
     },
     // 关闭新建编辑页面
@@ -1154,6 +1168,7 @@ export default {
       this.cgthFormVisible = false
       this.wxflFormVisible = false
       this.wxshFormVisible = false
+      this.pickFormVisible=false
       if (isRefresh) {
         this.getStockMovelistFun()
       }

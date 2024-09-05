@@ -280,9 +280,7 @@
                       $t("common.reset") }}
                     </el-button>
                   </el-form-item>
-                </el-col>
-                <el-button style="float: right; margin-right: 20px" size="mini" type="primary" icon="el-icon-search"
-                  @click="moreQueries()">更多查询</el-button>
+                </el-col> 
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -400,14 +398,12 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getouteData()">
                       {{ $t("common.search") }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t("common.reset") }}
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetOuData()">{{ $t("common.reset") }}
                     </el-button>
                   </el-form-item>
-                </el-col>
-                <el-button style="float: right; margin-right: 20px" size="mini" type="primary" icon="el-icon-search"
-                  @click="moreQueries()">更多查询</el-button>
+                </el-col> 
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -2224,13 +2220,8 @@ export default {
                 4
               );
           });
-          const key = `${curr.sealingCoverTyping}-${curr.accuracyLevel}-${curr.vibrationLevel}-${curr.oil}-${curr.oilQuantity}-${curr.productsId}-${curr.clearance}-${curr.packagingMethod}-${curr.specialRequire}`;
-            if (!acc[key]) {
-              acc[key] = { ...curr };
-            } else {
-              acc[key].outputQuantity += curr.outputQuantity;
-              acc[key].planProductionQuantity += curr.planProductionQuantity;
-            }
+          
+           
           console.log("arr", arr);
           const mergedArr = arr.reduce((acc, curr) => {
             const existingItem = acc.find(

@@ -165,7 +165,7 @@
 <script>
 import { getBomList, deleteBomData, batchCalculateLen } from '@/api/basicData/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
-import Form from './Form'
+import Form from '../productionBom/Form.vue'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'

@@ -795,7 +795,7 @@
         </div>
 
       </el-dialog>
-    <PurchaseFormPage v-if="purchaseVisible" ref="Purchaseref" @refresh="refresh" @close="refresh" />
+    <!-- <PurchaseFormPage v-if="purchaseVisible" ref="Purchaseref" @refresh="refresh" @close="refresh" />
     <PlanFormPage v-if="planVisible" ref="Planref" @refresh="refresh" @close="refresh" />
     <PickingFormPage v-if="pickingVisible" ref="Pickingref" @refresh="refresh" @close="refresh" />
     <ProductOutFormPage v-if="productOutVisible" ref="ProductOutref" @refresh="refresh" @close="refresh" />
@@ -806,7 +806,7 @@
     <DeliveryFormPage v-if="deliveryVisible" ref="Deliveryref" @refresh="refresh" @close="refresh" />
     <ReconciliationFormPage v-if="reconciliatioVisible" ref="Reconciliationref" @refresh="refresh" @close="refresh" />
     <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetFormref" @refresh="refresh" @close="refresh" />
-    <RetrospectForm v-if="retrospectFormVisible" ref="retrospectFormref" @refresh="refresh" @close="refresh" />
+    <RetrospectForm v-if="retrospectFormVisible" ref="retrospectFormref" @refresh="refresh" @close="refresh" /> -->
 
     </div>
   </transition>
@@ -814,23 +814,23 @@
 
   <script>
 import { getOrderSourceList } from '@/api/productOrdes/finishedProductOrders'
-import PlanFormPage from '../../../calculationList/calculationManagement/calculationManagement/Form.vue'
-import PurchaseFormPage from '../../../purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
-import PickingFormPage from '../../../productionOrders/assembleManagement/MaterialRequisitionNotice/Form.vue'
-import ProductOutFormPage from '../../../productionOrders/assembleManagement/MaterialRequisitionNotice/Form'
-import ProductionFormPage from '../../../productionOrders/productOrdersMan/finishedOrdersManage/Form.vue'
-import ProductionrOutFormPage from '../../../externalProcessManagement/externalProcess/outsourProcessOrder/Form.vue'
-import DeliveryFormPage from '../../shippingnotice/assemblyNotice/Form.vue'
-import WarehousingFormPage from "../../../warehouseManagement/inboundAndOutbound/inbound/Form.vue"
-import ReconciliationFormPage from '../../saleReconciliationManagement/salesReconManagement/Form.vue'
-import ComplateSetForm from '../../../calculationList/calculationManagement/completeSetQuery/complateSetForm.vue'
-import RetrospectForm from '../../../calculationList/calculationManagement/completeSetQuery/retrospectForm.vue'
+// import PlanFormPage from '../../../calculationList/calculationManagement/calculationManagement/Form.vue'
+// import PurchaseFormPage from '../../../purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
+// import PickingFormPage from '../../../productionOrders/assembleManagement/MaterialRequisitionNotice/Form.vue'
+// import ProductOutFormPage from '../../../productionOrders/assembleManagement/MaterialRequisitionNotice/Form'
+// import ProductionFormPage from '../../../productionOrders/productOrdersMan/finishedOrdersManage/Form.vue'
+// import ProductionrOutFormPage from '../../../externalProcessManagement/externalProcess/outsourProcessOrder/Form.vue'
+// import DeliveryFormPage from '../../shippingnotice/assemblyNotice/Form.vue'
+// import WarehousingFormPage from "../../../warehouseManagement/inboundAndOutbound/inbound/Form.vue"
+// import ReconciliationFormPage from '../../saleReconciliationManagement/salesReconManagement/Form.vue'
+// import ComplateSetForm from '../../../calculationList/calculationManagement/completeSetQuery/complateSetForm.vue'
+// import RetrospectForm from '../../../calculationList/calculationManagement/completeSetQuery/retrospectForm.vue'
 import { getMRPMaterialList,  } from '@/api/calculationList/MRPOperation'
 import {getOrderDetail,getPlanList,purchaseOrderList,WithdrawalList,getprodOrderList,getWarehouseList,getQuotationdatasendlist,getfinAccountList,getsaleOrderList,getsaleOrderLineList} from "@/api/orderFollow/index"
 import originTypeList from "../originTypeList.js"
 export default {
   props: {},
-  components: {PlanFormPage, PurchaseFormPage,PickingFormPage,RetrospectForm,ComplateSetForm, ProductOutFormPage,ProductionFormPage,ProductionrOutFormPage,DeliveryFormPage,ReconciliationFormPage,WarehousingFormPage },
+  // components: {PlanFormPage, PurchaseFormPage,PickingFormPage,RetrospectForm,ComplateSetForm, ProductOutFormPage,ProductionFormPage,ProductionrOutFormPage,DeliveryFormPage,ReconciliationFormPage,WarehousingFormPage },
     data() {
         return {
           retrospectFormVisible:false,

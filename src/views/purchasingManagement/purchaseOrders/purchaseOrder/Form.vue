@@ -668,18 +668,7 @@ export default {
                 })
               })
             }
-            this.dataForm = {
-              cooperativePartnerName: res.data.cooperativePartnerName, //供应商名称
-              deliveryDate: res.data.deliveryDate, //交货日期.
-              orderType: res.data.orderType,
-              excludingTaxTotalAmount: res.data.excludingTaxTotalAmount, //订单 不含税总金额
-              totalAmount: res.data.totalAmount, //   含税总金额
-              taxAmount: res.data.taxAmount,
-              orderNo: res.data.orderNo,
-              id: res.data.id,
-              receivingStatus: res.data.receivingStatus,
-              approvalFlag: res.data.approvalFlag
-            }
+            this.dataForm = res.data
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)

@@ -367,16 +367,7 @@ import sourceForm from './source.vue'
 import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
-import workFlow from '@/components/WorkFlow/settingBus.vue'
 import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import {
-  getApprovalTemplate,
-  getApprovalDetailTree,
-  busApprovalFlowTree,
-  getSaleBusDetail,
-  getBusDetail,
-  approvalTransferList
-} from '@/api/basicData/approvalAdministrator'
 import {
   getOrderDetail,
   addOrders,
@@ -395,7 +386,6 @@ import Process from '@/components/Process/Preview'
 export default {
   components: {
     sourceForm,
-    workFlow,
     Process
   },
   data() {

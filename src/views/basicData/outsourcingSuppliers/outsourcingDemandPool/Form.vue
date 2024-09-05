@@ -7,7 +7,7 @@
           <div class="options">
             <!-- <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
               保存草稿</el-button> -->
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit()">
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit()">
               {{ $t('common.submitButton') }}
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -1150,7 +1150,7 @@ export default {
     },
 
     // 表单提交
-    async dataFormSubmit() {
+    async handleSubmit() {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
       let form_1 = this.$refs['elForm']

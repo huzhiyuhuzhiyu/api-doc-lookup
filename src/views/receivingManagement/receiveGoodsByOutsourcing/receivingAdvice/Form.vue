@@ -672,39 +672,7 @@ export default {
     //     this.countryList = res.data.records
     //   })
     // },
-    // 根据选择的省份获取相应的城市数据
-    changeProvince(item, row) {
-      this.dataForm.city = ''
-      this.dataForm.area = ''
-      getProvinceList(item.id).then((res) => {
-        // this.changeCity()
-        this.cities = res.data.list
-      })
-    },
-    // 根据选择的城市获取各区的数据
-    changeCity(item, row) {
-      if (row) {
-        row.area = ''
-      } else {
-        this.dataForm.area = ''
-      }
-      getProvinceList(item.id).then((res) => {
-        this.areas = res.data.list
-      })
-    },
-    // 获取省份数据
-    getProvinceList() {
-      getProvinceList(this.nodeId, this.listQuery)
-        .then((res) => {
-          this.provinces = res.data.list
-          this.init(id, parentId)
-        })
-        .catch(() => {
-          this.listLoading = false
-          this.btnLoading = false
-          this.refreshTable = true
-        })
-    },
+    
     // 产品列表选中
     handeleProductInfoData(val) {
       this.selectRows = val

@@ -45,8 +45,10 @@
                       </el-col>
                       <el-col :span="8" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-input type="text" v-model="dataForm.receivingStatus === 'receiving' ? '未完成' : '已完成'"
-                            placeholder="订单状态" :disabled="type == 'look'"></el-input>
+                          <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                            <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
+                              :value="item.value" ></el-option>
+                          </el-select>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -327,6 +329,20 @@ export default {
         totalAmount: '', //   含税总金额
         taxAmount: '' // 税额
       },
+      receivingStatusOptions: [
+        {
+          value: 'not_finished',
+          label: '未完成'
+        },
+        {
+          value: 'finished',
+          label: '已完成'
+        },
+        {
+          value: 'stopped',
+          label: '已停止'
+        }
+      ],
       dataPickerOptions: {
         // 日期区间选择器通用选项
         disabledDate(time) {

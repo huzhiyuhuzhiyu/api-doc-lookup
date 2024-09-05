@@ -111,7 +111,7 @@
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.productId, 'look')">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.productCode }}
               </el-link>
             </template>

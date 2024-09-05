@@ -231,6 +231,9 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
+            <!-- <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane> -->
           </el-tabs>
         </div>
 
@@ -259,16 +262,12 @@
 </template>
 
 <script>
-import { editPartner, addPartner, getCounryData, checkCode } from '@/api/basicData/index'
-import { getProvinceList } from '@/api/system/province'
-// import { getOrderDetail, addOrders, editOrders, getcategoryTrees, getAttributeline, getcooperativeProduct } from '@/api/salesManagement/assemblyOrders'
 import { getQuotationsendlist, editReceiptnoticelist } from '@/api/salesManagement/index'
 import { getsaleOrderList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getCooperativeInfo, getCooperativeData, getAddressInfo } from '@/api/basicData/index'
 import changeAddress from './changeAddress.vue'
-import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import {
   purProcurementDemandPoolexternal,
   outPoolexternal,
@@ -278,9 +277,11 @@ import {
   detailpurPurchaseReceiptReturnGoods
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
 export default {
   components: {
-    changeAddress
+    changeAddress,Process
   },
   data() {
     return {
@@ -531,7 +532,8 @@ export default {
         delivery: 'deliver_goods',
         // shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false
       },
       defaultAddress: '',
       parentId: '',

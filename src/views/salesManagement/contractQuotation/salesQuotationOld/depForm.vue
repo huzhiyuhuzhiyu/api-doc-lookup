@@ -562,9 +562,6 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getProducts, getDetailByDrawNo } from '@/api/masterDataManagement/index.js' // 产品列表
 import { mapGetters, mapState } from 'vuex'
 import { getbimProductAttributes } from "@/api/masterDataManagement/index";
-import workFlow from '@/components/WorkFlow/settingBus.vue'
-import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
-// import errorDialog from '@/components/WorkFlow/dialog/errorDialog.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
@@ -572,7 +569,7 @@ import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
-  components: { workFlow, ExportForm ,Process , recordList},
+  components: {  ExportForm ,Process , recordList},
   mixins: [busFlow],
   data() {
     return {

@@ -9,7 +9,7 @@
         <div class="tag-group JNPF-common-search-box treeBox_bot"
           style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 0px 0">
             <el-radio-group v-model="listQuery.flowCategory" style="background-color:#fff;">
-              <el-badge :value="total">
+              <el-badge :value="allTotal">
                 <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
               </el-badge>
               <el-badge :value="item.num" :max="99" v-for="item in countItems" :key="item.id">
@@ -247,7 +247,8 @@ export default {
         },
       ],
       countItems: [],
-      flowType:'businessType'
+      flowType:'businessType',
+      allTotal:0
     }
   },
   filters: {
@@ -277,8 +278,8 @@ export default {
   methods: {
     getCount() {
       getFlowBeforeCount(this.listQuery).then(res => {
-        console.log(res, 'sdasdas');
         this.countItems = res.data.result
+        this.allTotal = this.countItems.reduce((acc,item)=>acc+=item.num*1,0)
       })
     },
     changeCategory(item, index) {

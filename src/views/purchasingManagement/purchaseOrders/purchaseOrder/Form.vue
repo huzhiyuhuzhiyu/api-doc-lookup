@@ -126,7 +126,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位(主)" min-width="140" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" min-width="140" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -136,7 +136,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
+                      <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
                             <div class="viewData">
@@ -144,7 +144,7 @@
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="price" label="含税单价" min-width="120">
                         <template slot-scope="scope">
@@ -249,11 +249,11 @@
                   </el-form>
 
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin-right:10px">
+                    <!-- <span style="font-weight:500;margin-right:10px">
                       总金额：{{ dataForm.excludingTaxTotalAmount }}
-                    </span>
-                    <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
-                    <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
+                    </span> -->
+                    <span style="font-weight:500;margin-right:10px">总税额：{{ computedValue2 }}</span>
+                    <span style="font-weight:500;margin-right:10px">价税合计：{{ computedValue }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -491,7 +491,58 @@ export default {
     }
   },
   created() { },
-
+  computed: {
+    ...mapGetters(['userInfo']),
+    computedValue() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      let num = 0
+      let num2 = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.totalAmount * 1
+      })
+      this.dataForm.totalAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.totalAmount
+    },
+    computedValue2() {
+      // 在这里计算第三个输入框的值
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        count += item.taxAmount * 1
+      })
+      this.dataForm.taxAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.taxAmount
+    },
+    backComputedValue() {
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        if (item.receiptReturnType == 'inbound_purchase') {
+          count += item.includingTaxAmount * 1
+        }
+      })
+      this.dataForm.backAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.backAmount
+    },
+    receiptComputedValue() {
+      let count = 0
+      this.dataFormTwo.data.forEach((item) => {
+        if (item.receiptReturnType === 'outbound_purchase') {
+          count += item.includingTaxAmount * 1
+        }
+      })
+      this.dataForm.receiptAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.receiptAmount
+    },
+    brComputedValue() {
+      let count = 0
+      if (this.dataForm.excludingTaxAmount !== '' && this.dataForm.taxAmount !== '') {
+        count = this.dataForm.excludingTaxAmount * 1 + this.dataForm.taxAmount * 1
+      }
+      console.log('count', count)
+      this.dataForm.includingTaxAmount = this.jnpf.numberFormat(count)
+      return this.dataForm.includingTaxAmount
+    }
+  },
   methods: {
     disabledDate(time) {
       // 将输入的日期字符串转换为日期对象
@@ -819,7 +870,7 @@ export default {
       this.formLoading = true
       this.scheduleForm.purchaseOrderId = this.dataForm.id
       console.log(this.scheduleForm, '参数')
-   
+
     },
     resetDetail() {
       this.$refs['scheduleRef'].$refs.JNPFTable.clearSort()

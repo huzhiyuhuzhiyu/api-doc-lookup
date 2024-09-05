@@ -136,7 +136,7 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from './Form.vue'
+import Form from '../purchaseOrder/Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'

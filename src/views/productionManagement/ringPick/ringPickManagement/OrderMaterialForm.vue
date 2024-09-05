@@ -63,7 +63,7 @@
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum, detailordershengchan, getMaterialList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan, getMaterialList,ordermaterialList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -117,7 +117,7 @@ export default {
  
     getMaterialListFun() {
       this.listLoading = true
-      getMaterialList(this.orderForm).then(res => {
+      ordermaterialList(this.orderForm).then(res => {
         console.log("生产详情", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
@@ -127,7 +127,7 @@ export default {
       })
     },
     search() {
-      this.getMaterialListFun(this.id)
+      this.getMaterialListFun( )
     },
     reset() {
       this.form = {

@@ -153,6 +153,37 @@
             </el-form-item>
           </el-col>
         </el-form>
+
+        <!-- 生产领料 查询 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'outbound_pick_out'">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="pickForm.receiveType" placeholder="领料类型" style="width: 100%;">
+                <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
@@ -198,7 +229,7 @@
           <el-table-column prop="recipient" label="收件人" min-width="140" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
 
-          <el-table-column prop="delivery" label="发货方式"min-width="140">
+          <el-table-column prop="delivery" label="发货方式" min-width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.delivery == 'deliver_goods'">
                 <span>送货</span>
@@ -217,7 +248,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="countryName" label="国家"min-width="140" />
+          <el-table-column prop="countryName" label="国家" min-width="140" />
           <el-table-column prop="provinceName" label="省" width="160" />
           <el-table-column prop="cityName" label="市" width="160" />
           <el-table-column prop="areaName" label="区" width="160" />
@@ -312,8 +343,10 @@
           <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="salesman" label="操作员" min-width="140" sortable="custom" />
-          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom" v-if="categoryType == 'outbound_purchase'"></el-table-column>
-          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom" v-if="categoryType == 'inbound_purchase'"></el-table-column>
+          <el-table-column prop="deliverDate" label="退货日期" min-width="140" sortable="custom"
+            v-if="categoryType == 'outbound_purchase'"></el-table-column>
+          <el-table-column prop="deliverDate" label="收货日期" min-width="140" sortable="custom"
+            v-if="categoryType == 'inbound_purchase'"></el-table-column>
           <el-table-column prop="remark" label="备注" width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -368,7 +401,7 @@
         </JNPF-table>
         <!-- 外协发料 -->
         <JNPF-table v-loading="listLoading" :data="wxflTableList" v-if="categoryType == 'outbound_external_send'"
-          custom-column ref="wxfltabForm" :fixedNo="true"  :setColumnDisplayList="wxflcolumnList">
+          custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
           <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
@@ -418,6 +451,33 @@
           </el-table-column>
         </JNPF-table>
 
+        <!-- 装配/套圈领料 outbound_pick_out -->
+        <JNPF-table v-loading="listLoading" :data="pickingTableList" v-if="categoryType == 'outbound_pick_out'"
+          custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
+          <el-table-column prop="orderNo" label="领料单号" min-width="140" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="partnerName" label="领料类型" min-width="140" sortable="custom" />
+          <el-table-column prop="partnerCode" label="任务单号" min-width="140" sortable="custom" />
+          <el-table-column prop="deliverDate" label="领料人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'picking')">出库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewFun(scope.row.id, 'look', 'PickForm', pickFormVisible = true)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+
+
 
 
         <pagination :total="fhTotal" :page.sync="fhForm.pageNum" :limit.sync="fhForm.pageSize"
@@ -433,6 +493,9 @@
         <pagination :total="wxflTotal" :page.sync="wxflForm.pageNum" :limit.sync="wxflForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'outbound_external_send'">
         </pagination>
+        <pagination :total="pickTotal" :page.sync="pickForm.pageNum" :limit.sync="pickForm.pageSize"
+          @pagination="getTabdataList" v-if="categoryType == 'outbound_pick_out'">
+        </pagination>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -442,6 +505,7 @@
     <CGSHREFForm v-if="cgshFormVisible" ref="CGSHREFForm" @close="closeForm" />
     <WXFLREFForm v-if="wxflFormVisible" ref="WXFLREFForm" @close="closeForm" />
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
+    <PickForm v-if="pickFormVisible" ref="PickForm" @close="closeForm" />
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -465,14 +529,16 @@ import CGTHREFForm from "../../../purchasingManagement/returnManagement/purchase
 import CGSHREFForm from "../../../warehouseManagement/finishedProductWarehouseManagement/purchaseReceiveNote/Form.vue"
 import WXSHREFForm from '../../../receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 import WXFLREFForm from "../../../outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue"
+import PickForm from "@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue"
+import { WithdrawalList } from '@/api/productOrdes/index.js'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm },
-  props:{
-    classAttribute:"",
+  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm },
+  props: {
+    classAttribute: "",
   },
-  data() { 
+  data() {
     return {
       thFormVisible: false,
       fhFormVisible: false,
@@ -504,6 +570,8 @@ export default {
           column: "create_time"
         }],
         superQuery: {},
+        pageNum: 1,
+        pageSize: 20,
       },
       fhTableList: [],//发货列表数据
       fhTotal: 0,//发货 列表总条数
@@ -534,6 +602,8 @@ export default {
       wxshTotal: 0,
       wxshTableList: [],
       wxshForm: {
+        pageNum: 1,
+        pageSize: 20,
         classAttribute: "",
         documentStatus: "sibmit",
         deliverDateStart: "",
@@ -566,6 +636,8 @@ export default {
       wxflTotal: 0,
       wxflTableList: [],
       wxflForm: {
+        pageNum: 1,
+        pageSize: 20,
         classAttribute: "",
         documentStatus: "sibmit",
         rdeDate: "",
@@ -584,6 +656,32 @@ export default {
         }],
         superQuery: {},
       },
+
+      pickcolumnList: ["createByName",],
+      receiveTypeList: [
+        { label: "订单物料", value: "order" },
+        { label: "工序物料", value: "process" },
+      ],
+      pickTotal: 0,
+      pickFormVisible: false,
+      pickForm: {
+        pageNum: 1,
+        pageSize: 20,
+        classAttribute: "",
+        pickingFlag: 1,
+        receiveType: "",
+        orderNo: "",
+        personName: "",
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {},
+      },
+      pickingTableList: [],
 
 
       defaultProps: {
@@ -622,6 +720,9 @@ export default {
     console.log(this.classAttribute);
   },
   methods: {
+    getcategoryTree() {
+      this.getStockMovelistFun()
+    },
     getStockMovelistFun() {
       getStockMovelist(this.classAttribute).then(res => {
         console.log("左侧分类数据", res);
@@ -645,7 +746,20 @@ export default {
             }
             if (item.businessType == 'inbound_external') {
               item.fullName = '外协收货'
-            } 
+            }
+            if (item.businessType == 'outbound_pick_out') {
+              item.fullName = '生产领料'
+
+            }
+            if (item.businessType == 'inbound_return_materials') {
+              item.fullName = '生产退料'
+
+            }
+            if (item.businessType == 'inbound_mock_production') {
+              item.fullName = '生产入库'
+
+            }
+
           });
         }
         this.$nextTick(() => {
@@ -663,7 +777,7 @@ export default {
       if (this.categoryType) {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs[ref].init(data, btnType, this.categoryType,this.classAttribute)
+          this.$refs[ref].init(data, btnType, this.categoryType, this.classAttribute)
         })
 
       }
@@ -674,7 +788,7 @@ export default {
       if (this.categoryType == 'outbound_sale_send') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'delivery'
-        this.fhForm.classAttribute=this.classAttribute
+        this.fhForm.classAttribute = this.classAttribute
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.fhTableList = res.data.records
           this.fhTotal = res.data.total
@@ -687,8 +801,8 @@ export default {
       if (this.categoryType == 'inbound_sale_return') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'back'
-        this.$set(this.fhForm,'inspectionStatus','inspected')
-        this.fhForm.classAttribute=this.classAttribute
+        this.$set(this.fhForm, 'inspectionStatus', 'inspected')
+        this.fhForm.classAttribute = this.classAttribute
         getQuotationdatasendlist(this.fhForm).then(res => {
           this.thTableList = res.data.records
           this.fhTotal = res.data.total
@@ -702,7 +816,7 @@ export default {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'receipt'
         // this.$set(this.cgForm,'receiptInboundFlag',1)
-        this.cgForm.classAttribute=this.classAttribute
+        this.cgForm.classAttribute = this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -715,7 +829,7 @@ export default {
       if (this.categoryType == 'outbound_purchase') {
         this.listLoading = true
         this.cgForm.receiptReturnType = 'back'
-        this.cgForm.classAttribute=this.classAttribute
+        this.cgForm.classAttribute = this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total
@@ -727,7 +841,7 @@ export default {
       // 外协发料
       if (this.categoryType == 'outbound_external_send') {
         this.listLoading = true
-        this.wxflForm.classAttribute=this.classAttribute
+        this.wxflForm.classAttribute = this.classAttribute
         getQuotationdatasendlist(this.wxflForm).then(res => {
           this.wxflTableList = res.data.records
           this.wxflTotal = res.data.total
@@ -739,15 +853,25 @@ export default {
       // 外协收货
       if (this.categoryType == 'inbound_external') {
         this.listLoading = true
-        this.$set(this.wxshForm,'receiptInboundFlag',1)
+        this.$set(this.wxshForm, 'receiptInboundFlag', 1)
 
-         
-        this.wxshForm.classAttribute=this.classAttribute
+
+        this.wxshForm.classAttribute = this.classAttribute
         purPurchaseReceiptReturnGoodsList(this.wxshForm).then(res => {
           this.wxshTableList = res.data.records
           this.wxshTotal = res.data.total
           this.listLoading = false
         }).catch(error => {
+          this.listLoading = false
+        })
+      }
+      // 生产领料
+      if (this.categoryType == 'outbound_pick_out') {
+        this.listLoading = true
+        console.log(555);
+        this.pickForm.classAttribute = this.classAttribute
+        WithdrawalList(this.pickForm).then(res => {
+          console.log("领料", res);
           this.listLoading = false
         })
       }
@@ -990,6 +1114,26 @@ export default {
         },
           this.getTabdataList()
       }
+      if (this.categoryType == 'outbound_pick_out') {
+        this.pickForm = {
+          pageNum: 1,
+          pageSize: 20,
+          classAttribute: this.classAttribute,
+          pickingFlag: 1,
+          receiveType: "",
+          orderNo: "",
+          personName: "",
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          superQuery: {},
+        },
+          this.getTabdataList()
+      }
     },
 
 
@@ -1009,7 +1153,7 @@ export default {
       this.cgshFormVisible = false
       this.cgthFormVisible = false
       this.wxflFormVisible = false
-      this.wxshFormVisible=false
+      this.wxshFormVisible = false
       if (isRefresh) {
         this.getStockMovelistFun()
       }

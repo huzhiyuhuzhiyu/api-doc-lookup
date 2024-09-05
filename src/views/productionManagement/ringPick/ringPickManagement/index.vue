@@ -177,7 +177,7 @@ export default {
         classAttribute: "semi_finished",
         pickingStatus: "not_finished",
         orderStatus: "normal",
-        notifyType: 'back',
+        notifyType: 'picking',
       },
 
 

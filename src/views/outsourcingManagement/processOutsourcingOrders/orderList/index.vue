@@ -92,14 +92,24 @@
                   :editDisabled="scope.row.documentStatus !== 'draft'"
                   :delDisabled="scope.row.documentStatus !== 'draft'">
                   <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-
-                  </el-dropdown>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
+                      查看详情
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
+                      下载订货单
+                    </el-dropdown-item>
+                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
+                      打印订货单
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
                 </tableOpts>
 
               </template>

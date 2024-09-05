@@ -62,7 +62,7 @@
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum,getWorkList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum,getWorkList,ordercollectlList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -117,7 +117,7 @@ export default {
     },
     getWorkListFun() {
       this.listLoading = true
-      getWorkList(this.orderForm).then(res => {
+      ordercollectlList(this.orderForm).then(res => {
         console.log("工单", res);
         this.tableDataList = res.data.records
         this.total = res.data.total

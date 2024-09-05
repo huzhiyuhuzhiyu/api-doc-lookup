@@ -133,7 +133,7 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from './Form'
+import Form from '../../purchaseOrders/purchaseOrder/Form.vue'
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -163,7 +163,7 @@ export default {
         // documentStatus: "submit",
         // orderState: "not_finish",
         classAttribute: 'finish_product',
-        orderType: 'procur',
+        orderType: 'procure',
         deliveryEndDate: '',
         deliveryStartTime: '',
         // extensionFlag: 1,

@@ -7,9 +7,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="scanCodeTent">
               <div class="searchregion">
-                <el-input v-model="scanResult" placeholder="请输入编码或单号,支持扫码" class="scanResultIpt"></el-input>
-                <el-button type="primary" size="mini" icon="el-icon-search" class="searchBtn" @click="searchResult()">
-                  {{ $t('common.search') }}</el-button>
+                <el-input v-model="scanResult" placeholder="请输入编码或单号"  @keyup.enter.native="searchResult()" class="scanResultIpt"></el-input>  
                 <p style="margin-top: 10px;text-align: left;">说明：支持扫任务码、工序码、班组码、人员码。</p>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
@@ -65,8 +63,8 @@
                     </div>
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title"> 总生产数量:{{ item.productionQuantity }}</div>
-                    <div class="label_title"> 已完成数量:{{ item.completedQuantity }}</div>
+                    <div class="label_title bold"> 总生产数量:<span style="color: #3fb9f8;">{{ item.productionQuantity }}</span></div>
+                    <div class="label_title bold" > 已完成数量:<span style="color: #67c23A;">{{ item.completedQuantity }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
                       <el-button style="color:red;" type="text">关单</el-button>
@@ -1084,7 +1082,7 @@ export default {
 
 .searchregion {
   position: absolute;
-  width: 50%;
+  width: 40%;
   left: 50%;
   transform: translateX(-50%);
   margin-top: 20px;
@@ -1092,7 +1090,6 @@ export default {
 }
 
 .scanResultIpt {
-  width: 85%;
   height: 60px;
 }
 
@@ -1107,12 +1104,12 @@ export default {
 }
 
 .scanImg {
-  scale: 1.5;
-  margin-top: 150px;
-  padding-bottom: 100px;
+    margin-top: 50px;
+    padding-bottom: 50px;
 }
 
 .orderNo {
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -1130,5 +1127,12 @@ export default {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+}
+::v-deep .el-tabs__item{
+  padding: 0 10px;
+}
+.bold{
+  font-size: 18px;
+  font-weight: 600;
 }
 </style>

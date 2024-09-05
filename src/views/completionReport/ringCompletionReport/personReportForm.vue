@@ -2,7 +2,7 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <div class="pageTitle">班组报工</div>
+        <el-page-header @back="goBack" :content="'人员报工'" />
         <div class="options">
 
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -10,76 +10,70 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="orderInfo">
-            <el-collapse v-model="activeNames">
+        <el-collapse v-model="activeNames">
 
-              <el-collapse-item title="工单信息" name="productInfo">
+          <el-collapse-item title="工单信息" name="productInfo">
 
 
-                <div>
-                  <div class="JNPF-common-head">
-                    <div></div>
-                    <div class="JNPF-common-head-right">
+            <div>
+              <div class="JNPF-common-head">
+                <div></div>
+                <div class="JNPF-common-head-right">
 
-                      <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                        <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                          @click="columnSetFun()" />
-                      </el-tooltip>
-
-                    </div>
-                  </div>
-                  <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
-                    @sort-change="sortChange" :setColumnDisplayList="columnList" custom-column class="groupBox">
-                    <el-table-column prop="processName" label="工序名称" min-width="160"
-                      sortable="custom"></el-table-column>
-                    <el-table-column prop="processCode" label="工序编码" min-width="160"
-                      sortable="custom"></el-table-column>
-                    <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
-                      <template slot-scope="scope">
-                        <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
-                    <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
-                    <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
-                    <el-table-column prop="mainUnit" label="单位" min-width="80" />
-                    <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
-                    <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
-                    <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
-                    <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
-                    <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
-                    <el-table-column prop="workstationName" label="工位" min-width="120" sortable="custom" />
-                    <el-table-column label="操作" width="180" fixed="right">
-                      <template slot-scope="scope">
-                        <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
-                        <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
-                      </template>
-                    </el-table-column>
-                  </JNPF-table>
-
-                  <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                        @pagination="initData"> -->
-
-                  <!-- </pagination> -->
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun()" />
+                  </el-tooltip>
 
                 </div>
+              </div>
+              <JNPF-table ref="dataTable" :partentOrChild="'orderInfo'" :data="workList" :fixedNO="true"
+                @sort-change="sortChange" :setColumnDisplayList="columnList" custom-column class="groupBox">
+                <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom"></el-table-column>
+                <el-table-column prop="processCode" label="工序编码" min-width="160" sortable="custom"></el-table-column>
+                <el-table-column prop="processingType" label="加工类型" min-width="120" sortable="custom">
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
+                <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
+                <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" min-width="80" />
+                <el-table-column prop="productionQuantity" label="生产数量" min-width="120" sortable="custom" />
+                <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
+                <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
+                <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
+                <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
+                <el-table-column prop="workstationName" label="工位" min-width="120" sortable="custom" />
+                <el-table-column label="操作" width="180" fixed="right">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
+                    <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+
+              <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+                        @pagination="initData"> -->
+
+              <!-- </pagination> -->
+
+            </div>
 
 
 
 
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
+          </el-collapse-item>
+        </el-collapse>
 
-        </el-tabs>
       </div>
 
 
     </div>
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
-    <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
+    <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
 
   </div>
 </template>
@@ -99,11 +93,11 @@ import recordForm from './recordForm.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm,recordForm
+    NormalForm, VibrateForm, recordForm
   },
   data() {
     return {
-      recordFormVisible:false,
+      recordFormVisible: false,
       columnList: ["processCode"],
       normalFormVisible: false,
       vibrateFormVisible: false,
@@ -166,12 +160,12 @@ export default {
     },
     // 点击报工
     reportFun(row) {
-        this.vibrateFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.VibrateForm.init(row)
+      this.vibrateFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.VibrateForm.init(row)
 
-        })
-     
+      })
+
     },
     reportRecordsFun(row) {
       this.recordFormVisible = true
@@ -184,7 +178,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'processName' || prop === 'workstationName' || prop === 'workGroupName'||prop=='productionLineName') {
+      if (prop === 'partnerCode' || prop === 'processName' || prop === 'workstationName' || prop === 'workGroupName' || prop == 'productionLineName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {

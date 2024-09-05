@@ -2,7 +2,8 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <div class="pageTitle">班组报工</div>
+        <el-page-header @back="goBack" :content="'班组报工'" /> 
+         
         <div class="options">
 
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -11,7 +12,6 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
 
               <el-collapse-item title="工单信息" name="productInfo">
@@ -70,7 +70,6 @@
 
               </el-collapse-item>
             </el-collapse>
-          </el-tab-pane>
 
         </el-tabs>
       </div>

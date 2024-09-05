@@ -2,7 +2,7 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <div class="pageTitle">工序报工</div>
+        <el-page-header @back="goBack" :content="'工序报工'" />
         <div class="options">
 
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -10,8 +10,6 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
 
               <el-collapse-item title="工单信息" name="productInfo">
@@ -70,9 +68,7 @@
 
               </el-collapse-item>
             </el-collapse>
-          </el-tab-pane>
 
-        </el-tabs>
       </div>
 
 
@@ -157,6 +153,7 @@ export default {
     getWorkListFun() {
       getWorkList(this.form).then(res => {
         this.workList = res.data.records
+        if (!res.data.records.length) return this.$message.warning("暂无可报工数据")
       })
     },
     columnSetFun() {

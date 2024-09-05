@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择生产任务" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
+  <el-dialog title="选择物料" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="customerVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectProcess" width="70%" append-to-body
     @close="customerVisible = false">
 
@@ -62,7 +62,7 @@
   </el-dialog>
 </template>
 <script>
-import { ordershengchanList, addOrderNum,getWorkList } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum,getWorkList,ordercollectlList } from '@/api/productOrdes/index.js'
 export default {
   data() {
     return {
@@ -90,8 +90,7 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        pickingProductFlag: 1,
-
+        pickingProductFlag: 1, 
 
       },
       listLoading: false,
@@ -118,7 +117,7 @@ export default {
     },
     getWorkListFun() {
       this.listLoading = true
-      getWorkList(this.orderForm).then(res => {
+      ordercollectlList(this.orderForm).then(res => {
         console.log("工单", res);
         this.tableDataList = res.data.records
         this.total = res.data.total
@@ -150,7 +149,7 @@ export default {
           asc: false,
           column: "create_time"
         }], 
-        pickingProductFlag: 1, 
+        pickingProductFlag: 1,
       }
       this.getWorkListFun()
     },

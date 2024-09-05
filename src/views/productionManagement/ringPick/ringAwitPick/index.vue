@@ -109,7 +109,7 @@
 <script>
 import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
 import { UserListAll, } from '@/api/permission/user'
-import Form from '@/views/productionManagement/assemblyplan/assemblyTaskManagement/Form.vue'
+import Form from '@/views/productionManagement/ringPlan/ringTaskManagement/Form.vue'
 import PickForm from '../ringPickManagement/Form.vue'
 import { getProductionPlanList } from '@/api/productionManagement/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -329,7 +329,7 @@ export default {
     handleUserRelation(id){
       this.formVisible=true
       this.$nextTick(()=>{
-        this.$refs.Form.init(id)
+        this.$refs.Form.init(id,'all')
       })
     },
     dispurchaseData(row) {
@@ -417,6 +417,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.pickVisible=false
       this.search()
     },
     initData() {

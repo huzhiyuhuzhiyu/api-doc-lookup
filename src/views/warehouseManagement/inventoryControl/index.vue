@@ -52,10 +52,11 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
+                @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
-         
+
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
@@ -88,14 +89,24 @@
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="code" label="产品编码" min-width="120" sortable="custom">
           </el-table-column>
-      
+
           <el-table-column prop="productCategoryName" label="产品分类" width="160" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" width=" 80" />
-          <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom" />
-          <el-table-column prop="maxInventory" label="最高库存" min-width="120" sortable="custom" />
+          <el-table-column prop="safeInventory" label="安全库存" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.safeInventory" @focus="safeInventoryFocusFun(scope.row)"
+                @blur="safeInventoryBlurFun(scope.row, scope.$index)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="maxInventory" label="最高库存" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.maxInventory" @focus="maxInventoryFocusFun(scope.row)"
+                @blur="maxInventoryBlurFun(scope.row, scope.$index)"></el-input>
+            </template>
+          </el-table-column>
 
           <el-table-column prop="createTime" label="创建时间" width="180" align="center" sortable="custom">
-           
+
           </el-table-column>
 
         </JNPF-table>
@@ -121,8 +132,8 @@
           提交</el-button>
       </span>
     </el-dialog>
-     <!-- 高级查询 -->
-     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
@@ -165,7 +176,7 @@ export default {
       listLoading: true,
       total: 0,
       type: '',
-      visible: false, 
+      visible: false,
       refreshTree: true,
       defaultProps: {
         children: 'childrenList',
@@ -202,12 +213,12 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        superQuery:{
-           condition: [],
+        superQuery: {
+          condition: [],
           matchLogic: ""
         }
       },
- 
+
       superQueryJson: [
         {
           prop: 'drawingNo',
@@ -219,7 +230,7 @@ export default {
           label: "产品编码",
           type: 'input'
         },
-  
+
         {
           prop: 'productCategoryName',
           label: "产品分类",
@@ -240,7 +251,7 @@ export default {
           label: "最高库存",
           type: 'input'
         },
-         
+
         {
           prop: 'createTime',
           label: '创建时间',
@@ -254,8 +265,10 @@ export default {
 
 
       ],
-      listQuery:{},
+      listQuery: {},
       inventoryVisible: false,
+      safeInventory: "",
+      maxInventory:"",
     }
   },
   watch: {
@@ -269,6 +282,41 @@ export default {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
   },
   methods: {
+    safeInventoryFocusFun(row) {
+      this.safeInventory = JSON.parse(JSON.stringify(row.safeInventory))
+    },
+    safeInventoryBlurFun(row, index) {
+      let arr = []
+      if (row.safeInventory) {
+        arr.push(row)
+        batchUpdataProductIncentory(arr).then(res => {
+          this.$message.success("安全库存设置成功")
+          this.initData()
+
+        })
+      } else {
+        this.$message.error("安全库存不能为空")
+        this.tableData[index].safeInventory = this.safeInventory
+      }
+    },
+    maxInventoryBlurFun(row, index) {
+      let arr = []
+      if (row.maxInventory) {
+        arr.push(row)
+        batchUpdataProductIncentory(arr).then(res => {
+          this.$message.success("最高库存设置成功")
+          this.initData()
+
+        })
+      } else {
+        this.$message.error("最高库存不能为空")
+        this.tableData[index].maxInventory = this.maxInventory
+      }
+    },
+    maxInventoryFocusFun(row) {
+      this.maxInventory = JSON.parse(JSON.stringify(row.maxInventory))
+
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -306,17 +354,17 @@ export default {
             this.inventoryVisible = false
             this.btnLoading = false
             this.formLoading = false
-            this.dataForm={
-              safeInventory:"",
-              maxInventory:"",
+            this.dataForm = {
+              safeInventory: "",
+              maxInventory: "",
             }
             this.initData()
           })
-         
+
         }
       })
     },
-   
+
     setStock() {
       if (!this.selectArr.length) return this.$message.error("请选择产品")
       this.inventoryVisible = true
@@ -473,8 +521,9 @@ export default {
 .JNPF-common-search-box .el-form-item {
   margin-bottom: 8px !important;
 }
+
 .JNPF-common-head {
-  padding: 8px!important
+  padding: 8px !important
 }
 
 .pagination-container {

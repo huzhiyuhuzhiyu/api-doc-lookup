@@ -823,38 +823,43 @@ export default {
   mounted() { },
   created() {
     this.fetchData('WXDH')
-    console.log(this.$route.query.data, 'data')
-    const data = JSON.parse(this.$route.query.data)
-    console.log(data, 'pppppppppp')
-    if (data) {
-      // 解析 JSON 字符串
-      data.forEach((item) => {
-        item.productSource = item.productSource // 产品来源 采购
-        item.classAttribute = item.classAttribute
-        item.productsId = item.id // 产品id
-        item.productName = item.name // 产品名称
-        item.productCode = item.code // 产品编码
-        item.productDrawingNo = item.productDrawingNo // 品名规格
-        item.ratio = item.ratio // 转换系数
-        item.calculationDirection = item.calculationDirection // 计算方向
-        item.mainUnit = item.mainUnit // 主单位
-        item.purchaseQuantity = item.inventoryQuantity // 数量
-        item.price = item.price // 含税单价
-        item.totalAmount = item.totalAmount // 金额(含税)
-        item.taxRate = item.taxRate // 税率
-        item.excludingTaxPrice = item.excludingTaxPrice // 不含税单价
-        item.taxAmount = item.taxAmount // 税额
-        item.excludingTaxAmount = item.excludingTaxAmount // 金额(不含税)
-        item.deputyUnit = item.deputyUnit // 副单位
-        item.planQuantity = '' //计划数量主
-        item.planQuantity2 = '' //计划数量副
-        item.remark = item.remark
-        item.deliveryDate = '' // 交期
-      })
-      this.dataFormTwo.data = data
-      console.log(this.dataFormTwo.data, 'two')
-      this.getProductClassFun()
+
+    if (this.$route.query.data) {
+      const data = JSON.parse(this.$route.query.data)
+
+      if (data) {
+        // 解析 JSON 字符串
+        data.forEach((item) => {
+          item.productSource = item.productSource // 产品来源 采购
+          item.classAttribute = item.classAttribute
+          item.productsId = item.id // 产品id
+          item.productName = item.name // 产品名称
+          item.productCode = item.code // 产品编码
+          item.productDrawingNo = item.productDrawingNo // 品名规格
+          item.ratio = item.ratio // 转换系数
+          item.calculationDirection = item.calculationDirection // 计算方向
+          item.mainUnit = item.mainUnit // 主单位
+          item.purchaseQuantity = item.inventoryQuantity // 数量
+          item.price = item.price // 含税单价
+          item.totalAmount = item.totalAmount // 金额(含税)
+          item.taxRate = item.taxRate // 税率
+          item.excludingTaxPrice = item.excludingTaxPrice // 不含税单价
+          item.taxAmount = item.taxAmount // 税额
+          item.excludingTaxAmount = item.excludingTaxAmount // 金额(不含税)
+          item.deputyUnit = item.deputyUnit // 副单位
+          item.planQuantity = '' //计划数量主
+          item.planQuantity2 = '' //计划数量副
+          item.remark = item.remark
+          item.deliveryDate = '' // 交期
+        })
+        this.dataFormTwo.data = data
+        console.log(this.dataFormTwo.data, 'two')
+        this.getProductClassFun()
+      }
+    } else {
+
     }
+
   },
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)

@@ -265,7 +265,6 @@
                       icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                   </div> -->
             </el-tab-pane>
-      >
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>

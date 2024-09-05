@@ -66,7 +66,6 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="140" :key="4" />
                   <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>

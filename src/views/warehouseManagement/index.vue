@@ -11,6 +11,7 @@ import inventory from "@/views/warehouseManagement/finishedProductWarehouseManag
 import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList"
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
+import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
 import {
   getBimProductAttributesInfo,
   updataBimProductAttributes,
@@ -21,7 +22,7 @@ import {
 } from '@/api/masterDataManagement/index'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition},
   data() {
     return {
       businessType:"",
@@ -73,6 +74,9 @@ export default {
     }
     if(this.businessType=='transferManagement'){
       this.listPageComponent=transferManagement
+    }
+    if(this.businessType=='directMaterialRequisition'){
+      this.listPageComponent=directMaterialRequisition
     }
     // if()
 

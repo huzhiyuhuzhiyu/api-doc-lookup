@@ -19,7 +19,7 @@
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="通知单信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -74,7 +74,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <div v-if="btnType != 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px;  font-size:14px!important"
-                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>||
+                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>|
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </div>
@@ -86,8 +86,7 @@
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                      <el-table-column prop="waitReceiveQuantity" label="待退料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
+                     
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -97,9 +96,7 @@
                             <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
-                      </el-table-column>
-                      <el-table-column prop="waitReceiveQuantity" label="可退料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'process'"></el-table-column>
+                      </el-table-column> 
                       <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
                           <span class="required">*</span>退料数量
@@ -187,7 +184,7 @@ export default {
         receiveType: "",
         classAttribute: "finish_product",
         documentStatus: "",
-        notifyType: "picking",
+        notifyType: "back",
         operationDate: "",
         personId: "",
         productionOrderId: "",
@@ -274,10 +271,7 @@ export default {
       this.dataForm.productionOrderNo = data.orderNo
 
       this.dataForm.productionOrderId = data.id
-      if (this.dataForm.receiveType == 'order') {
-        this.getCollectFun(this.dataForm.productionOrderId)
-      } else {
-      }
+    
 
 
     },

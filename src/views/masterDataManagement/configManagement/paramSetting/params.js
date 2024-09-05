@@ -79,9 +79,11 @@ export default () => [
     tabContent: [
       {
         row: [
-          { prop: "arrange_auto_picking", clearable: false, label: "生产是否自动生成生产单", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
           { prop: "work_exceed_report", clearable: false, label: "是否完工报工超报", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
           { prop: "configValue2", clearable: true, label: "范围值", value: '0', sm: 6, type: 'input', itemRules: [{ required: true, trigger: "blur" },], render: false },
+          { prop: "collect_exceed_picking", clearable: false, label: "是否允许装配超领料", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
+          { prop: "collectValue", clearable: true, label: "范围值", value: '0', sm: 6, type: 'input', itemRules: [{ required: true, trigger: "blur" },], render: false },
+          { prop: "arrange_auto_picking", clearable: false, label: "是否自动生成领料单", value: '0', sm: 6, type: 'switch', options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
           // { prop: "ferrule_inbound_process", clearable: false, label: "套圈（对应半成品）完工入库是否加工序", value: '1', sm: 8, type: 'switch',  options: [{ label: "否", value: '0' }, { label: "是", value: '1' }], itemRules: [{ required: true, trigger: "change" },] },
         ]
       },

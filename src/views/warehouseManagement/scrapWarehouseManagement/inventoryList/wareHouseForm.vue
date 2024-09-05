@@ -1,6 +1,6 @@
 <template>
 
-  <el-dialog title="选择库位" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="locationVisible"
+  <el-dialog title="选择货位" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="locationVisible"
     lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body
     @close="locationVisible = false">
 
@@ -11,7 +11,7 @@
           <el-form @submit.native.prevent>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="tableQuery.code" placeholder="请输入库位编码" clearable />
+                <el-input v-model="tableQuery.code" placeholder="请输入货位编码" clearable />
               </el-form-item>
             </el-col>
 
@@ -31,9 +31,9 @@
   
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
             @sort-change="sortChange" custom-column >
-            <el-table-column prop="name" label="库位名称" min-width="180">
+            <el-table-column prop="name" label="货位名称" min-width="180">
             </el-table-column>
-            <el-table-column prop="code" label="库位编码" width="180" sortable="custom">
+            <el-table-column prop="code" label="货位编码" width="180" sortable="custom">
             </el-table-column>
             <el-table-column prop="warehouseName" label="仓库名称" width="160" />
             <el-table-column prop="remark" label="备注" width="160" />

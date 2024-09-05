@@ -17,11 +17,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.partnerName" @keyup.enter.native="search()" placeholder="客户/供应商" clearable />
-            </el-form-item>
-          </el-col>
+        
           <el-col :span="6">
             <el-form-item>
               <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
@@ -79,19 +75,7 @@
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
             </template> 
           </el-table-column>
-          <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
-            
-          </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="160" ></el-table-column>
-          <el-table-column prop="inspectionResults" label="检验标志" min-width="120" sortable="custom">
-            <template slot-scope="scope">
-              <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
-              <el-tag type="danger" v-else-if="scope.row.inspectionResults == 'unqualified'">不合格</el-tag>
-              <el-tag v-else-if="scope.row.inspectionResults == 'unInspect'">待检验</el-tag>
-            </template>
-
-          </el-table-column>
-
+         
           <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
@@ -153,7 +137,7 @@ export default {
   },
   data() {
     return {
-      columnList: ["partnerCode","inspectionResults", "documentStatus", "remark", "createByName",],
+      columnList: ["partnerCode", "documentStatus", "remark", "createByName",],
 
       exportFormVisible: false,
       visible: false,
@@ -161,15 +145,7 @@ export default {
       listLoading: false,
 
       list: [
-        { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
+       
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
       ],
@@ -189,6 +165,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        warehouseType:"scrap",
       },
       listQuery: {},
       total: 0,

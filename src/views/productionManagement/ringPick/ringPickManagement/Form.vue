@@ -19,7 +19,7 @@
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="通知单信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -74,7 +74,7 @@
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <div v-if="btnType != 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px;  font-size:14px!important"
-                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>||
+                        icon="el-icon-plus" @click="openSeleceMaterDialog()">选择物料</el-button>|
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </div>
@@ -187,7 +187,7 @@ export default {
         receiveType: "",
         classAttribute: "semi_finished",
         documentStatus: "",
-        notifyType: "picking",
+        notifyType: "back",
         operationDate: "",
         personId: "",
         productionOrderId: "",

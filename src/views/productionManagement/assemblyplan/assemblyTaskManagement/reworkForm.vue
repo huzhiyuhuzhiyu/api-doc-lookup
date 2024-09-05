@@ -784,7 +784,7 @@ export default {
     selectCollectProductFun(data) {
       console.log("领料产品", data);
       data.forEach(item => {
-        this.$set(item, 'reduceType', 'picking')
+        this.$set(item, 'reduceType', 'auto')
       });
       this.dataFormOne.collectData = data
     },
@@ -1386,6 +1386,9 @@ export default {
 
           if (this.allocationFlag) {
             this.dataForm.materialFlag = true
+          }else{
+            this.dataForm.materialFlag = false
+
           }
           for (let index = 0; index < this.dataFormTwo.data.length; index++) {
             const item = this.dataFormTwo.data[index];

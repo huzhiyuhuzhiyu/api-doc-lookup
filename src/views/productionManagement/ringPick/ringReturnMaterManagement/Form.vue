@@ -4,7 +4,7 @@
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
           <el-page-header @back="goBack"
-            :content="btnType == 'add' ? '新建领料通知单' : btnType == 'edit' ? '编辑领料通知单' : btnType == 'look' ? '查看领料通知单' : '新建领料通知单'" />
+            :content="btnType == 'add' ? '新建退料通知单' : btnType == 'edit' ? '编辑退料通知单' : btnType == 'look' ? '查看退料通知单' : '新建退料通知单'" />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('draft')">
@@ -24,14 +24,14 @@
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料单号" prop="orderNo">
+                        <el-form-item label="退料单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料类型" prop="receiveType">
-                          <el-select v-model="dataForm.receiveType" placeholder="领料类型" style="width: 100%;"
+                        <el-form-item label="退料类型" prop="receiveType">
+                          <el-select v-model="dataForm.receiveType" placeholder="退料类型" style="width: 100%;"
                             :disabled="btnType == 'look'" @change="checkSelection">
                             <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
                               :value="item.value"></el-option>
@@ -45,16 +45,16 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料日期" prop="operationDate">
+                        <el-form-item label="退料日期" prop="operationDate">
                           <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="datetime"
-                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择领料日期"
+                            value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择退料日期"
                             :disabled="btnType == 'look' ? true : false">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :sm="8" :xs="24">
-                        <el-form-item label="领料人" prop="personId">
-                          <user-select v-model="dataForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
+                        <el-form-item label="退料人" prop="personId">
+                          <user-select v-model="dataForm.personId" placeholder="请选择退料人" clearable style="width: 100%;"
                             :disabled="btnType == 'look'" @change="hangleSelectSales">
                           </user-select>
 
@@ -69,7 +69,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="领料清单" name="productInfo" class="productInfo">
+                <el-collapse-item title="退料清单" name="productInfo" class="productInfo">
 
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                     <div v-if="btnType != 'look'">
@@ -86,27 +86,24 @@
                       <el-table-column prop="mainUnit" label="单位" min-width="130"></el-table-column>
                       <el-table-column prop="materialsUsedQuantity" label="投料数量" min-width="130"
                         v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                      <el-table-column prop="waitReceiveQuantity" label="待领料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'order'"></el-table-column>
-                      <el-table-column prop="num" label="领料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
+                     
+                      <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'order'">
                         <template slot="header">
-                          <span class="required">*</span>领料数量
+                          <span class="required">*</span>退料数量
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
-                            <el-input v-model="scope.row.num" placeholder="领料数量" :disabled="btnType == 'look'" />
+                            <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
-                      </el-table-column>
-                      <el-table-column prop="waitReceiveQuantity" label="可领料数量" min-width="130"
-                        v-if="btnType != 'look' && dataForm.receiveType == 'process'"></el-table-column>
-                      <el-table-column prop="num" label="领料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
+                      </el-table-column> 
+                      <el-table-column prop="num" label="退料数量" min-width="130" v-if="dataForm.receiveType == 'process'">
                         <template slot="header">
-                          <span class="required">*</span>领料数量
+                          <span class="required">*</span>退料数量
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'num'" :rules="productRules.rules">
-                            <el-input v-model="scope.row.num" placeholder="领料数量" :disabled="btnType == 'look'" />
+                            <el-input v-model="scope.row.num" placeholder="退料数量" :disabled="btnType == 'look'" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -171,9 +168,9 @@ export default {
       },
       productRules: {
         rules: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：领料数量${errMsg}`) }] }), trigger: ['blur'] },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：领料数量${errMsg}`) }] }), trigger: ['blur'] },
-          { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`领料清单第${index + 1}行：领料数量${errMsg}`) }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ['', (errMsg, index) => { this.$message.error(`退料清单第${index + 1}行：退料数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate({ type: 'decimal', params: [20, 4, '', (errMsg, index) => { this.$message.error(`退料清单第${index + 1}行：退料数量${errMsg}`) }] }), trigger: ['blur'] },
+          { validator: this.formValidate('positiveNumber', false, (errMsg, index) => { this.$message.error(`退料清单第${index + 1}行：退料数量${errMsg}`) }), trigger: 'blur' },
           { required: true, trigger: ['blur'] }
         ]
       },
@@ -185,9 +182,9 @@ export default {
       dataForm: {
         orderNo: "",
         receiveType: "",
-        classAttribute: "finish_product",
+        classAttribute: "semi_finished",
         documentStatus: "",
-        notifyType: "picking",
+        notifyType: "back",
         operationDate: "",
         personId: "",
         productionOrderId: "",
@@ -208,19 +205,19 @@ export default {
       },
       dataRule: {
         receiveType: [
-          { required: true, message: '领料类型不能为空', trigger: 'change' }
+          { required: true, message: '退料类型不能为空', trigger: 'change' }
         ],
         productionOrderNo: [
           { required: true, message: '生产任务不能为空', trigger: 'change' }
         ],
         orderNo: [
-          { required: true, message: '领料单号不能为空', trigger: 'blur' }
+          { required: true, message: '退料单号不能为空', trigger: 'blur' }
         ],
         operationDate: [
-          { required: true, message: '领料日期不能为空', trigger: 'change' }
+          { required: true, message: '退料日期不能为空', trigger: 'change' }
         ],
         personId: [
-          { required: true, message: '领料人不能为空', trigger: 'change' }
+          { required: true, message: '退料人不能为空', trigger: 'change' }
         ],
 
       },
@@ -232,7 +229,7 @@ export default {
 
       detailDataList: [],
       detailDiaFlag: false,
-      previousReceiveType: null,  // 存储上一次选择的领料类型  
+      previousReceiveType: null,  // 存储上一次选择的退料类型  
       isSame: false,
     }
   },
@@ -259,7 +256,7 @@ export default {
     },
     // 打开选择生产任务弹框
     openProductTaskFun() {
-      if (!this.dataForm.receiveType) return this.$message.error("请先选择领料类型")
+      if (!this.dataForm.receiveType) return this.$message.error("请先选择退料类型")
       this.productTaskVisible = true
       this.$nextTick(() => {
         this.$refs.ProductTaskForm.init()
@@ -274,22 +271,19 @@ export default {
       this.dataForm.productionOrderNo = data.orderNo
 
       this.dataForm.productionOrderId = data.id
-      if (this.dataForm.receiveType == 'order') {
-        this.getCollectFun(this.dataForm.productionOrderId)
-      } else {
-      }
+    
 
 
     },
 
-    //领料人
+    //退料人
     hangleSelectSales(e, r) {
       this.$nextTick(() => {
         this.$refs.dataForm.validateField('personId')
       })
       this.dataForm.personId = e
     },
-    // 领料清单  多选
+    // 退料清单  多选
     handeleProductInfoData(val) {
       this.selectArr = val
     },
@@ -315,7 +309,7 @@ export default {
     },
     // 打开选择物料的弹框
     openSeleceMaterDialog() {
-      if (!this.dataForm.receiveType) return this.$message.error("请先选择领料类型")
+      if (!this.dataForm.receiveType) return this.$message.error("请先选择退料类型")
       if (!this.dataForm.productionOrderNo) return this.$message.error("请先选择生产任务")
       if (this.dataForm.receiveType == 'order') {
         this.orderMaterialFormVisible = true
@@ -377,34 +371,7 @@ export default {
       }
 
     },
-    // 根据生产任务 查找领料清单
-    getCollectFun(id) {
-      detailordershengchan(id).then(res => {
-        console.log("清单信息", res);
-        let arr = []
-        let filteredData = res.data.materialList.filter(item => item.reduceType === 'picking');
-        filteredData.forEach(item => {
-          this.$set(item, 'num', JSON.parse(JSON.stringify(item.waitReceiveQuantity)))
-          this.$set(item,'materialListId',item.id)
-          arr.push(item)
-        });
-        if (this.dataFormTwo.data.length) {
-          let uniqueArr = [];
-          let idSet = new Set();
-
-          arr.forEach(item => {
-            if (!idSet.has(item.id)) {
-              uniqueArr.push(item);
-              idSet.add(item.id);
-            }
-          });
-          this.dataFormTwo.data = uniqueArr
-        } else {
-          this.dataFormTwo.data = filteredData
-        }
-
-      })
-    },
+ 
     dateFormat(dateData) {
       var date = new Date(dateData);
       var year = date.getFullYear();
@@ -464,27 +431,12 @@ export default {
       })
     },
     init(id, btnType, sourceType) {
-      if (sourceType == 'pick') {
         console.log("传递数据", id, btnType);
         this.sourceType = sourceType
         if (id) {
           this.getDetailWithdrawal(id)
         }
-      }
-      if (sourceType == 'awit') {
-        let data = id
-        console.log("传递数据", id);
-        console.log(data);
-        this.dataForm.receiveType = 'order'
-        this.$nextTick(()=>{
-          console.log(666);
-          this.dataForm.productionOrderNo = data.orderNo
-        this.dataForm.productionOrderId = data.id
-        this.getCollectFun(this.dataForm.productionOrderId)
-      })
-        console.log(666);
-
-      }
+      
       this.btnType = btnType
 
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))

@@ -77,7 +77,7 @@
                         <span class="required">*</span>目标仓库
                       </template>
                       <template slot-scope="scope">
-                        <ComSelect-list :requestObj="{ type: 'normal' }" :dialogTitle="'选择仓库'"
+                        <ComSelect-list :requestObj="{ type: 'line_edge' }" :dialogTitle="'选择仓库'"
                           :isdisabled="btnType == 'look'" v-model="scope.row.inWarehouseName" :method="getWarehouseList"
                           placeholder="请选择仓库" :paramsObj="{ index: scope.$index }"
                           @change="changeWarehousex"></ComSelect-list>
@@ -530,7 +530,7 @@ export default {
       console.log("btnty", btnType);
       // this.refeshDataFormItems()
       if (id) {
-        this.title = btnType == 'look' ? '查看调拨单' : '编辑调拨单'
+        this.title = btnType == 'look' ? '查看直接领料单' : '编辑直接领料单'
         // 获取详情
         this.fetchData("DBDH", false)
 
@@ -561,9 +561,9 @@ export default {
         // 拼接为YYYY-MM-DD格式
         const formattedDate = `${year}-${month}-${date}`;
         this.dataForm.pickingDate = formattedDate;
-        this.title = '新建调拨单'
+        this.title = '新建直接领料单'
         this.formLoading = false
-        this.fetchData("DBDH", true)
+        this.fetchData("ZJDH", true)
 
 
 

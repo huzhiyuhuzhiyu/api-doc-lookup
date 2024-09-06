@@ -41,16 +41,7 @@
                             " />
                         </el-form-item>
                       </el-col>
-                      <!-- <el-col :sm="8" :xs="24">
-                        <el-form-item label="换货标识" prop="exchangeGoodsFlag">
-                          <el-select v-model="dataForm.exchangeGoodsFlag" placeholder="请选择状态" style="width: 100%;"
-                            :disabled="btnType == 'look' || Flagtype" @change="changeclick">
-                            <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col> -->
-
+                  
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="客户名称" prop="partnerName">
                           <!-- 供应商选择弹窗  -->
@@ -369,49 +360,21 @@ export default {
       Flagtype: false,
       datafilelist: [],
       provinces: [],
-      deliveryList: [
-        { label: '全部', value: 'all' },
-        { label: '未发货完成', value: 'un_shipment_completed' },
-        { label: '已发货完成', value: 'shipment_completed' }
-      ],
       addressVisibled: false,
-      inspectionStatusList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
       deliveryStatusList: [
         { label: '未完成', value: 'not_finished' },
         { label: '已完成', value: 'finished' },
         { label: '已取消', value: 'canceled' }
       ],
-      documentStatusList: [{ label: '正常发货', value: false }, { label: '换货发货', value: true }],
       approvalStatusList: [
         { label: '审批中', value: 'ing' },
         { label: '审批通过', value: 'ok' },
         { label: '审批拒绝', value: 'rebut' }
       ],
-      orderList: [
-        { label: '正常订单', value: 'normal' },
-        { label: '预测订单', value: 'prediction' },
-        { label: '样品订单', value: 'sample' },
-        { label: '备货订单', value: 'stock_up' },
-        { label: '急件订单', value: 'urgent' }
-      ],
-      orderListtf: [{ label: '退货', value: 'back' }, { label: '发货', value: 'delivery' }],
-      orderListdd: [
-        { label: '外贸', value: 'foreign_trade' },
-        { label: '内销', value: 'domestic_market' },
-        { label: '总成', value: 'assembly' }
-      ],
       orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
+        { label: '送货', value: 'deliver_goods' }
       ],
-      paymentStatusList: [
-        { label: '未付款', value: 'no_pay' },
-        { label: '部分付款', value: 'part_pay' },
-        { label: '已付清', value: 'payed' }
-      ],
+   
       productRules: {
         deliveryQuantity: [
           { required: true, trigger: 'blur' },

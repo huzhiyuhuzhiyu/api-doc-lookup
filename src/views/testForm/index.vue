@@ -79,20 +79,20 @@
           <JNPF-table v-loading="listLoading" :data="list" custom-column>
             <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="120" />
             <el-table-column prop="enCode" label="编码" min-width="120" />
-            <el-table-column prop="webType" label="模式" width="70" align="center">
+            <el-table-column prop="webType" label="模式" min-width="70" align="center">
               <template slot-scope="scope">
                 <span v-if="scope.row.webType == 1">表单</span>
                 <span v-if="scope.row.webType == 2">列表</span>
                 <span v-if="scope.row.webType == 3">流程</span>
               </template>
             </el-table-column>
-            <el-table-column prop="state" label="状态" width="80" align="center">
+            <el-table-column prop="state" label="状态" min-width="80" align="center">
               <template slot-scope="scope">
                 <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
                   {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" min-width="280">
+            <el-table-column label="操作" fixed="right" width="480">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                   <el-button type="text" size="mini" @click="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'form')">编辑表单</el-button>

@@ -1078,6 +1078,7 @@ export default {
   height: 100%;
   background: #fff;
   position: relative;
+  overflow-y: auto;
 }
 
 .searchregion {

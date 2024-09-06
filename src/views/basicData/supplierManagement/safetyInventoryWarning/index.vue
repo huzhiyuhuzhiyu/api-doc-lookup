@@ -658,4 +658,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/index-list.scss" lang="scss" scoped /> -->

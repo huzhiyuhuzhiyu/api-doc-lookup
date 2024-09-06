@@ -1066,7 +1066,7 @@ export default {
 }
 
 .scanCode {
-  margin-top: 10px
+  margin-top: 5px
 }
 
 .scanCode .JNPF-flex-main {
@@ -1079,6 +1079,7 @@ export default {
   height: 100%;
   background: #fff;
   position: relative;
+  overflow-y: auto;
 }
 
 .searchregion {

@@ -466,6 +466,7 @@ import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList } from '@/api/productOrdes/index.js'
 import BatchNumberForm from './batchNumberForm.vue'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm },
@@ -1125,6 +1126,33 @@ export default {
           this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false
         }).catch(() => { this.formLoading = false })
+      }
+      if(businessType=='outbound_pick_out'){
+        detailWithdrawal(data.id).then(res => {
+          console.log("详情", res);
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute&&item.unReceiveQuantity);
+          if (filteredArray.length) {
+            filteredArray.forEach(item => {
+              item.classAttribute = this.classAttribute
+              item.noticeId = item.materialCollectId
+              item.noticeLineId = item.id
+              item.sourceNo = this.dataForm.sourceNo
+              item.moveId = this.dataForm.id
+              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
+              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
+              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, item.price]), 6)
+              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
+              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
+              if (businessType == 'outbound_external_send') {
+                item.num = item.deliveryQuantity
+              }
+            });
+          }
+          this.productData = filteredArray
+          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
+          this.formLoading = false
+        }).catch(() => { this.formLoading = false })
+
       }
     },
 

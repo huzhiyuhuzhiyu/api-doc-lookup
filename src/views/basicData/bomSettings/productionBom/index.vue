@@ -454,7 +454,7 @@ export default {
     addOrUpdateHandle(id, btnType, approvalStatus) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType || 'add', approvalStatus)
+        this.$refs.Form.init(id, btnType || 'add',false, approvalStatus)
       })
     },
     add() {

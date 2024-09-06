@@ -606,13 +606,6 @@ export default {
   padding: 0px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0px !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
-}
-
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
@@ -703,5 +696,8 @@ export default {
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

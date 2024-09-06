@@ -791,12 +791,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
-}
 
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
@@ -886,10 +880,7 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
+
 
 .JNPF-common-search-box {
   padding: 8px 0 0 0;
@@ -932,5 +923,8 @@ export default {
 
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

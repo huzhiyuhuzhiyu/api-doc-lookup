@@ -148,7 +148,7 @@ import {
   Cancelshipmentlinelist
 } from '@/api/salesManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import Form from './Form.vue'
+import Form from '../purchaseReturnNote/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
@@ -832,7 +832,7 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->
 <style lang="scss" scoped>
 :v-deep .el-table__body-wrapper {
   height: auto !important;

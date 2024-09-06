@@ -1808,13 +1808,6 @@ export default {
   margin-right: 4px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-}
-
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -1960,5 +1953,8 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

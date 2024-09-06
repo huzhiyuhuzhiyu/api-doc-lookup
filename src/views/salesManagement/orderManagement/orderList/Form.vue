@@ -2386,7 +2386,7 @@ export default {
           // 使用 splice 插入 newDataArray
           this.productData.splice(index, 0, ...this.selectArr);
         } else {
-          this.productData = [...this.productData, ...this.selectArr]
+          this.productData = [...this.selectArr,...this.productData, ]
         }
       }
 

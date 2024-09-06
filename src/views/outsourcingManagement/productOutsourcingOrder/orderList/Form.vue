@@ -906,8 +906,8 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
+  /* padding-left: 10px !important; */
+  padding-bottom: 5px !important;
   margin-bottom: 0 !important;
   background: #fff;
 }
@@ -986,11 +986,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
-
 .JNPF-common-search-box {
   padding: 8px 0 0 0;
   margin-left: 0 !important;
@@ -1032,5 +1027,12 @@ export default {
 
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

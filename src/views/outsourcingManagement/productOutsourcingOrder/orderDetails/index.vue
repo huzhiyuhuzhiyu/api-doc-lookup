@@ -6,13 +6,13 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入外协单号" clearable
+                <el-input v-model.trim="listsQuery.orderNo" placeholder="外协单号" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
@@ -63,7 +63,7 @@
           <JNPF-table @selection-change="handeleFinshData" v-loading="listLoading" highlight-current-row :fixedNO="true"
             ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -1253,4 +1253,4 @@ export default {
 }
 </script>
 
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->

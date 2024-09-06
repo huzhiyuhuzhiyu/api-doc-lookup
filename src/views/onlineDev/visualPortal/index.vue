@@ -88,7 +88,7 @@
                   {{ scope.row.enabledMark == 1 ? '启用' : '禁用' }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column label="操作" fixed="right" min-width="240">
+            <el-table-column label="操作" fixed="right" width="320">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.type, scope.row.id)" @del="handleDel(scope.row.id)">
                   <el-button size="mini" type="text" @click.native="preview(scope.row.id)">预览</el-button>

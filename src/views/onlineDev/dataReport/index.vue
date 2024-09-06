@@ -84,9 +84,9 @@
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" :setColumnDisplayList="columnList">
             <el-table-column prop="fullName" label="名称" min-width="200" />
             <el-table-column prop="enCode" label="编码" min-width="140" />
-            <el-table-column prop="creatorUser" label="创建人" width="120" />
-            <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="120" />
-            <el-table-column label="操作" min-width="240" fixed="right">
+            <el-table-column prop="creatorUser" label="创建人" min-width="120" />
+            <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" min-width="120" />
+            <el-table-column label="操作" width="320" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
                   <el-button size="mini" type="text" @click.native="preview(scope.row)">预览</el-button>

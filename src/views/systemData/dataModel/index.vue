@@ -98,9 +98,9 @@
               </el-table>
             </template>
           </el-table-column> -->
-            <el-table-column prop="enName" label="表名" min-width="300" sortable />
-            <el-table-column prop="cnName" label="说明" min-width="200"/>
-            <el-table-column label="操作" min-width="200" fixed="right">
+            <el-table-column prop="enName" label="表名" min-width="140" sortable />
+            <el-table-column prop="cnName" label="说明" min-width="140"/>
+            <el-table-column label="操作" width="320" fixed="right">
               <template slot-scope="scope">
                 <tableOpts @edit="addOrUpdateHandle(scope.row.enName)" @del="handleDel(scope.$index, scope.row.enName)">
                   <el-button size="mini" type="text" @click="openData(scope.row.table)">打开数据</el-button>

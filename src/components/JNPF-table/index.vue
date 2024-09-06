@@ -146,7 +146,7 @@ export default {
       this.$nextTick(() => { this.doLayout()})
     },
     setShowOverflowTooltip() {
-      const children = this.$slots.default;
+      const children = this.$slots.default || [];
       if (children.length > 0) {
         children.forEach((child) => {
           let childPropsData = child.componentOptions ? child.componentOptions.propsData : ""

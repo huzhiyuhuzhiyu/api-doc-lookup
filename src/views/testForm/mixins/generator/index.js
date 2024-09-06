@@ -10,7 +10,8 @@ export default {
         currentPage: 1,
         pageSize: 20,
         sort: 'desc',
-        sidx: ''
+        sidx: '',
+        category:''
       },
       total: 0,
       listLoading: false,
@@ -25,13 +26,18 @@ export default {
     this.getDictionaryData()
     this.initData()
   },
+  watch:{
+    'category':function(newVal){
+      this.initData()
+    },
+  },
   // watch: {
   //   filterText(val) {
   //     this.$refs.treeBox.filter(val);
   //   },
   // },
   mounted() {
-    this.getcategoryTree()
+    // this.getcategoryTree()
   },
   methods: {
     // 注意：此处不能使用箭头函数，否则this指向会有问题

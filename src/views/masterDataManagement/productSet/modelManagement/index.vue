@@ -71,14 +71,14 @@
           <el-table-column prop="model" label="型号" sortable="custom" />
           <el-table-column prop="innerCircle" label="内圈" sortable="custom" min-width="150" />
           <el-table-column prop="outerCircle" label="外圈" sortable="custom" min-width="150" />
-          <el-table-column prop="steelBall" label="钢球型号" sortable="custom" min-width="150" />
+          <el-table-column prop="steelBall" label="钢球型号" sortable="custom" min-width="170" />
           <el-table-column prop="steelBallNum" label="钢球用量" sortable="custom" width="120" />
           <el-table-column prop="oilNum" label="油脂用量" sortable="custom" width="120" />
           <el-table-column prop="holderNum" label="保持架用量" sortable="custom" width="140" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" sortable="custom" width="120" />
 
-          <el-table-column label="操作" width="120" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)"></tableOpts>
@@ -146,7 +146,7 @@ export default {
     return {
       tableFormVisible: false,
       exportFormVisible: false,
-      columnList: ['remark','createTime', 'createByName'],
+      columnList: ['remark', 'createTime', 'createByName'],
       createTimeArr: [],
       title: '更多查询',
       visible: false,

@@ -87,7 +87,7 @@
           <el-table-column prop="name" label="名称" />
           <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
           <el-table-column prop="remark" label="备注" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">

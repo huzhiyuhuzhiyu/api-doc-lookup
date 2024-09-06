@@ -1112,4 +1112,10 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  padding:0 10px 10px;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+}
 </style>

@@ -15,7 +15,7 @@
       <div class="contain">
         <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <el-tabs v-model="activeName" style="padding-right: 10px;" v-if="!approvalFlag">
+            <el-tabs v-model="activeName" v-if="!approvalFlag">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -1374,7 +1374,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px;
+  padding:0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -1460,5 +1460,11 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
+}
+::v-deep .JNPF-common-layout-main.JNPF-flex-main {
+  padding:0 10px 10px;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

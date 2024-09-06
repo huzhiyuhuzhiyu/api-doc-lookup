@@ -94,7 +94,7 @@ export default {
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        approvalStatus: 'ok', // 审批状态
+        // approvalStatus: 'ok', // 审批状态
         documentStatus: 'submit', // 单据状态
         inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
         orderItems: [
@@ -127,7 +127,6 @@ export default {
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-    this.linesQuery = JSON.parse(JSON.stringify(this.initLinesQuery))
     this.initData()
   },
   methods: {

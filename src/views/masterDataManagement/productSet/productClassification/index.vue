@@ -71,8 +71,8 @@
               {{ scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column prop="code" label="分类编码" min-width="120" />
-          <el-table-column prop="parentName" label="上级分类" min-width="120" />
+          <el-table-column prop="code" label="分类编码" min-width="160" />
+          <el-table-column prop="parentName" label="上级分类" min-width="100" />
           <!-- <el-table-column prop="integger" label="分类编码" min-width="120" /> -->
           <el-table-column prop="classAttribute" label="类别属性" min-width="120">
             <template slot-scope="scope">
@@ -80,7 +80,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="classType" label="类型" min-width="130">
+          <el-table-column prop="classType" label="类型" min-width="80">
             <template slot-scope="scope">
               {{ $getLabel(classTypelist, scope.row.classType, 'value', 'label') }}
             </template>
@@ -93,7 +93,7 @@
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" />
 
-          <el-table-column label="操作" width="120" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"

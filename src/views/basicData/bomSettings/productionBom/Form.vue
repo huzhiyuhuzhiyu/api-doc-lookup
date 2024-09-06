@@ -252,7 +252,7 @@ export default {
             { label: '都不是', value: 'none' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],
-          minWidth: 160
+          minWidth: 160,
         },
         { prop: 'remark', label: '备注', value: '', type: 'input', maxlength: 200, minWidth: 160 }
       ],
@@ -789,7 +789,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -841,11 +841,9 @@ export default {
   line-height: 33px;
   font-size: 18px;
   border-top: 1px solid rgb(220, 223, 230);
-  // background: #dcdfe6;
   background: rgb(250, 250, 250);
   padding-left: 5px;
   font-weight: 700;
-  // border-bottom:none;
   border-right: 1px solid #dcdfe6;
   border-left: 1px solid #dcdfe6;
 }
@@ -856,9 +854,22 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
+
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px;
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

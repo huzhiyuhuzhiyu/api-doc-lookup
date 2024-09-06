@@ -738,8 +738,7 @@ export default {
   } */
 
 ::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
+  margin-bottom: -5px;
 }
 
 ::v-deep .el-tabs__item {

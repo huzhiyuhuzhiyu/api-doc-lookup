@@ -134,7 +134,7 @@
           <el-table-column prop="brand" label="品牌" width="120" />
           <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">

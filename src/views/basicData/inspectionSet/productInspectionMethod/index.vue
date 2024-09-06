@@ -44,17 +44,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.drawingNo" placeholder="请输入品名规格" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.drawingNo" placeholder="品名规格" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.name" placeholder="请输入产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.name" placeholder="产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.code" placeholder="请输入产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.code" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
@@ -90,7 +90,7 @@
           <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="handleUserRelation(scope.row.id, true)">
+              <el-link type="primary" @click.native="handleUserRelation(scope.row, true)">
                 {{ scope.row.code }}
               </el-link>
             </template>
@@ -135,8 +135,9 @@
           :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :busSetId="'CPBM'" />
+    <finishedProductForm v-if="finishedProductFormVisible" ref="finishedProductForm" @refreshDataList="initData"
+      @close="closeForm" :busSetId="'CPBM'" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -154,12 +155,13 @@ import {
   batchSetInspectionMethod
 } from '@/api/basicData/materialFiles'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
-import Form from '@/views/basicData/materialFiles/raw_material/Form'
+import Form from '@/views/masterDataManagement/productManagement/components/Form.vue'
+import finishedProductForm from '@/views/masterDataManagement/productManagement/finished_product/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import InspectionSettingForm from './InspectionSettingForm.vue'
 export default {
-  components: { Form, SuperQuery, InspectionSettingForm },
+  components: { Form, SuperQuery, InspectionSettingForm, finishedProductForm },
   data() {
     return {
       leftFlag: false,
@@ -292,6 +294,7 @@ export default {
 
       total: 0,
       formVisible: false,
+      finishedProductFormVisible: false,
       expands: true,
       refreshTree: true,
       customList: [], // 列表中显示的自定义属性
@@ -334,6 +337,9 @@ export default {
     this.getDynamicConditions()
   },
   methods: {
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -402,6 +408,7 @@ export default {
     closeForm(isRefresh) {
       this.batchVisible = false
       this.formVisible = false
+      this.finishedProductFormVisible = false
       if (isRefresh) {
         this.initData()
       }
@@ -577,11 +584,18 @@ export default {
         })
       }
     },
-    handleUserRelation(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
+    handleUserRelation(row, btnType) {
+      if (row.classAttribute == 'finish_product') {
+        this.finishedProductFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.finishedProductForm.init(row.id, btnType)
+        })
+      } else {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(row.id, btnType)
+        })
+      }
     },
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
@@ -630,4 +644,4 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/index-list.scss" lang="scss" scoped /> -->

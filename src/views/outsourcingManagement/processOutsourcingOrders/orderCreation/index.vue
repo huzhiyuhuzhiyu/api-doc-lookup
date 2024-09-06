@@ -100,7 +100,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
+                      <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
                           产品名称
@@ -111,7 +111,7 @@
                             <el-input v-model="scope.row.productName" placeholder="请输入产品名称" />
                           </el-form-item>
                         </template>
-                      </el-table-column> -->
+                      </el-table-column>
 
                       <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                         <template slot="header">

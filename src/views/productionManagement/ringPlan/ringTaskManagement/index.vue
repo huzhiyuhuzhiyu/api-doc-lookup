@@ -180,6 +180,7 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
+    <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
   </div>
 </template>
 
@@ -204,6 +205,7 @@ export default {
         productionQuantity: "",
         orderNo: ""
       },
+      BatchDispatchVisible:false,
       reworkVisible: false,
       addOrderVisible: false,
       columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
@@ -576,6 +578,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
+      this.BatchDispatchVisible=false
       this.search()
     },
     initData() {

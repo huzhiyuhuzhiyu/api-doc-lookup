@@ -23,40 +23,40 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工产品" prop="drawingNo">
                           <el-input v-model="dataForm.drawingNo" placeholder="返工产品"
                             @focus="openSelectProductFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工生产数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -65,7 +65,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -74,7 +74,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -83,7 +83,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -91,7 +91,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -100,7 +100,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -108,7 +108,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
@@ -117,7 +117,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
@@ -246,13 +246,13 @@
                   <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                     label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料单号" prop="orderNo">
                           <el-input v-model="collect.orderNo"
                             :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料人" prop="personId">
                           <user-select v-model="collect.personId" placeholder="请选择领料人" clearable style="width: 100%;"
                             :disabled="btnType == 'look'" @change="hangleSelectSales">
@@ -439,7 +439,7 @@
                   <el-input v-model="dispatchSearchForm.processName" placeholder="请输入工序名称" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="6">
                 <el-form-item>
                   <el-date-picker v-model="daterangeList" type="daterange" value-format="yyyy-MM-dd" style="width: 100%"
                     clearable start-placeholder="请选择创建开始日期" end-placeholder="请选择创建结束日期">

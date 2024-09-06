@@ -18,12 +18,12 @@
 
                   <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="任务类型" prop="orderType">
                           <el-select v-model="dataForm.orderType" placeholder="任务类型" clearable style="width: 100%;"
                             disabled>
@@ -32,7 +32,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="品名规格" prop="productDrawingNo">
                           <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
@@ -42,94 +42,94 @@
 
 
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productCode">
                           <el-input v-model="dataForm.productCode" placeholder="产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="总生产数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="总生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="已完成数量" prop="completedQuantity">
                           <el-input v-model="dataForm.completedQuantity" placeholder="已完成数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线编码" prop="routingCode">
                           <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称" disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂" prop="oil">
                           <el-input v-model="dataForm.oil" placeholder="油脂" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-input v-model="dataForm.oilQuantity" placeholder="油脂量" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
                           <el-input v-model="dataForm.clearance" placeholder="游隙" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
                           <el-input v-model="dataForm.packagingMethod" placeholder="包装方式" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
                           <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="状态" prop="orderStatus">
                           <el-select v-model="dataForm.orderStatus" placeholder="精度等级" clearable style="width: 100%;"
                             disabled>
@@ -138,7 +138,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划开始日期" prop="planStartDate">
                           <el-date-picker v-model="dataForm.planStartDate" placeholder="计划开始日期" type="date" disabled
                             value-format="yyyy-MM-dd" style="width: 100%;">
@@ -146,14 +146,14 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划结束日期" prop="planEndDate">
                           <el-date-picker v-model="dataForm.planEndDate" placeholder="计划结束日期" type="date" disabled
                             value-format="yyyy-MM-dd" style="width: 100%;">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="是否紧急" prop="urgentFlag">
                           <el-select v-model="dataForm.urgentFlag" placeholder="精度等级" clearable style="width: 100%;"
                             disabled>
@@ -162,14 +162,14 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="创建时间" prop="createTime">
                           <el-date-picker v-model="dataForm.createTime" placeholder="创建时间" type="datetime" disabled
                             value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="创建人" prop="createByName">
                           <el-input v-model="dataForm.createByName" placeholder="创建人" disabled>
                           </el-input>

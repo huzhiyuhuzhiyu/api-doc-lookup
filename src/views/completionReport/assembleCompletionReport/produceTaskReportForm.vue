@@ -10,8 +10,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-tabs v-model="activeName">
-          <el-collapse v-model="activeNames">
+          <el-collapse v-model="activeNames" style="margin-top: 10px;border-top: 0;">
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
               <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
@@ -216,7 +215,6 @@
             </el-collapse-item>
           </el-collapse>
 
-        </el-tabs>
       </div>
 
 

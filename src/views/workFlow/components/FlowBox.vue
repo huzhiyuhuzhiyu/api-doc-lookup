@@ -213,15 +213,32 @@ import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
 // 业务单据 审批页面引入
 import SaleQuoForm from '@/views/salesManagement/contractQuotation/salesQuotationOld/depForm.vue'
-import purReconciliationForm from '@/views/purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue'
-import outReconciliationForm from '@/views/externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue'
-import salesReconForm from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
-import defectiveProductHandlingForm from '@/views/inspectionManagement/components/defectiveProductHandlingForm.vue'
-import productionBomForm from '@/views/basicData/bomSettings/productionBom/Form.vue'
+import PurReconciliationForm from '@/views/purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue'
+import OutReconciliationForm from '@/views/externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue'
+import SalesReconForm from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
+import DefectiveProductHandlingForm from '@/views/inspectionManagement/components/defectiveProductHandlingForm.vue'
+import ProductionBomForm from '@/views/basicData/bomSettings/productionBom/Form.vue'
+import RoutingForm from '@/views/basicData/processSettings/processSettingss/Form.vue'
+import SaleOrderForm from '@/views/salesManagement/orderManagement/orderList/Form.vue'
+import SaleSendForm from '@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue'
+import SaleReturnForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
+import PurchaseOrderForm from '@/views/purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
+// import PurchaseOrderForm from '@/views/purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue'
+import PurchaseReturnForm from '@/views/purchasingManagement/returnManagement/purchaseReturnNote/Form.vue'
+import PurFinishedReturnForm from '@/views/purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue'
+import OutsourceOrderForm from '@/views/outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
+import OutProcessOrderForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
+import ExternalSendLForm from '@/views/outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue'
+import PurchaseReceiveForm from '@/views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
+import PurchaseFinishReceiveForm from '@/views/receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue'
+import ExternalhReceiveForm from '@/views/receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
+
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
-    SaleQuoForm, purReconciliationForm, outReconciliationForm, salesReconForm, defectiveProductHandlingForm,productionBomForm
+    SaleQuoForm, PurReconciliationForm, OutReconciliationForm, SalesReconForm, DefectiveProductHandlingForm,ProductionBomForm,RoutingForm,SaleOrderForm,
+    SaleSendForm,SaleReturnForm,PurchaseOrderForm,PurchaseReturnForm,PurFinishedReturnForm,OutsourceOrderForm,OutProcessOrderForm,ExternalSendLForm,
+    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm
   },
   data() {
     return {
@@ -304,13 +321,27 @@ export default {
       isValidate: false,
       pageView: {
         'b001': 'SaleQuoForm',
-        'b012': 'purReconciliationForm',
-        'b013': 'salesReconForm',
-        'b014': 'outReconciliationForm',
-        'b003': 'defectiveProductHandlingForm',
-        'b004': 'defectiveProductHandlingForm',
-        'b006': 'defectiveProductHandlingForm',
-        'b023': 'productionBomForm',
+        'b012': 'PurReconciliationForm',
+        'b013': 'SalesReconForm',
+        'b014': 'OutReconciliationForm',
+        'b003': 'DefectiveProductHandlingForm',
+        'b004': 'DefectiveProductHandlingForm',
+        'b006': 'DefectiveProductHandlingForm',
+        'b023': 'ProductionBomForm',
+        'b024': 'RoutingForm',
+        'b025': 'SaleOrderForm',
+        'b026': 'SaleSendForm',
+        'b027': 'SaleReturnForm',
+        'b009': 'PurchaseOrderForm',
+        'b028': 'PurchaseOrderForm',
+        'b029': 'PurchaseReturnForm',
+        'b030': 'PurFinishedReturnForm',
+        'b010': 'OutsourceOrderForm',
+        'b011': 'OutProcessOrderForm',
+        'b031': 'ExternalSendLForm',
+        'b034': 'PurchaseReceiveForm',
+        'b035': 'PurchaseFinishReceiveForm',
+        'b036': 'ExternalhReceiveForm',
       },
       inspectionTypeList: [
         { label: 'b003', value: 'procure' },

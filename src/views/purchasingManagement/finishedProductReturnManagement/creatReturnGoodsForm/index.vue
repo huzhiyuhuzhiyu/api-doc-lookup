@@ -1501,13 +1501,6 @@ export default {
   margin-right: 4px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-}
-
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -1667,5 +1660,8 @@ $footerPadding: '10px';
   height: 100%;
   line-height: 36px;
   font-weight: 700;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

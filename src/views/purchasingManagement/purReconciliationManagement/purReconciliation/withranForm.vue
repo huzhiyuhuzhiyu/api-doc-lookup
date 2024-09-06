@@ -828,7 +828,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding-left: 0 !important;
-  padding-bottom: 10px !important;
+  padding-bottom: 5px !important;
   margin-bottom: 0 !important;
   background: #fff;
 }

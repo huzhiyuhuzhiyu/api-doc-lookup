@@ -648,8 +648,12 @@ export default {
             this.dataForm = res.data
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.type === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           })
         }
       })
@@ -680,27 +684,13 @@ export default {
         count += item.taxAmount * 1
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
-      if (this.type == 'add') {
-        _data = {
-          ...this.dataForm,
-          attachmentList: this.datafilelist,
-          purProcurementRequirements: this.dataForm,
-          purchaseOrderLines: this.dataFormTwo.data,
-          flowData:this.flowData,
-          orderType: 'external_process'
-        }
-      }
-      if (this.type === 'edit' || this.type === 'look') {
-        // this.dataFormTwo.data.forEach((item, index) => {
-        //   this.dataFormTwo.data[index].inquirySheetId = this.dataForm.id
-        // })
-        _data = {
-          ...this.dataForm,
-          attachmentList: this.datafilelist,
-          purProcurementRequirements: this.dataForm,
-          purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external_process'
-        }
+      _data = {
+        ...this.dataForm,
+        attachmentList: this.datafilelist,
+        purProcurementRequirements: this.dataForm,
+        purchaseOrderLines: this.dataFormTwo.data,
+        flowData:this.flowData,
+        orderType: 'external_process'
       }
       console.log(_data, '参数')
       let msg = ''

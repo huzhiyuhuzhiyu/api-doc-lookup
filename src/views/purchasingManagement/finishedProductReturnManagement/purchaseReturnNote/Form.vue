@@ -1549,8 +1549,12 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
             })
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.btnType === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
           this.dataFormTwo.productData = res.data.noticeLineList
         })
@@ -1636,7 +1640,8 @@ export default {
           let obj = {
             attachmentList: this.datafilelist,
             returnGoods: this.dataForm,
-            lines: []
+            lines: [],
+            flowData:this.flowData
           }
           if (!this.dataFormTwo.productData.length) {
             this.$message({

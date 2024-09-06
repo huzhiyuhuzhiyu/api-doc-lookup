@@ -1374,8 +1374,12 @@ export default {
               item.demandQuantity = item.ordersNum
             })
             console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.btnType === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
         })
       }
@@ -1500,6 +1504,7 @@ export default {
             receiptLineList: []
           }
           let obj = {
+            flowData:this.flowData,
             attachmentList: this.datafilelist,
             notice: this.dataForm,
             noticeLineList: [],

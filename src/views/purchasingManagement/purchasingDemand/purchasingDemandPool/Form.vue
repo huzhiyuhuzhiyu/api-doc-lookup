@@ -381,7 +381,7 @@ import {
 } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
-import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
   components: {
@@ -477,7 +477,7 @@ export default {
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
         taxAmount: '', // 税额
-        approvalFlag:false, //
+        approvalFlag: false, //
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -661,7 +661,7 @@ export default {
       list8: [],
       taxRateList: [],
       flowTemplateJson: {},
-      flowData:{},
+      flowData: {},
     }
   },
   created() { },
@@ -1190,7 +1190,7 @@ export default {
     async dataFormSubmit() {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
-     
+
       let form_1 = this.$refs['elForm']
       let valid_1 = await form_1.validate().catch((err) => false)
       if (!valid_1 && submitFlag) {
@@ -1225,7 +1225,7 @@ export default {
         this.dataForm.purchaseOrderLines = dataTwo
         let _data = {
           ...this.dataForm,
-          flowData:this.flowData
+          flowData: this.flowData
         }
 
         insertPurchaseOrder(_data)
@@ -1278,25 +1278,25 @@ export default {
       }
     },
     // 测试审批流
-    getBusInfo(){
+    getBusInfo() {
       let code = this.dataForm.classAttribute === 'other' ? 'b009' : 'b028'
-      getBusinessFlowInfo(code).then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+      getBusinessFlowInfo(code).then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
-    },    
+      }).catch(() => { })
+    },
   },
   mounted() {
     this.switchStyleheight()
@@ -1344,7 +1344,7 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  /* padding-left: 10px !important; */
+  padding-left: 0 !important;
   padding-bottom: 10px !important;
   margin-bottom: 0 !important;
   background: #fff;
@@ -1416,9 +1416,22 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
+
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px;
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

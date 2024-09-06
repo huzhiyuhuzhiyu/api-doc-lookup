@@ -828,10 +828,23 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
+
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px;
+  padding-bottom: 0px
+}
+
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 
 .viewData {
@@ -869,6 +882,7 @@ export default {
   /* height: auto !important; */
   height: calc(100% - 47px) !important;
   overflow: auto !important;
+  margin-bottom:10px;
   /* padding: 0 20px; */
 }
 

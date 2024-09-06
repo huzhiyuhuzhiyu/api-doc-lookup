@@ -147,6 +147,7 @@ export default {
       tableData: [],
       listLoading: false,
       form: {
+        transferType:"receive_material",
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
@@ -331,6 +332,7 @@ export default {
         pickingEndDate: "",
         documentStatus: "",
         classAttribute: "finish_product",
+        transferType:"receive_material",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{

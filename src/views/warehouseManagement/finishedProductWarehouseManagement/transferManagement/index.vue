@@ -152,6 +152,7 @@ export default {
         pickingEndDate: "",
         documentStatus: "",
         classAttribute: "finish_product",
+        transferType:"allocate_transfer",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -332,6 +333,7 @@ export default {
         documentStatus: "",
         classAttribute: "finish_product",
         pageNum: 1,
+        transferType:"allocate_transfer",
         pageSize: 20,
         orderItems: [{
           asc: false,

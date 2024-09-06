@@ -49,8 +49,8 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" custom-column
-          :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
+        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
+          custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="类别名称" sortable="custom" />
           <el-table-column prop="code" label="类别编码" sortable="custom" />
           <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
@@ -131,12 +131,8 @@ export default {
 
         orderItems: [
           {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
+            asc: true,
+            column: 'sort'
           }
         ]
       },
@@ -207,6 +203,9 @@ export default {
   methods: {
     changeMove(data) {
       console.log(data, 'iiiiii')
+      data.forEach(item => {
+        item.sort = item.sortCode
+      })
       updateSortBatch(data).then(res => {
         this.$message.success("批量修改排序成功")
         this.initData()

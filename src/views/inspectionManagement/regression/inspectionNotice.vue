@@ -11,14 +11,12 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.ordersNo" placeholder="外协订单号" @keyup.enter.native="search()"
-                  clearable />
+                <el-input v-model="listQuery.ordersNo" placeholder="外协订单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.shipperName" placeholder="业务员" @keyup.enter.native="search()"
-                  clearable />
+                <el-input v-model="listQuery.shipperName" placeholder="业务员" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -31,10 +29,6 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-              @click="visible = true">
-              更多查询
-            </el-button>
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -86,9 +80,7 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist } from '@/api/salesManagement'
-import { linesReceiptGoods } from '@/api/purchasingManagement/purchaseInquirySheet'
-
+import { WithdrawalList, deleteWithdrawal, WithdrawalmxList } from '@/api/productOrdes/index'
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/externalProcessManagement/outsourceMaterial/outsourcingReturnMaterial/Form.vue'
 import DetailForm from './DetailForm.vue'
@@ -96,7 +88,6 @@ export default {
   components: { Form, DetailForm },
   data() {
     return {
-      visible: false,
       detailFormVisible: false,
       activeName: 'dataTable',
       tableData: [],
@@ -105,11 +96,7 @@ export default {
       initListQuery: {
         approvalStatus: 'ok', // 审批状态
         documentStatus: 'submit', // 单据状态
-        // fullReceiptFlag: false, // 是否已全部收货 0否1是
         inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
-        notifyType: 'external', // 通知单类型 外协通知 external、销售通知 sale,
-        externalFlag: true, // notifyType是外协时，连同工序外协数据一起获取
-        // deliveryStatus: "not_returned", // 退发货状态 待发货 undelivered 、已发货 delivered 、待退货 not_returned 、已退货 returned
         orderItems: [
           {
             asc: false,
@@ -117,43 +104,18 @@ export default {
           },
           {
             asc: false,
-            column: 'create_time'
+            column: ''
           }
         ],
         createTimeArr: [],
         orderNo: '',
         pageNum: 1,
-        pageSize: 20,
-        canceledFlag: true // 过滤掉取消的单据
+        pageSize: 20
       },
       linesTableData: [],
       linesTotal: 0,
       linesQuery: {},
-      initLinesQuery: {
-        approvalStatus: 'ok', // 审批状态
-        documentStatus: 'submit', // 单据状态
-        // fullReceiptFlag: false, // 是否已全部收货 0否1是
-        inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
-        notifyType: 'external', // 通知单类型 外协通知 external、销售通知 sale,
-        externalFlag: true, // notifyType是外协时，连同工序外协数据一起获取
-        // deliveryStatus: "not_returned", // 退发货状态 待发货 undelivered 、已发货 delivered 、待退货 not_returned 、已退货 returned
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        orderNo: '',
-        pageNum: 1,
-        pageSize: 20,
-        createTimeArr: [],
-        orderDateArr: [],
-        canceledFlag: true // 过滤掉取消的单据
-      },
+
       total: 0,
       formVisible: false
     }
@@ -172,12 +134,11 @@ export default {
     initData() {
       this.listLoading = true
 
-      getQuotationdatasendlist(this.listQuery)
+      WithdrawalmxList(this.listQuery)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
           this.listLoading = false
-          this.visible = false
         })
         .catch(() => {
           this.listLoading = false

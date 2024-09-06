@@ -12,35 +12,6 @@
       </div>
       <div class="contain">
         <div class="JNPF-common-layout">
-          <!-- <div class="JNPF-common-layout-left" v-if="title !== '新建BOM' && !statusFlag">
-            <div class="JNPF-common-title">
-              <h2>BOM树</h2>
-              <span class="options">
-                <el-dropdown>
-                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="init(firstId, btnType)">刷新数据</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
-            <el-scrollbar class="JNPF-common-el-tree-scrollbar">
-              <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
-                v-loading="treeLoading" highlight-current :current-node-key="selectedNodeKey"
-                :expand-on-click-node="false" node-key="productId" @node-click="handleNodeClick"
-                class="JNPF-common-el-tree" v-if="refreshTree">
-                <span
-                  :class="[(data.childrenList && data.childrenList.length > 0) ? 'custom-tree-node' : 'disabled-span']"
-                  slot-scope="{ data }" :title="data.name">
-                  <i
-                    :class="[(data.childrenList && data.childrenList.length > 0) ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-                  <span class="text" :title="data.productName">{{ data.productName }}</span>
-                </span>
-              </el-tree>
-            </el-scrollbar>
-          </div> -->
           <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <el-tabs v-model="activeName">

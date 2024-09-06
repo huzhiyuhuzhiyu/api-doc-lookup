@@ -1476,8 +1476,12 @@ export default {
               })
             }
             this.formLoading = false
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.btnType === 'edit'){
+                this.getBusInfo()
+            }else{
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           })
         }).catch(err => {
           this.formLoading = false

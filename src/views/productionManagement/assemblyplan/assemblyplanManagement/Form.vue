@@ -764,7 +764,6 @@ export default {
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)

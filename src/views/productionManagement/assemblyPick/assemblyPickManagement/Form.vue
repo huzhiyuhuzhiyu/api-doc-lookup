@@ -23,13 +23,13 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料类型" prop="receiveType">
                           <el-select v-model="dataForm.receiveType" placeholder="领料类型" style="width: 100%;"
                             :disabled="btnType == 'look'" @change="checkSelection">
@@ -38,13 +38,13 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务" prop="productionOrderNo">
                           <el-input v-model="dataForm.productionOrderNo" :disabled="btnType == 'look' ? true : false"
                             readonly placeholder="生产任务" @focus="openProductTaskFun" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料日期" prop="operationDate">
                           <el-date-picker v-model="dataForm.operationDate" :default-value="new Date()" type="datetime"
                             value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择领料日期"
@@ -52,7 +52,7 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料人" prop="personId">
                           <user-select v-model="dataForm.personId" placeholder="请选择领料人" clearable style="width: 100%;"
                             :disabled="btnType == 'look'" @change="hangleSelectSales">
@@ -60,7 +60,7 @@
 
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
                             :disabled="btnType == 'look' ? true : false" type="textarea" maxlength="200" />

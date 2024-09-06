@@ -19,12 +19,12 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
@@ -32,31 +32,31 @@
                       </el-col>
 
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="品名规格" prop="productsDrawingNo">
                           <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productsCode">
                           <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产数量" prop="planProductionQuantity">
                           <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="可编排数量" prop="availableArrangeQuantity">
                           <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
                           </el-input>
@@ -64,13 +64,13 @@
                       </el-col>
 
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="编排数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
@@ -78,7 +78,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
@@ -764,7 +764,6 @@ export default {
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
-      this.getProductClassFun()
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)

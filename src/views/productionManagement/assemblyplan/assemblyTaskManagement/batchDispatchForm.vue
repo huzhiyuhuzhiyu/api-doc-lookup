@@ -15,7 +15,7 @@
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="任务信息" name="orderInfo" v-if="btnType == 'all' ">
-              <el-collapse v-model="activeNames1">
+              <el-collapse v-model="activeNames1" class="orderInfo">
                 <el-collapse-item title="任务信息" name="basicInfo">
 
                   <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
@@ -186,7 +186,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="工单信息" name="workOrderInfo" v-if="btnType == 'all' || btnType == 'work'">
-              <el-collapse v-model="activeNames2">
+              <el-collapse v-model="activeNames2"  class="orderInfo">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
                   <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
                     <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -275,7 +275,7 @@
             </el-tab-pane>
 
             <el-tab-pane label="投料信息" name="feedInfo" v-if="btnType == 'all' || btnType == 'feed'">
-              <el-collapse v-model="activeNames3">
+              <el-collapse v-model="activeNames3"  class="orderInfo">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
@@ -295,7 +295,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType  == 'report'">
-              <el-collapse v-model="activeNames4">
+              <el-collapse v-model="activeNames4"  class="orderInfo">
                 <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
@@ -972,5 +972,8 @@ $footerPadding: '10px';
   padding: 0 !important;
   border-top: 1px solid #dcdfe6;
   border-right: 0 !important;
+}
+.orderInfo{
+  margin-top: 10px;
 }
 </style>

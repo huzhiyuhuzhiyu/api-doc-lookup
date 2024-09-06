@@ -105,10 +105,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column prop="createTime" label="创建时间" width="180" align="center" sortable="custom">
-
-          </el-table-column>
-
+         
         </JNPF-table>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
           @pagination="initData" />

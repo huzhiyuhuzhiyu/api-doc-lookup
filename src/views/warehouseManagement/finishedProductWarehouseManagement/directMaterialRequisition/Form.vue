@@ -29,9 +29,9 @@
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
-                        <el-form-item label="调拨日期" prop="pickingDate">
+                        <el-form-item label="领料日期" prop="pickingDate">
                           <el-date-picker v-model="dataForm.pickingDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择调拨日期" :disabled="btnType == 'look' ? true : false">
+                            style="width: 100%;" placeholder="领料日期" :disabled="btnType == 'look' ? true : false">
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
@@ -62,12 +62,12 @@
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="88" />
                     <el-table-column prop="inventoryQuantity" label="批次库存数量" width="180" :key="8"
                       v-if="btnType != 'look'" />
-                    <el-table-column prop="num" label="调拨数量" width="140" :key="8088">
+                    <el-table-column prop="num" label="领料数量" width="140" :key="8088">
                       <template slot="header">
-                        <span class="required">*</span>调拨数量
+                        <span class="required">*</span>领料数量
                       </template>
                       <template slot-scope="scope">
-                        <el-input v-model="scope.row.num" placeholder="调拨数量" :disabled="btnType == 'look'"
+                        <el-input v-model="scope.row.num" placeholder="领料数量" :disabled="btnType == 'look'"
                           oninput="value=value.replace(/^(0+)|[^\d]+/g,'')">
                         </el-input>
                       </template>
@@ -645,7 +645,7 @@ export default {
           if (submitFlag) {
             this.dataForm.classAttribute = this.classAttribute
             this.dataForm.documentStatus = submitModel
-            this.dataForm.transferType = 'allocate_transfer'
+            this.dataForm.transferType = 'receive_material'
 
             let obj = {
               picking: this.dataForm,

@@ -6,7 +6,7 @@
         <div class="header-title">
 
           <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
-          <h2 class="header-txt"> MRP计算</h2>
+          <h2 class="header-txt" style="font-size: 24px;font-weight: 700;"> MRP计算</h2>
         </div>
         <el-steps :active="activeStep" finish-status="success" simple s v-if="!loading">
           <el-step title="计算公式及需求范围" @click.native="stepChick(0)" />
@@ -22,6 +22,7 @@
           <el-button size="mini" @click="closeDialog()">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
+      <div style="height: 1px;width: 100%;background-color: #E4E7ED;margin-top: 7px"></div>
       <div class="main" v-loading="loading">
         <el-collapse v-model="activeNames" v-if="!activeStep" style="height: 100%;background-color: #fff;">
           <el-collapse-item title="运算公式" name="basicInfo" class="orderInfo">
@@ -1154,6 +1155,7 @@ export default {
         console.log("res", res);
         this.$message.success("分析成功")
         this.activeStep = 1
+        this.activeName='assemble'
         this.getassembleData()
       })
     },

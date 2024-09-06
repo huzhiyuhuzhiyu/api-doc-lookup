@@ -231,9 +231,9 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
-            <!-- <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-            </el-tab-pane> -->
+            </el-tab-pane>
           </el-tabs>
         </div>
 
@@ -585,7 +585,9 @@ export default {
           }
         ]
       },
-      selectArr: []
+      selectArr: [],
+      flowTemplateJson: {},
+      flowData:{},
     }
   },
   computed: {
@@ -1229,6 +1231,7 @@ export default {
         const formattedDate = `${year}-${month}-${date}`
         this.dataForm.deliverDate = formattedDate
         this.fetchData('WXFL')
+        this.getBusInfo()
       }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
@@ -1274,7 +1277,8 @@ export default {
         delivery: 'deliver_goods',
         // shipperId: '',
         cooperativePartnerId: '',
-        remark: ''
+        remark: '',
+        approvalFlag:false,
       }
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
@@ -1330,7 +1334,8 @@ export default {
             attachmentList: this.datafilelist,
             id: this.dataForm.id,
             remark: this.dataForm.remark,
-            receiptLineList: []
+            receiptLineList: [],
+            flowData:this.flowData
           }
           let obj = {
             attachmentList: this.datafilelist,
@@ -1521,7 +1526,26 @@ export default {
           }
         }
       })
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      getBusinessFlowInfo('b031').then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },    
   }
 }
 </script>

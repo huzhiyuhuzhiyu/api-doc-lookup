@@ -1065,7 +1065,7 @@ export default {
 }
 
 .scanCode {
-  margin-top: 10px
+  margin-top: 5px
 }
 
 .scanCode .JNPF-flex-main {

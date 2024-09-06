@@ -65,27 +65,18 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" hasC
             @selection-change="selectCustomerFun" :setColumnDisplayList="columnList" @sort-change="sortChange"
             custom-column>
-            <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="订单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
-
-            <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
-            <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="料品名规格" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="料产品名称" width="160" sortable="custom" />
-            <el-table-column prop="productCode" label="料产品编码" width="160" sortable="custom" />
-
-            <el-table-column prop="processName" label="料工序名称" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" sortable="custom" />
-            <el-table-column prop="demandQuantity" label="发料数量" width="160" sortable="custom" />
-            <el-table-column prop="waitDeliverNum" label="待发料数量" width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="产品交货日期" width="160" sortable="custom" />
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
+            <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
+            <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -150,7 +141,7 @@ export default {
     return {
       addFormVisible: false,
       btnsearchFlag: true,
-      columnList: ['cooperativePartnerCode', 'productName', 'deliveryDate', 'createByName'],
+      columnList: ['cooperativePartnerCode', 'createByName'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -200,71 +191,13 @@ export default {
           type: 'input'
         },
         {
-          prop: 'cooperativePartnerCode',
-          label: '客户编码',
-          type: 'input'
-        },
-        {
           prop: 'cooperativePartnerName',
-          label: '客户名称',
-          type: 'input'
-        },
-
-        {
-          prop: 'departmentName',
-          label: '所属部门',
-          type: 'input'
-        },
-
-        {
-          prop: 'salesName',
-          label: '所属销售人员',
-          type: 'custom',
-          component: 'user-select'
-        },
-        {
-          prop: 'customerProductNo',
-          label: '客户料号',
+          label: '供应商名称',
           type: 'input'
         },
         {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
-        {
-          prop: 'drawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'mainUnit',
-          label: '单位(主)',
-          type: 'input'
-        },
-        {
-          prop: 'num',
-          label: '数量(主)',
-          type: 'input'
-        },
-        {
-          prop: 'waitDeliverNum',
-          label: '待发料数量',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '单位(副)',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
+          prop: 'cooperativePartnerCode',
+          label: '供应商编码',
           type: 'input'
         },
         {
@@ -272,82 +205,20 @@ export default {
           label: '交货日期',
           type: 'input'
         },
-
-        {
-          prop: 'price',
-          label: '单价(含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: '税率',
-          type: 'input'
-        },
-        {
-          prop: 'totalAmount',
-          label: '金额(含税)',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: '单价(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: '金额(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'input'
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'input'
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'input'
-        },
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'input'
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'input'
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'input'
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'input'
-        },
-        {
-          prop: 'ordersRemark',
-          label: '备注',
-          type: 'input'
-        },
-        {
-          prop: 'documentStatus',
-          label: '单据状态',
-          type: 'input'
-        },
         {
           prop: 'createTime',
           label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
           type: 'input'
-        }
+        },
       ],
       list: []
     }

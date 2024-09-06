@@ -11,7 +11,7 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName">
-            <el-collapse v-model="activeNames">
+            <el-collapse v-model="activeNames" style="margin-top: 10px;">
 
               <el-collapse-item title="工单信息" name="productInfo">
 
@@ -203,7 +203,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 0px
 }
 
 
@@ -284,7 +284,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding:  0px;
   border-top: none !important;
 
 }

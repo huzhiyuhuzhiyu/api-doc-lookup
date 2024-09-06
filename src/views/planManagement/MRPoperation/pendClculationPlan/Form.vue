@@ -614,6 +614,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
+        documentStatus:"draft",
       },
       produceForm: {
         demandType: "produce",
@@ -627,6 +628,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
+        documentStatus:"draft",
       },
       purchaseForm: {
         demandType: "purchase",
@@ -640,6 +642,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
+        documentStatus:"draft",
       },
       outForm: {
         demandType: "out",
@@ -653,6 +656,7 @@ export default {
         }],
         pageSize: 20,
         pageNum: 1,
+        documentStatus:"draft",
       },
       totalDemandQuantity: 0,//需求数量
       outputQuantity: 0,//需组装/生产/采购/外协数量
@@ -769,54 +773,51 @@ export default {
     getassembleData() {
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
-        let totalData = res.data.total
-        let tableData = res.data.page.records
-        if (tableData.length) {
-          this.total1 = res.data.page.total
-          this.assembleData = tableData
+        let totalData = res.data.total||0
+        let tableData = res.data.page.records ||[]
+          this.total1 = res.data.page.total||0
+          this.assembleData = tableData||[]
 
-          this.totalDemandQuantity = totalData.demandQuantity
-          this.outputQuantity = totalData.outputQuantity
-        }
+          this.totalDemandQuantity = totalData.demandQuantity||0
+          this.outputQuantity = totalData.outputQuantity||0
+      
       })
     },
     // 生产列表数据
     getproduceData() {
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
-        let totalData = res.data.total
-        let tableData = res.data.page.records
-        if (tableData.length) {
-          this.produceData = tableData
-          this.total2 = res.data.page.total
+        let totalData = res.data.total||0
+        let tableData = res.data.page.records ||[]
+          this.produceData = tableData||[]
+          this.total2 = res.data.page.total||0
 
-          this.totalDemandQuantity = totalData.demandQuantity
-          this.outputQuantity = totalData.outputQuantity
-          this.lossNum = totalData.lossNum
-          this.planInTransitQuantity = totalData.planInTransitQuantity
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
-          this.occupancyQuantity = totalData.occupancyQuantity
-        }
+          this.totalDemandQuantity = totalData.demandQuantity||0
+          this.outputQuantity = totalData.outputQuantity||0
+          this.lossNum = totalData.lossNum||0
+          this.planInTransitQuantity = totalData.planInTransitQuantity||0
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
+          this.occupancyQuantity = totalData.occupancyQuantity||0
+       
       })
     },
     // 采购列表数据
     getpurchaseDataa() {
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
-        let totalData = res.data.total
-        let tableData = res.data.page.records
-        if (tableData.length) {
-          this.purchaseData = tableData
-          this.total3 = res.data.page.total
+        let totalData = res.data.total||0
+        let tableData = res.data.page.records||[]
+          this.purchaseData = tableData||0
+          this.total3 = res.data.page.total||0
 
-          this.totalDemandQuantity = totalData.demandQuantity
-          this.outputQuantity = totalData.outputQuantity
-          this.lossNum = totalData.lossNum
-          this.planInTransitQuantity = totalData.planInTransitQuantity
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
-          this.occupancyQuantity = totalData.occupancyQuantity
+          this.totalDemandQuantity = totalData.demandQuantity||0
+          this.outputQuantity = totalData.outputQuantity||0
+          this.lossNum = totalData.lossNum||0
+          this.planInTransitQuantity = totalData.planInTransitQuantity||0
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
+          this.occupancyQuantity = totalData.occupancyQuantity||0
 
-        }
+        
       })
     },
     // 外协列表数据
@@ -824,19 +825,18 @@ export default {
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
         let totalData = res.data.total
-        let tableData = res.data.page.records
-        if (tableData.length) {
-          this.outData = tableData
-          this.total4 = res.data.page.total
+        let tableData = res.data.page.records 
+          this.outData = tableData||[]
+          this.total4 = res.data.page.total||0
 
-          this.totalDemandQuantity = totalData.demandQuantity
-          this.outputQuantity = totalData.outputQuantity
-          this.lossNum = totalData.lossNum
-          this.planInTransitQuantity = totalData.planInTransitQuantity
-          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity
-          this.occupancyQuantity = totalData.occupancyQuantity
+          this.totalDemandQuantity = totalData.demandQuantity||0
+          this.outputQuantity = totalData.outputQuantity||0
+          this.lossNum = totalData.lossNum||0
+          this.planInTransitQuantity = totalData.planInTransitQuantity||0
+          this.inTransitUnOccupancyQuantity = totalData.inTransitUnOccupancyQuantity||0
+          this.occupancyQuantity = totalData.occupancyQuantity||0
 
-        }
+         
       })
     },
     // 追溯主产品

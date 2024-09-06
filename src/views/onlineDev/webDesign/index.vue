@@ -1,6 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+
+    <!-- <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" v-if="!leftFlag" style="display: block;padding:0">
         <div class="title_box">
           <h2>业务分类</h2>
@@ -9,10 +10,6 @@
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-                <!-- <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
-                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>  -->
               </el-dropdown-menu>
             </el-dropdown>
           </span>
@@ -38,78 +35,76 @@
       <div v-if="leftFlag" class="expand" style="position: absolute">
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
-    </div>
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="6">
-            <el-form-item label="所属分类">
-              <el-select v-model="category" placeholder="请选择所属分类" clearable>
-                <el-option v-for="item in categoryList" :key="item.id" :label="item.fullName" :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" size=mini icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button icon="el-icon-refresh-right" size=mini @click="reset()">{{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
-          <topOpts @add="openAddBox()">
-            <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData" @on-success="initData" />
-          </topOpts>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
-            </el-tooltip>
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
+    </div> -->
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
+        <el-radio-group v-model="listQuery.category" style="background-color:#fff;">
+          <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
+          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+            :key="item.enCode" :label="item.id">{{ item.fullName }}
+          </el-radio-button>
+        </el-radio-group>
+      </div>
+      <div class="JNPF-common-layout-center">
+        <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="6">
+              <el-form-item label="关键词">
+                <el-input v-model="listQuery.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" size=mini icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button icon="el-icon-refresh-right" size=mini @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <topOpts @add="openAddBox()">
+              <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData" @on-success="initData" />
+            </topOpts>
+            <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
-        </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" :setColumnDisplayList="columnList">
-          <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
-          <el-table-column prop="enCode" label="编码" width="200" />
-          <el-table-column prop="category" label="分类" width="150" />
-          <el-table-column prop="webType" label="模式" width="70" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.webType == 1">表单</span>
-              <span v-if="scope.row.webType == 2">列表</span>
-              <span v-if="scope.row.webType == 3">流程</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="creatorUser" label="创建人" width="140" />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="160" />
-          <el-table-column prop="lastModifyTime" label="最后修改时间" :formatter="jnpf.tableDateFormat" width="160" />
-          <el-table-column prop="sortCode" label="排序" width="70" align="center" />
-          <el-table-column prop="state" label="状态" width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
-                {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" fixed="right" min-width="180">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <!-- <el-button  type="text" @click.native="toggleWebType(scope.row)">更改模式</el-button>
-                <el-button  type="text" @click.native="openReleaseDialog(scope.row)">同步菜单</el-button>
-                <el-button  type="text" @click.native="preview(scope.row.id)">预览模板</el-button>
-                <el-button  type="text" @click.native="copy(scope.row.id)">复制模板</el-button>
-                <el-button  type="text" @click.native="exportModel(scope.row.id)">导出模板</el-button> -->
+          <JNPF-table v-loading="listLoading" :data="list" custom-column ref="tabForm" :setColumnDisplayList="columnList">
+            <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
+            <el-table-column prop="enCode" label="编码" width="200" />
+            <el-table-column prop="webType" label="模式" width="70" align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.webType == 1">表单</span>
+                <span v-if="scope.row.webType == 2">列表</span>
+                <span v-if="scope.row.webType == 3">流程</span>
+              </template>
+            </el-table-column>
 
-                <el-dropdown>
+            <el-table-column prop="state" label="状态" width="80" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
+                  {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" min-width="180">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+                  <el-button type="text" size="mini" @click.native="toggleWebType(scope.row)">更改模式</el-button>
+                  <el-button type="text" size="mini" @click.native="openReleaseDialog(scope.row)">同步菜单</el-button>
+                  <el-button type="text" size="mini" @click.native="preview(scope.row.id)">预览模板</el-button>
+                  <el-button type="text" size="mini" @click.native="copy(scope.row.id)">复制模板</el-button>
+                  <el-button type="text" size="mini" @click.native="exportModel(scope.row.id)">导出模板</el-button>
+
+                  <!-- <el-dropdown>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
                         class="el-icon-arrow-down el-icon--right"></i>
@@ -125,13 +120,14 @@
                     <el-dropdown-item @click.native="exportModel(scope.row.id)">导出模板
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+                </el-dropdown> -->
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
+            @pagination="initData" />
+        </div>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -212,8 +208,9 @@ export default {
         pageSize: 20,
         sort: 'desc',
         sidx: '',
-        keyword:"",
-        category:"",
+        keyword: "",
+        category: "",
+        type:1,
       },
       total: 0,
       sort: 'webDesign',
@@ -241,7 +238,7 @@ export default {
       refreshTree: true,
       leftFlag: false,
       expands: true,
-      treeLoading:false,
+      treeLoading: false,
 
     }
   },
@@ -249,9 +246,12 @@ export default {
     filterText(val) {
       this.$refs.treeBox.filter(val);
     },
+    'listQuery.category':function(newVal){
+      this.initData()
+    },
   },
   mounted() {
-    this.getcategoryTree()
+    // this.getcategoryTree()
   },
   methods: {
     filterNode(value, data) {
@@ -264,27 +264,27 @@ export default {
       this.listQuery.category = node.data.id
       this.search();
     },
-    getcategoryTree() {
-      this.treeLoading = true
-      this.listLoading = true
-      getbimProductAttributes('765929a127f44a5b80e773d65d58f96c').then(res => {
-        this.treeData = res.data.list.length ? res.data.list : []
-        this.listLoading = false
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
-          this.listQuery.category = this.treeData[0].id
-          this.treeLoading = false
-          this.listLoading = false
-          this.initData()
-        })
-      }).catch(() => {
-        this.listLoading = false
-        this.treeLoading = false
-      })
-    },
+    // getcategoryTree() {
+    //   this.treeLoading = true
+    //   this.listLoading = true
+    //   getbimProductAttributes('765929a127f44a5b80e773d65d58f96c').then(res => {
+    //     this.treeData = res.data.list.length ? res.data.list : []
+    //     this.listLoading = false
+    //     this.$nextTick(() => {
+    //       this.$refs.treeBox.setCurrentKey(this.treeData[0].id) // 默认选中节点第一个
+    //       this.listQuery.category = this.treeData[0].id
+    //       this.treeLoading = false
+    //       this.listLoading = false
+    //       this.initData()
+    //     })
+    //   }).catch(() => {
+    //     this.listLoading = false
+    //     this.treeLoading = false
+    //   })
+    // },
     initData() {
       this.listLoading = true
-       
+
       getVisualDevList(this.listQuery).then(res => {
         this.list = res.data.list
         this.total = res.data.pagination.total
@@ -292,12 +292,12 @@ export default {
       })
     },
     search() {
-       this.listQuery.currentPage=1
+      this.listQuery.currentPage = 1
       this.initData()
     },
     reset() {
       this.listQuery.keyword = ''
-       this.listQuery.currentPage=1
+      this.listQuery.currentPage = 1
       this.listQuery.category = ''
       this.search()
     },

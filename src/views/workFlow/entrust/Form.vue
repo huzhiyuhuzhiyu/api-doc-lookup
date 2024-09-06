@@ -41,7 +41,13 @@
 <script>
 import { FlowDelegateInfo, Create, Update } from '@/api/workFlow/FlowDelegate'
 import { FlowEngineListAll } from '@/api/workFlow/FlowEngine'
+import { boolean } from 'mathjs'
 export default {
+  props:{
+    businessFlag:{
+      type: String | Boolean | Number,
+    }
+  },
   data() {
     var checkStartTime = (rule, value, callback) => {
       if (!this.dataForm.endTime) {
@@ -107,7 +113,7 @@ export default {
   },
   methods: {
     getFlowEngineList() {
-      FlowEngineListAll().then((res) => {
+      FlowEngineListAll(this.businessFlag).then((res) => {
         this.flowEngineList = res.data.list
         this.$nextTick(() => {
           this.$refs['dataForm'].resetFields()

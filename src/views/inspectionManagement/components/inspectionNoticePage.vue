@@ -396,7 +396,7 @@ export default {
 
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(row.id, btnType, this.pageData.type)
+          this.$refs.Form.init(row.id, btnType, false, this.pageData.type)
         })
       }
     },

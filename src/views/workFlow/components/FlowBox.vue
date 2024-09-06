@@ -217,10 +217,11 @@ import purReconciliationForm from '@/views/purchasingManagement/purReconciliatio
 import outReconciliationForm from '@/views/externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue'
 import salesReconForm from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
 import defectiveProductHandlingForm from '@/views/inspectionManagement/components/defectiveProductHandlingForm.vue'
+import productionBomForm from '@/views/basicData/bomSettings/productionBom/Form.vue'
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
-    SaleQuoForm, purReconciliationForm, outReconciliationForm, salesReconForm, defectiveProductHandlingForm
+    SaleQuoForm, purReconciliationForm, outReconciliationForm, salesReconForm, defectiveProductHandlingForm,productionBomForm
   },
   data() {
     return {
@@ -309,6 +310,7 @@ export default {
         'b003': 'defectiveProductHandlingForm',
         'b004': 'defectiveProductHandlingForm',
         'b006': 'defectiveProductHandlingForm',
+        'b023': 'productionBomForm',
       },
       inspectionTypeList: [
         { label: 'b003', value: 'procure' },

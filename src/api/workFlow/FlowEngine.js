@@ -96,9 +96,9 @@ export function Stop(id) {
   })
 }
 // 列表ListAll
-export function FlowEngineListAll() {
+export function FlowEngineListAll(businessFlag) {
   return request({
-    url: `/api/workflow/Engine/FlowEngine/ListAll`,
+    url: `/api/workflow/Engine/FlowEngine/ListAll?businessFlag=${businessFlag}`,
     method: 'get'
   })
 }

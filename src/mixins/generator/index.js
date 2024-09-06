@@ -24,7 +24,7 @@ export default {
   },
   created() {
     this.getDictionaryData()
-    // this.initData()
+    this.initData()
   },
   methods: {
     search() {

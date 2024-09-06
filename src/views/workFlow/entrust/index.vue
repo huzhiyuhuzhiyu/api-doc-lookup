@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="reset" />
+    <Form :businessFlag="listQuery.businessFlag" v-if="formVisible" ref="Form" @refreshDataList="reset" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
       @close="superQueryVisible = false" />

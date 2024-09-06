@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+    <!-- <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" style="display: block;padding:0"  v-if="!leftFlag">
         <div class="title_box">
           <h2>业务分类</h2>
@@ -35,97 +35,97 @@
       <div v-if="leftFlag" class="expand" style="position: absolute">
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
       </div>
-    </div>
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box" :gutter="16">
-        <el-form @submit.native.prevent>
-          <el-col :span="6">
-            <el-form-item label="关键词">
-              <el-input v-model="query.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="6">
-            <el-form-item label="所属分类">
-              <el-select v-model="category" placeholder="请选择所属分类" clearable>
-                <el-option v-for="item in categoryList" :key="item.id" :label="item.fullName"
-                  :value="item.id">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col> -->
-          <el-col :span="6">
-            <el-form-item>
-              <el-button type="primary" icon="el-icon-search" @click="search()">
-                {{ $t('common.search') }}</el-button>
-              <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
-        <div class="JNPF-common-head">
-          <topOpts @add="handleAdd('', 3)">
-            <!-- <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData"
+    </div> -->
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
+        <el-radio-group v-model="category" style="background-color:#fff;">
+          <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
+          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+            :key="item.enCode" :label="item.id">{{ item.fullName }}
+          </el-radio-button>
+        </el-radio-group>
+      </div>
+      <div class="JNPF-common-layout-center">
+        <el-row class="JNPF-common-search-box" :gutter="16">
+          <el-form @submit.native.prevent>
+            <el-col :span="6">
+              <el-form-item label="关键词">
+                <el-input v-model="query.keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item>
+                <el-button type="primary" icon="el-icon-search" @click="search()">
+                  {{ $t('common.search') }}</el-button>
+                <el-button icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                </el-button>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head">
+            <topOpts @add="handleAdd('', 3)">
+              <!-- <upload-btn url="/api/visualdev/OnlineDev/Model/Actions/ImportData"
               @on-success="initData" /> -->
-          </topOpts>
-          <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-            </el-tooltip>
+            </topOpts>
+            <div class="JNPF-common-head-right">
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
           </div>
+          <JNPF-table v-loading="listLoading" :data="list" custom-column>
+            <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
+            <el-table-column prop="enCode" label="编码" width="200" />
+            <el-table-column prop="webType" label="模式" width="70" align="center">
+              <template slot-scope="scope">
+                <span v-if="scope.row.webType == 1">表单</span>
+                <span v-if="scope.row.webType == 2">列表</span>
+                <span v-if="scope.row.webType == 3">流程</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="state" label="状态" width="80" align="center">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
+                  {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" min-width="240">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+                  <el-button type="text" size="mini" @click="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'form')">编辑表单</el-button>
+                  <el-button type="text" size="mini" @click="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'table')">编辑列表</el-button>
+                  <el-button type="text" size="mini" @click="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'flow')">编辑流程</el-button>
+                  <el-button type="text" size="mini" @click="openReleaseDialog(scope.row)">同步菜单</el-button>
+                  <!-- <el-dropdown>
+                    <span class="el-dropdown-link">
+                      <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
+                          class="el-icon-arrow-down el-icon--right"></i>
+                      </el-button>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                      <el-dropdown-item
+                        @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'form')">编辑表单
+                      </el-dropdown-item>
+                      <el-dropdown-item
+                        @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'table')">编辑列表
+                      </el-dropdown-item>
+                      <el-dropdown-item
+                        @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'flow')">编辑流程
+                      </el-dropdown-item>
+                      <el-dropdown-item @click.native="openReleaseDialog(scope.row)">同步菜单
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </el-dropdown> -->
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
+            @pagination="initData" />
         </div>
-        <JNPF-table v-loading="listLoading" :data="list" custom-column>
-          <el-table-column prop="fullName" label="名称" show-overflow-tooltip min-width="200" />
-          <el-table-column prop="enCode" label="编码" width="200" />
-          <el-table-column prop="category" label="分类" width="150" />
-          <el-table-column prop="webType" label="模式" width="70" align="center">
-            <template slot-scope="scope">
-              <span v-if="scope.row.webType == 1">表单</span>
-              <span v-if="scope.row.webType == 2">列表</span>
-              <span v-if="scope.row.webType == 3">流程</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="creatorUser" label="创建人" width="140" />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="160" />
-          <el-table-column prop="lastModifyTime" label="最后修改时间" :formatter="jnpf.tableDateFormat" width="160" />
-          <el-table-column prop="sortCode" label="排序" width="70" align="center" />
-          <el-table-column prop="state" label="状态" width="80" align="center">
-            <template slot-scope="scope">
-              <el-tag :type="scope.row.state == 1 ? 'success' : 'danger'" disable-transitions>
-                {{ scope.row.state == 1 ? '启用' : '禁用' }}</el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" fixed="right" width="180">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
-                <el-dropdown>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">{{ $t('common.moreBtn') }}<i
-                        class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'form')">编辑表单
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'table')">编辑列表
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, scope.row.webType, '', 'flow')">编辑流程
-                    </el-dropdown-item>
-                    <el-dropdown-item @click.native="openReleaseDialog(scope.row)">同步菜单
-                    </el-dropdown-item>
-                    <!-- <el-dropdown-item @click.native="preview(scope.row.id)">预览模板</el-dropdown-item>
-                    <el-dropdown-item @click.native="copy(scope.row.id)">复制模板</el-dropdown-item>
-                    <el-dropdown-item @click.native="exportModel(scope.row.id)">导出模板
-                    </el-dropdown-item> -->
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.currentPage" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -266,7 +266,7 @@ export default {
         this.$refs['releaseForm'].resetFields()
       })
     },
-    changeSystem(val){
+    changeSystem(val) {
       if (val) {
         this.getMenuSelector()
         this.getAPPMenuSelector()
@@ -416,4 +416,5 @@ export default {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-}</style>
+}
+</style>

@@ -164,6 +164,7 @@ export default {
       ordeDateArr: [],
       orderForm: {
         orderType: 'external',
+        shipmentStatus: 'not_finish',
         deliveryEndDate: '',
         deliveryStartTime: '',
         pageNum: 1,

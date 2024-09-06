@@ -10,7 +10,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-collapse v-model="activeNames">
+        <el-collapse v-model="activeNames" style="margin-top: 10px;">
           <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
             <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
@@ -462,7 +462,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding:  0px;
   border-top: none !important;
 
 }

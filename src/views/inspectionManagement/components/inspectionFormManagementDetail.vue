@@ -25,8 +25,11 @@
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                       :btnType="btnType === 'setLoss' ? 'look' : btnType" />
                   </el-collapse-item>
+                  <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
+                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                  </el-collapse-item>
 
-                  <el-collapse-item title="检验项目" name="inspectionInfo">
+                  <el-collapse-item title="检验项目" name="inspectionItem">
                     <el-row :gutter="30" style="padding:0 15px">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
@@ -100,7 +103,7 @@ export default {
     return {
       datafilelist: [],
       activeName: "jcInfo",
-      activeNames: ['productInfo', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
+      activeNames: ['inspectionItem', 'basicInfo', 'inspectionInfo', 'adverseCausesInfo'],
       title: "查看检验单",
       inspectionTypeList,
       inspectionResultsList,
@@ -112,7 +115,7 @@ export default {
       documentStatus: "",
       dataForm: {},
       dataFormItems: [],
-
+      inspectionInfo:[],
       linesList: [],
       linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
       dialogRequestObj: {
@@ -187,7 +190,7 @@ export default {
       ProductTableItemss: [
         { prop: 'code', label: '产品编码' },
         { prop: 'name', label: '产品名称' },
-        { prop: 'drawingNo', label: '产品图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'sheetName', label: '图纸名称' },
         { prop: 'version', label: '版本' }
       ],
@@ -324,7 +327,10 @@ export default {
           sm: 12,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
-        {
+       
+      ],
+      this.inspectionInfo = [
+      {
           prop: 'inspectionMethod',
           label: '检验方式',
           value: '',
@@ -371,7 +377,7 @@ export default {
         },
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
         { prop: "description", label: "处理说明", value: "", type: "textarea" }
-      ]
+        ]
     },
     // 刷新子表结构
     refeshLinesListItems() {
@@ -531,7 +537,7 @@ export default {
       this.refeshDataFormItems()
       this.refeshLinesListItems()
       this.title = '查看检验单'
-      this.getApproverData()
+      // this.getApproverData()
       this.formLoading = false
       if (id) {
         if (btnType === 'anew') { // 重新提交

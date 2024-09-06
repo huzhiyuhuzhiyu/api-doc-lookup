@@ -841,7 +841,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
       })
     }
   }

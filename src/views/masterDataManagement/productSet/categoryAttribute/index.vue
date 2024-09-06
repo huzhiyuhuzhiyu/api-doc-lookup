@@ -49,17 +49,12 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" custom-column
-          :setColumnDisplayList="columnList" @sort-change="sortChange">
+        <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData" custom-column
+          :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="类别名称" sortable="custom" />
           <el-table-column prop="code" label="类别编码" sortable="custom" />
           <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column>
-          <el-table-column prop="sort" label="排序" width="100" align="center">
-            <template slot-scope="scope">
-              <el-input @blur="switchShow(scope.row, 'sort')" clearable v-model="scope.row.sort"></el-input>
-            </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" />
@@ -108,7 +103,7 @@ import Form from './Form'
 import WarehouseForm from './WarehouseForm.vue'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes, enableClassAttributeState } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, enableClassAttributeState, updateSortBatch } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierProfile',
   components: { Form, SuperQuery, WarehouseForm },
@@ -210,6 +205,13 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    changeMove(data) {
+      console.log(data, 'iiiiii')
+      updateSortBatch(data).then(res => {
+        this.$message.success("批量修改排序成功")
+        this.initData()
+      })
+    },
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false

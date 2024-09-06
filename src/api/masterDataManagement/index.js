@@ -444,6 +444,15 @@ export function delClassAttribute(id) {
   })
 }
 
+// 类别属性-批量排序
+export function updateSortBatch(data) {
+  return request({
+    url: `/api/zgt/product/classAttribute/update/sort/batch`,
+    method: 'PUT',
+    data
+  })
+}
+
 // 修改产品类别状态
 export const enableClassAttributeState = (data) => {
   return request({

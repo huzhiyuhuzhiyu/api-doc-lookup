@@ -233,13 +233,15 @@ import PurchaseReceiveForm from '@/views/receivingManagement/procurementReceivin
 import PurchaseFinishReceiveForm from '@/views/receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue'
 import ExternalhReceiveForm from '@/views/receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 import BuyingRequisitionForm from '@/views/purchasingManagement/purchasingDemand/buyingRequisition/Form.vue'
+import AssemblyPickForm from '@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue'
+import AssemblyReturnForm from '@/views/productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue'
 
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
     SaleQuoForm, PurReconciliationForm, OutReconciliationForm, SalesReconForm, DefectiveProductHandlingForm,ProductionBomForm,RoutingForm,SaleOrderForm,
     SaleSendForm,SaleReturnForm,PurchaseOrderForm,PurchaseReturnForm,PurFinishedReturnForm,OutsourceOrderForm,OutProcessOrderForm,ExternalSendLForm,
-    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm
+    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm,AssemblyPickForm,AssemblyReturnForm
   },
   data() {
     return {
@@ -344,6 +346,7 @@ export default {
         'b035': 'PurchaseFinishReceiveForm',
         'b036': 'ExternalhReceiveForm',
         'b015': 'BuyingRequisitionForm',
+        'b037': 'AssemblyPickForm',
       },
       inspectionTypeList: [
         { label: 'b003', value: 'procure' },

@@ -5,7 +5,8 @@
       <el-tabs v-model="activeName" @tab-click="handleClick" stretch style="padding:10px">
         <div v-if="type !== 'look'">
           <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-            :disabled="type == 'look' ? true : false" @click="openSeleceProcessDialog(personData.length, activeName)">选择{{
+            :disabled="type == 'look' ? true : false"
+            @click="openSeleceProcessDialog(personData.length, activeName)">选择{{
               actTitle }}</el-button>|
           <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
           <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
@@ -93,7 +94,8 @@
           </JNPF-table>
         </el-tab-pane>
         <el-tab-pane label="工具" name="tool">
-          <JNPF-table :hasC="type != 'look'" @selection-change="handeletoolInfoData" :data="toolData" style="width: 100%">
+          <JNPF-table :hasC="type != 'look'" @selection-change="handeletoolInfoData" :data="toolData"
+            style="width: 100%">
             <el-table-column prop="resourceId" label="工具名称">
               <template slot-scope="scope">
                 <!-- <el-select v-model="scope.row.resourceId" filterable placeholder="请选择" style="width:100%;">
@@ -141,8 +143,8 @@
     <ComSelect-page ref="ComSelect-page" @change="DeviceSubmit" :tableItems="DeviceTableItems" title="选择设备"
       treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="stateEquEquipment" :listRequestObj="DeviceRequestObj"
       :searchList="DeviceTableSearchList" :elementShow="false" multiple />
-    <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具" treeTitle="工具分类"
-      :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
+    <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具"
+      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
       :searchList="ToolTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
@@ -682,23 +684,23 @@ export default {
           const filteredData4 = data[0].bimRoutingProcessResourceDTOList.filter(item => item.resourceType === 'tool')
           this.toolData = filteredData4
         }
-        if (data[0].bimRoutingProcessResourceVOList&&data[0].bimRoutingProcessResourceDTOList) {
+        if (data[0].bimRoutingProcessResourceVOList && data[0].bimRoutingProcessResourceDTOList) {
           let dataAll = [...data[0].bimRoutingProcessResourceVOList, ...data[0].bimRoutingProcessResourceDTOList]
           console.log(dataAll, '都有');
           const filteredData = dataAll.filter(item => item.resourceType === 'personnel')
           this.personData = [...new Set(filteredData)]
-        this.personData = this.removeDuplicates( this.personData);
+          this.personData = this.removeDuplicates(this.personData);
           console.log(filteredData, 'ren');
 
           const filteredData2 = dataAll.filter(item => item.resourceType === 'work_group')
-        this.classData = this.removeDuplicates(filteredData2);
+          this.classData = this.removeDuplicates(filteredData2);
 
           const filteredData3 = dataAll.filter(item => item.resourceType === 'device')
-        this.equipData = this.removeDuplicates(filteredData3);
+          this.equipData = this.removeDuplicates(filteredData3);
 
 
           const filteredData4 = dataAll.filter(item => item.resourceType === 'tool')
-        this.toolData = this.removeDuplicates(filteredData4);
+          this.toolData = this.removeDuplicates(filteredData4);
         }
       }
 
@@ -828,7 +830,7 @@ export default {
 }
 
 ::v-deep .el-tabs__content {
-  padding: 0px 10px !important;
+  padding: 5px 0 !important;
 }
 
 ::v-deep .el-tab-pane {

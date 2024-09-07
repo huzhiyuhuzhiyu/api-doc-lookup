@@ -102,7 +102,7 @@ import {
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import TableFormProduct from '@/components/no_mount/TableForm-product/index' // 产品选择组件
+import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
 import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';

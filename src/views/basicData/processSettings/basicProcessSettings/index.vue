@@ -617,7 +617,7 @@ export default {
       this.treeLoading = true
       this.listQuery.productCategoryId = "" // 重置数据类型id筛选
       let query = {
-        classAttribute: "process",
+        type: "process",
         pageNum: 1,
         pageSize: 20,
       }

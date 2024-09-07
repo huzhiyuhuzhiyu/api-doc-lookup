@@ -102,7 +102,7 @@
                 <div v-if="scope.row.approvalStatus == 'rebut'"><el-tag type="danger">审批拒绝</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" min-width="180" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : scope.row.approvalStatus == 'ok'" -->
                 <el-button size="mini" type="text" @click="updateHandle(scope.row.id, 'edit')">编辑</el-button>
@@ -727,60 +727,4 @@ export default {
   }
 }
 </style>
-<style scoped>
-/* .JNPF-common-layout-left {
-    margin-right: 0;
-    border-right: 1px solid #cacaca;
-  }
-  
-  ::v-deep .el-tabs__content {
-    height: calc(100vh - 163px);
-  } */
 
-::v-deep .el-tabs__header {
-  margin-bottom: -5px;
-}
-
-::v-deep .el-tabs__item {
-  padding: 0 10px !important
-}
-
-::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
-}
-
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
-}
-
-::v-deep.el-tree-node__content {
-  height: 30px;
-  line-height: 30px;
-}
-
-.JNPF-common-el-tree {
-  margin: 5px 0;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 0;
-}
-</style>

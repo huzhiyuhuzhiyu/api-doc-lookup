@@ -430,15 +430,7 @@ export default {
 .main {
   // padding: 0px 30px 10px;
 }
-
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  background-color: #fff;
-}
-
+ 
 .el-button--small {
   padding: 1;
 }
@@ -499,5 +491,8 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

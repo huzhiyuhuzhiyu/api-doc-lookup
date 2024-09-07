@@ -21,7 +21,7 @@
           suffix-icon="el-icon-search" clearable></el-input>
       </div>
 
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode" :default-expanded-keys="[selectedNodeKey]">
@@ -75,7 +75,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="addSupplier('add')">普通新建</el-dropdown-item>
-              <el-dropdown-item @click.native="aiAdd()">批量新建</el-dropdown-item>
+              <el-dropdown-item @click.native="aiAdd()">批量生成</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 

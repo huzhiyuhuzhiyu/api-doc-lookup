@@ -6,19 +6,19 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入外协单号" clearable
+                <el-input v-model.trim="listQuery.orderNo" placeholder="外协单号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -63,7 +63,7 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="外协单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="外协单号" min-width="200" sortable="custom">
 
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
@@ -781,4 +781,4 @@ export default {
 }
 </script>
 
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->

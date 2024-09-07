@@ -67,10 +67,7 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                             :rules="productRules.productDrawingNo">
-                            <!-- <el-input :title="scope.row.productDrawingNo" v-model="scope.row.productDrawingNo" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="物料名称">{{
-                                scope.row.productDrawingNo }}
-                            </el-input> -->
+                
                             <div class="viewData">
                               <span>{{ scope.row.productDrawingNo }}</span>
                             </div>
@@ -82,30 +79,14 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'"
                             :rules="productRules.productCode">
-                            <!-- <el-input :title="scope.row.productCode" v-model="scope.row.productCode" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="物料名称">{{
-                                scope.row.productCode }}
-                            </el-input> -->
                             <div class="viewData">
                               <span>{{ scope.row.productCode }}</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <!-- 
-                  <el-table-column prop="productName" label="产品名称" min-width="200" fixed="left" show-overflow-tooltip key="productName">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
-                        :rules='productRules.productName'>
-                      
-                        <div class="viewData">
-                          <span>{{ scope.row.productName }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
 
-                      <el-table-column prop="planQuantity" label="数量(主)" min-width="200" key="planQuantity">
+                      <el-table-column prop="planQuantity" label="数量" min-width="200" key="planQuantity">
                         <template slot="header">
                           <span class="required">*</span>
                           数量(主)
@@ -121,7 +102,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="mainUnit" label="单位(主)" min-width="200" show-overflow-tooltip
+                      <el-table-column prop="mainUnit" label="单位" min-width="200" show-overflow-tooltip
                         key="mainUnit">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
@@ -135,7 +116,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
+<!-- 
                       <el-table-column prop="planQuantity2" label="数量(副)" min-width="200" key="planQuantity2">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planQuantity2'"
@@ -145,9 +126,6 @@
                               placeholder="请输入数量(副)">
                               {{ scope.row.planQuantity2 }}
                             </el-input>
-                            <!-- <div class="viewData">
-                              <span>{{ scope.row.planQuantity2 }}</span>
-                            </div> -->
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -156,16 +134,12 @@
                         key="deputyUnit">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                            <!-- <el-input v-model="scope.row.deputyUnit" :disabled="type === 'look'" readonly maxlength="20"
-                              placeholder="请输入副单位">{{
-                                scope.row.deputyUnit }}
-                            </el-input> -->
                             <div class="viewData">
                               <span>{{ scope.row.deputyUnit }}</span>
                             </div>
                           </el-form-item>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
 
                       <el-table-column prop="deliveryDate" label="交货日期" min-width="240" key="deliveryDate">
                         <template slot="header">

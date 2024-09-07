@@ -26,10 +26,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -290,8 +290,8 @@
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-          </el-tab-pane>
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -322,11 +322,11 @@ import {
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
   components: {
-    SourceArea,Process
+    SourceArea, Process
   },
   data() {
     return {
@@ -377,7 +377,7 @@ export default {
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
         submitDate: '', //提交时间
-        approvalFlag:false
+        approvalFlag: false
       },
       sourceVisibled: false,
       type: 'add',
@@ -630,10 +630,10 @@ export default {
 
       taxRateList: [],
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   computed: {
@@ -1107,7 +1107,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          flowData:this.flowData,
+          flowData: this.flowData,
           orderType: 'external_process'
         }
       }
@@ -1216,25 +1216,25 @@ export default {
       this.dataFormTwo.data.splice(index, 1)
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b011').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b011').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
-    },    
- 
+      }).catch(() => { })
+    },
+
   }
 }
 </script>
@@ -1249,7 +1249,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 .required {
@@ -1296,8 +1296,8 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
+  /* padding-left: 10px !important; */
+  padding-bottom: 5px !important;
   margin-bottom: 0 !important;
   background: #fff;
 }

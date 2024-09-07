@@ -83,7 +83,7 @@
             新建
           </el-button> -->
           <div>
-            <el-button type="primary" @click="handleBatch">批量设置工艺</el-button>
+            <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button> -->
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"

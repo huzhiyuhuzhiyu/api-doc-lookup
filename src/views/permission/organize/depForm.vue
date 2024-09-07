@@ -83,9 +83,7 @@ export default {
         { label: '质量部', value: "ZLB" },
         { label: '仓储部', value: "CCB" },
         { label: '生产部', value: "SCB" },
-        { label: '总成车间', value: "ZCCJ" },
-        { label: '金工车间', value: "JGCJ" },
-        { label: '装配车间', value: "ZPCJ" }
+        { label: '车间', value: "CJ" }
       ]
     }
   },

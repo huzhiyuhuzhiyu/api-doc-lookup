@@ -55,11 +55,11 @@
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange"
           custom-column @selection-change="currentChange" :setColumnDisplayList="columnList">
           <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                 {{ scope.row.orderNo }}
               </el-link>
-            </template>
+            </template> -->
           </el-table-column>
           <el-table-column prop="workNo" label="工单单号" width="120" sortable="custom" />
           <el-table-column prop="orderNo" label="报工单号" width="160" sortable="custom" />
@@ -80,10 +80,10 @@
           <el-table-column prop="reporterName" label="报工人" width="120" sortable="custom" />
           <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
           <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-          <el-table-column label="操作" width="140" fixed="right">
+          <el-table-column label="操作" width="60" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
-                <el-dropdown hide-on-click>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}
@@ -95,7 +95,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>

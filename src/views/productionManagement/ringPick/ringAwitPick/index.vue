@@ -323,7 +323,7 @@ export default {
     addition(data){
       this.pickVisible=true
       this.$nextTick(()=>{
-        this.$refs.PickForm.init(data,'add','awit')
+        this.$refs.PickForm.init(data,'add',false,'awit')
       })
     },
     handleUserRelation(id){
@@ -439,9 +439,6 @@ export default {
         }
       }
       if (this.productDrawingNoS) {
-        // this.orderForm.superQuery.condition.push(
-        //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
-        // )
         if (this.orderForm.superQuery.condition.length) {
           let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("productsDrawingNo"));
           filteredData.push({ "field": "productsDrawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })

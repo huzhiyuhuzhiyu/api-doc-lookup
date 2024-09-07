@@ -235,13 +235,15 @@ import ExternalhReceiveForm from '@/views/receivingManagement/receiveGoodsByOuts
 import BuyingRequisitionForm from '@/views/purchasingManagement/purchasingDemand/buyingRequisition/Form.vue'
 import AssemblyPickForm from '@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue'
 import AssemblyReturnForm from '@/views/productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue'
+import RingPickForm from '@/views/productionManagement/ringPick/ringPickManagement/Form.vue'
+import RingReturnForm from '@/views/productionManagement/ringPick/ringReturnMaterManagement/Form.vue'
 
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
     SaleQuoForm, PurReconciliationForm, OutReconciliationForm, SalesReconForm, DefectiveProductHandlingForm,ProductionBomForm,RoutingForm,SaleOrderForm,
     SaleSendForm,SaleReturnForm,PurchaseOrderForm,PurchaseReturnForm,PurFinishedReturnForm,OutsourceOrderForm,OutProcessOrderForm,ExternalSendLForm,
-    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm,AssemblyPickForm,AssemblyReturnForm
+    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm,AssemblyPickForm,AssemblyReturnForm,RingPickForm,RingReturnForm
   },
   data() {
     return {
@@ -347,6 +349,9 @@ export default {
         'b036': 'ExternalhReceiveForm',
         'b015': 'BuyingRequisitionForm',
         'b037': 'AssemblyPickForm',
+        'b047': 'AssemblyReturnForm',
+        'b038': 'RingPickForm',
+        'b039': 'RingReturnForm',
       },
       inspectionTypeList: [
         { label: 'b003', value: 'procure' },

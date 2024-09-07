@@ -575,6 +575,8 @@ export default {
       })
     },
     init(id, btnType,approvalFlag, sourceType) {
+      this.btnType = btnType
+      this.approvalFlag = approvalFlag
       if (sourceType == 'pick') {
         console.log("传递数据", id, btnType);
         this.sourceType = sourceType
@@ -596,8 +598,7 @@ export default {
         console.log(666);
 
       }
-      this.btnType = btnType
-      this.approvalFlag = approvalFlag
+
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
 

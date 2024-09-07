@@ -211,34 +211,10 @@ import Process from '@/components/Process/Preview'
 import PrintBrowse from '@/components/PrintBrowse'
 import vueEsign from 'vue-esign'
 import ActionDialog from '@/views/workFlow/components/ActionDialog'
-// 业务单据 审批页面引入
-import SaleQuoForm from '@/views/salesManagement/contractQuotation/salesQuotationOld/depForm.vue'
-import PurReconciliationForm from '@/views/purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue'
-import OutReconciliationForm from '@/views/externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue'
-import SalesReconForm from '@/views/salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue'
-import DefectiveProductHandlingForm from '@/views/inspectionManagement/components/defectiveProductHandlingForm.vue'
-import ProductionBomForm from '@/views/basicData/bomSettings/productionBom/Form.vue'
-import RoutingForm from '@/views/basicData/processSettings/processSettingss/Form.vue'
-import SaleOrderForm from '@/views/salesManagement/orderManagement/orderList/Form.vue'
-import SaleSendForm from '@/views/salesManagement/shippingnotice/saleMetalworking/Form.vue'
-import SaleReturnForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
-import PurchaseOrderForm from '@/views/purchasingManagement/purchaseOrders/purchaseOrder/Form.vue'
-// import PurchaseOrderForm from '@/views/purchasingManagement/finishedProductPurchaseOrders/purchaseOrder/Form.vue'
-import PurchaseReturnForm from '@/views/purchasingManagement/returnManagement/purchaseReturnNote/Form.vue'
-import PurFinishedReturnForm from '@/views/purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue'
-import OutsourceOrderForm from '@/views/outsourcingManagement/productOutsourcingOrder/orderList/Form.vue'
-import OutProcessOrderForm from '@/views/outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
-import ExternalSendLForm from '@/views/outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue'
-import PurchaseReceiveForm from '@/views/receivingManagement/procurementReceiving/receivingAdvice/Form.vue'
-import PurchaseFinishReceiveForm from '@/views/receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue'
-import ExternalhReceiveForm from '@/views/receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
-    SaleQuoForm, PurReconciliationForm, OutReconciliationForm, SalesReconForm, DefectiveProductHandlingForm,ProductionBomForm,RoutingForm,SaleOrderForm,
-    SaleSendForm,SaleReturnForm,PurchaseOrderForm,PurchaseReturnForm,PurFinishedReturnForm,OutsourceOrderForm,OutProcessOrderForm,ExternalSendLForm,
-    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm
   },
   data() {
     return {
@@ -320,30 +296,43 @@ export default {
       errorNodeList: [],
       isValidate: false,
       pageView: {
-        'b001': 'SaleQuoForm',
-        'b012': 'PurReconciliationForm',
-        'b013': 'SalesReconForm',
-        'b014': 'OutReconciliationForm',
-        'b003': 'DefectiveProductHandlingForm',
-        'b004': 'DefectiveProductHandlingForm',
-        'b006': 'DefectiveProductHandlingForm',
-        'b023': 'ProductionBomForm',
-        'b024': 'RoutingForm',
-        'b025': 'SaleOrderForm',
-        'b026': 'SaleSendForm',
-        'b027': 'SaleReturnForm',
-        'b009': 'PurchaseOrderForm',
-        'b028': 'PurchaseOrderForm',
-        'b029': 'PurchaseReturnForm',
-        'b030': 'PurFinishedReturnForm',
-        'b010': 'OutsourceOrderForm',
-        'b011': 'OutProcessOrderForm',
-        'b031': 'ExternalSendLForm',
-        'b034': 'PurchaseReceiveForm',
-        'b035': 'PurchaseFinishReceiveForm',
-        'b036': 'ExternalhReceiveForm',
+        'b001': 'salesManagement/contractQuotation/salesQuotationOld/depForm.vue',
+        'b012': 'purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue',
+        'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
+        'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',
+        'b003': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b004': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b006': 'inspectionManagement/components/defectiveProductHandlingForm.vue',
+        'b023': 'basicData/bomSettings/productionBom/Form.vue',
+        'b024': 'basicData/processSettings/processSettingss/Form.vue',
+        'b025': 'salesManagement/orderManagement/orderList/Form.vue',
+        'b026': 'salesManagement/shippingnotice/saleMetalworking/Form.vue',
+        'b027': 'salesManagement/shippingnotice/returnSalesmemo/Form.vue',
+        'b009': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
+        'b028': 'purchasingManagement/purchaseOrders/purchaseOrder/Form.vue',
+        'b029': 'purchasingManagement/returnManagement/purchaseReturnNote/Form.vue',
+        'b030': 'purchasingManagement/finishedProductReturnManagement/purchaseReturnNote/Form.vue',
+        'b010': 'outsourcingManagement/productOutsourcingOrder/orderList/Form.vue',
+        'b011': 'outsourcingManagement/processOutsourcingOrders/orderList/Form.vue',
+        'b031': 'outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue',
+        'b034': 'receivingManagement/procurementReceiving/receivingAdvice/Form.vue',
+        'b035': 'receivingManagement/purchaseAndReceiveFinishedProducts/receivingAdvice/Form.vue',
+        'b036': 'receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue',
+        'b015': 'purchasingManagement/purchasingDemand/buyingRequisition/Form.vue',
+        'b037': 'productionManagement/assemblyPick/assemblyPickManagement/Form.vue',
+        'b047': 'productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue',
+        'b038': 'productionManagement/ringPick/ringPickManagement/Form.vue',
+        'b039': 'productionManagement/ringPick/ringReturnMaterManagement/Form.vue',
+        'b040': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b041': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b042': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b043': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b044': 'inspectionManagement/components/inspectionFormManagementDetail.vue',
+        'b045': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
+        'b046': 'warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue',
       },
       inspectionTypeList: [
+        // 不良品
         { label: 'b003', value: 'procure' },
         { label: 'b004', value: 'external' },
         { label: 'b008', value: 'produce' },
@@ -351,8 +340,14 @@ export default {
         { label: 'b007', value: 'back_material' },
         { label: 'b005', value: 'process' },
         { label: 'b022', value: 'finished' },
+        // 检验单 
+        { label: 'b040', value: 'procure' },
+        { label: 'b041', value: 'external' },
+        { label: 'b042', value: 'process' },
+        { label: 'b043', value: 'finished' },
       ],
       inspectionType:'',
+      businessFlow:'',
       messageFlag: false
     }
   },
@@ -486,6 +481,7 @@ export default {
         this.flowUrgent = this.flowTaskInfo.flowUrgent || 1
         data.type = this.flowTaskInfo.type
         data.draftData = res.data.draftData || null
+        this.businessFlow = data.businessFlow || ''
         if (data.formType == 1) {
           if (this.flowTaskInfo.formUrl) {
             this.currentView = (resolve) => require([`@/views/${this.flowTaskInfo.formUrl}`], resolve)
@@ -497,8 +493,9 @@ export default {
         } else {
           console.log(this.pageView[data.businessFlow]);
           console.log(data);
-
-          this.currentView = this.pageView[data.businessFlow]
+          let page = this.pageView[data.businessFlow]
+          // this.currentView = (resolve) => require([`@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryList/Form.vue`], resolve) 
+          this.currentView = (resolve) => require([`@/views/${page}`], resolve) 
 
         }
         this.flowTaskNodeList = res.data.flowTaskNodeList
@@ -563,7 +560,7 @@ export default {
       }).catch(() => { this.loading = false })
     },
     eventLauncher(eventType) {
-      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form)
+      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form,this.businessFlow)
     },
     eventReceiver(formData, eventType) {
       this.formData = formData

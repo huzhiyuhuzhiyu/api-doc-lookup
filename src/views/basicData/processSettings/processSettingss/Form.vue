@@ -6,10 +6,10 @@
           <el-page-header @back="goBack" :content="dialogTitle + `工艺`" />
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :disabled="dataForm.documentStatus == 'submit'" :loading="btnLoading"
-              @click="dataFormSubmit('draft')">
+              @click="handleSubmit('draft')">
               保存草稿
             </el-button>
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
+            <el-button type="primary" :loading="btnLoading" @click="handleSubmit('submit')">
               保存并提交
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
@@ -867,8 +867,12 @@ export default {
                 it.jobNumber = it.resourceCode
               })
             })
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.type === 'edit'){
+                this.getBusInfo()
+            }else{
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
             this.loading = false
             // if (res.data.attachmentList) {
             //   res.data.attachmentList.forEach((item) => {
@@ -886,7 +890,7 @@ export default {
       })
     },
     // 表单提交
-    dataFormSubmit(type) {
+    handleSubmit(type) {
       this.request(type)
     },
     // 校验与聚焦
@@ -1371,12 +1375,7 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
-}
+
 
 ::v-deep .el-table__body-wrapper.is-scrolling-left {
   height: auto !important;
@@ -1402,13 +1401,6 @@ export default {
 //   padding: 0px 20px;
 // }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  background-color: #fff;
-}
 
 .el-button--small {
   padding: 1;

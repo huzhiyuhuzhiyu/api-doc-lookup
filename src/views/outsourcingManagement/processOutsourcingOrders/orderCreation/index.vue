@@ -108,7 +108,14 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
                             :rules="productRules.productName">
-                            <el-input v-model="scope.row.productName" placeholder="请输入产品名称" />
+                            <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
+                            <!-- 工序选择弹窗  -->
+                            <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                              v-model="dataForm.processName" :beforeSubmit="beforeProcessSubmit" ref="ComSelect-page"
+                              @change="supplierdataProcess" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
+                              title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
+                              :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
+                              :paramsObj="{ oldProcessData }" :searchList="ProcessTableSearchList" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -268,7 +275,7 @@
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">
-                            查看发料清单
+                            配置发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
                             v-if="dataFormTwo.data.length > 1" @click="delequipment_process_relList(scope.$index)">
@@ -290,8 +297,8 @@
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
             <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
-            <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-          </el-tab-pane>
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+            </el-tab-pane>
           </el-tabs>
         </div>
       </div>
@@ -322,11 +329,13 @@ import {
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import { getBimProcessList } from '@/api/bimProcess/index'
 export default {
   components: {
-    SourceArea,Process
+    SourceArea,
+    Process
   },
   data() {
     return {
@@ -360,6 +369,30 @@ export default {
         partnerCategoryId: '',
         type: 'outsourcing_suppliers'
       },
+      // 工序
+      getBimProcessList,
+      //  供应商 树请求
+      ProcessMethodArr: { method: getcategoryTree, requestObj: { classAttribute: 'process' } },
+      // 供应商 列表
+      ProcessTableItems: [
+        { prop: 'code', label: '工序编码' },
+        { prop: 'name', label: '工序名称' },
+        { prop: 'nameEn', label: '英文名称' },
+        { prop: 'taxId', label: '税号' }
+      ],
+      // 供应商搜索条件
+      ProcessTableSearchList: [
+        { prop: 'code', label: '工序编码', type: 'input' },
+        { prop: 'name', label: '工序名称', type: 'input' }
+      ],
+      // 供应商请求参数
+      ProcessListRequestObj: {
+        code: '',
+        name: '',
+
+        pageNum: 1,
+        pageSize: 20
+      },
       loading: false,
       btnLoading: false,
       index: null,
@@ -377,7 +410,7 @@ export default {
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
         submitDate: '', //提交时间
-        approvalFlag:false
+        approvalFlag: false
       },
       sourceVisibled: false,
       type: 'add',
@@ -479,6 +512,7 @@ export default {
       formLoading: false,
       codeConfig: {},
       oldData: [],
+      oldProcessData: [],
       rules: {
         // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
@@ -630,10 +664,10 @@ export default {
 
       taxRateList: [],
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   computed: {
@@ -881,6 +915,61 @@ export default {
       }
     },
 
+    // 切换供应商后给的提示
+    async beforeProcessSubmit(data, paramsObj) {
+      let flag = true
+      if (paramsObj.oldData.length) {
+        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '更换成功!'
+            })
+            this.$refs['productForm'].resetFields()
+            return true
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消'
+            })
+            return false
+          })
+      }
+      return flag
+    },
+    supplierdataProcess(id, data) {
+      this.$nextTick(() => {
+        this.$refs['elForm'].validateField('cooperativePartnerName')
+      })
+      if (data.length === 0) {
+        this.dataForm.cooperativePartnerName = ''
+        this.dataForm.cooperativePartnerCode = ''
+        this.dataForm.cooperativePartnerId = ''
+        this.oldProcessData = []
+      } else {
+        if (this.oldProcessData.length) {
+        } else {
+          this.oldProcessData.push(data)
+        }
+        this.dataForm.cooperativePartnerName = data[0].all.name
+        this.dataForm.cooperativePartnerCode = data[0].all.code
+        this.dataForm.cooperativePartnerId = data[0].all.id
+        let productIdList = []
+        this.dataFormTwo.data.forEach((item) => {
+          productIdList.push(item.productsId)
+        })
+        let _data = {
+          cooperativePartnerId: this.dataForm.cooperativePartnerId,
+          productIdList
+        }
+      }
+    },
+
     // 去除系数后两位的小数位
     numberFormat(number) {
       var formatted = parseFloat(number)
@@ -1071,7 +1160,6 @@ export default {
             purProcurementRequirementsList(this.dataForm.id).then((res) => {
               this.dataFormTwo.data = res.data
             })
-
           })
         }
       })
@@ -1107,7 +1195,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          flowData:this.flowData,
+          flowData: this.flowData,
           orderType: 'external_process'
         }
       }
@@ -1216,25 +1304,26 @@ export default {
       this.dataFormTwo.data.splice(index, 1)
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b011').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+    getBusInfo() {
+      getBusinessFlowInfo('b011')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        }else{
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(()=>{})
-    },    
- 
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -1249,7 +1338,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 .required {
@@ -1296,8 +1385,8 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
+  /* padding-left: 10px !important; */
+  padding-bottom: 5px !important;
   margin-bottom: 0 !important;
   background: #fff;
 }

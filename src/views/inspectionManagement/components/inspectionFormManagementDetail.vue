@@ -3,7 +3,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
 
-      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
+      <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <el-page-header @back="$emit('close')" :content="title" />
         <div class="options" v-if="btnType !== 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')"
@@ -17,7 +17,7 @@
       <div class="contain">
         <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
           <div class="JNPF-common-layout-main JNPF-flex-main">
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName" v-if="!approvalFlag">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
                   <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -60,8 +60,42 @@
                 <UploadWj v-model="datafilelist" :disabled="btnType === 'look' || btnType === 'setLoss'"
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
-
+              <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              </el-tab-pane>
+              <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+                <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+              </el-tab-pane>
             </el-tabs>
+            <el-collapse v-model="activeNames" v-else>
+                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+
+                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                      :btnType="btnType === 'setLoss' ? 'look' : btnType" />
+                  </el-collapse-item>
+                  <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
+                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                  </el-collapse-item>
+
+                  <el-collapse-item title="检验项目" name="inspectionItem">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                        :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                        @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                        :nowNum="nowNum" />
+                    </el-row>
+
+                  </el-collapse-item>
+                  <el-collapse-item title="不良原因" name="adverseCausesInfo">
+                    <el-row :gutter="30" style="padding:0 15px">
+                      <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
+                        :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
+                        @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                        :nowNum="nowNumTwo" />
+                    </el-row>
+
+                  </el-collapse-item>
+            </el-collapse>
           </div>
         </div>
       </div>
@@ -88,17 +122,19 @@ import { getDownloadUrl } from '@/api/common'
 import { getbimDrawingData } from "@/api/basicData/index";
 import Preview from "@/components/upload-wj/Preview.vue";
 import { addQcUnqualifiedData, updateQcUnqualifiedData, detailQcUnqualifiedData, detailInspectionData, lossQcUnqualifiedData } from '@/api/inspectionManagement/index' // 产品检验项目列表
-import { getInspectionList } from '@/api/inspectionManagement/index' // 检验单
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import TableFormProduct from "./TableForm-product.vue"
-import workFlow from '@/components/WorkFlow/settingBus.vue'
 import TableFormWare from "./TableForm-ware.vue"
 import TableFormWareTwo from "./TableForm-ware-two.vue"
-import { getApprovalTemplate, getApprovalDetailTree, busApprovalFlowTree, getSaleBusDetail, getBusDetail, approvalTransferList } from '@/api/basicData/approvalAdministrator'
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
+import {  getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow';
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
-  components: { TableFormProduct, workFlow, WareSide, Preview, TableFormWare, TableFormWareTwo },
+  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo ,Process , recordList},
+  mixins: [busFlow],
   data() {
     return {
       datafilelist: [],
@@ -143,47 +179,6 @@ export default {
       spaceLines: [],
       productionLotList: [],
       inspectionType: '',
-      // 审批流需要字段
-      approvalBusinessId: '',
-      workVisible: false,
-      busNodeConfig: {
-        nodeName: "发起人",
-        nodeType: 0,
-        type: 'node',
-        priorityLevel: "",
-        approvalType: "appoint",
-        selectMode: "",
-        selectRange: "",
-        directorLevel: "",
-        examineMode: "",
-        whenEmpty: "",
-        examineEndDirectorLevel: "",
-        ccSelfSelectFlag: "",
-        conditionList: [],
-        nodeUserList: [],
-        childNode: null,
-        conditionNodes: []
-      },
-      approvalForm: {},
-      firstOneNode: [],
-      // 审批 转审记录参数
-      transferQuery: {
-        approvalFormId: '',
-        createByName: "",
-        documentId: '',
-        endTime: "",
-        keyword: "",
-        orderItems: [
-          {
-            "asc": true,
-            "column": ""
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
-        startTime: ""
-      },
-      transferData: [],
       formLoading: false,
       wareVisibled: false,
       ProductListRequestObjs: {},
@@ -212,7 +207,12 @@ export default {
         { prop: "remark", label: "备注", value: "", type: 'input', minWidth: 120 },
       ],
       productList: [],
-      codeConfig: {}
+      codeConfig: {},
+      flowTemplateJson: {},
+      flowData:{},
+      approvalFlag:false,   // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime:0
     }
   },
   beforeCreate() {
@@ -503,15 +503,12 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    async init(row, btnType, inspectionType, businessCode) {
-      console.log(row, 'row666')
-      let id = row.id
-      this.inspectionOrderNoChange(row.id)
-      this.dataForm = row
-      this.dataForm.inspectionOrderNo = row.orderNo
+    async init(id, btnType,approvalFlag, inspectionType, businessCode) {
+      this.inspectionOrderNoChange(id)
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
+      this.approvalFlag = approvalFlag
       let option = this.inspectionTypeList.find(o => o.value === inspectionType)
       this.inspectionType = inspectionType
       this.businessCode = businessCode
@@ -537,7 +534,6 @@ export default {
       this.refeshDataFormItems()
       this.refeshLinesListItems()
       this.title = '查看检验单'
-      // this.getApproverData()
       this.formLoading = false
       if (id) {
         if (btnType === 'anew') { // 重新提交
@@ -623,7 +619,6 @@ export default {
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建检验单'
-        this.getApproverData()
         this.formLoading = false
       }
     },
@@ -631,178 +626,6 @@ export default {
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
-      // 审批条件参数列表
-      let nodeCondList = []
-      // 审批抄送人列表
-      let ccList = []
-      let ccLists = []
-      let nodeJudg = []
-      // 业务审批单流程节点列表
-      let formNodeList = []
-      // 业务审批单
-      let form = {}
-      // 限制审批人员 和 抄送人员 离职情况 节点值空的时候限制提交
-      let templateLineList = []
-      // 新增时审批
-      if (this.btnType === 'add') {
-        if (this.busNodeConfig.childNode) {
-          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
-          flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item => {
-            return {
-              ...item,
-              nodeUserList: item.nodeUserList ? item.nodeUserList : []
-            }
-          })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-          // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
-
-          for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
-          }
-          if (templateLineList.length && submitModel === 'submit') {
-            submitFlag = templateLineList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('审核人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          if (ccList.length && submitModel === 'submit') {
-            submitFlag = ccList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('抄送人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-          // 业务审批单流程节点参数
-          formNodeList = flattenedNodes.map((item, index) => {
-            return {
-              ...item,
-              approvalStatus: item.name == '审核人' ? 'no' : '',
-              adminId: '',
-              id: '',
-              previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-              name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-            }
-          })
-          // 抄送人
-          ccLists = ccLists.map(item => {
-            return {
-              ...item,
-              approvalTemplateId: item.approvalTemplateId ? item.approvalTemplateId : this.approvalForm.id,
-              ccToId: item.targetId,
-              approvalFormNodeCode: item.approvalTemplateLineCode ? item.approvalTemplateLineCode : item.code,
-              id: '',
-              defaultFlag: item.defaultFlag == 0 ? item.defaultFlag : 1,
-            }
-          })
-          // 条件列表
-          if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
-              return {
-                ...item,
-                approvalFormNodeCode: item.code,
-                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-                code: item.conditionList[0].tjCode,
-                dataType: item.conditionList[0].dataType,
-                id: item.conditionList[0].id ? item.conditionList[0].id : ''
-              }
-            })
-          }
-          // 业务审批单
-          form = {
-            ...this.approvalForm,
-            approvalTemplateId: this.approvalForm.id,
-            documentStatus: submitModel,
-            documentId: '',
-            id: ''
-          }
-        }
-      } else {
-        if (this.busNodeConfig.childNode) {
-          let data = JSON.parse(JSON.stringify(this.busNodeConfig))
-          let flattenedNodes = this.flattenNodes(data);
-          flattenedNodes.splice(0, 1)
-          flattenedNodes = flattenedNodes.map(item => {
-            return {
-              ...item,
-              nodeUserList: item.nodeUserList ? item.nodeUserList : []
-            }
-          })
-          templateLineList = flattenedNodes.filter(item => item.nodeName === '审核人')
-          // 抄送人节点数组 ccList
-          ccList = flattenedNodes.filter(item => item.nodeName === '抄送人')
-          for (var i = 0; i < ccList.length; i++) {
-            var nodeUserList = ccList[i].nodeUserList;
-            ccLists = ccLists.concat(nodeUserList);
-          }
-          if (templateLineList.length && submitModel === 'submit') {
-            submitFlag = templateLineList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('审核人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          if (ccList.length && submitModel === 'submit') {
-            submitFlag = ccList.every(item => item.nodeUserList.length)
-            if (!submitFlag) {
-              this.$message.error('抄送人不能为空！')
-              this.btnLoading = false
-              return
-            }
-          }
-          // return
-          // 条件节点数组 nodeJudgmentList
-          nodeCondList = flattenedNodes.filter(item => item.type === 'condition')
-          // 业务审批单流程节点参数
-          formNodeList = flattenedNodes.map((item, index) => {
-            return {
-              ...item,
-              // previousCode: item.type === 'condition' ? item.previousCode : (index === 0 ? '' : flattenedNodes[index - 1].code),
-              // name: item.nodeName,
-              designatedMembersId: item.designatedMembersId ? item.designatedMembersId : item.nodeUserList.length ? item.nodeUserList[0].targetId : '',
-            }
-          })
-          // 抄送人
-          ccLists = ccLists.map(item => {
-            return {
-              ...item,
-              approvalFormId: item.approvalFormId ? item.approvalFormId : this.approvalForm.id,
-              approvalFormNodeCode: item.approvalFormNodeCode ? item.approvalFormNodeCode : item.code,
-              ccToId: item.targetId,
-              id: item.id ? item.id : ''
-            }
-          })
-          // 条件列表
-          if (nodeCondList.length) {
-            nodeJudg = nodeCondList.map(item => {
-              return {
-                ...item,
-                approvalFormNodeCode: item.code,
-                businessValue: item.conditionList[0].tjCode == 'numCode' ? this.totalNum : this.totalPrice,
-                code: item.conditionList[0].tjCode,
-                dataType: item.conditionList[0].dataType,
-                id: item.conditionList[0].id ? item.conditionList[0].id : ''
-              }
-            })
-          }
-          // 业务审批单
-          form = {
-            ...this.approvalForm,
-            approvalTemplateId: this.approvalForm.id,
-            documentStatus: submitModel,
-          }
-        }
-      }
 
       // 校验主表
       let form_1 = this.$refs['dataForm'].$children[0]
@@ -894,21 +717,8 @@ export default {
           attachmentList: this.datafilelist,
           unqualified: this.dataForm,
           // lines: this.linesList,
-          // form: form,
-          // formNodeList,
-          // nodeCondList: nodeJudg,
-          // ccList: ccLists,
         }
 
-
-        if (location.hostname === 'localhost' || location.href.indexOf('mode=dev') !== -1) { // 调试
-          let flag = await confirm('确定提交吗？')
-          if (!flag) {
-            console.log(dataObj)
-            this.btnLoading = false
-            return
-          }
-        }
 
         formMethod(dataObj).then(res => {
           let msg = res.msg
@@ -940,6 +750,9 @@ export default {
         console.log(res, 'res123')
         this.inspectionList = res.data.itemList
         this.linesListTwo = res.data.causesList
+        this.dataForm = res.data.inspection
+         // 流程信息和流转记录
+         if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         let tempLinesList = res.data.lines.filter(line => line.unqualifiedQuantity != '0')
         tempLinesList.forEach(line => {
           line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
@@ -962,8 +775,6 @@ export default {
         }
 
         this.linesList = tempLinesList
-        // 获取审批模版
-        this.$nextTick(() => { this.getApproverData() })
         this.formLoading = false
       }).catch(err => { this.formLoading = false })
     },
@@ -976,6 +787,34 @@ export default {
         this.$refs['wareSide'].init({ ...scope }, true)
       })
     },
+    // 流程信息 && 流转记录
+    getFlowDetail(id){
+      getBusinessFlowDetail(id).then(res=>{
+        if (res.data){
+          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
+          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+          let flowTaskNodeList = res.data.flowTaskNodeList
+          if (flowTaskNodeList.length) {
+            for (let i = 0; i < flowTaskNodeList.length; i++) {
+              const nodeItem = flowTaskNodeList[i]
+              const loop = data => {
+                if (Array.isArray(data)) data.forEach(d => loop(d))
+                if (data.nodeId === nodeItem.nodeCode) {
+                  if (nodeItem.type == 0) data.state = 'state-past'
+                  if (nodeItem.type == 1) data.state = 'state-curr'
+                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
+                  return
+                }
+                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                if (data.childNode) loop(data.childNode)
+              }
+              loop(this.flowTemplateJson)
+            }
+          }
+        }
+      }).catch(()=>{})
+    },    
   },
   computed: {
     openMode() {

@@ -75,7 +75,7 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:8px">
-        
+
           <div>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
@@ -140,7 +140,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look', scope.row)">
                 查看详情
@@ -277,7 +277,7 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName','createTime']
+      columnList: ['productName', 'pickingWay', 'createByName', 'createTime']
     }
   },
   watch: {
@@ -423,7 +423,7 @@ export default {
     addOrUpdateHandle(id, btnType, approvalStatus) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType || 'add', approvalStatus)
+        this.$refs.Form.init(id, btnType || 'add', false, approvalStatus)
       })
     },
     add() {

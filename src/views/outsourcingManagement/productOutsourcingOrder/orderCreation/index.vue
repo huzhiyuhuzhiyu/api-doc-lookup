@@ -330,11 +330,11 @@ import {
   getsaleOrderDetailList
 } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
-import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
   components: {
-    SourceArea,Process
+    SourceArea, Process
   },
   data() {
     return {
@@ -385,7 +385,7 @@ export default {
         orderNo: '', //申请单号
         reasonRejection: '', //驳回理由
         submitDate: '', //提交时间
-        approvalFlag:false
+        approvalFlag: false
       },
       sourceVisibled: false,
       type: 'add',
@@ -638,10 +638,10 @@ export default {
 
       taxRateList: [],
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   computed: {
@@ -1151,7 +1151,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          flowData:this.flowData,
+          flowData: this.flowData,
           orderType: 'external'
         }
       }
@@ -1284,24 +1284,24 @@ export default {
       this.dataFormTwo.data.splice(index, 1)
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b010').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b010').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
-    },    
+      }).catch(() => { })
+    },
   }
 }
 </script>
@@ -1316,7 +1316,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 .required {

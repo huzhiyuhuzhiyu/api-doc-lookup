@@ -323,7 +323,7 @@ export default {
     addition(data){
       this.pickVisible=true
       this.$nextTick(()=>{
-        this.$refs.PickForm.init(data,'add','awit')
+        this.$refs.PickForm.init(data,'add',false,'awit')
       })
     },
     handleUserRelation(id){

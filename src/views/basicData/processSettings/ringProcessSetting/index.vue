@@ -83,7 +83,7 @@
             新建
           </el-button> -->
           <div>
-            <el-button type="primary" @click="handleBatch">批量设置工艺</el-button>
+            <el-button type="primary" size="mini" @click="handleBatch">批量设置工艺</el-button>
             <!-- <el-button type="primary" size="mini" icon="el-icon-upload2" @click="importForm">导入</el-button> -->
             <!-- <el-button type="primary" size="mini" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
@@ -748,44 +748,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
 
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
-}
-
-::v-deep.el-tree-node__content {
-  height: 30px;
-  line-height: 30px;
-}
-
-.JNPF-common-el-tree {
-  margin: 5px 0;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 0;
-}
-</style>

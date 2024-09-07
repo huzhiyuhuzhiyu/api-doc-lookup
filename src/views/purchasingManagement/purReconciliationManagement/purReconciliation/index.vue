@@ -527,10 +527,6 @@ export default {
 }
 </script>
 <style scoped>
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
 
 .JNPF-common-search-box {
   padding: 8px 0 0 0;

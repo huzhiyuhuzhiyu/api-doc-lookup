@@ -86,7 +86,7 @@
                       </el-col>
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="产线" prop="productionLineId">
-                          <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable>
+                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
                           </el-select>
@@ -1020,7 +1020,7 @@ $footerPadding: '10px';
 }
 
 .orderInfo {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .orderInfo ::v-deep .el-collapse-item__wrap {

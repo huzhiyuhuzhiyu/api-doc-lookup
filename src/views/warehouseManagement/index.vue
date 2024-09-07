@@ -12,14 +12,6 @@ import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseM
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
-import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
-  delClassAttribute,
-  addBimProductAttributes,
-  getclassAttributeList,
-  disabledClassAttributeState
-} from '@/api/masterDataManagement/index'
 export default {
   name: 'quality',
   components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition},

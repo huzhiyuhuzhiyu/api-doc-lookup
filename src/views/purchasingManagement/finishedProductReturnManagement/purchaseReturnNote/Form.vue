@@ -1549,8 +1549,12 @@ export default {
             this.dataFormTwo.productData.forEach((item) => {
               item.drawingNo = item.productDrawingNo
             })
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.btnType === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
           this.dataFormTwo.productData = res.data.noticeLineList
         })
@@ -1636,7 +1640,8 @@ export default {
           let obj = {
             attachmentList: this.datafilelist,
             returnGoods: this.dataForm,
-            lines: []
+            lines: [],
+            flowData:this.flowData
           }
           if (!this.dataFormTwo.productData.length) {
             this.$message({
@@ -1837,13 +1842,6 @@ export default {
   margin-right: 4px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-}
-
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -1989,5 +1987,8 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

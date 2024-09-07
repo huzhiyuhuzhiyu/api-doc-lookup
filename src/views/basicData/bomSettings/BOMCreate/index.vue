@@ -41,7 +41,8 @@
         </div>
       </div>
       <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+        :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center"
+        width="500px">
         <div>
           <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
           <span class="import_t">{{ submitmethodsTitle }}啦！</span>
@@ -71,7 +72,7 @@ import {
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import TableFormProduct from '@/components/no_mount/TableForm-product/index' // 产品选择组件
+import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -84,12 +85,12 @@ import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquiryShe
 import { mapGetters, mapState } from 'vuex'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
-import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 Vue.prototype.$getLabel = getLabel
 export default {
   name: 'BOMCreate',
-  components: { TableFormProduct ,Process },
+  components: { TableFormProduct, Process },
   data() {
     return {
       activeNames: ['productInfo', 'basicInfo'],
@@ -285,10 +286,10 @@ export default {
       btnText: '继续新建',
       classAttributeList: [],
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   computed: {
@@ -304,7 +305,7 @@ export default {
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
-          tc.dialogTitle = '选择产品'
+          tc.dialogTitle = '选择子件'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr
@@ -694,7 +695,7 @@ export default {
           bom: this.dataForm,
           lines: this.linesList,
           doubleSubmitFlag: this.isDoubleFlag,
-          flowData:this.flowData
+          flowData: this.flowData
         }
 
         // 检查是否有循环问题
@@ -871,23 +872,23 @@ export default {
       })
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b023').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b023').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
   }
 }
@@ -900,7 +901,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding: 10px;
+  padding: 0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -1001,4 +1002,8 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+}
+
 </style>

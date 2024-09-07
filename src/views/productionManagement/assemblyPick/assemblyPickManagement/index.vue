@@ -255,14 +255,14 @@ export default {
     addSupplier(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType,'pick')
+        this.$refs.Form.init(id,btnType,false,'pick')
       })
     },
     // 查看详情
     viewDetailsFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType,'pick')
+        this.$refs.Form.init(id,btnType,false,'pick')
       })
     },
     // 编辑
@@ -270,7 +270,7 @@ export default {
       this.formVisible=true
       this.$nextTick(()=>{
         console.log(6666);
-        this.$refs.Form.init(id,btnType,'pick')
+        this.$refs.Form.init(id,btnType,false,'pick')
       })
     },
     superQuerySearch(query) {

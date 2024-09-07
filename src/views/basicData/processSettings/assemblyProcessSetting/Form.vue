@@ -1344,12 +1344,8 @@ export default {
   height: auto !important;
   /* padding: 0 20px; */
 }
-
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
+  margin-bottom: -5px;
 }
 
 ::v-deep .el-table__body-wrapper.is-scrolling-left {
@@ -1376,13 +1372,6 @@ export default {
 //   padding: 0px 20px;
 // }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  background-color: #fff;
-}
 
 .el-button--small {
   padding: 1;
@@ -1442,4 +1431,5 @@ export default {
   // margin-bottom: 10px;
   border-bottom: none !important;
 }
+
 </style>

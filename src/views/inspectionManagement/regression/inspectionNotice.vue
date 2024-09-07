@@ -97,6 +97,7 @@ export default {
         // approvalStatus: 'ok', // 审批状态
         documentStatus: 'submit', // 单据状态
         inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
+        notifyType: 'back',
         orderItems: [
           {
             asc: false,

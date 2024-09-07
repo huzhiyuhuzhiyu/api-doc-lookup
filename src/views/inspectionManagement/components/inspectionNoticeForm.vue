@@ -50,6 +50,9 @@
               <el-tab-pane label="附件" name="annex">
                 <UploadWj v-model="datafilelist" :disabled="readOnly" :detailed="readOnly"></UploadWj>
               </el-tab-pane>
+              <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+                <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
+              </el-tab-pane>
             </el-tabs>
           </div>
         </div>
@@ -63,16 +66,11 @@
 
 <script>
 import {
-  getpurPurchaseReceiptReturnGoodsdetail,
-  detailpurPurchaseReceiptReturnGoods
-} from '@/api/purchasingManagement/purchaseInquirySheet' // 单据详情
-import {
   addInspectionData,
   updateInspectionData,
   detailInspectionData,
   detailInspectionDataByBizid
 } from '@/api/inspectionManagement/index' // 产品检验项目列表
-import { getQuotationsendlist } from '@/api/salesManagement/index' // 外协退料通知单
 import { detailWithdrawal, detailordershengchan } from '@/api/productOrdes/index' // 生产退料
 import { inspectionTypeList } from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
@@ -84,8 +82,10 @@ import { getbimDrawingData } from '@/api/basicData/index'
 import Preview from '@/components/upload-wj/Preview.vue'
 import { getDownloadUrl } from '@/api/common'
 import { mapGetters } from 'vuex'
+import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
 export default {
-  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo },
+  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process},
   data() {
     return {
       activeFile: {},
@@ -187,7 +187,9 @@ export default {
         { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
       ],
       productList: [],
-      codeConfig: {}
+      codeConfig: {},
+      flowTemplateJson: {},
+      flowData:{},
     }
   },
   methods: {
@@ -620,10 +622,9 @@ export default {
       this.scope = { ...row }
 
       this.fetchData(businessCode, true)
-      this.dataForm = row
+      this.dataForm = { ...row ,approvalFlag:false,approvalStatus:'ing'}
       console.log(this.dataForm, 'form')
       console.log(this.dataForm.inspectorId, 'productDrawingNo')
-
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
@@ -683,6 +684,7 @@ export default {
         })
       let id = row.id
       this.inspectionType = inspectionType
+      this.getBusInfo()
       this.businessCode = businessCode
       this.visible = true
       this.formLoading = true
@@ -1121,7 +1123,8 @@ export default {
           // lines: this.linesList,
           causesList: this.linesListTwo,
           itemList: this.inspectionList,
-          attachmentList: this.datafilelist
+          attachmentList: this.datafilelist,
+          flowData:this.flowData
         }
 
         let modifyFlag = dataObj.inspection.submitMethod !== 'add'
@@ -1329,7 +1332,27 @@ export default {
       } else if (prop) {
         this.linesListTwo[dataOrIndex][prop] = value
       }
-    }
+    },
+    // 测试审批流
+    getBusInfo(){
+      let code = this.inspectionType === 'procure' ? 'b040' : this.inspectionType === 'external' ? 'b041' : this.inspectionType === 'sale_back' ? 'b042' : this.inspectionType === 'process' ? 'b043' : 'b044'
+      getBusinessFlowInfo(code).then(res=>{
+        if (res.data){
+          if (res.data.enabledMark){
+            this.flowData = res.data
+            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+            this.dataForm.approvalFlag = res.data.enabledMark
+          }else{
+            this.flowTemplateJson = {}
+            this.dataForm.approvalFlag = false
+            this.$message.error('未找到审批流程！')
+          }
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.approvalFlag = false
+        }
+      }).catch(()=>{})
+    },    
   },
   beforeCreate() {
     this.initLinesListItems = () => [

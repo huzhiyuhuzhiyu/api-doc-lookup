@@ -973,4 +973,7 @@ $footerPadding: '10px';
   border-top: 1px solid #dcdfe6;
   border-right: 0 !important;
 }
+::v-deep.el-collapse-item{
+  margin-top: 5px;
+}
 </style>

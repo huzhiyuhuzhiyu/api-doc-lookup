@@ -390,7 +390,7 @@ export default {
         this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init({ ...row, approvalFlag: false }, btnType, this.pageData.type)
+          this.$refs.DetailForm.init(row.id, btnType,false, this.pageData.type)
         })
       } else {
 

@@ -2686,11 +2686,15 @@ export default {
 
             this.dataForm.address = res.data.order.address
             this.defaultAddress = res.data.order.region.countryName + res.data.order.region.provinceName + res.data.order.region.cityName + res.data.order.region.areaName + res.data.order.address
-            // 流程信息和流转记录
-            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             this.$nextTick(() => {
               res.data.order.approvalStatus = ""
               this.dataForm = res.data.order
+              if (this.btnType === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+              }
               if (!this.dataForm.cooperativePartnerId) {
                 this.contractFlag = true
               } else {
@@ -3159,7 +3163,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 5px
 }
 
 
@@ -3271,4 +3275,5 @@ export default {
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
+ 
 </style>

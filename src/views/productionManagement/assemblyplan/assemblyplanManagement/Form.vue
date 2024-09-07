@@ -19,12 +19,12 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
@@ -32,31 +32,31 @@
                       </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="品名规格" prop="productsDrawingNo">
                           <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="产品编码" prop="productsCode">
                           <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产数量" prop="planProductionQuantity">
                           <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="可编排数量" prop="availableArrangeQuantity">
                           <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
                           </el-input>
@@ -64,13 +64,13 @@
                       </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="编排数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
@@ -78,20 +78,13 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="产线" prop="productionLineId">
-                          <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable>
-                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
-                              :value="item.id"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
+
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -143,10 +136,11 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
+                      <el-table-column prop="productionLineId" label="产线" min-width="160">
 
-                        <template slot-scope="scope"> 
-                          <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
+                        <template slot-scope="scope">
+                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择产线"  /> -->
+                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
@@ -154,14 +148,15 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="workstationId" label="工位" min-width="160">
-                        <template slot-scope="scope"> 
+                        <template slot-scope="scope">
+                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择工位" /> -->
                           <el-select v-model="scope.row.workstationId" placeholder="请选择工位"
                             :disabled="!scope.row.productionLineId" clearable @focus="selectworkstation(scope.row)">
                             <el-option v-for="(item, index) in workstationList" :key="index"
                               :label="item.workstationIdName" :value="item.workstationId"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column> -->
+                      </el-table-column>
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -195,8 +190,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
-              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"
-                style="margin-top: 10px;"></UploadWj>
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -409,7 +403,6 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
-        productionLineId:"",
       },
       dataFormTwo: {
         data: [],
@@ -771,6 +764,7 @@ export default {
       this.$set(this.dataForm, 'productionPlanId', data[0].id)
       console.log(this.$refs.dataForm);
       this.$refs.dataForm.clearValidate('planDate');
+      this.getProductClassFun()
       this.getProductionLineListFun()
       this.fetchData("PROD")
       this.getRoutingDetail(this.dataForm.routingId)
@@ -1018,7 +1012,7 @@ $footerPadding: '10px';
 }
 
 .orderInfo {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .orderInfo ::v-deep .el-collapse-item__wrap {

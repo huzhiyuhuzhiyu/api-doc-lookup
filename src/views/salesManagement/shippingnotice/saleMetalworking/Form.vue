@@ -1521,8 +1521,12 @@ export default {
 
             // this.dataFormTwo.data = res.data.noticeLineList
             this.processingdata(res.data.noticeLineList)
-             // 流程信息和流转记录
-             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.btnType === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           }
 
         })
@@ -1879,6 +1883,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
+  margin-bottom: 5px!important;
 }
 
 ::v-deep .el-tabs__header {

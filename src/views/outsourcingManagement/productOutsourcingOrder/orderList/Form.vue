@@ -657,8 +657,12 @@ export default {
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
             this.dataFormTwo.data[0].outShipmentList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-             // 流程信息和流转记录
-             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.type === 'edit'){
+                this.getBusInfo()
+              }else{
+                // 流程信息和流转记录
+                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            }
           })
         }
       })
@@ -689,27 +693,13 @@ export default {
         count += item.taxAmount * 1
       })
       this.dataForm.taxAmount = this.jnpf.numberFormat(count)
-      if (this.type == 'add') {
-        _data = {
-          ...this.dataForm,
-          attachmentList: this.datafilelist,
-          purProcurementRequirements: this.dataForm,
-          purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external',
-          flowData:this.flowData
-        }
-      }
-      if (this.type === 'edit' || this.type === 'look') {
-        // this.dataFormTwo.data.forEach((item, index) => {
-        //   this.dataFormTwo.data[index].inquirySheetId = this.dataForm.id
-        // })
-        _data = {
-          ...this.dataForm,
-          attachmentList: this.datafilelist,
-          purProcurementRequirements: this.dataForm,
-          purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external'
-        }
+      _data = {
+        ...this.dataForm,
+        attachmentList: this.datafilelist,
+        purProcurementRequirements: this.dataForm,
+        purchaseOrderLines: this.dataFormTwo.data,
+        orderType: 'external',
+        flowData:this.flowData
       }
       console.log(_data, '参数')
       let msg = ''
@@ -906,8 +896,8 @@ export default {
 }
 
 ::v-deep .el-tabs__header {
-  padding-left: 10px !important;
-  padding-bottom: 10px !important;
+  /* padding-left: 10px !important; */
+  padding-bottom: 5px !important;
   margin-bottom: 0 !important;
   background: #fff;
 }
@@ -986,11 +976,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
-
 .JNPF-common-search-box {
   padding: 8px 0 0 0;
   margin-left: 0 !important;
@@ -1032,5 +1017,12 @@ export default {
 
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

@@ -430,10 +430,10 @@ export default {
       if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error('只能选择相同客户的明细订单')
-
+ 
       this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addForm.init('', btntype, this.list)
+        this.$refs.addForm.init(this.list[0].purchaseOrderId, btntype, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

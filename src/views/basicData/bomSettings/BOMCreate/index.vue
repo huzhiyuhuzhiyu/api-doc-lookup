@@ -72,7 +72,7 @@ import {
 
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import TableFormProduct from '@/components/no_mount/TableForm-product/index' // 产品选择组件
+import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -305,7 +305,7 @@ export default {
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
-          tc.dialogTitle = '选择产品'
+          tc.dialogTitle = '选择子件'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr

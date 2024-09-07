@@ -251,13 +251,10 @@ export default {
         pageNum: 1,
         pageSize: 20,
         orderItems: [
+        
           {
             asc: false,
             column: ''
-          },
-          {
-            asc: false,
-            column: 'createTime'
           }
         ],
         // keyword:"",

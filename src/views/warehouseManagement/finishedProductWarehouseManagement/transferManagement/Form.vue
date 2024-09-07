@@ -838,4 +838,7 @@ export default {
   line-height: 36px;
   font-weight: 700;
 }
+.JNPF-common-layout-main.JNPF-flex-main{
+  padding-top: 5px;
+}
 </style>

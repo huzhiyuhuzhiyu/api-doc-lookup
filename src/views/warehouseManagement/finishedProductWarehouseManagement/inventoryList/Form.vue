@@ -1471,4 +1471,10 @@ export default {
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
+::v-deep .el-tabs__header{
+  margin-bottom: 5px;
+}
+.JNPF-common-layout-main.JNPF-flex-main{
+  padding-top: 0;
+}
 </style>

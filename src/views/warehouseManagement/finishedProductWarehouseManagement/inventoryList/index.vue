@@ -11,7 +11,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;">
+              <el-select v-model="listQuery.businessType" placeholder="业务类型" style="width: 100%;" clearable>
                 <el-option v-for="(item, index) in list" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -77,6 +77,8 @@
               <div v-if="scope.row.businessType == 'outbound_external'">外协退货</div>
               <div v-if="scope.row.businessType == 'inbound_other'">直接入库</div>
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
+              <div v-if="scope.row.businessType == 'outbound_transfer'">调拨出库</div>
+              <div v-if="scope.row.businessType == 'inbound_transfer'">调拨入库</div>
             </template> 
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">

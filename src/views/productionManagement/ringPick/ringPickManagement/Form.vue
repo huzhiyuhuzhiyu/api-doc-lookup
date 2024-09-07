@@ -19,7 +19,7 @@
           <el-tabs v-model="activeName" @tab-click="handleClick" v-if="!approvalFlag" class=".el-table">
             <el-tab-pane label="通知单信息" name="orderInfo">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 10px;">
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -464,7 +464,8 @@ export default {
     selectProcessMaterialFun(data) {
       console.log("所选的工序物料", data);
       data.forEach(item => {
-        this.$set(item, 'num', JSON.parse(JSON.stringify(item.waitReceiveQuantity)))
+        this.$set(item, 'waitReceiveQuantity', JSON.parse(JSON.stringify(item.inventoryQuantity)))
+        this.$set(item, 'num', JSON.parse(JSON.stringify(item.inventoryQuantity)))
       });
       if (this.dataFormTwo.data.length) {
         let uniqueArr = [];
@@ -574,7 +575,7 @@ export default {
         }
       })
     },
-    init(id, btnType,approvalFlag, sourceType) {
+    init(id, btnType, sourceType,approvalFlag,) {
       this.btnType = btnType
       this.approvalFlag = approvalFlag
       if (sourceType == 'pick') {

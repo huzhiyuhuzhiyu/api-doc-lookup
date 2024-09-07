@@ -928,7 +928,9 @@ export default {
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   padding: 10px 10px;
 }
-
+.JNPF-common-layout-main.JNPF-flex-main{
+  padding-top: 5px;
+}
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
   overflow: auto;
 }

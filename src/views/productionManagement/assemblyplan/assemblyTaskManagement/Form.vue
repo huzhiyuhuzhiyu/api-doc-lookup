@@ -633,7 +633,7 @@ $footerPadding: '10px';
 }
 
 .orderInfo {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
  

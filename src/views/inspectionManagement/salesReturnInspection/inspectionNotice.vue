@@ -124,8 +124,7 @@ import {
   linesReceiptReturn
 } from '@/api/purchasingManagement/purchaseInquirySheet'
 import Form from '../components/inspectionNoticeForm.vue'
-// import DetailForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
-import DetailForm from './DetailForm.vue'
+import DetailForm from '@/views/salesManagement/shippingnotice/returnSalesmemo/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes, getbimProductsModelList } from '@/api/masterDataManagement/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'

@@ -622,10 +622,9 @@ export default {
       this.scope = { ...row }
 
       this.fetchData(businessCode, true)
-      this.dataForm = { ...row ,approvalFlag:false}
+      this.dataForm = { ...row ,approvalFlag:false,approvalStatus:'ing'}
       console.log(this.dataForm, 'form')
       console.log(this.dataForm.inspectorId, 'productDrawingNo')
-
       this.dataForm.inspectorId = this.dataForm.inspectorId ? this.dataForm.inspectorId : this.userInfo.userId
       this.dataForm.inspectionDate = this.jnpf.toDate(new Date(), 'yyyy-MM-dd')
       this.dataForm.productDrawingNo = row.productDrawingNo
@@ -685,6 +684,7 @@ export default {
         })
       let id = row.id
       this.inspectionType = inspectionType
+      this.getBusInfo()
       this.businessCode = businessCode
       this.visible = true
       this.formLoading = true
@@ -770,7 +770,6 @@ export default {
         this.linesListFormat(tempLinesList)
         this.linesList = tempLinesList
         this.setLinesListItems()
-        this.getBusInfo()
         this.formLoading = false
         return
       }

@@ -237,13 +237,15 @@ import AssemblyPickForm from '@/views/productionManagement/assemblyPick/assembly
 import AssemblyReturnForm from '@/views/productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue'
 import RingPickForm from '@/views/productionManagement/ringPick/ringPickManagement/Form.vue'
 import RingReturnForm from '@/views/productionManagement/ringPick/ringReturnMaterManagement/Form.vue'
+import InspectionForm from '@/views/inspectionManagement/components/inspectionFormManagementDetail.vue'
 
 export default {
   components: {
     recordList, Process, vueEsign, PrintBrowse, Comment, RecordSummary, CandidateForm, CandidateUserSelect, ErrorForm, ActionDialog,
     SaleQuoForm, PurReconciliationForm, OutReconciliationForm, SalesReconForm, DefectiveProductHandlingForm,ProductionBomForm,RoutingForm,SaleOrderForm,
     SaleSendForm,SaleReturnForm,PurchaseOrderForm,PurchaseReturnForm,PurFinishedReturnForm,OutsourceOrderForm,OutProcessOrderForm,ExternalSendLForm,
-    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm,AssemblyPickForm,AssemblyReturnForm,RingPickForm,RingReturnForm
+    PurchaseReceiveForm,PurchaseFinishReceiveForm,ExternalhReceiveForm,BuyingRequisitionForm,AssemblyPickForm,AssemblyReturnForm,RingPickForm,RingReturnForm,
+    InspectionForm
   },
   data() {
     return {
@@ -352,8 +354,14 @@ export default {
         'b047': 'AssemblyReturnForm',
         'b038': 'RingPickForm',
         'b039': 'RingReturnForm',
+        'b040': 'InspectionForm',
+        'b041': 'InspectionForm',
+        'b042': 'InspectionForm',
+        'b043': 'InspectionForm',
+        'b044': 'InspectionForm',
       },
       inspectionTypeList: [
+        // 不良品
         { label: 'b003', value: 'procure' },
         { label: 'b004', value: 'external' },
         { label: 'b008', value: 'produce' },
@@ -361,8 +369,14 @@ export default {
         { label: 'b007', value: 'back_material' },
         { label: 'b005', value: 'process' },
         { label: 'b022', value: 'finished' },
+        // 检验单 
+        { label: 'b040', value: 'procure' },
+        { label: 'b041', value: 'external' },
+        { label: 'b042', value: 'process' },
+        { label: 'b043', value: 'finished' },
       ],
       inspectionType:'',
+      businessFlow:'',
       messageFlag: false
     }
   },
@@ -496,6 +510,7 @@ export default {
         this.flowUrgent = this.flowTaskInfo.flowUrgent || 1
         data.type = this.flowTaskInfo.type
         data.draftData = res.data.draftData || null
+        this.businessFlow = data.businessFlow || ''
         if (data.formType == 1) {
           if (this.flowTaskInfo.formUrl) {
             this.currentView = (resolve) => require([`@/views/${this.flowTaskInfo.formUrl}`], resolve)
@@ -573,7 +588,7 @@ export default {
       }).catch(() => { this.loading = false })
     },
     eventLauncher(eventType) {
-      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form)
+      this.$refs.form && this.$refs.form.dataFormSubmit(eventType, this.flowUrgent,this.inspectionType,this.$refs.form,this.businessFlow)
     },
     eventReceiver(formData, eventType) {
       this.formData = formData

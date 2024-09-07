@@ -2,7 +2,7 @@
   <div>
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
-        <el-page-header @back="goBack" :content="'班组报工'" />
+        <el-page-header @back="goBack" :content="'设备报工'" />
 
         <div class="options">
 
@@ -37,7 +37,7 @@
                     <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
+                <el-table-column prop="equipmentName" label="设备" min-width="120" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -45,6 +45,7 @@
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
                 <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
+           
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
@@ -111,7 +112,7 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       form: {
-        workGroupId: "",
+        equipmentId: "",
         prodOrderStatus: 'normal',
         workReportFlag: true,
         processingType: "self_produced",
@@ -145,7 +146,7 @@ export default {
     init(row) {
       console.log("供需信息", row);
       this.processData = row
-      this.form.workGroupId = row.id
+      this.form.equipmentId = row.id
       this.getWorkListFun()
     },
     getWorkListFun() {

@@ -56,6 +56,14 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="产线" prop="productionLineId">
+                          <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable>
+                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -187,10 +195,9 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productionLineId" label="产线" min-width="160">
+                      <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
-                        <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择产线"  /> -->
+                        <template slot-scope="scope"> 
                           <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
@@ -199,15 +206,14 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="workstationId" label="工位" min-width="160">
-                        <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择工位" /> -->
+                        <template slot-scope="scope"> 
                           <el-select v-model="scope.row.workstationId" placeholder="请选择工位"
                             :disabled="!scope.row.productionLineId" clearable @focus="selectworkstation(scope.row)">
                             <el-option v-for="(item, index) in workstationList" :key="index"
                               :label="item.workstationIdName" :value="item.workstationId"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -635,6 +641,7 @@ export default {
         remark: "",
         bomId: "",
         drawingNo: "",
+        productionLineId:"",
       },
       dataFormTwo: {
         data: [],

@@ -78,7 +78,7 @@
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
                     </div>
-                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"
+                    <JNPF-table ref="product" :data="dataFormTwo.data" fixedNo v-loading="tableloading"  style="border-top: 1px solid #EBEEF5;"
                       :hasC="btnType != 'look'" @selection-change="handeleProductInfoData">
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="130"></el-table-column>
                       <el-table-column prop="productCode" label="产品编码" min-width="130"></el-table-column>
@@ -359,7 +359,8 @@ export default {
     selectProcessMaterialFun(data) {
       console.log("所选的工序物料", data);
       data.forEach(item => {
-        this.$set(item, 'num', JSON.parse(JSON.stringify(item.waitReceiveQuantity)))
+        this.$set(item, 'waitReceiveQuantity', JSON.parse(JSON.stringify(item.inventoryQuantity)))
+        this.$set(item, 'num', JSON.parse(JSON.stringify(item.inventoryQuantity)))
       });
       if (this.dataFormTwo.data.length) {
         let uniqueArr = [];
@@ -720,6 +721,7 @@ $footerPadding: '10px';
 
 .productInfo ::v-deep .el-collapse-item__wrap {
   padding: 0px;
+  border: 1px solid #dcdfe6 !important;
 
 }
 

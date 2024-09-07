@@ -75,6 +75,7 @@
             <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
             
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
+            <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
             <el-table-column prop="orderStatus" label="状态" min-width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.orderStatus == 'normal'"> 正常 </div>

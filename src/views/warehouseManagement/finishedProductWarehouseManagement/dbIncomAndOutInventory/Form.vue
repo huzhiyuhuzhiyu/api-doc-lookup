@@ -72,7 +72,7 @@
 
                         </el-form-item>
                       </el-col>
-                      
+
 
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
@@ -105,13 +105,16 @@
                     </el-table-column>
                     <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
                     <el-table-column prop="customerProductNo" label="客户料号" width="160" :key="1212"
-                      v-if="dataForm.businessType != 'outbound_external_send'"> </el-table-column>
-                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6" show-overflow-tooltip> </el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" />
+                      v-if="dataForm.businessType != 'outbound_external_send' || dataForm.businessType != 'outbound_pick_out' || dataForm.businessType != 'inbound_return_materials'">
+                    </el-table-column>
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
+                      show-overflow-tooltip> </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
                     <el-table-column prop="processName" label="工序名称" width="160" :key="222"
-                      v-if="dataForm.businessType == 'outbound_external_send'"> </el-table-column>
-                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111"
-                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send'">
+                      v-if="dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
+                    </el-table-column>
+                    <el-table-column prop="batchNumber" label="批次号" width="200" :key="10111" v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external_send'
+                      || dataForm.businessType == 'outbound_pick_out'">
                       <template slot="header">
                         <span class="required">*</span>批次号
                       </template>
@@ -134,12 +137,14 @@
         { label: "外协退货", value: "outbound_external" }, -->
                     <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" v-if="allocationFlag">
                       <template slot="header"
-                        v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external'">
+                        v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external' ||
+                          dataForm.businessType != 'outbound_pick_out' || dataForm.businessType != 'inbound_return_materials'">
                         <span class="required">*</span>库位
                       </template>
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.shelfSpaceName" readonly
-                          v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external'"
+                          v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external'
+                            || dataForm.businessType != 'outbound_pick_out' || dataForm.businessType != 'inbound_return_materials'"
                           @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                         </el-input>
                         <div
@@ -148,13 +153,20 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <el-table-column prop="availableBatchNumber" label="批次可用数量" width="140" :key="7"
-                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
-                       
-                      <el-table-column prop="undeliveredQuantity" :label="inOroundTitle" width="140" :key="777" v-if="dataForm.businessType=='outbound_sale_send'||dataForm.businessType=='inbound_sale_return'||dataForm.businessType=='outbound_external_send'||dataForm.businessType=='inbound_external_return'"> </el-table-column>
-                      <el-table-column prop="requiredReceivedQuantity" :label="inOroundTitle" width="140" :key="777" v-if="dataForm.businessType=='inbound_purchase'||dataForm.businessType=='outbound_purchase'||dataForm.businessType=='inbound_external'||dataForm.businessType=='outbound_external'"> </el-table-column>
-                    
-                      <el-table-column prop="num" label="数量" width="140" :key="77">
+                    <el-table-column prop="availableBatchNumber" label="可用数量" width="140" :key="7"
+                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_pick_out'"></el-table-column>
+
+                    <el-table-column prop="undeliveredQuantity" :label="inOroundTitle" width="140" :key="777"
+                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external_return'">
+                    </el-table-column>
+                    <el-table-column prop="requiredReceivedQuantity" :label="inOroundTitle" width="140" :key="777"
+                      v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'inbound_external' || dataForm.businessType == 'outbound_external'">
+                    </el-table-column>
+                    <el-table-column prop="unReceiveQuantity" :label="inOroundTitle" width="140" :key="777"
+                      v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
+                    </el-table-column>
+
+                    <el-table-column prop="num" label="数量" width="140" :key="77">
                       <template slot="header">
                         <span class="required">*</span>{{ numTitle }}
                       </template>
@@ -164,13 +176,17 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="price" label="单价(含税)" width="120"
-                      v-if="dataForm.businessType != 'outbound_external_send'" :key="110"></el-table-column>
+                      v-if="dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      :key="110"></el-table-column>
                     <el-table-column prop="taxRate" label="税率(%)" width="100"
-                      v-if="dataForm.businessType != 'outbound_external_send'" :key="171"></el-table-column>
+                      v-if="dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      :key="171"></el-table-column>
                     <el-table-column prop="taxAmount" label="税额" width="100"
-                      v-if="dataForm.businessType != 'outbound_external_send'" :key="1721"></el-table-column>
+                      v-if="dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      :key="1721"></el-table-column>
                     <el-table-column prop="totalAmount" label="总金额(含税)" width="120"
-                      v-if="dataForm.businessType != 'outbound_external_send'" :key="125"></el-table-column>
+                      v-if="dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      :key="125"></el-table-column>
                     <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
                       v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_external'">
                       <template slot-scope="scope">
@@ -179,35 +195,42 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="standardValue" label="规值" width="100" 
+                    <el-table-column prop="standardValue" label="规值" width="100"
+                      v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_pick_out'" />
+                    <el-table-column prop="aperture" label="孔径" width="100"
+                      v-if="dataForm.businessType == 'outbound_pick_out'" />
+                    <el-table-column prop="colour" label="颜色" width="100"
                       v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
-                    <el-table-column prop="colour" label="颜色" width="100" 
-                      v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                      prop="sealingCoverTyping" label="打字内容" width="100"  />
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      prop="sealingCoverTyping" label="打字内容" width="100" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                      prop="accuracyLevel" label="精度等级" width="100"  />
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      prop="accuracyLevel" label="精度等级" width="100" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                      prop="vibrationLevel" label="振动等级" width="100"  />
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      prop="vibrationLevel" label="振动等级" width="100" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                      prop="oil" label="油脂" width="100"  />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="100" 
-                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      prop="oil" label="油脂" width="100" />
+                    <el-table-column prop="oilQuantity" label="油脂量" width="100"
+                      v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                      prop="clearance" label="游隙" width="100"  />
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
+                      prop="clearance" label="游隙" width="100" />
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                       prop="packagingMethod" label="包装方式" width="100"></el-table-column>
                     <el-table-column
-                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                      v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                       prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                    <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
-                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'" fixed="right">
+                    <el-table-column prop="remark" label="备注" width="200" :key="128">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.remark" placeholder="备注"></el-input>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
+                      fixed="right">
                       <template slot-scope="scope">
                         <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
                       </template>
@@ -332,6 +355,46 @@
                 </el-col>
 
               </el-form>
+              <!-- 生产领退料 -->
+              <el-form @submit.native.prevent
+                v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'">
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.productCode" placeholder="产品编码" clearable />
+                  </el-form-item>
+                </el-col>
+
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-input v-model="orderForm.processName" placeholder="工序名称" clearable />
+                  </el-form-item>
+                </el-col>
+                <!-- { label: "销售发货", value: "outbound_sale_send" },
+{ label: "销售退货", value: "inbound_sale_return" },
+{ label: "采购收货", value: "inbound_purchase" },
+{ label: "采购退货", value: "outbound_purchase" },
+{ label: "生产领料", value: "outbound_pick_out" },
+{ label: "生产退料", value: "inbound_return_materials" },
+{ label: "外协发料", value: "outbound_external_send" },
+{ label: "外协退料", value: "inbound_external_return" },
+{ label: "外协收货", value: "inbound_external" },
+{ label: "外协退货", value: "outbound_external" }, -->
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
+                      $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
@@ -342,23 +405,37 @@
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external'"></el-table-column>
                 <el-table-column prop="orderNo" label="发料单号" width="180" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_external_send'"></el-table-column>
+                <el-table-column prop="orderNo" label="领料单号" width="180" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'"></el-table-column>
                 <el-table-column prop="orderNo" label="退货单号" width="180" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_purchase'"></el-table-column>
                 <el-table-column prop="deliverDate"
+                  v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'"
                   :label="dataForm.businessType == 'outbound_sale_send' ? '发货日期' : dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external' ? '收货日期' : dataForm.businessType == 'outbound_purchase' ? '退货日期' : dataForm.businessType == 'outbound_external_send' ? '发料日期' : ''"
                   width="160" sortable="custom" />
-                <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
+                <el-table-column prop="operationDate"
+                  :label="dataForm.businessType == 'outbound_pick_out' ? '领料日期' : dataForm.businessType == 'inbound_return_materials' ? '退料日期' : ''"
+                  width="160" sortable="custom" />
+                <el-table-column prop="ordersNo" label="任务单号" width="160" sortable="custom" />
                 <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序" width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'" />
                 <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
+                <el-table-column prop="num" label="领料数量" width="120" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'" />
                 <el-table-column prop="ordersNum" label="数量" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'inbound_external'" />
                 <el-table-column prop="deliveryQuantity" label="数量" width="120" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_external_send'" />
+                <el-table-column prop="unReceiveQuantity"
+                  :label="dataForm.businessType == 'outbound_pick_out' ? '待领料数量' : dataForm.businessType == 'inbound_return_materials' ? '待退料数量' : ''"
+                  width="160" sortable="custom"
+                  v-if="dataForm.businessType == 'outbound_pick_out' || dataForm.businessType == 'inbound_return_materials'" />
                 <el-table-column prop="undeliveredQuantity"
                   :label="dataForm.businessType == 'inbound_sale_return' ? '待入库数量' : dataForm.businessType == 'outbound_external_send' ? '待发料数量' : '待出库数量'"
                   width="160" sortable="custom"
@@ -375,27 +452,27 @@
                 <el-table-column prop="colour" label="颜色" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="oil" label="油脂" width="160" sortable="custom" />
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' && dataForm.businessType == 'inbound_sale_return'" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="clearance" label="游隙" width="160" sortable="custom" />
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="packagingMethod" label="包装方式" width="120"></el-table-column>
                 <el-table-column
-                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
+                  v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send' && dataForm.businessType == 'outbound_pick_out' && dataForm.businessType == 'inbound_return_materials'"
                   prop="specialRequire" label="特殊要求" width="120"></el-table-column>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
@@ -413,7 +490,8 @@
 
                 <el-table-column prop="remark" label="备注" width="160" sortable="custom"
                   v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'outbound_external_send' || dataForm.businessType == 'inbound_external'" />
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
+                  v-if="dataForm.businessType != 'outbound_pick_out' && dataForm.businessType != 'inbound_return_materials'" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
                 @pagination="searchProductFun" />
@@ -466,18 +544,18 @@ import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
-import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList } from '@/api/productOrdes/index.js'
+import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
 import BatchNumberForm from './batchNumberForm.vue'
 export default {
   components: { CustomerForm, WareHouseForm, BatchNumberForm },
 
   data() {
     return {
-      warehouseRequestObj:{
-         type: 'normal', state: 'enable' 
+      warehouseRequestObj: {
+        type: 'normal', state: 'enable'
       },
-      inOroundTitle:"",
-      numTitle:"",
+      inOroundTitle: "",
+      numTitle: "",
       batchNumVisible: false,
       wareHouseVisible: false,
       // 选择批次号请求条件
@@ -526,7 +604,7 @@ export default {
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" },
       ],
-     
+
       dataRule: {
         cooperativePartnerId: [
           { required: true, message: '客户不能为空', trigger: 'change' }
@@ -600,7 +678,7 @@ export default {
     // 选择批次
     selectBatchNumberFun(data, index) {
       console.log("批次号数据", data, index);
-   
+
       this.$set(this.productData[index], 'warehouseId', data.warehouseId)
       this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
       this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
@@ -636,7 +714,10 @@ export default {
 
     // 点击选择产品 销售发货 
     openSeleceProductDialog() {
-      if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+      if (this.dataForm.businessType != 'inbound_return_materials' && this.dataForm.businessType != 'outbound_pick_out') {
+        if (!this.dataForm.cooperativePartnerId) return this.$message.error("请先选择客户")
+
+      }
       this.productVisible = true
       this.searchProductFun()
     },
@@ -733,7 +814,30 @@ export default {
       //   { label: "外协退料", value: "inbound_external_return" },
       //   { label: "外协收货", value: "inbound_external" },
       //   { label: "外协退货", value: "outbound_external" },  
-
+      if (this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'inbound_return_materials') {
+        this.orderForm = {
+          
+          orderNo: this.dataForm.sourceNo,
+          classAttribute: this.classAttribute,
+          pageNum: 1,
+          pageSize: 20,
+          productDrawingNo: "",
+          productCode: "",
+        }
+        if(this.dataForm.businessType=='outbound_pick_out'){
+          this.orderForm.pickingFlag=true
+        }
+        if(this.dataForm.businessType=='inbound_return_materials'){
+          this.orderForm.backFlag =true
+        }
+        WithdrawalmxList(this.orderForm).then(res => {
+          res.data.records.forEach(item => {
+            item.ordersNo = item.productionOrderNo
+          });
+          this.productList = res.data.records
+          this.productTotal = res.data.total
+        })
+      }
 
 
     },
@@ -1007,8 +1111,8 @@ export default {
       if (businessType == 'inbound_sale_return') {
         this.selectcustomerObj.type = 'customer'
         this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
-        this.warehouseRequestObj.virtuallyFlag=false
-        this.warehouseRequestObj.type=""
+        this.warehouseRequestObj.virtuallyFlag = false
+        this.warehouseRequestObj.type = ""
       }
       if (businessType == 'inbound_purchase') {
         this.selectcustomerObj.type = 'supplier'
@@ -1039,8 +1143,8 @@ export default {
         this.dataForm.businessType == 'inbound_external_return' ||
         this.dataForm.businessType == 'inbound_external') {
         this.jyFlag = true
-        this.numTitle="入库数量"
-        this.inOroundTitle="待入库数量"
+        this.numTitle = "入库数量"
+        this.inOroundTitle = "待入库数量"
         if (this.btnType == 'edit') {
           this.fetchData("RKDH", false)
 
@@ -1051,9 +1155,12 @@ export default {
         }
         this.title = '新建入库单'
       }
-      if (this.dataForm.businessType == 'outbound_sale_send' || this.dataForm.businessType == 'outbound_purchase' || this.dataForm.businessType == 'outbound_pick_out' || this.dataForm.businessType == 'outbound_external_send') {
-        this.numTitle="出库数量"
-        this.inOroundTitle="待出库数量"
+      if (this.dataForm.businessType == 'outbound_sale_send' ||
+        this.dataForm.businessType == 'outbound_purchase' ||
+        this.dataForm.businessType == 'outbound_pick_out' ||
+        this.dataForm.businessType == 'outbound_external_send') {
+        this.numTitle = "出库数量"
+        this.inOroundTitle = "待出库数量"
         this.jyFlag = false
         if (this.btnType == 'edit') {
           this.fetchData("CKDH", false)
@@ -1098,8 +1205,8 @@ export default {
       if (businessType == 'inbound_purchase' || businessType == 'outbound_purchase' || businessType == 'inbound_external') {
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute&&item.qualifiedQuantity>item.receiptQuantity);
-           
+          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute && item.qualifiedQuantity > item.receiptQuantity);
+
           // if(businessType == 'inbound_purchase'){
           //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
           // }
@@ -1127,29 +1234,23 @@ export default {
           this.formLoading = false
         }).catch(() => { this.formLoading = false })
       }
-      if(businessType=='outbound_pick_out'){
+      if (businessType == 'outbound_pick_out' || businessType == 'inbound_return_materials') {
         detailWithdrawal(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute&&item.unReceiveQuantity);
+          let filteredArray = res.data.collectLineList.filter(item => item.classAttribute === this.classAttribute && item.unReceiveQuantity);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
               item.classAttribute = this.classAttribute
               item.noticeId = item.materialCollectId
               item.noticeLineId = item.id
               item.sourceNo = this.dataForm.sourceNo
-              item.moveId = this.dataForm.id
-              let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
-              item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-              item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, item.price]), 6)
-              item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.deliveryQuantity, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
-              item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-              if (businessType == 'outbound_external_send') {
-                item.num = item.deliveryQuantity
-              }
+              item.ordersId = res.data.collect.productionOrderId
+              item.ordersLineId = item.materialListId
+
             });
           }
+          console.log("filteredArray", filteredArray);
           this.productData = filteredArray
-          this.dataForm.id = this.productData[0].returnDeliveryNoticeId
           this.formLoading = false
         }).catch(() => { this.formLoading = false })
 
@@ -1176,7 +1277,7 @@ export default {
         partnerName: "",
         documentType: "",
         id: "",
-        warehouseType: "", 
+        warehouseType: "",
       }
       this.productData = []
       this.$refs.dataForm.resetFields()

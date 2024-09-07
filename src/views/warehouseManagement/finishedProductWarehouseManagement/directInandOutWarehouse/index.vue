@@ -58,7 +58,7 @@
                           placeholder="请选择仓库" @change="changeWarehousex"></ComSelect-list>
                       </el-form-item>
                     </el-col>
-                    
+
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -266,8 +266,21 @@
                       </el-select>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
-                  <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'">
+                  <el-table-column prop="processName" label="工序" width="160" sortable="custom">
+                    <template slot-scope="scope">
+                      <el-select v-model="scope.row.processId" placeholder="请选择" clearable style="width: 100%;">
+                        <el-option v-for="(item, index) in processList" :key="index" :label="item.name"
+                          :value="item.id"></el-option>
+                      </el-select>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="remark" label="备注" width="200" :key="128">
+                    <template slot-scope="scope">
+                      <el-input :disabled="btnType == 'look'"  
+                      v-model="scope.row.remark" placeholder="备注"></el-input>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" fixed="right" width="100" v-if="productData.length && btnType != 'look'">
                     <template slot-scope="scope">
                       <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
                     </template>
@@ -311,7 +324,7 @@
 
               <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
                 <el-form-item>
-                  <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable />
+                  <el-input v-model="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable />
                 </el-form-item>
               </el-col>
               <!-- <el-col :span="6" v-if="dataForm.documentType == 'inbound'">
@@ -390,7 +403,9 @@
               <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"
                 v-if="dataForm.documentType == 'inbound'" />
             </JNPF-table>
-            <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+            <pagination :total="productTotal"
+              :page.sync="dataForm.documentType == 'outbound' ? orderForm.pageNum : listQuery.pageNum"
+              :limit.sync="dataForm.documentType == 'outbound' ? orderForm.pageSize : listQuery.pageSize"
               @pagination="searchProductFun" />
           </div>
         </div>
@@ -429,6 +444,7 @@ import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBi
 import { getcategoryTree, getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getProductList } from '@/api/masterDataManagement/productManage'
+import { getBimProcessList } from '@/api/bimProcess/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -445,6 +461,7 @@ export default {
   },
   data() {
     return {
+      processList: [],
       documentTypeList: [
         { label: "直接出库", value: "outbound", },
         { label: "直接入库", value: "inbound", },
@@ -494,8 +511,8 @@ export default {
         id: "",
         warehouseType: "",
         inspectionResults: "",
-        partnerName:"",
-        cooperativePartnerId:"",
+        partnerName: "",
+        cooperativePartnerId: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -515,7 +532,7 @@ export default {
         ],
       },
       orderForm: { //获取产品数据 
-        drawingNo: "",        // customerProductNo: "",
+        productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",
@@ -592,6 +609,7 @@ export default {
   created() {
     this.getWarehouseConfig()
     this.getProductClassFun()
+    this.getprocessList()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -601,6 +619,20 @@ export default {
     }
   },
   methods: {
+    getprocessList() {
+      let obj = {
+        "name": "",
+        "code": "",
+        "processingType": "",
+        "orderItems": [{ "asc": false, "column": "" }, { "asc": false, "column": "create_time" }],
+        "pageNum": -1,
+        "pageSize": 20,
+        "productCategoryId": ""
+      };
+      getBimProcessList(obj).then(res => {
+        this.processList = res.data.records
+      })
+    },
     // 所选择的客户数据
     handleSelectCustomer(data) {
       console.log("客户信息", data);
@@ -685,7 +717,7 @@ export default {
         })
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-        this.listQuery.classAttribute=this.classAttribute
+        this.listQuery.classAttribute = this.classAttribute
         getProductList(this.listQuery)
           .then((res) => {
             console.log("res.", res);
@@ -709,7 +741,7 @@ export default {
     // 销售发货选择产品——重置
     resetProductFun() {
       this.orderForm = { //获取产品数据
-        drawingNo: "",        // customerProductNo: "",
+        productDrawingNo: "",        // customerProductNo: "",
         productName: "",
         productCode: "",
 
@@ -775,6 +807,7 @@ export default {
         item.ordersLineId = ""
         item.totalAmount = ""
         item.taxAmount = ""
+        item.productCode=item.code
         item.taxRate = 13
         if (this.dataForm.documentType == 'inbound') {
           item.productsId = item.id
@@ -1006,7 +1039,7 @@ export default {
       this.$forceUpdate()
       this.orderForm = { //获取产品数据
         cooperativePartnerId: "",
-        drawingNo: "",        // customerProductNo: "",
+        productDrawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliveryStartTime: "",
         deliveryEndTime: "",

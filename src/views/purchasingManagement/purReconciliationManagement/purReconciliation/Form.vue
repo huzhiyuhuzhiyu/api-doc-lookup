@@ -16,36 +16,33 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账单号" prop="orderNo" ref="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
                           <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账日期" prop="reconciliationDate" ref="reconciliationDate">
-                          <!-- <el-input v-model="dataForm.reconciliationDate" placeholder="请选择报价有效期" clearable
-                        :style='{ "width": "100%" }' maxlength="20" :disabled="type == 'look'"></el-input> -->
-
                           <el-date-picker v-model="dataForm.reconciliationDate" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" placeholder="请选择对账日期"
                             :disabled="type == 'look' ? true : false"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="订单金额" prop="includingTaxAmount" ref="includingTaxAmount">
                           <el-input v-model="dataForm.includingTaxAmount" placeholder="请输入订单金额"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账金额" prop="totalReconciliationAmount" ref="totalReconciliationAmount">
                           <el-input v-model="dataForm.totalReconciliationAmount" placeholder="请输入对账金额"
                             :disabled="type == 'look' ? true : false"></el-input>
@@ -236,20 +233,20 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账单号" prop="orderNo" ref="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请输入对账单号"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="客户名称" prop="supplierName" ref="supplierName">
                           <el-input v-model="dataForm.cooperativePartnerName" placeholder="请输入客户名称"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账日期" prop="reconciliationDate" ref="reconciliationDate">
                           <!-- <el-input v-model="dataForm.reconciliationDate" placeholder="请选择报价有效期" clearable
                         :style='{ "width": "100%" }' maxlength="20" :disabled="type == 'look'"></el-input> -->
@@ -259,13 +256,13 @@
                             :disabled="type == 'look' ? true : false"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="订单金额" prop="includingTaxAmount" ref="includingTaxAmount">
                           <el-input v-model="dataForm.includingTaxAmount" placeholder="请输入订单金额"
                             :disabled="type == 'look' ? true : false"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="对账金额" prop="totalReconciliationAmount" ref="totalReconciliationAmount">
                           <el-input v-model="dataForm.totalReconciliationAmount" placeholder="请输入对账金额"
                             :disabled="type == 'look' ? true : false"></el-input>
@@ -669,7 +666,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 10px;
   border-top: none !important;
 }
 

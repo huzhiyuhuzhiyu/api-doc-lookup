@@ -456,3 +456,18 @@ export function updatecrmReceivablesPlanclose(data) {
     data
   })
 }
+//crm行程管理-列表
+export function getcrmTravelInformation(data) {
+  return request({
+    url: `/api/zgt/crmTravelInformation/list`,
+    method: 'POST',
+    data
+  })
+}
+// crm行程管理 详情
+export function detailcrmTravelInformation(id) {
+  return request({
+    url: `/api/zgt/crmTravelInformation/detail/${id}`,
+    method: 'GET'
+  })
+}

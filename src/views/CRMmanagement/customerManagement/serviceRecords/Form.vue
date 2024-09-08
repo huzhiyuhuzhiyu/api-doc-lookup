@@ -94,7 +94,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="里程数" prop="mileage">
+                      <el-form-item label="里程数(km)" prop="mileage">
                         <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
@@ -421,16 +421,6 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              // if (resp.enCode == "Purposeofvisit") {
-              //   let id = resp.id;
-              //   let obj = {
-              //     keyword: '',
-              //     isTree: 0
-              //   }
-              //   getDictionaryDataList(id, obj).then(response => {
-              //     this.visitGoalList = response.data.list
-              //   })
-              // }
               if (resp.enCode == "Followupform") {
                 let id = resp.id;
                 let obj = {

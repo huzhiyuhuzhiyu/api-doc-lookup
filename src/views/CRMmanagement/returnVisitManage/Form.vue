@@ -42,7 +42,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -84,7 +84,7 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="里程数" prop="mileage">
+                      <el-form-item label="里程数(km)" prop="mileage">
                         <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
@@ -141,9 +141,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { getCooperativeData } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
-import { getPartnerList, getMyContactsList } from '@/api/customerManagement/index'
+import { getMyContactsList } from '@/api/customerManagement/index'
 import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
 export default {
   data() {
@@ -193,13 +194,22 @@ export default {
       ],
       // 客户列表
       partnerRequestObj: {
-        taxId: "",
+        partnerCategoryId: '',
         code: "",
         name: "",
+        taxId: "",
+        contacts: "",
+        phone: "",
+        mobilePhone: "",
+        departmentId: "",
+        salespersonIdText: "",
+        salespersonId: "",
+        internalStaffId: "",
+        startTime: "",
+        endTime: "",
+        type: "customer",
         pageNum: 1,
         pageSize: 20,
-        customerStatus: 'private_sea',
-        totalRowFlag: false,
         orderItems: [{
           asc: false,
           column: ""
@@ -207,6 +217,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
+        superQuery: {}
       },
       // 客户列表字段
       partnerTableItems: [
@@ -218,7 +229,7 @@ export default {
       requestObj: {
         customerStatus: 'private_sea',
       },
-      getPartnerList,
+      getCooperativeData,
       activeName: "jcInfo",
       visible: false,
       formLoading: false,
@@ -339,8 +350,8 @@ export default {
     },
     // 客户分类节点点击
     PartnerTreeNodeClick(data, node, listQuery) {
-      if (listQuery.categoryId === data.id) return listQuery
-      listQuery.categoryId = data.id
+      if (listQuery.partnerCategoryId === data.id) return listQuery
+      listQuery.partnerCategoryId = data.id
       return listQuery
     },
     // 客户选框传值

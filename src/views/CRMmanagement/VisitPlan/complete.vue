@@ -6,6 +6,10 @@
           <el-input type="textarea" :rows="4" v-model="dataForm.activityName" placeholder="请输入跟进内容">
           </el-input>
         </el-form-item>
+        <el-form-item label="下次拜访时间" prop="nextTime">
+          <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次拜访时间">
+          </el-date-picker>
+        </el-form-item>
       </el-col>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -40,7 +44,7 @@ export default {
         if (this.dataForm.id) {
           detailcrmVisit(this.dataForm.id).then(res => {
             this.dataForm = res.data
-            this.dataForm.activityName=''
+            this.dataForm.activityName = ''
           }).catch(() => {
             this.visibleDialog = false
           })

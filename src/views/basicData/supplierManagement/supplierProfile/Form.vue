@@ -19,50 +19,50 @@
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="所属分类" prop="partnerCategoryIdText">
                         <ComSelect-list :isdisabled="dataForm.id ? true : false"
                           v-model="dataForm.partnerCategoryIdText" placeholder="请选择上级分类" auth @change="onOrganizeChange"
                           :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="编码" prop="code">
                         <el-input v-model="dataForm.code" placeholder="请输入编码" maxlength="20" :disabled="btnType ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true
                           " />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="税号" prop="taxId">
                         <el-input v-model="dataForm.taxId" placeholder="请输入税号" :disabled="btnType ? true : false"
                           maxlength="25" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="名称" prop="name">
                         <el-input v-model="dataForm.name" placeholder="请输入名称" :disabled="btnType ? true : false"
                           maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="英文名称" prop="nameEn">
                         <el-input v-model="dataForm.nameEn" placeholder="请输入英文名称" :disabled="btnType ? true : false"
                           maxlength="200" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="联系人" prop="contacts">
                         <el-input v-model="dataForm.contacts" placeholder="请输入联系人" :disabled="btnType ? true : false"
                           maxlength="50" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="负责人" prop="personResponsible">
                         <el-input v-model="dataForm.personResponsible" placeholder="请输入负责人" maxlength="20"
                           :disabled="btnType ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="地区" prop="regionCode">
                         <el-select v-model="dataForm.regionCode" placeholder="请选择地区" style="width: 100%;"
                           :disabled="btnType ? true : false" @change="handleChange">
@@ -71,7 +71,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="国家" prop="country">
                         <el-select v-model="dataForm.country" placeholder="请选择国家" style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -80,7 +80,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="省" prop="province">
                         <el-select v-model="dataForm.province" placeholder="请选择省" style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -89,7 +89,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="市" prop="city">
                         <el-select v-model="dataForm.city" placeholder="请选择市" style="width: 100%;"
                           @focus="focusfoundation(dataForm.province)" :loading="foundationloadingcity"
@@ -101,7 +101,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="dataForm.regionCode != 'foreign'">
+                    <el-col :sm="6" :xs="24" v-if="dataForm.regionCode != 'foreign'">
                       <el-form-item label="区" prop="area">
                         <el-select v-model="dataForm.area" placeholder="请选择区" style="width: 100%;"
                           @focus="foundationfocusactionarea(dataForm.city)" :loading="loadingareafoundation"
@@ -112,63 +112,63 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="地址" prop="address">
                         <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btnType ? true : false"
                           maxlength="300" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="电话" prop="phone">
                         <el-input v-model="dataForm.phone" placeholder="请输入电话" :disabled="btnType ? true : false"
                           maxlength="20" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="手机号" prop="mobilePhone">
                         <el-input v-model="dataForm.mobilePhone" placeholder="请输入手机号" :disabled="btnType ? true : false"
                           maxlength="20" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="传真" prop="fax">
                         <el-input v-model="dataForm.fax" placeholder="请输入传真" :disabled="btnType ? true : false"
                           maxlength="50" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="邮政编码" prop="zipCode">
                         <el-input v-model="dataForm.zipCode" placeholder="请输入邮政编码" :disabled="btnType ? true : false"
                           maxlength="10" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="邮箱" prop="email">
                         <el-input v-model="dataForm.email" placeholder="请输入邮箱" :disabled="btnType ? true : false"
                           maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="网址" prop="website">
                         <el-input v-model="dataForm.website" placeholder="请输入网址" :disabled="btnType ? true : false"
                           maxlength="512" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="对账开始日期" prop="reconciliationStartDate">
                         <el-date-picker v-model="dataForm.reconciliationStartDate" type="date" format="yyyy-MM-dd"
                           style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账开始日期"
                           :disabled="btnType ? true : false"></el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="对账结束日期" prop="reconciliationEndDate">
                         <el-date-picker v-model="dataForm.reconciliationEndDate" type="date" format="yyyy-MM-dd"
                           style="width: 100%;" value-format="yyyy-MM-dd" placeholder="请选择对账结束日期"
                           :disabled="btnType ? true : false"></el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="付款方式" prop="paymentMethod">
                         <el-select v-model="dataForm.paymentMethod" placeholder="请选择付款方式" style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -177,7 +177,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="付款周期" prop="paymentCycle">
                         <el-select v-model="dataForm.paymentCycle" placeholder="请选择付款周期" style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -187,7 +187,7 @@
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="开票类型" prop="billingTypeText">
                         <el-select v-model="dataForm.billingType" placeholder="请选择开票类型" style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -196,7 +196,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="税率%" prop="taxRate">
                         <el-select v-model="dataForm.taxRate" placeholder="请选择税率" style="width: 100%;">
                           <el-option v-for="item in taxRateList" :key="item.id" :label="item.fullName"
@@ -205,26 +205,26 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="认定日期" prop="customerRecognitionTime">
                         <el-date-picker v-model="dataForm.customerRecognitionTime" type="date" format="yyyy-MM-dd"
                           style="width: 100%;" value-format="yyyy-MM-dd" :picker-options="pickerOptions"
                           placeholder="请选择认定日期" :disabled="btnType ? true : false"></el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="开户银行" prop="bank">
                         <el-input v-model="dataForm.bank" placeholder="请输入开户银行" :disabled="btnType ? true : false"
                           maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="银行账号" prop="bankInfo">
                         <el-input v-model="dataForm.bankInfo" placeholder="请输入银行账号" :disabled="btnType ? true : false"
                           maxlength="100" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="渠道类型" prop="channel">
                         <el-select v-model="dataForm.channel" placeholder="请选择渠道类型" clearable style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -233,7 +233,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="运输方式" prop="modeTransport">
                         <el-select v-model="dataForm.modeTransport" placeholder="请选择运输方式" clearable style="width: 100%;"
                           :disabled="btnType ? true : false">
@@ -242,14 +242,14 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="运输时间(天)" prop="transportationTime">
                         <el-input v-model="dataForm.transportationTime" oninput="value = value.replace(/[^0-9]/g,'')"
                           placeholder="请输入运输时间(天)" :disabled="btnType ? true : false" maxlength="4" />
                       </el-form-item>
                     </el-col>
 
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="等级" prop="grade">
                         <el-select v-model="dataForm.grade" placeholder="请选择等级" clearable
                           :disabled="btnType ? true : false" style="width: 100%;">
@@ -258,7 +258,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200"
                           :disabled="btnType ? true : false" />

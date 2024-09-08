@@ -3,25 +3,40 @@
     :visible.sync="visible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
     <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
       label-width="120px">
-      <el-form-item label="产线编码" prop="code">
-        <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20"
-          :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
-      </el-form-item>
-      <el-form-item label="产线名称" prop="name">
-        <el-input v-model.trim="dataForm.name" placeholder="请输入产线名称" maxlength="20"
-          :disabled="btntype ? true : false" />
-      </el-form-item>
-      <el-form-item label="状态" prop="state">
-        <el-select v-model="dataForm.state" placeholder="请选择状态" style="width: 100%;" :disabled="btntype ? true : false">
-          <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-            :value="item.value"></el-option>
-        </el-select>
-      </el-form-item>
+      <el-row :gutter="30">
+        <el-col :span="12">
+          <el-form-item label="产线编码" prop="code">
+            <el-input v-model.trim="dataForm.code" placeholder="请输入产线编码" maxlength="20"
+              :disabled="btntype ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="产线名称" prop="name">
+            <el-input v-model.trim="dataForm.name" placeholder="请输入产线名称" maxlength="20"
+              :disabled="btntype ? true : false" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="状态" prop="state">
+            <el-select v-model="dataForm.state" placeholder="请选择状态" style="width: 100%;"
+              :disabled="btntype ? true : false">
+              <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
+                :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="24">
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200"
+              :disabled="btntype ? true : false" placeholder="请输入备注" />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" type="textarea" :rows="3" maxlength="200" :disabled="btntype ? true : false"
-          placeholder="请输入备注" />
-      </el-form-item>
+
+
+
+
       <!-- 关联工位 -->
       <el-col :span="24">
         <el-form-item label-width="0">

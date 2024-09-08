@@ -24,28 +24,28 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :span="8" v-if="type === 'look'">
+                      <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
                           <el-input :disabled="type == 'look'" type="text" v-model="dataForm.orderNo"
                             placeholder="外协单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8">
+                      <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                             placeholder="请选择供应商名称" @focus="openDialog"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8">
+                      <el-col :span="6">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
                             value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
                             placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8" v-if="type === 'look'">
+                      <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                          <el-select v-model="value" style="width: 100%;" placeholder="请选择" :disabled="type !== 'add' ? true : false">
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -274,26 +274,26 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-                  <el-col :span="8" v-if="type === 'look'">
+                  <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="外协单号" prop="orderNo" ref="orderNo">
                       <el-input :disabled="type == 'look'" type="text" v-model="dataForm.orderNo"
                         placeholder="外协单号"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <el-input :disabled="type == 'look'" v-model="dataForm.cooperativePartnerName"
                         placeholder="请选择供应商名称" @focus="openDialog"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="6">
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker :disabled="type == 'look'" v-model="dataForm.deliveryDate" type="date"
                         value-format="yyyy-MM-dd" style="width: 100%;" :picker-options="dataPickerOptions2"
                         placeholder="请选择交货日期"></el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8" v-if="type === 'look'">
+                  <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
                       <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
                         <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
@@ -859,12 +859,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-::v-deep .el-tabs__header {
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
-}
-
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
@@ -981,5 +975,15 @@ export default {
 
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
 }
 </style>

@@ -14,12 +14,14 @@
                 <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
                 <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </span>
         </div>
         <div v-if="!leftFlag">
-          <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
+          <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
             suffix-icon="el-icon-search" clearable></el-input>
         </div>
       </div>
@@ -48,17 +50,17 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入编码" clearable />
+              <el-input v-model="form.code" placeholder="编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
+              <el-input v-model="form.name" placeholder="名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.mobilePhone" placeholder="请输入手机号" clearable />
+              <el-input v-model="form.mobilePhone" placeholder="手机号" clearable />
             </el-form-item>
           </el-col>
 
@@ -176,75 +178,7 @@
     </el-tabs> -->
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="名称">
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="税号">
-              <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="负责人">
-              <el-input v-model="form.personResponsible" placeholder="请输入负责人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人">
-              <el-input v-model="form.contacts" placeholder="请输入联系人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="电话">
-              <el-input v-model="form.phone" placeholder="请输入电话" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="手机号">
-              <el-input v-model="form.mobilePhone" placeholder="请输入手机号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="form.email" placeholder="请输入邮箱" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="等级">
-              <el-select v-model="form.grade" placeholder="请选择等级" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                  :value="item.enCode"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="认定日期">
-              <el-date-picker v-model="form.customerRecognitionTime" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索
-        </el-button>
-      </span>
-    </el-dialog>
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -515,6 +449,11 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    if (localStorage.getItem("supplierManagementFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('supplierManagementFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getcategoryTree(true)
     this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -773,6 +712,15 @@ export default {
     },
     changeLeft() {
       this.leftFlag = !this.leftFlag
+    },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("supplierManagementFlag", expands)
+      })
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()

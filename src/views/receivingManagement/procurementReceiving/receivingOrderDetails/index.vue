@@ -837,7 +837,7 @@ export default {
   }
 }
 </script>
-<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
+<!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->
 <style lang="scss" scoped>
 :v-deep .el-table__body-wrapper {
   height: auto !important;

@@ -1,7 +1,7 @@
 
 <template>
   <div class="content-crm">
-    <div v-if="type=='contractamount'">
+    <div v-if="type=='contractAmount'">
       <div class="left-content card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="type=='rankinglist'">
+    <div v-else-if="type=='rankingList'">
       <div class="left-content card rankingtable">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -68,7 +68,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="type=='salesfunnel'">
+    <div v-else-if="type=='salesFunnel'">
       <div class="left-content card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -93,7 +93,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="type=='datasummary'">
+    <div v-else-if="type=='dataSummary'">
       <div class="right-content card statistics-card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -109,7 +109,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="type=='targetcompletionrate'">
+    <div v-else-if="type=='targetCompletionRate'">
       <div class="right-content card statistics-card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -140,7 +140,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="type=='forgettingreminder'">
+    <div v-else-if="type=='forgettingReminder'">
       <div class="right-content card statistics-card">
         <div class="vux-flexbox card-title vux-flex-row">
           <div class="card-title-center">
@@ -230,19 +230,19 @@ export default {
       handler(newOption) {
         this.daterangecontent = newOption.daterangecontent ? newOption.daterangecontent : '本年度'
         this.personnelcontent = newOption.personnelcontent ? newOption.personnelcontent : '仅本人'
-        if (this.type == 'contractamount') {
+        if (this.type == 'contractAmount') {
           this.dataForm = { ...newOption, label: '1' }
           this.initDatasalesTrend()
-        } else if (this.type == 'datasummary') {
+        } else if (this.type == 'dataSummary') {
           this.getqueryData()
-        } else if (this.type == 'targetcompletionrate') {
+        } else if (this.type == 'targetCompletionRate') {
           this.dataFormtarge = { ...newOption, label: '1' }
           this.initDatatarge()
-        } else if (this.type == 'salesfunnel') {
+        } else if (this.type == 'salesFunnel') {
           this.initDatasalesfunnel()
-        } else if (this.type == 'forgettingreminder') {
+        } else if (this.type == 'forgettingReminder') {
           this.initDataforget()
-        } else if (this.type == 'rankinglist') {
+        } else if (this.type == 'rankingList') {
           this.rankingForm = { ...newOption, label: '1' }
           this.initDatarankinglist()
         }

@@ -14,30 +14,30 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :span="8" v-if="type === 'look'">
+                      <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
                           <el-input :disabled="type != 'add' ? true : false" type="text" v-model="dataForm.orderNo"
                             placeholder="采购单号"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8">
+                      <el-col :span="6">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                             @focus="openDialog"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8">
+                      <el-col :span="6">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker disabled v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" :picker-options="dataPickerOptions2"
                             placeholder="请选择交货日期"></el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :span="8" v-if="type === 'look'">
+                      <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
                           <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
-                              :value="item.value" ></el-option>
+                              :value="item.value"></el-option>
                           </el-select>
                         </el-form-item>
                       </el-col>
@@ -250,26 +250,26 @@
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
-                  <el-col :span="8" v-if="type === 'look'">
+                  <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
                       <el-input :disabled="type != 'add' ? true : false" type="text" v-model="dataForm.orderNo"
                         placeholder="采购单号"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="6">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                       <el-input disabled v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称"
                         @focus="openDialog"></el-input>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="6">
                     <el-form-item label="交货日期" prop="deliveryDate">
                       <el-date-picker disabled v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                         style="width: 100%;" :picker-options="dataPickerOptions2"
                         placeholder="请选择交货日期"></el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="8" v-if="type === 'look'">
+                  <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
                       <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
                         <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
@@ -456,12 +456,14 @@ import workFlow from '@/components/WorkFlow/settingBus.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: {
     workFlow,
-    ExportForm, Process, recordList
+    ExportForm,
+    Process,
+    recordList
   },
   mixins: [busFlow],
   data() {
@@ -529,7 +531,7 @@ export default {
       exportFormVisible: false,
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -673,7 +675,6 @@ export default {
             // 流程信息和流转记录
             if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
-
         }
       })
     },
@@ -714,52 +715,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b009').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b009')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
-
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -791,7 +802,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-
 ::v-deep .JNPF-common-page-header.noButtons {
   padding: 11px 10px;
 }
@@ -822,11 +832,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -834,11 +843,11 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 
 .viewData {
@@ -876,11 +885,9 @@ export default {
   /* height: auto !important; */
   height: calc(100% - 47px) !important;
   overflow: auto !important;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   /* padding: 0 20px; */
 }
-
-
 
 .JNPF-common-search-box {
   padding: 8px 0 0 0;
@@ -924,6 +931,7 @@ export default {
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }

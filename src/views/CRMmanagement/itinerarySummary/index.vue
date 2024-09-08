@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <div class="treeBox_bot gjsearch" ref="fangan">
           <div style="width: 200px;">
-            <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
+            <el-input v-model="listQuery.customerName" placeholder="请输入客户名称" clearable @keyup.enter.native="search()" />
           </div>
           <div style="min-width: 190px;margin-left: 10px;">
             <el-button type="primary" icon="el-icon-search" @click="search()" class="commonBox">
@@ -31,11 +31,10 @@
           </div> -->
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head">
+          <div class="JNPF-common-head" style="display:block;line-height:34px">
             <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
-              <el-button size="mini" type="primary" @click="Tagtype">标记跟进类型</el-button>
             </topOpts>
-            <div class="JNPF-common-head-right">
+            <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
               </el-tooltip>
@@ -47,45 +46,22 @@
               </el-tooltip>
             </div>
           </div>
-          <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-            <el-table-column prop="serviceDescription" label="跟进内容" min-width="180" />
-            <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
-            <el-table-column prop="visitForm" label="跟进方式" min-width="180">
+          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
+            <el-table-column prop="customerName" label="客户名称" min-width="170" />
+            <el-table-column prop="ownerUserName" label="负责人" width="120" />
+            <el-table-column prop="visitTime" label="出行时间" min-width="180" />
+            <el-table-column prop="travelMode" label="出行方式" min-width="140">
               <template slot-scope="scope">
-                {{visitFormListfaction(scope.row.visitForm)}}
+                {{VisitForm(scope.row.travelMode)}}
               </template>
             </el-table-column>
-            <el-table-column prop="visitPlanName" label="拜访计划" min-width="180" />
-            <el-table-column prop="name" label="相关客户" min-width="180" />
-            <el-table-column prop="contactsName" label="相关联系人" min-width="180" />
-            <el-table-column prop="businessName" label="相关商机" min-width="180" />
-            <el-table-column prop="contractNo" label="相关合同" min-width="180" />
-            <el-table-column prop="receivablesNo" label="相关回款" min-width="180" />
-            <!-- <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" /> -->
-            <el-table-column prop="recordsValid" label="跟进类型" min-width="180">
+            <el-table-column prop="departure" label="出发地" min-width="180" />
+            <el-table-column prop="destination" label="目的地" min-width="180" />
+            <el-table-column prop="mileage" label="里程数(km)" min-width="140" />
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
-                <div v-if="scope.row.recordsValid=='0'"><el-tag type="danger">无效跟进</el-tag></div>
-                <div v-else-if="scope.row.recordsValid=='1'"><el-tag type="success">有效跟进</el-tag></div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="ownerName" label="跟进人" min-width="180" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" />
-            <el-table-column prop="createByName" label="创建人" min-width="100" />
-            <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                  <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown>
+                <tableOpts :hasEdit="false" :hasDel="false">
+                  <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, 'look')">查看详情</el-button>
                 </tableOpts>
               </template>
             </el-table-column>
@@ -95,16 +71,6 @@
         </div>
       </div>
     </div>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false">
-      <el-radio-group v-model="recordsValid">
-        <el-radio :label="1">有效跟进</el-radio>
-        <el-radio :label="0">无效跟进</el-radio>
-      </el-radio-group>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="recordsValidactive">确 定</el-button>
-      </span>
-    </el-dialog>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <!-- 高级查询 -->
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
@@ -114,98 +80,62 @@
 
 <script>
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { getcrmTravelInformation } from '@/api/CRMmanagement/index'
+import Form from './Form'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
-import { getServiceRecordList, deleteServiceRecord } from '@/api/customerManagement/index'
-import { updaterecordsValid } from '@/api/CRMmanagement/index'
-import Form from './Form'
 export default {
-  name: 'serviceRecords',
-  components: { Form, programme, SuperQuery },
+  name: 'myContacts',
+  components: {
+    SuperQuery,
+    programme,
+    Form
+  },
   data() {
     return {
-      recordsValid: '',
-      dialogVisible: false,
-      selectData: [],
       datalist: [],
+      returnVisitFormList: [],
       superQueryJson: [
         {
-          prop: 'serviceDescription',
-          label: "跟进内容",
+          prop: 'customerName',
+          label: "客户名称",
+          type: 'input'
+        },
+        {
+          prop: 'ownerUserName',
+          label: "负责人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
-          prop: 'nextTime',
-          label: '下次联系时间',
+          prop: 'visitTime',
+          label: '出行时间',
           type: 'datetimerange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '下次联系开始时间',
-          endPlaceholder: '下次联系结束时间',
-          pickerOptions: {}
+          startPlaceholder: '回访开始时间',
+          endPlaceholder: '回访结束时间',
+          pickerOptions: this.global.timePickerOptions
         },
         { // 下拉选
-          prop: 'visitForm',
-          label: '跟进方式',
+          prop: 'travelMode',
+          label: '出行方式',
           type: 'select',
           options: []
         },
+
         {
-          prop: 'visitPlanName',
-          label: "拜访计划",
+          prop: 'departure',
+          label: "出发地",
           type: 'input'
         },
         {
-          prop: 'name',
-          label: "相关客户",
+          prop: 'destination',
+          label: "目的地",
           type: 'input'
         },
         {
-          prop: 'contactsName',
-          label: "相关联系人",
-          type: 'input'
-        },
-        {
-          prop: 'businessName',
-          label: "相关商机",
-          type: 'input'
-        },
-        {
-          prop: 'contractNo',
-          label: "相关合同",
-          type: 'input'
-        },
-        {
-          prop: 'receivablesNo',
-          label: "相关回款",
-          type: 'input'
-        },
-        { // 下拉选
-          prop: 'recordsValid',
-          label: '跟进类型',
-          type: 'select',
-          options: [
-            { label: '有效跟进', value: 1 },
-            { label: '无效跟进', value: 0 }
-          ]
-        },
-        {
-          prop: 'createUserName',
-          label: "跟进人",
-          type: 'input'
-        },
-        { // 日期时间选择器（区间）
-          prop: 'createTime',
-          label: '创建时间',
-          type: 'datetimerange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
-          startPlaceholder: '创建开始时间',
-          endPlaceholder: '创建结束时间',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createByName',
-          label: '创建人',
+          prop: 'mileage',
+          label: "里程数(km)",
           type: 'input'
         }
       ],
@@ -220,19 +150,9 @@ export default {
       tableData: [],
       listLoading: false,
       initListQuery: {
-        cooperativePartnerCode: "",
-        cooperativePartnerName: "",
-        createByName: "",
-        endTime: "",
-        endUpdateTime: "",
-        keyword: "",
+        customerName: '',
         pageNum: 1,
         pageSize: 20,
-        serviceDescription: "",
-        startTime: "",
-        startUpdateTime: "",
-        totalRowFlag: false,
-        createTimeArr: [],
         orderItems: [{
           asc: false,
           column: ""
@@ -244,8 +164,6 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
-      visitFormList: [],
-      travelModeList: []
     }
   },
   computed: {
@@ -265,10 +183,17 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
-    visitFormListfaction(val) {
-      let _data = this.visitFormList.filter(item => item.enCode == val)[0]
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+        this.switchStyle()
+      })
+    },
+    VisitForm(val) {
+      let _data = this.returnVisitFormList.filter(item => item.enCode == val)[0]
       return _data ? _data.fullName : val
     },
+    // 获取客户满意度、回访形式数据
     getDictionaryType() {
       getDictionaryType().then(res => {
         let data = res.data.list
@@ -283,24 +208,7 @@ export default {
                   isTree: 0
                 }
                 getDictionaryDataList(id, obj).then(response => {
-                  this.visitFormList = response.data.list
-                  this.superQueryJson.forEach(item => {
-                    if (item.prop == 'visitForm') {
-                      item.options = response.data.list.map(o => {
-                        return { label: o.fullName, value: o.enCode }
-                      })
-                    }
-                  })
-                })
-              }
-              if (resp.enCode == "Travelmode") {
-                let id = resp.id;
-                let obj = {
-                  keyword: '',
-                  isTree: 0
-                }
-                getDictionaryDataList(id, obj).then(response => {
-                  this.travelModeList = response.data.list
+                  this.returnVisitFormList = response.data.list
                   this.superQueryJson.forEach(item => {
                     if (item.prop == 'travelMode') {
                       item.options = response.data.list.map(o => {
@@ -315,29 +223,10 @@ export default {
         })
       })
     },
-    recordsValidactive() {
-      if (!this.recordsValid && this.recordsValid !== 0) return this.$message.error('请选择跟进类型')
-      let a = {
-        idList: this.selectData.map(item => item.id),
-        recordsValid: this.recordsValid
-      }
-      updaterecordsValid(a).then(res => {
-        this.$message.success('更新成功')
-        this.dialogVisible = false
-        this.closeForm(true)
-      })
-    },
-    Tagtype() {
-      if (!this.selectData.length) return this.$message.error('请先选择数据')
-      this.dialogVisible = true
-    },
-    handeleInfoData(val) {
-      this.selectData = val
-    },
-    getAdvancedQuery() {
-      getAdvancedQueryList(this.currMenuId).then(row => {
-        this.datalist = row.data.list
-        this.switchStyle()
+    addOrUpdateHandle(id, type) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, type)
       })
     },
     superQuerySearch(query) {
@@ -374,7 +263,6 @@ export default {
       };
     },
     columnSetFun() {
-      console.log("this.$refs.dataTable", this.$refs.dataTable);
       this.$refs.dataTable.showDrawer()
     },
     initData() {
@@ -383,8 +271,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-      getServiceRecordList(this.listQuery).then(res => {
+      getcrmTravelInformation(this.listQuery).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -423,26 +310,6 @@ export default {
       this.programmefrom = {}
       this.programmetitle = ''
       this.initData()
-    },
-    addOrUpdateHandle(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
-    },
-    handleDel(id) {
-      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
-        type: 'warning'
-      }).then(() => {
-        deleteServiceRecord(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
-          })
-        })
-      }).catch(() => { })
     },
   }
 }

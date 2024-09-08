@@ -22,11 +22,11 @@
         </div>
         <div class="table-content" v-loading="listLoading">
           <div class="handle-bar">
-            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
-              <el-table-column v-for="item in columnsData" :label="item.label" :key="item.prop" min-width="150">
+              <el-table-column v-for="item in columnsData" :prop="item.prop" :label="item.label" :key="item.prop" min-width="150">
                 <template slot-scope="scope">
                   {{scope.row[item.prop]}}
                 </template>
@@ -36,21 +36,27 @@
         </div>
       </div>
     </div>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" :exportHidden="true" />
   </div>
 </template>
 
 <script>
+import { excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters } from 'vuex'
 import { getcontractNumStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
   components: {
+    ExportForm,
     selectdate,
     selectdepartment
   },
   data() {
     return {
+      columnList: [],
+      exportFormVisible: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now();
@@ -66,7 +72,7 @@ export default {
       listLoading: false,
       dataForm: {
         year: "",
-        type:'contractMoney',
+        type: 'contractMoney',
         userIds: []
       },
       tableList: [],
@@ -106,6 +112,35 @@ export default {
     }
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.dataForm,
+          exportType: '1221',
+          exportName: '合同金额分析',
+          includeFieldMap,
+          pageSize: -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
     search() {
       this.initData()
     },
@@ -245,6 +280,14 @@ export default {
         _this.$set(_this.tableList[1], columnObj.prop, item.lastYearGrowth)
         _this.$set(_this.tableList[2], columnObj.prop, item.lastMonthGrowth)
       })
+      this.$nextTick(() => {
+        const tableColumns = this.$refs.tabForm.$children;
+        const propsAndLabels = tableColumns.map(column => ({
+          prop: column.prop,
+          label: column.label
+        }))
+        this.columnList = propsAndLabels
+      });
     }
   }
 }

@@ -13,6 +13,9 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
+          <div style="min-width: 136px;">
+            <el-button class="btnBox" :class="{'is-reverse':listQuery.privateFlag==1}" size="mini" @click="btnsearch()">我的拜访计划</el-button>
+          </div>
           <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
             <div v-if="programmelist.length">
               <span class="text">方案：</span>
@@ -472,6 +475,11 @@ export default {
         this.keyword = ''
         this.initData()
       }
+    },
+    btnsearch() {
+      this.$set(this.listQuery, 'privateFlag', 1)
+      this.listQuery.pageNum = 1
+      this.initData()
     },
     search() {
       this.listQuery.pageNum = 1

@@ -26,7 +26,7 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:0 15px">
+                    <el-row :gutter="30" style="padding:10px">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -34,7 +34,7 @@
                     </el-row>
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:0 15px">
+                    <el-row :gutter="30" style="padding:10px">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -68,7 +68,7 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
-                <el-row :gutter="30" style="padding:0 15px">
+                <el-row :gutter="30" style="padding:10px">
                   <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                     :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                     @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -76,7 +76,7 @@
                 </el-row>
               </el-collapse-item>
               <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                <el-row :gutter="30" style="padding:0 15px">
+                <el-row :gutter="30" style="padding:10px">
                   <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                     :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                     @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"

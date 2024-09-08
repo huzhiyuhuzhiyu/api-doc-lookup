@@ -95,9 +95,9 @@
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
           :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
-          <el-table-column prop="name" label="库位名称" min-width="180"></el-table-column>
-          <el-table-column prop="code" label="库位编码" min-width="180" sortable="custom"></el-table-column>
-          <el-table-column prop="state" label="状态" min-width="180">
+          <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
+          <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="state" label="状态" min-width="140">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'enable'">启用</div>
               <div v-if="scope.row.state == 'disabled'">禁用</div>

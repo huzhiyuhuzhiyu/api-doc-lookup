@@ -276,7 +276,7 @@ export default {
           type: 'input',
           itemDisabled: true,
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12
+          sm: 6
         },
         {
           prop: 'inspectorId',
@@ -290,7 +290,7 @@ export default {
               this.$refs.dataForm.$refs.main.validateField('inspectorId')
             })
           },
-          sm: 12
+          sm: 6
         },
         {
           prop: 'inspectionDate',
@@ -298,7 +298,7 @@ export default {
           value: undefined,
           type: 'date',
           itemRules: [{ required: true, trigger: 'change' }],
-          sm: 12
+          sm: 6
         },
 
         {
@@ -307,7 +307,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12,
+          sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
         {
@@ -316,7 +316,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12,
+          sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
         {
@@ -324,7 +324,7 @@ export default {
           label: '报检数量',
           value: '',
           type: 'input',
-          sm: 12,
+          sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
        
@@ -338,7 +338,7 @@ export default {
           clearable: false,
           change: this.inspectionMethodChange,
           itemRules: [{ required: true, trigger: 'change' }],
-          sm: 12,
+          sm: 6,
           // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
           options: [
             { label: '免检', value: 'exempt' },
@@ -346,13 +346,13 @@ export default {
             { label: '全检', value: 'all' }
           ]
         },
-        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
         {
           prop: 'samplingQuantity',
           label: '检验数量',
           value: '',
           type: 'input',
-          sm: 12,
+          sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
         },
@@ -364,18 +364,18 @@ export default {
           options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
           change: this.inspectionResultsChange,
           itemRules: [{ required: true, trigger: 'change' }],
-          sm: 12
+          sm: 6
         },
         {
           prop: 'unqualifiedQuantity',
           label: '不合格数量',
           value: '',
           type: 'input',
-          sm: 12,
+          sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
         },
-        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
+        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
         { prop: "description", label: "处理说明", value: "", type: "textarea" }
         ]
     },

@@ -30,8 +30,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
-                    <el-form-item label="产品图号" prop="productDrawingNo">
-                      <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入产品图号"
+                    <el-form-item label="品名规格" prop="productDrawingNo">
+                      <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入品名规格"
                         :disabled="btntype ? true : false" />
                     </el-form-item>
                   </el-col>
@@ -93,13 +93,13 @@
 
             <el-collapse-item title="项目信息" name="productInfo">
               <div v-if="!btntype">
-                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                   icon="el-icon-plus" :disabled="btntype ? true : false" @click="openSeleceProductDialog">
                   选择项目
                 </el-button>
                 |
                 <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                   :disabled="btntype ? true : false" icon="el-icon-delete" @click="batchDelete">
                   批量删除
                 </el-button>
@@ -306,7 +306,7 @@ export default {
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
         { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'drawingNo', label: '产品图号' },
+        { prop: 'drawingNo', label: '品名规格' },
         { prop: 'spec', label: '规格型号' },
         // { prop: 'routingName', label: '工艺路线名称', minWidth: 140 },
         // { prop: 'processName', label: '工序名称' },
@@ -316,18 +316,18 @@ export default {
       ProductTableSearchList: [
         { prop: 'code', label: '产品编码', type: 'input' },
         { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'drawingNo', label: '产品图号', type: 'input' }
+        { prop: 'drawingNo', label: '品名规格', type: 'input' }
       ], // 产品选择弹出框搜索条件
       requestObj: {
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: ''
           }
         ],
         pageNum: 1,
         pageSize: 20,
-        type: ''
+        // type: ''
       },
       // 保存编辑时已有的项目编码
       autoCode: undefined,

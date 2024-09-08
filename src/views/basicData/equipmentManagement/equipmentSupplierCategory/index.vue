@@ -54,7 +54,7 @@
                   scope.row.name }}
             </template>
           </el-table-column>
-          <el-table-column prop="parentName" label="上级分类" />
+          <el-table-column prop="parentName" label="上级分类" min-width="100" />
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="sortCode" label="排序" width="100" align="center">
             <template slot-scope="scope">

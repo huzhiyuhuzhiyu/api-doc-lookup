@@ -3,76 +3,83 @@
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;">
       <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;">
         <div class="JNPF-common-layout"> -->
-          <div class="JNPF-common-layout-left">
-            <div class="JNPF-common-title">
-              <h2>供应商分类</h2>
-              <span class="options">
-                <el-dropdown>
-                  <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
-                    <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </span>
-            </div>
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" v-if="!leftFlag">
+        <h2>供应商分类</h2>
+        <span class="options">
+          <el-dropdown>
+            <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item @click.native="getcategoryTree(true)">刷新数据</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+              <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </span>
+      </div>
 
-            <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
-              <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands"
-                highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-                class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-                <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
-                  <i
-                    :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
-                  <span class="text" :title="data.name">{{ data.name }}</span>
-                </span>
-              </el-tree>
-            </el-scrollbar>
-          </div>
-          <div class="JNPF-common-layout-center JNPF-flex-main">
-            <el-row class="JNPF-common-search-box" :gutter="16">
-              <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="form.name" placeholder="请输入名称" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
-                  </el-form-item>
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
+          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
+          v-if="refreshTree" :filter-node-method="filterNode">
+          <span class="custom-tree-node" slot-scope="{ data }" :title="data.name">
+            <i
+              :class="[data.childrenList.length > 0 ? 'icon-ym icon-ym-tree-organization3' : 'icon-ym icon-ym-systemForm']" />
+            <span class="text" :title="data.name">{{ data.name }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract " style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand " style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+    </div>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="6">
+            <el-form-item>
+              <el-input v-model="form.code" placeholder="供应商编码" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="form.name" placeholder="名称" clearable />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="form.taxId" placeholder="税号" clearable />
+            </el-form-item>
 
-                </el-col>
+          </el-col>
 
 
 
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                    </el-button>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+              </el-button>
 
-                  </el-form-item>
+            </el-form-item>
 
-                </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">更多查询</el-button>
+          </el-col>
 
-              </el-form>
-            </el-row>
-            <div class="JNPF-common-layout-main JNPF-flex-main">
-              <div class="JNPF-common-head" style="padding:10px">
-                <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
-              新建
-            </el-button>
-                <!-- <div>
+
+        </el-form>
+      </el-row>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head" style="padding:10px">
+          <el-button type="primary" size="mini" icon="el-icon-plus" @click.native="addSupplier()">
+            新建
+          </el-button>
+          <!-- <div>
                   <topOpts @add="addSupplier()" />
                   <el-button type="primary" icon="el-icon-download" size="mini" @click="exportData()"
                     style="margin-left: 10px;">导出
@@ -81,159 +88,84 @@
                     style="margin-left: 10px;">上传文件
                   </el-button>
                 </div> -->
-                <div class="JNPF-common-head-right">
-                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
-                  </el-tooltip>
-                </div>
-              </div>
-              <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
-                @sort-change="sortChange" custom-column>
-                <el-table-column prop="code" label="编码" width="140" fixed="left" sortable="custom">
-                  <template slot-scope="scope">
-
-                    <el-link type="primary"
-                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">{{
-                        scope.row.code
-                      }}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="taxId" label="税号" width="200" />
-                <el-table-column prop="name" label="名称" width="120" fixed="left" sortable="custom" />
-                <el-table-column prop="regionCodeText" label="地区" width="100" />
-                <el-table-column prop="countryText" label="国家" min-width="150" />
-                <el-table-column prop="provinceText" label="省" width="160" />
-                <el-table-column prop="cityText" label="市" width="160" />
-                <el-table-column prop="areaText" label="区" width="160" />
-                <el-table-column prop="address" label="地址" width="160" />
-                <el-table-column prop="billingTypeText" label="开票类型" width="160" />
-                <el-table-column prop="taxRate" label="税率%" width="100" sortable="custom" />
-                <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
-                <el-table-column prop="personResponsible" label="负责人" width="160" />
-                <el-table-column prop="contacts" label="联系人" width="160" />
-                <el-table-column prop="phone" label="电话" width="160" />
-                <el-table-column prop="mobilePhone" label="手机号" width="160" />
-                <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
-                <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
-                <el-table-column prop="email" label="邮箱" width="160" />
-                <el-table-column prop="bank" label="开户银行" width="160" />
-                <el-table-column prop="bankInfo" label="银行账号" width="160" />
-                <el-table-column prop="gradeText" label="等级" width="160"></el-table-column>
-                <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-                <el-table-column prop="createByName" label="创建人" width="160" />
-                <el-table-column label="操作" width="180" fixed="right">
-                  <template slot-scope="scope">
-                    <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
-                      @del="handleDel(scope.row.id)">
-                      <el-dropdown hide-on-click>
-                        <span class="el-dropdown-link">
-                          <el-button type="text" size="mini">
-                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                          </el-button>
-                        </span>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item
-                            @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
-                            查看详情
-                          </el-dropdown-item>
-                        </el-dropdown-menu>
-                      </el-dropdown>
-                    </tableOpts>
-                  </template>
-                </el-table-column>
-              </JNPF-table>
-              <pagination :total="total" :page.sync="form.pageNum" :background="background"
-                :limit.sync="form.pageSize" @pagination="initData" />
-            </div>
+          <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+            </el-tooltip>
           </div>
-        <!-- </div> -->
+        </div>
+        <JNPF-table ref="dataTable" v-loading="listLoading" highlight-current-row :data="tableData" :fixedNO="true"
+          @sort-change="sortChange" custom-column>
+          <el-table-column prop="code" label="编码" width="140" fixed="left" sortable="custom">
+            <template slot-scope="scope">
 
+              <el-link type="primary"
+                @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">{{
+                  scope.row.code
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="taxId" label="税号" width="200" />
+          <el-table-column prop="name" label="名称" width="120" fixed="left" sortable="custom" />
+          <el-table-column prop="regionCodeText" label="地区" width="100" />
+          <el-table-column prop="countryText" label="国家" min-width="150" />
+          <el-table-column prop="provinceText" label="省" width="160" />
+          <el-table-column prop="cityText" label="市" width="160" />
+          <el-table-column prop="areaText" label="区" width="160" />
+          <el-table-column prop="address" label="地址" width="160" />
+          <el-table-column prop="billingTypeText" label="开票类型" width="160" />
+          <el-table-column prop="taxRate" label="税率%" width="100" sortable="custom" />
+          <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
+          <el-table-column prop="personResponsible" label="负责人" width="160" />
+          <el-table-column prop="contacts" label="联系人" width="160" />
+          <el-table-column prop="phone" label="电话" width="160" />
+          <el-table-column prop="mobilePhone" label="手机号" width="160" />
+          <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
+          <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
+          <el-table-column prop="email" label="邮箱" width="160" />
+          <el-table-column prop="bank" label="开户银行" width="160" />
+          <el-table-column prop="bankInfo" label="银行账号" width="160" />
+          <el-table-column prop="gradeText" label="等级" width="160"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="160" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
+                @del="handleDel(scope.row.id)">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button type="text" size="mini">
+                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item
+                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'true')">
+                      查看详情
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <pagination :total="total" :page.sync="form.pageNum" :background="background" :limit.sync="form.pageSize"
+          @pagination="initData" />
+      </div>
+    </div>
 
-
-      <!-- </el-tab-pane> -->
-      <!-- <el-tab-pane label="供应商表格" name="supplierTable">
-
-      </el-tab-pane>
-
-    </el-tabs> -->
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model="form.code" placeholder="请输入供应商编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="名称">
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="税号">
-              <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="负责人">
-              <el-input v-model="form.personResponsible" placeholder="请输入负责人" clearable />
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人">
-              <el-input v-model="form.contacts" placeholder="请输入联系人" clearable />
-            </el-form-item>
-
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="电话">
-              <el-input v-model="form.phone" placeholder="请输入电话" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="手机号">
-              <el-input v-model="form.mobilePhone" placeholder="请输入手机号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="form.email" placeholder="请输入邮箱" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="等级">
-              <el-select v-model="form.grade" placeholder="请选择等级" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                  :value="item.enCode"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-
-            <el-form-item label="认定日期">
-              <el-date-picker v-model="form.customerRecognitionTime" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索</el-button>
-      </span>
-    </el-dialog>
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
   </div>
 </template>
 
@@ -244,11 +176,144 @@ import Form from './Form'
 import UserRelationList from './userRelation'
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import {
+  getbimProductAttributesList, getbimProductAttributes
+} from "@/api/masterDataManagement/index";
 export default {
   name: 'supplierProfile',
-  components: { Form, UserRelationList, },
+  components: { Form, UserRelationList, SuperQuery },
   data() {
     return {
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'code',
+          label: '编码',
+          type: 'input'
+        },
+        {
+          prop: 'taxId',
+          label: '税号',
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: '名称',
+          type: 'input'
+        },
+        {
+          prop: 'regionCodeText',
+          label: '地区',
+          type: 'input'
+        },
+        {
+          prop: 'countryText',
+          label: '国家',
+          type: 'input'
+        },
+        {
+          prop: 'provinceText',
+          label: '省',
+          type: 'input'
+        },
+        {
+          prop: 'cityText',
+          label: '市',
+          type: 'input'
+        },
+        {
+          prop: 'areaText',
+          label: '区',
+          type: 'input'
+        },
+        {
+          prop: 'address',
+          label: '地址',
+          type: 'input'
+        },
+        {
+          prop: 'billingTypeText',
+          label: '开票类型',
+          type: 'input'
+        },
+        {
+          prop: 'taxRate',
+          label: '税率%',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'contacts',
+          label: '联系人',
+          type: 'input'
+        },
+        {
+          prop: 'phone',
+          label: '电话',
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: '手机号',
+          type: 'input'
+        },
+        {
+          prop: 'email',
+          label: '邮箱',
+          type: 'input'
+        },
+        {
+          prop: 'bank',
+          label: '开户银行',
+          type: 'input'
+        },
+        {
+          prop: 'bankInfo',
+          label: '银行账号',
+          type: 'input'
+        },
+        {
+          prop: 'gradeText',
+          label: '等级',
+          type: 'input'
+        },
+        {
+          prop: 'reconciliationStartDate',
+          label: '对账开始日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'reconciliationEndDate',
+          label: '对账结束日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        },
+
+      ],
+      leftFlag: false,
       title: "更多查询",
       background: true,//分页器背景颜色
       activeName: "supplierPage",
@@ -335,7 +400,15 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
+  mounted() {
+    this.getProductClassFun()
+  },
   created() {
+    if (localStorage.getItem("equipmentManagementFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('equipmentManagementFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getcategoryTree(true)
     this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -344,15 +417,276 @@ export default {
     handleClick() {
 
     },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
+    getProductClassFun() {
+
+      let obj1 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa007",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj1).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj2 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa006",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+
+      getbimProductAttributesList(obj2).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj3).then(res => {
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj4 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa002",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj4).then(res => {
+
+
+
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj5 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa003",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj5).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj6 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa001",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+
+      getbimProductAttributesList(obj6).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+      let obj7 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa015",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ],
+      };
+      getbimProductAttributesList(obj7).then(res => {
+        let arr = []
+        res.data.records.forEach(item => {
+          let obj = {
+            label: item.name,
+            value: item.name,
+          }
+          arr.push(obj)
+        });
+        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+
+        if (oilObj) {
+          // 将options赋值为5  
+          oilObj.options = arr;
+        }
+      })
+
+
+      // 获取税率(数据字典)
+      getbimProductAttributes("585438081021126405").then(res => {
+        res.data.list.forEach(item => {
+          item.taxRate = item.enCode.replace('%', '') * 1
+        })
+        this.taxRateList = res.data.list
+        console.log("税率", this.taxRateList);
+      })
+
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("equipmentManagementFlag", expands)
+      })
+    },
     moreQueries() {
       this.visible = true
     },
     dataFormSubmit() {
-      this.form.pageNum=1
+      this.form.pageNum = 1
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
         this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
         this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
-      }else{
+      } else {
         this.form.customerRecognitionStartTime = ""
         this.form.customerRecognitionEndTime = ""
       }
@@ -434,7 +768,7 @@ export default {
     initData() {
       console.log(this.form);
       this.listLoading = true
-    
+
       getCooperativeData(this.form).then(res => {
         console.log("res++", res);
         this.tableData = res.data.records
@@ -453,7 +787,7 @@ export default {
         this.form.customerRecognitionStartTime = ""
         this.form.customerRecognitionEndTime = ""
       }
-      this.form.pageNum=1
+      this.form.pageNum = 1
       this.initData()
     },
     reset() {
@@ -483,7 +817,7 @@ export default {
           column: "createTime"
         }],
       }
-    this.getcategoryTree(true)
+      this.getcategoryTree(true)
 
       // this.search()
     },

@@ -11,9 +11,6 @@
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
         label-position="top" label-width="120px" hide-required-asterisk="fasle">
         <el-form-item label="上级分类" prop="parentName">
-          <template slot="label">
-            上级分类<span class="required">*</span>
-          </template>
           <ComSelect3 v-model="dataForm.parentName" placeholder="请选择上级分类" auth @change="onOrganizeChange"
             :currOrgId="dataForm.id" :type="dataForm.type" :classAttribute="dataForm.type" />
         </el-form-item>

@@ -51,6 +51,7 @@ export default {
         managerId: '',
         fullName: '',
         enCode: '',
+        deptType: '',
         sortCode: 0,
         enabledMark: 1,
         description: '',

@@ -57,30 +57,31 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
-          custom-column :setColumnDisplayList="columnList">
-          <el-table-column prop="code" label="产线编码" sortable="custom">
-            <!-- <template slot-scope="scope">
+        <div class="tableBox">
+          <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
+            custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="code" label="产线编码" sortable="custom">
+              <!-- <template slot-scope="scope">
 
                             <el-link type="primary"
                                 @click.native="handleUserRelation(scope.row.id,  'look')">{{
                                     scope.row.code
                                 }}</el-link>
                         </template> -->
-          </el-table-column>
-          <el-table-column prop="name" label="产线名称" sortable="custom" />
-          <el-table-column prop="state" label="状态" sortable="custom"></el-table-column>
-          <el-table-column prop="remark" label="备注"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
-          <el-table-column label="操作" width="180">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
-                @del="handleDel(scope.row.id, scope.row.parentId)" />
-              <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+            </el-table-column>
+            <el-table-column prop="name" label="产线名称" sortable="custom" />
+            <el-table-column prop="state" label="状态" sortable="custom"></el-table-column>
+            <el-table-column prop="remark" label="备注"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+            <el-table-column prop="createByName" label="创建人" width="180" sortable="custom" />
+            <el-table-column label="操作" width="180">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
+                  @del="handleDel(scope.row.id, scope.row.parentId)" />
+                <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
               <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
                 style=" color: #ff3a3a">删除</el-button> -->
-              <!-- <el-dropdown hide-on-click>
+                <!-- <el-dropdown hide-on-click>
                                 <span class="el-dropdown-link">
                                     <el-button type="text" size="mini">
                                         {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -92,9 +93,26 @@
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown> -->
-            </template>
-          </el-table-column>
-        </JNPF-table>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+          <JNPF-table v-loading="detailLoading" :data="dataDetail" class="dataTable" border :partentOrChild="'child'"
+            custom-column>
+            <el-table-column prop="sourceName" min-width="120" label="主单位" />
+            <el-table-column prop="ratio" min-width="120" label="转换系数" />
+            <el-table-column prop="calculationDirection" min-width="120" label="计算方向">
+              <template slot-scope="{ row }">
+                <template v-if="row.calculationDirection == 'multiplication'">
+                  乘
+                </template>
+                <template v-else-if="row.calculationDirection == 'division'">
+                  除
+                </template>
+              </template>
+            </el-table-column>
+            <el-table-column prop="targetName" min-width="120" label="副单位" />
+          </JNPF-table>
+        </div>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
           :limit.sync="tableQuery.pageSize" @pagination="initData" />
       </div>
@@ -174,6 +192,7 @@ export default {
       background: true, //分页器背景颜色
       visible: false,
       tableDataList: [],
+      dataDetail: [{ sourceName: '测试' }],
       stateList: [
         {
           label: '启用',
@@ -185,6 +204,7 @@ export default {
         }
       ],
       listLoading: false,
+      detailLoading: false,
       tableQuery: {
         pageNum: 1,
         pageSize: 20,
@@ -205,7 +225,7 @@ export default {
 
       total: 0,
       formVisible: false,
-      columnList: ['remark', 'createByName','createTime']
+      columnList: ['remark', 'createByName', 'createTime']
     }
   },
   created() {
@@ -357,6 +377,24 @@ export default {
   }
 }
 </script>
+<style scoped lang="scss">
+.tableBox {
+  flex: auto;
+  display: flex;
+  position: relative;
+
+  // border: 1px solid #dedede;
+  // box-shadow: inset 0 0 0 1px #dedede;
+  >.dataTable:first-child {
+    flex: 3;
+    margin: 0 3px 0 0;
+  }
+
+  >.dataTable:last-child {
+    flex: 2;
+  }
+}
+</style>
 <style scoped>
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;

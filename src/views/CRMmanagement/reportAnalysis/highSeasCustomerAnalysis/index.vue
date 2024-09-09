@@ -117,8 +117,7 @@ export default {
           exportType: '1214',
           exportName: '公海客户分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

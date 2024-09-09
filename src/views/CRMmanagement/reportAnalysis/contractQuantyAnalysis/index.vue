@@ -131,8 +131,7 @@ export default {
           exportType: '1221',
           exportName: '合同数量分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

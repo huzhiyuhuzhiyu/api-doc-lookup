@@ -118,8 +118,7 @@ export default {
           exportType: '1212',
           exportName: '客户跟进次数分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

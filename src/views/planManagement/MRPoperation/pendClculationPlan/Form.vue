@@ -5,7 +5,7 @@
       <div class="JNPF-full-dialog-header">
         <div class="header-title">
 
-          <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
+          <!-- <img src="@/assets/images/jnpf.png" class="header-logo" /> -->
           <h2 class="header-txt" style="font-size: 24px;font-weight: 700;"> MRP计算</h2>
         </div>
         <el-steps :active="activeStep" finish-status="success" simple s v-if="!loading">

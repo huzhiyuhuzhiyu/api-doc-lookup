@@ -1,55 +1,81 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="tab-head">
-      <div>
-        <div class="module-list">
-          <div class="module-item text" :class="index == 0 ? 'module-selected' : ''" v-for="(item, index) in tabList"
-            :key="index">
-            <span>{{ item.label }}</span>
-          </div>
-        </div>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
+        <el-radio-group v-model="activeName" style="background-color:#fff;">
+          <el-radio-button label="all" style="margin:3px 0">全部</el-radio-button>
+          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+            :key="item.enCode" :label="item.enCode">{{ item.fullName }}
+          </el-radio-button>
+        </el-radio-group>
       </div>
-    </div>
-    <div class="tab-body">
-      <div class="business-list">
-        <div class="business-list__header">
-          <div class="business-list__col-type business-list__header-item">
-            单据类型
-          </div>
-          <div class="business-list__col-template business-list__header-item">
-            模板
-          </div>
+      <div class="JNPF-common-layout-center">
+        <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="tab-body">
+            <div class="business-list">
+              <div class="business-list__header">
+                <div class="business-list__col-type business-list__header-item">
+                  单据类型
+                </div>
+                <div class="business-list__col-type business-list__header-item">
+                  单据类型
+                </div>
+                <div class="business-list__col-template business-list__header-item">
+                  模板
+                </div>
 
-        </div>
+              </div>
 
-        <div class="business-list__body">
-          <!-- 渲染数据 -->
-          <div class="business-list__body__item">
-            <div class="business-list__col-type">
-
-            </div>
-            <div class="business-list__col-type-right">
-              <!-- 单据 -->
-              <div>
-                <div class="business-list__col-template template-list">
-                  <div class="template-item template-item__item">
+              <div class="business-list__body">
+                <!-- 渲染数据 -->
+                <div class="business-list__body__item">
+                  <div class="business-list__col-type">
                     单据
                   </div>
-                  <!-- 需要渲染 -->
-                  <div class="template-item template-item__item is-default">
-                    <div title="湛江市牧泰邦科技有限公司(默认)" class="template-item__name">
-                      <span>湛江市牧泰邦科技有限公司(默认)</span>
+                  <div class="business-list__col-type">
+                    单据
+                  </div>
+                  <div class="business-list__col-type-right">
+                    <!-- 单据 -->
+                    <div>
+                      <div class="business-list__col-template template-list">
+                        <div class="template-item template-item__item">
+                          单据
+                        </div>
+                        <!-- 需要渲染 -->
+                        <div class="template-item template-item__item is-default">
+                          <div title="湛江市牧泰邦科技有限公司(默认)" class="template-item__name">
+                            <span>湛江市牧泰邦科技有限公司(默认)</span>
+                          </div>
+                        </div>
+                        <div class="template-item template-item__add-btn">
+                          <span class="el-icon-plus template-item__add-btn__text"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- 小票 -->
+                    <div>
+                      <div class="business-list__col-template template-list">
+                        <div class="template-item template-item__item">
+                          小票
+                        </div>
+                        <!-- 需要渲染 -->
+                        <div class="template-item template-item__item is-default">
+                          <div title="湛江市牧泰邦科技有限公司(默认)" class="template-item__name">
+                            <span>湛江市牧泰邦科技有限公司(默认)</span>
+                          </div>
+                        </div>
+                        <div class="template-item template-item__add-btn">
+                          <span class="el-icon-plus template-item__add-btn__text"></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="template-item template-item__add-btn">
-                    <span class="el-icon-plus template-item__add-btn__text"></span>
-                  </div>
+
                 </div>
               </div>
-              <!-- 小票 -->
-              <div></div>
             </div>
-
           </div>
         </div>
       </div>
@@ -58,10 +84,12 @@
 </template>
 
 <script>
+import { getChildrenList } from '@/api/systemData/dictionary'
 export default {
   name: 'printMode',
   data() {
     return {
+      activeName: 'all',
       tabList: [
         {
           label: '销货',
@@ -76,18 +104,16 @@ export default {
           value: '3'
         },
       ],
-      categoryList:[]
+      categoryList: []
     }
   },
   created() {
-    this.getDictionaryData()
+    this.getChildrenListData()
   },
   methods: {
-    getDictionaryData() {
-      this.$store.dispatch('base/getDictionaryData', { sort: 'PrintingBusiness' }).then((res) => {
-        this.categoryList = res
-        console.log(this.categoryList);
-        
+    getChildrenListData() {
+      getChildrenList('600639172939682437').then(res => {
+        this.categoryList = res.data
       })
     },
   },
@@ -99,7 +125,6 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24px;
   background-color: #fff;
 
   .module-list {
@@ -129,7 +154,7 @@ export default {
 
   .tab-body {
     flex: 1;
-    margin-top: 16px;
+    // margin-top: 16px;
     overflow-y: auto;
 
     .business-list {
@@ -155,6 +180,7 @@ export default {
           align-items: center;
           width: 210px;
           padding: 0 70px;
+          border-left: 1px solid #e4e4e4;
         }
 
         .business-list__col-template {
@@ -180,6 +206,7 @@ export default {
             align-items: center;
             width: 210px;
             padding: 0 70px;
+            border-left: 1px solid #e4e4e4;
           }
 
           .business-list__col-type-right {

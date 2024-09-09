@@ -4,7 +4,7 @@
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
         <el-image class="sidebar-logo 8" :src="define.comUrl+systemVO.iconUrl" :style="{ backgroundColor: head }" v-if="systemVO && systemVO.iconUrl">
           <template slot="error">
-            <img class="sidebar-logo 9" :class="headClass" :style="{backgroundColor:head}" src="@/assets/images/jnpf2.png" alt="">
+            <img class="sidebar-logo 9" :class="headClass" :style="{backgroundColor:head}" src="@/assets/images/jnpf.png" alt="">
           </template>
         </el-image>
         <img src="@/assets/images/jnpf.png" :class="headClass" :style="{backgroundColor:head}" class="sidebar-logo 10" v-else />

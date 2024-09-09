@@ -30,7 +30,7 @@
                   </el-collapse-item>
 
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="margin-bottom: 15px;">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -39,7 +39,7 @@
 
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="margin-bottom: 15px;">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -68,33 +68,33 @@
               </el-tab-pane>
             </el-tabs>
             <el-collapse v-model="activeNames" v-else>
-                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
-                    <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
-                      :btnType="btnType === 'setLoss' ? 'look' : btnType" />
-                  </el-collapse-item>
-                  <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
-                  </el-collapse-item>
+                <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
+                  :btnType="btnType === 'setLoss' ? 'look' : btnType" />
+              </el-collapse-item>
+              <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
+                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
 
-                  <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:10px">
-                      <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
-                        :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
-                        @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
-                        :nowNum="nowNum" />
-                    </el-row>
+              <el-collapse-item title="检验项目" name="inspectionItem">
+                <el-row :gutter="30" style="padding:10px">
+                  <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
+                    :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
+                    @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                    :nowNum="nowNum" />
+                </el-row>
 
-                  </el-collapse-item>
-                  <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:10px">
-                      <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
-                        :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
-                        @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
-                        :nowNum="nowNumTwo" />
-                    </el-row>
+              </el-collapse-item>
+              <el-collapse-item title="不良原因" name="adverseCausesInfo">
+                <el-row :gutter="30" style="padding:10px">
+                  <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
+                    :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
+                    @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
+                    :nowNum="nowNumTwo" />
+                </el-row>
 
-                  </el-collapse-item>
+              </el-collapse-item>
             </el-collapse>
           </div>
         </div>
@@ -128,12 +128,12 @@ import TableFormWare from "./TableForm-ware.vue"
 import TableFormWareTwo from "./TableForm-ware-two.vue"
 import { mapGetters, mapState } from 'vuex'
 import WareSide from './WareSide.vue'
-import {  getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
-  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo ,Process , recordList},
+  components: { TableFormProduct, WareSide, Preview, TableFormWare, TableFormWareTwo, Process, recordList },
   mixins: [busFlow],
   data() {
     return {
@@ -151,7 +151,7 @@ export default {
       documentStatus: "",
       dataForm: {},
       dataFormItems: [],
-      inspectionInfo:[],
+      inspectionInfo: [],
       linesList: [],
       linesListItems: [/* 通过 this.refeshLinesListItems() 动态更改 */],
       dialogRequestObj: {
@@ -209,10 +209,10 @@ export default {
       productList: [],
       codeConfig: {},
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   beforeCreate() {
@@ -327,56 +327,56 @@ export default {
           sm: 6,
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
-       
+
       ],
-      this.inspectionInfo = [
-      {
-          prop: 'inspectionMethod',
-          label: '检验方式',
-          value: '',
-          type: 'select',
-          clearable: false,
-          change: this.inspectionMethodChange,
-          itemRules: [{ required: true, trigger: 'change' }],
-          sm: 6,
-          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-          options: [
-            { label: '免检', value: 'exempt' },
-            { label: '抽检', value: 'spot_check' },
-            { label: '全检', value: 'all' }
-          ]
-        },
-        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
-        {
-          prop: 'samplingQuantity',
-          label: '检验数量',
-          value: '',
-          type: 'input',
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
-        },
-        {
-          prop: 'inspectionResults',
-          label: '检验结果',
-          value: undefined,
-          type: 'select',
-          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-          change: this.inspectionResultsChange,
-          itemRules: [{ required: true, trigger: 'change' }],
-          sm: 6
-        },
-        {
-          prop: 'unqualifiedQuantity',
-          label: '不合格数量',
-          value: '',
-          type: 'input',
-          sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-          itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
-        },
-        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-        { prop: "description", label: "处理说明", value: "", type: "textarea" }
+        this.inspectionInfo = [
+          {
+            prop: 'inspectionMethod',
+            label: '检验方式',
+            value: '',
+            type: 'select',
+            clearable: false,
+            change: this.inspectionMethodChange,
+            itemRules: [{ required: true, trigger: 'change' }],
+            sm: 6,
+            // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+            options: [
+              { label: '免检', value: 'exempt' },
+              { label: '抽检', value: 'spot_check' },
+              { label: '全检', value: 'all' }
+            ]
+          },
+          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
+          {
+            prop: 'samplingQuantity',
+            label: '检验数量',
+            value: '',
+            type: 'input',
+            sm: 6,
+            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+            itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
+          },
+          {
+            prop: 'inspectionResults',
+            label: '检验结果',
+            value: undefined,
+            type: 'select',
+            options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+            change: this.inspectionResultsChange,
+            itemRules: [{ required: true, trigger: 'change' }],
+            sm: 6
+          },
+          {
+            prop: 'unqualifiedQuantity',
+            label: '不合格数量',
+            value: '',
+            type: 'input',
+            sm: 6,
+            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+            itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
+          },
+          // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
+          { prop: "description", label: "处理说明", value: "", type: "textarea" }
         ]
     },
     // 刷新子表结构
@@ -503,7 +503,7 @@ export default {
       scope.row.totalLossAmount = this.jnpf.math('add', [scope.row.lossAmount, scope.row.otherLossAmount])
     },
     // 初始化
-    async init(id, btnType,approvalFlag, inspectionType, businessCode) {
+    async init(id, btnType, approvalFlag, inspectionType, businessCode) {
       this.inspectionOrderNoChange(id)
       this.visible = true
       this.formLoading = true
@@ -751,8 +751,10 @@ export default {
         this.inspectionList = res.data.itemList
         this.linesListTwo = res.data.causesList
         this.dataForm = res.data.inspection
-         // 流程信息和流转记录
-         if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+        console.log(this.dataForm, 'oooooo')
+        this.dataForm.inspectionOrderNo = this.dataForm.orderNo
+        // 流程信息和流转记录
+        if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         let tempLinesList = res.data.lines.filter(line => line.unqualifiedQuantity != '0')
         tempLinesList.forEach(line => {
           line.inspectionUnqualifiedQuantity = line.unqualifiedQuantity
@@ -788,9 +790,9 @@ export default {
       })
     },
     // 流程信息 && 流转记录
-    getFlowDetail(id){
-      getBusinessFlowDetail(id).then(res=>{
-        if (res.data){
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id).then(res => {
+        if (res.data) {
           this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
           this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
           this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
@@ -813,8 +815,8 @@ export default {
             }
           }
         }
-      }).catch(()=>{})
-    },    
+      }).catch(() => { })
+    },
   },
   computed: {
     openMode() {
@@ -931,7 +933,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 0px 14px 8px 14px;
   border-top: none !important;
 
 }
@@ -951,9 +953,11 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding:0 10px 10px;
+  padding: 0 10px 10px;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }

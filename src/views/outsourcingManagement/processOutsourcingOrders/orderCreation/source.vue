@@ -19,7 +19,7 @@
                     </div>
                   </el-form-item>
                 </template>
-              </el-table-column> -->
+</el-table-column> -->
 
               <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
@@ -120,21 +120,21 @@
               </el-table-column>
 
               <!-- 操作 -->
-              <!-- <el-table-column label="操作" width="90" v-if="dataFormTwo.data.length>1">
+              <el-table-column label="操作" width="90" v-if="dataFormTwo.data.length > 1">
                 <template slot-scope="scope">
-                  <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'" style="color:rgb(245,108,108)"
-                    @click="handlerDelete(scope.$index, 'personnel')">删除</el-button>
+                  <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'"
+                    style="color:rgb(245,108,108)" @click="handlerDelete(scope.$index, 'personnel')">删除</el-button>
                 </template>
-              </el-table-column> -->
+              </el-table-column>
             </el-table>
           </el-form>
         </el-scrollbar>
-        <!-- <div class="footer">
+        <div class="footer">
           <el-button @click="drawer = false">{{ $t('common.cancelButton') }}</el-button>
           <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? true : false">
             {{ $t('common.confirmButton') }}
           </el-button>
-        </div> -->
+        </div>
       </div>
 
 
@@ -175,8 +175,8 @@ export default {
   },
 
   methods: {
-    handlerDelete(index){
-      this.dataFormTwo.data.splice(index,1)
+    handlerDelete(index) {
+      this.dataFormTwo.data.splice(index, 1)
     },
     // 校验发料数量
     checktaxDemandQuantity1() {
@@ -233,7 +233,7 @@ export default {
               shipmentType: 'out_orders',
             })
           })
-          console.log("sourceData",sourceData);
+          console.log("sourceData", sourceData);
           this.$emit('confirm', sourceData)
           this.$message.success('配置成功')
           this.drawer = false

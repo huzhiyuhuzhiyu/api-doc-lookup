@@ -1,9 +1,8 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
+          <el-form >
             <el-col :span="5">
               <el-form-item>
                 <el-input v-model="quotationNoS" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
@@ -150,7 +149,6 @@
         </div>
       </div>
 
-    </div>
     <DepForm v-if="depFormVisible" ref="depForm" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"

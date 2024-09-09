@@ -5,14 +5,14 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建发料通知单'
-            : btnType == 'edit'
-              ? '编辑发料通知单'
-              : btnType == 'qrsh'
-                ? '确认收货'
-                : btnType == 'copy'
-                  ? '新建发料通知单'
-                  : '查看发料通知单'
+              ? '新建发料通知单'
+              : btnType == 'edit'
+                ? '编辑发料通知单'
+                : btnType == 'qrsh'
+                  ? '确认收货'
+                  : btnType == 'copy'
+                    ? '新建发料通知单'
+                    : '查看发料通知单'
             " />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -34,10 +34,10 @@
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                              ? true
+                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                                ? false
+                                : true
                             " />
                         </el-form-item>
                       </el-col>
@@ -1510,13 +1510,6 @@ export default {
   margin-right: 4px;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-}
-
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
 </style>
 <style scoped>
 ::v-deep .el-tabs__content {
@@ -1635,7 +1628,7 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 10px;
   border-top: none !important;
 }
 
@@ -1662,5 +1655,8 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

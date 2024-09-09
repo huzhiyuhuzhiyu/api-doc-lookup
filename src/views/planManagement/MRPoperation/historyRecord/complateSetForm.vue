@@ -126,4 +126,8 @@ export default {
 ::v-deep .el-table__body-wrapper {
   height: auto !important;
 }
+.JNPF-common-table{
+    border: 1px solid #ebeef5 !important;
+    border-right: 0 !important;
+}
 </style>

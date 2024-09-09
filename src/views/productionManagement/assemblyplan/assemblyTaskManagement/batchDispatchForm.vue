@@ -15,7 +15,7 @@
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="任务信息" name="orderInfo" v-if="btnType == 'all' ">
-              <el-collapse v-model="activeNames1" class="orderInfo">
+              <el-collapse v-model="activeNames1">
                 <el-collapse-item title="任务信息" name="basicInfo">
 
                   <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
@@ -186,7 +186,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="工单信息" name="workOrderInfo" v-if="btnType == 'all' || btnType == 'work'">
-              <el-collapse v-model="activeNames2"  class="orderInfo">
+              <el-collapse v-model="activeNames2">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
                   <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
                     <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -275,7 +275,7 @@
             </el-tab-pane>
 
             <el-tab-pane label="投料信息" name="feedInfo" v-if="btnType == 'all' || btnType == 'feed'">
-              <el-collapse v-model="activeNames3"  class="orderInfo">
+              <el-collapse v-model="activeNames3">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
@@ -295,7 +295,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType  == 'report'">
-              <el-collapse v-model="activeNames4"  class="orderInfo">
+              <el-collapse v-model="activeNames4">
                 <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
                     <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
@@ -355,7 +355,7 @@
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                  工单截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
                     .replace("-", ".")
                   }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -404,7 +404,7 @@
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length -
+                  工单截止：{{ totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -423,19 +423,19 @@
               <el-col :span="5">
                 <el-form-item>
                   <el-input v-model="dispatchSearchForm.orderNo" @keyup.enter.native="dataFormSubmit()"
-                    placeholder="请输入派工单号" clearable />
+                    placeholder="工单号" clearable />
                 </el-form-item>
               </el-col>
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="请输入工序名称" clearable />
+                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item>
                   <el-date-picker v-model="daterangeList" type="daterange" value-format="yyyy-MM-dd" style="width: 100%"
-                    clearable start-placeholder="请选择创建开始日期" end-placeholder="请选择创建结束日期">
+                    clearable start-placeholder="创建开始日期" end-placeholder="创建结束日期">
                   </el-date-picker>
                 </el-form-item>
               </el-col>
@@ -452,17 +452,17 @@
             </el-form>
           </el-row>
           <el-table ref="product" :data="detailDataList" border max-height="600">
-            <el-table-column type="index" width="70" label="序号" />
-            <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
+            <el-table-column type="index" width="70" label="序号" fixed/>
+            <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
+            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
-            <el-table-column prop="dispatchQuantity" label="派工数量" width="100" />
-            <el-table-column prop="completedQuantity" label="完工数量" width="100" />
+            <el-table-column prop="productionQuantity" label="生产数量" width="100" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" width="100" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.createTime ? scope.row.createTime.substring(0, 10) : '' }}</div>
@@ -470,8 +470,9 @@
             </el-table-column>
           </el-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-            <span style="font-weight:500;margin-right:10px">总派工数量：{{ totalDispatchQuantity }}</span>
-            <span style="font-weight:500;margin-right:10px">总完工数量：{{ totalCompletedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">总生产数量：{{ totalProductionQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">合格数量：{{ totalQualifiedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
           </div>
         </el-dialog>
 
@@ -540,7 +541,29 @@ export default {
       btnLoading:false,
     }
   },
-
+  computed: {
+    totalProductionQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].productionQuantity])
+      }
+      return totalNums
+    },
+    totalQualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].qualifiedQuantity])
+      }
+      return totalNums
+    },
+    totalUnqualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].unqualifiedQuantity])
+      }
+      return totalNums
+    },
+  },
   mounted() {
 
   },
@@ -973,7 +996,7 @@ $footerPadding: '10px';
   border-top: 1px solid #dcdfe6;
   border-right: 0 !important;
 }
-.orderInfo{
-  margin-top: 10px;
+::v-deep.el-collapse-item{
+  margin-top: 5px;
 }
 </style>

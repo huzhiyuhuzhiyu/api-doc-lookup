@@ -56,14 +56,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
-                        <el-form-item label="产线" prop="productionLineId">
-                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
-                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
-                              :value="item.id"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col>
+                  
 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">

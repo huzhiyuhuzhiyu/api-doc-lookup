@@ -84,14 +84,14 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <!-- <el-col :sm="8" :xs="24">
                         <el-form-item label="产线" prop="productionLineId">
                           <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
                           </el-select>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -218,24 +218,24 @@
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
                     {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
                     {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][1].completedQuantity }}/{{ totalData[item][1].dispatchQuantity }}个
+                    {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                  工单截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
                     .replace("-", ".")
                   }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -261,30 +261,30 @@
                     }}-
                     {{ totalData[item][totalData[item].length - 2].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
-                    {{ totalData[item][totalData[item].length - 2].completedQuantity
+                    {{ totalData[item][totalData[item].length - 2].qualifiedQuantity
                     }}/{{ totalData[item][totalData[item].length
-                      - 2].dispatchQuantity }}个
+                      - 2].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][totalData[item].length - 1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-
                     {{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
-                    {{ totalData[item][totalData[item].length - 1].completedQuantity
+                    {{ totalData[item][totalData[item].length - 1].qualifiedQuantity
                     }}/{{ totalData[item][totalData[item].length
-                      - 1].dispatchQuantity }}个
+                      - 1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length -
+                  工单截止：{{ totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -296,7 +296,7 @@
           </el-row>
 
         </el-dialog>
-        <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
+        <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
           :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
           @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">
@@ -304,19 +304,19 @@
               <el-col :span="5">
                 <el-form-item>
                   <el-input v-model="dispatchSearchForm.orderNo" @keyup.enter.native="dataFormSubmit()"
-                    placeholder="请输入派工单号" clearable />
+                    placeholder="工单号" clearable />
                 </el-form-item>
               </el-col>
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="请输入工序名称" clearable />
+                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item>
                   <el-date-picker v-model="daterangeList" type="daterange" value-format="yyyy-MM-dd" style="width: 100%"
-                    clearable start-placeholder="请选择创建开始日期" end-placeholder="请选择创建结束日期">
+                    clearable start-placeholder="创建开始日期" end-placeholder="创建结束日期">
                   </el-date-picker>
                 </el-form-item>
               </el-col>
@@ -333,17 +333,17 @@
             </el-form>
           </el-row>
           <el-table ref="product" :data="detailDataList" border max-height="600">
-            <el-table-column type="index" width="70" label="序号" />
-            <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
+            <el-table-column type="index" width="70" label="序号" fixed/>
+            <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
+            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
-            <el-table-column prop="dispatchQuantity" label="派工数量" width="100" />
-            <el-table-column prop="completedQuantity" label="完工数量" width="100" />
+            <el-table-column prop="productionQuantity" label="生产数量" width="100" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" width="100" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.createTime ? scope.row.createTime.substring(0, 10) : '' }}</div>
@@ -351,8 +351,9 @@
             </el-table-column>
           </el-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-            <span style="font-weight:500;margin-right:10px">总派工数量：{{ totalDispatchQuantity }}</span>
-            <span style="font-weight:500;margin-right:10px">总完工数量：{{ totalCompletedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">总生产数量：{{ totalProductionQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">合格数量：{{ totalQualifiedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
           </div>
         </el-dialog>
 
@@ -463,7 +464,27 @@ export default {
     }
   },
   computed: {
-
+    totalProductionQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].productionQuantity])
+      }
+      return totalNums
+    },
+    totalQualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].qualifiedQuantity])
+      }
+      return totalNums
+    },
+    totalUnqualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].unqualifiedQuantity])
+      }
+      return totalNums
+    },
   },
   created() {
 

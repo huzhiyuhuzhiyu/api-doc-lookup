@@ -68,6 +68,8 @@
                         }}</span></div>
                     <div class="label_title bold"> 已完成数量:<span style="color: #67c23A;">{{ item.completedQuantity
                         }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                        }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
                       <el-button style="color:red;" type="text">关单</el-button>
@@ -413,8 +415,8 @@
       @close="closeForm"></PersonReportForm>
     <DeviceReportForm v-if="deviceReportVisible" ref="DeviceReportForm" @refreshDataList="searchdeviceData"
       @close="closeForm"></DeviceReportForm>
-    <ProduceLineReportForm v-if="produceLineReportVisible" ref="ProduceLineReportForm" @refreshDataList="searchProduceLineData"
-      @close="closeForm"></ProduceLineReportForm>
+    <ProduceLineReportForm v-if="produceLineReportVisible" ref="ProduceLineReportForm"
+      @refreshDataList="searchProduceLineData" @close="closeForm"></ProduceLineReportForm>
   </div>
 </template>
 
@@ -439,14 +441,14 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getUserListPost } from '@/api/permission/user'
 export default {
   name: 'assembleCompletionReport',
-  components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm,ProduceLineReportForm },
+  components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
   data() {
     return {
       defaultPropsPerson: {
         children: 'children',
         label: 'fullName'
       },
-      produceLineReportVisible:false,
+      produceLineReportVisible: false,
       personReportVisible: false,
       groupReportVisible: false,
       ProcessReportVisible: false,
@@ -650,7 +652,7 @@ export default {
       this.groupReportVisible = false
       this.personReportVisible = false
       this.deviceReportVisible = false
-      this.produceLineReportVisible=false
+      this.produceLineReportVisible = false
       if (flag) {
         if (this.activeName == 'produce') {
           this.searchProductData()
@@ -770,6 +772,10 @@ export default {
       }
       this.listLoading = true
       ordershengchanList(this.produceForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.completedQuantity]), 6)
+          this.$set(item, 'uncompletedQuantity', num)
+        });
         this.produceData = res.data.records
         this.produceTotal = res.data.total
         this.listLoading = false
@@ -871,7 +877,7 @@ export default {
       }
       this.searchProduceLineData()
     },
-   
+
     // 班组  点击报工
     produceLineReportFun(data) {
       this.produceLineReportVisible = true

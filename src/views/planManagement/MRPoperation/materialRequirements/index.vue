@@ -353,7 +353,7 @@
                 <el-table-column prop="outputQuantity" label="需采购数量" min-width="140" sortable="custom" />
                 <el-table-column prop="planStartDate" label="计划开始日期" width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" width="180" sortable="custom" />
-                <el-table-column label="操作" width="200" fixed="right">
+                <el-table-column label="操作" width="120" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text"
                       :disabled="scope.row.outputQuantity == 0 || scope.row.mainProductFlag"
@@ -2429,5 +2429,8 @@ export default {
 
 ::v-deep .el-dialog .el-dialog__body {
   padding: 30px 20px !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px;
 }
 </style>

@@ -148,7 +148,7 @@ import {
   Cancelshipmentlinelist
 } from '@/api/salesManagement'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import Form from '../purchaseReturnNote/Form.vue'
+import Form from '../purchaseReturnNote/Form.vue' 
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'

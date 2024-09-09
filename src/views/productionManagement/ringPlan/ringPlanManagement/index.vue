@@ -66,7 +66,7 @@
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="productsDrawingNo" label="品名规格" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="productsCode" label="产品编码" min-width="120" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
+            <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
             <el-table-column prop="arrangeOrderNum" label="已编排任务单数" min-width="160" sortable="custom" />
@@ -75,8 +75,8 @@
                 <div>{{ scope.row.urgentFlag ? '是' : '否' }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="160" sortable="custom"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="160" sortable="custom"></el-table-column>
 
       
 
@@ -85,7 +85,7 @@
 
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="220" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.orderType == 'rework'"
                   @click="addition(scope.row)">编排</el-button>
@@ -327,7 +327,9 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
-      this.search()
+      this.selectArr = []
+      this.search()        
+
     },
     initData() {
       this.listLoading = true

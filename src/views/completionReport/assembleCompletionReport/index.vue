@@ -64,9 +64,11 @@
                     </div>
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title bold"> 总生产数量:<span style="color: #3fb9f8;">{{ item.productionQuantity
+                    <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
                         }}</span></div>
-                    <div class="label_title bold"> 已完成数量:<span style="color: #67c23A;">{{ item.completedQuantity
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
                         }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
@@ -125,6 +127,9 @@
 
                       <div class="label_title"> 产线名称:{{ item.name }}</div>
                       <div class="label_title"> 产线编码:{{ item.code }}</div>
+                      <!-- <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity }}</span></div> -->
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="produceLineReportFun(item)">报 工</el-button>
                       </div>
@@ -180,6 +185,12 @@
 
                       <div class="label_title"> 工序名称:{{ item.name }}</div>
                       <div class="label_title"> 工序编码:{{ item.code }}</div>
+                      <!-- <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                        }}</span></div> -->
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="ProcessReportFun(item)">报 工</el-button>
                       </div>
@@ -234,6 +245,12 @@
 
                     <div class="label_title"> 班组名称:{{ item.name }}</div>
                     <div class="label_title"> 班组编码:{{ item.code }}</div>
+                    <!-- <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                        }}</span></div> -->
                     <div style="margin-top: 10px;">
                       <el-button type="primary" size="mini" @click="groupReportFun(item)">报 工</el-button>
                     </div>
@@ -329,6 +346,12 @@
 
                       <div class="label_title"> 名称:{{ item.realName }}</div>
                       <div class="label_title"> 账号:{{ item.account }}</div>
+                      <!-- <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                        }}</span></div> -->
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="personReportFun(item)">报 工</el-button>
                       </div>
@@ -384,6 +407,12 @@
 
                     <div class="label_title"> 设备名称:{{ item.name }}</div>
                     <div class="label_title"> 设备编码:{{ item.code }}</div>
+                    <!-- <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
+                        }}</span></div>
+                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                        }}</span></div> -->
                     <div style="margin-top: 10px;">
                       <el-button type="primary" size="mini" @click="deviceReportFun(item)">报 工</el-button>
                     </div>
@@ -413,8 +442,8 @@
       @close="closeForm"></PersonReportForm>
     <DeviceReportForm v-if="deviceReportVisible" ref="DeviceReportForm" @refreshDataList="searchdeviceData"
       @close="closeForm"></DeviceReportForm>
-    <ProduceLineReportForm v-if="produceLineReportVisible" ref="ProduceLineReportForm" @refreshDataList="searchProduceLineData"
-      @close="closeForm"></ProduceLineReportForm>
+    <ProduceLineReportForm v-if="produceLineReportVisible" ref="ProduceLineReportForm"
+      @refreshDataList="searchProduceLineData" @close="closeForm"></ProduceLineReportForm>
   </div>
 </template>
 
@@ -439,14 +468,14 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getUserListPost } from '@/api/permission/user'
 export default {
   name: 'assembleCompletionReport',
-  components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm,ProduceLineReportForm },
+  components: { ExportForm, Diagram, taskForm, produceTaskReportForm, ProcessReportForm, GroupReportForm, PersonReportForm, DeviceReportForm, ProduceLineReportForm },
   data() {
     return {
       defaultPropsPerson: {
         children: 'children',
         label: 'fullName'
       },
-      produceLineReportVisible:false,
+      produceLineReportVisible: false,
       personReportVisible: false,
       groupReportVisible: false,
       ProcessReportVisible: false,
@@ -650,7 +679,7 @@ export default {
       this.groupReportVisible = false
       this.personReportVisible = false
       this.deviceReportVisible = false
-      this.produceLineReportVisible=false
+      this.produceLineReportVisible = false
       if (flag) {
         if (this.activeName == 'produce') {
           this.searchProductData()
@@ -770,6 +799,10 @@ export default {
       }
       this.listLoading = true
       ordershengchanList(this.produceForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.completedQuantity]), 6)
+          this.$set(item, 'uncompletedQuantity', num)
+        });
         this.produceData = res.data.records
         this.produceTotal = res.data.total
         this.listLoading = false
@@ -871,7 +904,7 @@ export default {
       }
       this.searchProduceLineData()
     },
-   
+
     // 班组  点击报工
     produceLineReportFun(data) {
       this.produceLineReportVisible = true

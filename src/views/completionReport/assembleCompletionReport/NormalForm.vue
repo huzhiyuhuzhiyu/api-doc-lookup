@@ -264,12 +264,14 @@ export default {
           });
           this.personList = result
           console.log(result);
-          this.$set(this.form, 'producerId', result[0].id)
-          this.$set(this.form, 'producerName', result[0].label)
+         if (result.length > 0) {
+            this.$set(this.form, 'producerId', result[0].id)
+            this.$set(this.form, 'producerName', result[0].label)
 
-          this.$nextTick(() => {
-            this.$refs.reportRef.clearValidate('producerName')
-          })
+            this.$nextTick(() => {
+              this.$refs.reportRef.clearValidate('producerName')
+            })
+          }
         }
       })
     },

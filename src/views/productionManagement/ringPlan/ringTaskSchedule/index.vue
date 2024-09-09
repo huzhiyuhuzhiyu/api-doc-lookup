@@ -580,9 +580,12 @@ export default {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
       ordershengchanList(this.orderForm).then(res => {
-        res.data.records.forEach(item => {
+        if(item.processSchedule.indexOf(',')){
           item.processScheduleList = item.processSchedule.split(',')
-        });
+
+          }else{
+          item.processScheduleList .push(item.processSchedule)
+          }
         console.log("表格数据", res);
         this.tableData = res.data.records
         this.total = res.data.total

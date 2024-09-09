@@ -43,7 +43,7 @@
           </el-col>
           <el-col :sm="8" :xs="24">
             <el-form-item label="振动等级">
-              <el-input v-model="form.apertureList" placeholder="振动等级" disabled />
+              <el-input v-model="form.vibrationLevel" placeholder="振动等级" disabled />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -87,10 +87,12 @@
             </el-form-item>
           </el-col>
 
-          <el-col :sm="8" :xs="24" v-for="(item, index) in apertureList" :key="index">
-            <el-form-item :label="item.name + '(合格数量)'" :prop="item.name">
-              <el-input v-model="form.item[item.name]" placeholder="合格数量" @input="forceUpdata"
-                @blur="handleBlur(item, form.item[item.name])" />
+          <el-col :sm="8" :xs="24">
+            <el-form-item label="孔径" :prop="aperture">
+              <el-select v-model="form.aperture" placeholder="孔径" style="width: 100%;">
+                <el-option v-for="(item, index) in apertureList" :key="index" :label="item.label"
+                  :value="item.id"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -108,12 +110,6 @@
               <el-input v-model="form.materialWasteQuantity" placeholder="料废数量" disabled />
             </el-form-item>
           </el-col>
-          <el-col :sm="8" :xs="24">
-            <el-form-item label="料废数量">
-              <el-input v-model="form.utilizeQuantity" placeholder="料废数量" disabled />
-            </el-form-item>
-          </el-col>
-          
           <el-col :sm="8" :xs="24">
             <el-form-item label="返工数量">
               <el-input v-model="form.reworkQuantity" placeholder="返工数量" />
@@ -203,7 +199,7 @@ export default {
         productionQuantity: "",
         sealingCoverTyping: "",
         accuracyLevel: "",
-        apertureList: "",
+        vibrationLevel: "",
         oil: "",
         oilQuantity: "",
         clearance: "",
@@ -221,9 +217,9 @@ export default {
         equipmentId: "",
         remark: "",
         workOrderNo: "",
-        utilizeQuantity:0,
-        item: {},
+        aperture: "",
       },
+      apertureList: [],
       selectArr: [],
       listLoading: false,
       total: 0,
@@ -231,7 +227,7 @@ export default {
       id: "",
       processData: [],
       codeConfig: {},
-      apertureList: [],
+      vibrationLevelList: [],
       totalReportNum: 0,
     }
   },
@@ -244,7 +240,7 @@ export default {
       let total = Object.values(this.form.item)
         .map(Number) // 将每个值转换为数字  
         .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity,this.form.utilizeQuantity]), 6)
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
     init(workData) {
@@ -274,11 +270,9 @@ export default {
         ]
       };
       getbimProductAttributesList(obj3).then(res => {
-        console.log("孔径数据", res);
+        console.log("振动等级数据", res);
         this.apertureList = res.data.records
-        res.data.records.forEach(item => {
-          this.form.item[item.name] = ""
-        });
+
         console.log(666666, this.form);
       })
     },
@@ -312,12 +306,15 @@ export default {
           });
           this.personList = result
           console.log(result);
-          this.$set(this.form, 'producerId', result[0].id)
-          this.$set(this.form, 'producerName', result[0].label)
+          if (result.length > 0) {
+            this.$set(this.form, 'producerId', result[0].id)
+            this.$set(this.form, 'producerName', result[0].label)
 
-          this.$nextTick(() => {
-            this.$refs.reportRef.clearValidate('producerName')
-          })
+            this.$nextTick(() => {
+              this.$refs.reportRef.clearValidate('producerName')
+            })
+          }
+
         }
       })
     },
@@ -334,62 +331,30 @@ export default {
           }
           if (submitFlag === false) return
           let arr = []
-          if (this.apertureList.length) {
-            this.apertureList.forEach((item, index) => {
-              let obj = {}
-              if (index == 0) {
-                obj.classAttribute = this.form.classAttribute
-                obj.orderType = this.form.orderType
-                obj.productDrawingNo = this.form.productDrawingNo
-                obj.processName = this.form.processName
-                obj.productionQuantity = this.form.productionQuantity
-                obj.equipmentId = this.form.equipmentId
-                obj.remark = this.form.remark
-                obj.reportingTime = this.form.reportingTime
-                obj.reworkQuantity = this.form.reworkQuantity
-                obj.responsibilityWasteQuantity = this.form.responsibilityWasteQuantity
-                obj.materialWasteQuantity = this.form.materialWasteQuantity
-                obj.pricingType = this.form.pricingType
-                obj.processId = this.form.processId
-                obj.producerId = this.form.producerId
-                obj.productionOrderId = this.form.productionOrderId
-                obj.qualifiedQuantity = this.form.item[item.name] 
-                obj.reportingQuantity =  this.jnpf.numberFormat(this.jnpf.math('add', [this.form.item[item.name], this.form.unqualifiedQuantity,this.form.reworkQuantity]), 6)
-                obj.reportingType = "normal"
-                obj.unqualifiedQuantity = this.form.unqualifiedQuantity
-                obj.utilizeQuantity = this.form.utilizeQuantity
-                obj.apertureList = item.name
-                obj.workOrderId = this.form.id
-                arr.push(obj)
-              } else {
-                obj.classAttribute = this.form.classAttribute
-                obj.orderType = this.form.orderType
-                obj.productDrawingNo = this.form.productDrawingNo
-                obj.processName = this.form.processName
-                obj.productionQuantity = this.form.productionQuantity
-                obj.equipmentId = this.form.equipmentId
-                obj.remark = this.form.remark
-                obj.reportingTime = this.form.reportingTime
-                obj.reworkQuantity = 0
-                obj.responsibilityWasteQuantity = this.form.responsibilityWasteQuantity
-                obj.materialWasteQuantity = this.form.materialWasteQuantity
-                obj.pricingType = this.form.pricingType
-                obj.processId = this.form.processId
-                obj.producerId = this.form.producerId
-                obj.productionOrderId = this.form.productionOrderId
-                obj.qualifiedQuantity = this.form.item[item.name]
-                obj.reportingQuantity = this.form.item[item.name]
-                obj.reportingType = "normal"
-                obj.utilizeQuantity = this.form.utilizeQuantity
-                obj.unqualifiedQuantity = 0
-                obj.apertureList = item.name
-                obj.workOrderId = this.form.id
-                arr.push(obj)
-              }
-            });
-          }
+          let obj = {}
+          obj.classAttribute = this.form.classAttribute
+          obj.orderType = this.form.orderType
+          obj.productDrawingNo = this.form.productDrawingNo
+          obj.processName = this.form.processName
+          obj.productionQuantity = this.form.productionQuantity
+          obj.equipmentId = this.form.equipmentId
+          obj.remark = this.form.remark
+          obj.reportingTime = this.form.reportingTime
+          obj.reworkQuantity = this.form.reworkQuantity
+          obj.responsibilityWasteQuantity = this.form.responsibilityWasteQuantity
+          obj.materialWasteQuantity = this.form.materialWasteQuantity
+          obj.pricingType = this.form.pricingType
+          obj.processId = this.form.processId
+          obj.producerId = this.form.producerId
+          obj.productionOrderId = this.form.productionOrderId
+          obj.reportingType = "normal"
+          obj.unqualifiedQuantity = this.form.unqualifiedQuantity
+          obj.aperture = this.form.aperture
+          obj.workOrderId = this.form.id
+          arr.push(obj)
+
           addWorkReport(arr).then(res => {
-            this.customerVisible = false 
+            this.customerVisible = false
             this.$message.success("报工成功")
             this.$emit('close', true)
           })

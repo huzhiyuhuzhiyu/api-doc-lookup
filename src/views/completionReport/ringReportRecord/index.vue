@@ -132,7 +132,6 @@ export default {
         workNo: "",
         productsDrawingNo: "",
         pageNum: 1,
-        availableArrangeFlag: 1,
         pageSize: 20,
         superQuery: {
           condition: [],

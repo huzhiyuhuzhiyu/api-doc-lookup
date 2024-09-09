@@ -202,8 +202,7 @@ export default {
         cooperativePartnerIdText: "",
         deliver: "",
         bidder: "",
-        quotationStartTime: "",
-        quotationEndTime: '',
+  
         approvalStatus: '',
         documentStatus: "",
         submitStartDate: '',
@@ -416,20 +415,8 @@ export default {
 
     },
     search() {
-      if (this.submitDate && this.submitDate.length > 0) {
-        this.form.submitStartDate = this.submitDate[0].replace(/ 0(?!0)/g, " ")
-        this.form.submitEndDate = this.submitDate[1].replace(/ 0(?!0)/g, " ")
-      } else {
-        this.form.submitStartDate = ''
-        this.form.submitEndDate = ''
-      }
-      if (this.quotationTime && this.quotationTime.length > 0) {
-        this.form.quotationStartTime = this.quotationTime[0]
-        this.form.quotationEndTime = this.quotationTime[1]
-      } else {
-        this.form.quotationStartTime = ''
-        this.form.quotationEndTime = ''
-      }
+  
+      
       Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item

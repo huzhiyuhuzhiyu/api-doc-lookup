@@ -141,12 +141,12 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="产品信息" name="productInfo">
+                <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
 
 
                   <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
 
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
                       icon="el-icon-plus" @click="openSeleceProductDialog()">选择产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px ; font-size:14px!important"
                       icon="el-icon-delete" @click="batchDelete">批量删除</el-button>
@@ -352,7 +352,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="产品信息" name="productInfo">
+                <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
 
 
                   <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
@@ -2036,5 +2036,9 @@ $footerPadding: '10px';
 
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
+}
+.productInfo ::v-deep .el-collapse-item__wrap {
+  padding: 0;
+  border-top: 1px solid #dcdfe6 !important;
 }
 </style>

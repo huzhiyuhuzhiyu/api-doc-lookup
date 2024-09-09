@@ -83,13 +83,18 @@
 
             <el-table-column prop="processSchedule" label="工单进度条" min-width="780">
               <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processScheduleList" :key="index" style="width:100px;display: inline-block;">
+                <div v-for="(item, index) in scope.row.processScheduleList" :key="index"
+                  style="width:100px;display: inline-block;">
                   <div style="position: relative;">
-                    <div class="processSchedule_top" :class="item==0?'noValue':item=='100'?'sucess':'normal'">{{ item }}%</div>
+                    <div class="processSchedule_top"
+                      :class="item == 0 ? 'noValue' : item == '100' ? 'sucess' : 'normal'">{{ item
+                      }}%</div>
                     <p style="margin-top: 10px;">工序{{ index + 1 }}</p>
-                    <img v-if="index!=scope.row.processScheduleList.length-1" style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;" src="../../../../assets/images/right.png" alt="">
+                    <img v-if="index != scope.row.processScheduleList.length - 1"
+                      style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
+                      src="../../../../assets/images/right.png" alt="">
                   </div>
-                  
+
                 </div>
               </template>
             </el-table-column>
@@ -581,7 +586,15 @@ export default {
       }
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
-          item.processScheduleList = item.processSchedule.split(',')
+          if (item.processSchedule) {
+            if (item.processSchedule.indexOf(',')) {
+              item.processScheduleList = item.processSchedule.split(',')
+
+            } else {
+              item.processScheduleList.push(item.processSchedule)
+            }
+          }
+
         });
         console.log("表格数据", res);
         this.tableData = res.data.records
@@ -648,24 +661,28 @@ export default {
   margin-left: 0 !important;
 
   margin-bottom: 5px;
-} 
-.processSchedule_top{
+}
+
+.processSchedule_top {
   width: 50px;
-    height: 50px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    line-height: 50px;
-    text-align: center;
+  height: 50px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  line-height: 50px;
+  text-align: center;
 }
-.noValue{
-  border-color:#ccc;
-  
+
+.noValue {
+  border-color: #ccc;
+
 }
-.normal{
-  border-color:#409eff
+
+.normal {
+  border-color: #409eff
 }
-.sucess{
-  border-color:#67c23A
+
+.sucess {
+  border-color: #67c23A
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

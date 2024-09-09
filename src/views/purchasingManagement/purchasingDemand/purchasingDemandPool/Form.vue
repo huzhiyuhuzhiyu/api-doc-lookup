@@ -17,17 +17,11 @@
         <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo" ref="orderInfos">
-              <!-- <div
-                style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-                   <h5>基本信息</h5>
-              </div> -->
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="12">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
-                      </el-input> -->
                       <!-- 供应商选择弹窗  -->
                       <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                         v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
@@ -63,13 +57,6 @@
                         <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                         <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                          <!-- <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                              <div class="viewData">
-                                <span>{{ scope.row.productDrawingNo }}</span>
-                              </div>
-                            </el-form-item>
-                          </template> -->
                           <template slot="header">
                             <span class="required">*</span>
                             品名规格
@@ -81,18 +68,6 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <!-- <el-table-column prop="productName" label="产品名称" min-width="160" show-overflow-tooltip>
-                          <template slot="header">
-                            <span class="required">*</span>
-                            产品名称
-                          </template>
-                          <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
-                              :rules="productRules.productName">
-                              <el-input v-model="scope.row.productName" placeholder="请输入含税单价" />
-                            </el-form-item>
-                          </template>
-                        </el-table-column> -->
 
                         <el-table-column prop="deliveryDate" label="交货日期" min-width="200">
                           <template slot="header">
@@ -162,8 +137,6 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :rules="productRules.taxRate">
-                              <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
-                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                   :value="item.id"></el-option>
@@ -182,19 +155,6 @@
                           </template>
                         </el-table-column>
 
-                        <!-- <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
-                      <template slot="header">
-                        <span class="required">*</span>总金额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column> -->
-
                         <el-table-column prop="taxAmount" label="税额" min-width="100">
                           <template slot="header">
                             <span class="required">*</span>
@@ -202,8 +162,6 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
-                              <!-- <el-input v-model="scope.row.taxAmount" maxlength="20" placeholder="请输入税额">
-                          </el-input> -->
                               <div class="viewData">
                                 <span>{{ scope.row.taxAmount ? scope.row.taxAmount : 0 }}</span>
                               </div>
@@ -217,8 +175,6 @@
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                              <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20"
-                                placeholder="请输入金额(不含税)"></el-input> -->
                               <div class="viewData">
                                 <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                               </div>
@@ -238,9 +194,6 @@
 
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'"
                           prop="sealingCoverTyping" label="打字内容" width="120" :key="212">
-                          <!-- <template slot="header">
-                        <span class="required">*</span>打字内容
-                      </template> -->
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                               style="width: 100%;">
@@ -251,9 +204,6 @@
                         </el-table-column>
                         <el-table-column v-if="this.dataForm.classAttribute == 'finish_product'" prop="accuracyLevel"
                           label="精度等级" width="120" :key="123">
-                          <!-- <template slot="header">
-                        <span class="required">*</span>精度等级
-                      </template> -->
                           <template slot-scope="scope" v-if="scope.row.classAttribute == 'finish_product'">
                             <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                               <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -395,7 +345,6 @@ export default {
       datafilelist: [],
       // 选择客户产品参数
       ProductListRequestObjs: {
-
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
@@ -477,7 +426,7 @@ export default {
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
         taxAmount: '', // 税额
-        approvalFlag: false, //
+        approvalFlag: false //
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -661,7 +610,7 @@ export default {
       list8: [],
       taxRateList: [],
       flowTemplateJson: {},
-      flowData: {},
+      flowData: {}
     }
   },
   created() { },
@@ -670,6 +619,7 @@ export default {
     computedValue() {
       // 在这里计算第三个输入框的值
       let count = 0
+
       this.dataFormTwo.data.forEach((item) => {
         count += item.excludingTaxAmount * 1
       })
@@ -696,6 +646,7 @@ export default {
           if (item.price && item.taxRate) {
             item.excludingTaxPrice = this.jnpf.numberFormat(item.price / (1 + (item.taxRate * 1) / 100))
           }
+
           if (item.purchaseQuantity && item.excludingTaxPrice) {
             item.excludingTaxAmount = this.jnpf.numberFormat(item.purchaseQuantity * item.excludingTaxPrice)
           }
@@ -715,7 +666,6 @@ export default {
   },
   methods: {
     listDataFormatting(res) {
-      console.log(res);
       res.data.records.forEach((item, index) => {
         if (item.immediatelyBuyFlag) {
           item.immediatelyBuyFlag = '是'
@@ -743,7 +693,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj0).then((res) => {
-        console.log(res, 'res123')
         this.list0 = res.data.records
       })
 
@@ -890,7 +839,6 @@ export default {
         ]
       }
       getBimProcessList(obj8).then((res) => {
-        console.log(res, 'oiii')
         this.list8 = res.data.records
       })
 
@@ -900,7 +848,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
       })
     },
     // 根据订单类型  打开不同的选择产品弹框
@@ -923,6 +870,33 @@ export default {
           item.id = ''
         }
         this.dataFormTwo.data.push(item)
+
+        var maxDate = null // 最大日期初始值设为null
+        for (var i = 0; i < this.dataFormTwo.data.length; i++) {
+          var currentDate = new Date(this.dataFormTwo.data[i].deliveryDate)
+          if (maxDate === null || currentDate > maxDate) {
+            maxDate = currentDate
+          }
+          this.$set(this.dataFormTwo.data[i], 'excludingTaxAmount', '') // 总金额(不含税)
+          // this.$set(this.dataFormTwo.data[i], 'excludingTaxPrice', '')    // 	不含税单价
+          this.$set(this.dataFormTwo.data[i], 'fixedPrice', '') //  	定价
+          if (!this.dataFormTwo.data[i].price) {
+            this.$set(this.dataFormTwo.data[i], 'price', '') // 	价税合计
+          }
+          this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
+          this.$set(this.dataFormTwo.data[i], 'taxRate', '13') // taxRate
+          if (!this.dataFormTwo.data[i].totalAmount) {
+            this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
+          }
+
+          this.$set(
+            this.dataFormTwo.data[i],
+            'orderQuantity',
+            this.dataFormTwo.data[i].planDemandQuantity -
+            (this.dataFormTwo.data[i].orderedQuantity ? this.dataFormTwo.data[i].orderedQuantity : 0)
+          ) // 	可下单数量
+          this.olddeliveryDateArr.push(this.dataFormTwo.data[i].deliveryDate)
+        }
       })
     },
     // 产品列表选中
@@ -1094,18 +1068,17 @@ export default {
       this.$emit('close')
     },
     init(data, classAttributeFlag) {
-      console.log(data, 'data')
       this.dataForm.classAttribute = classAttributeFlag
       this.getProductClassFun()
-      // data.forEach((item) => {
-      //   item.productDrawingNo = item.drawingNo
-      //   item.productName = item.name
-      //   item.productCode = item.code
-      // })
+      data.forEach((item) => {
+        item.productDrawingNo = item.drawingNo
+        item.productName = item.name
+        item.productCode = item.code
+      })
       // if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
       // this.dataForm = data
       this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data)))
-      console.log(this.dataFormTwo, 'two')
+
       // }
       // else {
       //   // 避免传递过来的数据 输入框设置默认值后无法修改 因为内存地址的问题 指向了同一个
@@ -1280,23 +1253,25 @@ export default {
     // 测试审批流
     getBusInfo() {
       let code = this.dataForm.classAttribute === 'other' ? 'b009' : 'b028'
-      getBusinessFlowInfo(code).then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo(code)
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   },
   mounted() {
     this.switchStyleheight()
@@ -1416,11 +1391,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
@@ -1428,10 +1402,10 @@ export default {
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 </style>

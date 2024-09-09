@@ -921,6 +921,7 @@ $footerPadding : '10px';
 }
 ::v-deep.JNPF-common-layout-center .JNPF-common-layout-main {
   padding: 0;
+  border-left: 1px solid #EBEEF5;
 }
 
 ::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {

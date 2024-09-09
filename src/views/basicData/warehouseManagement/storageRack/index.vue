@@ -99,8 +99,9 @@
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="状态" min-width="140">
             <template slot-scope="scope">
-              <div v-if="scope.row.state == 'enable'">启用</div>
-              <div v-if="scope.row.state == 'disabled'">禁用</div>
+              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
+                inactive-value="disabled" @change="stateChange(scope.row)">
+              </el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
@@ -126,7 +127,7 @@
 </template>
 
 <script>
-import { deleteStockGoodsShelves, getStockGoodsShelves, getList } from '@/api/basicData/stockGoodsShelves'
+import { deleteStockGoodsShelves, getStockGoodsShelves, editStockGoodsShelves, getList } from '@/api/basicData/stockGoodsShelves'
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import AiForm from "./AiForm.vue";
@@ -263,6 +264,16 @@ export default {
       this.tableQuery.orderItems[0].asc = order === 'ascending'
       this.tableQuery.orderItems[0].column = newProp
       this.initData()
+    },
+    stateChange(row) {
+      editStockGoodsShelves(row).then((res) => {
+        this.initData()
+        this.$message({
+          type: 'success',
+          message: row.state == 'enable' ? '开启成功' : '禁用成功',
+          duration: 1500
+        })
+      })
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {

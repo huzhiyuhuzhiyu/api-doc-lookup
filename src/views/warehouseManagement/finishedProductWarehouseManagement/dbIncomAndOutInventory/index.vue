@@ -42,12 +42,12 @@
           v-if="categoryType == 'outbound_sale_send' || categoryType == 'inbound_sale_return'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="fhForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="fhForm.orderNo" placeholder="单号" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="fhForm.partnerName" placeholder="客户名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="fhForm.partnerName" placeholder="客户名称" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -72,12 +72,12 @@
           v-if="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="cgForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="cgForm.orderNo" placeholder="单号" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="cgForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="cgForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -101,12 +101,12 @@
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_external'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxshForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="wxshForm.orderNo" placeholder="单号" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -129,12 +129,12 @@
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_external_send'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxflForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="wxflForm.orderNo" placeholder="单号" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxflForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="wxflForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -158,7 +158,7 @@
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_pick_out'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable @keyup.enter.native="search()" />
+              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -172,7 +172,38 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable @keyup.enter.native="search()" />
+              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable @keyup.enter.native="getTabdataList()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="getTabdataList()">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+        <!-- 生产退料 查询 -->
+        <el-form @submit.native.prevent v-if="categoryType == 'inbound_return_materials'">
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="returnMaterForm.orderNo" placeholder="退料单号" clearable @keyup.enter.native="getTabdataList()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="returnMaterForm.receiveType" placeholder="退料类型" style="width: 100%;">
+                <el-option v-for="(item, index) in receiveTypeList" :key="index" :label="item.label"
+                  :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="returnMaterForm.partnerName" placeholder="退料人" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -213,9 +244,9 @@
           </div>
         </div>
         <!-- 销售发货通知单列表 -->
-        <JNPF-table v-loading="listLoading"  :data="fhTableList" v-show="categoryType == 'outbound_sale_send'"
-          custom-column ref="fhtabForm" :fixedNo="true" :setColumnDisplayList="fhcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
+        <JNPF-table v-loading="listLoading" :data="fhTableList" v-show="categoryType == 'outbound_sale_send'"
+          custom-column ref="fhtabForm" :fixedNO="true" :setColumnDisplayList="fhcolumnList">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'FHREFForm', fhFormVisible = true)">{{
@@ -226,7 +257,7 @@
           <el-table-column prop="partnerCode" label="客户编码" width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="客户名称" min-width="140" sortable="custom" />
           <el-table-column prop="deliverDate" label="发货日期" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="recipient" label="收件人" min-width="140" sortable="custom" />
+          <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
 
           <el-table-column prop="delivery" label="发货方式" min-width="140">
@@ -277,9 +308,9 @@
           </el-table-column>
         </JNPF-table>
         <!-- 销售退货货通知单列表 -->
-        <JNPF-table v-loading="listLoading"  :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
+        <JNPF-table v-loading="listLoading" :data="thTableList" v-show="categoryType == 'inbound_sale_return'"
           custom-column ref="thtabForm" :fixedNo="true" :setColumnDisplayList="thcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'THREFForm', thFormVisible = true)">{{
@@ -325,10 +356,10 @@
         { label: "外协退货", value: "outbound_external" }, -->
 
         <!-- 采购收/退货 -->
-        <JNPF-table v-loading="listLoading"   :data="cgTableList"
+        <JNPF-table v-loading="listLoading" :data="cgTableList"
           v-show="categoryType == 'outbound_purchase' || categoryType == 'inbound_purchase'" custom-column
           ref="cgthtabForm" :fixedNo="true" :setColumnDisplayList="cgthcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
@@ -365,9 +396,9 @@
         </JNPF-table>
 
         <!-- 外协收货 -->
-        <JNPF-table v-loading="listLoading"  :data="wxshTableList" v-show="categoryType == 'inbound_external'"
+        <JNPF-table v-loading="listLoading" :data="wxshTableList" v-show="categoryType == 'inbound_external'"
           custom-column ref="wxshtabForm" :fixedNo="true" :setColumnDisplayList="wxshthcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <!-- <el-link type="primary" v-if="categoryType == 'outbound_purchase'"
                 @click.native="viewFun(scope.row.id, 'look', 'CGTHREFForm', cgthFormVisible = true)">{{
@@ -400,9 +431,10 @@
           </el-table-column>
         </JNPF-table>
         <!-- 外协发料 -->
-        <JNPF-table v-loading="listLoading" :key="3" :data="wxflTableList" v-show="categoryType == 'outbound_external_send'"
-          custom-column ref="wxfltabForm" :fixedNo="true" :setColumnDisplayList="wxflcolumnList">
-          <el-table-column prop="orderNo" label="单号" min-width="140" sortable="custom">
+        <JNPF-table v-loading="listLoading" :key="3" :data="wxflTableList"
+          v-show="categoryType == 'outbound_external_send'" custom-column ref="wxfltabForm" :fixedNo="true"
+          :setColumnDisplayList="wxflcolumnList">
+          <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'WXFLREFForm', wxflFormVisible = true)">{{
@@ -413,7 +445,7 @@
           <el-table-column prop="partnerName" label="供应商名称" min-width="140" sortable="custom" />
           <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
           <el-table-column prop="deliverDate" label="发料日期" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="recipient" label="收件人" min-width="140" sortable="custom" />
+          <el-table-column prop="recipient" label="收件人" min-width="120" sortable="custom" />
           <el-table-column prop="phone" label="收件人电话" min-width="140" sortable="custom" />
           <el-table-column prop="delivery" label="发料方式" min-width="140" sortable="custom">
             <template slot-scope="scope">
@@ -454,7 +486,7 @@
         <!-- 装配/套圈领料 outbound_pick_out -->
         <JNPF-table v-loading="listLoading" :data="pickingTableList" v-show="categoryType == 'outbound_pick_out'"
           custom-column ref="picktabForm" :fixedNo="true" :setColumnDisplayList="pickcolumnList">
-          <el-table-column prop="orderNo" label="领料单号" min-width="140" sortable="custom">
+          <el-table-column prop="orderNo" label="领料单号" min-width="160" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary"
                 @click.native="viewFun(scope.row.id, 'look', 'PickREFForm', pickFormVisible = true)">{{
@@ -462,12 +494,12 @@
                 }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="receiveType" label="领料类型" min-width="140" sortable="custom"  >
+          <el-table-column prop="receiveType" label="领料类型" min-width="140" sortable="custom">
             <template slot-scope="scope">
-              <div>{{ scope.row.receiveType=='order'?'订单物料':"工序物料" }}</div>
+              <div>{{ scope.row.receiveType == 'order' ? '订单物料' : "工序物料" }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="productionOrderNo" label="任务单号" min-width="140" sortable="custom" />
+          <el-table-column prop="productionOrderNo" label="任务单号" min-width="160" sortable="custom" />
           <el-table-column prop="personName" label="领料人" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
           <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
@@ -481,7 +513,36 @@
           </el-table-column>
         </JNPF-table>
 
-
+        <!-- 装配/套圈退料 outbound_pick_out -->
+        <JNPF-table v-loading="listLoading" :data="returnMaterTableList"
+          v-show="categoryType == 'inbound_return_materials'" custom-column ref="returnMatertabForm" :fixedNo="true"
+          :setColumnDisplayList="returnMatercolumnList">
+          <el-table-column prop="orderNo" label="退料单号" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary"
+                @click.native="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true)">{{
+                  scope.row.orderNo
+                }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="receiveType" label="退料类型" min-width="120" sortable="custom">
+            <template slot-scope="scope">
+              <div>{{ scope.row.receiveType == 'order' ? '订单物料' : "工序物料" }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productionOrderNo" label="任务单号" min-width="160" sortable="custom" />
+          <el-table-column prop="personName" label="退料人" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
+          <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text"
+                @click="incomAndOutInventFun(scope.row, 'add', 'Form', 'returnMater')">入库</el-button>
+              <el-button size="mini" type="text"
+                @click="viewFun(scope.row.id, 'look', 'ReturnMaterREFForm', returnMaterFormVisible = true)">查看详情</el-button>
+            </template>
+          </el-table-column>
+        </JNPF-table>
 
 
         <pagination :total="fhTotal" :page.sync="fhForm.pageNum" :limit.sync="fhForm.pageSize"
@@ -500,6 +561,10 @@
         <pagination :total="pickTotal" :page.sync="pickForm.pageNum" :limit.sync="pickForm.pageSize"
           @pagination="getTabdataList" v-if="categoryType == 'outbound_pick_out'">
         </pagination>
+        <pagination :total="returnMaterTotal" :page.sync="returnMaterForm.pageNum"
+          :limit.sync="returnMaterForm.pageSize" @pagination="getTabdataList"
+          v-if="categoryType == 'inbound_return_materials'">
+        </pagination>
       </div>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
@@ -510,6 +575,7 @@
     <WXFLREFForm v-if="wxflFormVisible" ref="WXFLREFForm" @close="closeForm" />
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
     <PickForm v-if="pickFormVisible" ref="PickREFForm" @close="closeForm" />
+    <ReturnMaterREFForm v-if="returnMaterFormVisible" ref="ReturnMaterREFForm" @close="closeForm" />
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -534,16 +600,18 @@ import CGSHREFForm from "../../../warehouseManagement/finishedProductWarehouseMa
 import WXSHREFForm from '../../../receivingManagement/receiveGoodsByOutsourcing/receivingAdvice/Form.vue'
 import WXFLREFForm from "../../../outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue"
 import PickForm from "@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue"
+import ReturnMaterREFForm from "../../../productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue"
 import { WithdrawalList } from '@/api/productOrdes/index.js'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm },
+  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm, ReturnMaterREFForm },
   props: {
     classAttribute: "",
   },
   data() {
     return {
+      returnMaterFormVisible: false,
       thFormVisible: false,
       fhFormVisible: false,
       cgthFormVisible: false,
@@ -686,6 +754,29 @@ export default {
         superQuery: {},
       },
       pickingTableList: [],
+      returnMatercolumnList: ["createByName",],
+      
+      returnMaterTotal: 0,
+      returnMaterTableList: [],
+      returnMaterForm: {
+        receiveType: "",
+        orderNo: "",
+        personName: "",
+        productClassAttribute: "",
+        backFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {},
+        pageNum: 1,
+        pageSize: 20,
+      },
+
+
 
 
       defaultProps: {
@@ -880,6 +971,18 @@ export default {
           console.log("领料", res);
           this.pickingTableList = res.data.records
           this.pickTotal = res.data.total
+          this.listLoading = false
+        })
+      }
+      // 生产退料
+      if (this.categoryType == 'inbound_return_materials') {
+        this.listLoading = true
+        console.log(555);
+        this.returnMaterForm.productClassAttribute = this.classAttribute
+        WithdrawalList(this.returnMaterForm).then(res => {
+          console.log("退料", res);
+          this.returnMaterTableList = res.data.records
+          this.returnMaterTotal = res.data.total
           this.listLoading = false
         })
       }
@@ -1142,6 +1245,28 @@ export default {
         },
           this.getTabdataList()
       }
+      if (this.categoryType == 'inbound_return_materials') {
+        this.returnMaterForm = {
+          receiveType: "",
+          orderNo: "",
+          personName: "",
+          productClassAttribute: "",
+          backFlag: true,
+          orderItems: [{
+            asc: false,
+            column: ""
+          }, {
+            asc: false,
+            column: "create_time"
+          }],
+          superQuery: {},
+          pageNum: 1,
+          pageSize: 20,
+        }
+        this.getTabdataList()
+      }
+
+
     },
 
 
@@ -1150,10 +1275,10 @@ export default {
     viewFun(id, btnType, ref, visible) {
       console.log(id, btnType, ref, visible);
       this.$nextTick(() => {
-        if(ref=='picktabForm'){
-
-          this.$refs[ref].init(id, btnType,'pick')
-        }else{
+        if (ref == 'PickREFForm') {
+          console.log(666);
+          this.$refs[ref].init(id, btnType, 'pick')
+        } else {
           this.$refs[ref].init(id, btnType)
 
         }
@@ -1168,7 +1293,8 @@ export default {
       this.cgthFormVisible = false
       this.wxflFormVisible = false
       this.wxshFormVisible = false
-      this.pickFormVisible=false
+      this.pickFormVisible = false
+      this.returnMaterFormVisible = false
       if (isRefresh) {
         this.getStockMovelistFun()
       }
@@ -1324,5 +1450,9 @@ export default {
 
 .JNPF-common-head {
   padding: 11px 10px;
+}
+
+::v-deep .el-tabs__header {
+  margin-bottom: 0;
 }
 </style>

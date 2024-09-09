@@ -1,7 +1,7 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left">
-      <div class="JNPF-common-title">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" v-if="!leftFlag">
         <h2>工序分类</h2>
         <span class="options">
           <el-dropdown>
@@ -18,7 +18,7 @@
         <el-input placeholder="请输入" v-model="filterText" style="width:200px;margin:10px auto;display:block"
           suffix-icon="el-icon-search" clearable></el-input>
       </div>
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -30,6 +30,12 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
@@ -160,6 +166,7 @@ export default {
   components: { SuperQuery },
   data() {
     return {
+      leftFlag: false,
       filterText: '',
       superQueryVisible: false,
       superQueryJson: [
@@ -302,6 +309,9 @@ export default {
         })
       })
     },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
     filterNode(value, data) {
       if (!value) return true
       return data.name.indexOf(value) !== -1
@@ -312,7 +322,7 @@ export default {
       this.treeLoading = true
       this.listQuery.productCategoryId = '' // 重置数据类型id筛选
       let query = {
-        classAttribute: 'process',
+        type: 'process',
         pageNum: 1,
         pageSize: 20
       }

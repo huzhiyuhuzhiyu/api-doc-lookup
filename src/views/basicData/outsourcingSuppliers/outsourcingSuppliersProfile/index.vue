@@ -3,8 +3,8 @@
     <!-- <el-tabs v-model="activeName" @tab-click="handleClick" style="width: 100%;background-color: #fff;"> -->
     <!-- <el-tab-pane label="供应商页面" name="supplierPage" style="margin-bottom: 5px;height: 100%;"> -->
     <!-- <div class="JNPF-common-layout"> -->
-    <div class="JNPF-common-layout-left">
-      <div class="JNPF-common-title">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" v-if="!leftFlag">
         <h2>外协供应商分类</h2>
         <span class="options">
           <el-dropdown>
@@ -13,12 +13,14 @@
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
       </div>
 
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading">
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
         <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
           :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
           v-if="refreshTree" :filter-node-method="filterNode">
@@ -30,23 +32,29 @@
           </span>
         </el-tree>
       </el-scrollbar>
+      <div v-if="!leftFlag" class="retract " style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand " style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
     </div>
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <el-col :span="6">
             <el-form-item>
-              <el-input v-model="form.code" placeholder="请输入外协供应商编码" clearable />
+              <el-input v-model="form.code" placeholder="外协供应商编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
+              <el-input v-model="form.name" placeholder="名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
+              <el-input v-model="form.taxId" placeholder="税号" clearable />
             </el-form-item>
           </el-col>
 
@@ -58,10 +66,7 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-            icon="icon-ym icon-ym-report-icon-search-setting" @click="moreQueries()">
-            更多查询
-          </el-button>
+       
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -161,75 +166,7 @@
     <!-- </el-tabs> -->
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getcategoryTree" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="form" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="编码">
-              <el-input v-model="form.code" placeholder="请输入外协供应商编码" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="名称">
-              <el-input v-model="form.name" placeholder="请输入名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="税号">
-              <el-input v-model="form.taxId" placeholder="请输入税号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="负责人">
-              <el-input v-model="form.personResponsible" placeholder="请输入负责人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人">
-              <el-input v-model="form.contacts" placeholder="请输入联系人" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="电话">
-              <el-input v-model="form.phone" placeholder="请输入电话" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="手机号">
-              <el-input v-model="form.mobliePhone" placeholder="请输入手机号" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱">
-              <el-input v-model="form.email" placeholder="请输入邮箱" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="等级">
-              <el-select v-model="form.grade" placeholder="请选择等级" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in gradeList" :key="index" :label="item.fullName"
-                  :value="item.enCode"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="认定日期">
-              <el-date-picker v-model="form.customerRecognitionTime" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">
-          搜索
-        </el-button>
-      </span>
-    </el-dialog>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -376,9 +313,7 @@ export default {
           type: 'input'
         }
       ],
-      columnSetFun() {
-        this.$refs.dataTable.showDrawer()
-      },
+      leftFlag: false,
       title: '更多查询',
       background: true, //分页器背景颜色
       activeName: 'supplierPage',
@@ -473,6 +408,11 @@ export default {
     }
   },
   created() {
+    if (localStorage.getItem("outsourcingSuppliersFlag")) {
+      let roleFlag = JSON.parse(localStorage.getItem('outsourcingSuppliersFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getcategoryTree(true)
     this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -482,6 +422,21 @@ export default {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+    },
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("outsourcingSuppliersFlag", expands)
+      })
     },
     handleClick() { },
     moreQueries() {

@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       pageData: {
-        type: 'back_material', // 通知单类型
+        type: 'produce', // 通知单类型
         showRouting: true, // 是否显示工艺路线
         showProcess: true, // 是否显示工序
       }

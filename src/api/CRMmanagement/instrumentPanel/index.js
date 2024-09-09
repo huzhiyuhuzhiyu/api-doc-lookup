@@ -1,4 +1,19 @@
 import request from '@/utils/request'
+// 报表数据-仪表盘设置
+export function getcrmBiPosition() {
+  return request({
+    url: `/api/zgt/crmBiPosition/detail/1`,
+    method: 'GET'
+  })
+}
+// 报表数据-仪表盘设置修改
+export function updatecrmBiPosition(data) {
+  return request({
+    url: `/api/zgt/crmBiPosition/update`,
+    method: 'PUT',
+    data
+  })
+}
 //报表数据-仪表盘销售简报-列表
 export function getsaleskitList(data) {
   return request({
@@ -211,6 +226,22 @@ export function getportraitLevel(data) {
 export function getportraitSource(data) {
   return request({
     url: `/api/zgt/bi/rank/portraitSource`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-行程信息分析表
+export function gettravelInformationInfo(data) {
+  return request({
+    url: `/api/zgt/crmBi/travelInformationInfo`,
+    method: 'POST',
+    data
+  })
+}
+//报表数据-行程信息分析图
+export function gettravelInformation(data) {
+  return request({
+    url: `/api/zgt/crmBi/travelInformation`,
     method: 'POST',
     data
   })

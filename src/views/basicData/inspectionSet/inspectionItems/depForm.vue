@@ -13,7 +13,7 @@
         <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top"
           label-width="120px">
           <el-row :gutter="30">
-            <el-col :span="12">
+            <el-col :span="6">
 
               <el-form-item label="所属分类" prop="categoryIdText">
                 <ComSelectInspection :isdisabled="btntype ? true : false" v-model="dataForm.categoryIdText"
@@ -21,19 +21,19 @@
                   :requestObj="requestObj" :paramsObj="{}" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="检验项目名称" prop="name">
                 <el-input v-model="dataForm.name" placeholder="请输入检验项目名称" maxlength="50"
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="项目编码" prop="code">
                 <el-input v-model="dataForm.code" placeholder="请输入项目编码" maxlength="20"
                   :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="检验方式" prop="inspectionMethod">
                 <el-select v-model="dataForm.inspectionMethod" placeholder="请选择检验方式" style="width: 100%;"
                   :disabled="btntype ? true : false" @change="hangleWay">
@@ -42,7 +42,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="6">
               <el-form-item label="检验工具" prop="equipmentId">
                 <!-- <el-select v-model="dataForm.inspectionTools" placeholder="请选择检验方式" style="width: 100%;"
               :disabled="btntype ? true : false" @change="hangleWay">
@@ -56,13 +56,13 @@
                   :requestObj="requestObjTwo" :paramsObj="{}" />
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="dataForm.inspectionMethod == 'other'">
+            <el-col :span="6" v-if="dataForm.inspectionMethod == 'other'">
               <el-form-item label="检验要求" prop="inspectionBasis">
                 <el-input v-model="dataForm.inspectionBasis" placeholder="请输入检验要求" maxlength="200"
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
               <el-form-item label="正常值" prop="normalValue">
                 <!-- /^[^\u4e00-\u9fa5\uF900-\uFA2D\u0020-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E\.?[0-9]*$/ -->
                 <el-input v-model="dataForm.normalValue"
@@ -70,14 +70,14 @@
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
               <el-form-item label="最低值" prop="minimum">
                 <el-input v-model="dataForm.minimum" maxlength="20"
                   oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最低值"
                   :disabled="btntype ? true : false" />
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="dataForm.inspectionMethod == 'measure'">
+            <el-col :span="6" v-if="dataForm.inspectionMethod == 'measure'">
               <el-form-item label="最高值" prop="maximum">
                 <el-input v-model="dataForm.maximum" maxlength="20"
                   oninput="value = value.replace(/[^\w\s.]|[\u4E00-\u9FA5]/g, '')" placeholder="请输入最高值"

@@ -1343,7 +1343,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 10px;
   border-top: none !important;
 }
 
@@ -1360,13 +1360,6 @@ export default {
   height: calc(100% - 47px) !important;
   overflow: auto !important;
   /* padding: 0 20px; */
-}
-
-::v-deep .el-tabs__header {
-  /* padding-left: 10px !important; */
-  padding-bottom: 10px !important;
-  margin-bottom: 0 !important;
-  background: #fff;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
@@ -1404,5 +1397,8 @@ export default {
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
+}
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
 }
 </style>

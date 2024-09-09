@@ -41,7 +41,7 @@
                             " />
                         </el-form-item>
                       </el-col>
-                  
+
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="客户名称" prop="partnerName">
                           <!-- 供应商选择弹窗  -->
@@ -217,6 +217,19 @@
                     </div>
                   </el-form>
                 </el-collapse-item>
+                <el-collapse-item title="发料清单信息" name="materialInfo">
+                  <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
+                    id="table">
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
+                    <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
+                    <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
+                  </el-table>
+                </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
@@ -270,9 +283,11 @@ import {
 import { shipmentList } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import { purPurchaseOrderdetail } from '@/api/purchasingAndOutsourcingOrders/index'
 export default {
   components: {
-    changeAddress,Process
+    changeAddress,
+    Process
   },
   data() {
     return {
@@ -350,7 +365,7 @@ export default {
       tipsvisible: false,
       btnText: '',
       submitmethodsTitle: '',
-      activeNames: ['productInfo', 'basicInfo'],
+      activeNames: ['productInfo', 'basicInfo', 'materialInfo'],
       productList: [],
       productTotal: 0,
       tableloading: false,
@@ -371,10 +386,8 @@ export default {
         { label: '审批通过', value: 'ok' },
         { label: '审批拒绝', value: 'rebut' }
       ],
-      orderListfhfs: [
-        { label: '送货', value: 'deliver_goods' }
-      ],
-   
+      orderListfhfs: [{ label: '送货', value: 'deliver_goods' }],
+
       productRules: {
         deliveryQuantity: [
           { required: true, trigger: 'blur' },
@@ -496,7 +509,7 @@ export default {
         // shipperId: '',
         cooperativePartnerId: '',
         remark: '',
-        approvalFlag:false
+        approvalFlag: false
       },
       defaultAddress: '',
       parentId: '',
@@ -550,7 +563,7 @@ export default {
       },
       selectArr: [],
       flowTemplateJson: {},
-      flowData:{},
+      flowData: {}
     }
   },
   computed: {
@@ -1128,6 +1141,13 @@ export default {
           this.customerData = res.data.cooperativePartner
         })
       }
+      if (id) {
+        purPurchaseOrderdetail(id).then((res) => {
+          console.log(res, 'rews123')
+          this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+          this.dataFormTwo.data[0].outShipmentList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
+        })
+      }
       this.formLoading = true
       // this.getProvinceList()
       console.log('传递数据', btnType)
@@ -1135,49 +1155,7 @@ export default {
       this.btnType = btnType
       this.oldId = JSON.parse(JSON.stringify(id)) || ''
       this.oldType = JSON.parse(JSON.stringify(btnType))
-      if (this.dataForm.id) {
-        getQuotationsendlist(this.dataForm.id).then((res) => {
-          if (res.data.attachmentList) {
-            res.data.attachmentList.forEach((item) => {
-              this.datafilelist.push({
-                name: item.document.fullName,
-                fileSize: item.document.fileSize,
-                filename: item.document.filePath,
-                id: item.document.id,
-                url: item.url
-              })
-            })
-          }
-          this.dataForm = res.data.notice
-          this.dataForm.country = res.data.notice.country === '中国' ? 'CN' : res.data.notice.country
-          if (this.dataForm.country === 'CN') {
-            this.defaultAddress =
-              res.data.notice.region.provinceName +
-              res.data.notice.region.cityName +
-              res.data.notice.region.areaName +
-              res.data.notice.address
-          } else {
-            this.defaultAddress = res.data.notice.region.countryName + res.data.notice.address
-          }
-          if (this.btnType == 'copy') {
-            this.dataForm.stockStatus = ''
-            this.dataForm.inspectionStatus = ''
-            this.dataForm.id = ''
-            this.datafilelist = []
-            this.dataForm.approvalStatus = ''
-            this.dataForm.fullReceiptFlag = false
-            res.data.noticeLineList.forEach((item) => {
-              item.deliveryQuantity = ''
-            })
-            this.dataFormTwo.data = res.data.noticeLineList
 
-            console.log('this.dataFormTwo.data', this.dataFormTwo.data)
-          } else if (this.btnType == 'edit' || this.btnType == 'look') {
-            // this.dataFormTwo.data = res.data.noticeLineList
-            this.processingdata(res.data.noticeLineList)
-          }
-        })
-      }
       if (btnType == 'add' || btnType == 'copy') {
         const currentDate = new Date()
 
@@ -1241,7 +1219,7 @@ export default {
         // shipperId: '',
         cooperativePartnerId: '',
         remark: '',
-        approvalFlag:false,
+        approvalFlag: false
       }
       this.$refs.dataForm.resetFields()
       this.init('', 'add')
@@ -1250,9 +1228,11 @@ export default {
       this.$emit('close', true)
     },
     handleConfirm(value) {
+      console.log('oooooo')
       this.$refs['productForm'].validate((valid) => {
         this.iszhi = valid ? false : true
       })
+      console.log('jk')
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
@@ -1264,11 +1244,7 @@ export default {
             })
             return
           }
-
-          if (this.iszhi) {
-            this.iszhi = false
-            return
-          }
+          console.log(this.iszhi, 'zhi')
           // let eve = this.dataFormTwo.data.some(({ deliveryQuantity }) => {
           //   return deliveryQuantity < 1
           // })
@@ -1281,6 +1257,7 @@ export default {
           //   return
           // }
           if (value == 'submit') {
+            console.log('[[[]]]')
             this.dataForm.inspectionStatus = 'inspected'
           }
           if (this.datafilelist.length) {
@@ -1298,7 +1275,7 @@ export default {
             id: this.dataForm.id,
             remark: this.dataForm.remark,
             receiptLineList: [],
-            flowData:this.flowData
+            flowData: this.flowData
           }
           let obj = {
             attachmentList: this.datafilelist,
@@ -1491,24 +1468,26 @@ export default {
       })
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b031').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+    getBusInfo() {
+      getBusinessFlowInfo('b031')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        }else{
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(()=>{})
-    },    
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

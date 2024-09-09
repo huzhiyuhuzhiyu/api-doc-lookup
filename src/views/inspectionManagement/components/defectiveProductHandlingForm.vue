@@ -26,7 +26,7 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:0 15px">
+                    <el-row :gutter="30" style="padding:10px">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -34,7 +34,7 @@
                     </el-row>
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:0 15px">
+                    <el-row :gutter="30" style="padding:10px">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -68,7 +68,7 @@
                     <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
                   </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
-                <el-row :gutter="30" style="padding:0 15px">
+                <el-row :gutter="30" style="padding:10px">
                   <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                     :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                     @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -76,7 +76,7 @@
                 </el-row>
               </el-collapse-item>
               <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                <el-row :gutter="30" style="padding:0 15px">
+                <el-row :gutter="30" style="padding:10px">
                   <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                     :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                     @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -360,7 +360,7 @@ export default {
           type: 'input',
           itemDisabled: true,
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12
+          sm: 6
         },
         {
           prop: 'inspectionOrderNo',
@@ -369,7 +369,7 @@ export default {
           type: 'input',
           itemDisabled: true,
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12
+          sm: 6
         },
         {
           prop: 'inspectorId',
@@ -384,7 +384,7 @@ export default {
               this.$refs.dataForm.$refs.main.validateField('inspectorId')
             })
           },
-          sm: 12
+          sm: 6
         },
         {
           prop: 'inspectionDate',
@@ -393,7 +393,7 @@ export default {
           type: 'date',
           itemDisabled: true,
           itemRules: [{ required: true, trigger: 'change' }],
-          sm: 12
+          sm: 6
         },
 
         {
@@ -402,7 +402,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12,
+          sm: 6,
           itemDisabled: true,
           // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
@@ -412,7 +412,7 @@ export default {
           value: '',
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 12,
+          sm: 6,
           itemDisabled: true,
           // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         },
@@ -421,11 +421,11 @@ export default {
           label: '报检数量',
           value: '',
           type: 'input',
-          sm: 12,
+          sm: 6,
           itemDisabled: true,
           // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
         }
-        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
+        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
       ],
         this.inspectionInfo = [
           {
@@ -437,7 +437,7 @@ export default {
             itemDisabled: true,
             change: this.inspectionMethodChange,
             itemRules: [{ required: true, trigger: 'change' }],
-            sm: 12,
+            sm: 6,
             // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
             options: [
               { label: '免检', value: 'exempt' },
@@ -445,13 +445,13 @@ export default {
               { label: '全检', value: 'all' }
             ]
           },
-          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 12 },
+          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
           {
             prop: 'samplingQuantity',
             label: '检验数量',
             value: '',
             type: 'input',
-            sm: 12,
+            sm: 6,
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
             itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读'
           },
@@ -463,7 +463,7 @@ export default {
             options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
             change: this.inspectionResultsChange,
             itemRules: [{ required: true, trigger: 'change' }],
-            sm: 12,
+            sm: 6,
             itemDisabled: true
           },
           {
@@ -471,7 +471,7 @@ export default {
             label: '检验不合格数量',
             value: '',
             type: 'input',
-            sm: 12,
+            sm: 6,
             // render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
             itemDisabled: true
           },
@@ -484,7 +484,7 @@ export default {
             change: this.treatmentResultsChange,
             render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
             itemRules: [{ required: true, trigger: 'change' }],
-            sm: 12,
+            sm: 6,
             itemDisabled: this.dataForm.approvalStatus === 'ok' ? true : false
           },
           { prop: 'description', label: '处理说明', value: '', type: 'textarea' },
@@ -494,7 +494,7 @@ export default {
             label: '不合格数量',
             value: '',
             type: 'input',
-            sm: 12,
+            sm: 6,
             render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
             itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
           },
@@ -503,7 +503,7 @@ export default {
             label: '合格数量',
             value: '',
             type: 'input',
-            sm: 12,
+            sm: 6,
             render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
             itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
           }

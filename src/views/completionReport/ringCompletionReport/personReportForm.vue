@@ -36,7 +36,7 @@
                     <div>{{ scope.row.processingType == "self_produced" ? '自制' : "外协" }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="workGroupName" label="班组" min-width="120" sortable="custom" />
+                    <el-table-column prop="personName" label="人员" min-width="120" sortable="custom" /> 
                 <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom" />
                 <el-table-column prop="planEndDate" label="计划结束日期" min-width="180" sortable="custom" />
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
@@ -44,8 +44,6 @@
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
                 <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
-                <el-table-column prop="productionLineName" label="产线" min-width="120" sortable="custom" />
-                <el-table-column prop="workstationName" label="工位" min-width="120" sortable="custom" />
                 <el-table-column label="操作" width="180" fixed="right">
                   <template slot-scope="scope">
                     <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>

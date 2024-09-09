@@ -6,17 +6,20 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="退料单号" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.orderNo" placeholder="单号" @keyup.enter.native="search()" clearable />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.ordersNo" placeholder="外协订单号" @keyup.enter.native="search()" clearable />
+                <el-date-picker v-model="time" type="datetimerange" align="right" start-placeholder="开始日期"
+                  end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" :align="left">
+                </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="listQuery.shipperName" placeholder="业务员" @keyup.enter.native="search()" clearable />
+                <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                  clearable />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -32,25 +35,48 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
+          <div class="JNPF-common-head" style="padding:10px">
+            <div>
+              <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+                icon="el-icon-download" @click="exportForm">
+                导出
+              </el-button>
+            </div>
+            <div class="JNPF-common-head-right">
+              <el-tooltip content="高级查询" placement="top" v-if="true">
+                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                  @click="superQueryVisible = true" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                  @click="columnSetFun()" />
+              </el-tooltip>
+              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+              </el-tooltip>
+            </div>
+          </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            @sort-change="sortChange" custom-column>
-            <el-table-column prop="orderNo" label="退料单号" min-width="200" sortable="custom">
+            @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom"></el-table-column>
+            <el-table-column prop="receiveType" label="退料类型" min-width="110" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">
-                  {{ scope.row.orderNo }}
-                </el-link>
+                <div v-if="scope.row.receiveType == 'order'">订单物料</div>
+                <div v-if="scope.row.receiveType == 'process'">工序物料</div>
               </template>
             </el-table-column>
-            <el-table-column prop="ordersNo" label="外协订单号" min-width="200" />
-            <el-table-column prop="partnerName" label="客户名称" min-width="120" />
-            <el-table-column prop="shipperName" label="业务员" min-width="120" sortable="custom" />
-            <el-table-column prop="deliverDate" label="退料日期" width="180" />
+            <el-table-column prop="operationDate" label="退料日期" width="180" sortable="custom" />
+            <el-table-column prop="personName" label="退料人" min-width="200" sortable="custom" />
+            <el-table-column prop="productionOrderNo" label="任务单号" min-width="200" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="70" />
+            <el-table-column prop="num" label="退料数量" min-width="110" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="120" />
-            <el-table-column prop="remark" min-width="200" label="备注" />
+            <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
             <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row.id)" editText="检验" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row)" editText="检验" :hasDel="false">
                   <el-dropdown hide-on-click>
                     <span class="el-dropdown-link">
                       <el-button type="text" size="mini">
@@ -59,7 +85,7 @@
                       </el-button>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">
+                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, true)">
                         查看详情
                       </el-dropdown-item>
                     </el-dropdown-menu>
@@ -76,6 +102,10 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
+      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
@@ -84,19 +114,94 @@ import { WithdrawalList, deleteWithdrawal, WithdrawalmxList } from '@/api/produc
 import Form from '../components/inspectionNoticeForm.vue'
 // import DetailForm from '@/views/externalProcessManagement/outsourceMaterial/outsourcingReturnMaterial/Form.vue'
 import DetailForm from './DetailForm.vue'
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { excelExport } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
-  components: { Form, DetailForm },
+  components: { Form, DetailForm, SuperQuery, ExportForm },
   data() {
     return {
       detailFormVisible: false,
       activeName: 'dataTable',
+      exportFormVisible: false,
+      superQueryVisible: false,
+      superQueryJson: [
+        {
+          prop: 'orderNo',
+          label: '单号',
+          type: 'input'
+        },
+        {
+          prop: 'receiveType',
+          label: '退料类型',
+          type: 'select',
+          options: [{ label: '订单物料', value: 'order' }, { label: '工序物料', value: 'process' }]
+        },
+
+        {
+          prop: 'operationDate',
+          label: '退料日期',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'personName',
+          label: '退料人',
+          type: 'input'
+        },
+        {
+          prop: 'productionOrderNo',
+          label: '任务单号',
+          type: 'input'
+        },
+        {
+          prop: 'productDrawingNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
+          prop: 'productCode',
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'mainUnit',
+          label: '单位',
+          type: 'select'
+        },
+        {
+          prop: 'num',
+          label: '退料数量',
+          type: 'input'
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
+        }
+      ],
+      columnList: ['personName', 'productionOrderNo', 'productCode', 'createByName'],
       tableData: [],
       listLoading: false,
       listQuery: {},
+      time: null,
       initListQuery: {
         // approvalStatus: 'ok', // 审批状态
         documentStatus: 'submit', // 单据状态
         inspectionStatus: 'unInspect', // 检验状态 待检验 unInspect、已检验 inspected
+        notifyType: 'back',
         orderItems: [
           {
             asc: false,
@@ -130,7 +235,59 @@ export default {
     this.initData()
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
+        }
+        console.log(includeFieldMap)
+        let _data = {
+          ...this.listQuery,
+          exportType: '1073',
+          exportName: '采购待检收货单',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
+          totalRowFlag: true
+        }
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
+      }
+    },
+    superQuerySearch(query) {
+      this.orderForm.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+
     initData() {
+      if (this.time) {
+        this.listQuery.operationSd = this.time[0]
+        this.listQuery.operationEd = this.time[1]
+      } else {
+        this.listQuery.operationSd = ''
+        this.listQuery.operationEd = ''
+      }
       this.listLoading = true
 
       WithdrawalmxList(this.listQuery)
@@ -158,16 +315,16 @@ export default {
 
       this.search()
     },
-    addOrUpdateHandle(id, readOnly) {
+    addOrUpdateHandle(row, readOnly) {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(id, 'look')
+          this.$refs.DetailForm.init(row.id, 'look')
         })
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(id, readOnly, 'back_material', 'notice')
+          this.$refs.Form.init(row, readOnly, 'produce', 'notice', 'QCDH')
         })
       }
     },

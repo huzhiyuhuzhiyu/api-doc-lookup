@@ -12,6 +12,9 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
+          <div style="min-width: 104px;">
+            <el-button class="btnBox" :class="{'is-reverse':listQuery.privateFlag==1}" size="mini" @click="btnsearch()">我的线索</el-button>
+          </div>
           <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
             <div v-if="programmelist.length">
               <span class="text">方案：</span>
@@ -131,7 +134,7 @@
     <programme :programmefrom="programmefrom" @superQuery="superQuerySearch"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="refreshDataList" />
-    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList"/>
+    <depForm v-if="clueVisible" ref="depForm" @close="cluerefreshDataList" />
     <el-upload action="#" v-show="false" accept=".xls, .xlsx" :headers="{ token }" ref="UploadProduct" :http-request="UploadProduct" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
@@ -653,6 +656,11 @@ export default {
           })
         })
       }).catch(() => { })
+    },
+    btnsearch() {
+      this.$set(this.listQuery, 'privateFlag', 1)
+      this.listQuery.pageNum = 1
+      this.initData()
     },
     search() {
       this.listQuery.pageNum = 1

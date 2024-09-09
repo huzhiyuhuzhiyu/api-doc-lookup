@@ -25,10 +25,10 @@
               </div>
               <div class="table-content" v-loading="listLoading">
                 <div class="handle-bar">
-                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
+                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
-                  <JNPF-table show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+                  <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
                     <el-table-column prop="realName" label="姓名" min-width="120" />
                     <el-table-column prop="cycle" label="平均成交周期(天)" min-width="150" />
                     <el-table-column prop="customerNum" label="成交客户数" min-width="150" />
@@ -59,10 +59,10 @@
               </div>
               <div class="table-content" v-loading="listLoading">
                 <div class="handle-bar">
-                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
+                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm2" :disabled="!tableList2.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
-                  <JNPF-table show-summary :summary-method="getSummaries" :data="tableList2" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
+                  <JNPF-table ref="tabForm2" show-summary :summary-method="getSummaries" :data="tableList2" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
                     <el-table-column prop="type" label="地区" min-width="120" />
                     <el-table-column prop="cycle" label="平均成交周期(天)" min-width="150" />
                     <el-table-column prop="customerNum" label="成交客户数" min-width="150" />
@@ -93,7 +93,7 @@
               </div>
               <div class="table-content" v-loading="listLoading">
                 <div class="handle-bar">
-                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
+                  <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm3" :disabled="!tableList3.length">导出</el-button>
                 </div>
                 <div style="height: 400px;">
                   <JNPF-table show-summary :summary-method="getSummaries" :data="tableList3" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
@@ -109,21 +109,30 @@
       </div>
 
     </div>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" :exportHidden="true" />
+    <ExportForm v-if="exportFormVisible2" ref="exportForm2" @download="download2" :exportHidden="true" />
+    <ExportForm v-if="exportFormVisible3" ref="exportForm3" @download="download3" :exportHidden="true" />
   </div>
 </template>
 
 <script>
+import { excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters } from 'vuex'
 import { getcustomerRecordStats, getproductCycle, getcustomerRecordInfo, getemployeeCycle, getemployeeCycleInfo, getdistrictCycle } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
   components: {
+    ExportForm,
     selectdate,
     selectdepartment
   },
   data() {
     return {
+      exportFormVisible: false,
+      exportFormVisible2: false,
+      exportFormVisible3: false,
       activeName: 'ygkhcjzq',
       chartLoading: false,
       listLoading: false,
@@ -169,6 +178,93 @@ export default {
     window.onresize = null
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.tabForm.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.dataForm,
+          exportType: '1215',
+          exportName: '员工客户成交周期分析',
+          includeFieldMap,
+          pageSize: -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
+    // 导出
+    exportForm2() {
+      this.exportFormVisible2 = true
+      let columnList = this.$refs.tabForm2.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm2.init(columnList) })
+    },
+    download2(data) {
+      if (data) {
+        this.exportFormVisible2 = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.dataForm2,
+          exportType: '1218',
+          exportName: '地区成交周期分析',
+          includeFieldMap,
+          pageSize: -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
+    // 导出
+    exportForm3() {
+      this.exportFormVisible3 = true
+      let columnList = this.$refs.tabForm3.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm3.init(columnList) })
+    },
+    download3(data) {
+      if (data) {
+        this.exportFormVisible3 = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.dataForm3,
+          exportType: '1219',
+          exportName: '产品成交周期分析',
+          includeFieldMap,
+          pageSize: -1,
+          totalRowFlag: true,
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
     // 切换table
     handleClick(tab, event) {
       this.initData(tab.name)

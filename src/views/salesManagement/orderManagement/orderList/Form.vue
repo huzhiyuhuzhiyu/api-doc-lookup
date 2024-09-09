@@ -3163,7 +3163,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 5px
 }
 
 
@@ -3275,4 +3275,5 @@ export default {
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
+ 
 </style>

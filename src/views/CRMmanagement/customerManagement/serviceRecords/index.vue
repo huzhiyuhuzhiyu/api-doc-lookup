@@ -13,6 +13,9 @@
             <el-button icon="el-icon-refresh-right" @click="reset()" class="commonBox">{{$t('common.reset')}}
             </el-button>
           </div>
+          <div style="min-width: 136px;">
+            <el-button class="btnBox" :class="{'is-reverse':listQuery.privateFlag==1}" size="mini" @click="btnsearch()">我的跟进记录</el-button>
+          </div>
           <div ref="programmes" style="flex:1;overflow: auto;white-space: nowrap;">
             <div v-if="programmelist.length">
               <span class="text">方案：</span>
@@ -48,24 +51,28 @@
             </div>
           </div>
           <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" custom-column>
-            <el-table-column prop="serviceDescription" label="跟进内容" sortable="custom" min-width="180" />
-            <el-table-column prop="nextTime" label="下次联系时间" sortable="custom" min-width="180" />
-            <el-table-column prop="visitForm" label="跟进方式" sortable="custom" min-width="180" />
-            <el-table-column prop="visitPlanName" label="拜访计划" sortable="custom" min-width="180" />
-            <el-table-column prop="name" label="相关客户" sortable="custom" min-width="180" />
-            <el-table-column prop="contactsName" label="相关联系人" sortable="custom" min-width="180" />
-            <el-table-column prop="businessName" label="相关商机" sortable="custom" min-width="180" />
-            <el-table-column prop="contractNo" label="相关合同" sortable="custom" min-width="180" />
-            <el-table-column prop="receivablesNo" label="相关回款" sortable="custom" min-width="180" />
+            <el-table-column prop="serviceDescription" label="跟进内容" min-width="180" />
+            <el-table-column prop="nextTime" label="下次联系时间" min-width="180" />
+            <el-table-column prop="visitForm" label="跟进方式" min-width="180">
+              <template slot-scope="scope">
+                {{visitFormListfaction(scope.row.visitForm)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="visitPlanName" label="拜访计划" min-width="180" />
+            <el-table-column prop="name" label="相关客户" min-width="180" />
+            <el-table-column prop="contactsName" label="相关联系人" min-width="180" />
+            <el-table-column prop="businessName" label="相关商机" min-width="180" />
+            <el-table-column prop="contractNo" label="相关合同" min-width="180" />
+            <el-table-column prop="receivablesNo" label="相关回款" min-width="180" />
             <!-- <el-table-column prop="name1" label="相关产品" sortable="custom" min-width="180" /> -->
-            <el-table-column prop="recordsValid" label="跟进类型" sortable="custom" min-width="180">
+            <el-table-column prop="recordsValid" label="跟进类型" min-width="180">
               <template slot-scope="scope">
                 <div v-if="scope.row.recordsValid=='0'"><el-tag type="danger">无效跟进</el-tag></div>
                 <div v-else-if="scope.row.recordsValid=='1'"><el-tag type="success">有效跟进</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createUserName" label="有效跟进人" sortable="custom" min-width="180" />
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
+            <el-table-column prop="ownerName" label="跟进人" min-width="180" />
+            <el-table-column prop="createTime" label="创建时间" min-width="180" />
             <el-table-column prop="createByName" label="创建人" min-width="100" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
@@ -109,7 +116,7 @@
 </template>
 
 <script>
-
+import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import programme from "@/views/CRMmanagement/components/programme.vue";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
@@ -187,7 +194,7 @@ export default {
         },
         {
           prop: 'createUserName',
-          label: "有效跟进人",
+          label: "跟进人",
           type: 'input'
         },
         { // 日期时间选择器（区间）
@@ -240,6 +247,8 @@ export default {
       listQuery: {},
       total: 0,
       formVisible: false,
+      visitFormList: [],
+      travelModeList: []
     }
   },
   computed: {
@@ -248,6 +257,7 @@ export default {
     }
   },
   created() {
+    this.getDictionaryType()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.initData()
   },
@@ -258,6 +268,56 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    visitFormListfaction(val) {
+      let _data = this.visitFormList.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
+    },
+    getDictionaryType() {
+      getDictionaryType().then(res => {
+        let data = res.data.list
+        data.forEach(item => {
+          if (item.enCode == "partnerArchives") {
+            let children = item.children
+            children.forEach(resp => {
+              if (resp.enCode == "Followupform") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.visitFormList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'visitForm') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+              if (resp.enCode == "Travelmode") {
+                let id = resp.id;
+                let obj = {
+                  keyword: '',
+                  isTree: 0
+                }
+                getDictionaryDataList(id, obj).then(response => {
+                  this.travelModeList = response.data.list
+                  this.superQueryJson.forEach(item => {
+                    if (item.prop == 'travelMode') {
+                      item.options = response.data.list.map(o => {
+                        return { label: o.fullName, value: o.enCode }
+                      })
+                    }
+                  })
+                })
+              }
+            })
+          }
+        })
+      })
+    },
     recordsValidactive() {
       if (!this.recordsValid && this.recordsValid !== 0) return this.$message.error('请选择跟进类型')
       let a = {
@@ -354,6 +414,11 @@ export default {
         this.keyword = ''
         this.initData()
       }
+    },
+    btnsearch() {
+      this.$set(this.listQuery, 'privateFlag', 1)
+      this.listQuery.pageNum = 1
+      this.initData()
     },
     search() {
       this.listQuery.pageNum = 1

@@ -18,8 +18,8 @@
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
             <el-tab-pane label="基本信息" name="orderInfo">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo">
+              <el-collapse v-model="activeNames"  >
+                <el-collapse-item title="任务信息" name="basicInfo" class="orderInfo" >
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
@@ -56,6 +56,15 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="产线" prop="productionLineId">
+                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
+                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
@@ -135,7 +144,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="工序信息" name="productInfo">
+                <el-collapse-item title="工序信息" name="productInfo" style="border-bottom: 1px solid #dcdfe6 !important;">
                   <div>
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -187,10 +196,9 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productionLineId" label="产线" min-width="160">
+                      <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
                         <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择产线"  /> -->
                           <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
@@ -200,14 +208,13 @@
                       </el-table-column>
                       <el-table-column prop="workstationId" label="工位" min-width="160">
                         <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择工位" /> -->
                           <el-select v-model="scope.row.workstationId" placeholder="请选择工位"
                             :disabled="!scope.row.productionLineId" clearable @focus="selectworkstation(scope.row)">
                             <el-option v-for="(item, index) in workstationList" :key="index"
                               :label="item.workstationIdName" :value="item.workstationId"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -241,7 +248,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="领料信息" name="annex">
-              <el-collapse v-model="activeNames2">
+              <el-collapse v-model="activeNames2" style="margin-top: 5px;">
                 <el-collapse-item title="基本信息" name="pickbasicInfo" class="orderInfo" v-if="allocationFlag">
                   <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                     label-position="top">
@@ -424,8 +431,9 @@
 
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
-          <el-row class="JNPF-common-search-box" :gutter="5" >
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
+          @close="detailDiaFlag = false">
+          <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
                 <el-form-item>
@@ -537,7 +545,7 @@ export default {
         { label: "自动扣减料", value: "auto" },
         { label: "都不是", value: "none" },
       ],
-      workOrderList:false,
+      workOrderList: false,
       getBimProcessList,
       ProductMethodArr: [
         {
@@ -635,6 +643,7 @@ export default {
         remark: "",
         bomId: "",
         drawingNo: "",
+        productionLineId:"",
       },
       dataFormTwo: {
         data: [],
@@ -660,7 +669,7 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量不能为空",(errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`返工生产数量${errMsg}`) }), trigger: 'blur' },
         ],
@@ -702,9 +711,9 @@ export default {
       selectProcessArr: [],
       selectRows: [],
       currentProductIndex: "",
-      isSame:false,
-      previousroutingId:"",
-      detailDiaFlag:false,
+      isSame: false,
+      previousroutingId: "",
+      detailDiaFlag: false,
     }
   },
   computed: {
@@ -1386,7 +1395,7 @@ export default {
 
           if (this.allocationFlag) {
             this.dataForm.materialFlag = true
-          }else{
+          } else {
             this.dataForm.materialFlag = false
 
           }
@@ -1593,11 +1602,13 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 0px;
   border-top: none !important;
 
 }
-
+.orderInfo ::v-deep.el-collapse-item__wrap{
+  padding: 0 10px;
+}
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
@@ -1619,7 +1630,10 @@ $footerPadding: '10px';
   margin-top: 43px;
   display: inline-block;
 }
-
+.orderInfo{
+  margin-top: 5px;
+  border-top: 0;
+}
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }

@@ -67,29 +67,28 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="image" label="二维码" align="center" width="150" height="150">
+          <el-table-column prop="image" label="二维码" align="center" width="100" height="50">
             <template slot-scope="scope">
               <el-popover placement="top-start" trigger="click">
                 <!--trigger属性值：hover、click、focus 和 manual-->
                 <a :href="scope.row.image" target="_blank" title="查看最大化图片">
-                  <img :src="scope.row.image" style="width: 500px;height: 100px" />
+                  <vue-qr :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
+                    :text="scope.row.code" />
                 </a>
-                <img slot="reference" :src="scope.row.image" style="width: 100px;height: 100px; cursor:pointer" />
+                <img slot="reference" :src="scope.row.image" style="width: 50px;height: 50px; cursor:pointer" />
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="state" label="状态" width="80">
+          <el-table-column prop="state" label="状态" min-width="80">
             <template slot-scope="scope">
               <div v-if="scope.row.state == 'enable'">启用</div>
               <div v-if="scope.row.state == 'disabled'">禁用</div>
             </template>
           </el-table-column>
           <el-table-column prop="position" label="位置" min-width="120"></el-table-column>
-          <!-- <el-table-column prop="goodsShelvesNum" label="货架数" width="100" />
-          <el-table-column prop="goodsAllocationNum" label="库位数" width="100" /> -->
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" min-width="270" fixed="right">
+          <el-table-column label="操作" width="260" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
@@ -100,20 +99,10 @@
                 <el-button v-else type="text" size="mini" @click="offHandle(scope.row, 'disabled')">
                   禁用仓库
                 </el-button>
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}
-                      <i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
+                <el-button type="text" size="mini"
+                  @click="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
+                  查看详情
+                </el-button>
               </tableOpts>
             </template>
           </el-table-column>
@@ -133,9 +122,10 @@ import { getWarehouseList, deleteWarehouse, BuildQRCode, editWarehouseState } fr
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
+import VueQr from 'vue-qr'
 export default {
   name: 'warehouseArchives',
-  components: { Form, SuperQuery },
+  components: { Form, SuperQuery, VueQr },
   data() {
     return {
       superQueryVisible: false,
@@ -247,7 +237,7 @@ export default {
     setTableIndex(arr, index) {
       arr.forEach((item, key) => {
         item.index = key + 1
-        item.image = require('../../../../assets/images/zgt.png')
+        item.image = require('@/assets/images/scanCode.svg')
         if (index) {
           item.index = index + 1
         }

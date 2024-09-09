@@ -8,13 +8,16 @@
     </template>
     <div style="padding:10px;">
       <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :type="dataForm.type" :rules="dataRule"
-        label-position="top" label-width="120px">
+        label-position="top" label-width="120px" hide-required-asterisk="fasle">
         <el-form-item label="上级分类" prop="parentName">
           <ComSelect-list :isdisabled="dataForm.id ? true : false" v-model="dataForm.parentName" placeholder="请选择上级分类"
             auth @change="onOrganizeChange" :title="'选择上级分类'" :method="getcategoryTree" :requestObj="requestObjTwo"
             :paramsObj="{}" />
         </el-form-item>
         <el-form-item label="分类名称" prop="name">
+          <template slot="label">
+            分类名称<span class="required">*</span>
+          </template>
           <el-input v-model="dataForm.name" placeholder="请输入分类名称" maxlength="20" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -168,3 +171,15 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+.required {
+  color: red;
+  margin-left: 4px;
+}
+</style>

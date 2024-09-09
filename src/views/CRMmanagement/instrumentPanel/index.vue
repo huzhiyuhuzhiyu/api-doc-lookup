@@ -2,7 +2,7 @@
   <div class="JNPF-common-layout crmDashboard">
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="crm-workbench__hd">
-        <div class="el-dropdown" @click="aaaa">
+        <div class="el-dropdown">
           CRM仪表盘
         </div>
       </div>
@@ -20,20 +20,20 @@
       <div style="padding-top:16px;">
         <flexbox :Requestparameters="dataForm"></flexbox>
       </div>
-      <div class="vux-flex-row section vux-flexbox1">
+      <div class="vux-flex-row section vux-flexbox1" v-loading="mainloading">
         <div class="left">
-          <draggable v-model="list" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list" :key="item.id" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
+          <draggable v-model="summarylist.leftList" @start="drag=true" @end="onEnd" group="arr">
+            <chartlist v-for="item in summarylist.leftList" :key="item.typeChart" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
         <div class="right">
-          <draggable v-model="list1" @start="drag=true" @end="drag=false" group="arr">
-            <chartlist v-for="item in list1" :key="item.id" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
+          <draggable v-model="summarylist.rightList" @start="drag=true" @end="onEnd" group="arr">
+            <chartlist v-for="item in summarylist.rightList" :key="item.typeChart" :type="item.typeChart" :Requestparameters="dataForm"></chartlist>
           </draggable>
         </div>
       </div>
     </div>
-    <el-dialog title="仪表盘模块设置" :visible.sync="dialogVisible" width="30%" custom-class="no-padding-dialog" :close-on-click-modal="false">
+    <el-dialog title="仪表盘模块设置" :visible.sync="dialogVisible" width="650px" custom-class="no-padding-dialog" :close-on-click-modal="false">
       <div class="handle-box">
         <div class="reminder-wrapper">
           <div class="vux-flexbox reminder-body vux-flex-row">
@@ -43,18 +43,18 @@
         </div>
         <div class="vux-flexbox section vux-flex-row">
           <div class="left">
-            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.left" :key="index">
+            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.slice(0, 3)" :key="index">
               <div style="flex:1;">{{item.name}}</div>
               <div>
-                <el-switch v-model="item.value"></el-switch>
+                <el-switch v-model="item.isHidden"></el-switch>
               </div>
             </div>
           </div>
           <div class="right">
-            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.right" :key="index">
+            <div class="vux-flexbox sort-item vux-flex-row" v-for="(item,index) in crmlist.slice(3)" :key="index">
               <div style="flex:1;">{{item.name}}</div>
               <div>
-                <el-switch v-model="item.value"></el-switch>
+                <el-switch v-model="item.isHidden"></el-switch>
               </div>
             </div>
           </div>
@@ -62,12 +62,13 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="submitSettings">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 <script>
+import { getcrmBiPosition, updatecrmBiPosition } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "@/views/CRMmanagement/reportAnalysis/components/selectdate";
 import selectdepartment from "@/views/CRMmanagement/reportAnalysis/components/selectdepartment";
 import { mapGetters } from 'vuex'
@@ -84,18 +85,15 @@ export default {
   },
   data() {
     return {
-      crmlist: {
-        left: [
-          { name: '合同/回款金额目标及完成情况', value: false },
-          { name: '排行榜', value: false },
-          { name: '销售漏斗', value: false }
-        ],
-        right: [
-          { name: '数据汇总', value: false },
-          { name: '业绩指标完成率', value: false },
-          { name: '遗忘提醒', value: false }
-        ]
-      },
+      mainloading: false,
+      crmlist: [
+        { name: '合同/回款金额目标及完成情况', typeChart: 'contractAmount', isHidden: false },
+        { name: '排行榜', typeChart: 'rankingList', isHidden: false },
+        { name: '销售漏斗', typeChart: 'salesFunnel', isHidden: false },
+        { name: '数据汇总', typeChart: 'dataSummary', isHidden: false },
+        { name: '目标完成率', typeChart: 'targetCompletionRate', isHidden: false },
+        { name: '客户遗忘提醒', typeChart: 'forgettingReminder', isHidden: false }
+      ],
       dialogVisible: false,
       dataForm: {
         startTime: "",
@@ -105,27 +103,88 @@ export default {
         daterangecontent: '',
         personnelcontent: ''
       },
-      list: [
-        { name: '合同金额目标及完成情况', id: '1', typeChart: 'contractamount' },
-        { name: '排行榜', id: '2', typeChart: 'rankinglist' },
-        { name: '销售漏斗', id: '3', typeChart: 'salesfunnel' }
-      ],
-      list1: [
-        { name: '数据汇总', id: '11', typeChart: 'datasummary' },
-        { name: '目标完成率', id: '22', typeChart: 'targetcompletionrate' },
-        { name: '客户遗忘提醒', id: '33', typeChart: 'forgettingreminder' }
-      ]
+      summarylist: {
+        leftList: [
+          { name: '合同/回款金额目标及完成情况', typeChart: 'contractAmount' },
+          { name: '排行榜', typeChart: 'rankingList' },
+          { name: '销售漏斗', typeChart: 'salesFunnel' }
+        ],
+        rightList: [
+          { name: '数据汇总', typeChart: 'dataSummary' },
+          { name: '目标完成率', typeChart: 'targetCompletionRate' },
+          { name: '客户遗忘提醒', typeChart: 'forgettingReminder' }
+        ]
+      }
     }
   },
   created() {
     this.dataForm.userIds = [this.userInfo.userId]
+    this.crmModulesettings()
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    aaaa() {
-      console.log(this.list, this.list1, '11111111+++');
+    //拖拽后事件
+    onEnd() {
+      updatecrmBiPosition(this.summarylist).then(res => {
+        this.$message({
+          message: '更改成功',
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.dialogVisible = false
+            this.crmModulesettings()
+          }
+        })
+      })
+    },
+    // 查找函数
+    findMatchingObjects(objArray1, objArray2, key) {
+      objArray1.forEach(obj1 => {
+        objArray2.forEach(obj2 => {
+          if (obj2[key] === obj1[key]) {
+            obj1.isHidden = obj2.isHidden
+          }
+        })
+      }
+      );
+      return objArray1
+    },
+    //仪表盘模块设置
+    submitSettings() {
+      let left = this.findMatchingObjects(this.summarylist.leftList, this.crmlist, 'typeChart')
+      let right = this.findMatchingObjects(this.summarylist.rightList, this.crmlist, 'typeChart')
+      updatecrmBiPosition({ leftList: left, rightList: right }).then(res => {
+        this.$message({
+          message: '保存成功',
+          type: 'success',
+          duration: 1500,
+          onClose: () => {
+            this.dialogVisible = false
+            this.crmModulesettings()
+          }
+        })
+      })
+    },
+    crmModulesettings() {
+      this.mainloading = true
+      getcrmBiPosition().then(res => {
+        let leftList = res.data.leftList.filter(item => item.isHidden)
+        let rightList = res.data.rightList.filter(item => item.isHidden)
+        this.summarylist = { leftList, rightList }
+        this.mainloading = false
+        let arr = [...leftList, ...rightList]
+        this.crmlist.forEach(item => {
+          const match = arr.find(obj => obj.typeChart === item.typeChart);
+          if (match) {
+            item.isHidden = true
+          } else {
+            item.isHidden = false
+          }
+          return item
+        });
+      })
     },
     depinputcontent(value) {
       this.dataForm.personnelcontent = value

@@ -42,7 +42,7 @@
           </div>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" v-if="true">
+            <el-tooltip content="高级查询" placement="top" >
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
             </el-tooltip>
@@ -77,6 +77,10 @@
               <div v-if="scope.row.sourceType == 'outbound_external'">外协退货</div>
               <div v-if="scope.row.sourceType == 'inbound_other'">直接入库</div>
               <div v-if="scope.row.sourceType == 'outbound_other'">直接出库</div>
+              <div v-if="scope.row.sourceType == 'outbound_transfer'">调拨出库</div>
+              <div v-if="scope.row.sourceType == 'inbound_transfer'">调拨入库</div>
+              <div v-if="scope.row.sourceType == 'inbound_receive_material'">直接领料入库</div>
+              <div v-if="scope.row.sourceType == 'outbound_receive_material'">直接领料出库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -932,13 +936,7 @@ export default {
       })
     },
 
-    // 写记录
-    handleRecord(row) {
-      this.recordFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.RecordForm.init(row.id)
-      })
-    },
+     
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -953,21 +951,7 @@ export default {
         })
       }).catch(() => { })
     },
-    releaseFun() {
-      if (this.selectData.length) {
-        let idList = this.selectData.map(item => item.id)
-        releasePartner(idList).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "释放成功",
-            duration: 1500,
-          })
-        }).catch(() => { })
-      } else {
-        this.$message.warning('请选择您要释放的客户数据！')
-      }
-    },
+    
   }
 }
 </script>

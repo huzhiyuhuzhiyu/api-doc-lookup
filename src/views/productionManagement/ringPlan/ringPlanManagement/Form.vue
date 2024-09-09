@@ -84,7 +84,14 @@
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="产线" prop="productionLineId">
+                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
+                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
+                              :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
@@ -190,7 +197,8 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
-              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"
+                style="margin-top: 10px;"></UploadWj>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -403,6 +411,7 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
+        productionLineId:"",
       },
       dataFormTwo: {
         data: [],
@@ -1011,7 +1020,7 @@ $footerPadding: '10px';
 }
 
 .orderInfo {
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
 .orderInfo ::v-deep .el-collapse-item__wrap {

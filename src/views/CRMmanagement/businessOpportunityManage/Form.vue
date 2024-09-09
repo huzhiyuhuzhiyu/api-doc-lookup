@@ -11,7 +11,7 @@
       </div>
       <div class="main">
         <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="jcInfo">
+          <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
@@ -128,7 +128,7 @@
                 </div>
               </el-collapse-item>
             </el-collapse>
-          </el-tab-pane>
+          <!-- </el-tab-pane> -->
         </el-tabs>
       </div>
       <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" dialogTitle="选择产品" treeTitle="产品分类" :methodArr="ProductMethodArr" :listMethod="getcrmProductlist" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :treeNodeClick="ProductTreeNodeClick" :elementShow="false" multiple />

@@ -89,7 +89,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="里程数(km)" prop="mileage">
-                        <el-input v-model="informationForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
+                        <el-input v-model="informationForm.mileage" @change="handleDownload" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
@@ -104,26 +104,14 @@
                         <el-input v-model="informationForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
+                    <el-col :sm="8" :xs="24">
                       <el-form-item label="现场照片" prop="visitPhoto">
-                        <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
-                          <i slot="default" class="el-icon-plus"></i>
-                          <div slot="file" slot-scope="{file}">
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-                            <span class="el-upload-list__item-actions">
-                              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                                <i class="el-icon-zoom-in"></i>
-                              </span>
-                              <span class="el-upload-list__item-delete" @click="handleDownload(file)">
-                                <i class="el-icon-download"></i>
-                              </span>
-                              <span v-if="btntype !== 'look'" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                <i class="el-icon-delete"></i>
-                              </span>
-                            </span>
+                        <el-image style="width: 148px;height: 148px;border:1px solid #c0ccda;border-radius: 6px;box-sizing: border-box;overflow: hidden;" fit="contain" :src="define.comUrl+informationForm.visitPhotoList[0].url">
+                          <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
                           </div>
-                          <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
-                        </el-upload>
+                        </el-image>
+                        <!-- <UploadImg v-model="fileList"></UploadImg> -->
                         <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
                           <img width="100%" :src="dialogImageUrl" alt="">
                         </el-dialog>
@@ -144,6 +132,7 @@
 </template>
 
 <script>
+import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { mapGetters } from 'vuex'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -151,6 +140,7 @@ import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getMyContactsList } from '@/api/customerManagement/index'
 import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
 export default {
+  components: { UploadImg },
   data() {
     return {
       isattachmentswitch: '1',
@@ -298,7 +288,7 @@ export default {
       this.dialogVisible = true;
     },
     handleDownload(file) {
-      console.log(file);
+      console.log('下载', file);
     },
     async fetchData(code) {
       try {
@@ -402,6 +392,13 @@ export default {
           detailcrmReturnVisit(this.dataForm.id).then(res => {
             this.dataForm = res.data.returnVisit
             this.informationForm = res.data.information
+            if (this.informationForm.visitPhotoList == "[]") {
+              this.informationForm.visitPhotoList = [];
+            } else {
+              this.informationForm.visitPhotoList = this.informationForm.visitPhotoList.map(
+                item => JSON.parse("{" + item + "}")
+              )
+            }
             getMyContactsList({
               cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
               pageSize: -1,

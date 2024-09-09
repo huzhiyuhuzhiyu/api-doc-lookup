@@ -98,8 +98,8 @@
             <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
-            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
             <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+            <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
 
 
             <el-table-column prop="planStartDate" label="计划开始日期" min-width="180" sortable="custom"></el-table-column>

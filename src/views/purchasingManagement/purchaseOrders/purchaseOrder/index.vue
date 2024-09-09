@@ -104,11 +104,11 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
                       @click.native="withdrawnAddHandle(scope.row.id, 'add')">
                       重新提交
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
@@ -409,10 +409,17 @@ export default {
       printForm: {}, // 表单数据
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
-      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName']
+      columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName'],
+      showAppCodeFlag:true
     }
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b009')
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
+    }
     this.initData()
   },
   methods: {

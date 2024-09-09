@@ -86,10 +86,10 @@
                 <el-image :src="define.comUrl + sysConfig.logoIcon" class="about-logo"
                     v-if="sysConfig && sysConfig.logoIcon">
                     <template slot="error">
-                        <img src="@/assets/images/jnpf2.png" class="about-logo" />
+                        <img src="@/assets/images/jnpf.png" class="about-logo" />
                     </template>
                 </el-image>
-                <img src="@/assets/images/jnpf2.png" class="about-logo" v-else />
+                <img src="@/assets/images/jnpf.png" class="about-logo" v-else />
 
                 <div>
                     <p class="title"><a :href="sysConfig.companyUrl" target="_blank">{{ sysConfig.sysName }}</a></p>

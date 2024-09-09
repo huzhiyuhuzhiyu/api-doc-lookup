@@ -44,7 +44,7 @@
               </div> -->
 
               <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
-                :data="tableDataList" @sort-change="sortChange" custom-column>
+                :data="tableDataList" @sort-change="sortChange" custom-column v-if="tableDataList.length">
                 <el-table-column prop="orderNo" label="请购单号" min-width="180" sortable="custom">
                   <template slot-scope="scope">
                     <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">{{
@@ -72,7 +72,7 @@
                 </el-table-column>
 
                 <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120"
-                  fixed="right">
+                  fixed="right" v-if="showAppCodeFlag">
                   <template slot-scope="scope">
                     <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
                     <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
@@ -92,11 +92,11 @@
                       </span>
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item
-                          v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                          v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
                           @click.native="addOrUpdateHandle(scope.row.id, 'add')">
                           重新提交
                         </el-dropdown-item>
-                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                        <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                           @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                           审批撤回
                         </el-dropdown-item>
@@ -376,11 +376,18 @@ export default {
       },
 
       formVisible: false,
+      showAppCodeFlag:true
     }
   },
-  created() {
+  async created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.linesQuery = JSON.parse(JSON.stringify(this.initLinesQuery))
+    const res = await this.jnpf.getBusInfo('b015')
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
+    }
     this.initData()
   },
   methods: {

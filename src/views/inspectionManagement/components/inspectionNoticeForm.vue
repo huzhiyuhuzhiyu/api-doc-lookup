@@ -1510,6 +1510,8 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
-  padding: 0 10px;
 }
+.el-table {  
+  border: 1px solid #ebeef5; /* 默认边框颜色 */  
+}  
 </style>

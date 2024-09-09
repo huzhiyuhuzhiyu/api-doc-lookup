@@ -81,8 +81,9 @@
           </el-table-column>
           <el-table-column prop="state" label="状态" min-width="80">
             <template slot-scope="scope">
-              <div v-if="scope.row.state == 'enable'">启用</div>
-              <div v-if="scope.row.state == 'disabled'">禁用</div>
+              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
+                inactive-value="disabled" @change="stateChange(scope.row)">
+              </el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="position" label="位置" min-width="120"></el-table-column>
@@ -92,13 +93,6 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
-                  @click="onHandle(scope.row, 'enable')">
-                  开启仓库
-                </el-button>
-                <el-button v-else type="text" size="mini" @click="offHandle(scope.row, 'disabled')">
-                  禁用仓库
-                </el-button>
                 <el-button type="text" size="mini"
                   @click="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
                   查看详情
@@ -118,7 +112,7 @@
 </template>
 
 <script>
-import { getWarehouseList, deleteWarehouse, BuildQRCode, editWarehouseState } from '@/api/basicData/index'
+import { getWarehouseList, deleteWarehouse, editWarehouseState } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
@@ -199,18 +193,22 @@ export default {
   },
   created() {
     this.initData()
-    // this.buildQRCode()
   },
   methods: {
+    stateChange(row) {
+      editWarehouseState(row).then((res) => {
+        this.initData()
+        this.$message({
+          type: 'success',
+          message: row.state == 'enable' ? '开启成功' : '禁用成功',
+          duration: 1500
+        })
+      })
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
       this.search()
-    },
-    buildQRCode() {
-      BuildQRCode().then((res) => {
-        console.log(res, 'res')
-      })
     },
     columnSetFun() {
       this.$refs.tabForm.showDrawer()

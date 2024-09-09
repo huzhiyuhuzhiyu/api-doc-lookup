@@ -11,7 +11,7 @@
         </el-image>
         <img src="@/assets/images/jnpf.png" :class="headClass"  class="header-logo"
           v-else />
-        <!-- <img src="@/assets/images/jnpf2.png" class="header-logo" /> -->
+        <!-- <img src="@/assets/images/jnpf.png" class="header-logo" /> -->
         <p class="header-txt"> · 在线开发</p>
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps"

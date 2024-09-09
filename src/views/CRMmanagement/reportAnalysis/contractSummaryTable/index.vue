@@ -116,8 +116,7 @@ export default {
           exportType: '1220',
           exportName: '合同汇总表',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

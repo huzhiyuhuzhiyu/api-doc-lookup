@@ -26,10 +26,10 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -103,11 +103,11 @@
                       <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
                         <template slot="header">
                           <span class="required">*</span>
-                          产品名称
+                          工序名称
                         </template>
                         <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'"
-                            :rules="productRules.productName">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
+                            :rules="productRules.processName">
                             <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
                             <!-- 工序选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
@@ -917,8 +917,9 @@ export default {
 
     // 切换供应商后给的提示
     async beforeProcessSubmit(data, paramsObj) {
+      console.log(paramsObj.oldProcessData, 'paramsObj.oldData')
       let flag = true
-      if (paramsObj.oldData.length) {
+      if (paramsObj.oldProcessData.length) {
         flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -943,30 +944,26 @@ export default {
       return flag
     },
     supplierdataProcess(id, data) {
+      console.log(data, ';ooooo')
       this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['elForm'].validateField('processName')
       })
       if (data.length === 0) {
-        this.dataForm.cooperativePartnerName = ''
-        this.dataForm.cooperativePartnerCode = ''
-        this.dataForm.cooperativePartnerId = ''
+        this.dataForm.processName = ''
+        this.dataForm.processId = ''
         this.oldProcessData = []
       } else {
         if (this.oldProcessData.length) {
         } else {
           this.oldProcessData.push(data)
         }
-        this.dataForm.cooperativePartnerName = data[0].all.name
-        this.dataForm.cooperativePartnerCode = data[0].all.code
-        this.dataForm.cooperativePartnerId = data[0].all.id
+        this.dataForm.processName = data[0].all.name
+        this.dataForm.processId = data[0].all.id
         let productIdList = []
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
         })
-        let _data = {
-          cooperativePartnerId: this.dataForm.cooperativePartnerId,
-          productIdList
-        }
+       
       }
     },
 

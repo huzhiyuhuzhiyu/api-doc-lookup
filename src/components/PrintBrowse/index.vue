@@ -3,7 +3,7 @@
     fullscreen lock-scroll class="JNPF-full-dialog" :show-close="false" :modal="false" append-to-body>
     <div class="JNPF-full-dialog-header">
       <div class="header-title">
-        <img src="@/assets/images/jnpf2.png" class="header-logo" />
+        <img src="@/assets/images/jnpf.png" class="header-logo" />
         <p class="header-txt"> · 打印预览</p>
       </div>
       <div class="options">

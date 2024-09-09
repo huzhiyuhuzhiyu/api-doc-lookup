@@ -57,7 +57,7 @@
           </div>
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" fixedNO @sort-change="sortChange"
-            custom-column :setColumnDisplayList="columnList">
+            custom-column :setColumnDisplayList="columnList"  v-if="tableData.length">
             <el-table-column prop="orderNo" label="处理单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row, 'look')">
@@ -77,7 +77,7 @@
             <el-table-column prop="treatmentResults" label="处理结果" min-width="180" sortable="custom" />
             <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
             <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <el-tag disable-transitions
                   v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">
@@ -105,11 +105,11 @@
                 <tableOpts :hasEdit="false" :hasDel="false">
                   <template #left>
                     <el-button type="text" size="mini"
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
                       @click.native="withdrawnAddHandle(scope.row, 'add')">
                       重新提交
                     </el-button>
-                    <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing'"
+                    <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-button>
@@ -317,11 +317,19 @@ export default {
       linesTableData: [],
       linesQuery: {},
 
-      linesTotal: 0
+      linesTotal: 0,
+      showAppCodeFlag:true
     }
   },
-  created() {
+  async created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+    let code = this.pageData.type === 'procure' ? 'b003' : this.pageData.type === 'sale_back' ? 'b006' : 'b004'
+    const res = await this.jnpf.getBusInfo(code)
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
+    }
     this.initData()
   },
   watch: {
@@ -422,7 +430,7 @@ export default {
     withdrawnAddHandle(row, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type)
+        this.$refs.Form.init(row.inspectionId, btnType, false, this.pageData.type)
       })
     },
     withdrawnHandle(formId) {

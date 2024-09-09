@@ -1431,5 +1431,11 @@ export default {
   // margin-bottom: 10px;
   border-bottom: none !important;
 }
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
+}
 
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important
+}
 </style>

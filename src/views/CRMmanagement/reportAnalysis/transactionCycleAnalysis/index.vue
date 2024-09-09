@@ -197,8 +197,7 @@ export default {
           exportType: '1215',
           exportName: '员工客户成交周期分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
@@ -226,8 +225,7 @@ export default {
           exportType: '1218',
           exportName: '地区成交周期分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false
@@ -255,8 +253,7 @@ export default {
           exportType: '1219',
           exportName: '产品成交周期分析',
           includeFieldMap,
-          pageSize: -1,
-          totalRowFlag: true,
+          pageSize: -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

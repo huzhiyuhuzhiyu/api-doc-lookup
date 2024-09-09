@@ -4,7 +4,7 @@
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
         <el-radio-group v-model="activeName" style="background-color:#fff;">
-          <el-radio-button label="all" style="margin:3px 0">全部</el-radio-button>
+          <!-- <el-radio-button label="" style="margin:3px 0">全部</el-radio-button> -->
           <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
             :key="item.enCode" :label="item.enCode">{{ item.fullName }}
           </el-radio-button>
@@ -15,10 +15,7 @@
           <div class="tab-body">
             <div class="business-list">
               <div class="business-list__header">
-                <div class="business-list__col-type business-list__header-item">
-                  单据类型
-                </div>
-                <div class="business-list__col-type business-list__header-item">
+                <div class="business-list__col-type business-list__header-item" style="justify-content:center">
                   单据类型
                 </div>
                 <div class="business-list__col-template business-list__header-item">
@@ -29,12 +26,9 @@
 
               <div class="business-list__body">
                 <!-- 渲染数据 -->
-                <div class="business-list__body__item">
+                <div class="business-list__body__item" v-for="item in currentData" :key="item.id">
                   <div class="business-list__col-type">
-                    单据
-                  </div>
-                  <div class="business-list__col-type">
-                    单据
+                    {{ item.fullName }}
                   </div>
                   <div class="business-list__col-type-right">
                     <!-- 单据 -->
@@ -89,31 +83,31 @@ export default {
   name: 'printMode',
   data() {
     return {
-      activeName: 'all',
-      tabList: [
-        {
-          label: '销货',
-          value: '1'
-        },
-        {
-          label: '销货',
-          value: '2'
-        },
-        {
-          label: '销货',
-          value: '3'
-        },
-      ],
-      categoryList: []
+      activeName: 'Salesmanagement',
+      categoryList: [],
+      currentData: [],
+      dictionaryType:'Salesmanagement'
     }
   },
   created() {
     this.getChildrenListData()
+    this.getDictionaryData(this.dictionaryType)
+  },
+  watch: {
+    activeName(val) {
+      this.getDictionaryData(val)
+    }
   },
   methods: {
     getChildrenListData() {
       getChildrenList('600639172939682437').then(res => {
         this.categoryList = res.data
+      })
+    },
+    getDictionaryData(type) {
+      this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
+        this.currentData = res
+        
       })
     },
   },
@@ -204,8 +198,9 @@ export default {
           .business-list__col-type {
             display: flex;
             align-items: center;
+            justify-content: center;
             width: 210px;
-            padding: 0 70px;
+            // padding: 0 60px;
             border-left: 1px solid #e4e4e4;
           }
 
@@ -245,11 +240,12 @@ export default {
                   overflow: hidden;
                   text-overflow: ellipsis;
                 }
+
+                &.is-default {
+                  background-color: #eaf4ff !important;
+                }
               }
 
-              &.is-default {
-                background-color: #eaf4ff;
-              }
 
               .template-item__add-btn {
                 width: 110px;

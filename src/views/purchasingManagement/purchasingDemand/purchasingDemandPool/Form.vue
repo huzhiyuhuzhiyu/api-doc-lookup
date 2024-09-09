@@ -1070,11 +1070,7 @@ export default {
     init(data, classAttributeFlag) {
       this.dataForm.classAttribute = classAttributeFlag
       this.getProductClassFun()
-      data.forEach((item) => {
-        item.productDrawingNo = item.drawingNo
-        item.productName = item.name
-        item.productCode = item.code
-      })
+
       // if (!demandDelivery) { // 没有日期，代表从重新提交中进来的
       // this.dataForm = data
       this.$set(this.dataFormTwo, 'data', JSON.parse(JSON.stringify(data)))

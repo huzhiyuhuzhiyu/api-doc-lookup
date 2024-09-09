@@ -25,7 +25,6 @@ import { message } from './utils/message';
 import * as filters from './filters' // global filters
 
 import * as echarts from 'echarts'
-import VueQr from 'vue-qr'
 
 
 

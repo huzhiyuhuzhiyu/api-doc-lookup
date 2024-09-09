@@ -62,18 +62,6 @@
                         <ComSelect-page v-model="dataForm.receivablesNo" @change="receivablesNoChange" :tableItems="receivablesNoTableItems" dialogTitle="选择回款" placeholder="请选择回款" :listMethod="getcrmReceivableslist" :listRequestObj="receivablesNoRequestObj" :searchList="receivablesNoSearchList" :isdisabled="btntype === 'look'||!dataForm.name" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <!-- <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机名称" prop="businessName">
-                        <ComSelect-page v-model="dataForm.businessName" @change="businessChange" :tableItems="businessIdTableItems" dialogTitle="选择商机" placeholder="请选择商机" :listMethod="getcrmBusinessList" :listRequestObj="businessRequestObj" :searchList="businessSearchList" :isdisabled="btntype === 'look'||!dataForm.name" :renderTree="false" />
-                      </el-form-item>
-                    </el-col> -->
-                    <!-- <el-col :sm="8" :xs="24">
-                      <el-form-item label="跟进目的" prop="visitAim">
-                        <el-select v-model="dataForm.visitAim" placeholder="请选择跟进目的" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in visitGoalList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col> -->
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="跟进内容" prop="serviceDescription">
                         <el-input v-model="dataForm.serviceDescription" placeholder="请输入跟进内容" :disabled="btntype == 'look'" type="textarea" :rows="2" />
@@ -81,33 +69,37 @@
                     </el-col>
                   </el-row>
                 </el-collapse-item>
+              </el-collapse>
+            </el-form>
+            <el-form ref="informationForm" v-loading="formLoading" :model="informationForm" :rules="dataRule" label-position="top" label-width="120px">
+              <el-collapse v-model="activeNames">
                 <el-collapse-item title="行程信息" name="xcInfo" v-if="dataForm.visitForm=='见面拜访'">
                   <el-row :gutter="30" class="custom-row">
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="出发地" prop="departure">
-                        <el-input v-model="dataForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
+                        <el-input v-model="informationForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="目的地" prop="destination">
-                        <el-input v-model="dataForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
+                        <el-input v-model="informationForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="里程数(km)" prop="mileage">
-                        <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
+                        <el-input v-model="informationForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="出行方式" prop="travelMode">
-                        <el-select v-model="dataForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                        <el-select v-model="informationForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
                       <el-form-item label="定位" prop="visitGps">
-                        <el-input v-model="dataForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
+                        <el-input v-model="informationForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
@@ -313,12 +305,15 @@ export default {
         cooperativePartnerId: '',
         contactsId: '',
         serviceDescription: '',
+      },
+      informationForm: {
         departure: '',
         destination: '',
         mileage: '',
         travelMode: '',
         visitGps: '',
-        visitPhoto: ''
+        visitPhoto: '',
+        visitPhotoList: []
       },
       btntype: false,
       dataRule: {
@@ -486,9 +481,10 @@ export default {
         this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           detailServiceRecords(this.dataForm.id).then(res => {
-            this.dataForm = res.data
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
+            this.dataForm = res.data.records
+            this.informationForm = res.data.information
+            if (res.data.records.attachmentList) {
+              res.data.records.attachmentList.forEach((item) => {
                 this.datafilelist.push(
                   {
                     name: item.document.fullName,
@@ -522,8 +518,11 @@ export default {
             })
           }
           let obj = {
-            ...this.dataForm,
-            attachmentList: this.datafilelist,
+            information: informationForm,
+            records: {
+              ...this.dataForm,
+              attachmentList: this.datafilelist
+            }
           }
           let formMethod = this.dataForm.id ? updateServiceRecords(obj) : addServiceRecords(obj);
           formMethod.then(res => {

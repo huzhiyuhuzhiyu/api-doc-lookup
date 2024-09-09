@@ -21,7 +21,7 @@
         </div>
         <div class="table-content" v-loading="listLoading">
           <div class="handle-bar">
-            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download">导出</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
           </div>
           <div style="height: 400px;">
             <JNPF-table ref="tabForm" show-summary :summary-method="getSummaries" :data="tableList" custom-column row-key="id" :hasNO="false" style="border:1px solid #ebeef5;border-right:none;">
@@ -29,29 +29,34 @@
               <el-table-column prop="customerSumNum" label="当前客户数" min-width="120" />
               <el-table-column prop="customerNum" label="新增客户数" min-width="120" />
               <el-table-column prop="dealCustomerNum" label="成交客户数" min-width="120" />
-              <el-table-column prop="dealCustomerRate" label="客户成交率(%)" min-width="120" />
-              <el-table-column prop="contractMoney" label="合同总金额(元)" min-width="120" />
+              <el-table-column prop="dealCustomerRate" label="客户成交率(%)" min-width="130" />
+              <el-table-column prop="contractMoney" label="合同总金额(元)" min-width="130" />
               <el-table-column prop="receivablesMoney" label="回款金额(元)" min-width="120" />
             </JNPF-table>
           </div>
         </div>
       </div>
     </div>
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" :exportHidden="true" />
   </div>
 </template>
 
 <script>
+import { excelExport } from '@/api/basicData/index'
+import ExportForm from '@/components/no_mount/ExportBox/index'
 import { mapGetters } from 'vuex'
 import { gettotalCustomerTable, gettotalCustomerStats } from "@/api/CRMmanagement/instrumentPanel/index";
 import selectdate from "../components/selectdate";
 import selectdepartment from "../components/selectdepartment";
 export default {
   components: {
+    ExportForm,
     selectdate,
     selectdepartment
   },
   data() {
     return {
+      exportFormVisible: false,
       chartLoading: false,
       listLoading: false,
       dataForm: {
@@ -96,6 +101,34 @@ export default {
     }
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.tabForm.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.dataForm,
+          exportType: '1217',
+          exportName: '客户总量分析',
+          includeFieldMap,
+          pageSize: -1
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
     search() {
       this.initData()
     },

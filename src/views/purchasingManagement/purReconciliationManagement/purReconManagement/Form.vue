@@ -859,7 +859,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 10px;
   border-top: none !important;
 }
 

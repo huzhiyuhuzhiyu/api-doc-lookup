@@ -5,12 +5,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="query.name" placeholder="请输入检验类型名称" @keyup.enter.native="search()" clearable />
+              <el-input v-model="query.name" placeholder="检验类型名称" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="query.inspectionCategory" placeholder="请选择检验种类" style="width: 100%;">
+              <el-select v-model="query.inspectionCategory" placeholder="检验种类" style="width: 100%;">
                 <el-option v-for="(item, index) in inspectionCategoryList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -18,7 +18,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="query.inspectionType" placeholder="请选择类型名称" style="width: 100%;">
+              <el-select v-model="query.inspectionType" placeholder="类型名称" style="width: 100%;">
                 <el-option v-for="(item, index) in inspectionTypeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>

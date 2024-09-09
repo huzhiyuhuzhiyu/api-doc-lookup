@@ -17,25 +17,25 @@
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
               <el-form ref="dataForm" :model="dataForm" :rules="dataRules" label-width="160px" label-position="top">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :span="12">
+                  <el-col :span="6">
                     <el-form-item label="检验类型编码" prop="code">
                       <el-input v-model="dataForm.code" placeholder="请输入类型编码" maxlength="20"
                         :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="6">
                     <el-form-item label="检验类型名称" prop="name">
                       <el-input v-model="dataForm.name" placeholder="请输入类型名称" maxlength="50"
                         :disabled="btntype ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
+                  <el-col :span="6" v-if="btntype && dataForm.inspectionType === 'product'">
                     <el-form-item label="品名规格" prop="productDrawingNo">
                       <el-input v-model.trim="dataForm.productDrawingNo" placeholder="请输入品名规格"
                         :disabled="btntype ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="6">
                     <el-form-item label="检验种类" prop="inspectionCategory">
                       <el-select v-model="dataForm.inspectionCategory" placeholder="请选择检验种类" style="width: 100%;"
                         :disabled="btntype ? true : false" @change="changeType1">
@@ -44,7 +44,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12">
+                  <el-col :span="6">
                     <el-form-item label="类型名称" prop="inspectionType">
                       <el-select @change="changeType" v-model="dataForm.inspectionType" placeholder="请选择类型名称"
                         style="width: 100%;" :disabled="btntype ? true : false">
@@ -53,7 +53,7 @@
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12" v-if="dataForm.inspectionType === 'product'">
+                  <el-col :span="6" v-if="dataForm.inspectionType === 'product'">
                     <el-form-item label="产品名称" prop="productName">
                       <ComSelect-page :searchList="ProductTableSearchList" :isdisabled="btntype ? true : false"
                         v-model="dataForm.productName" placeholder="请选择产品名称" auth @change="onOrganizeChange"
@@ -62,20 +62,20 @@
                         :tableItems="ProductTableItems" treeTitle="产品分类" :paramsObj="{}" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product'">
+                  <el-col :span="6" v-if="btntype && dataForm.inspectionType === 'product'">
                     <el-form-item label="产品编码" prop="productCode">
                       <el-input v-model.trim="dataForm.productCode" placeholder="请输入产品编码"
                         :disabled="btntype ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12" v-if="dataForm.inspectionType === 'product_category'">
+                  <el-col :span="6" v-if="dataForm.inspectionType === 'product_category'">
                     <el-form-item label="产品分类名称" prop="productCategoryName">
                       <ComSelect-list :isdisabled="btntype ? true : false" :value="dataForm.productCategoryName"
                         placeholder="请选择产品分类" auth @change="onOrganizeChangeThree" :title="'选择产品分类'"
                         :method="getcategoryTree" :requestObj="productParams" :paramsObj="{}" />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12" v-if="btntype && dataForm.inspectionType === 'product_category'">
+                  <el-col :span="6" v-if="btntype && dataForm.inspectionType === 'product_category'">
                     <el-form-item label="产品分类编码" prop="productCategoryCode">
                       <el-input v-model.trim="dataForm.productCategoryCode" placeholder="请输入产品分类编码"
                         :disabled="btntype ? true : false" />

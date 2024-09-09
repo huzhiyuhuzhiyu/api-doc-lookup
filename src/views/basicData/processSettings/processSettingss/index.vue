@@ -64,7 +64,7 @@
         </div>
         <div class="tableBox">
           <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
+            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" v-if="list.length">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">{{ scope.row.code
@@ -95,7 +95,7 @@
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120">
+            <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"  v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <div v-if="scope.row.approvalStatus == 'ing'"><el-tag type="warning">审批中</el-tag></div>
                 <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
@@ -301,13 +301,20 @@ export default {
       detailLoading: false,
       visible: false,
       customerRecognitionTime: [],
-      columnList: ['reasonRejection', 'remark', 'createByName', 'createTime']
+      columnList: ['reasonRejection', 'remark', 'createByName', 'createTime'],
+      showAppCodeFlag:true
     }
   },
   mounted() {
     this.getProductClassFun()
   },
-  created() {
+  async created() {
+    const res = await this.jnpf.getBusInfo('b024')
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
+    }
     this.initData()
   },
   methods: {

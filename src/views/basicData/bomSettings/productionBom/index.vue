@@ -107,7 +107,7 @@
         </div>
         <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableData" @sort-change="sortChange" custom-column
           fixedNO @selection-change="selectionChange" :element-loading-text="loadingText"
-          :setColumnDisplayList="columnList">
+          :setColumnDisplayList="columnList" v-if="tableData.length">
           <el-table-column prop="drawNo" label="品名规格" min-width="600" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="200" sortable="custom">
             <template slot-scope="scope">
@@ -135,7 +135,7 @@
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center">
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
               <el-tag type="success"
@@ -164,11 +164,11 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
                       @click.native="addOrUpdateHandle(scope.row.id, 'add', scope.row)">
                       重新提交
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
@@ -308,7 +308,8 @@ export default {
       loadingText: '',
       btnLoading: false,
       selectedData: [],
-      columnList: ['productName', 'pickingWay', 'createByName', 'createTime']
+      columnList: ['productName', 'pickingWay', 'createByName', 'createTime'],
+      showAppCodeFlag:true
     }
   },
   watch: {
@@ -316,12 +317,18 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  created() {
+ async created() {
     this.getcategoryTree()
     if (localStorage.getItem("productionBomFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
+    }
+    const res = await this.jnpf.getBusInfo('b023')
+    if (res){
+      this.showAppCodeFlag = res.enabledMark
+    }else{
+      this.showAppCodeFlag = false
     }
     // this.initData()
   },

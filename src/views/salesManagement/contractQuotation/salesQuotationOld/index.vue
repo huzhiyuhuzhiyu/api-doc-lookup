@@ -118,11 +118,11 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                      v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
+                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn')  && showAppCodeFlag"
                       @click.native="addSupplier(scope.row.id, 'add')">
                       重新提交
                     </el-dropdown-item>
-                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
+                    <el-dropdown-item v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>

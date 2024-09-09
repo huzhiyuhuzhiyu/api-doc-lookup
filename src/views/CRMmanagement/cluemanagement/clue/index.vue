@@ -522,8 +522,7 @@ export default {
           exportType: '1203',
           exportName: '线索',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
         }
         excelExport(_data).then(res => {
           this.exportFormVisible = false

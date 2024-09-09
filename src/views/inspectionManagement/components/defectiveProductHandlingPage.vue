@@ -422,7 +422,7 @@ export default {
     withdrawnAddHandle(row, btnType) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(row.inspectionId, btnType, this.pageData.type)
+        this.$refs.Form.init(row.inspectionId, btnType, false, this.pageData.type)
       })
     },
     withdrawnHandle(formId) {

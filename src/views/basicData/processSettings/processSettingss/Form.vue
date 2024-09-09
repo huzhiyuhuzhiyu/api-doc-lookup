@@ -407,7 +407,8 @@
                       <div class="viewData">
                         <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
                         <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                        <div class="viewData" v-if="scope.row.processType == 'vibrate'">振工序</div>
+                        <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                        <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
                       </div>
                     </template>
                   </el-table-column>

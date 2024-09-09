@@ -128,7 +128,8 @@
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
                 @edit="editFun(scope.row.moveId, 'edit')" @del="handleDel(scope.row.moveId)">
-                <el-dropdown hide-on-click>
+                <el-button  size="mini" type="text" @click="viewFun(scope.row.moveId, 'look')">查看详情</el-button>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -138,7 +139,7 @@
                     <el-dropdown-item @click.native="viewFun(scope.row.moveId, 'look')">查看详情</el-dropdown-item>
 
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </tableOpts>
             </template>
           </el-table-column>

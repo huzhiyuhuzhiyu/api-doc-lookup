@@ -10,7 +10,7 @@
           </template>
         </el-image>
         <img src="@/assets/images/jnpf.png" :class="headClass" class="header-logo" v-else />
-        <p class="header-txt"> · 代码生成</p>
+        <p class="header-txt"> · 流程设计</p>
       </div>
       <el-steps :active="activeStep" finish-status="success" simple class="steps" :class="flowDesign ? 'stepsCenter' : '' ">
         <el-step title="基础信息" @click.native="stepChick(0)" v-if="!flowDesign" />

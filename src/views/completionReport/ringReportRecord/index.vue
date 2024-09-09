@@ -5,11 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="workNoS" placeholder="工单单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+           
 
             <el-col :span="4">
               <el-form-item>
@@ -19,6 +15,11 @@
             <el-col :span="4">
               <el-form-item>
                 <el-input v-model="productDrawingNoS" placeholder="品名规格" clearable @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-form-item>
+                <el-input v-model="processNameS" placeholder="工序名称" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -75,7 +76,7 @@
             <el-table-column prop="reworkQuantity" label="返工数量" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
-            <el-table-column label="操作" width="220" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
 
               <template slot-scope="scope">
                 <el-button size="mini" type="text" @click="withdrawFun(scope.row)">撤回</el-button>
@@ -99,7 +100,7 @@
 </template>
 
 <script>
-import { getWorkReportList } from "@/api/productOrdes/index.js"
+import { getWorkReportList,revokeReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -114,7 +115,7 @@ export default {
     return {
       columnList: ["productionOrderNo", "productsCode",],
       orderNoS: "",
-      workNoS: "",
+      processNameS: "",
       productsDrawingNoS: "",
       superQueryVisible: false,
       exportFormVisible: false,
@@ -129,7 +130,7 @@ export default {
       orderForm: {},
       orderFormlist: {
         orderNo: "",
-        workNo: "",
+        processName: "",
         productsDrawingNo: "",
         pageNum: 1,
         pageSize: 20,
@@ -282,7 +283,10 @@ export default {
 
     // 撤回
     withdrawFun(data) {
-
+      revokeReport(data.id).then(res=>{
+        this.$message.success("撤回成功")
+        this.initData()
+      })
     },
 
     // 获取打字内容等
@@ -387,21 +391,21 @@ export default {
           )
         }
       }
-      if (this.workNoS) {
+      if (this.processNameS) {
         // this.orderForm.superQuery.condition.push(
         //   { "field": "productDrawingNo", "fieldValue": this.productDrawingNo, "symbol": "like" }
         // )
         if (this.orderForm.superQuery.condition.length) {
           let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("workNo"));
-          filteredData.push({ "field": "workNo", "fieldValue": this.workNoS, "symbol": "like" })
+          filteredData.push({ "field": "workNo", "fieldValue": this.processNameS, "symbol": "like" })
           this.orderForm.superQuery.condition = filteredData
         } else {
           this.orderForm.superQuery.condition.push(
-            { "field": "workNo", "fieldValue": this.workNoS, "symbol": "like" }
+            { "field": "workNo", "fieldValue": this.processNameS, "symbol": "like" }
           )
         }
       }
-      if (this.customerDrawingNumberS || this.productDrawingNoS || this.workNoS) {
+      if (this.customerDrawingNumberS || this.productDrawingNoS || this.processNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
       getWorkReportList(this.orderForm).then(res => {
@@ -432,7 +436,7 @@ export default {
 
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
 
-      this.workNoS = ""
+      this.processNameS = ""
       this.orderNoS = ""
       this.productDrawingNoS = ""
       this.$refs.SuperQuery.conditionList = []

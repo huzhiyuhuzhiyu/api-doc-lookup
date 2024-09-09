@@ -23,41 +23,42 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="返工产品" prop="drawingNo">
                           <el-input v-model="dataForm.drawingNo" placeholder="返工产品"
                             @focus="openSelectProductFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="返工生产数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                  
-                      <el-col :sm="6" :xs="24">
+
+
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -66,7 +67,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -75,7 +76,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -84,7 +85,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -92,7 +93,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -101,7 +102,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -109,7 +110,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
@@ -118,7 +119,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
@@ -136,7 +137,7 @@
                     </el-row>
                   </el-form>
                 </el-collapse-item>
-                <el-collapse-item title="工序信息" name="productInfo">
+                <el-collapse-item title="工序信息" name="productInfo" style="border-bottom: 1px solid #dcdfe6 !important;">
                   <div>
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -172,7 +173,25 @@
                           </el-button>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="equipmentId" label="设备" min-width="150">
 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
+                            style="width:70%;display:none" class="applySelect" disabled>
+                            <el-option
+                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
+                              :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
+                              :value="item.resourceId"></el-option>
+                          </el-select>
+                          <el-button @click="selectDeviceFun(scope)" type="text" class="underline-button"
+                            :disabled="scope.row.processingType != 'self_produced'">
+                            {{ scope.row.equipmentId ? scope.row.equipmentCode ?
+                              scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
+                              "请选择设备" }}
+
+                          </el-button>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="personId" label="人员" min-width="100">
 
                         <template slot-scope="scope">
@@ -190,7 +209,7 @@
                       </el-table-column>
                       <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
-                        <template slot-scope="scope"> 
+                        <template slot-scope="scope">
                           <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
@@ -199,7 +218,7 @@
                         </template>
                       </el-table-column>
                       <el-table-column prop="workstationId" label="工位" min-width="160">
-                        <template slot-scope="scope"> 
+                        <template slot-scope="scope">
                           <el-select v-model="scope.row.workstationId" placeholder="请选择工位"
                             :disabled="!scope.row.productionLineId" clearable @focus="selectworkstation(scope.row)">
                             <el-option v-for="(item, index) in workstationList" :key="index"
@@ -240,18 +259,18 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="领料信息" name="annex">
-              <el-collapse v-model="activeNames2">
+              <el-collapse v-model="activeNames2" style="margin-top: 5px;">
                 <el-collapse-item title="基本信息" name="pickbasicInfo" class="orderInfo" v-if="allocationFlag">
                   <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                     label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="领料单号" prop="orderNo">
                           <el-input v-model="collect.orderNo"
                             :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="领料人" prop="personId">
                           <user-select v-model="collect.personId" placeholder="请选择领料人" clearable style="width: 100%;"
                             :disabled="btnType == 'look'" @change="hangleSelectSales">
@@ -344,24 +363,24 @@
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
                     {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}-
                     {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][1].completedQuantity }}/{{ totalData[item][1].dispatchQuantity }}个
+                    {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                  工单截止：{{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
                     .replace("-", ".")
                   }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -387,30 +406,30 @@
                     }}-
                     {{ totalData[item][totalData[item].length - 2].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
-                    {{ totalData[item][totalData[item].length - 2].completedQuantity
+                    {{ totalData[item][totalData[item].length - 2].qualifiedQuantity
                     }}/{{ totalData[item][totalData[item].length
-                      - 2].dispatchQuantity }}个
+                      - 2].productionQuantity }}个
                   </p>
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][totalData[item].length - 1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-
                     {{ totalData[item][totalData[item].length - 1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
-                    {{ totalData[item][totalData[item].length - 1].completedQuantity
+                    {{ totalData[item][totalData[item].length - 1].qualifiedQuantity
                     }}/{{ totalData[item][totalData[item].length
-                      - 1].dispatchQuantity }}个
+                      - 1].productionQuantity }}个
                   </p>
                 </div>
                 <div v-else-if="totalData[item].length == 1">
                   <p style="margin-top: 4px; font-size: 12px">
                     {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}-{{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-", ".") }}
-                    {{ totalData[item][0].completedQuantity }}/{{ totalData[item][0].dispatchQuantity }}个
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity }}个
                   </p>
                 </div>
 
                 <p v-if="totalData[item].length" style="margin-top: 4px; font-size: 12px">
-                  派工截止：{{ totalData[item][totalData[item].length -
+                  工单截止：{{ totalData[item][totalData[item].length -
                     1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace("-",
                       ".") }}
                   <el-button class="elbutton" type="text" size="mini"
@@ -420,28 +439,76 @@
               </div>
             </el-col>
           </el-row>
+          <el-row class="row-bg" :gutter="0" style="margin:12px 0;" v-if="routingProResMapDiaTitle == '设备资源'">
+            <el-col :span="4" class="personBox" :class="[item.split('_')[0] == currentDeviceId ? 'active' : '']"
+              v-for="(item, index) in deviceData" :key="index">
+              <div class="grid-content bg-purple" @click="changresouce(item, '设备')"
+                @dblclick="selectResouce(item, '设备')" :style="!totalData[item].length ? 'height:100%' : ''">
+                <p style="margin-top:14px; font-size:18px">{{ item.split('_')[1] }}</p>
+                <p style=" font-size:18px">{{ item.split('_')[2] ? item.split('_')[2] : '--' }}
+                </p>
+                <div v-if="totalData[item].length > 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}-
+                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
 
+                  </p>
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}-
+                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity
+                    }}个
+                  </p>
+                </div>
+                <div v-else-if="totalData[item].length == 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.')
+                    }}-{{
+                      totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
+                  </p>
+                </div>
+
+                <p v-if="totalData[item].length" style="margin-top:4px; font-size:12px">工单截止：{{
+                  totalData[item][totalData[item].length -
+                    1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }} <el-button class="elbutton" type="text"
+                    size="mini" @click.stop="getDetailFun(item, totalData[item], '设备')"
+                    :style="item.split('_')[0] == currentDeviceId ? 'border:1px solid #fff;color:#1890ff;background:#fff;    padding: 4px!important;' : ''">详细</el-button>
+                </p>
+              </div>
+            </el-col>
+
+
+
+          </el-row>
         </el-dialog>
-        <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
-          <el-row class="JNPF-common-search-box" :gutter="5" >
+        <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
+          @close="detailDiaFlag = false">
+          <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
                 <el-form-item>
                   <el-input v-model="dispatchSearchForm.orderNo" @keyup.enter.native="dataFormSubmit()"
-                    placeholder="请输入派工单号" clearable />
+                    placeholder="工单号" clearable />
                 </el-form-item>
               </el-col>
 
               <el-col :span="4">
                 <el-form-item>
-                  <el-input v-model="dispatchSearchForm.processName" placeholder="请输入工序名称" clearable />
+                  <el-input v-model="dispatchSearchForm.processName" placeholder="工序名称" clearable />
                 </el-form-item>
               </el-col>
-              <el-col :span="6">
+              <el-col :span="8">
                 <el-form-item>
                   <el-date-picker v-model="daterangeList" type="daterange" value-format="yyyy-MM-dd" style="width: 100%"
-                    clearable start-placeholder="请选择创建开始日期" end-placeholder="请选择创建结束日期">
+                    clearable start-placeholder="创建开始日期" end-placeholder="创建结束日期">
                   </el-date-picker>
                 </el-form-item>
               </el-col>
@@ -458,17 +525,17 @@
             </el-form>
           </el-row>
           <el-table ref="product" :data="detailDataList" border max-height="600">
-            <el-table-column type="index" width="70" label="序号" />
-            <el-table-column prop="orderNo" label="派工单号" min-width="200"></el-table-column>
-            <el-table-column prop="productCode" label="产品编码" min-width="120"></el-table-column>
-            <el-table-column prop="productDrawingNo" label="产品图号" min-width="300"
+            <el-table-column type="index" width="70" label="序号" fixed />
+            <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="processName" label="工序名称" width="100" />
+            <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
-            <el-table-column prop="dispatchQuantity" label="派工数量" width="100" />
-            <el-table-column prop="completedQuantity" label="完工数量" width="100" />
+            <el-table-column prop="productionQuantity" label="生产数量" width="100" />
+            <el-table-column prop="qualifiedQuantity" label="合格数量" width="100" />
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="120" />
             <el-table-column prop="createTime" label="创建时间" width="120">
               <template slot-scope="scope">
                 <div>{{ scope.row.createTime ? scope.row.createTime.substring(0, 10) : '' }}</div>
@@ -476,8 +543,9 @@
             </el-table-column>
           </el-table>
           <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-            <span style="font-weight:500;margin-right:10px">总派工数量：{{ totalDispatchQuantity }}</span>
-            <span style="font-weight:500;margin-right:10px">总完工数量：{{ totalCompletedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">总生产数量：{{ totalProductionQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">合格数量：{{ totalQualifiedQuantity }}</span>
+            <span style="font-weight:500;margin-right:10px">不合格数量：{{ totalUnqualifiedQuantity }}</span>
           </div>
         </el-dialog>
 
@@ -536,7 +604,7 @@ export default {
         { label: "自动扣减料", value: "auto" },
         { label: "都不是", value: "none" },
       ],
-      workOrderList:false,
+      workOrderList: false,
       getBimProcessList,
       ProductMethodArr: [
         {
@@ -634,7 +702,7 @@ export default {
         remark: "",
         bomId: "",
         drawingNo: "",
-        productionLineId:"",
+        productionLineId: "",
       },
       dataFormTwo: {
         data: [],
@@ -660,7 +728,7 @@ export default {
           { required: true, message: '计划生产日期不能为空', trigger: 'change' }
         ],
         productionQuantity: [
-          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量不能为空",(errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
+          { validator: this.formValidate({ type: 'noEmtry', params: ["返工生产数量不能为空", (errMsg) => { this.$message.error(`${errMsg}`) }] }), trigger: 'blur' },
           { required: true, trigger: 'blur' },
           { validator: this.formValidate('positiveNumber', false, (errMsg) => { this.$message.error(`返工生产数量${errMsg}`) }), trigger: 'blur' },
         ],
@@ -702,13 +770,33 @@ export default {
       selectProcessArr: [],
       selectRows: [],
       currentProductIndex: "",
-      isSame:false,
-      previousroutingId:"",
-      detailDiaFlag:false,
+      isSame: false,
+      previousroutingId: "",
+      detailDiaFlag: false,
     }
   },
   computed: {
-
+    totalProductionQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].productionQuantity])
+      }
+      return totalNums
+    },
+    totalQualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].qualifiedQuantity])
+      }
+      return totalNums
+    },
+    totalUnqualifiedQuantity: function () {
+      var totalNums = 0;
+      for (var i = 0; i < this.detailDataList.length; i++) {
+        totalNums = this.jnpf.math('add', [totalNums, this.detailDataList[i].unqualifiedQuantity])
+      }
+      return totalNums
+    },
   },
   created() {
     this.getPickingConfig()
@@ -998,7 +1086,38 @@ export default {
         this.$message.error("当前工序没有配置班组资源");
       }
     },
+    // 选择设备
+    selectDeviceFun(scope) {
+      console.log("设备", scope);
+      this.totalData = []
+      if (scope.row.routingProResMap) {
+        if (scope.row.routingProResMap.device) {
+          this.index = scope.$index
+          this.currentDeviceId = scope.row.equipmentId
+          let deviceDataData = scope.row.routingProResMap.device
+          this.routingProResMapDiaFlag = true
+          this.routingProResMapDiaTitle = "设备资源"
+          let resIdList = []
+          deviceDataData.forEach(item => {
+            resIdList.push(item.resourceId)
+          });
+          let obj = {
+            resType: "device",
+            resIdList: resIdList,
+          }
+          getWorkListMap(obj).then(res => {
+            console.log("设备数据", res);
+            this.deviceData = Object.keys(res.data).sort();
+            this.totalData = res.data
+          })
+        } else {
+          this.$message.error("当前工序没有配置设备资源")
 
+        }
+      } else {
+        this.$message.error("当前工序没有配置设备资源")
+      }
+    },
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
@@ -1316,7 +1435,11 @@ export default {
               item.workGroupId = item.routingProResMap.work_group[0].resourceId;
               item.workGroupName = item.routingProResMap.work_group[0].resourceName;
             }
+            if (item.routingProResMap.device) {
+              item.equipmentId = item.routingProResMap.device[0].resourceId
+              item.equipmentName = item.routingProResMap.device[0].resourceName
 
+            }
           } else {
           }
         });
@@ -1386,7 +1509,7 @@ export default {
 
           if (this.allocationFlag) {
             this.dataForm.materialFlag = true
-          }else{
+          } else {
             this.dataForm.materialFlag = false
 
           }
@@ -1593,9 +1716,13 @@ $footerPadding: '10px';
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 0px;
   border-top: none !important;
 
+}
+
+.orderInfo ::v-deep.el-collapse-item__wrap {
+  padding: 0 10px;
 }
 
 ::v-deep .el-collapse-item__content {
@@ -1619,9 +1746,12 @@ $footerPadding: '10px';
   margin-top: 43px;
   display: inline-block;
 }
+
 .orderInfo {
   margin-top: 5px;
+  border-top: 0;
 }
+
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
@@ -1664,8 +1794,5 @@ $footerPadding: '10px';
 .active {
   background-color: #5d9bd5;
   color: #fff;
-}
-.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body{
-  max-height: 100vh;
 }
 </style>

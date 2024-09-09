@@ -244,3 +244,10 @@ export function changProdWork(data) {
   })
 }
   
+// 报工记录撤回
+export function revokeReport(id) {
+  return request({
+    url: `/api/mrp/work/report/revoke?id=${id}`,
+    method: 'POST',
+  })
+}

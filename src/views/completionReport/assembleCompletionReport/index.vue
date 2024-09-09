@@ -7,9 +7,8 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="scanCodeTent">
               <div class="searchregion">
-                <el-input v-model="scanResult" placeholder="请输入编码或单号" @keyup.enter.native="searchResult()"
+                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、派工码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()"
                   class="scanResultIpt"></el-input>
-                <p style="margin-top: 10px;text-align: left;">说明：支持扫任务码、工序码、班组码、人员码。</p>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
                 </div>
@@ -591,6 +590,7 @@ export default {
       },
 
       deviceForm: {
+        classAttribute: "equipment",
         name: "",
         code: "",
         pageNum: 1,

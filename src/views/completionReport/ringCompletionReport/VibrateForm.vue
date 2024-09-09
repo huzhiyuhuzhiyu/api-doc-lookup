@@ -91,7 +91,7 @@
             <el-form-item label="孔径" :prop="aperture">
               <el-select v-model="form.aperture" placeholder="孔径" style="width: 100%;">
                 <el-option v-for="(item, index) in apertureList" :key="index" :label="item.label"
-                  :value="item.id"></el-option>
+                  :value="item.name"></el-option>
               </el-select>
             </el-form-item>
           </el-col>

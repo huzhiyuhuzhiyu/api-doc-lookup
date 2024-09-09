@@ -19,12 +19,12 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
@@ -32,31 +32,31 @@
                       </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="品名规格" prop="productsDrawingNo">
                           <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="产品编码" prop="productsCode">
                           <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产数量" prop="planProductionQuantity">
                           <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="可编排数量" prop="availableArrangeQuantity">
                           <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
                           </el-input>
@@ -64,13 +64,13 @@
                       </el-col>
 
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="编排数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
@@ -78,26 +78,49 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="6" :xs="24">
+                      <el-col :sm="8" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
-                      <!-- <el-col :sm="8" :xs="24">
-                        <el-form-item label="产线" prop="productionLineId">
-                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable>
-                            <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
-                              :value="item.id"></el-option>
-                          </el-select>
-                        </el-form-item>
-                      </el-col> -->
+
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注" type="textarea" maxlength="200"
                             :rows="2" />
                         </el-form-item>
                       </el-col>
+                    </el-row>
+                  </el-form>
+                </el-collapse-item>
+                <el-collapse-item title="领料信息" name="pickInfo" v-if="allocationFlag">
+                  <el-form ref="collectForm" :model="collectForm" :rules="pickDataRule" label-width="160px"
+                    label-position="top">
+                    <el-row :gutter="30" class="custom-row">
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料单号" prop="orderNo">
+                          <el-input v-model="collectForm.orderNo"
+                            :disabled="collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="8" :xs="24">
+                        <el-form-item label="领料人" prop="personId">
+                          <user-select v-model="collectForm.personId" placeholder="请选择领料人" clearable
+                            style="width: 100%;" :disabled="btnType == 'look'" @change="hangleSelectSales">
+                          </user-select>
+
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="领料日期" prop="operationDate">
+                          <el-date-picker v-model="collectForm.operationDate" :default-value="new Date()"
+                            type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="领料日期"
+                            :disabled="btnType == 'look' ? true : false" @change="changDateFun">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
                     </el-row>
                   </el-form>
                 </el-collapse-item>
@@ -127,7 +150,25 @@
                           </el-button>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="equipmentId" label="设备" min-width="150">
 
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
+                            style="width:70%;display:none" class="applySelect" disabled>
+                            <el-option
+                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
+                              :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
+                              :value="item.resourceId"></el-option>
+                          </el-select>
+                          <el-button @click="selectDeviceFun(scope)" type="text" class="underline-button"
+                            :disabled="scope.row.processingType != 'self_produced'">
+                            {{ scope.row.equipmentId ? scope.row.equipmentCode ?
+                              scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
+                              "请选择设备" }}
+
+                          </el-button>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="personId" label="人员" min-width="100">
 
                         <template slot-scope="scope">
@@ -143,11 +184,10 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="productionLineId" label="产线" min-width="160">
+                      <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
                         <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择产线"  /> -->
-                          <el-select v-model="scope.row.productionLineId" placeholder="请选择产线" clearable
+                          <el-select v-model="dataForm.productionLineId" placeholder="请选择产线" clearable
                             :disabled="scope.row.processingType != 'self_produced'">
                             <el-option v-for="(item, index) in lineList" :key="index" :label="item.name"
                               :value="item.id"></el-option>
@@ -156,14 +196,13 @@
                       </el-table-column>
                       <el-table-column prop="workstationId" label="工位" min-width="160">
                         <template slot-scope="scope">
-                          <!-- <el-input v-model="scope.row.productCode" placeholder="请选择工位" /> -->
                           <el-select v-model="scope.row.workstationId" placeholder="请选择工位"
                             :disabled="!scope.row.productionLineId" clearable @focus="selectworkstation(scope.row)">
                             <el-option v-for="(item, index) in workstationList" :key="index"
                               :label="item.workstationIdName" :value="item.workstationId"></el-option>
                           </el-select>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                       <el-table-column prop="pickingFlag" label="是否领料" min-width="160">
                         <template slot-scope="scope">
                           <div>{{ scope.row.pickingFlag ? "是" : "否" }}</div>
@@ -197,8 +236,7 @@
               </el-collapse>
             </el-tab-pane>
             <el-tab-pane label="附件" name="annex">
-              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"
-                style="margin-top: 10px;"></UploadWj>
+              <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
             </el-tab-pane>
           </el-tabs>
         </div>
@@ -294,11 +332,58 @@
               </div>
             </el-col>
           </el-row>
+          <el-row class="row-bg" :gutter="0" style="margin:12px 0;" v-if="routingProResMapDiaTitle == '设备资源'">
+            <el-col :span="4" class="personBox" :class="[item.split('_')[0] == currentDeviceId ? 'active' : '']"
+              v-for="(item, index) in deviceData" :key="index">
+              <div class="grid-content bg-purple" @click="changresouce(item, '设备')"
+                @dblclick="selectResouce(item, '设备')" :style="!totalData[item].length ? 'height:100%' : ''">
+                <p style="margin-top:14px; font-size:18px">{{ item.split('_')[1] }}</p>
+                <p style=" font-size:18px">{{ item.split('_')[2] ? item.split('_')[2] : '--' }}
+                </p>
+                <div v-if="totalData[item].length > 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}-
+                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
 
+                  </p>
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}-
+                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity
+                    }}个
+                  </p>
+                </div>
+                <div v-else-if="totalData[item].length == 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.')
+                    }}-{{
+                      totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
+                  </p>
+                </div>
+
+                <p v-if="totalData[item].length" style="margin-top:4px; font-size:12px">工单截止：{{
+                  totalData[item][totalData[item].length -
+                    1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }} <el-button class="elbutton" type="text"
+                    size="mini" @click.stop="getDetailFun(item, totalData[item], '设备')"
+                    :style="item.split('_')[0] == currentDeviceId ? 'border:1px solid #fff;color:#1890ff;background:#fff;    padding: 4px!important;' : ''">详细</el-button>
+                </p>
+              </div>
+            </el-col>
+
+
+
+          </el-row>
         </el-dialog>
         <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
           :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
-          @close="detailDiaFlag = false">
+          :header-cell-style="headerCellStyle" @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -333,7 +418,7 @@
             </el-form>
           </el-row>
           <el-table ref="product" :data="detailDataList" border max-height="600">
-            <el-table-column type="index" width="70" label="序号" fixed/>
+            <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
@@ -381,6 +466,7 @@ import {
 import { excelExport, getProductionLineInfo, getProductionLineList } from "@/api/basicData/index";
 import RoutingForm from "./RoutingForm.vue"
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
+import { getBimBusinessSwitchConfigList } from '@/api/basicData/index'
 export default {
   components: {
     RoutingForm
@@ -388,7 +474,27 @@ export default {
   data() {
     return {
       activeNames: ["productInfo", "basicInfo"],
+      allocationFlag: false,
       routingVisible: false,
+      collectForm: {
+        orderNo: "",
+        operationDate: "",
+        personId: "",
+      },
+      collectConfig: {
+
+      },
+      pickDataRule: {
+        orderNo: [
+          { required: true, message: '领料单号单号不能为空', trigger: 'blur' }
+        ],
+        operationDate: [
+          { required: true, message: '领料日期不能为空', trigger: 'change' }
+        ],
+        personId: [
+          { required: true, message: '领料人不能为空', trigger: 'change' }
+        ],
+      },
       dataForm: {
         planDate: [],
         orderNo: "",
@@ -412,7 +518,6 @@ export default {
         specialRequire: "",
         remark: "",
         bomId: "",
-        productionLineId:"",
       },
       dataFormTwo: {
         data: [],
@@ -461,6 +566,10 @@ export default {
       },
       detailDataList: [],
       detailDiaFlag: false,
+      headerCellStyle: {
+        backgroundColor: '#f5f7fa',
+        fontWeight: 'bold'
+      }
     }
   },
   computed: {
@@ -487,12 +596,36 @@ export default {
     },
   },
   created() {
-
+    this.getPickingConfig()
   },
   mounted() {
 
   },
   methods: {
+    // 获取领料设置 领料是否自动生成领料单
+    getPickingConfig() {
+
+      let obj = { "pageSize": -1, "businessCode": "produce" }
+      getBimBusinessSwitchConfigList(obj).then(res => {
+        this.allocationFlag = res.data.produce[0].configValue1 == '1' ? true : false
+        if (this.allocationFlag) {
+          this.activeNames = ['pickInfo', "productInfo", "basicInfo"]
+          this.fetchData("PODH")
+        } else {
+          this.activeNames = ["productInfo", "basicInfo"]
+
+        }
+      })
+    },
+    //领料人
+    hangleSelectSales(e, r) {
+      this.$nextTick(() => {
+        this.$refs.collectForm.clearValidate('personId')
+      })
+      this.collectForm.personId = e
+    },
+
+
     // 通过查询条件查询未完成的派工单
     dataFormSubmit() {
       if (this.daterangeList.length) {
@@ -596,7 +729,38 @@ export default {
         this.$message.error("当前工序没有配置班组资源");
       }
     },
+    // 选择设备
+    selectDeviceFun(scope) {
+      console.log("设备", scope);
+      this.totalData = []
+      if (scope.row.routingProResMap) {
+        if (scope.row.routingProResMap.device) {
+          this.index = scope.$index
+          this.currentDeviceId = scope.row.equipmentId
+          let deviceDataData = scope.row.routingProResMap.device
+          this.routingProResMapDiaFlag = true
+          this.routingProResMapDiaTitle = "设备资源"
+          let resIdList = []
+          deviceDataData.forEach(item => {
+            resIdList.push(item.resourceId)
+          });
+          let obj = {
+            resType: "device",
+            resIdList: resIdList,
+          }
+          getWorkListMap(obj).then(res => {
+            console.log("设备数据", res);
+            this.deviceData = Object.keys(res.data).sort();
+            this.totalData = res.data
+          })
+        } else {
+          this.$message.error("当前工序没有配置设备资源")
 
+        }
+      } else {
+        this.$message.error("当前工序没有配置设备资源")
+      }
+    },
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
@@ -777,7 +941,11 @@ export default {
               item.workGroupId = item.routingProResMap.work_group[0].resourceId;
               item.workGroupName = item.routingProResMap.work_group[0].resourceName;
             }
+            if (item.routingProResMap.device) {
+              item.equipmentId = item.routingProResMap.device[0].resourceId
+              item.equipmentName = item.routingProResMap.device[0].resourceName
 
+            }
           } else {
           }
         });
@@ -796,13 +964,23 @@ export default {
       this.$refs.dataForm.clearValidate('planDate');
       this.getProductionLineListFun()
       this.fetchData("PROD")
+
       this.getRoutingDetail(this.dataForm.routingId)
     },
     async fetchData(code) {
       try {
         const data = await this.jnpf.getBillRuleConfigFun(code);
-        this.codeConfig = data
-        this.dataForm.orderNo = data.number
+        if (code == 'PROD') {
+          this.codeConfig = data
+          this.dataForm.orderNo = data.number
+
+        }
+        if (code == 'PODH') {
+          this.collectConfig = data
+          this.collectForm.orderNo = data.number
+
+        }
+
       } catch (error) {
       }
     },
@@ -810,53 +988,76 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
+    checkFun() {
+      if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
+      let submitFlag = null;
+      for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+        const item = this.dataFormTwo.data[index];
+        if (
+          !item.workGroupId &&
+          !item.personId &&
+          !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
+          item.processingType == "self_produced"
+        ) {
+          submitFlag = false;
+          this.btnLoading = false;
+          this.$message({
+            message: "第" + (index + 1) + "行班组、人员需要必填一项",
+            type: "error",
+          });
+          break;
+        }
+      }
+      if (this.allocationFlag) {
+        this.dataForm.materialFlag = true
+      } else {
+        this.dataForm.materialFlag = false
+
+      }
+      console.log("表单", this.dataForm);
+      console.log("工序", this.dataFormTwo.data);
+      if (submitFlag === false) return
+      this.dataFormTwo.data.forEach(item => {
+        item.routingProResList.forEach(items => {
+          items.processId = item.processId
+        })
+        this.$set(item, 'workOrderResList', item.routingProResList)
+      });
+      let obj = {
+        prodOrder: this.dataForm,
+        workOrderList: this.dataFormTwo.data,
+        collect: this.collectForm,
+      }
+      addProdPlanArrange(obj).then(res => {
+        this.btnLoading = false
+        this.$message.success("生成编排成功")
+        setTimeout(() => {
+          this.$emit('close')
+        }, 1500);
+      }).catch(error => {
+        this.btnLoading = false
+
+      })
+    },
     handleConfirm(value) {
 
       this.$refs['dataForm'].validate((valid) => {
         this.dataForm.documentStatus = value
         if (valid) {
-          if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
-          let submitFlag = null;
-          for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-            const item = this.dataFormTwo.data[index];
-            if (
-              !item.workGroupId &&
-              !item.personId &&
-              !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
-              item.processingType == "self_produced"
-            ) {
-              submitFlag = false;
-              this.btnLoading = false;
-              this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                type: "error",
-              });
-              break;
-            }
-          }
-          console.log("表单", this.dataForm);
-          console.log("工序", this.dataFormTwo.data);
-          if (submitFlag === false) return
-          this.dataFormTwo.data.forEach(item => {
-            item.routingProResList.forEach(items => {
-              items.processId = item.processId
+          if (this.allocationFlag) {
+            this.$refs['collectForm'].validate((valid2) => {
+              if (valid2) {
+                this.checkFun()
+              }
             })
-            this.$set(item, 'workOrderResList', item.routingProResList)
-          });
-          let obj = {
-            prodOrder: this.dataForm,
-            workOrderList: this.dataFormTwo.data
+          } else {
+            this.checkFun()
           }
-          addProdPlanArrange(obj).then(res => {
-            this.btnLoading = false
-            this.$message.success("生成编排成功")
-            setTimeout(() => {
-              this.$emit('close')
-            }, 1500);
-          }).catch(error => {
-            this.btnLoading = false
 
-          })
+
+
+
+
 
         }
       })

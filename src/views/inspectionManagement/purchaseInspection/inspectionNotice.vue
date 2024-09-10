@@ -725,6 +725,7 @@ export default {
         type: 'supplier'
       }
       getCooperativeData(obj13).then((res) => {
+        console.log(res, 'kffkldsfdlkf')
         let arr = []
         res.data.records.forEach((item) => {
           let obj = {

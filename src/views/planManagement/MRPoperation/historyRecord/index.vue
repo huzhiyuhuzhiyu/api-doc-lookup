@@ -514,6 +514,7 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ComplateSetForm v-if="complateSetFormVisible" ref="complateSetForm" @refreshDataList="initData"
       @close="closeForm" />
+    <RetrospectForm v-if="retrospectFormVisible" ref="retrospectForm" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
 
@@ -530,11 +531,12 @@ import { getbimProductAttributesList, getbimProductAttributes } from "@/api/mast
 import Form from "./Form";
 import ComplateSetForm from "./complateSetForm";
 import moment from "moment";
+import RetrospectForm from '../materialRequirements/retrospectForm.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { index } from 'mathjs';
 export default {
   name: "historyRecord",
-  components: { Form, ComplateSetForm, SuperQuery },
+  components: { Form, ComplateSetForm, SuperQuery,RetrospectForm},
   data() {
     return {
       superQueryVisible: false,

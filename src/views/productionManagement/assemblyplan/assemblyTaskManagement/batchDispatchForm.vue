@@ -205,7 +205,7 @@
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column prop="personId" label="人员" min-width="100">
+                    <el-table-column prop="personId" label="人员" min-width="150">
 
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.personId" placeholder="" clearable

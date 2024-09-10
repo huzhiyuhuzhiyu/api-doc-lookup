@@ -159,7 +159,7 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="100">
+                      <el-table-column prop="personId" label="人员" min-width="150">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable

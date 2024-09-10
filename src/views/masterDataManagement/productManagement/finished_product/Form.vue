@@ -52,7 +52,7 @@ export default {
     return {
       datafilelist: [],
       activeName: 'basicInfo',
-      activeNames: ['modelInfo', 'basicInfo','otherInfo'],
+      activeNames: ['modelInfo', 'basicInfo', 'otherInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -351,7 +351,10 @@ export default {
               if (this.dataForm.deputyUnit) {
                 detailUnitData(val).then((res) => {
                   res.data.unitRelList.forEach((it) => {
+                    console.log(it, 'it1')
                     if (it.targetName == this.dataForm.deputyUnit) {
+                      console.log(this.dataForm.deputyUnit, '1')
+                      console.log(it, '1')
                       this.dataForm.ratio = it.ratio
                       this.dataForm.calculationDirection = it.calculationDirection
                     } else {
@@ -370,8 +373,12 @@ export default {
                 detailUnitData(val).then((res) => {
                   res.data.unitRelList.forEach((it) => {
                     if (it.targetName == this.dataForm.mainUnit) {
+                      console.log(this.dataForm.mainUnit, 'main')
+                      console.log(it, 'it2')
                       this.dataForm.ratio = it.ratio
                       this.dataForm.calculationDirection = it.calculationDirection
+                      console.log(this.dataForm.ratio, 'ra')
+                      console.log(this.dataForm, 'form')
                     } else {
                       this.dataForm.ratio = ''
                       this.dataForm.calculationDirection = ''
@@ -543,7 +550,7 @@ export default {
         // 数据有效，进行更新
         this.dataForm[paramsObj.prop] = data[0].all.name
         this.dataForm.steelBallManufacturer = data[0].all.code
-        console.log(this.dataForm.steelBallManufacturer,'this.dataForm.steelBallManufacturer')
+        console.log(this.dataForm.steelBallManufacturer, 'this.dataForm.steelBallManufacturer')
         // this.dataForm.
         this.dataForm.drawingNo =
           this.dataForm.model +

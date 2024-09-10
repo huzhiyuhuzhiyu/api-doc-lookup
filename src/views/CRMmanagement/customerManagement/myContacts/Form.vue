@@ -15,54 +15,54 @@
             <el-collapse-item title="基本信息" name="basicInfo">
               <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                 <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="姓名" prop="name">
                       <el-input v-model="dataForm.name" placeholder="请输入姓名" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="性别" prop="sex">
                       <el-select v-model="dataForm.sex" placeholder="请选择性别" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                         <el-option v-for="(item, index) in sexList" :key="index" :label="item.label" :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="客户名称" prop="cooperativePartnerName">
                       <ComSelect-list :isdisabled="btntype=== 'look'" v-model="dataForm.cooperativePartnerName" placeholder="请选择客户名称" @change="onPartnerChange" :title="'选择客户'" :method="getPartnerList" :requestObj="requestObj" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="电话" prop="phone">
                       <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="邮箱" prop="email">
                       <el-input v-model="dataForm.email" placeholder="请输入邮箱" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="地址" prop="address">
                       <el-input v-model="dataForm.address" placeholder="请输入地址" :disabled="btntype === 'look' ? true : false" maxlength="300" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="职务" prop="displayName">
                       <el-input v-model="dataForm.displayName" placeholder="请输入职务" :disabled="btntype === 'look' ? true : false" maxlength="300" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="部门" prop="departmentName">
                       <el-input v-model="dataForm.departmentName" placeholder="请输入部门" :disabled="btntype === 'look' ? true : false" maxlength="300" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="爱好" prop="hobby">
                       <el-input v-model="dataForm.hobby" placeholder="请输入爱好" :disabled="btntype === 'look' ? true : false" maxlength="300" />
                     </el-form-item>
                   </el-col>
-                  <el-col :sm="8" :xs="24">
+                  <el-col :sm="6" :xs="24">
                     <el-form-item label="备注" prop="remark">
                       <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                     </el-form-item>

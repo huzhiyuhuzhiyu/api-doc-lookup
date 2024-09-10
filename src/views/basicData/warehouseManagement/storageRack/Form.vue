@@ -11,21 +11,17 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-        <!-- 使用对象结合自定义组件渲染内容 -->
-        <el-tabs v-model="activeName">
-          <!-- 普通属性 -->
-          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
-                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-                <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm"
-                  :tableItems="sleeveItems" :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-                <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-                  :openMode="openMode" />
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
-        </el-tabs>
+
+        <el-collapse v-model="activeNames">
+          <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
+            <JNPF-col v-model="dataForm" :tabContent="tabs[0].tabContent" ref="dataForm" :openMode="openMode" />
+            <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+              :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
+            <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+              :openMode="openMode" />
+          </el-collapse-item>
+        </el-collapse>
+
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
     </div>
@@ -491,6 +487,7 @@ export default {
 
 .JNPF-preview-main .main {
   padding-top: 0;
+  margin-top: 10px;
 }
 
 ::v-deep .el-tabs__item {

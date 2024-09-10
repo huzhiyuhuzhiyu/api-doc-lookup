@@ -16,53 +16,59 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="拜访计划" prop="visitPlanName">
                         <ComSelect-page v-model="dataForm.visitPlanName" @change="visitPlanChange" :tableItems="VisitPlanTableItems" dialogTitle="选择拜访计划" placeholder="请选择拜访计划" :listMethod="getcrmVisitlist" :listRequestObj="VisitPlanRequestObj" :searchList="VisitPlanSearchList" :isdisabled="btntype === 'look'" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="跟进时间" prop="returnVisitTime">
+                        <el-date-picker v-model="dataForm.returnVisitTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择跟进时间" :disabled="btntype == 'look' ? true : false">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="下次跟进时间" prop="nextTime">
                         <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次跟进时间" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="跟进方式" prop="visitForm">
                         <el-select v-model="dataForm.visitForm" placeholder="请选择跟进方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in visitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户名称" prop="name">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.name" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'||!!dataForm.visitPlanName" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="联系人" prop="contactsId">
                         <el-select v-model="dataForm.contactsId" placeholder="请选择联系人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.name">
                           <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="合同" prop="contractNo">
                         <ComSelect-page v-model="dataForm.contractNo" @change="contractNoChange" :tableItems="contractNoTableItems" dialogTitle="选择合同" placeholder="请选择合同" :listMethod="getcrmContractlist" :listRequestObj="contractNoRequestObj" :searchList="contractNoSearchList" :isdisabled="btntype === 'look'||!dataForm.name" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回款" prop="receivablesNo">
                         <ComSelect-page v-model="dataForm.receivablesNo" @change="receivablesNoChange" :tableItems="receivablesNoTableItems" dialogTitle="选择回款" placeholder="请选择回款" :listMethod="getcrmReceivableslist" :listRequestObj="receivablesNoRequestObj" :searchList="receivablesNoSearchList" :isdisabled="btntype === 'look'||!dataForm.name" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="跟进内容" prop="serviceDescription">
                         <el-input v-model="dataForm.serviceDescription" placeholder="请输入跟进内容" :disabled="btntype == 'look'" type="textarea" :rows="2" />
                       </el-form-item>
@@ -71,59 +77,46 @@
                 </el-collapse-item>
               </el-collapse>
             </el-form>
-            <el-form ref="informationForm" v-loading="formLoading" :model="informationForm" :rules="dataRule" label-position="top" label-width="120px">
+            <el-form v-if="dataForm.visitForm=='见面拜访'" ref="informationForm" v-loading="formLoading" :model="informationForm" :rules="dataRule" label-position="top" label-width="120px">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="行程信息" name="xcInfo" v-if="dataForm.visitForm=='见面拜访'">
+                <el-collapse-item title="行程信息" name="xcInfo">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="出发地" prop="departure">
                         <el-input v-model="informationForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="目的地" prop="destination">
                         <el-input v-model="informationForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="里程数(km)" prop="mileage">
                         <el-input v-model="informationForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="出行方式" prop="travelMode">
                         <el-select v-model="informationForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
+                    <el-col :sm="6" :xs="24" v-if="btntype == 'look' && informationForm.visitPhoto">
                       <el-form-item label="定位" prop="visitGps">
                         <el-input v-model="informationForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
+                    <el-col :sm="24" :xs="24" v-if="btntype == 'look' && informationForm.visitPhoto">
                       <el-form-item label="现场照片" prop="visitPhoto">
-                        <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
-                          <i slot="default" class="el-icon-plus"></i>
-                          <div slot="file" slot-scope="{file}">
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-                            <span class="el-upload-list__item-actions">
-                              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                                <i class="el-icon-zoom-in"></i>
-                              </span>
-                              <span class="el-upload-list__item-delete" @click="handleDownload(file)">
-                                <i class="el-icon-download"></i>
-                              </span>
-                              <span v-if="btntype !== 'look'" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                <i class="el-icon-delete"></i>
-                              </span>
-                            </span>
+                        <el-image class="information-img" fit="contain" v-for="item in informationForm.visitPhotoList" :key="item.id" :src="define.comUrl+item.url" @click="handlePictureCardPreview(item)">
+                          <div slot="placeholder" class="image-slot">
+                            加载中<span class="dot">...</span>
                           </div>
-                          <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
-                        </el-upload>
+                        </el-image>
                         <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
-                          <img width="100%" :src="dialogImageUrl" alt="">
+                          <img width="100%" height="100%" :src="define.comUrl+dialogImageUrl" alt="">
                         </el-dialog>
                       </el-form-item>
                     </el-col>
@@ -292,6 +285,7 @@ export default {
       formLoading: false,
       btnLoading: false,
       dataForm: {
+        returnVisitTime: '',
         receivablesNo: '',
         receivablesId: '',
         contractId: '',
@@ -317,6 +311,9 @@ export default {
       },
       btntype: false,
       dataRule: {
+        returnVisitTime: [
+          { required: true, message: '请选择跟进时间', trigger: 'blur' },
+        ],
         serviceDescription: [
           { required: true, message: '请输入跟进内容', trigger: 'blur' },
         ],
@@ -348,21 +345,14 @@ export default {
   },
   created() {
     this.getDictionaryType()
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    handleRemove(file) {
-      console.log(file);
-    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    },
-    handleDownload(file) {
-      console.log(file);
     },
     //合同传值
     contractNoChange(val, data) {
@@ -483,6 +473,15 @@ export default {
           detailServiceRecords(this.dataForm.id).then(res => {
             this.dataForm = res.data.records
             this.informationForm = res.data.information
+            if (this.informationForm.visitPhoto) {
+              if (this.informationForm.visitPhotoList == "[]") {
+                this.informationForm.visitPhotoList = [];
+              } else {
+                this.informationForm.visitPhotoList = this.informationForm.visitPhotoList.map(
+                  item => JSON.parse("{" + item + "}")
+                )
+              }
+            }
             if (res.data.records.attachmentList) {
               res.data.records.attachmentList.forEach((item) => {
                 this.datafilelist.push(
@@ -499,6 +498,8 @@ export default {
             this.formLoading = false
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
+          this.dataForm.returnVisitTime = this.jnpf.getToday('YYYY-MM-DD HH:mm:ss')
           this.formLoading = false
         }
       })
@@ -518,7 +519,7 @@ export default {
             })
           }
           let obj = {
-            information: informationForm,
+            information: this.informationForm,
             records: {
               ...this.dataForm,
               attachmentList: this.datafilelist
@@ -554,6 +555,18 @@ export default {
 <style scoped lang="scss">
 .JNPF-preview-main .main {
   padding-top: 0;
+  .information-img {
+    width: 148px;
+    height: 148px;
+    border: 1px solid #c0ccda;
+    border-radius: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .information-img + .information-img {
+    margin-left: 10px;
+  }
 }
 ::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 0 !important;

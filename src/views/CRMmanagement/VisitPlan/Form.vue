@@ -11,69 +11,69 @@
       </div>
       <div class="main">
         <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="jcInfo">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="拜访计划名称" prop="visitName">
-                        <el-input v-model="dataForm.visitName" placeholder="请输入拜访计划名称" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="预计拜访时间" prop="visitTime">
-                        <el-date-picker v-model="dataForm.visitTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择预计拜访时间" :disabled="btntype == 'look' ? true : false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="拜访形式" prop="visitForm">
-                        <el-select v-model="dataForm.visitForm" placeholder="请选择拜访形式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in visitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="负责人" prop="ownerUserId">
-                        <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="联系人" prop="contactsId">
-                        <el-select v-model="dataForm.contactsId" placeholder="请选择联系人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.customerName">
-                          <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机名称" prop="businessName">
-                        <ComSelect-page v-model="dataForm.businessName" @change="businessChange" :tableItems="businessIdTableItems" dialogTitle="选择商机" placeholder="请选择商机" :listMethod="getcrmBusinessList" :listRequestObj="businessRequestObj" :searchList="businessSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="拜访目的" prop="visitAim">
-                        <el-select v-model="dataForm.visitAim" placeholder="请选择拜访目的" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in visitGoalList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
+          <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基本信息" name="basicInfo">
+              <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="拜访计划名称" prop="visitName">
+                      <el-input v-model="dataForm.visitName" placeholder="请输入拜访计划名称" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="预计拜访时间" prop="visitTime">
+                      <el-date-picker v-model="dataForm.visitTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择预计拜访时间" :disabled="btntype == 'look' ? true : false">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="拜访形式" prop="visitForm">
+                      <el-select v-model="dataForm.visitForm" placeholder="请选择拜访形式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                        <el-option v-for="(item, index) in visitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="负责人" prop="ownerUserId">
+                      <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'">
+                      </user-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="客户名称" prop="customerName">
+                      <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="联系人" prop="contactsId">
+                      <el-select v-model="dataForm.contactsId" placeholder="请选择联系人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.customerName">
+                        <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="商机名称" prop="businessName">
+                      <ComSelect-page v-model="dataForm.businessName" @change="businessChange" :tableItems="businessIdTableItems" dialogTitle="选择商机" placeholder="请选择商机" :listMethod="getcrmBusinessList" :listRequestObj="businessRequestObj" :searchList="businessSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="拜访目的" prop="visitAim">
+                      <el-select v-model="dataForm.visitAim" placeholder="请选择拜访目的" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                        <el-option v-for="(item, index) in visitGoalList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
+          <!-- </el-tab-pane> -->
         </el-tabs>
       </div>
     </div>
@@ -187,7 +187,6 @@ export default {
   },
   created() {
     this.getDictionaryType()
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -286,6 +285,7 @@ export default {
             })
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
           this.formLoading = false
         }
       })

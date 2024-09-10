@@ -287,7 +287,7 @@ export default {
       classAttributeList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -639,13 +639,13 @@ export default {
       this.btnLoading = true
       let submitFlag = true
 
-
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
       let valid_1 = await form_1.validate().catch(() => false)
       if (!valid_1 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_1.fields)
+        this.btnLoading = false
       }
 
       // 校验表单表格（子数据列表）
@@ -654,6 +654,7 @@ export default {
       if (!valid_2 && submitFlag) {
         submitFlag = false
         this.jnpf.focusErrValidItem(form_2.fields)
+        this.btnLoading = false
       }
 
       // 判断是否有子件
@@ -664,7 +665,11 @@ export default {
         submitFlag = false
         this.$message.error('至少有一个子产品的扣减料方式为生成领料单')
       }
-
+      if (this.dataForm.classAttribute == 'semi_finished' && this.dataForm.productSource == 'out') {
+        if (this.linesList.length > 1)
+          return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
+        this.btnLoading = false
+      }
       if (submitFlag) {
         let index = this.linesList.findIndex((line) => line.productId === this.dataForm.productId)
         if (index !== -1) {
@@ -742,6 +747,7 @@ export default {
       } else {
         this.btnLoading = false
       }
+      this.btnLoading = false
     },
     handleNodeClick(nodeData, node) {
       const msgArr = ['选择节点']
@@ -770,14 +776,13 @@ export default {
     // 对应子数据新增或删除行
     addOrDelLinesItem(data) {
       let type = Array.isArray(data) ? 'Array' : 'Object'
-      console.log(type, 'type')
+
       if (type === 'Object') {
         this.linesList.splice(data.$index, 1)
       } else {
-        if (!this.dataForm.drawNo) return this.$message.error('请先选择品名规格')
-        console.log(this.linesList, ';ppppp')
+
         if (this.dataForm.classAttribute == 'semi_finished' && this.dataForm.productSource == 'out') {
-          console.log(9999)
+
           if (this.linesList.length == 0) {
             if (data.length > 1) return this.$message.error('半成品产品来源是外协时，创建BOM的子件，只能选择一个子件')
           } else {
@@ -807,7 +812,7 @@ export default {
       }
     },
     ProductChange(val, data, paramsObj) {
-      console.log(data, ';')
+
       this.$nextTick(() => {
         this.$refs['dataForm'].$children[0].validateField(paramsObj.prop)
       })
@@ -873,23 +878,25 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b023').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b023')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -1002,8 +1009,8 @@ export default {
   margin-top: 43px;
   display: inline-block;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }
-
 </style>

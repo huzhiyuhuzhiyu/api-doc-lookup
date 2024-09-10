@@ -28,7 +28,6 @@
           </el-collapse>
           <!-- </el-tab-pane> -->
         </el-tabs>
-
       </div>
     </div>
   </transition>
@@ -52,7 +51,7 @@ export default {
     return {
       datafilelist: [],
       activeName: 'basicInfo',
-      activeNames: ['modelInfo', 'basicInfo','otherInfo'],
+      activeNames: ['modelInfo', 'basicInfo', 'otherInfo'],
       tabs: tabs(),
       tempRules: {}, // 动态判断是否必填项
       btnType: false,
@@ -68,6 +67,7 @@ export default {
         classAttribute: 'finish_product',
         sealingCoverStructure: ''
       },
+      unitRelList: [],
       modelQuery: {
         startTime: '',
         endTime: '',
@@ -136,7 +136,7 @@ export default {
           filterable: true,
           remote: true,
           maxlength: 50,
-          itemRules: [{ required: true, trigger: "change" }],
+          itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
         },
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
@@ -279,7 +279,6 @@ export default {
 
           tc.clearable = true
           tc.change = (val) => {
-            console.log(val, ';')
             this.dataForm.drawingNo =
               this.dataForm.model +
               this.dataForm.sealingCoverStructure +
@@ -348,42 +347,44 @@ export default {
 
           if (tc.prop === 'mainUnit') {
             tc.change = (val) => {
-              if (this.dataForm.deputyUnit) {
+              this.$nextTick(() => {
+                this.$refs.dataForm[0].$refs.main.clearValidate('calculationDirection')
+              })
+              this.dataForm.ratio = ''
+              this.dataForm.calculationDirection = ''
+              if (val) {
                 detailUnitData(val).then((res) => {
-                  res.data.unitRelList.forEach((it) => {
+                  this.unitRelList = res.data.unitRelList
+                  this.unitRelList.forEach((it) => {
                     if (it.targetName == this.dataForm.deputyUnit) {
                       this.dataForm.ratio = it.ratio
                       this.dataForm.calculationDirection = it.calculationDirection
-                    } else {
-                      this.dataForm.ratio = ''
-                      this.dataForm.calculationDirection = ''
                     }
                   })
                 })
               }
+
             }
           }
 
           if (tc.prop === 'deputyUnit') {
             tc.change = (val) => {
-              if (this.dataForm.mainUnit) {
-                detailUnitData(val).then((res) => {
-                  res.data.unitRelList.forEach((it) => {
-                    if (it.targetName == this.dataForm.mainUnit) {
-                      this.dataForm.ratio = it.ratio
-                      this.dataForm.calculationDirection = it.calculationDirection
-                    } else {
-                      this.dataForm.ratio = ''
-                      this.dataForm.calculationDirection = ''
-                    }
-                  })
+              this.$nextTick(() => {
+                this.$refs.dataForm[0].$refs.main.clearValidate('calculationDirection')
+              })
+              this.dataForm.ratio = ''
+              this.dataForm.calculationDirection = ''
+
+              if (this.unitRelList && this.unitRelList.length !== 0) {
+                this.unitRelList.forEach((item) => {
+                  if (item.targetName === val) {
+                    this.dataForm.ratio = item.ratio
+                    this.dataForm.calculationDirection = item.calculationDirection
+                  }
                 })
               }
             }
           }
-          //  else {
-          //   this.otherForm.bomFlag = false
-          // }
         }
       })
     })
@@ -535,7 +536,6 @@ export default {
     },
     // 钢球厂家
     steelBallChange(val, data, paramsObj) {
-      console.log(data, paramsObj, 'jjj')
       this.$nextTick(() => {
         this.$refs['dataForm'][paramsObj.tabInd].$children[0].validateField(paramsObj.prop)
       })
@@ -543,8 +543,7 @@ export default {
         // 数据有效，进行更新
         this.dataForm[paramsObj.prop] = data[0].all.name
         this.dataForm.steelBallManufacturer = data[0].all.code
-        console.log(this.dataForm.steelBallManufacturer,'this.dataForm.steelBallManufacturer')
-        // this.dataForm.
+
         this.dataForm.drawingNo =
           this.dataForm.model +
           this.dataForm.sealingCoverStructure +
@@ -763,11 +762,10 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 ::v-deep .JNPF-common-page-header {

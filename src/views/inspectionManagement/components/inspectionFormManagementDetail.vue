@@ -933,7 +933,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0px 14px 8px 14px;
+  padding: 0px 14px 0 14px;
   border-top: none !important;
 
 }

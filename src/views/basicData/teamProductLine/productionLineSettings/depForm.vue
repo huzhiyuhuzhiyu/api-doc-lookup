@@ -46,8 +46,8 @@
               <template slot-scope="{ row }">
                 <el-form :ref="`tableForm_1_${row.index}`" :model="row" :rules="rulesTwo">
                   <el-form-item prop="workstationIdCode" :style="row.cssObj" ref="workstationIdCode">
-                    <el-input disabled v-model="row.workstationIdCode" placeholder="工位编码" clearable
-                      maxlength="20"></el-input>
+                    <el-input v-model="row.workstationIdCode" placeholder="工位编码" clearable maxlength="20"
+                      :disabled="workstationIdCodeDisabled"></el-input>
                   </el-form-item>
                 </el-form>
               </template>
@@ -60,15 +60,7 @@
               <template slot-scope="{ row }">
                 <el-form :ref="`tableForm_${row.index}`" :model="row" :rules="rulesTwo">
                   <el-form-item prop="workstationIdName" :style="row.cssObj" ref="targetName">
-                    <!-- <ComSelect3 v-model="dataForm.targetName" :isdisabled="btntype" placeholder="请选择项目名称" auth
-                        @change="onOrganizeChange" :currOrgId="dataForm.id" :type="dataForm.type"
-                        :classAttribute="dataForm.classAttribute" /> -->
-
-                    <!-- ComSelect-list 用法 title弹出窗口标题 method数据请求方法 requestObj请求对象 param其他参数(会跟随@change一起返回) -->
-                    <ComSelectInspection v-model="row.workstationIdName" placeholder="请选择工位名称" auth
-                      @change="onOrganizeChangeTwo" :title="'选择工位名称'" :method="bimWorkstationList"
-                      :requestObj="requestObj"
-                      :paramsObj="{ row, oldVal: { name: row.workstationIdName || '', id: row.workstationId || '' } }" />
+                    <el-input v-model="row.workstationIdName" placeholder="工位名称" clearable maxlength="20"></el-input>
                   </el-form-item>
                 </el-form>
               </template>
@@ -199,6 +191,8 @@ export default {
       },
       btntype: false,
       codeConfig: {},
+      workstationIdCodeDisabled: false,
+      workstationIdCode: '',
       dataRule: {
         code: [
           { required: true, message: '请输入产线编码', trigger: 'blur' },
@@ -265,18 +259,29 @@ export default {
       }
     },
     // 添加和删除
-    addtable() {
+    async addtable() {
       let ind = this.dataFormTwo.length
-      let item = {
-        index: ind,
-        name: '',
-        workstationId: this.dataForm.workstationId,
-        workstationIdCode: '',
-        workstationIdName: '',
-        targetUnitCode: '',
-        cssObj: {}
+      let item = {}
+      const res = await this.jnpf.getBillRuleConfigFun('bm_sc_gw')
+      console.log(res, 'fre')
+      this.workstationIdCode = res.number
+      this.workstationIdCodeDisabled = !res.modifyFlag
+
+      console.log(this.workstationIdCode, 'workstationIdCode')
+      if (this.workstationIdCode) {
+        item = {
+          index: ind,
+          name: '',
+          workstationId: this.dataForm.workstationId,
+          workstationIdCode: this.workstationIdCode,
+          workstationIdName: '',
+          targetUnitCode: '',
+          cssObj: {}
+        }
+        this.dataFormTwo.push(item)
       }
-      this.dataFormTwo.push(item)
+
+
     },
     deltable(index) {
       this.dataFormTwo.splice(index, 1)
@@ -321,58 +326,60 @@ export default {
           state: this.dataForm.state,
           id: this.dataForm.id
         },
-        relationList: this.dataFormTwo
+        relationList: this.dataFormTwo,
+        
       }
+      console.log(queryData, 'queryData')
       let msg = true
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          if (this.dataFormTwo.length === 0) {
-            this.$message({
-              type: 'error',
-              message: `请至少选择一个工位`,
-              duration: 1500
-            })
-          } else {
-            this.dataFormTwo.forEach((item, index) => {
-              if (item.workstationIdName === '') {
-                msg = false
-                this.$message({
-                  type: 'error',
-                  message: `工位:第${index + 1}条工位不能为空`,
-                  duration: 1500
-                })
-              }
-            })
-            if (msg) {
-              this.btnLoading = true
-              let formMethod = this.dataForm.id ? editProductionLineData : addProductionLineData
+      // this.$refs['dataForm'].validate((valid) => {
+      //   if (valid) {
+      //     if (this.dataFormTwo.length === 0) {
+      //       this.$message({
+      //         type: 'error',
+      //         message: `请至少选择一个工位`,
+      //         duration: 1500
+      //       })
+      //     } else {
+      //       this.dataFormTwo.forEach((item, index) => {
+      //         if (item.workstationIdName === '') {
+      //           msg = false
+      //           this.$message({
+      //             type: 'error',
+      //             message: `工位:第${index + 1}条工位不能为空`,
+      //             duration: 1500
+      //           })
+      //         }
+      //       })
+      //       if (msg) {
+      //         this.btnLoading = true
+      //         let formMethod = this.dataForm.id ? editProductionLineData : addProductionLineData
 
-              formMethod(queryData)
-                .then((res) => {
-                  let msg = ''
-                  if (formMethod == editProductionLineData) {
-                    msg = '修改成功'
-                  } else {
-                    msg = '新建成功'
-                  }
-                  this.$message({
-                    message: msg,
-                    type: 'success',
-                    duration: 1500,
-                    onClose: () => {
-                      this.visible = false
-                      this.btnLoading = false
-                      this.$emit('close', true)
-                    }
-                  })
-                })
-                .catch(() => {
-                  this.btnLoading = false
-                })
-            }
-          }
-        }
-      })
+      //         formMethod(queryData)
+      //           .then((res) => {
+      //             let msg = ''
+      //             if (formMethod == editProductionLineData) {
+      //               msg = '修改成功'
+      //             } else {
+      //               msg = '新建成功'
+      //             }
+      //             this.$message({
+      //               message: msg,
+      //               type: 'success',
+      //               duration: 1500,
+      //               onClose: () => {
+      //                 this.visible = false
+      //                 this.btnLoading = false
+      //                 this.$emit('close', true)
+      //               }
+      //             })
+      //           })
+      //           .catch(() => {
+      //             this.btnLoading = false
+      //           })
+      //       }
+      //     }
+      //   }
+      // })
     }
   }
 }

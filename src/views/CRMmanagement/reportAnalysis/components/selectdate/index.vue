@@ -20,7 +20,7 @@
       <div class="custom-date">
         <div class="custom">自定义</div>
         <div class="vux-flexbox type-content-custom vux-flex-row">
-          <el-date-picker v-model="dataForm.valuedate" @change="()=>{dataForm.name='',dataForm.value=''}" value-format="yyyy-MM-dd" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期">
+          <el-date-picker v-model="dataForm.valuedate" @change="()=>{dataForm.name='',dataForm.value='',beginDate=''}" value-format="yyyy-MM-dd" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions">
           </el-date-picker>
         </div>
         <div class="confirm">
@@ -40,6 +40,27 @@
 export default {
   data() {
     return {
+      beginDate: '',
+      //时间限制
+      pickerOptions: {
+        onPick: ({ maxDate, minDate }) => {
+          this.beginDate = minDate && minDate.getTime();
+          if (maxDate) {
+            this.dataForm.valuedate[1] = "";
+          }
+        },
+        disabledDate: (time) => {
+          const minTime = new Date(this.beginDate).setMonth(
+            new Date(this.beginDate).getMonth() - 3
+          );
+          const maxTime = new Date(this.beginDate).setMonth(
+            new Date(this.beginDate).getMonth() + 3
+          );
+          return this.beginDate
+            ? time.getTime() < minTime || time.getTime() > maxTime
+            : false;
+        }
+      },
       visible: false,
       dataForm: {
         name: '本年度',

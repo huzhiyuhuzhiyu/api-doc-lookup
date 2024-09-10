@@ -18,7 +18,7 @@
             <div class="JNPF-common-layout-main JNPF-flex-main" v-loading="formLoading" ref="main"
               :element-loading-text="loadingText">
               <el-tabs v-model="activeName">
-                <el-tab-pane label="基本信息" name="orderInfo" class="orderInfo">
+                <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                       <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px"
@@ -673,6 +673,8 @@ export default {
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" },
+        { label: "生产入库", value: "inbound_mock_production" },
+        
       ],
 
       dataRule: {
@@ -1647,6 +1649,6 @@ export default {
   padding-top: 0;
 }
 ::v-deep .el-tabs__header{
-  margin-bottom: 5px;
+  margin-bottom: 5px!important;
 }
 </style>

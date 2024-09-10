@@ -3,10 +3,9 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
-        <el-radio-group v-model="activeName" style="background-color:#fff;">
-          <!-- <el-radio-button label="" style="margin:3px 0">全部</el-radio-button> -->
-          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
-            :key="item.enCode" :label="item.enCode">{{ item.fullName }}
+        <el-radio-group v-model="listQuery.category" style="background-color:#fff;">
+          <el-radio-button style="margin:2px 0;" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{
+            item.fullName }}
           </el-radio-button>
         </el-radio-group>
       </div>
@@ -21,9 +20,7 @@
                 <div class="business-list__col-template business-list__header-item">
                   模板
                 </div>
-
               </div>
-
               <div class="business-list__body">
                 <!-- 渲染数据 -->
                 <div class="business-list__body__item" v-for="item in currentData" :key="item.id">
@@ -31,19 +28,31 @@
                     {{ item.fullName }}
                   </div>
                   <div class="business-list__col-type-right">
+
                     <!-- 单据 -->
                     <div>
                       <div class="business-list__col-template template-list">
                         <div class="template-item template-item__item">
                           单据
                         </div>
-                        <!-- 需要渲染 -->
-                        <div class="template-item template-item__item is-default">
-                          <div title="湛江市牧泰邦科技有限公司(默认)" class="template-item__name">
-                            <span>湛江市牧泰邦科技有限公司(默认)</span>
-                          </div>
-                        </div>
-                        <div class="template-item template-item__add-btn">
+                        <template v-if="item.hasOwnProperty('list') && item.list.length">
+                          <template v-for="line in item.list">
+                            <!-- 1为单据 2 为小票 -->
+                            <template v-if="line.type === 1">
+                              <!-- 需要渲染 -->
+                              <div class="template-item template-item__item" :class="line.enabledMark ? 'is-default' : ''"
+                                :key="line.id">
+                                <div :title="line.fullName" class="template-item__name"  @click="addOrUpdateHandle(scope.row.id)">
+                                  <span>{{ line.fullName }}</span>
+                                </div>
+                                <div class="template-item__delete-btn" @click="handleDel(scope.row.id)">
+                                  <div class="icon-delete"></div>
+                                </div>
+                              </div>
+                            </template>
+                          </template>
+                        </template>
+                        <div class="template-item template-item__add-btn" @click="addOrUpdateHandle()">
                           <span class="el-icon-plus template-item__add-btn__text"></span>
                         </div>
                       </div>
@@ -54,13 +63,24 @@
                         <div class="template-item template-item__item">
                           小票
                         </div>
-                        <!-- 需要渲染 -->
-                        <div class="template-item template-item__item is-default">
-                          <div title="湛江市牧泰邦科技有限公司(默认)" class="template-item__name">
-                            <span>湛江市牧泰邦科技有限公司(默认)</span>
-                          </div>
-                        </div>
-                        <div class="template-item template-item__add-btn">
+                        <template v-if="item.hasOwnProperty('list') && item.list.length">
+                          <template v-for="line in item.list">
+                            <!-- 1为单据 2 为小票 -->
+                            <template v-if="line.type === 2">
+                              <!-- 需要渲染 -->
+                              <div class="template-item template-item__item" :class="line.enabledMark ? 'is-default' : ''"
+                                :key="line.id">
+                                <div :title="line.fullName" class="template-item__name" @click="addOrUpdateHandle(scope.row.id)">
+                                  <span>{{ line.fullName }}</span>
+                                </div>
+                                <div class="template-item__delete-btn" @click="handleDel(scope.row.id)">
+                                  <div class="icon-delete"></div>
+                                </div>
+                              </div>
+                            </template>
+                          </template>
+                        </template>
+                        <div class="template-item template-item__add-btn" @click="addOrUpdateHandle()">
                           <span class="el-icon-plus template-item__add-btn__text"></span>
                         </div>
                       </div>
@@ -79,26 +99,48 @@
 
 <script>
 import { getChildrenList } from '@/api/systemData/dictionary'
+import { getPrintDevList, Delete, Copy, exportTpl, getPrintList } from '@/api/system/printDev'
 export default {
   name: 'printMode',
   data() {
     return {
-      activeName: 'Salesmanagement',
       categoryList: [],
       currentData: [],
-      dictionaryType:'Salesmanagement'
+      dictionaryType: 'Salesmanagement',
+      listQuery: {
+        category: 'Salesmanagement',
+      }
     }
   },
   created() {
     this.getChildrenListData()
     this.getDictionaryData(this.dictionaryType)
+    this.initData()
   },
   watch: {
-    activeName(val) {
+    'listQuery.category'(val) {
       this.getDictionaryData(val)
     }
   },
   methods: {
+    mapPrintData(data, obj) {
+      // 创建新数组
+      var newData = data.map(item => {
+        if (obj[item.enCode]) {
+          return {
+            ...item,
+            list: obj[item.enCode]
+          };
+        }
+        return item;
+      });
+      return newData
+    },
+    initData() {
+      getPrintList(this.listQuery).then(res => {
+        this.currentData = this.mapPrintData(this.currentData, res.data)
+      }).catch(() => { })
+    },
     getChildrenListData() {
       getChildrenList('600639172939682437').then(res => {
         this.categoryList = res.data
@@ -107,7 +149,7 @@ export default {
     getDictionaryData(type) {
       this.$store.dispatch('base/getDictionaryData', { sort: type }).then((res) => {
         this.currentData = res
-        
+        this.initData()
       })
     },
   },
@@ -243,6 +285,30 @@ export default {
 
                 &.is-default {
                   background-color: #eaf4ff !important;
+                }
+
+                .template-item__delete-btn {
+                  display: none;
+                  position: absolute;
+                  top: -10px;
+                  right: -10px;
+                  width: 20px;
+                  height: 20px;
+                  padding: 2px;
+                  transition: display .3s linear;
+
+                  .icon-delete {
+                    width: 16px;
+                    height: 16px;
+                    background: url(~@/assets/images/delete.png) center center no-repeat no-repeat;
+                    background-size: cover;
+                  }
+                }
+
+                &:hover {
+                  .template-item__delete-btn {
+                    display: block;
+                  }
                 }
               }
 

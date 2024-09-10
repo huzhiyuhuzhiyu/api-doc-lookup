@@ -44,17 +44,17 @@
                   </el-link>
                 </template>
               </el-table-column>
-              <el-table-column prop="type" label="消息类型" width="120">
+              <el-table-column prop="type" label="消息类型" min-width="120">
                 <template slot-scope="scope">
                   <!-- {{ scope.row.type==1?'系统公告':scope.row.type==2?"系统消息":"私信信息"}} -->
                   {{ scope.row.type==1?'系统消息':"私信信息"}}
                 </template>
               </el-table-column>
-              <el-table-column prop="releaseUser" label="发送人员" width="120">
+              <el-table-column prop="releaseUser" label="发送人员" min-width="120">
               </el-table-column>
               <el-table-column prop="releaseTime" label="发送时间" :formatter="jnpf.tableDateFormat"
-                width="120" />
-              <el-table-column prop="isRead" label="状态" width="100">
+                min-width="120" />
+              <el-table-column prop="isRead" label="状态" min-width="100">
                 <template slot-scope="scope">
                   <el-tag type="success" v-if="scope.row.isRead=='1'">已读</el-tag>
                   <el-tag type="info" v-else>未读</el-tag>
@@ -180,7 +180,7 @@ export default {
   }
   .messageRecord-tab {
     height: 100%;
-    >>> .el-tabs__content {
+    ::v-deep .el-tabs__content {
       padding: 0;
       height: calc(100% - 40px);
       .box {

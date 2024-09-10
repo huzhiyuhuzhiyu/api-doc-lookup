@@ -103,6 +103,8 @@ export default {
         convert_urls: false,
         toolbar_mode: 'sliding',
         file_picker_types: 'image',
+        selector: 'img',  // change this value according to your HTML
+        draggable_modal: true,
         // 此处为图片上传处理函数，这个直接用了base64的图片形式上传图片，
         // 如需ajax上传可参考https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_handler
         images_upload_url: "api/extend/Document/uploader/with/code", //指定上传图片的后端处理程序的URL。

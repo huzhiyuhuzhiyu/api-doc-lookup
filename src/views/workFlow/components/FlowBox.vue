@@ -1031,5 +1031,10 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
+  padding: 0 !important;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important
 }
 </style>

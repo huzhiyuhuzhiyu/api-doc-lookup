@@ -8,6 +8,14 @@ export function getPrintDevList(data) {
     data
   })
 }
+// 获取列表 map
+export function getPrintList(data) {
+  return request({
+    url: '/api/system/printDev/listMap',
+    method: 'post',
+    data
+  })
+}
 // 获取详情
 export function getPrintDevInfo(id) {
   return request({

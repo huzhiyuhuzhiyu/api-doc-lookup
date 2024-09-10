@@ -114,7 +114,10 @@ export default {
     newData() {
       console.log(this.treeData, 'newData');
       let hasPageRow = this.treeData.find(item=>item.hasPage)
-      this.newIndexData[0].parentId = hasPageRow.id
+      console.log(hasPageRow);
+      if (hasPageRow){
+        this.newIndexData[0].parentId = hasPageRow.id
+      }
       return this.treeData
     },
     newSysData() {

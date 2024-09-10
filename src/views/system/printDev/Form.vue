@@ -41,18 +41,18 @@
               <el-input v-model="dataForm.enCode" placeholder="模板编码" maxlength="50">
               </el-input>
             </el-form-item>
-            <el-form-item label="模板分类" prop="category">
-              <el-select v-model="dataForm.category" placeholder="选择分类">
+            <!-- <el-form-item label="模板分类" prop="category">
+              <el-select v-model="dataForm.category" placeholder="选择分类" @change="changeCategory">
                 <el-option :key="item.id" :label="item.fullName" :value="item.enCode"
                   v-for="item in categoryList" />
               </el-select>
-            </el-form-item>
-            <el-form-item label="打印业务" prop="printBus">
+            </el-form-item> -->
+            <!-- <el-form-item label="打印业务" prop="printBus">
               <el-select v-model="dataForm.printBus" placeholder="选择打印业务">
                 <el-option :key="item.id" :label="item.fullName" :value="item.enCode"
                   v-for="item in printBusList" />
               </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="分页类型" prop="pageType">
               <el-select v-model="dataForm.pageType" placeholder="选择分类">
                 <el-option :key="item.value" :label="item.label" :value="item.value"
@@ -63,12 +63,12 @@
               <el-input v-model="dataForm.pageSize" placeholder="分页条数" maxlength="50">
               </el-input>
             </el-form-item>
-            <el-form-item label="模板类型" prop="type">
+            <!-- <el-form-item label="模板类型" prop="type">
               <el-radio-group v-model="dataForm.type">
                 <el-radio :label="1">流程表单</el-radio>
                 <el-radio :label="2">功能表单</el-radio>
               </el-radio-group>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="模板排序" prop="sortCode">
               <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode"
                 controls-position="right" />
@@ -150,6 +150,7 @@ export default {
         description: '',
         pageSize:'',
         pageType:'auto',
+        printBus:'',
       },
       dataRule: {
         fullName: [
@@ -210,17 +211,9 @@ export default {
     },
   },
   created(){
-    this.getPrintType()
   },
   methods: {
-    getPrintType() {
-      getbimProductAttributes('591551111345768581').then(res => {
-        console.log(res,'打印业务');
-        
-        this.printBusList = res.data.list
-      })
-    },
-    init(categoryList, id) {
+    init(categoryList, id,enCode,category,type) {
       this.categoryList = categoryList
       this.activeStep = 0
       this.dataForm.id = id || ''
@@ -232,9 +225,14 @@ export default {
           this.loading = true
           getPrintDevInfo(this.dataForm.id).then(res => {
             this.dataForm = res.data
+            // this.getPrintType(this.dataForm.category)
             this.sqlTemplate = this.dataForm.sqlTemplate && JSON.parse(this.dataForm.sqlTemplate) || []
             this.loading = false
           }).catch(() => { this.loading = false })
+        }else{
+          this.dataForm.category = category
+          this.dataForm.printBus = enCode
+          this.dataForm.type = type
         }
       })
     },

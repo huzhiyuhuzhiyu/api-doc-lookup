@@ -42,6 +42,9 @@
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
               <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printOrder('p035')">打印装配单</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer"
+                @click="printFlowCard('p020')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
               </el-button>
 
@@ -53,8 +56,7 @@
                   @click="superQueryVisible = true" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
+                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
               </el-tooltip>
               <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                 <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -82,7 +84,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="productionQuantity" label="总生产数量" min-width="140" sortable="custom" />
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
-            <el-table-column prop="prodSchedule" label="完成进度" min-width="140"  >
+            <el-table-column prop="prodSchedule" label="完成进度" min-width="140">
               <template slot-scope="scope">
                 <el-progress
                   :percentage="Number((scope.row.completedQuantity / scope.row.productionQuantity * 100).toFixed(2)) || 0"></el-progress>
@@ -147,8 +149,8 @@
       </div>
 
     </div>
-    <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false"
-      :visible.sync="addOrderVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
+    <el-dialog title="追加生产数量" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="addOrderVisible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="600px">
       <el-row :gutter="20">
 
         <el-form ref="diaForm" :model="form" :rules="dataRule" label-width="120px" label-position="left">
@@ -178,15 +180,48 @@
     </el-dialog>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
-    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
-      @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch"
+      @close="superQueryVisible = false" />
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
-    <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
+    <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm">
+    </BatchDispatchForm>
+
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <!-- 打印流转卡弹窗选择工单数据 -->
+    <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
+      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
+      <el-row :gutter="20">
+        <el-form ref="workOrderForm" :model="workOrderForm" label-width="92px" label-position="left">
+          <el-col :span="12">
+            <el-form-item label="生产数量：" prop="productionQuantity">
+              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border>
+        <el-table-column prop="orderNo" label="工单号" min-width="160" />
+        <el-table-column prop="processName" label="工序名称" min-width="120" />
+        <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
+        <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
+        <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
+        <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
+        <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
+        <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
+        <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+      </JNPF-table>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
+          打 印</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { ordershengchanList, addOrderNum } from '@/api/productOrdes/index.js'
+import { ordershengchanList, addOrderNum, detailordershengchan } from '@/api/productOrdes/index.js'
 import { prodOrderClose } from '@/api/productOrdes/finishedProductOrders.js'
 import { UserListAll, } from '@/api/permission/user'
 import Form from './Form'
@@ -196,12 +231,19 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm,BatchDispatchForm },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse },
   data() {
     return {
-      BatchDispatchVisible:false,
+      BatchDispatchVisible: false,
+      printBrowseVisible: false,
+      workOrderVisible: false,
+      workOrderForm: {
+        productionQuantity: '',
+      },
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -408,6 +450,9 @@ export default {
           { validator: this.formValidate('positiveNumber', '请输入大于0的正整数',), trigger: 'blur' }
         ],
       },
+      workOrderData: [],
+      selectWorkOrder: [],
+      flowCardCode:''
     }
   },
   created() {
@@ -420,10 +465,10 @@ export default {
   },
   methods: {
     // 改派
-    updataDispatch(id){
-      this.BatchDispatchVisible=true
-      this.$nextTick(()=>{
-        this.$refs.BatchDispatchForm.init(id,'all')
+    updataDispatch(id) {
+      this.BatchDispatchVisible = true
+      this.$nextTick(() => {
+        this.$refs.BatchDispatchForm.init(id, 'all')
       })
     },
     // 新建返工
@@ -448,21 +493,21 @@ export default {
 
 
     },
-    
+
     reassignmentFun2() {
       console.log(this.selectArr);
       if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
       if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
       this.BatchDispatchVisible = true
       this.$nextTick(() => {
-        this.$refs.BatchDispatchForm.init(this.selectArr[0].id,'all')
+        this.$refs.BatchDispatchForm.init(this.selectArr[0].id, 'all')
       })
     },
     reassignmentFun1(data) {
 
       this.BatchDispatchVisible = true
       this.$nextTick(() => {
-        this.$refs.BatchDispatchForm.init(id,'all')
+        this.$refs.BatchDispatchForm.init(id, 'all')
       })
     },
     // 追加生产数量 提交
@@ -584,7 +629,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.reworkVisible = false
-      this.BatchDispatchVisible=false
+      this.BatchDispatchVisible = false
       this.search()
     },
     initData() {
@@ -683,7 +728,51 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-
+    // 打印 装配单
+    printOrder(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectArr[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    // 打印 流转卡
+    printFlowCard(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      this.workOrderVisible = true
+      this.flowCardCode = enCode
+      this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
+      detailordershengchan(this.selectArr[0].id).then(res => {
+        this.workOrderData = res.data.workOrderList
+      })
+    },
+    handleSelectWork(val){
+      this.selectWorkOrder = val
+    },
+    printSubmit(){
+      if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(this.flowCardCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectWorkOrder[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
   }
 }
 </script>

@@ -204,11 +204,7 @@
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
-                  </el-form-item>
-                </el-col>
+             
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
@@ -230,7 +226,6 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                <el-table-column prop="name" label="产品名称" sortable="custom" />
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
@@ -853,7 +848,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 5px
 }
 
 

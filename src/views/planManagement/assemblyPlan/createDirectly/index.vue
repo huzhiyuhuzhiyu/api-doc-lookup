@@ -66,7 +66,6 @@
                     </template>
                   </el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" min-width="320" :key="6"></el-table-column>
-                  <el-table-column prop="productName" label="产品名称" width="140" :key="4" />
                   <el-table-column prop="bomId" label="BOM" width="140" :key="444">
                     <template slot-scope="scope">
                       <div>{{ scope.row.bomId ? scope.row.drawingNo : "无BOM" }}</div>
@@ -86,26 +85,7 @@
                     </template>
                   </el-table-column>
 
-                  <!-- <el-table-column prop="planStartDate" label="计划开始日期" width="180" :key="13">
-                    <template slot="header">
-                      <span class="required">*</span>计划开始日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planStartDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="planEndDate" label="计划结束日期" width="180" :key="139">
-                    <template slot="header">
-                      <span class="required">*</span>计划结束日期
-                    </template>
-                    <template slot-scope="scope">
-                      <el-date-picker v-model="scope.row.planEndDate" type="date" value-format="yyyy-MM-dd"
-                        :disabled="btnType == 'look' ? true : false" style="width: 100%;" placeholder="请选择">
-                      </el-date-picker>
-                    </template>
-                  </el-table-column> -->
+               
 
                   <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
                     <template slot-scope="scope">
@@ -215,11 +195,7 @@
                     <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
                   </el-form-item>
                 </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
-                  </el-form-item>
-                </el-col>
+           
                 <el-col :span="6">
                   <el-form-item>
                     <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
@@ -241,7 +217,6 @@
               <JNPF-table v-loading="listLoading" :data="allproductData" hasC @sort-change="sortChange"
                 @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                 <el-table-column prop="drawingNo" label="品名规格" sortable="custom" />
-                <el-table-column prop="name" label="产品名称" sortable="custom" />
                 <el-table-column prop="code" label="产品编码" sortable="custom" width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
                 <el-table-column prop="inventoryQuantity" label="可用库存数量" sortable="custom"></el-table-column>
@@ -882,7 +857,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 5px
 }
 
 

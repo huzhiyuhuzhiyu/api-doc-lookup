@@ -13,7 +13,7 @@
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-            <el-tab-pane label="基本信息" name="orderInfo">
+            <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
 
@@ -136,6 +136,21 @@
                           </div>
                         </template>
                       </el-table-column>
+                      <el-table-column prop="personId" label="人员" min-width="100">
+
+                        <template slot-scope="scope">
+                          <el-select v-model="scope.row.personId" placeholder="" clearable
+                            style="width: 60%; display: none" class="applySelect" disabled>
+                            <el-option
+                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
+                              :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
+                          </el-select>
+                          <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
+                            :disabled="scope.row.processingType != 'self_produced'">
+                            {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
+                          </el-button>
+                        </template>
+                      </el-table-column>
                       <el-table-column prop="workGroupId" label="班组" min-width="150">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
@@ -169,21 +184,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="100">
 
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.personId" placeholder="" clearable
-                            style="width: 60%; display: none" class="applySelect" disabled>
-                            <el-option
-                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
-                              :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
-                          </el-select>
-                          <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
-                            {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
-                          </el-button>
-                        </template>
-                      </el-table-column>
                       <!-- <el-table-column prop="productionLineId" label="产线" min-width="160">
 
                         <template slot-scope="scope">
@@ -417,12 +418,12 @@
               </el-col>
             </el-form>
           </el-row>
-          <el-table ref="product" :data="detailDataList" border max-height="600">
+          <el-table ref="product" :data="detailDataList" border max-height="380">
             <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="processName" label="工序名称" width="100" />
+            <el-table-column prop="processName" show-overflow-tooltip label="工序名称" width="100" />
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
@@ -924,31 +925,25 @@ export default {
         console.log("工艺详情", res);
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
-          item.personId = "";
-          item.workGroupId = "";
-          item.equipmentId = "";
+         
+         if (item.routingProResMap) {
+           if (item.routingProResMap.personnel) {
+             this.$set(item,'personId',item.routingProResMap.personnel[0].resourceId)
+             this.$set(item,'personName',item.routingProResMap.personnel[0].resourceName)
+           }
+           if (item.routingProResMap.work_group) {
+             this.$set(item,'workGroupId',item.routingProResMap.work_group[0].resourceId)
+             this.$set(item,'workGroupName',item.routingProResMap.work_group[0].resourceName) 
+           }
+           if (item.routingProResMap.device) {
 
-          item.personName = "";
-          item.workGroupName = "";
-          item.equipmentName = "";
-          item.equipmentCode = "";
-          if (item.routingProResMap) {
-            if (item.routingProResMap.personnel) {
-              item.personId = item.routingProResMap.personnel[0].resourceId;
-              item.personName = item.routingProResMap.personnel[0].resourceName;
-            }
-            if (item.routingProResMap.work_group) {
-              item.workGroupId = item.routingProResMap.work_group[0].resourceId;
-              item.workGroupName = item.routingProResMap.work_group[0].resourceName;
-            }
-            if (item.routingProResMap.device) {
-              item.equipmentId = item.routingProResMap.device[0].resourceId
-              item.equipmentName = item.routingProResMap.device[0].resourceName
+             this.$set(item,'equipmentId',item.routingProResMap.device[0].resourceId)
+             this.$set(item,'equipmentName',item.routingProResMap.device[0].resourceName) 
 
-            }
-          } else {
-          }
-        });
+           }
+         } else {
+         }
+       });
       })
     },
     init(data) {

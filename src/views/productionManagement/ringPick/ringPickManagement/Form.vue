@@ -575,7 +575,7 @@ export default {
         }
       })
     },
-    init(id, btnType, sourceType,approvalFlag,) {
+    init(id, btnType,approvalFlag, sourceType) {
       this.btnType = btnType
       this.approvalFlag = approvalFlag
       if (sourceType == 'pick') {

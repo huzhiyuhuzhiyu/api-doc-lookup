@@ -99,7 +99,7 @@
             <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
 
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
                   @click.native="handleUserRelation(scope.row.ordersId, 'look')">查看详情</el-button>

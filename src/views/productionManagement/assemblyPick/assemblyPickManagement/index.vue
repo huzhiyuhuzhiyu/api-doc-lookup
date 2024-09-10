@@ -63,7 +63,7 @@
             </el-table-column>
             <el-table-column prop="orderNo" label="领料单号" min-width="180" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="viewDetailsFun(scope.row.id,'look')">{{
+                <el-link type="primary" @click.native="viewDetailsFun(scope.row.id, 'look')">{{
                   scope.row.orderNo
                 }}</el-link>
               </template>
@@ -123,8 +123,8 @@
   </div>
 </template>
 
-<script> 
-import { WithdrawalList,deleteWithdrawal } from '@/api/productOrdes/index.js'
+<script>
+import { WithdrawalList, deleteWithdrawal } from '@/api/productOrdes/index.js'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from './Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -134,10 +134,10 @@ import {
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'assemblyplanManagement',
-  components: { SuperQuery, ExportForm,Form },
+  components: { SuperQuery, ExportForm, Form },
   data() {
     return {
-      formVisible:false,
+      formVisible: false,
       columnList: ["productionOrderNo", "createByName"],
       receiveTypeList: [
         { label: "订单物料", value: "order" },
@@ -181,7 +181,7 @@ export default {
 
 
 
-      total: 0, 
+      total: 0,
       selectArr: [],
 
       superQueryJson: [
@@ -247,30 +247,30 @@ export default {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
     this.search()
   },
-   
+
   mounted() {
   },
   methods: {
     // 新增
-    addSupplier(id,btnType){
-      this.formVisible=true
-      this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType,false,'pick')
+    addSupplier(id, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType, false, 'pick')
       })
     },
     // 查看详情
-    viewDetailsFun(id,btnType){
-      this.formVisible=true
-      this.$nextTick(()=>{
-        this.$refs.Form.init(id,btnType,false,'pick')
+    viewDetailsFun(id, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, btnType, false, 'pick')
       })
     },
     // 编辑
-    addOrUpdateHandle(id,btnType){
-      this.formVisible=true
-      this.$nextTick(()=>{
+    addOrUpdateHandle(id, btnType) {
+      this.formVisible = true
+      this.$nextTick(() => {
         console.log(6666);
-        this.$refs.Form.init(id,btnType,false,'pick')
+        this.$refs.Form.init(id, btnType, false, 'pick')
       })
     },
     superQuerySearch(query) {
@@ -295,7 +295,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName'||prop=='personName') {
+      if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName' || prop == 'personName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
         } else {
@@ -349,7 +349,7 @@ export default {
       }
       if (this.orderNoS || this.personNameS) {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
-      }else{
+      } else {
         if (!this.orderForm.superQuery.condition.length) {
           this.orderForm.superQuery = {
             condition: [],

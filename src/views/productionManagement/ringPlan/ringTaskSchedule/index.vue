@@ -81,15 +81,20 @@
             </el-table-column>
 
 
-            <el-table-column prop="processSchedule" label="工单进度条" min-width="780">
+            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
               <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processScheduleList" :key="index" style="width:100px;display: inline-block;">
+                <div v-for="(item, index) in scope.row.processScheduleList" :key="index"
+                  style="width:100px;display: inline-block;">
                   <div style="position: relative;">
-                    <div class="processSchedule_top" :class="item==0?'noValue':item=='100'?'sucess':'normal'">{{ item }}%</div>
+                    <div class="processSchedule_top"
+                      :class="item == 0 ? 'noValue' : item == '100' ? 'sucess' : 'normal'">{{ item
+                      }}%</div>
                     <p style="margin-top: 10px;">工序{{ index + 1 }}</p>
-                    <img v-if="index!=scope.row.processScheduleList.length-1" style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;" src="../../../../assets/images/right.png" alt="">
+                    <img v-if="index != scope.row.processScheduleList.length - 1"
+                      style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
+                      src="../../../../assets/images/right.png" alt="">
                   </div>
-                  
+
                 </div>
               </template>
             </el-table-column>
@@ -121,13 +126,10 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="320" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'feed')">投料信息</el-button>
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'work')">工单信息</el-button>
-                <el-button size="mini" type="text"
-                  @click="handleUserRelation(scope.row.orderNo, 'report')">报工信息</el-button>
+
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看详情</el-button>
               </template>
             </el-table-column>
@@ -377,98 +379,12 @@ export default {
     this.getProductClassFun()
   },
   methods: {
-    // 新建返工
-    addTaskFun(id, type) {
-      this.reworkVisible = true
-      this.$nextTick(() => {
-        this.$refs.reworkForm.init(id, type)
-      })
-    },
-    // 追加
-    addition2() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
-      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
-      this.form = this.selectArr[0]
-      this.addOrderVisible = true
-    },
-    addition1(data) {
-      this.form = data
-      this.addOrderVisible = true
 
 
 
-    },
-    reassignmentFun2() {
-      console.log(this.selectArr);
-      if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(this.selectArr[0].id)
-      })
-    },
-    reassignmentFun1(data) {
 
-      this.reassignmentVisible = true
-      this.$nextTick(() => {
-        this.$refs.reassignmentForm.init(id)
-      })
-    },
-    // 追加生产数量 提交
-    submitFun() {
-      this.$refs['diaForm'].validate((valid) => {
-        if (valid) {
-          console.log(this.form);
-          this.btnLoading = true
-          addOrderNum(this.form).then(res => {
-            this.addOrderVisible = false
-            this.btnLoading = false
-            this.$message.success("追加生产数量成功")
-            this.search()
-          }).catch(error => {
-            this.btnLoading = false
-          })
-        }
-      })
 
-    },
-    // 多选
-    handleSelectionChange(val) {
-      this.selectArr = val
-    },
-    //禁用复选框
-    checkSelectable(row) {
-      if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
-        console.log(222);
-        return false
-      } else {
-        console.log(333);
-        return true
 
-      }
-    },
-
-    // 关单
-    Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
-      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
-        type: 'warning',
-        customClass: 'custom-confirm',
-      }).then(() => {
-
-        let arr = this.selectArr.map(item => {
-          return item.id
-        })
-        console.log(arr)
-        prodOrderClose(arr).then(res => {
-          console.log(555);
-          this.$message.success("关单成功")
-          this.search()
-        }).catch(() => {
-        })
-      }).catch(() => { })
-    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -580,13 +496,22 @@ export default {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
       ordershengchanList(this.orderForm).then(res => {
-        if(item.processSchedule.indexOf(',')){
-          item.processScheduleList = item.processSchedule.split(',')
 
-          }else{
-          item.processScheduleList .push(item.processSchedule)
+        res.data.records.forEach(element => {
+          if (item.processSchedule.indexOf(',')) {
+            item.processScheduleList = item.processSchedule.split(',')
+
+          } else {
+            item.processScheduleList.push(item.processSchedule)
           }
-        console.log("表格数据", res);
+          if (item.processScheduleList.length) {
+            item.processInfoList = item.processScheduleList.map(items => {
+              const [key, value] = items.split(':');
+              return { name: key, value: parseInt(value, 10) }; // 创建包含name和value的对象  
+            });
+          }
+        });
+        console.log(res.data.records);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -651,24 +576,28 @@ export default {
   margin-left: 0 !important;
 
   margin-bottom: 5px;
-} 
-.processSchedule_top{
+}
+
+.processSchedule_top {
   width: 50px;
-    height: 50px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    line-height: 50px;
-    text-align: center;
+  height: 50px;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  line-height: 50px;
+  text-align: center;
 }
-.noValue{
-  border-color:#ccc;
-  
+
+.noValue {
+  border-color: #ccc;
+
 }
-.normal{
-  border-color:#409eff
+
+.normal {
+  border-color: #409eff
 }
-.sucess{
-  border-color:#67c23A
+
+.sucess {
+  border-color: #67c23A
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

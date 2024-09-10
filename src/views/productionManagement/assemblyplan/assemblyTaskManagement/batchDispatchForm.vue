@@ -8,13 +8,13 @@
           <div class="options">
             <el-button type="primary" v-if="btnType != 'look'" size="mini" :loading="btnLoading"
               @click="handleConfirm('submit')">
-             提交</el-button>
+              提交</el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main" v-loading="formLoading">
           <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-            <el-tab-pane label="任务信息" name="orderInfo" v-if="btnType == 'all' ">
+            <el-tab-pane label="任务信息" name="orderInfo" v-if="btnType == 'all'">
               <el-collapse v-model="activeNames1">
                 <el-collapse-item title="任务信息" name="basicInfo">
 
@@ -205,37 +205,54 @@
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column prop="workGroupId" label="班组" min-width="150">
-                        <template slot-scope="scope">
-                          <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
-                            style="width: 70%; display: none">
-                            <el-option
-                              v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
-                              :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
-                          </el-select>
-                          <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
-                            :disabled="scope.row.processingType != 'self_produced'">
-                            {{ scope.row.workGroupId ? scope.row.workGroupName : "请选择班组" }}
-                          </el-button>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="100">
+                    <el-table-column prop="personId" label="人员" min-width="100">
 
-<template slot-scope="scope">
-  <el-select v-model="scope.row.personId" placeholder="" clearable
-    style="width: 60%; display: none" class="applySelect" disabled>
-    <el-option
-      v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
-      :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
-  </el-select>
-  <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
-    :disabled="scope.row.processingType != 'self_produced'">
-    {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
-  </el-button>
-</template>
-</el-table-column>
-                    <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
-                    <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.personId" placeholder="" clearable
+                          style="width: 60%; display: none" class="applySelect" disabled>
+                          <el-option
+                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.personnel : []"
+                            :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
+                        </el-select>
+                        <el-button @click="selectPersonnelFun(scope)" type="text" class="underline-button"
+                          :disabled="scope.row.processingType != 'self_produced'">
+                          {{ scope.row.personId ? scope.row.personName : "请选择人员" }}
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="workGroupId" label="班组" min-width="150">
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
+                          style="width: 70%; display: none">
+                          <el-option
+                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.work_group : []"
+                            :key="index" :label="item.resourceName" :value="item.resourceId"></el-option>
+                        </el-select>
+                        <el-button @click="selectWorkgroupFun(scope)" type="text" class="underline-button"
+                          :disabled="scope.row.processingType != 'self_produced'">
+                          {{ scope.row.workGroupId ? scope.row.workGroupName : "请选择班组" }}
+                        </el-button>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="equipmentId" label="设备" min-width="150">
+
+                      <template slot-scope="scope">
+                        <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
+                          style="width:70%;display:none" class="applySelect" disabled>
+                          <el-option
+                            v-for="(item, index) in scope.row.routingProResMap ? scope.row.routingProResMap.device : []"
+                            :key="index" :label="item.resourceName + '(' + item.resourceCode + ')'"
+                            :value="item.resourceId"></el-option>
+                        </el-select>
+                        <el-button @click="selectDeviceFun(scope)" type="text" class="underline-button"
+                          :disabled="scope.row.processingType != 'self_produced'">
+                          {{ scope.row.equipmentId ? scope.row.equipmentCode ?
+                            scope.row.equipmentName + "(" + scope.row.equipmentCode + ")" : scope.row.equipmentName :
+                          "请选择设备" }}
+
+                        </el-button>
+                      </template>
+                    </el-table-column>
 
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
@@ -294,7 +311,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType  == 'report'">
+            <el-tab-pane label="报工信息" name="reportRecords" v-if="btnType == 'report'">
               <el-collapse v-model="activeNames4">
                 <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
@@ -414,10 +431,58 @@
               </div>
             </el-col>
           </el-row>
+          <el-row class="row-bg" :gutter="0" style="margin:12px 0;" v-if="routingProResMapDiaTitle == '设备资源'">
+            <el-col :span="4" class="personBox" :class="[item.split('_')[0] == currentDeviceId ? 'active' : '']"
+              v-for="(item, index) in deviceData" :key="index">
+              <div class="grid-content bg-purple" @click="changresouce(item, '设备')"
+                @dblclick="selectResouce(item, '设备')" :style="!totalData[item].length ? 'height:100%' : ''">
+                <p style="margin-top:14px; font-size:18px">{{ item.split('_')[1] }}</p>
+                <p style=" font-size:18px">{{ item.split('_')[2] ? item.split('_')[2] : '--' }}
+                </p>
+                <div v-if="totalData[item].length > 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}-
+                    {{ totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
 
+                  </p>
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][1].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}-
+                    {{ totalData[item][1].planEndDate.match(/-(\d{2}-\d{2})/)[1]
+                      .replace('-', '.') }}
+                    {{ totalData[item][1].qualifiedQuantity }}/{{ totalData[item][1].productionQuantity
+                    }}个
+                  </p>
+                </div>
+                <div v-else-if="totalData[item].length == 1">
+                  <p style="margin-top:4px; font-size:12px">
+                    {{ totalData[item][0].planStartDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.')
+                    }}-{{
+                      totalData[item][0].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }}
+                    {{ totalData[item][0].qualifiedQuantity }}/{{ totalData[item][0].productionQuantity
+                    }}个
+                  </p>
+                </div>
+
+                <p v-if="totalData[item].length" style="margin-top:4px; font-size:12px">工单截止：{{
+                  totalData[item][totalData[item].length -
+                    1].planEndDate.match(/-(\d{2}-\d{2})/)[1].replace('-', '.') }} <el-button class="elbutton" type="text"
+                    size="mini" @click.stop="getDetailFun(item, totalData[item], '设备')"
+                    :style="item.split('_')[0] == currentDeviceId ? 'border:1px solid #fff;color:#1890ff;background:#fff;    padding: 4px!important;' : ''">详细</el-button>
+                </p>
+              </div>
+            </el-col>
+
+
+
+          </el-row>
         </el-dialog>
         <el-dialog title="派工单数据" :close-on-click-modal="false" :close-on-press-escape="false" append-to-body
-          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px" @close="detailDiaFlag=false">
+          :visible.sync="detailDiaFlag" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1180px"
+          @close="detailDiaFlag = false">
           <el-row class="JNPF-common-search-box" :gutter="5">
             <el-form @submit.native.prevent>
               <el-col :span="5">
@@ -451,12 +516,12 @@
               </el-col>
             </el-form>
           </el-row>
-          <el-table ref="product" :data="detailDataList" border max-height="600">
-            <el-table-column type="index" width="70" label="序号" fixed/>
+          <el-table ref="product" :data="detailDataList" border max-height="380">
+            <el-table-column type="index" width="70" label="序号" fixed />
             <el-table-column prop="orderNo" label="工单号" min-width="200"></el-table-column>
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="300"
               show-overflow-tooltip></el-table-column>
-            <el-table-column prop="processName" label="工序名称" width="100" />
+            <el-table-column prop="processName" label="工序名称" width="100" show-overflow-tooltip />
             <el-table-column prop="processCode" label="工序编码" width="100" />
             <el-table-column prop="planStartDate" label="计划开始日期" width="140" />
             <el-table-column prop="planEndDate" label="计划结束日期" width="140" />
@@ -483,14 +548,14 @@
 
 <script>
 
-import { detailordershengchan,changProdWork } from '@/api/productOrdes/index.js'
+import { detailordershengchan, changProdWork } from '@/api/productOrdes/index.js'
 import { detailProcess, getProcessList, getWorkListMap, addProdPlanArrange } from '@/api/basicData/processSettingss.js'
 import { getWorkReportList } from "@/api/productOrdes/index.js"
 export default {
 
   data() {
     return {
-      detailDiaFlag:false,
+      detailDiaFlag: false,
       routingProResMapDiaFlag: false,
       dispatchSearchForm: {
         resIdList: [],
@@ -500,8 +565,8 @@ export default {
         orderNo: "",
         processName: "",
       },
-      totalDispatchQuantity:0,
-      totalCompletedQuantity:0,
+      totalDispatchQuantity: 0,
+      totalCompletedQuantity: 0,
       orderTypeList: [
         { label: "正常订单", value: "normal", },
         { label: "返工订单", value: "rework", },
@@ -521,24 +586,24 @@ export default {
       activeNames2: ["workOrderInfoForm"],
       activeNames3: ["feedInfoForm"],
       activeNames4: ['record'],
-      activeName: 'orderInfo',
+      activeName: 'workOrderInfo',
       feedData: [],
       workOrderData: [],
       dataForm: {},
       formLoading: false,
       btnType: "",
       title: "",
-      detailDataList:[],
+      detailDataList: [],
       routingProResMapDiaTitle: "",
       workgroupData: [],
       deviceData: [],
       personnelData: [],
       totalData: [],
-      workOrderList:false,
+      workOrderList: false,
       currentWorkgroupId: "",
       currentDeviceId: "",
       currentPersonId: '',
-      btnLoading:false,
+      btnLoading: false,
     }
   },
   computed: {
@@ -568,8 +633,8 @@ export default {
 
   },
   methods: {
-     // 通过查询条件查询未完成的派工单
-     dataFormSubmit() {
+    // 通过查询条件查询未完成的派工单
+    dataFormSubmit() {
       if (this.daterangeList.length) {
         this.dispatchSearchForm.startTime = this.daterangeList[0] + " 00:00:00";
         this.dispatchSearchForm.endTime = this.daterangeList[1] + " 23:59:59";
@@ -584,7 +649,7 @@ export default {
         this.detailDataList = res.data[arr[0]];
       });
     },
-        // 重置查询条件
+    // 重置查询条件
     reset() {
       this.daterangeList = [];
       this.dispatchSearchForm = {
@@ -597,8 +662,8 @@ export default {
       },
         this.dataFormSubmit();
     },
-       // 点击详情
-       getDetailFun(id, data, type) {
+    // 点击详情
+    getDetailFun(id, data, type) {
       console.log(data);
       this.dispatchSearchForm.resIdList = [];
       this.dispatchSearchForm.resIdList.push(id.split("_")[0]);
@@ -631,8 +696,8 @@ export default {
         this.currentDeviceId = item.split("_")[0];
       }
     },
-       // 选择班组
-       selectWorkgroupFun(scope) {
+    // 选择班组
+    selectWorkgroupFun(scope) {
       console.log("班组", scope);
       this.totalData = []
       if (scope.row.workOrderResMap) {
@@ -664,7 +729,38 @@ export default {
         this.$message.error("当前工序没有配置班组资源");
       }
     },
+    // 选择设备
+    selectDeviceFun(scope) {
+      console.log("设备", scope);
+      this.totalData = []
+      if (scope.row.routingProResMap) {
+        if (scope.row.routingProResMap.device) {
+          this.index = scope.$index
+          this.currentDeviceId = scope.row.equipmentId
+          let deviceDataData = scope.row.routingProResMap.device
+          this.routingProResMapDiaFlag = true
+          this.routingProResMapDiaTitle = "设备资源"
+          let resIdList = []
+          deviceDataData.forEach(item => {
+            resIdList.push(item.resourceId)
+          });
+          let obj = {
+            resType: "device",
+            resIdList: resIdList,
+          }
+          getWorkListMap(obj).then(res => {
+            console.log("设备数据", res);
+            this.deviceData = Object.keys(res.data).sort();
+            this.totalData = res.data
+          })
+        } else {
+          this.$message.error("当前工序没有配置设备资源")
 
+        }
+      } else {
+        this.$message.error("当前工序没有配置设备资源")
+      }
+    },
     //  选择人员
     selectPersonnelFun(scope) {
       console.log(scope.row);
@@ -716,7 +812,7 @@ export default {
           }
         });
       }
-    
+
       console.log("'this.workOrderData'", this.workOrderData);
       this.$forceUpdate();
       this.routingProResMapDiaFlag = false;
@@ -724,8 +820,8 @@ export default {
     init(id, btnType) {
       this.btnType = btnType
       console.log(btnType);
-      this.title='改派'
-      
+      this.title = '改派'
+
       if (btnType != 'report') {
 
         detailordershengchan(id).then(res => {
@@ -757,21 +853,21 @@ export default {
         })
       }
     },
-    handleConfirm(){
+    handleConfirm() {
       console.log(this.workOrderData);
       this.workOrderData.forEach(item => {
-        this.$set(item,'productionOrderId',this.dataForm.id)
+        this.$set(item, 'productionOrderId', this.dataForm.id)
       });
-          this.btnLoading=true
-          changProdWork(this.workOrderData).then(res=>{
+      this.btnLoading = true
+      changProdWork(this.workOrderData).then(res => {
         this.$message.success("改派成功")
         setTimeout(() => {
           this.$emit('close')
-          this.btnLoading=false
+          this.btnLoading = false
         }, 1000);
-      }).catch(error=>{
-        this.btnLoading=false
-        
+      }).catch(error => {
+        this.btnLoading = false
+
       })
     },
 
@@ -996,7 +1092,8 @@ $footerPadding: '10px';
   border-top: 1px solid #dcdfe6;
   border-right: 0 !important;
 }
-::v-deep.el-collapse-item{
+
+::v-deep.el-collapse-item {
   margin-top: 5px;
 }
 </style>

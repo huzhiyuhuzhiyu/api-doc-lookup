@@ -16,7 +16,7 @@
       </div>
       <div class="main" v-loading="formLoading" ref="main" :element-loading-text="loadingText">
         <el-tabs v-model="activeName" v-if="!approvalFlag" class="JNPF-el_tabs">
-          <el-tab-pane label="订单信息" name="orderInfo" class="orderInfo">
+          <el-tab-pane label="基础信息" name="orderInfo" class="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
@@ -102,10 +102,10 @@
 
 
 
-              <el-collapse-item title="产品信息" name="productInfo">
+              <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                 <div v-if="btnType == 'add' || btnType == 'edit'">
 
-                  <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
+                  <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px ;font-size:14px!important"
                     icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
@@ -1905,9 +1905,13 @@ $footerPadding: '10px';
 .orderInfo ::v-deep .el-collapse-item__wrap {
   border-bottom: none !important
 }
+.productInfo ::v-deep.el-collapse-item__wrap{
+  padding: 0;
+}
 </style>
 <style>
 .my-message {
   font-size: 16px !important;
 }
+
 </style>

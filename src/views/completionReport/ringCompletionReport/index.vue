@@ -7,7 +7,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="scanCodeTent">
               <div class="searchregion">
-                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、派工码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()"
+                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()"
                   class="scanResultIpt"></el-input>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
@@ -63,11 +63,11 @@
                     </div>
                     <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
                     <div class="label_title"> 品名规格:6933ZZC03.4GN11AA6</div>
-                    <div class="label_title bold"> 总生产数量:<span style="color: #3fb9f8;">{{ item.productionQuantity
+                    <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity
                         }}</span></div>
-                    <div class="label_title bold"> 已完成数量:<span style="color: #67c23A;">{{ item.completedQuantity
+                    <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.completedQuantity
                         }}</span></div>
-                    <div class="label_title bold" style="color: red;"> 未完成数量:<span>{{ item.uncompletedQuantity
+                    <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.uncompletedQuantity
                         }}</span></div>
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
@@ -126,6 +126,9 @@
 
                       <div class="label_title"> 产线名称:{{ item.name }}</div>
                       <div class="label_title"> 产线编码:{{ item.code }}</div>
+                      <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="produceLineReportFun(item)">报 工</el-button>
                       </div>
@@ -181,6 +184,9 @@
 
                       <div class="label_title"> 工序名称:{{ item.name }}</div>
                       <div class="label_title"> 工序编码:{{ item.code }}</div>
+                      <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="ProcessReportFun(item)">报 工</el-button>
                       </div>
@@ -235,6 +241,9 @@
 
                     <div class="label_title"> 班组名称:{{ item.name }}</div>
                     <div class="label_title"> 班组编码:{{ item.code }}</div>
+                    <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
                     <div style="margin-top: 10px;">
                       <el-button type="primary" size="mini" @click="groupReportFun(item)">报 工</el-button>
                     </div>
@@ -330,6 +339,9 @@
 
                       <div class="label_title"> 名称:{{ item.realName }}</div>
                       <div class="label_title"> 账号:{{ item.account }}</div>
+                      <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
                       <div style="margin-top: 10px;">
                         <el-button type="primary" size="mini" @click="personReportFun(item)">报 工</el-button>
                       </div>
@@ -385,6 +397,9 @@
 
                     <div class="label_title"> 设备名称:{{ item.name }}</div>
                     <div class="label_title"> 设备编码:{{ item.code }}</div>
+                    <div class="label_title bold" style="color: #3fb9f8;"> 总生产数量:<span>{{ item.productionQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #67c23A;"> 已完成数量:<span>{{ item.qualifiedQuantity}}</span></div>
+                      <div class="label_title bold" style="color: #e6a23c;"> 未完成数量:<span>{{ item.unqualifiedQuantity }}</span></div>
                     <div style="margin-top: 10px;">
                       <el-button type="primary" size="mini" @click="deviceReportFun(item)">报 工</el-button>
                     </div>
@@ -495,6 +510,8 @@ export default {
       ],
 
       processForm: {
+        productClassAttribute:"semi_finished",
+        workReportFlag:true,
         name: "",
         code: "",
         pageNum: 1,
@@ -520,6 +537,8 @@ export default {
       groupTotal: 0,
       groupData: [],
       workGroupForm: {
+        productClassAttribute:"semi_finished",
+        workReportFlag:true,
         code: "",
         name: "",
         pageNum: 1,
@@ -534,6 +553,8 @@ export default {
 
       },
       personForm: {
+        productClassAttribute:"semi_finished",
+        workReportFlag:true,
         organizeId: "",
         account: "",
         realName: "",
@@ -563,6 +584,8 @@ export default {
       },
 
       deviceForm: {
+        productClassAttribute:"semi_finished",
+        workReportFlag:true,
         classAttribute: "equipment",
         name: "",
         code: "",
@@ -582,6 +605,8 @@ export default {
       produceLineData: [],
       produceLineTotal: 0,
       produceLineForm: {
+        productClassAttribute:"semi_finished",
+        workReportFlag:true,
         name: "",
         code: "",
         pageNum: 1,
@@ -827,6 +852,10 @@ export default {
     // 工序
     searchProcessData() {
       getBimProcessList(this.processForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)
+          this.$set(item, 'unqualifiedQuantity', num)
+        });
         this.ProcessData = res.data.records
         this.processTotal = res.data.total
       })
@@ -856,6 +885,10 @@ export default {
     // 产线
     searchProduceLineData() {
       getProductionLineList(this.produceLineForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)
+          this.$set(item, 'unqualifiedQuantity', num)
+        });
         this.produceLineData = res.data.records
         this.produceLineTotal = res.data.total
       })
@@ -888,6 +921,10 @@ export default {
     // 班组列表
     searchWorkGroupData() {
       getGroupList(this.workGroupForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)
+          this.$set(item, 'unqualifiedQuantity', num)
+        });
         console.log("班组", res);
         this.groupData = res.data.records
         this.groupTotal = res.data.total
@@ -928,6 +965,10 @@ export default {
     // 人员列表
     searchPersonData() {
       getUserListPost(this.personForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)
+          this.$set(item, 'unqualifiedQuantity', num)
+        });
         this.personData = res.data.records
         this.personTotal = res.data.total
       })
@@ -989,6 +1030,10 @@ export default {
     // 设备
     searchDeviceData() {
       getEquEquipmentList(this.deviceForm).then(res => {
+        res.data.records.forEach(item => {
+          let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.productionQuantity, item.qualifiedQuantity]), 6)
+          this.$set(item, 'unqualifiedQuantity', num)
+        });
         this.deviceData = res.data.records
         this.deviceTotal = res.data.total
       })
@@ -1264,7 +1309,7 @@ export default {
 
 .searchregion {
   position: absolute;
-  width: 40%;
+  width: 60%;
   left: 50%;
   transform: translateX(-50%);
   margin-top: 20px;

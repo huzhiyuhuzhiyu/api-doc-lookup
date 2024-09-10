@@ -356,7 +356,7 @@ export default {
       console.log(data);
       this.bomFormVisible=true
       this.$nextTick(()=>{
-        this.$refs.bomForm.init(data.productsId,'look')
+        this.$refs.bomForm.init(data.bomId,'look',false)
       })
     },
     closeForm(){
@@ -752,7 +752,7 @@ export default {
 
 ::v-deep .el-tabs__header {
   padding: 0 !important;
-  margin-bottom: 10px
+  margin-bottom: 5px
 }
 
 

@@ -329,7 +329,7 @@ export default {
       this.search()
     },
     columnSetFun() {
-      this.$refs.dataTable.showDrawer()
+      this.$refs.tableForm.showDrawer()
     },
     sortChange({ prop, order }) {
       let newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());

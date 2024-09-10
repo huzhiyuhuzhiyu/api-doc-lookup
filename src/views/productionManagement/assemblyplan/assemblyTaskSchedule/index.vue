@@ -81,16 +81,18 @@
             </el-table-column>
 
 
-            <el-table-column prop="processSchedule" label="工单进度条" min-width="780">
+            <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
               <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processScheduleList" :key="index"
+                <div v-for="(item, index) in scope.row.processInfoList" :key="index"
                   style="width:100px;display: inline-block;">
                   <div style="position: relative;">
                     <div class="processSchedule_top"
-                      :class="item == 0 ? 'noValue' : item == '100' ? 'sucess' : 'normal'">{{ item
+                      :class="item.value == 0 ? 'noValue' : item.value == '100' ? 'sucess' : 'normal'">{{ item.value
                       }}%</div>
-                    <p style="margin-top: 10px;">工序{{ index + 1 }}</p>
-                    <img v-if="index != scope.row.processScheduleList.length - 1"
+                    <el-tooltip class="item" effect="dark" :content=" item.name " placement="top-start">
+                      <p class="ProcessName">{{ item.name }}</p>
+                    </el-tooltip>
+                    <img v-if="index != scope.row.processInfoList.length - 1"
                       style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
                       src="../../../../assets/images/right.png" alt="">
                   </div>
@@ -126,13 +128,10 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom"></el-table-column>
             <el-table-column prop="createByName" label="创建人" min-width="140" sortable="custom" />
-            <el-table-column label="操作" width="320" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
 
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'feed')">投料信息</el-button>
-                <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'work')">工单信息</el-button>
-                <el-button size="mini" type="text"
-                  @click="handleUserRelation(scope.row.orderNo, 'report')">报工信息</el-button>
+
                 <el-button size="mini" type="text" @click="handleUserRelation(scope.row.id, 'all')">查看详情</el-button>
               </template>
             </el-table-column>
@@ -586,15 +585,27 @@ export default {
       }
       ordershengchanList(this.orderForm).then(res => {
         res.data.records.forEach(item => {
-          if (item.processSchedule) {
-            if (item.processSchedule.indexOf(',')) {
-              item.processScheduleList = item.processSchedule.split(',')
+          // 初始化 processInfoList 为一个空数组  
+          item.processInfoList = [];
 
+          // 检查 processSchedule 字段是否有值  
+          if (item.processSchedule) {
+            // 判断是否包含逗号  
+            if (item.processSchedule.includes(',')) {
+              // 以逗号分割为数组  
+              const processes = item.processSchedule.split(',');
+
+              // 遍历每一项并处理  
+              processes.forEach(process => {
+                const [name, value] = process.split(':');
+                item.processInfoList.push({ name, value: parseInt(value, 10) });
+              });
             } else {
-              item.processScheduleList.push(item.processSchedule)
+              // 直接以冒号分割  
+              const [name, value] = item.processSchedule.split(':');
+              item.processInfoList.push({ name, value: parseInt(value, 10) });
             }
           }
-
         });
         console.log("表格数据", res);
         this.tableData = res.data.records
@@ -605,6 +616,7 @@ export default {
       })
 
     },
+
     search() {
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
@@ -683,6 +695,18 @@ export default {
 
 .sucess {
   border-color: #67c23A
+}
+
+.ProcessName {
+  margin-top: 10px;
+  width: 70%;
+
+  overflow: hidden;
+  /*超出的部分隐藏起来。*/
+  white-space: nowrap;
+  /*不显示的地方用省略号...代替*/
+  text-overflow: ellipsis;
+  /* 支持 IE */
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

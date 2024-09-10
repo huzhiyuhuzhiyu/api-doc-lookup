@@ -67,7 +67,6 @@
           <el-table-column prop="partnerName" label="客户名称" min-width="180" sortable="custom" />
           <el-table-column prop="partnerCode" label="客户编码" min-width="180" sortable="custom" />
           <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" min-width="180" sortable="custom" />
           <el-table-column prop="drawingNo" label="品名规格" min-width="180" sortable="custom" />
           <el-table-column prop="businessType" label="发/退货类型" min-width="180" sortable="custom">
             <template slot-scope="scope">
@@ -185,11 +184,7 @@ export default {
           label: "产品编码",
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: "产品名称",
-          type: 'input'
-        },
+     
         {
           prop: 'productDrawingNo',
           label: "品名规格",

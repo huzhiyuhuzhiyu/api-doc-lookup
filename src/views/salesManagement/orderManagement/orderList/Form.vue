@@ -17,7 +17,8 @@
         </div>
         <div class="main" v-loading="formLoading" :element-loading-text="loadingText">
 
-          <el-tabs v-model="activeName"  v-if="!approvalFlag" @tab-click="handleClick">
+          <el-tabs v-model="activeName"   @tab-click="handleClick" v-if="!approvalFlag"
+          >
             <el-tab-pane label="基础信息" name="orderInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -83,19 +84,6 @@
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-
-
-
-
-
-                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="发货单号" prop="deliveryNoteNumber">
-                          <el-input v-model="dataForm.deliveryNoteNumber" placeholder="请输入发货单号"
-                            :disabled="btnType == 'look' ? true : false" maxlength="300" />
-                        </el-form-item>
-                      </el-col> -->
-
-
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="订单状态" prop="orderState">
                           <el-select v-model="dataForm.orderState" placeholder="请选择订单状态" style="width: 100%;"
@@ -106,8 +94,6 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-
-
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                         <el-form-item label="含税总金额" prop="totalAmount">
                           <el-input v-model="dataForm.totalAmount" placeholder="请输入含税总金额"
@@ -126,13 +112,6 @@
                             :disabled="btnType == 'look' ? true : false" />
                         </el-form-item>
                       </el-col>
-
-                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="变更次数" prop="changesCount">
-                          <el-input v-model="dataForm.changesCount" placeholder="请输入变更次数"
-                            :disabled="btnType == 'look' ? true : false" maxlength="4" />
-                        </el-form-item>
-                      </el-col> -->
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -140,16 +119,14 @@
                         </el-form-item>
                       </el-col>
                     </el-row>
-
-
                   </el-form>
                 </el-collapse-item>
 
 
 
-                <el-collapse-item title="产品信息" name="productInfo">
+                <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                   <div v-if="btnType !== 'look'">
-                    <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    <el-button type="text" style="margin-right:8px;margin-left:5px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openSeleceCustomerProductDialog()">选择客户产品</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
@@ -180,12 +157,7 @@
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                      <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
-                        <template slot-scope="scope">
-                          <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
-
-                        </template>
-</el-table-column> -->
+                      
 
                       <el-table-column prop="num" label="数量" width="100" :key="7">
 
@@ -527,12 +499,7 @@
 
 
 
-                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="发货单号" prop="deliveryNoteNumber">
-                          <el-input v-model="dataForm.deliveryNoteNumber" placeholder="请输入发货单号"
-                            :disabled="btnType == 'look' ? true : false" maxlength="300" />
-                        </el-form-item>
-                      </el-col> -->
+                       
 
 
                       <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
@@ -566,12 +533,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                        <el-form-item label="变更次数" prop="changesCount">
-                          <el-input v-model="dataForm.changesCount" placeholder="请输入变更次数"
-                            :disabled="btnType == 'look' ? true : false" maxlength="4" />
-                        </el-form-item>
-                      </el-col> -->
+                     
                       <el-col :sm="12" :xs="24">
                         <el-form-item label="备注" prop="remark">
                           <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -586,7 +548,7 @@
 
 
 
-                <el-collapse-item title="产品信息" name="productInfo">
+                <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                   <div v-if="btnType !== 'look'">
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -619,12 +581,7 @@
                       </el-table-column>
                       <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                       <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                      <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
-                        <template slot-scope="scope">
-                          <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
-
-                        </template>
-</el-table-column> -->
+                 
 
                       <el-table-column prop="num" label="数量" width="100" :key="7">
 
@@ -706,12 +663,7 @@
                     </el-table-column>
                     <el-table-column prop="productCode" label="产品编码" width="140" :key="4" />
                     <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                    <!-- <el-table-column prop="availableQuantity" label="可用库存" width="100" :key="121">
-                      <template slot-scope="scope">
-                        <div> {{ scope.row.availableQuantity ? scope.row.availableQuantity : 0 }}</div>
-
-                      </template>
-                    </el-table-column> -->
+               
 
                     <el-table-column prop="num" label="数量" width="100" :key="7">
                       <template slot="header">
@@ -775,9 +727,6 @@
                     </el-table-column>
 
                     <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>打字内容
-                      </template> -->
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
                           style="width: 100%;">
@@ -787,9 +736,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="accuracyLevel" label="精度等级" width="120" :key="123">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>精度等级
-                      </template> -->
+                      
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable>
                           <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -799,9 +746,7 @@
                     </el-table-column>
 
                     <el-table-column prop="vibrationLevel" label="振动等级" width="120" :key="17">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>振动等级
-                      </template> -->
+                    
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
@@ -810,9 +755,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="oil" label="油脂" width="120" :key="61">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>油脂
-                      </template> -->
+                   
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -830,9 +773,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column prop="clearance" label="游隙" width="120" :key="100">
-                      <!-- <template slot="header">
-                        <span class="required">*</span>游隙
-                      </template> -->
+                      
                       <template slot-scope="scope">
                         <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;">
                           <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -873,16 +814,16 @@
                   </el-table>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;" class="text">
                     <span style="font-weight:500;margin-right:10px">总数量：{{ totalNum }}</span>
-                    <!-- <span style="font-weight:500;margin-right:10px">总副数量：{{ totalAssistantNum }}</span> -->
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ totalAmount }}</span>
                     <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ excludingTaxAmount }}</span>
                   </div>
                 </el-collapse-item>
 
           </el-collapse>
+       
         </div>
         <el-dialog title="选择客户" :close-on-click-modal="false" :close-on-press-escape="false"
-          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+          :visible.sync="customerVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
           append-to-body @close="handleClose">
 
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -963,7 +904,7 @@
         </el-dialog>
 
         <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false"
-          :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
+          :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
           append-to-body>
 
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -999,14 +940,10 @@
                 <el-form @submit.native.prevent>
                   <el-col :span="6">
                     <el-form-item>
-                      <el-input v-model="ProductListRequestObj.code" placeholder="请输入产品编码" clearable />
+                      <el-input v-model="ProductListRequestObj.productCode" placeholder="请输入产品编码" clearable />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6">
-                    <el-form-item>
-                      <el-input v-model="ProductListRequestObj.name" placeholder="请输入产品名称" clearable />
-                    </el-form-item>
-                  </el-col>
+                  
                   <el-col :span="6">
                     <el-form-item>
                       <el-input v-model="ProductListRequestObj.productDrawingNo" placeholder="请输入品名规格" clearable />
@@ -1030,8 +967,8 @@
                 <JNPF-table v-loading="listLoading" :data="allproductData" hasC
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="name" label="产品名称" />
                   <el-table-column prop="drawingNo" label="品名规格" />
+                  <el-table-column prop="mainUnit" label="单位" />
 
                 </JNPF-table>
                 <pagination :total="allProductTotal" :page.sync="ProductListRequestObj.pageNum"
@@ -1189,7 +1126,6 @@ export default {
       ProductTableItems: [
         { prop: 'customerProductNo', label: ' 客户料号', fixed: 'left' },
         { prop: 'productCode', label: '产品编码' },
-        { prop: 'productName', label: '产品名称' },
         { prop: 'drawingNo', label: '品名规格' },
         { prop: 'mainUnit', label: '单位(主)' },
       ],
@@ -1215,7 +1151,6 @@ export default {
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: "customerProductNo", label: "客户料号", type: 'input' },
-        { prop: "productName", label: "产品名称", type: 'input' },
         { prop: "drawingNo", label: "品名规格", type: 'input' },
         { prop: "productCode", label: "产品编码", type: 'input' },
       ],
@@ -1248,8 +1183,8 @@ export default {
         productCategoryId: "",
         queryType: 2,
         productStatus: 'enable',
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -2340,8 +2275,8 @@ export default {
         productCategoryId: "",
         queryType: 2,
 
-        code: "",
-        name: "",
+        productCode: "",
+        productName: "",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -3170,8 +3105,7 @@ export default {
 
 //.el-button--small {
 // padding: 1;
-//}</style>
-<style scoped>
+//}</style> 
 ::v-deep .el-tabs__content {
   height: auto !important;
   padding: 0;
@@ -3254,7 +3188,9 @@ export default {
   padding-bottom: 0px
 }
 
-
+.productInfo ::v-deep.el-collapse-item__wrap{
+  padding: 0;
+}
 .import_t {
   font-size: 22px;
   color: rgb(103, 194, 58);

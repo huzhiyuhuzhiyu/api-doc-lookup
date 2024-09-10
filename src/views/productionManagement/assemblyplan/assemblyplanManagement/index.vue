@@ -39,7 +39,7 @@
           <div class="JNPF-common-head">
             <div>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="translateFun()">
-                生产编排
+                编排
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-download" @click.native="exportForm('dataTable')">
                 导出
@@ -70,7 +70,7 @@
             <el-table-column prop="mainUnit" label="单位" width="80" />
             <el-table-column prop="planProductionQuantity" label="计划生产数量" min-width="160" sortable="custom" />
             <el-table-column prop="availableArrangeQuantity" label="可编排数量" min-width="160" sortable="custom" />
-            <el-table-column prop="arrangeOrderNum" label="已编排任务单数" min-width="160" sortable="custom" />
+            <el-table-column prop="arrangeOrderNum" label="已编排单数/数量" min-width="180" sortable="custom" />
 
             <el-table-column prop="urgentFlag" label="是否紧急" min-width="120" sortable="custom"
               :cell-class-name="cellClassName">

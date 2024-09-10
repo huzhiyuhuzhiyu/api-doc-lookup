@@ -122,10 +122,10 @@
                     <el-dropdown-item @click.native="getCopyOrders(scope.row.ordersId, 'copy')">
                       复制订单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="orderFollow(scope.row.ordersId)"
+                    <!-- <el-dropdown-item @click.native="orderFollow(scope.row.ordersId)"
                       v-if="scope.row.documentStatus == 'submit'">
                       订单跟踪
-                    </el-dropdown-item>
+                    </el-dropdown-item> -->
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>

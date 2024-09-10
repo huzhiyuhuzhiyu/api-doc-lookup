@@ -15,7 +15,7 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-          <el-tab-pane label="订单信息" name="orderInfo">
+          <el-tab-pane label="基础信息" name="orderInfo">
             <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
               <h5>基本信息</h5>
             </div>

@@ -118,7 +118,7 @@
                     <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
                       下载订货单
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id, 'P001')">
+                    <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id, 'p006')">
                       打印订货单
                     </el-dropdown-item>
                   </el-dropdown-menu>

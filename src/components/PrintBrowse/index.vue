@@ -30,6 +30,7 @@
 <script>
 import { mapGetters } from "vuex"
 import { getData } from '@/api/system/printDev'
+import QRCode from 'qrcodejs2'
 export default {
   props: ['id', 'formId', 'fullName'],
   computed: {
@@ -57,15 +58,6 @@ export default {
         if (!res.data) return
         this.printTemplate = res.data.printTemplate
         this.data = res.data.printData
-        // 复制数据测试 打印分页
-        for (var i = 0; i < 5; i++) {
-          this.data.T1 = this.data.T1.concat(this.data.T1).map((item, index) => {
-            return {
-              ...item,
-              index: index + 1
-            }
-          })
-        }
         if (this.data.pageType === 'custom') {
           this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1)
         }
@@ -74,6 +66,25 @@ export default {
         this.recordList = res.data.operatorRecordList || []
         this.$nextTick(() => {
           console.log(this.$refs.tsPrint, 'this.$refs.tsPrint');
+         
+          let barCodeEl = this.$refs.tsPrint.querySelector('[data-tag="headTable.bar_code"]')
+          let str = barCodeEl.innerHTML
+          if (barCodeEl) {
+            console.log(barCodeEl)
+            console.log(barCodeEl.style)
+            console.log(barCodeEl.parentElement)
+            // barCodeEl.parentElement.style.display = 'flex'
+            // barCodeEl.parentElement.style.alignItems = 'center'
+            barCodeEl.innerHTML = ''
+            let qrcode = new QRCode(barCodeEl, {
+              width: 80,
+              height: 80,
+              text: str, // 二维码内容
+              // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
+              correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+            })
+            qrcode._el.title = ''
+          }
           if (this.data.pageType === 'custom') {
             for (let t = 0; t < this.data.T1.length; t++) {
               const tableList = this.$refs['tsPrintItem' + t][0].getElementsByTagName('table')
@@ -126,11 +137,11 @@ export default {
               }
             }
           }
-          if (this.$refs.tsPrint.querySelectorAll('img').length){
+          if (this.$refs.tsPrint.querySelectorAll('img').length) {
             this.$refs.tsPrint.querySelectorAll('img').forEach(item => {
               item.crossOrigin = 'anonymous'
               const imgType = item.src.substring(item.src.lastIndexOf('.') + 1);
-              this.compressImage(item, 0.7, 800,imgType)
+              this.compressImage(item, 0.7, 800, imgType)
             })
           }
 
@@ -308,7 +319,7 @@ export default {
         document.body.appendChild(iframe);
         const doc = iframe.contentWindow.document;
         // 4. 写入内容// 
-        doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>');
+        doc.write('<style media="print"> @page {margin: 5mm; padding: 0;}</style>');
         doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`);
         doc.write(newStr);
         const link = doc.getElementsByTagName('link')[0];
@@ -400,7 +411,7 @@ export default {
       var base64 = canvas.toDataURL("image/png");// 可以根据需要更改为其他格式，如'image/jpeg'等
       return base64;
     },
-    compressImage(img, quality, maxWidth,imgType) {
+    compressImage(img, quality, maxWidth, imgType) {
       img.onload = () => {
         let width = img.width;
         let height = img.height;
@@ -435,7 +446,8 @@ export default {
   overflow: auto;
 }
 
-.print-content table td,th{
+.print-content table td,
+th {
   border: 1px solid gray !important;
 
 }

@@ -16,12 +16,12 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <!-- <el-col :span="4">
               <el-form-item>
                 <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -73,7 +73,7 @@
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
             <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
-            <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
@@ -204,75 +204,6 @@
       </span>
     </el-dialog>
 
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="detailVisible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listsQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model.trim="listsQuery.orderNo" placeholder="请输入采购单号" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="供应商名称">
-              <el-input v-model.trim="listsQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model.trim="listsQuery.productCode" placeholder="请输入产品编码" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model.trim="listsQuery.productName" placeholder="请输入产品名称" clearable
-                @keyup.enter.native="searchDetail()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="listsQuery.receivingStatus" placeholder="订单状态" style="width: 100%;">
-                <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="detailVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="searchDetail()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -332,11 +263,6 @@ export default {
         {
           prop: 'drawingNo',
           label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'productName',
-          label: '产品名称',
           type: 'input'
         },
         {

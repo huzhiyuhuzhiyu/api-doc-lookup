@@ -76,7 +76,7 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" width="160" sortable="custom" />
             <el-table-column prop="drawingNo" label="料品名规格" width="160" sortable="custom" />
-            <el-table-column prop="productName" label="料产品名称" width="160" sortable="custom" />
+            <!-- <el-table-column prop="productName" label="料产品名称" width="160" sortable="custom" /> -->
             <el-table-column prop="productCode" label="料产品编码" width="160" sortable="custom" />
 
             <el-table-column prop="processName" label="料工序名称" width="160" sortable="custom" />
@@ -231,11 +231,11 @@ export default {
           label: '产品编码',
           type: 'input'
         },
-        {
-          prop: 'productName',
-          label: '产品名称',
-          type: 'input'
-        },
+        // {
+        //   prop: 'productName',
+        //   label: '产品名称',
+        //   type: 'input'
+        // },
         {
           prop: 'drawingNo',
           label: '品名规格',

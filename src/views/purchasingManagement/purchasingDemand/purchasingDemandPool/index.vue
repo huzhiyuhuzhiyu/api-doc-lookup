@@ -62,7 +62,7 @@
           :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column
           :checkSelectable="checkSelectable">
           <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
-          <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" />
+          <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
           <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
           <el-table-column prop="classAttribute" label="类别属性" min-width="120" sortable="custom">
             <template slot-scope="scope">
@@ -142,95 +142,6 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="来源">
-              <el-select v-model="listQuery.source" placeholder="请选择来源" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in sourceList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="来源单号">
-              <el-input v-model.trim="listQuery.sourceOrderNo" placeholder="请输入来源单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model.trim="listQuery.productCode" placeholder="请输入产品编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model.trim="listQuery.productName" placeholder="请输入产品名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="品名规格">
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="需求状态">
-              <el-select v-model="listQuery.demandStatus" placeholder="需求状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in demandStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="有无价格">
-              <el-select v-model="listQuery.hasPrice" placeholder="请选择有无价格" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '有价格', value: true }, { label: '无价格', value: false }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="立即采购">
-              <el-select v-model="listQuery.immediatelyBuyFlag" placeholder="请选择是否立即采购" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '是', value: true }, { label: '否', value: false }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <!-- 订单来源明细 -->
     <el-dialog title="订单来源明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="sourceDialog"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">

@@ -32,7 +32,7 @@
                     </el-col>
                     <el-col :span="12">
                       <el-form-item label="工序分类" prop="productCategoryIdText">
-                        <ComSelect-list :placeholder="placeholder" :requestObj="{ classAttribute: 'process' }"
+                        <ComSelect-list :placeholder="placeholder" :requestObj="{ type: 'process' }"
                           :dialogTitle="'选择工序分类'" v-model="dataForm.productCategoryIdText" :isdisabled="disabled"
                           :method="getcategoryTree" :paramsObj="{}" @change="changeProductCategory"></ComSelect-list>
                       </el-form-item>
@@ -263,7 +263,7 @@ export default {
       loading: false,
       activeName: 'jcInfo',
       activeNames: ['jcInfo', 'basicInfo'],
-      actTitle: '',
+      actTitle: '人员',
       configurationName: 'personnel',
       btnLoading: false,
       dataForm: {

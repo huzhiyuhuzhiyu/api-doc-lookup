@@ -96,8 +96,8 @@
     </el-form>
 
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
-      treeTitle="物料分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      treeTitle="子件分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
+      :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
   </div>
 </template>
 
@@ -105,6 +105,9 @@
 import FormItem from "@/components/JNPF-col-table/item"
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
+import { getLabel } from '@/utils/index'
+Vue.prototype.$getLabel = getLabel
 export default {
   components: { FormItem },
   name: 'TableForm-product',
@@ -115,6 +118,7 @@ export default {
         data: this.value
       },
       tableVisible: true,
+      classAttributeList:[],
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
@@ -136,15 +140,15 @@ export default {
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格' },
         // { prop: 'spec', label: '规格型号' },
-        { prop: 'classAttributeText', label: '产品分类' }
+        { prop: 'classAttributeName', label: '产品分类' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: "code", label: "产品编码", type: 'input' },
-        { prop: "name", label: "产品名称", type: 'input' },
-        { prop: "drawingNo", label: "品名规格", type: 'input' }
+        { prop: "productCode", label: "产品编码", type: 'input' },
+        // { prop: "name", label: "产品名称", type: 'input' },
+        { prop: "productDrawingNo", label: "品名规格", type: 'input' }
       ], // 产品选择弹出框搜索条件
     }
   },
@@ -213,12 +217,38 @@ export default {
     }
   },
   mounted() {
+    this.getclassAttributeList()
     this.setDefaultValue();
   },
+  
   beforeDestroy() {
     window.onresize = null
   },
   methods: {
+    listDataFormatting(res) {
+      res.data.records.forEach((item, index) => {
+        item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')
+      })
+
+      return res.data.records
+    },
+    getclassAttributeList() {
+      let obj = {
+        pageNum: 1,
+        pageSize: 20
+      }
+      getclassAttributeList(obj).then((res) => {
+        let arr = []
+        res.data.records.forEach((item) => {
+          let obj = {
+            label: item.name,
+            value: item.code
+          }
+          arr.push(obj)
+        })
+        this.classAttributeList = arr
+      })
+    },
     handleInput(val, key, index) {
       this.$emit('input', index, key, val);
     },

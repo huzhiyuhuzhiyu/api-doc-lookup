@@ -12,122 +12,122 @@
       <div class="main">
         <el-tabs v-model="activeName">
           <!-- <el-tab-pane label="基础信息" name="jcInfo"> -->
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基本信息" name="basicInfo">
-                <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机名称" prop="businessName">
-                        <el-input v-model="dataForm.businessName" placeholder="请输入商机名称" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基本信息" name="basicInfo">
+              <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="商机名称" prop="businessName">
+                      <el-input v-model="dataForm.businessName" placeholder="请输入商机名称" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="负责人" prop="ownerUserId">
+                      <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
+                      </user-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="客户名称" prop="customerName">
+                      <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="商机金额" prop="money">
+                      <el-input v-model="dataForm.money" placeholder="请输入商机金额" maxlength="20" :disabled="btntype == 'look' ? true : false" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="预计成交日期" prop="dealDate">
+                      <el-date-picker v-model="dataForm.dealDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择预计成交日期" :disabled="btntype == 'look' ? true : false">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="下次联系时间" prop="nextTime">
+                      <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btntype == 'look' ? true : false">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="产品信息" name="productInfo">
+              <div v-if="btntype !== 'look'" key="11">
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btntype == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btntype == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+              </div>
+              <el-form :model="dataFormTwo" ref="productForm" class="data-form" v-loading="productVisible">
+                <el-table class="TableForm table" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
+                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
+                  <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
+                  <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip />
+                  <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
+                  <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
+                  <el-table-column prop="costPrice" label="成本价" width="160" show-overflow-tooltip />
+                  <el-table-column prop="num" label="数量" width="160">
+                    <template slot="header">
+                      <span class="required">*</span>数量
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
+                        <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btntype == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                        </el-input>
                       </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="负责人" prop="ownerUserId">
-                        <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
-                        </user-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户名称" prop="customerName">
-                        <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getPartnerList" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="商机金额" prop="money">
-                        <el-input v-model="dataForm.money" placeholder="请输入商机金额" maxlength="20" :disabled="btntype == 'look' ? true : false" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="预计成交日期" prop="dealDate">
-                        <el-date-picker v-model="dataForm.dealDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择预计成交日期" :disabled="btntype == 'look' ? true : false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="下次联系时间" prop="nextTime">
-                        <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btntype == 'look' ? true : false">
-                        </el-date-picker>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-form>
-              </el-collapse-item>
-              <el-collapse-item title="产品信息" name="productInfo">
-                <div v-if="btntype !== 'look'" key="11">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btntype == 'look' ? true : false" @click="openSeleceProductDialog()">选择产品</el-button>|
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btntype == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-                </div>
-                <el-form :model="dataFormTwo" ref="productForm" class="data-form" v-loading="productVisible">
-                  <el-table class="TableForm table" ref="product" :data="dataFormTwo.lines" @selection-change="handeleProductInfoData" style="border: 1px solid #e3e7ee">
-                    <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btntype != 'look'" key="1" />
-                    <el-table-column type="index" width="60" label="序号" align="center" fixed="left" key="2" />
-                    <el-table-column prop="productName" label="产品名称" width="180" show-overflow-tooltip />
-                    <el-table-column prop="productUnit" label="单位" width="110" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="purchasePrice" label="价格" width="160" show-overflow-tooltip />
-                    <el-table-column prop="costPrice" label="成本价" width="160" show-overflow-tooltip />
-                    <el-table-column prop="num" label="数量" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>数量
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量" :disabled="btntype == 'look'" maxlength="11" @input="watchnums(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
+                    </template>
+                  </el-table-column>
 
-                    <el-table-column prop="price" label="售价" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>售价
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
-                          <el-input v-model="scope.row.price" placeholder="请输入售价" :disabled="btntype == 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
-                          </el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="discount" label="折扣(%)" width="160">
-                      <template slot="header">
-                        <span class="required">*</span>折扣(%)
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'lines.' + scope.$index + '.' + 'discount'" :rules='productRules.discount'>
-                          <el-input v-model="scope.row.discount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="changeTaxRate(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
-                    <el-table-column prop="costPriceSum" label="成本价合计" width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="priceSum" label="合计" width="160" show-overflow-tooltip>
-                    </el-table-column>
-                    <el-table-column prop="remark" label="备注" min-width="230">
-                      <template slot-scope="scope">
-                        <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btntype == 'look' ? true : false" maxlength="200" />
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" width="120" fixed="right" v-if="btntype != 'look'" key="111">
-                      <template slot-scope="scope">
-                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </el-form>
-                <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;display:flex;justify-content: space-between;" class="text">
-                  <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderDiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
-                  <div>
-                    <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额：{{ totalAmount }}</span>
-                  </div>
+                  <el-table-column prop="price" label="售价" width="160">
+                    <template slot="header">
+                      <span class="required">*</span>售价
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'lines.' + scope.$index + '.' + 'price'" :rules='productRules.price'>
+                        <el-input v-model="scope.row.price" placeholder="请输入售价" :disabled="btntype == 'look'" maxlength="20" @input="watchPrice(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="discount" label="折扣(%)" width="160">
+                    <template slot="header">
+                      <span class="required">*</span>折扣(%)
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'lines.' + scope.$index + '.' + 'discount'" :rules='productRules.discount'>
+                        <el-input v-model="scope.row.discount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="changeTaxRate(scope.row, scope.$index)" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="costPriceSum" label="成本价合计" width="160" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="priceSum" label="合计" width="160" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="remark" label="备注" min-width="230">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.remark" placeholder="请输入备注" :disabled="btntype == 'look' ? true : false" maxlength="200" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="120" fixed="right" v-if="btntype != 'look'" key="111">
+                    <template slot-scope="scope">
+                      <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
+              <div style="height: 40px; line-height: 40px; background: #f5f7fa;padding-left: 10px;display:flex;justify-content: space-between;margin-bottom: 18px;" class="text">
+                <div><label>整单折扣（%）：</label><el-input v-model="dataForm.orderDiscount" placeholder="请输入折扣" :disabled="btntype == 'look'" maxlength="20" @input="Wholeorderdiscount" style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')"></el-input></div>
+                <div>
+                  <span style="font-weight:500;margin-right:10px">总主数量：{{ totalNum }}</span>
+                  <span style="font-weight:500;margin-right:10px">总金额：{{ totalAmount }}</span>
                 </div>
-              </el-collapse-item>
-            </el-collapse>
+              </div>
+            </el-collapse-item>
+          </el-collapse>
           <!-- </el-tab-pane> -->
         </el-tabs>
       </div>
@@ -284,9 +284,6 @@ export default {
       return totalPrice
     },
     ...mapGetters(['userInfo']),
-  },
-  created() {
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
     ProductTreeNodeClick(data, node, listQuery) {
@@ -559,6 +556,7 @@ export default {
             this.formLoading = false
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
           this.formLoading = false
         }
       })

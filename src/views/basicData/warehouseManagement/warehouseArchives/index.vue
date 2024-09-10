@@ -67,10 +67,9 @@
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="image" label="二维码" align="center" width="100" height="50">
+          <!-- <el-table-column prop="image" label="二维码" align="center" width="100" height="50">
             <template slot-scope="scope">
               <el-popover placement="top-start" trigger="click">
-                <!--trigger属性值：hover、click、focus 和 manual-->
                 <a :href="scope.row.image" target="_blank" title="查看最大化图片">
                   <vue-qr :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
                     :text="scope.row.code" />
@@ -78,21 +77,36 @@
                 <img slot="reference" :src="scope.row.image" style="width: 50px;height: 50px; cursor:pointer" />
               </el-popover>
             </template>
-          </el-table-column>
-          <el-table-column prop="state" label="状态" min-width="80">
+          </el-table-column> -->
+          <el-table-column prop="state" label="状态" width="80">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
-                inactive-value="disabled" @change="stateChange(scope.row)">
-              </el-switch>
+                inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="position" label="位置" min-width="120"></el-table-column>
+          <el-table-column prop="workshop" label="车间" width="100">
+            <template slot-scope="scope">
+              <div v-if="scope.row.workshop == 'assemble'">装配车间</div>
+              <div v-if="scope.row.workshop == 'ferrule'">套圈车间</div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="position" label="位置" width="120"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="260" fixed="right">
+          <el-table-column label="操作" width="270" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
+                <el-popover placement="top-start" trigger="click" style="margin: 0 10px;">
+                  <!--trigger属性值：hover、click、focus 和 manual-->
+                  <a :href="scope.row.image" target="_blank" title="查看最大化图片">
+                    <vue-qr :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
+                      :text="scope.row.code" />
+                  </a>
+                  <el-button type="text" size="mini" slot="reference">
+                    查看二维码
+                  </el-button>
+                </el-popover>
                 <el-button type="text" size="mini"
                   @click="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
                   查看详情

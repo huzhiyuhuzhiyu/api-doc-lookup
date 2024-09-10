@@ -16,53 +16,53 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="产品编码" prop="code">
                         <el-input v-model="dataForm.code" placeholder="请输入产品编码" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="产品名称" prop="name">
                         <el-input v-model="dataForm.name" placeholder="请输入产品名称" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="产品类型" prop="type">
                         <el-input v-model="dataForm.type" placeholder="请输入产品类型" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="产品类别" prop="productCategoryId">
                         <ComSelect-list :isdisabled="btntype == 'look' ? true : false" v-model="dataForm.productCategoryName" placeholder="请选择产品类别" auth @change="onOrganizeChange" :title="'选择产品类型'" :method="crmProductCategorytree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="成本价" prop="costPrice">
                         <el-input v-model="dataForm.costPrice" placeholder="请输入成本价" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="产品单位" prop="unit">
                         <el-select v-model="dataForm.unit" placeholder="请选择产品单位" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.fullName"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="价格" prop="price">
                         <el-input v-model="dataForm.price" placeholder="请输入价格" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="产品描述" prop="describe">
-                        <el-input v-model="dataForm.describe" placeholder="请输入产品描述" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="是否上下架" prop="stackingFlag">
                         <el-select v-model="dataForm.stackingFlag" placeholder="请选择是否上下架" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in stacklist" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="产品描述" prop="describe">
+                        <el-input v-model="dataForm.describe" placeholder="请输入产品描述" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
                     </el-col>
                   </el-row>

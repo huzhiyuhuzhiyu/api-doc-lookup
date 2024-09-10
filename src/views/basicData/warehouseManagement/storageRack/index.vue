@@ -97,7 +97,7 @@
           :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="state" label="状态" min-width="140">
+          <el-table-column prop="state" label="状态" width="70">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope.row)">
@@ -108,7 +108,7 @@
           <el-table-column prop="remark" label="备注" min-width="160" />
           <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-          <el-table-column label="操作" width="180" fixed="right">
+          <el-table-column label="操作" width="100" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
               </tableOpts>
@@ -519,48 +519,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
 
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
-}
-
-.JNPF-common-head {
-  padding: 8px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
-}
-
-::v-deep.el-tree-node__content {
-  height: 30px;
-  line-height: 30px;
-}
-
-.JNPF-common-el-tree {
-  margin: 5px 0;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 0;
-}
-</style>

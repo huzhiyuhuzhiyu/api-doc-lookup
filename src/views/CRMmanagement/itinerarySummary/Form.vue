@@ -11,83 +11,68 @@
       </div>
       <div class="main">
         <el-tabs v-model="activeName">
-          <el-tab-pane label="基础信息" name="jcInfo">
-            <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" label-position="top" label-width="120px">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="行程信息" name="xcInfo">
-                  <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="客户名称" prop="customerName">
-                        <el-input v-model="dataForm.customerName" placeholder="请输入客户名称" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="负责人" prop="ownerUserName">
-                        <el-input v-model="dataForm.ownerUserName" placeholder="请选择负责人" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="出行时间" prop="visitTime">
-                        <el-input v-model="dataForm.visitTime" placeholder="请选择出行时间" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="出发地" prop="departure">
-                        <el-input v-model="dataForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="目的地" prop="destination">
-                        <el-input v-model="dataForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="里程数(km)" prop="mileage">
-                        <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24">
-                      <el-form-item label="出行方式" prop="travelMode">
-                        <el-select v-model="dataForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
-                          <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
-                        </el-select>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
-                      <el-form-item label="定位" prop="visitGps">
-                        <el-input v-model="dataForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
-                      </el-form-item>
-                    </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
-                      <el-form-item label="现场照片" prop="visitPhoto">
-                        <el-upload action="#" list-type="picture-card" :auto-upload="false" :disabled="true">
-                          <i slot="default" class="el-icon-plus"></i>
-                          <div slot="file" slot-scope="{file}">
-                            <img class="el-upload-list__item-thumbnail" :src="file.url" alt="">
-                            <span class="el-upload-list__item-actions">
-                              <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                                <i class="el-icon-zoom-in"></i>
-                              </span>
-                              <span class="el-upload-list__item-delete" @click="handleDownload(file)">
-                                <i class="el-icon-download"></i>
-                              </span>
-                              <span v-if="btntype !== 'look'" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                                <i class="el-icon-delete"></i>
-                              </span>
-                            </span>
-                          </div>
-                          <div slot="tip" class="el-upload__tip">仅允许拍照上传</div>
-                        </el-upload>
-                        <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
-                          <img width="100%" :src="dialogImageUrl" alt="">
-                        </el-dialog>
-                      </el-form-item>
-                    </el-col>
-                  </el-row>
-                </el-collapse-item>
-              </el-collapse>
-            </el-form>
-          </el-tab-pane>
+          <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" label-position="top" label-width="120px">
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="行程信息" name="xcInfo">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="客户名称" prop="customerName">
+                      <el-input v-model="dataForm.customerName" placeholder="请输入客户名称" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="负责人" prop="ownerUserName">
+                      <el-input v-model="dataForm.ownerUserName" placeholder="请选择负责人" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="出行时间" prop="visitTime">
+                      <el-input v-model="dataForm.visitTime" placeholder="请选择出行时间" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="出发地" prop="departure">
+                      <el-input v-model="dataForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="目的地" prop="destination">
+                      <el-input v-model="dataForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="里程数(km)" prop="mileage">
+                      <el-input v-model="dataForm.mileage" placeholder="请输入里程数" :disabled="btntype == 'look'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="出行方式" prop="travelMode">
+                      <el-select v-model="dataForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
+                        <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24" v-if="btntype == 'look' && dataForm.visitPhoto">
+                    <el-form-item label="定位" prop="visitGps">
+                      <el-input v-model="dataForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="24" :xs="24" v-if="btntype == 'look' && dataForm.visitPhoto">
+                    <el-form-item label="现场照片" prop="visitPhoto">
+                      <el-image class="information-img" fit="contain" v-for="item in dataForm.visitPhotoList" :key="item.id" :src="define.comUrl+item.url" @click="handlePictureCardPreview(item)">
+                        <div slot="placeholder" class="image-slot">
+                          加载中<span class="dot">...</span>
+                        </div>
+                      </el-image>
+                      <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
+                        <img width="100%" height="100%" :src="define.comUrl+dialogImageUrl" alt="">
+                      </el-dialog>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-collapse-item>
+            </el-collapse>
+          </el-form>
         </el-tabs>
       </div>
     </div>
@@ -117,15 +102,9 @@ export default {
     this.getDictionaryType()
   },
   methods: {
-    handleRemove(file) {
-      console.log(file);
-    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    },
-    handleDownload(file) {
-      console.log(file);
     },
     // 获取客户满意度、行程信息形式数据
     getDictionaryType() {
@@ -159,7 +138,6 @@ export default {
       this.dataForm.id = id || ''
       this.formLoading = true
       this.$nextTick(() => {
-        this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           detailcrmTravelInformation(this.dataForm.id).then(res => {
             this.dataForm = res.data

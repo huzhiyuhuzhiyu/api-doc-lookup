@@ -16,55 +16,55 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回访编号" prop="returnVisitNo">
                         <el-input v-model="dataForm.returnVisitNo" placeholder="请输入回访编号" :disabled="btntype == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回访时间" prop="returnVisitTime">
                         <el-date-picker v-model="dataForm.returnVisitTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择回访时间" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回访人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择回访人" clearable style="width: 100%" :disabled="btntype == 'look'">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回访形式" prop="returnVisitForm">
                         <el-select v-model="dataForm.returnVisitForm" placeholder="请选择回访形式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in returnVisitFormList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户名称" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="联系人" prop="contactsId">
                         <el-select v-model="dataForm.contactsId" placeholder="请选择联系人" clearable style="width: 100%;" :disabled="btntype == 'look'||!dataForm.customerName">
                           <el-option v-for="(item, index) in contactsIdList" :key="index" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="合同编号" prop="contractNo">
                         <ComSelect-page v-model="dataForm.contractNo" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户满意度" prop="customerSatisfaction">
                         <el-select v-model="dataForm.customerSatisfaction" placeholder="请选择客户满意度" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in customerSatisfactionList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户反馈" prop="feedback">
                         <el-input v-model="dataForm.feedback" placeholder="请输入客户反馈" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
@@ -73,47 +73,47 @@
                 </el-collapse-item>
               </el-collapse>
             </el-form>
-            <el-form ref="informationForm" v-loading="formLoading" :model="informationForm" :rules="dataRule" label-position="top" label-width="120px">
+            <el-form v-if="dataForm.returnVisitForm=='见面拜访'" ref="informationForm" v-loading="formLoading" :model="informationForm" :rules="dataRule" label-position="top" label-width="120px">
               <el-collapse v-model="activeNames">
-                <el-collapse-item title="行程信息" name="xcInfo" v-if="dataForm.returnVisitForm=='见面拜访'">
+                <el-collapse-item title="行程信息" name="xcInfo">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="出发地" prop="departure">
                         <el-input v-model="informationForm.departure" placeholder="请输入出发地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="目的地" prop="destination">
                         <el-input v-model="informationForm.destination" placeholder="请输入目的地" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="里程数(km)" prop="mileage">
                         <el-input v-model="informationForm.mileage" @change="handleDownload" placeholder="请输入里程数" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="出行方式" prop="travelMode">
                         <el-select v-model="informationForm.travelMode" placeholder="请选择出行方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in travelModeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24" v-if="btntype == 'look'">
+                    <el-col :sm="6" :xs="24" v-if="btntype == 'look'">
                       <el-form-item label="定位" prop="visitGps">
                         <el-input v-model="informationForm.visitGps" placeholder="请在移动端进行定位" :disabled="true" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="24" :xs="24" v-if="btntype == 'look'">
                       <el-form-item label="现场照片" prop="visitPhoto">
-                        <el-image style="width: 148px;height: 148px;border:1px solid #c0ccda;border-radius: 6px;box-sizing: border-box;overflow: hidden;" fit="contain" :src="define.comUrl+informationForm.visitPhotoList[0].url">
+                        <el-image class="information-img" fit="contain" v-for="item in informationForm.visitPhotoList" :key="item.id" :src="define.comUrl+item.url" @click="handlePictureCardPreview(item)">
                           <div slot="placeholder" class="image-slot">
                             加载中<span class="dot">...</span>
                           </div>
                         </el-image>
                         <!-- <UploadImg v-model="fileList"></UploadImg> -->
                         <el-dialog :visible.sync="dialogVisible" :modal-append-to-body="false">
-                          <img width="100%" :src="dialogImageUrl" alt="">
+                          <img width="100%" height="100%" :src="define.comUrl+dialogImageUrl" alt="">
                         </el-dialog>
                       </el-form-item>
                     </el-col>
@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
+// import UploadImg from "@/components/Generator/components/Upload/UploadImg.vue";
 import { mapGetters } from 'vuex'
 import { getCooperativeData } from '@/api/basicData/index'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
@@ -140,7 +140,7 @@ import { getcategoryTrees } from '@/api/salesManagement/assemblyOrders'
 import { getMyContactsList } from '@/api/customerManagement/index'
 import { addcrmReturnVisit, detailcrmReturnVisit, updatecrmReturnVisit, getcrmContractlist } from '@/api/CRMmanagement/index'
 export default {
-  components: { UploadImg },
+  // components: { UploadImg },
   data() {
     return {
       isattachmentswitch: '1',
@@ -250,7 +250,7 @@ export default {
         travelMode: '',
         visitGps: '',
         visitPhoto: '',
-        visitPhotoList: ''
+        visitPhotoList: []
       },
       btntype: false,
       dataRule: {
@@ -274,21 +274,14 @@ export default {
   },
   created() {
     this.getDictionaryType()
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   computed: {
     ...mapGetters(['userInfo']),
   },
   methods: {
-    handleRemove(file) {
-      console.log(file);
-    },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
-    },
-    handleDownload(file) {
-      console.log('下载', file);
     },
     async fetchData(code) {
       try {
@@ -392,12 +385,14 @@ export default {
           detailcrmReturnVisit(this.dataForm.id).then(res => {
             this.dataForm = res.data.returnVisit
             this.informationForm = res.data.information
-            if (this.informationForm.visitPhotoList == "[]") {
-              this.informationForm.visitPhotoList = [];
-            } else {
-              this.informationForm.visitPhotoList = this.informationForm.visitPhotoList.map(
-                item => JSON.parse("{" + item + "}")
-              )
+            if (this.informationForm.visitPhoto) {
+              if (this.informationForm.visitPhotoList == "[]") {
+                this.informationForm.visitPhotoList = [];
+              } else {
+                this.informationForm.visitPhotoList = this.informationForm.visitPhotoList.map(
+                  item => JSON.parse("{" + item + "}")
+                )
+              }
             }
             getMyContactsList({
               cooperativePartnerName: this.dataForm.customerName, pageNum: 1,
@@ -421,6 +416,8 @@ export default {
             }
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
+          this.dataForm.returnVisitTime = this.jnpf.getToday('YYYY-MM-DD HH:mm:ss')
           this.formLoading = false
         }
       })
@@ -440,7 +437,7 @@ export default {
             })
           }
           let obj = {
-            information: informationForm,
+            information: this.informationForm,
             returnVisit: {
               ...this.dataForm,
               attachmentList: this.datafilelist
@@ -476,6 +473,18 @@ export default {
 <style scoped lang="scss">
 .JNPF-preview-main .main {
   padding-top: 0;
+  .information-img {
+    width: 148px;
+    height: 148px;
+    border: 1px solid #c0ccda;
+    border-radius: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .information-img + .information-img {
+    margin-left: 10px;
+  }
 }
 ::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
   padding-right: 0 !important;

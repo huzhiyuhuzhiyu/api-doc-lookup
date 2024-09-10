@@ -32,8 +32,8 @@
         </div>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="display:block;line-height:34px">
-            <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
-            </topOpts>
+            <!-- <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle('','add')">
+            </topOpts> -->
             <div class="JNPF-common-head-right" style="float: right">
               <el-tooltip content="高级查询" placement="top">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
@@ -201,7 +201,7 @@ export default {
           if (item.enCode == "partnerArchives") {
             let children = item.children
             children.forEach(resp => {
-              if (resp.enCode == "Followupform") {
+              if (resp.enCode == "Travelmode") {
                 let id = resp.id;
                 let obj = {
                   keyword: '',

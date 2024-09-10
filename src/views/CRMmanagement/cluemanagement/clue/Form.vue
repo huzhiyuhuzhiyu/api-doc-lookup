@@ -16,40 +16,40 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="线索名称" prop="clueName">
                         <el-input v-model="dataForm.clueName" placeholder="请输入线索名称" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="线索来源" prop="source">
                         <el-select v-model="dataForm.source" placeholder="请选择线索来源" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in sourceList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="手机号" prop="mobile">
                         <el-input v-model="dataForm.mobile" placeholder="请输入手机号" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="电话" prop="telephone">
                         <el-input v-model="dataForm.telephone" placeholder="请输入电话" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="邮箱" prop="email">
                         <el-input v-model="dataForm.email" placeholder="请输入邮箱" maxlength="20" :disabled="btntype == 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="地址" prop="provincecityarea">
                         <JNPF-Address v-model="dataForm.provincecityarea" @change="actiompro" placeholder="请选择地址" :disabled="btntype == 'look' ? true : false"></JNPF-Address>
                       </el-form-item>
@@ -78,32 +78,32 @@
                     </el-select>
                   </el-form-item>
                 </el-col> -->
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="详细地址" prop="address">
                         <el-input v-model="dataForm.address" placeholder="请输入详细地址" :disabled="btntype === 'look' ? true : false" maxlength="300" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户行业" prop="industry">
                         <el-select v-model="dataForm.industry" placeholder="请选择客户行业" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in industryList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户级别" prop="level">
                         <el-select v-model="dataForm.level" placeholder="请选择客户级别" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in levelList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="下次联系时间" prop="nextTime">
                         <el-date-picker v-model="dataForm.nextTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;" placeholder="请选择下次联系时间" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
@@ -194,7 +194,6 @@ export default {
     getbimProductAttributes('585430056520656645').then(res => {
       this.industryList = res.data.list.length ? res.data.list : []
     })
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   computed: {
     ...mapGetters(['userInfo']),
@@ -306,6 +305,7 @@ export default {
             this.formLoading = false
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
           this.formLoading = false
         }
       })

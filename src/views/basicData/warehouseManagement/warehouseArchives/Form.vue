@@ -11,25 +11,14 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-        <!-- 使用对象结合自定义组件渲染内容 -->
-        <el-tabs v-model="activeName">
-          <!-- 普通属性 -->
-          <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode">
-            <el-collapse v-model="activeNames">
-              <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
-                <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
-              </el-collapse-item>
-            </el-collapse>
-          </el-tab-pane>
-          <!-- <el-tab-pane label="权限信息" name="sleeve" id="sleeve">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>权限信息</h5>
-            </div>
-            <JNPF-col-table v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-              :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-          </el-tab-pane> -->
-        </el-tabs>
+
+
+        <el-collapse v-model="activeNames">
+          <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
+            <JNPF-col v-model="dataForm" :tabContent="tabs[0].tabContent" ref="dataForm" :openMode="openMode" />
+          </el-collapse-item>
+        </el-collapse>
+
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
     </div>
@@ -132,7 +121,7 @@ export default {
                 this.parentId = data ? data[0].id : ''
                 this.dataForm.partnerCategoryIdText = data ? data[0].name : ''
                 this.dataForm.type = data ? data[0].all.type : ''
-                console.log(this.dataForm.type, 'o')
+
                 if (this.dataForm.type == 'line_edge') {
                   this.tabs[0].tabContent.forEach((tc) => {
                     if (tc.prop == 'workshop') {
@@ -160,7 +149,7 @@ export default {
                         { label: '中转仓库', value: 'temp' },
                         { label: '不良品仓库', value: 'unqualified' },
                         { label: '报废仓库', value: 'scrap' },
-                        { label: "线边仓库", value: "line_edge" }
+                        { label: '线边仓库', value: 'line_edge' }
                       ]
                     }
                   })
@@ -244,6 +233,16 @@ export default {
             },
             trigger: 'blur'
           })
+        } else if (tc.prop === 'type') {
+          tc.change = (val) => {
+            if (val == 'line_edge') {
+              this.tabs[0].tabContent.forEach((tc) => {
+                if (tc.prop == 'workshop') {
+                  tc.render = true
+                }
+              })
+            }
+          }
         }
       })
     })
@@ -277,6 +276,7 @@ export default {
           this.dataForm.name = res.data.name
           this.dataForm.parentId = res.data.parentId
           this.dataForm.state = res.data.state
+          this.dataForm.workshop = res.data.workshop
           this.dataForm.position = res.data.position
           this.dataForm.remark = res.data.remark
           this.dataForm.sort = res.data.sort
@@ -284,7 +284,13 @@ export default {
 
           this.stockLimitsAuthorities = res.data.stockLimitsAuthorities
           this.dataForm.partnerCategoryIdText = res.data.parentName
-
+          if (this.dataForm.type == 'line_edge') {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (tc.prop == 'workshop') {
+                tc.render = true
+              }
+            })
+          }
           // 处理普通属性
 
           if (this.dataForm.type == 'scrap') {
@@ -305,7 +311,8 @@ export default {
                 tc.options = [
                   { label: '正常仓库', value: 'normal' },
                   { label: '中转仓库', value: 'temp' },
-                  { label: '不良品仓库', value: 'unqualified' }
+                  { label: '不良品仓库', value: 'unqualified' },
+                  { label: '线边仓库', value: 'line_edge' }
                 ]
               }
             })
@@ -314,10 +321,7 @@ export default {
           this.formLoading = false
         })
       }
-      //  else {
-      //   this.title = '新建仓库档案'
-      //   this.formLoading = false
-      // }
+
       if (btnType == 'look') {
         this.isdisabled = true
         this.editFlag = true
@@ -430,7 +434,7 @@ export default {
 .main {
   // padding: 0px 30px 10px;
 }
- 
+
 .el-button--small {
   padding: 1;
 }
@@ -474,24 +478,25 @@ export default {
   margin-bottom: 0;
   padding: 0 10px 0px;
   border-top: none !important;
-
 }
 
 ::v-deep .el-collapse-item__content {
-  padding-bottom: 0px
+  padding-bottom: 0px;
 }
 
 .JNPF-preview-main .main {
   padding-top: 0;
+  margin-top: 10px;
 }
 
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }

@@ -16,46 +16,46 @@
               <el-collapse-item title="基本信息" name="basicInfo">
                 <el-form ref="dataForm" v-loading="formLoading" :model="dataForm" :rules="dataRule" label-position="top" label-width="120px">
                   <el-row :gutter="30" class="custom-row">
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="负责人" prop="ownerUserId">
                         <user-select v-model="dataForm.ownerUserId" placeholder="请选择负责人" clearable style="width: 100%" :disabled="btntype == 'look'" @change="hangleSelectSales">
                         </user-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="客户名称" prop="customerName">
                         <ComSelect-page key="partner" ref="ComSelect-page" v-model="dataForm.customerName" @change="partnerChange" :tableItems="partnerTableItems" dialogTitle="选择客户" treeTitle="客户分类" placeholder="请选择客户" :methodArr="{ method: getcategoryTrees, requestObj: { type: 'customer' } }" :listMethod="getCooperativeData" :listRequestObj="partnerRequestObj" :searchList="partnerSearchList" :treeNodeClick="PartnerTreeNodeClick" :isdisabled="btntype === 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="合同编号" prop="contractNo">
                         <ComSelect-page v-model="dataForm.contractNo" @change="contractChange" :tableItems="contractTableItems" dialogTitle="选择合同" placeholder="请选择合同编号" :listMethod="getcrmContractlist" :listRequestObj="contractRequestObj" :searchList="contractSearchList" :isdisabled="btntype === 'look'||!dataForm.customerName" :renderTree="false" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="计划回款金额" prop="planReceivablesMoney">
                         <el-input v-model="dataForm.planReceivablesMoney" placeholder="请输入计划回款金额" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="计划回款日期" prop="planReceivablesData">
                         <el-date-picker v-model="dataForm.planReceivablesData" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择计划回款日期" :disabled="btntype == 'look' ? true : false">
                         </el-date-picker>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="前几天提醒" prop="remindInAdvance">
                         <el-input v-model="dataForm.remindInAdvance" placeholder="请输入前几天提醒" :disabled="btntype == 'look'" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="回款方式" prop="receivablesType">
                         <el-select v-model="dataForm.receivablesType" placeholder="请选择回款方式" clearable style="width: 100%;" :disabled="btntype == 'look' ? true : false">
                           <el-option v-for="(item, index) in returnTypeList" :key="index" :label="item.fullName" :value="item.enCode"></el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="8" :xs="24">
+                    <el-col :sm="6" :xs="24">
                       <el-form-item label="备注" prop="remark">
                         <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btntype == 'look'" type="textarea" maxlength="200" :rows="2" />
                       </el-form-item>
@@ -128,7 +128,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         type: "customer",
-        partnerCategoryId:'',
+        partnerCategoryId: '',
         orderItems: [{
           asc: false,
           column: ""
@@ -191,7 +191,6 @@ export default {
   },
   created() {
     this.getDictionaryType()
-    this.dataForm.ownerUserId = this.userInfo.userId
   },
   methods: {
     //负责人
@@ -282,6 +281,7 @@ export default {
             this.formLoading = false
           })
         } else {
+          this.dataForm.ownerUserId = this.userInfo.userId
           this.formLoading = false
         }
       })

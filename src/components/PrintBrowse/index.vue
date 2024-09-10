@@ -32,7 +32,7 @@ import { mapGetters } from "vuex"
 import { getData } from '@/api/system/printDev'
 import QRCode from 'qrcodejs2'
 export default {
-  props: ['id', 'formId', 'fullName'],
+  props: ['id', 'formId', 'fullName','params'],
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -52,8 +52,11 @@ export default {
       this.loading = true
       let query = {
         id: this.id,
-        formId: this.formId
+        formId: this.formId,
+        params:this.params.Object.values(obj).join(',')
       }
+      console.log(query);
+      return
       getData(query).then(res => {
         if (!res.data) return
         this.printTemplate = res.data.printTemplate

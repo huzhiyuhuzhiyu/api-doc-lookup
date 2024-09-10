@@ -186,7 +186,7 @@
     <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm">
     </BatchDispatchForm>
 
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -199,7 +199,7 @@
           </el-col>
         </el-form>
       </el-row>
-      <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading" border>
+      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border>
         <el-table-column prop="orderNo" label="工单号" min-width="160" />
         <el-table-column prop="processName" label="工序名称" min-width="120" />
         <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
@@ -213,7 +213,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="submitFun()">
+        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
           打 印</el-button>
       </span>
     </el-dialog>
@@ -451,7 +451,8 @@ export default {
         ],
       },
       workOrderData: [],
-      selectWorkOrder: []
+      selectWorkOrder: [],
+      flowCardCode:''
     }
   },
   created() {
@@ -730,7 +731,7 @@ export default {
     // 打印 装配单
     printOrder(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
@@ -744,14 +745,33 @@ export default {
       });
     },
     // 打印 流转卡
-    printFlowCard() {
+    printFlowCard(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
-      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.workOrderVisible = true
+      this.flowCardCode = enCode
       this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
       detailordershengchan(this.selectArr[0].id).then(res => {
         this.workOrderData = res.data.workOrderList
       })
+    },
+    handleSelectWork(val){
+      this.selectWorkOrder = val
+    },
+    printSubmit(){
+      if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(this.flowCardCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectWorkOrder[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
     },
   }
 }

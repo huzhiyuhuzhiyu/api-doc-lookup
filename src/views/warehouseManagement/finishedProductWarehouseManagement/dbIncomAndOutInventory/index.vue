@@ -1,42 +1,19 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" v-if="!leftFlag" style="display: block;padding:0">
-        <div class="title_box">
-          <h2>业务分类</h2>
-          <span class="options">
-            <el-dropdown>
-              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </span>
-        </div>
-        <div> <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:200px;margin:10px auto;display:block"
-            suffix-icon="el-icon-search" clearable>
-          </el-input></div>
-      </div>
 
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="businessType" @node-click="handleNodeClick"
-          class="JNPF-common-el-tree" v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-            <span class="text" :title="data.fullName">{{ data.fullName }} ({{ data.todoNum }})</span>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+        <el-radio-group v-model="categoryType" style="background-color:#fff;">
 
-          </span>
-        </el-tree>
-      </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute">
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+          <el-badge :value="item.todoNum" :max="99" v-for="item in treeData" :key="item.id">
+            <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
+              }}</el-radio-button>
+          </el-badge>
+        </el-radio-group>
       </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute">
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
-      </div>
-    </div>
-    <div class="JNPF-common-layout-center">
-      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16">
+      <el-row class="JNPF-common-search-box  treeBox_bot" :gutter="16" style="margin-top: 5px;"
+        v-if="categoryType != 'inbound_mock_production'">
         <!-- 销售待发/退货查询条件 -->
         <el-form @submit.native.prevent
           v-if="categoryType == 'outbound_sale_send' || categoryType == 'inbound_sale_return'">
@@ -47,7 +24,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="fhForm.partnerName" placeholder="客户名称" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="fhForm.partnerName" placeholder="客户名称" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -77,7 +55,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="cgForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="cgForm.partnerName" placeholder="供应商名称" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -106,7 +85,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="wxshForm.partnerName" placeholder="供应商名称" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -134,7 +114,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="wxflForm.partnerName" placeholder="供应商名称" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="wxflForm.partnerName" placeholder="供应商名称" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -158,7 +139,8 @@
         <el-form @submit.native.prevent v-if="categoryType == 'outbound_pick_out'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="pickForm.orderNo" placeholder="领料单号" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -172,7 +154,8 @@
 
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="pickForm.partnerName" placeholder="领料人" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -188,7 +171,8 @@
         <el-form @submit.native.prevent v-if="categoryType == 'inbound_return_materials'">
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="returnMaterForm.orderNo" placeholder="退料单号" clearable @keyup.enter.native="getTabdataList()" />
+              <el-input v-model="returnMaterForm.orderNo" placeholder="退料单号" clearable
+                @keyup.enter.native="getTabdataList()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -216,7 +200,8 @@
           </el-col>
         </el-form>
       </el-row>
-      <div class="JNPF-common-layout-main JNPF-flex-main">
+
+      <div class="JNPF-common-layout-main JNPF-flex-main" v-if="categoryType != 'inbound_mock_production'">
         <div class="JNPF-common-head">
           <div></div>
           <div class="JNPF-common-head-right">
@@ -566,6 +551,196 @@
           v-if="categoryType == 'inbound_return_materials'">
         </pagination>
       </div>
+
+      <el-tabs v-model="activeName" @tab-click="handleClick" v-show="categoryType == 'inbound_mock_production'"
+        class="produce">
+        <el-tab-pane label="生产产品入库" name="product">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="productForm.orderNo" @keyup.enter.native="searchProductData()" placeholder="任务单号"
+                      clearable />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-select v-model="productForm.orderType" placeholder="任务类型" style="width: 100%;">
+                      <el-option v-for="item in orderTypeList" :key="item.value" :label="item.label"
+                        :value="item.value"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="productForm.productDrawingNo" @keyup.enter.native="searchProductData()"
+                      placeholder="品名规格" clearable />
+
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductData()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('product')">{{
+                      $t('common.reset') }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+
+              <div class="JNPF-common-head">
+                <div>
+                  <el-button :disabled="productData.length > 0 ? false : true" size="mini" type="primary"
+                    icon="el-icon-plus" @click="batchInbound('product')">批量入库</el-button>
+                </div>
+                <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('dataTableProductRef')" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="searchProductData()" />
+                  </el-tooltip>
+                </div>
+              </div>
+              <JNPF-table ref="dataTableProductRef" v-loading="listLoading" :data="productData" :fixedNO="true"
+                custom-column @selection-change="handleSelectionProduct" hasC :setColumnDisplayList="productColumns"
+                v-show="categoryType == 'inbound_mock_production'">
+                <el-table-column prop="orderNo" label="任务单号" width="180" />
+                <el-table-column prop="orderType" label="任务类型" width="120">
+                  <template slot-scope="scope">
+                    <div v-for="(item, index) in orderTypeList" :key="index">
+                      <span v-if="item.value == scope.row.orderType">{{ item.label }}</span>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="productionQuantity" label="生产数量" width="120" />
+                <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
+                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
+                <el-table-column v-if="classAttribute=='semi_finished'" prop="aperture" label="孔径" width="100" />
+                <el-table-column v-if="classAttribute=='semi_finished'" prop="productionPlanNo" label="计划单号" width="160" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="sealingCoverTyping" label="打字内容" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="accuracyLevel" label="精度等级" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="vibrationLevel" label="振动等级" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="oil" label="油脂" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="oilQuantity" label="油脂量" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="clearance" label="游隙" width="100" />
+                <el-table-column v-if="classAttribute=='finish_product'" prop="packagingMethod" label="包装方式" width="100"></el-table-column>
+                <el-table-column v-if="classAttribute=='finish_product'" prop="specialRequire" label="特殊要求" width="100"></el-table-column>
+                <el-table-column v-if="classAttribute=='finish_product'" prop="createTime" label="创建时间" width="180" />
+                <el-table-column v-if="classAttribute=='semi_finished'" prop="createByName" label="创建人" width="180" />
+
+                <el-table-column label="操作" width="100" fixed="right">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="productInbound(scope.row,)">入库</el-button>
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <pagination :total="productTotal" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
+                @pagination="searchProductData" />
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="生产工单入库" name="work">
+          <div class="JNPF-common-layout-center JNPF-flex-main">
+            <el-row class="JNPF-common-search-box" :gutter="16">
+              <el-form @submit.native.prevent>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="workForm.productionOrderNo" placeholder="任务单号" clearable
+                      @keyup.enter.native="searchWorkDta()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="workForm.orderNo" placeholder="工单号" clearable
+                      @keyup.enter.native="searchWorkDta()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="workForm.productDrawingNo" placeholder="品名规格" clearable
+                      @keyup.enter.native="searchWorkDta()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="4">
+                  <el-form-item>
+                    <el-input v-model="workForm.processName" placeholder="工序名称" clearable
+                      @keyup.enter.native="searchWorkDta()" />
+                  </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                  <el-form-item>
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchWorkDta()">
+                      {{ $t('common.search') }}</el-button>
+                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetFun('work')">{{
+                      $t('common.reset')
+                    }}
+                    </el-button>
+                  </el-form-item>
+                </el-col>
+              </el-form>
+            </el-row>
+            <div class="JNPF-common-layout-main JNPF-flex-main">
+              <div class="JNPF-common-head">
+                <div>
+                  <el-button size="mini" type="primary" icon="el-icon-plus"
+                    @click="batchInbound('work')">批量入库</el-button>
+                </div>
+                <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                      @click="advancedQueryFun" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
+                      @click="columnSetFun('dataTableProductRef')" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
+                      @click="searchWorkDta()" />
+                  </el-tooltip>
+                </div>
+              </div>
+              <JNPF-table ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
+                @sort-change="sortChange" custom-column @selection-change="handleSelectionWork" hasC>
+                <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
+                <el-table-column prop="orderNo" label="工单号" width="180" />
+                <el-table-column prop="productDrawingNo" label="品名规格" width="160" />
+                <el-table-column prop="productName" label="产品编码" width="160" />
+
+                <el-table-column prop="processName" label="工序名称" width="160" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="productionQuantity" label="生产数量" width="120" />
+                <el-table-column prop="qualifiedQuantity" label="已完成数量" width="120" />
+                <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="120" />
+
+                <el-table-column prop="createTime" label="创建时间" width="180" />
+                <el-table-column label="操作" width="100" fixed="right">
+                  <template slot-scope="scope">
+                    <el-button size="mini" type="text" @click="workInbound(scope.row)">入库</el-button>
+                  </template>
+                </el-table-column>
+              </JNPF-table>
+              <pagination :total="workTotal" :page.sync="workForm.pageNum" :limit.sync="workForm.pageSize"
+                @pagination="searchWorkDta" />
+            </div>
+          </div>
+        </el-tab-pane>
+
+      </el-tabs>
     </div>
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <FHForm v-if="fhFormVisible" ref="FHREFForm" @close="closeForm" />
@@ -576,6 +751,10 @@
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
     <PickForm v-if="pickFormVisible" ref="PickREFForm" @close="closeForm" />
     <ReturnMaterREFForm v-if="returnMaterFormVisible" ref="ReturnMaterREFForm" @close="closeForm" />
+    <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
+    </ProductInboundForm>
+    <WorkInboundForm v-if="workInboundFormVisible" ref="workInboundREFForm" @close="closeForm">
+    </WorkInboundForm>
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -587,6 +766,7 @@
 <script>
 import { getQuotationdatasendlist, getStockMovelist } from '@/api/salesManagement/index'
 import { purPurchaseReceiptReturnGoodsList } from "@/api/purchasingAndOutsourcingOrders/index"
+import { ordershengchanList, detailordershengchan, getWorkPage } from '@/api/productOrdes/index.js'
 
 import Form from './Form'
 import mixin from '@/mixins/generator/index'
@@ -601,16 +781,70 @@ import WXSHREFForm from '../../../receivingManagement/receiveGoodsByOutsourcing/
 import WXFLREFForm from "../../../outsourcingManagement/externalMaterialIssuance/materialsIssueNotice/Form.vue"
 import PickForm from "@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue"
 import ReturnMaterREFForm from "../../../productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue"
+import ProductInboundForm from './productInboundForm.vue'
+import WorkInboundForm from './workInboundForm.vue'
 import { WithdrawalList } from '@/api/productOrdes/index.js'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm, ReturnMaterREFForm },
+  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm, ReturnMaterREFForm, ProductInboundForm, WorkInboundForm },
   props: {
     classAttribute: "",
   },
   data() {
     return {
+      orderTypeList: [
+        { label: "正常订单", value: "normal", },
+        { label: "返工订单", value: "rework", },
+      ],
+      productInboundFormVisible: false,
+      workInboundFormVisible: false,
+      productColumns: ["productCode", 'createByName'],
+      productTotal: 0,
+      productData: [],
+      productForm: {
+        orderNo: "",
+        orderType: "",
+        productDrawingNo: "",
+        classAttribute: "",
+        stockFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {},
+        pageNum: 1,
+        pageSize: 20,
+      },
+
+      workColumns: [],
+      workTotal: 0,
+      workData: [],
+      workForm: {
+        productionOrderNo: "",
+        orderNo: "",
+        processName: "",
+        productDrawingNo: "",
+        classAttribute: "",
+        stockFlag: true,
+        orderItems: [{
+          asc: false,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        superQuery: {},
+        pageNum: 1,
+        pageSize: 20,
+      },
+
+
+
+      activeName: "product",
       returnMaterFormVisible: false,
       thFormVisible: false,
       fhFormVisible: false,
@@ -755,7 +989,7 @@ export default {
       },
       pickingTableList: [],
       returnMatercolumnList: ["createByName",],
-      
+
       returnMaterTotal: 0,
       returnMaterTableList: [],
       returnMaterForm: {
@@ -802,11 +1036,13 @@ export default {
       categoryType: "outbound_sale_send",
       // 销售发通通知单查询条件
       cgTableList: [],
+      selectProductList: [],
+      selectWorkList: [],
     }
   },
   watch: {
-    filterText(val) {
-      this.$refs.treeBox.filter(val);
+    'categoryType': function (newVal) {
+      this.getTabdataList()
     },
   },
   mounted() {
@@ -816,9 +1052,8 @@ export default {
     console.log(this.classAttribute);
   },
   methods: {
-    getcategoryTree() {
-      this.getStockMovelistFun()
-    },
+
+
     getStockMovelistFun() {
       getStockMovelist(this.classAttribute).then(res => {
         console.log("左侧分类数据", res);
@@ -860,8 +1095,6 @@ export default {
         }
         this.$nextTick(() => {
           this.treeData = res.data
-          console.log("this", this.treeData);
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].businessType) // 默认选中节点第一个
           this.categoryType = this.treeData[0].businessType
           this.getTabdataList()
         })
@@ -882,6 +1115,7 @@ export default {
     getTabdataList() {
       // 发货通知单
       this.$forceUpdate()
+      console.log(this.categoryType);
       if (this.categoryType == 'outbound_sale_send') {
         this.listLoading = true
         this.fhForm.returnDeliveryType = 'delivery'
@@ -972,21 +1206,116 @@ export default {
           this.pickingTableList = res.data.records
           this.pickTotal = res.data.total
           this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
         })
       }
       // 生产退料
       if (this.categoryType == 'inbound_return_materials') {
         this.listLoading = true
-        console.log(555);
         this.returnMaterForm.productClassAttribute = this.classAttribute
         WithdrawalList(this.returnMaterForm).then(res => {
           console.log("退料", res);
           this.returnMaterTableList = res.data.records
           this.returnMaterTotal = res.data.total
           this.listLoading = false
+        }).catch(error => {
+          this.listLoading = false
+        })
+      }
+      // 生产入库
+      if (this.categoryType == 'inbound_mock_production') {
+        if(this.activeName=='product'){
+          this.searchProductData()
+        }else{
+          this.searchWorkDta()
+        }
+      }
+    },
+    // 生产产品数据
+    searchProductData() {
+      this.listLoading = true
+      this.productForm.classAttribute = this.classAttribute
+      ordershengchanList(this.productForm).then(res => {
+        console.log("生产产品", res);
+        this.productData = res.data.records
+        this.productTotal = res.data.total
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+      })
+    },
+    // 生产工单数据
+    searchWorkDta() {
+      this.listLoading = true
+      this.workForm.classAttribute = this.classAttribute
+      getWorkPage(this.workForm).then(res => {
+        console.log("生产产品", res);
+        this.workData = res.data.records
+        this.workTotal = res.data.total
+        this.listLoading = false
+      }).catch(error => {
+        this.listLoading = false
+      })
+    },
+    // 生产入库 产品与工单切换
+    handleClick() {
+      if (this.activeName == 'product') {
+        this.searchProductData()
+      } else {
+        this.searchWorkDta()
+      }
+    },
+    // 生产产品多选
+    handleSelectionProduct(val) {
+      console.log(val);
+      this.selectProductList = []
+      this.selectProductList = val
+    },
+    // 工单多选
+    handleSelectionWork(val) {
+      this.selectWorkList = []
+      this.selectWorkList = val
+    },
+    // 生产产品单条入库
+    productInbound(row) {
+      let arr = []
+      arr.push(row)
+      this.productInboundFormVisible = true
+      this.$nextTick(() => {
+        console.log(555);
+        this.$refs.productInboundREFForm.init(arr, 'add', this.classAttribute)
+      })
+    },
+    // 生产工单单条入库
+    workInbound(row) {
+      let arr = []
+      arr.push(row)
+      this.workInboundFormVisible = true
+      this.$nextTick(() => {
+        console.log(666,this.classAttribute);
+        this.$refs.workInboundREFForm.init(arr, 'add', this.classAttribute)
+      })
+    },
+    // 生产批量入库
+    batchInbound(type) {
+      if (type == 'product') {
+        // 生产产品批量入库
+        if (!this.selectProductList.length) return this.$message.error("请选择您要入库的数据")
+        this.productInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.productInboundREFForm.init(this.selectProductList, 'add', this.classAttribute)
+        })
+      } else {
+        // 生产工单批量入库
+        if (!this.selectWorkList.length) return this.$message.error("请选择您要入库的数据")
+        this.workInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.workInboundREFForm.init(this.selectWorkList, 'add', this.classAttribute)
         })
       }
     },
+    // 高级查询
     advancedQueryFun() {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'outbound_external_send') {
         this.superQueryJson = [
@@ -1131,7 +1460,7 @@ export default {
       }
       this.getTabdataList()
     },
-    resetFun() {
+    resetFun(type) {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'inbound_sale_return') {
         this.fhForm = {
           orderNo: "",
@@ -1265,7 +1594,48 @@ export default {
         }
         this.getTabdataList()
       }
-
+      if (this.categoryType == 'inbound_mock_production') {
+        if (type == 'product') {
+          this.productForm = {
+            orderNo: "",
+            orderType: "",
+            productDrawingNo: "",
+            classAttribute: "",
+            stockFlag: true,
+            orderItems: [{
+              asc: false,
+              column: ""
+            }, {
+              asc: false,
+              column: "create_time"
+            }],
+            superQuery: {},
+            pageNum: 1,
+            pageSize: 20,
+          }
+          this.searchProductData()
+        } else {
+          this.workForm = {
+            productionOrderNo: "",
+            orderNo: "",
+            processName: "",
+            productDrawingNo: "",
+            classAttribute: "",
+            stockFlag: true,
+            orderItems: [{
+              asc: false,
+              column: ""
+            }, {
+              asc: false,
+              column: "create_time"
+            }],
+            superQuery: {},
+            pageNum: 1,
+            pageSize: 20,
+          }
+          this.searchWorkDta()
+        }
+      }
 
     },
 
@@ -1277,7 +1647,7 @@ export default {
       this.$nextTick(() => {
         if (ref == 'PickREFForm') {
           console.log(666);
-          this.$refs[ref].init(id, btnType, 'pick')
+          this.$refs[ref].init(id, btnType, false, 'pick')
         } else {
           this.$refs[ref].init(id, btnType)
 
@@ -1295,6 +1665,8 @@ export default {
       this.wxshFormVisible = false
       this.pickFormVisible = false
       this.returnMaterFormVisible = false
+      this.productInboundFormVisible = false
+      this.workInboundFormVisible = false
       if (isRefresh) {
         this.getStockMovelistFun()
       }
@@ -1309,14 +1681,7 @@ export default {
       if (!value) return true;
       return data.fullName.indexOf(value) !== -1;
     },
-    handleNodeClick(data, node) {
-      console.log("请选择节点", node);
-      this.categoryType = node.data.businessType
-      this.$nextTick(() => {
-        this.resetFun()
-      })
 
-    },
 
 
 
@@ -1454,5 +1819,42 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 0;
+}
+
+::v-deep .el-badge__content.is-fixed {
+  top: 5px;
+  right: 21px;
+}
+
+.JNPF-common-search-box {
+  margin-bottom: 5px;
+  padding: 8px !important;
+  padding-bottom: 0px !important;
+}
+
+::v-deep.el-tabs {
+  height: 100%
+}
+
+::v-deep .el-tab-pane {
+  height: 100%;
+}
+
+::v-deep .el-tabs__content {
+  height: calc(100% - 40px);
+}
+
+.produce ::v-deep .el-tabs__header {
+  padding: 0 8px;
+  background-color: #fff;
+  margin-top: 5px;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px;
+}
+
+.JNPF-common-head {
+  padding: 8px;
 }
 </style>

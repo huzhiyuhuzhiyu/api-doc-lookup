@@ -163,7 +163,7 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        classAttribute:"semi_finished",
+        classAttribute:"finish_product",
       },
       total: 0,
       formVisible: false,

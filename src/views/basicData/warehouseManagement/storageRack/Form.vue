@@ -11,7 +11,6 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-
         <el-collapse v-model="activeNames">
           <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
             <JNPF-col v-model="dataForm" :tabContent="tabs[0].tabContent" ref="dataForm" :openMode="openMode" />
@@ -21,7 +20,6 @@
               :openMode="openMode" />
           </el-collapse-item>
         </el-collapse>
-
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
     </div>
@@ -194,87 +192,79 @@ export default {
     }
   },
   methods: {
-    init(row) {
+    init(data, btntype) {
+      this.btnType = btntype
       this.visible = true
       this.formLoading = true
-      this.btnType = row.btntype
+      let type = Array.isArray(data) ? 'Array' : 'Object'
+      if (type === 'Object') {
+        console.log(data, '1')
+        if (this.btnType == 'areaLook') {
+          this.isdisabled = false
+          this.title = '查看库区'
+          this.tableFlag = false
+          if (!!id) {
+            this.dataForm.id = id
 
-      // if (row.id) {
-      //   this.dataForm.id = id
-      //   // this.title = btnType ? '查看货架/库位' : '编辑货架/库位'
-      //   // 获取详情
-      //   detailProductionResourceData(id).then((res) => {
-      //     // 记录编码和图号，用于校验唯一性
-      //     this.dataForm = res.data
-      //     this.autoCode = res.data.code
-      //     this.dataForm.warehouseId = res.data.warehouseId
-      //     this.requestObj5.warehouseId = this.dataForm.warehouseId
+            // 获取详情
+            detailProductionResourceData(id).then((res) => {
+              // 记录编码和图号，用于校验唯一性
+              this.dataForm = res.data
+              this.autoCode = res.data.code
+              this.dataForm.warehouseNameNew = res.data.warehouseName
 
-      //     this.stockLimitsAuthorities = [
-      //       { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-      //     ]
-
-      //     this.formLoading = false
-      //   })
-      // }
-
-      if (this.btnType == 'areaLook') {
-        this.isdisabled = false
-        this.title = '查看库区'
-        this.tableFlag = false
-        if (!!id) {
-          this.dataForm.id = id
-
-          // 获取详情
-          detailProductionResourceData(id).then((res) => {
-            // 记录编码和图号，用于校验唯一性
-            this.dataForm = res.data
-            this.autoCode = res.data.code
-            this.dataForm.warehouseNameNew = res.data.warehouseName
-
-            this.stockLimitsAuthorities = [
-              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-            ]
-            this.formLoading = false
-          })
-        }
-      } else if (this.btnType == 'edit') {
-        this.isdisabled = false
-        this.title = '编辑库位'
-        this.tableFlag = false
-
-        this.sleeveItems.forEach((tc) => {
-          if (tc.prop == 'code') {
-            tc.itemDisabled = true
+              this.stockLimitsAuthorities = [
+                { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+              ]
+              this.formLoading = false
+            })
           }
-        })
-        if (row.id) {
-          this.dataForm.id = row.id
+        } else if (this.btnType == 'edit') {
+          this.isdisabled = false
+          this.title = '编辑库位'
+          this.tableFlag = false
 
-          // 获取详情
-          detailProductionResourceData(row.id).then((res) => {
-            // 记录编码和图号，用于校验唯一性
-            this.dataForm = res.data
-            this.autoCode = res.data.code
-            this.dataForm.warehouseNameNew = res.data.warehouseName
-
-            this.stockLimitsAuthorities = [
-              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-            ]
-            this.formLoading = false
+          this.sleeveItems.forEach((tc) => {
+            if (tc.prop == 'code') {
+              tc.itemDisabled = true
+            }
           })
+          if (data.id) {
+            this.dataForm.id = data.id
+
+            // 获取详情
+            detailProductionResourceData(data.id).then((res) => {
+              // 记录编码和图号，用于校验唯一性
+              this.dataForm = res.data
+              this.autoCode = res.data.code
+              this.dataForm.warehouseNameNew = res.data.warehouseName
+
+              this.stockLimitsAuthorities = [
+                { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+              ]
+              this.formLoading = false
+            })
+          }
+        } else if (this.btnType == 'add') {
+          this.title = '新建库位'
+          this.isdisabled = false
+          this.editFlag = false
+          this.dataForm.type = 'normal'
+          this.dataForm.warehouseName = data.warehouseName
+          this.dataForm.warehouseId = data.warehouseId
+
+          this.formLoading = false
+          console.log(this.formLoading, 'kkkkkk')
+
+          // this.$forceUpdate()
         }
-      } else if (this.btnType == 'add') {
-        this.title = '新建库位'
-        this.isdisabled = false
-        this.editFlag = false
-        this.dataForm.type = 'normal'
-        this.dataForm.warehouseName = row.warehouseName
-        this.dataForm.warehouseId = row.warehouseId
-
+      } else {
+        console.log(data, '3')
+        this.tableFlag = false
+        this.dataForm.warehouseName = data[0].warehouseName
+        this.dataForm.warehouseId = data[0].warehouseId
+        this.stockLimitsAuthorities = data
         this.formLoading = false
-
-        // this.$forceUpdate()
       }
     },
     async handleConfirm() {
@@ -404,8 +394,8 @@ export default {
       }
     },
     // 对应套筒删除当前行
-    deleteth(row, index) {
-      this.stockLimitsAuthorities.splice(row.$index, 1)
+    deleteth(data, index) {
+      this.stockLimitsAuthorities.splice(data.$index, 1)
     },
     //批量选择人员
     hangleSelectSales(val, data) {

@@ -68,16 +68,22 @@
           <!-- <el-button icon="el-icon-plus" type="primary" size="mini" @click.native="addSupplier('add')">
             新建库位
           </el-button> -->
-          <el-dropdown style="margin-right:10px;">
-            <el-button size="mini" type="primary" icon="el-icon-plus">
-              新建
-              <i class="el-icon-arrow-down el-icon--right"></i>
+          <div>
+            <el-dropdown style="margin-right:10px;">
+              <el-button size="mini" type="primary" icon="el-icon-plus">
+                新建
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="addSupplier('add')">普通新建</el-dropdown-item>
+                <el-dropdown-item @click.native="aiAdd()">批量生成</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="batchEditFun">
+              批量修改
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="addSupplier('add')">普通新建</el-dropdown-item>
-              <el-dropdown-item @click.native="aiAdd()">批量生成</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          </div>
+
 
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -94,7 +100,8 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
           :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
+          @selection-change="handleSelectionChange">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
           <el-table-column prop="state" label="状态" width="70">
@@ -240,7 +247,8 @@ export default {
       refreshTree: true,
       refreshTable: true,
       filterText: '',
-      warehouseName: ''
+      warehouseName: '',
+      selectList: []
     }
   },
   watch: {
@@ -273,6 +281,16 @@ export default {
           message: row.state == 'enable' ? '开启成功' : '禁用成功',
           duration: 1500
         })
+      })
+    },
+    handleSelectionChange(val) {
+      this.selectList = val
+    },
+    batchEditFun() {
+      if (!this.selectList.length) return this.$message.error('请先选择您要修改的数据!')
+      this.depFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.depForm.init(this.selectList, 'edit')
       })
     },
     // 关闭新建、编辑页面
@@ -441,7 +459,7 @@ export default {
           btntype: type,
           warehouseName: this.warehouseName
         }
-        this.$refs.depForm.init(row)
+        this.$refs.depForm.init(row, row.btntype)
       })
     },
     aiAdd() {
@@ -519,4 +537,3 @@ export default {
   }
 }
 </script>
-

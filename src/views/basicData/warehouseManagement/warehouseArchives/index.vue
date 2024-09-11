@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item prop="type">
-              <el-select v-model="form.type" placeholder="类型" style="width: 100%;">
+              <el-select v-model="form.type" placeholder="仓库类型" style="width: 100%;">
                 <el-option v-for="(item, index) in typeList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -99,10 +99,10 @@
                 @del="handleDel(scope.row.id, scope.row.parentId)">
                 <el-popover placement="top-start" trigger="click" style="margin: 0 10px;">
                   <!--trigger属性值：hover、click、focus 和 manual-->
-                  <a :href="scope.row.image" target="_blank" title="查看最大化图片">
-                    <vue-qr :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
+               
+                    <vue-qr class="qr-code" :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
                       :text="scope.row.code" />
-                  </a>
+                
                   <el-button type="text" size="mini" slot="reference">
                     查看二维码
                   </el-button>
@@ -357,4 +357,5 @@ export default {
   padding: 8px 0 0 0 !important;
   margin-left: 0 !important;
 }
+
 </style>

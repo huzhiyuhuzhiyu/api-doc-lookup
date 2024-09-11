@@ -151,7 +151,8 @@
                           <div class="viewData">
                             <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
                             <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">振工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                            <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
                           </div>
                         </template>
                       </el-table-column>
@@ -320,7 +321,7 @@
             </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
-            <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
+            <el-collapse-item title="工艺信息" name="modelInfo" class="orderInfo">
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
@@ -1072,6 +1073,13 @@ export default {
           }
         })
       }
+      // newArr.forEach(item => {
+      //   console.log(item)
+      //   item.routingProcResList.forEach(it => {
+      //     console.log(it, ';;;;')
+      //     it.processId = item.routingLine.processId
+      //   })
+      // })
       this.dataForm.documentStatus = type
       let _data = {
         routing: this.dataForm,

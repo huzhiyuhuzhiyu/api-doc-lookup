@@ -84,7 +84,7 @@ export default {
               validator: this.formValidate({
                 type: 'decimal',
                 params: [
-                  10,
+                  12,
                   6,
                   false,
                   (errMsg) => {

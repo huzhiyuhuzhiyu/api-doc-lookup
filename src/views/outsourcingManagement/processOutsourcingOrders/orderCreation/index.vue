@@ -389,7 +389,7 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-
+        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20
       },
@@ -735,6 +735,12 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    // 抽屉提交
+    handlerConfirm(data) {
+      console.log('1111111111111111111111111')
+      console.log(data, '资源资源数据');
+      this.dataFormTwo.data[this.index].outShipmentList = data
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 获取税率(数据字典)
@@ -963,7 +969,7 @@ export default {
         this.dataFormTwo.data.forEach((item) => {
           productIdList.push(item.productsId)
         })
-       
+
       }
     },
 

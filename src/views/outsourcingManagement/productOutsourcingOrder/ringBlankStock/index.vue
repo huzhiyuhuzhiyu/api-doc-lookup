@@ -19,8 +19,7 @@
             <el-col :span="4">
               <el-form-item>
                 <el-date-picker v-model="time" type="daterange" range-separator="至" start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
+                  end-placeholder="结束日期"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -70,13 +69,13 @@
             <el-table-column prop="latestStorageTime" label="入库日期" min-width="180" sortable="custom" />
           </JNPF-table>
           <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-            :limit.sync="listQuery.pageSize" @pagination="initData">
-          </pagination>
+            :limit.sync="listQuery.pageSize" @pagination="initData"></pagination>
         </div>
       </div>
     </div>
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <Form v-if="formVisible" ref="form" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -84,17 +83,15 @@
 </template>
 
 <script>
-import {
-  inventoryList,
-} from '@/api/purchasingAndOutsourcingOrders/index'
+import { inventoryList } from '@/api/purchasingAndOutsourcingOrders/index'
 import moment from 'moment'
-
+import Form from './Form.vue'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
   name: 'orderList',
-  components: { ExportForm, SuperQuery },
+  components: { ExportForm, Form, SuperQuery },
   data() {
     return {
       exportFormVisible: false,
@@ -171,6 +168,7 @@ export default {
         }
       ],
       printVisible: false,
+      formVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
       visible: false,
@@ -338,8 +336,6 @@ export default {
       this.initData()
     },
 
-
-
     initData() {
       this.listLoading = true
       if (this.createRequirementDate && this.createRequirementDate.length > 0) {
@@ -435,31 +431,14 @@ export default {
           }
         }
         if (msg) {
-          this.selectData.forEach((item, index) => {
-            item.purchaseQuantity = item.planDemandQuantity - item.orderedQuantity * 1
-            if (item.calculationDirection === 'multiplication') {
-              this.$set(
-                this.selectData[index],
-                'purchaseQuantity2',
-                this.jnpf.numberFormat(item.purchaseQuantity * item.ratio)
-              )
-            } else {
-              this.$set(
-                this.selectData[index],
-                'purchaseQuantity2',
-                this.jnpf.numberFormat(item.purchaseQuantity / item.ratio)
-              )
-            }
-          })
+          this.formVisible = true
           this.$nextTick(() => {
-            this.$router.push({
-              path: '/outsourcingManagement/productOutsourcingOrder/orderCreation',
-              query: { data: JSON.stringify(this.selectData) }
-            })
+            console.log(this.$refs, 'this.$refs')
+            this.$refs.form.init(this.selectData, 'add')
           })
         }
       }
-    },
+    }
   }
 }
 </script>

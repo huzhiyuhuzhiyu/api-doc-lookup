@@ -50,19 +50,20 @@ export default {
       this.printTemplate = ''
       this.data = {}
       this.loading = true
+      console.log(this.params);
+      
       let query = {
         id: this.id,
         formId: this.formId,
-        params:this.params.Object.values(obj).join(',')
+        params:this.params ? Object.values(this.params).join(',') : ''
       }
       console.log(query);
-      return
       getData(query).then(res => {
         if (!res.data) return
         this.printTemplate = res.data.printTemplate
         this.data = res.data.printData
         if (this.data.pageType === 'custom') {
-          this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1)
+          this.data.T1 && this.data.pageSize &&  (this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1))
         }
         console.log(this.data.T1, 'this.data.T1');
 
@@ -71,8 +72,8 @@ export default {
           console.log(this.$refs.tsPrint, 'this.$refs.tsPrint');
          
           let barCodeEl = this.$refs.tsPrint.querySelector('[data-tag="headTable.bar_code"]')
-          let str = barCodeEl.innerHTML
           if (barCodeEl) {
+            let str = barCodeEl.innerHTML
             console.log(barCodeEl)
             console.log(barCodeEl.style)
             console.log(barCodeEl.parentElement)
@@ -80,8 +81,8 @@ export default {
             // barCodeEl.parentElement.style.alignItems = 'center'
             barCodeEl.innerHTML = ''
             let qrcode = new QRCode(barCodeEl, {
-              width: 80,
-              height: 80,
+              width: 65,
+              height: 65,
               text: str, // 二维码内容
               // render: 'canvas' // 设置渲染方式（有两种方式 table和canvas，默认是canvas）
               correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
@@ -156,10 +157,11 @@ export default {
             if (upperMoneyList.length) {
               if (this.data.T1.length) {
                 this.data.T1.forEach((e, i) => {
-                  pageSizeList[i].innerHTML = this.data.T1.length
-                  upperMoneyList[i].innerHTML = e.UpperMoney
-                  totalList[i].innerHTML = e.total
-                  pageNumList[i].innerHTML = i + 1
+                  // pageSizeList[i].innerHTML = this.data.T1.length
+                  pageSizeList && pageSizeList[i] && (pageSizeList[i].textContent = this.data.T1.length)
+                  upperMoneyList && upperMoneyList[i] && (upperMoneyList[i].textContent = e.UpperMoney)
+                  totalList && totalList[i] && (totalList[i].textContent = e.total)
+                  pageNumList && pageNumList[i] && (pageNumList[i].textContent = i + 1)
                 })
               }
             }
@@ -351,6 +353,7 @@ export default {
         let pageNum = 0
         for (let i = 0; i < data.length; i++) {
           // 在将数据推入 pagedata 时，新增 index 字段
+          data[i].index = i + 1
           pagedata.push(data[i])
           pageNum++
           if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {

@@ -188,10 +188,12 @@ export default {
           ]
         },
         {
-          prop: 'accuracyLevel',
+          prop: 'type',
           label: '类型',
           type: 'select',
-          options: [{ label: '包装物', value: 'packaging' }]
+          options: [{ label: '包装物', value: 'packaging' },
+          { label: '内圈毛坯', value: 'inner_ring_blank' },
+          { label: '外协毛坯', value: 'outer_ring_blank' }]
         },
         {
           prop: 'createTime',

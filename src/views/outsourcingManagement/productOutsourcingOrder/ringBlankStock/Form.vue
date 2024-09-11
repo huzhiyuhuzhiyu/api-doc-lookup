@@ -3,8 +3,8 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle" />
-          <div style="font-size:18px" v-else>新建工序外协订单</div>
+          <el-page-header @back="goBack" :content="dialogTitle + `外协订单`" v-if="!!dialogTitle" />
+          <div style="font-size:18px" v-else>新建外协订单</div>
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
               保存草稿
@@ -82,13 +82,6 @@
                       <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
                       <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
-                        <!-- <template slot-scope="scope">
-                            <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'">
-                              <div class="viewData">
-                                <span>{{ scope.row.productDrawingNo }}</span>
-                              </div>
-                            </el-form-item>
-                          </template> -->
                         <template slot="header">
                           <span class="required">*</span>
                           品名规格
@@ -108,8 +101,6 @@
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'"
                             :rules="productRules.processName">
-                            <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
-                            <!-- 工序选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                               v-model="scope.row.processName" @change="onOrganizeChangeTwo"
                               :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
@@ -189,8 +180,6 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
-                            <!-- <el-input oninput="value = value.replace(/\D/g,'')" maxlength="2"
-                                v-model="scope.row.taxRate" placeholder="请输入税率"></el-input> -->
                             <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                               <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                                 :value="item.taxRate"></el-option>
@@ -208,19 +197,6 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-
-                      <!-- <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
-                      <template slot="header">
-                        <span class="required">*</span>总金额
-                      </template>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                          <div class="viewData">
-                            <span>{{ scope.row.excludingTaxAmount }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column> -->
 
                       <el-table-column prop="taxAmount" label="税额" min-width="100">
                         <template slot="header">
@@ -244,8 +220,6 @@
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                            <!-- <el-input v-model="scope.row.excludingTaxAmount" maxlength="20"
-                                placeholder="请输入金额(不含税)"></el-input> -->
                             <div class="viewData">
                               <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount : 0 }}</span>
                             </div>
@@ -389,7 +363,7 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-        processingType: 'external_production',
+        processType: 'heat_treatment',
         pageNum: 1,
         pageSize: 20
       },
@@ -831,19 +805,14 @@ export default {
         this.sourceData = res.data
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-            this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+            this.sourceData[ind].demandQuantity1 = item.qty
             this.sourceData[ind].processId = item.processId
             this.sourceData[ind].processName = item.processName
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
           })
         } else {
           this.sourceData.forEach((item, index) => {
-            this.$set(
-              this.sourceData[index],
-              'demandQuantity1',
-              item.demandQuantity
-            )
-
+            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
           })
         }
         console.log(this.sourceData, '1111')
@@ -1067,69 +1036,39 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type) {
-      console.log(id, type)
-      // this.fetchData('QGD')
-      // 此处判断用户选择新增还是编辑
-      this.dataForm.id = id || ''
-
-      this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
-      this.type = type
-      this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
-        if (!this.dataForm.id) {
-          this.clearData()
-        } else if (this.dataForm.id && this.type == 'add') {
-          this.loading = true
-          getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
-            this.dataForm = res.data
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push({
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                })
-              })
-            }
-
-            purProcurementRequirementsList(this.dataForm.id).then((res) => {
-              this.dataForm.approvalStatus = ''
-              this.dataForm.submitDate = ''
-              this.dataForm.approvalCompletionDate = ''
-              this.dataForm.id = ''
-              this.dataForm.documentStatus = ''
-              this.dataFormTwo.data = res.data
-              this.dataFormTwo.data.forEach((item) => {
-                item.id = ''
-              })
-            })
-            // 审批
-            // this.$nextTick(() => { this.getApproverData() })
-          })
-        } else {
-          this.loading = true
-          getpurProcurementRequireDetail(this.dataForm.id).then((res) => {
-            this.dataForm = res.data
-            if (res.data.attachmentList) {
-              res.data.attachmentList.forEach((item) => {
-                this.datafilelist.push({
-                  name: item.document.fullName,
-                  fileSize: item.document.fileSize,
-                  filename: item.document.filePath,
-                  id: item.document.id,
-                  url: item.url
-                })
-              })
-            }
-            purProcurementRequirementsList(this.dataForm.id).then((res) => {
-              this.dataFormTwo.data = res.data
-            })
-          })
+    init(data, type) {
+      console.log(data, type)
+      let arr = data.map(item => {
+        console.log(item, 'ooooo')
+        return {
+          productDrawingNo: item.externalProductDrawingNo,
+          deliveryDate: item.deliveryDate,
+          mainUnit: item.externalMainUnit,
+          purchaseQuantity: item.purchaseQuantity,
+          productsId: item.externalProductsId,
+          price: item.price,
+          totalAmount: item.totalAmount,
+          taxRate: '13%',
+          excludingTaxPrice: item.excludingTaxPrice,
+          taxAmount: item.taxAmount,
+          excludingTaxAmount: item.excludingTaxAmount,
+          remark: item.remark,
+          outShipmentList: [{
+            productDrawingNo: item.productDrawingNo,
+            productCode: item.productCode,
+            mainUnit: item.mainUnit,
+            demandQuantity: item.inventoryQuantity
+          }]
         }
       })
+
+      // this.fetchData('QGD')
+      // 此处判断用户选择新增还是编辑
+      this.dataForm.id = data.id || ''
+      this.dataFormTwo.data = arr
+      console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
+      this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
+      this.type = type
     },
     // 表单提交
     handleSubmit(type) {

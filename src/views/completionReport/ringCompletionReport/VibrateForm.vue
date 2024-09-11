@@ -96,6 +96,11 @@
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
+            <el-form-item label="合格数量" prop="qualifiedQuantity">
+              <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" @blur="handleBlur(form.qualifiedQuantity )"/>
+            </el-form-item>
+          </el-col>
+          <el-col :sm="8" :xs="24">
             <el-form-item label="不合格数量">
               <el-input v-model="form.unqualifiedQuantity" placeholder="不合格数量" disabled />
             </el-form-item>
@@ -235,12 +240,8 @@ export default {
     forceUpdata() {
       this.$forceUpdate()
     },
-    handleBlur(item, data) {
-      console.log("item", item, data, this.form.item);
-      let total = Object.values(this.form.item)
-        .map(Number) // 将每个值转换为数字  
-        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
-      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.form.unqualifiedQuantity]), 6)
+    handleBlur(data) {  
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [data, this.form.unqualifiedQuantity]), 6)
       this.$set(this.form, 'reportingQuantity', this.totalReportNum)
     },
     init(workData) {
@@ -348,6 +349,7 @@ export default {
           obj.producerId = this.form.producerId
           obj.productionOrderId = this.form.productionOrderId
           obj.reportingType = "normal"
+          obj.qualifiedQuantity=this.form.qualifiedQuantity
           obj.unqualifiedQuantity = this.form.unqualifiedQuantity
           obj.aperture = this.form.aperture
           obj.workOrderId = this.form.id

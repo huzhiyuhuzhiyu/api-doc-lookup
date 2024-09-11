@@ -1,7 +1,7 @@
 <template>
 
   <el-dialog title="选择库位" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="locationVisible"
-    lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body
+    lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%" append-to-body
     @close="locationVisible = false">
 
     <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
@@ -28,21 +28,23 @@
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
-  
+
           <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column >
-            <el-table-column prop="name" label="库位名称" min-width="180">
+            @sort-change="sortChange" custom-column>
+            <el-table-column prop="name" label="库位名称" min-width="120">
             </el-table-column>
-            <el-table-column prop="code" label="库位编码" width="180" sortable="custom">
+            <el-table-column prop="code" label="库位编码" min-width="120" sortable="custom">
             </el-table-column>
-            <el-table-column prop="warehouseName" label="仓库名称" width="160" />
-            <el-table-column prop="remark" label="备注" width="160" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column prop="warehouseName" label="仓库名称" min-width="120" />
+            <el-table-column prop="remark" label="备注" min-width="160" />
+            <el-table-column label="操作" width="100">
               <template slot-scope="scope">
                 <el-button type="text" @click="seleceWareHouseFun(scope.row)">选择</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
+          <pagination :total="total" :page.sync="tableQuery.pageNum" :limit.sync="tableQuery.pageSize"
+            @pagination="getbatchNumList" />
         </div>
       </div>
     </div>
@@ -65,15 +67,17 @@ export default {
             column: ''
           }
         ],
-        warehouseId: ''
+        warehouseId: '',
+        pageNum: 1,
+        pageSize: 20,
       },
-
+      total:0,
       expands: true,
       defaultProps: {
         children: 'childrenList',
         label: 'name'
       },
-      cpId:""
+      cpId: ""
     }
   },
   methods: {
@@ -85,15 +89,15 @@ export default {
     },
     initData(id) {
       this.listLoading = true
-      this.tableQuery.warehouseId=id
-      this.cpId=JSON.parse(JSON.stringify(id))
-      this.locationVisible=true
+      this.tableQuery.warehouseId = id
+      this.cpId = JSON.parse(JSON.stringify(id))
+      this.locationVisible = true
       getLocationList(this.tableQuery).then(res => {
         this.tableDataList = res.data.records
         this.tableDataList.forEach((item) => {
         })
 
-        
+
 
         this.total = res.data.total
         this.listLoading = false
@@ -102,10 +106,10 @@ export default {
       ])
 
     },
-  
+
     // 选择客户
     seleceWareHouseFun(row) {
-      this.$emit("selectWareHouseFun", row) 
+      this.$emit("selectWareHouseFun", row)
       this.locationVisible = false
     },
 

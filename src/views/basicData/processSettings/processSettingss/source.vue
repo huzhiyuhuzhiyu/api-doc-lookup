@@ -4,12 +4,12 @@
       :before-close="handleClose" size="40%" columnSettings-drawer class="JNPF-common-drawer">
       <el-tabs v-model="activeName" @tab-click="handleClick" stretch style="padding:10px">
         <div v-if="type !== 'look'">
-          <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
+          <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus"
             :disabled="type == 'look' ? true : false"
             @click="openSeleceProcessDialog(personData.length, activeName)">选择{{
               actTitle }}</el-button>|
           <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-          <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
+          <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
             :disabled="type == 'look' ? true : false" icon="el-icon-delete"
             @click="batchDelete(activeName)">批量删除</el-button>|
 

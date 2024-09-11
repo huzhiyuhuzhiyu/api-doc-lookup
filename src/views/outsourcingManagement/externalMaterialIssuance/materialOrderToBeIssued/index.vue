@@ -18,7 +18,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="料品名规格"
+                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()" placeholder="品名规格"
                   clearable />
               </el-form-item>
             </el-col>
@@ -75,8 +75,12 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-            <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" min-width="180" sortable="custom" />
+            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" min-width="160" sortable="custom" />
+            <el-table-column prop="qty" label="订单数量" min-width="160" sortable="custom" />
+
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text"
@@ -119,6 +123,7 @@ import {
   getSaleordersTotal,
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
+import { purchaseOrderList, detailpurchaseOrderList, deleteProcessOrder, purPurchaseBatch, purPurchaseBatchLine } from '@/api/purchasingAndOutsourcingOrders/index'
 // import Form from '../../orderManagement/orderList/Form.vue'
 // import OrderFollow from '../../orderManagement/orderList/orderFollow.vue'
 // import UserRelationList from '../../orderManagement/orderList/userRelation.vue'
@@ -141,7 +146,7 @@ export default {
     return {
       addFormVisible: false,
       btnsearchFlag: true,
-      columnList: ['cooperativePartnerCode', 'createByName'],
+      columnList: ['cooperativePartnerCode', 'productCode'],
       deliveryDateArr: [],
       orderFollowVisible: false,
       superQueryVisible: false,
@@ -162,8 +167,12 @@ export default {
         pageSize: 20,
         orderItems: [
           {
+            asc: true,
+            column: 'order_no'
+          },
+          {
             asc: false,
-            column: ''
+            column: 'delivery_date'
           }
         ],
 
@@ -364,10 +373,10 @@ export default {
     },
     initData() {
       this.listLoading = true
-      shipmentReport(this.orderForm)
+      detailpurchaseOrderList(this.orderForm)
         .then((res) => {
-          this.tableData = res.data.page.records
-          this.total = res.data.page.total
+          this.tableData = res.data.records
+          this.total = res.data.total
           this.listLoading = false
           this.getOrderLineReportFun()
         })
@@ -430,7 +439,7 @@ export default {
       if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
       if (flag) return this.$message.error('只能选择相同客户的明细订单')
- 
+
       this.addFormVisible = true
       this.$nextTick(() => {
         this.$refs.addForm.init(this.list[0].purchaseOrderId, btntype, this.list)
@@ -505,7 +514,7 @@ export default {
       const targetListQuery = this.orderForm
       let _data = {
         ...targetListQuery,
-        exportType: '1209',
+        exportType: '1003',
         exportName: '待发料订单',
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
@@ -519,4 +528,3 @@ export default {
   }
 }
 </script>
-

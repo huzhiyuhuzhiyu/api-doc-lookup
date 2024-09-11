@@ -1,21 +1,19 @@
 <template>
   <div>
-    <el-drawer :title="type === 'source'? '查看发料清单' : '配置发料清单'" :visible.sync="drawer" :direction="direction" :wrapperClosable="false"
+    <el-drawer title="发料清单" :visible.sync="drawer" :direction="direction" :wrapperClosable="false"
       :before-close="handleClose" size="45%" class="JNPF-common-drawer columnSettings-drawer">
-
       <div class="JNPF-flex-main">
         <el-scrollbar class="column-list">
+          <!-- 人员配置 -->
           <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-            <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size='mini' id="table"
+            <el-table hasNO fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" size="mini" id="table"
               style="width: 100%">
               <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-              <el-table-column prop="productName" label="产品名称" min-width="120" show-overflow-tooltip>
+              <el-table-column prop="drawingNo" label="品名规格" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'productName'" :rules='productRule.listPrice'>
-                    <!-- <el-input v-model="scope.row.productName" disabled readonly maxlength="20" placeholder="产品名称">
-                    </el-input> -->
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'" :rules="productRule.listPrice">
                     <div class="viewData">
-                      <span>{{ scope.row.productName }}</span>
+                      <span>{{ scope.row.drawingNo }}</span>
                     </div>
                   </el-form-item>
                 </template>
@@ -24,7 +22,7 @@
               <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules='productRule.productCode'>
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
                     <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" maxlength="5"
                       placeholder="请输入产品编码">
                     </el-input> -->
@@ -35,7 +33,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="mainUnit" label="单位(主)" min-width="90" show-overflow-tooltip>
+              <el-table-column prop="mainUnit" label="单位" min-width="90" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
@@ -47,104 +45,50 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="qty" label="基本数量" min-width="90">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.qty" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'" :rules='productRule.qty'>
-                    <!-- <el-input v-model="scope.row.qty" :disabled="type === 'look'" maxlength="20" placeholder="请输入基本数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.qty }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
 
-              <el-table-column prop="demandQuantity" label="发料数量" min-width="90" v-if="type == 'source'" key="demandQuantity">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity'"
-                    :rules='productRule.demandQuantity'>
-                    <!-- <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.demandQuantity }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="issuedQuantity" label="已出库数量" min-width="90">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.issuedQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'issuedQuantity'"
-                    :rules='productRule.issuedQuantity'>
-                    <!-- <el-input v-model="scope.row.issuedQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.issuedQuantity }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-              <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="90">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.undeliveredQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'undeliveredQuantity'"
-                    :rules='productRule.undeliveredQuantity'>
-                    <!-- <el-input v-model="scope.row.undeliveredQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.undeliveredQuantity }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="demandQuantity1" label="发料数量" min-width="140" v-if="type !== 'source'" key="demandQuantity1">
+              <el-table-column prop="demandQuantity1" label="发料数量" min-width="140">
                 <template slot="header">
-                  <span class="required">*</span>发料数量
+                  <span class="required">*</span>
+                  发料数量
                 </template>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity1'"
-                    :rules='productRule.demandQuantity1'>
-                    <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料数量">
-                    </el-input>
+                    :rules="productRule.demandQuantity1">
+                    <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" maxlength="20" disabled
+                      placeholder="请输入发料数量"></el-input>
                   </el-form-item>
+                </template>
+              </el-table-column>
+
+              <!-- 操作 -->
+              <el-table-column label="操作" width="90" v-if="dataFormTwo.data.length > 1">
+                <template slot-scope="scope">
+                  <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'"
+                    style="color:rgb(245,108,108)" @click="handlerDelete(scope.$index, 'personnel')">
+                    删除
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
           </el-form>
         </el-scrollbar>
-        <div class="footer" v-if="type != 'source'">
+        <div class="footer">
           <el-button @click="drawer = false">{{ $t('common.cancelButton') }}</el-button>
-          <el-button type="primary" @click="submitForm('dataForm')" >
+          <el-button type="primary" @click="submitForm('dataForm')" v-if="type != 'look' ? true : false">
             {{ $t('common.confirmButton') }}
           </el-button>
         </div>
       </div>
-
-
-
-
-
     </el-drawer>
-
   </div>
 </template>
 
 <script>
+import formValidate from '@/utils/formValidate'
 
-import formValidate from "@/utils/formValidate";
 export default {
-  components: {
-
-  },
+  components: {},
   data() {
     return {
       types: '',
@@ -153,20 +97,35 @@ export default {
       type: '',
       activeName: 'personnel',
       dataFormTwo: {
-        data: [],
+        data: []
       },
       productRule: {
         demandQuantity1: [
           { required: true, validator: this.checktaxDemandQuantity1(), trigger: ['blur'] },
-          { validator: this.formValidate({ type: 'decimal', params: [20, 4, "", (errMsg) => { this.$message.error('发料数量：' + errMsg) }] }), trigger: ['blur'] },
-          { validator: this.formValidate('noZero', '', (errMsg) => { this.$message.error('发料数量：不能为0') }), trigger: 'blur' }
+          {
+            validator: this.formValidate({
+              type: 'decimal',
+              params: [
+                20,
+                4,
+                '',
+                (errMsg) => {
+                  this.$message.error('发料数量：' + errMsg)
+                }
+              ]
+            }),
+            trigger: ['blur']
+          }
           // { validator: this.checktaxDemandQuantity1() , trigger: ['blur']},
-        ],
+        ]
       }
     }
   },
 
   methods: {
+    handlerDelete(index) {
+      this.dataFormTwo.data.splice(index, 1)
+    },
     // 校验发料数量
     checktaxDemandQuantity1() {
       return (rule, value, callback) => {
@@ -175,27 +134,24 @@ export default {
         if (!value) {
           this.$message.error(msg)
           callback(new Error(msg))
+        } else {
+          callback()
         }
-        else {
-          callback();
-        }
-      };
+      }
     },
     init(data, type) {
       console.log(data, '资源')
       // this.dataForm = data
       this.type = type
-      console.log(this.type);
+      console.log(this.type)
       this.dataFormTwo.data = JSON.parse(JSON.stringify(data))
-      // if (this.dataFormTwo.data.length) {
-
-      //   this.dataFormTwo.data.forEach((item, index) => {
-      //     this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity1)
-      //   })
-      // }
-      console.log(this.dataFormTwo.data);
+      if (this.dataFormTwo.data.length) {
+        this.dataFormTwo.data.forEach((item, index) => {
+          this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity)
+        })
+      }
+      console.log(this.dataFormTwo.data)
       this.drawer = true
-
     },
     handleClick(tab, event) {
       this.activeName = tab.name
@@ -208,9 +164,9 @@ export default {
       this.$refs['productForm'].validate((valid) => {
         if (valid) {
           let sourceData = []
-          this.dataFormTwo.data.forEach(item => {
+          this.dataFormTwo.data.forEach((item) => {
             sourceData.push({
-              outShipmentListId: item.outShipmentListId,
+              outShipmentListId: item.id,
               calculationDirection: item.calculationDirection,
               demandQuantity: item.demandQuantity1,
               deputyUnit: item.deputyUnit,
@@ -219,9 +175,10 @@ export default {
               qty: item.qty,
               ratio: item.ratio,
               routingLineId: item.routingLineId,
-              shipmentType: 'out_orders',
+              shipmentType: 'out_orders'
             })
           })
+          console.log('sourceData', sourceData)
           this.$emit('confirm', sourceData)
           this.$message.success('配置成功')
           this.drawer = false
@@ -317,9 +274,7 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-
   }
-
 }
 </style>
 <style scoped>

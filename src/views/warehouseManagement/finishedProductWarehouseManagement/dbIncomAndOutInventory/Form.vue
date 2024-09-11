@@ -96,8 +96,8 @@
 
                     <el-collapse-item title="产品信息" name="productInfo">
                       <div v-if="btnType !== 'look'">
-                        <el-button type="text" style="margin-right:8px; font-size:14px!important"
-                          icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
+                        <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
+                          :disabled="btnType == 'look' ? true : false"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
                         <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
@@ -131,16 +131,6 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
                         <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
                           v-if="allocationFlag">
                           <template slot="header"
@@ -244,66 +234,7 @@
                         </el-table-column>
                       </el-table>
 
-                      <el-table-column prop="num" label="数量" width="140" :key="77">
-                        <template slot="header">
-                          <span class="required">*</span>{{ numTitle }}
-                        </template>
-                        <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" @input="watchNum(scope.row, scope.$index)"
-                            v-model="scope.row.num" placeholder="数量"></el-input>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="price" label="单价(含税)" width="120"
-                        v-if="dataForm.businessType != 'outbound_external_send'" :key="110"></el-table-column>
-                      <el-table-column prop="taxRate" label="税率(%)" width="100"
-                        v-if="dataForm.businessType != 'outbound_external_send'" :key="171"></el-table-column>
-                      <el-table-column prop="taxAmount" label="税额" width="100"
-                        v-if="dataForm.businessType != 'outbound_external_send'" :key="1721"></el-table-column>
-                      <el-table-column prop="totalAmount" label="总金额(含税)" width="120"
-                        v-if="dataForm.businessType != 'outbound_external_send'" :key="125"></el-table-column>
-                      <el-table-column prop="originalBatchNumber" label="原产品批次号" width="170" :key="1255"
-                        v-if="dataForm.businessType == 'inbound_sale_return' || dataForm.businessType == 'inbound_external'">
-                        <template slot-scope="scope">
-                          <el-input :disabled="btnType == 'look'" v-model="scope.row.originalBatchNumber"
-                            placeholder="原产品批次号"></el-input>
-                        </template>
-                      </el-table-column>
 
-                      <el-table-column prop="standardValue" label="规值" width="100"
-                        v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
-                      <el-table-column prop="colour" label="颜色" width="100"
-                        v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase'" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="sealingCoverTyping" label="打字内容" width="100" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="accuracyLevel" label="精度等级" width="100" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="vibrationLevel" label="振动等级" width="100" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="oil" label="油脂" width="100" />
-                      <el-table-column prop="oilQuantity" label="油脂量" width="100"
-                        v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="clearance" label="游隙" width="100" />
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="packagingMethod" label="包装方式" width="100"></el-table-column>
-                      <el-table-column
-                        v-if="dataForm.businessType != 'inbound_external' && dataForm.businessType != 'outbound_external_send'"
-                        prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                      <el-table-column prop="remark" label="备注" width="200" :key="128"></el-table-column>
-                      <el-table-column label="操作" width="100" v-if="productData.length && btnType != 'look'"
-                        fixed="right">
-                        <template slot-scope="scope">
-                          <el-button type="text" @click="copyFun(scope.row, scope.$index)" size="mini">复制</el-button>
-                        </template>
-                      </el-table-column>
-                      </el-table>
 
                     </el-collapse-item>
 
@@ -674,7 +605,7 @@ export default {
         { label: "外协收货", value: "inbound_external" },
         { label: "外协退货", value: "outbound_external" },
         { label: "生产入库", value: "inbound_mock_production" },
-        
+
       ],
 
       dataRule: {
@@ -1375,139 +1306,142 @@ export default {
       console.log(this.productData);
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
 
-
-
-      // 判断子表是否有效
-      if (!this.productData.length && submitFlag) {
-        submitFlag = false
-        this.$message.error('请至少选择一个产品')
-      }
-      if (this.allocationFlag && this.jyFlag) {
-        this.productData.forEach((item, index) => {
-          if (!item.shelfSpaceId) {
+          // 判断子表是否有效
+          if (!this.productData.length && submitFlag) {
             submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
+            this.$message.error('请至少选择一个产品')
           }
-        })
-      }
-
-      if (this.productData.length) {
-        console.log(this.productData);
-        let totals = {};
-        let totalNum = {};
-        for (let index = 0; index < this.productData.length; index++) {
-          const item = this.productData[index];
-          if (!item.num) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
-            break
+          if (this.allocationFlag) {
+            this.productData.forEach((item, index) => {
+              if (!item.shelfSpaceId) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行库位不能为空")
+              }
+            })
           }
 
+          if (this.productData.length) {
+            console.log(this.productData);
+            let totals = {};
+            let totalNum = {};
+            for (let index = 0; index < this.productData.length; index++) {
+              const item = this.productData[index];
+              if (!item.num) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能为空")
+                break
+              }
 
 
-          if (Number(item.num) > Number(item.ordersNum)) {
-            console.log(item.num);
-            console.log(item.ordersNum);
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
-            break
-          }
 
-          if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
-            submitFlag = false
-            this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
-            break
-          }
-          if (!totals[item.ordersLineId]) {
-            totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
-          }
-          if (!totalNum[item.ordersLineId]) {
-            totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
-          }
-          totals[item.ordersLineId].totalNum += Number(item.num)
-          totalNum[item.ordersLineId].totalNum += Number(item.num);
-        }
-        for (let id in totals) {
-          if (totals[id].totalNum > totals[id].ordersNum) {
-            console.log(`同产品 ${id} 的总数量不能超过订单数量`);
-            submitFlag = false
-            this.$message.error("同产品的总数量不能超过订单数量")
-            break
-          }
-        }
-        if (this.dataForm.businessType == 'outbound_sale_send') {
-          for (let id in totalNum) {
-            if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
-              submitFlag = false
-              this.$message.error("同产品的总数量不能批次可用数量")
-              break
+              if (Number(item.num) > Number(item.ordersNum)) {
+                console.log(item.num);
+                console.log(item.ordersNum);
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过订单数量")
+                break
+              }
+
+              if (this.dataForm.businessType == 'outbound_sale_send' && item.num > item.availableBatchNumber) {
+                submitFlag = false
+                this.$message.error("产品信息第" + (index + 1) + "行数量不能超过批次可用数量")
+                break
+              }
+              if (!totals[item.ordersLineId]) {
+                totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
+              }
+              if (!totalNum[item.ordersLineId]) {
+                totalNum[item.ordersLineId] = { totalNum: 0, availableBatchNumber: item.availableBatchNumber };
+              }
+              totals[item.ordersLineId].totalNum += Number(item.num)
+              totalNum[item.ordersLineId].totalNum += Number(item.num);
+            }
+            for (let id in totals) {
+              if (totals[id].totalNum > totals[id].ordersNum) {
+                console.log(`同产品 ${id} 的总数量不能超过订单数量`);
+                submitFlag = false
+                this.$message.error("同产品的总数量不能超过订单数量")
+                break
+              }
+            }
+            if (this.dataForm.businessType == 'outbound_sale_send') {
+              for (let id in totalNum) {
+                if (totalNum[id].totalNum > totalNum[id].availableBatchNumber) {
+                  submitFlag = false
+                  this.$message.error("同产品的总数量不能批次可用数量")
+                  break
+                }
+              }
             }
           }
-        }
-      }
 
 
 
 
-      // 自动聚焦未使用则提交
-      if (submitFlag) {
-        if (this.jyFlag) {
-          this.dataForm.documentType = "inbound"
-        } else {
-          this.dataForm.documentType = "outbound"
+          // 自动聚焦未使用则提交
+          if (submitFlag) {
+            if (this.jyFlag) {
+              this.dataForm.documentType = "inbound"
+            } else {
+              this.dataForm.documentType = "outbound"
 
-        }
-        this.dataForm.documentStatus = submitModel
-        // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
-        const formMethod = addWarehouseData
-        // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
+            }
+            this.dataForm.documentStatus = submitModel
+            // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
+            const formMethod = addWarehouseData
+            // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
-        this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
-        this.copyLinesData.forEach(element => {
-          element.warehouseType = this.dataForm.warehouseType
-        });
-        this.dataForm.classAttribute = this.classAttribute
-        this.dataForm.sourceType = 'notice'
-        let dataObj = {
-          stockMove: this.dataForm,
-          lines: this.productData,
-          spaceLines: this.copyLinesData,
-          flowData: this.flowData
-        }
-        console.log("this.dataForm", this.dataForm);
-        // 提交确认
-        if (submitModel === 'submit') {
-          let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
-          if (!flag) {
-            console.log(dataObj)
-            return this.btnLoading = false
-          }
-        }
-        console.log("this.productData", this.productData);
-        formMethod(dataObj).then(res => {
-          let msg = res.msg
-          if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
-          if (submitModel == "draft") {
-            this.submitmethodsTitle = "保存成功"
+            this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
+            this.copyLinesData.forEach(element => {
+              element.warehouseType = this.dataForm.warehouseType
+            });
+            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.sourceType = 'notice'
+            let dataObj = {
+              stockMove: this.dataForm,
+              lines: this.productData,
+              spaceLines: this.copyLinesData,
+              flowData: this.flowData
+            }
+            console.log("this.dataForm", this.dataForm);
+            // // 提交确认
+            // if (submitModel === 'submit') {
+            //   let flag = await this.$confirm('请确认信息是否正确，提交后不允许修改，是否提交！', '提交确认', { type: 'warning' }).catch(err => false)
+            //   if (!flag) {
+            //     console.log(dataObj)
+            //     return this.btnLoading = false
+            //   }
+            // }
+            console.log("this.productData", this.productData);
+            formMethod(dataObj).then(res => {
+              let msg = res.msg
+              if (res.msg === 'Success') { msg = submitModel == "submit" ? "提交成功" : "保存成功" }
+              if (submitModel == "draft") {
+                this.submitmethodsTitle = "保存成功"
+              } else {
+                this.submitmethodsTitle = "提交成功"
+
+              }
+              if (this.btnType == 'edit') {
+                this.btnText = "继续修改"
+              } else if (this.btnType == 'add' || this.btnType == 'copy') {
+                this.btnText = "继续新增"
+              }
+              this.tipsvisible = true
+
+
+            }).catch(() => {
+              this.btnLoading = false
+            })
           } else {
-            this.submitmethodsTitle = "提交成功"
-
+            this.btnLoading = false
           }
-          if (this.btnType == 'edit') {
-            this.btnText = "继续修改"
-          } else if (this.btnType == 'add' || this.btnType == 'copy') {
-            this.btnText = "继续新增"
-          }
-          this.tipsvisible = true
+        }
+      })
 
-
-        }).catch(() => {
-          this.btnLoading = false
-        })
-      } else {
-        this.btnLoading = false
-      }
     },
     // 测试审批流
     getBusInfo() {
@@ -1645,10 +1579,12 @@ export default {
 .JNPF-common-table {
   border: 1px solid #ebeef5 !important;
 }
+
 .JNPF-common-layout-main {
   padding-top: 0;
 }
-::v-deep .el-tabs__header{
-  margin-bottom: 5px!important;
+
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
 }
 </style>

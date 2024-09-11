@@ -69,10 +69,10 @@
                 <el-radio :label="2">功能表单</el-radio>
               </el-radio-group>
             </el-form-item> -->
-            <el-form-item label="模板排序" prop="sortCode">
+            <!-- <el-form-item label="模板排序" prop="sortCode">
               <el-input-number :min="0" :max="999999" v-model="dataForm.sortCode"
                 controls-position="right" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="模板状态" prop="enabledMark">
               <el-switch v-model="dataForm.enabledMark" :active-value="1" :inactive-value="0" />
             </el-form-item>

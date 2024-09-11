@@ -45,7 +45,8 @@
                       </el-col>
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="订单状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-select v-model="value" style="width: 100%;" placeholder="请选择" :disabled="type !== 'add' ? true : false">
+                          <el-select v-model="value" style="width: 100%;" placeholder="请选择"
+                            :disabled="type !== 'add' ? true : false">
                             <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
                               :value="item.value"></el-option>
                           </el-select>
@@ -232,6 +233,14 @@
                           </el-input>
                         </template>
                       </el-table-column>
+                      <el-table-column label="操作" width="180" fixed="right">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="text" :disabled="sourceDisabled"
+                            @click="handlerOpenSource(scope.$index, 'source')">
+                            查看发料清单
+                          </el-button>
+                        </template>
+                      </el-table-column>
                     </el-table>
                   </el-form>
 
@@ -243,7 +252,7 @@
                     <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
                   </div>
                 </el-collapse-item>
-                <el-collapse-item title="发料清单信息" name="materialInfo">
+                <!-- <el-collapse-item title="发料清单信息" name="materialInfo">
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -255,7 +264,7 @@
                     <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
-                </el-collapse-item>
+                </el-collapse-item> -->
               </el-collapse>
             </el-tab-pane>
 
@@ -266,7 +275,7 @@
               <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
             <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-              <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
@@ -371,7 +380,7 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-<!-- 
+                  <!-- 
                   <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
@@ -401,7 +410,6 @@
                       </el-form-item>
                     </template>
                   </el-table-column>
-
 
                   <el-table-column prop="taxAmount" label="税额" min-width="120">
                     <template slot-scope="scope">
@@ -449,18 +457,24 @@
                       </el-input>
                     </template>
                   </el-table-column>
+                  <el-table-column label="操作" width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="text" :disabled="sourceDisabled"
+                        @click="handlerOpenSource(scope.$index, 'source')">
+                        查看发料清单
+                      </el-button>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </el-form>
 
               <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                <span style="font-weight:500;margin-right:10px">
-                  总金额：{{ dataForm.excludingTaxTotalAmount }}
-                </span>
+                <span style="font-weight:500;margin-right:10px">总金额：{{ dataForm.excludingTaxTotalAmount }}</span>
                 <span style="font-weight:500;margin-right:10px">总税额：{{ dataForm.taxAmount }}</span>
                 <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
               </div>
             </el-collapse-item>
-            <el-collapse-item title="发料清单信息" name="materialInfo">
+            <!-- <el-collapse-item title="发料清单信息" name="materialInfo">
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -472,21 +486,24 @@
                 <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
-            </el-collapse-item>
+            </el-collapse-item> -->
           </el-collapse>
         </div>
       </div>
     </transition>
+    <source-area v-if="sourceVisibled" ref="sourceRef" @confirm="handlerConfirm"></source-area>
   </div>
 </template>
 <script>
 import { editOutOrder, purPurchaseOrderdetail, orderSchedule } from '@/api/purchasingAndOutsourcingOrders/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { getShipmentList } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
+import SourceArea from '../orderCreation/source.vue'
 export default {
-  components: { Process, recordList },
+  components: { Process, recordList, SourceArea },
   mixins: [busFlow],
   data() {
     return {
@@ -502,7 +519,7 @@ export default {
       dataFormTwo: {
         data: []
       },
-
+      sourceVisibled: false,
       dataForm: {
         cooperativePartnerName: '', //供应商名称
         deliveryDate: '', //交货日期.
@@ -551,7 +568,7 @@ export default {
       linesList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -559,6 +576,13 @@ export default {
   created() { },
 
   methods: {
+    // 抽屉提交
+    handlerConfirm(data) {
+
+      console.log(data, '资源资源数据')
+      this.dataFormTwo.data[this.index].outShipmentList = data
+    },
+
     disabledDate(time) {
       // 将输入的日期字符串转换为日期对象
       const currentDate = new Date(time)
@@ -612,7 +636,7 @@ export default {
       this.$emit('close')
     },
     init(id, type, approvalFlag) {
-      console.log(id, 'id')
+
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
       this.type = type
@@ -648,11 +672,11 @@ export default {
             this.dataForm = res.data
             this.dataFormTwo.data = res.data.purchaseOrderLineVOList
             this.linesList = res.data.purchaseOrderLineVOList[0].outShipmentVOList
-            if (this.type === 'edit'){
-                this.getBusInfo()
-              }else{
-                // 流程信息和流转记录
-                if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
+            if (this.type === 'edit') {
+              this.getBusInfo()
+            } else {
+              // 流程信息和流转记录
+              if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           })
         }
@@ -662,13 +686,20 @@ export default {
     handleSubmit(type) {
       this.request(type)
     },
+    // 配置资源
+    handlerOpenSource(index, type) {
+      this.sourceVisibled = true
 
+      this.$nextTick(() => {
+        this.$refs['sourceRef'].init(this.dataFormTwo.data[index].outShipmentVOList, 'look')
+      })
+    },
     async request(type) {
       let _data
       let hasCostPrice = true
       this.btnLoading = true
       this.dataForm.documentStatus = type
-      console.log(this.dataForm.documentStatus, 'this.dataForm.documentStatus')
+
       if (this.datafilelist.length) {
         this.datafilelist.map((item, index) => {
           item.bimAttachments = {
@@ -689,10 +720,10 @@ export default {
         attachmentList: this.datafilelist,
         purProcurementRequirements: this.dataForm,
         purchaseOrderLines: this.dataFormTwo.data,
-        flowData:this.flowData,
+        flowData: this.flowData,
         orderType: 'external_process'
       }
-      console.log(_data, '参数')
+
       let msg = ''
       if (this.dataForm.documentStatus === 'draft') {
         msg = '保存成功'
@@ -709,7 +740,7 @@ export default {
               this.$message.error('请至少选择一项产品')
             } else {
               if (!valid_2) {
-                console.log(1)
+
                 this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]
@@ -781,53 +812,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b011').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b011')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
-
-
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -933,7 +973,6 @@ export default {
   /* padding: 0 20px; */
 }
 
-
 .JNPF-common-search-box {
   padding: 8px 0 0 0;
   margin-left: 0 !important;
@@ -976,14 +1015,16 @@ export default {
 ::v-deep .el-progress__text {
   margin-left: -7px !important;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }
+
 ::v-deep .el-tabs__item {
-  padding: 0 10px !important
+  padding: 0 10px !important;
 }
 
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
-  padding-left: 0px !important
+  padding-left: 0px !important;
 }
 </style>

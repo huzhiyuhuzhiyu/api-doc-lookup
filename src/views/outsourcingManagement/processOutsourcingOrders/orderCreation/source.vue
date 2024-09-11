@@ -18,25 +18,6 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
-                <template slot="header">
-                  <span class="required">*</span>
-                  工序名称
-                </template>
-                <template slot-scope="scope">
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRule.processName">
-                    <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
-                    <!-- 工序选择弹窗  -->
-                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                      v-model="dataForm.processName" :beforeSubmit="beforeProcessSubmit" ref="ComSelect-page"
-                      @change="supplierdataProcess" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
-                      title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
-                      :listRequestObj="ProcessListRequestObj" :paramsObj="{ oldProcessData }"
-                      :searchList="ProcessTableSearchList" />
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
               <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
@@ -50,6 +31,26 @@
                   </el-form-item>
                 </template>
               </el-table-column>
+              <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
+                <template slot="header">
+                  <span class="required">*</span>
+                  工序名称
+                </template>
+                <template slot-scope="scope">
+                  <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRule.processName">
+                    <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
+                    <!-- 工序选择弹窗  -->
+                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                      v-model="scope.row.processName" ref="ComSelect-page" @change="onOrganizeChangeTwo"
+                      :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
+                      :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
+                      :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
+                      :searchList="ProcessTableSearchList" />
+                  </el-form-item>
+                </template>
+              </el-table-column>
+
+
 
               <el-table-column prop="mainUnit" label="单位" min-width="90" show-overflow-tooltip>
                 <template slot-scope="scope">
@@ -59,62 +60,6 @@
                     </el-input> -->
                     <div class="viewData">
                       <span>{{ scope.row.mainUnit }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-              <el-table-column prop="qty" label="基本数量" min-width="90">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.qty" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'qty'" :rules="productRule.qty">
-                    <!-- <el-input v-model="scope.row.qty" :disabled="type === 'look'" maxlength="20" placeholder="请输入基本数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.qty }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="demandQuantity" label="发料总数量" min-width="120">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity'"
-                    :rules="productRule.demandQuantity">
-                    <!-- <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.demandQuantity }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-
-              <el-table-column prop="issuedQuantity" label="已出库数量" min-width="120">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.issuedQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'issuedQuantity'"
-                    :rules="productRule.issuedQuantity">
-                    <!-- <el-input v-model="scope.row.issuedQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.issuedQuantity }}</span>
-                    </div>
-                  </el-form-item>
-                </template>
-              </el-table-column>
-              <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="120">
-                <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.undeliveredQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
-                  <el-form-item :prop="'data.' + scope.$index + '.' + 'undeliveredQuantity'"
-                    :rules="productRule.undeliveredQuantity">
-                    <!-- <el-input v-model="scope.row.undeliveredQuantity" :disabled="type === 'look'" maxlength="20"
-                      placeholder="请输入发料总数量">
-                    </el-input> -->
-                    <div class="viewData">
-                      <span>{{ scope.row.undeliveredQuantity }}</span>
                     </div>
                   </el-form-item>
                 </template>
@@ -192,7 +137,6 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20
       },
@@ -252,11 +196,26 @@ export default {
           this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity1)
         })
       }
-      console.log(this.dataFormTwo.data)
+      console.log(this.dataFormTwo.data, '0003333333333333333')
       this.drawer = true
     },
     handleClick(tab, event) {
       this.activeName = tab.name
+    },
+
+    // 选择产品名称的弹框
+    onOrganizeChangeTwo(val, data, paramsObj) {
+      if (!data || !data.length) return
+      console.log(data)
+      console.log(paramsObj, '1111')
+      let index = paramsObj.scope.$index
+      console.log(index, '索引')
+      if (data.length) {
+        this.dataFormTwo.data[index].processName = data[0].name
+        this.dataFormTwo.data[index].processId = data[0].id
+      }
+
+      console.log(this.dataFormTwo, 'this.dataFormTwo')
     },
 
     handleClose(done) {
@@ -269,6 +228,8 @@ export default {
           this.dataFormTwo.data.forEach((item) => {
             sourceData.push({
               outShipmentListId: item.id,
+              processId: item.processId,
+              processName: item.processName,
               calculationDirection: item.calculationDirection,
               demandQuantity: item.demandQuantity,
               demandQuantity1: item.demandQuantity1,

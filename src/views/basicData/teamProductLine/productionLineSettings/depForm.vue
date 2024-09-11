@@ -190,19 +190,7 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            <!-- <el-tab-pane label="审批流程" name="approvalProcess">
-            </el-tab-pane> -->
-            <el-tab-pane label="附件" name="annex">
-              <UploadWj v-model="datafilelist" :disabled="type == 'look'" :detailed="type == 'look'"></UploadWj>
-            </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag" style="padding:10px 0">
-              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-            </el-tab-pane>
-            <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
-            </el-tab-pane>
           </el-tabs>
-
         </div>
       </div>
     </transition>

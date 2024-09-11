@@ -15,7 +15,7 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select clearable v-model="tableQuery.state" placeholder="状态" style="width: 100%;">
+              <el-select clearable v-model="tableQuery.workshopId" placeholder="加工车间" style="width: 100%;">
                 <el-option v-for="(item, index) in workshopIdOptions" :key="index" :label="item.fullName"
                   :value="item.id"></el-option>
               </el-select>

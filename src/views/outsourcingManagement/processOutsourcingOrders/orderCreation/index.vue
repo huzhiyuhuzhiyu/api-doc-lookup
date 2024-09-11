@@ -111,11 +111,11 @@
                             <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
                             <!-- 工序选择弹窗  -->
                             <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
-                              v-model="dataForm.processName" :beforeSubmit="beforeProcessSubmit" ref="ComSelect-page"
-                              @change="supplierdataProcess" :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'"
-                              title="选择工序" treeTitle="工序分类" :methodArr="ProcessMethodArr"
-                              :listMethod="getBimProcessList" :listRequestObj="ProcessListRequestObj"
-                              :paramsObj="{ oldProcessData }" :searchList="ProcessTableSearchList" />
+                              v-model="scope.row.processName" @change="onOrganizeChangeTwo"
+                              :tableItems="ProcessTableItems" :placeholder="'请选择工序名称'" title="选择工序" treeTitle="工序分类"
+                              :methodArr="ProcessMethodArr" :listMethod="getBimProcessList"
+                              :listRequestObj="ProcessListRequestObj" :paramsObj="{ scope }"
+                              :searchList="ProcessTableSearchList" />
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -182,10 +182,10 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率(%)" min-width="140">
+                      <el-table-column prop="taxRate" label="税率" min-width="140">
                         <template slot="header">
                           <span class="required">*</span>
-                          税率(%)
+                          税率
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">
@@ -389,7 +389,7 @@ export default {
       ProcessListRequestObj: {
         code: '',
         name: '',
-
+        processingType: 'external_production',
         pageNum: 1,
         pageSize: 20
       },
@@ -735,6 +735,12 @@ export default {
     this.getBusInfo()
   },
   methods: {
+    // 抽屉提交
+    handlerConfirm(data) {
+      console.log('1111111111111111111111111')
+      console.log(data, '资源资源数据')
+      this.dataFormTwo.data[this.index].outShipmentList = data
+    },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
       // 获取税率(数据字典)
@@ -825,7 +831,9 @@ export default {
         this.sourceData = res.data
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-            this.sourceData[ind].demandQuantity1 = item.demandQuantity1
+            this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+            this.sourceData[ind].processId = item.processId
+            this.sourceData[ind].processName = item.processName
             // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
           })
         } else {
@@ -833,10 +841,9 @@ export default {
             this.$set(
               this.sourceData[index],
               'demandQuantity1',
-              item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity < 0
-                ? 0
-                : item.demandQuantity - item.issuedQuantity - item.undeliveredQuantity
+              item.demandQuantity
             )
+
           })
         }
         console.log(this.sourceData, '1111')
@@ -915,56 +922,19 @@ export default {
       }
     },
 
-    // 切换供应商后给的提示
-    async beforeProcessSubmit(data, paramsObj) {
-      console.log(paramsObj.oldProcessData, 'paramsObj.oldData')
-      let flag = true
-      if (paramsObj.oldProcessData.length) {
-        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.$message({
-              type: 'success',
-              message: '更换成功!'
-            })
-            this.$refs['productForm'].resetFields()
-            return true
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消'
-            })
-            return false
-          })
+    // 选择产品名称的弹框
+    onOrganizeChangeTwo(val, data, paramsObj) {
+      if (!data || !data.length) return
+      console.log(data)
+      console.log(paramsObj, '1111')
+      let index = paramsObj.scope.$index
+      console.log(index, '索引')
+      if (data.length) {
+        this.dataFormTwo.data[index].processName = data[0].name
+        this.dataFormTwo.data[index].processId = data[0].id
       }
-      return flag
-    },
-    supplierdataProcess(id, data) {
-      console.log(data, ';ooooo')
-      this.$nextTick(() => {
-        this.$refs['elForm'].validateField('processName')
-      })
-      if (data.length === 0) {
-        this.dataForm.processName = ''
-        this.dataForm.processId = ''
-        this.oldProcessData = []
-      } else {
-        if (this.oldProcessData.length) {
-        } else {
-          this.oldProcessData.push(data)
-        }
-        this.dataForm.processName = data[0].all.name
-        this.dataForm.processId = data[0].all.id
-        let productIdList = []
-        this.dataFormTwo.data.forEach((item) => {
-          productIdList.push(item.productsId)
-        })
-       
-      }
+
+      console.log(this.dataFormTwo, 'this.dataFormTwo')
     },
 
     // 去除系数后两位的小数位

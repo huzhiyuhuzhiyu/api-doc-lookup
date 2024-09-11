@@ -1681,3 +1681,12 @@ export function getBatchNumber(data) {
     data
   })
 }
+
+// 查找批次号
+
+export function getDepartmentList(type) {
+  return request({
+    url: `/api/permission/Organize/department/list?type=${type}`,
+    method: 'post',
+  })
+}

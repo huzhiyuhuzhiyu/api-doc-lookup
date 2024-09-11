@@ -241,6 +241,12 @@ export default {
                   tc.render = true
                 }
               })
+            } else {
+              this.tabs[0].tabContent.forEach((tc) => {
+                if (tc.prop == 'workshop') {
+                  tc.render = false
+                }
+              })
             }
           }
         }

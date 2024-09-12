@@ -45,11 +45,11 @@
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head">
-            <!-- <topOpts @add="addSupplier('', 'add')"> -->
-            <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
-              导出
-            </el-button>
-            <!-- </topOpts> -->
+            <topOpts @add="addSupplier('', 'add')">
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                导出
+              </el-button>
+            </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
                 <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -65,7 +65,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column hasC
+            @selection-change="selectCustomerFun">
             <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.purchaseOrderId, 'look')">
@@ -81,8 +82,7 @@
             <el-table-column prop="mainUnit" label="单位" min-width="120" />
             <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
-            <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" sortable="custom" />
-            <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="150" sortable="custom" />
+
             <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
@@ -114,8 +114,8 @@
       </div>
     </div>
 
+    <Detail v-if="detailVisible" ref="Detail" @refreshDataList="initData" @close="closeForm" :customList="customList" />
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
-
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <OrderFollow v-if="orderFollowVisible" ref="orderFollow" @refreshDataList="initData" @close="closeForm" />
     <!-- 高级查询 -->
@@ -136,7 +136,8 @@ import {
   getOrderLineReport
 } from '@/api/salesManagement/assemblyOrders'
 import { purchaseOrderReport } from '@/api/purchasingAndOutsourcingOrders/index'
-import Form from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
+import Detail from '../../../outsourcingManagement/processOutsourcingOrders/orderList/Form.vue'
+import Form from "../receivingAdvice/Form.vue";
 import OrderFollow from '../../../salesManagement/orderManagement/orderList/orderFollow'
 import UserRelationList from '../../../salesManagement/orderManagement/orderList/userRelation'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -145,7 +146,7 @@ import ExportForm from '@/components/no_mount/ExportBox/index'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
   name: 'pendingOrders',
-  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
+  components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery, Detail },
   data() {
     return {
       columnList: ['cooperativePartnerCode', 'departmentName', 'productName', 'createTime'],
@@ -187,6 +188,7 @@ export default {
       total: 0,
       diagramVisible: false,
       formVisible: false,
+      detailVisible: false,
       totalNum: 0,
       filterText: '',
       totalDataForm: {},
@@ -239,16 +241,7 @@ export default {
           label: '待收货数量',
           type: 'input'
         },
-        {
-          prop: 'deputyUnit',
-          label: '单位(副)',
-          type: 'input'
-        },
-        {
-          prop: 'purchaseQuantity2',
-          label: '数量(副)',
-          type: 'input'
-        },
+
         {
           prop: 'deputyUnit',
           label: '交货日期',
@@ -336,7 +329,8 @@ export default {
           label: '备注',
           type: 'input'
         }
-      ]
+      ],
+      list: []
     }
   },
   watch: {
@@ -360,6 +354,9 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    selectCustomerFun(val) {
+      this.list = val
+    },
     // 获取合计数据
     getOrderLineReportFun() {
       getOrderLineReport(this.orderForm).then((res) => {
@@ -470,6 +467,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.detailVisible = false
       this.orderFollowVisible = false
       if (isRefresh) {
         this.keyword = ''
@@ -537,26 +535,24 @@ export default {
       })
     },
     addSupplier(id, btntype) {
+
+      if (!this.list.length) return this.$message.error("请选择您要新建的订单")
+      let flag = this.hasDifferentCooperativePartnerCode(this.list)
+      if (flag) return this.$message.error("只能选择相同供应商的明细订单")
+      console.log(this.list);
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
+        this.$refs.Form.init(id, btntype, false, this.list)
       })
     },
-    getCopyOrders(id, btntype) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btntype)
-      })
-    },
-    addOrUpdateHandle(id, btntype) {
-      this.formVisible = true
-      if (id) {
-        // setTimeout(() => {
-        this.$nextTick(() => {
-          this.$refs.Form.init(id, btntype)
-        })
-        // }, 600);
+    hasDifferentCooperativePartnerCode(arr) {
+      const codes = new Set();
+
+      for (const item of arr) {
+        codes.add(item.cooperativePartnerCode);
       }
+
+      return codes.size > 1; // 如果有多个不同的代码，则返回 true  
     },
 
     handleDel(id) {
@@ -576,9 +572,9 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(id, btnType) {
-      this.formVisible = true
+      this.detailVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
+        this.$refs.Detail.init(id, btnType)
       })
     },
     // 导出
@@ -848,4 +844,3 @@ export default {
   }
 }
 </script>
-

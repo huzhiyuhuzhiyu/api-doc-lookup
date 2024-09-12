@@ -1048,7 +1048,7 @@ export default {
           productsId: item.externalProductsId,
           price: item.price,
           totalAmount: item.totalAmount,
-          taxRate: '13%',
+          taxRate: 13,
           excludingTaxPrice: item.excludingTaxPrice,
           taxAmount: item.taxAmount,
           excludingTaxAmount: item.excludingTaxAmount,
@@ -1066,6 +1066,7 @@ export default {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = data.id || ''
       this.dataFormTwo.data = arr
+
       console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
       this.dialogTitle = type == 'add' ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
@@ -1102,7 +1103,7 @@ export default {
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
           flowData: this.flowData,
-          orderType: 'external_process'
+          orderType: 'external'
         }
       }
       if (this.type === 'edit' || this.type === 'look') {
@@ -1114,7 +1115,7 @@ export default {
           attachmentList: this.datafilelist,
           purProcurementRequirements: this.dataForm,
           purchaseOrderLines: this.dataFormTwo.data,
-          orderType: 'external_process'
+          orderType: 'external'
         }
       }
       console.log(_data, '参数')

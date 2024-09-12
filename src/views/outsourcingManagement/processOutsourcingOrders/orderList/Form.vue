@@ -233,14 +233,14 @@
                           </el-input>
                         </template>
                       </el-table-column>
-                      <el-table-column label="操作" width="180" fixed="right">
+                      <!-- <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
                           <el-button size="mini" type="text" :disabled="sourceDisabled"
                             @click="handlerOpenSource(scope.$index, 'source')">
                             查看发料清单
                           </el-button>
                         </template>
-                      </el-table-column>
+                      </el-table-column> -->
                     </el-table>
                   </el-form>
 
@@ -252,7 +252,7 @@
                     <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
                   </div>
                 </el-collapse-item>
-                <!-- <el-collapse-item title="发料清单信息" name="materialInfo">
+                <el-collapse-item title="发料清单信息" name="materialInfo">
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -264,7 +264,7 @@
                     <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
                   </el-table>
-                </el-collapse-item> -->
+                </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
 
@@ -457,14 +457,14 @@
                       </el-input>
                     </template>
                   </el-table-column>
-                  <el-table-column label="操作" width="180" fixed="right">
+                  <!-- <el-table-column label="操作" width="180" fixed="right">
                     <template slot-scope="scope">
                       <el-button size="mini" type="text" :disabled="sourceDisabled"
                         @click="handlerOpenSource(scope.$index, 'source')">
                         查看发料清单
                       </el-button>
                     </template>
-                  </el-table-column>
+                  </el-table-column> -->
                 </el-table>
               </el-form>
 
@@ -474,7 +474,7 @@
                 <span style="font-weight:500;margin-right:10px">价税合计：{{ dataForm.totalAmount }}</span>
               </div>
             </el-collapse-item>
-            <!-- <el-collapse-item title="发料清单信息" name="materialInfo">
+            <el-collapse-item title="发料清单信息" name="materialInfo">
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
@@ -486,7 +486,7 @@
                 <el-table-column prop="demandQuantity" label="发料数量" min-width="140"></el-table-column>
                 <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column>
               </el-table>
-            </el-collapse-item> -->
+            </el-collapse-item>
           </el-collapse>
         </div>
       </div>

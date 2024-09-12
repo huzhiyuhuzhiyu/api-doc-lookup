@@ -733,7 +733,7 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(row, type) {
-      if (!row.routingId) return this.$message.error('请先设置工艺')
+      // if (!row.routingId) return this.$message.error('请先设置工艺')
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.JNPFForm.init(row, type)

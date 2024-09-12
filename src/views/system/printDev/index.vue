@@ -261,7 +261,7 @@ export default {
     flex: 1;
     // margin-top: 16px;
     overflow-y: auto;
-
+    padding: 0 10px;
     .business-list {
       border: 1px solid #E4E4E4;
       border-bottom: none;
@@ -285,7 +285,7 @@ export default {
           align-items: center;
           width: 210px;
           padding: 0 70px;
-          border-left: 1px solid #e4e4e4;
+          // border-left: 1px solid #e4e4e4;
         }
 
         .business-list__col-template {
@@ -312,7 +312,7 @@ export default {
             justify-content: center;
             width: 210px;
             // padding: 0 60px;
-            border-left: 1px solid #e4e4e4;
+            // border-left: 1px solid #e4e4e4;
           }
 
           .business-list__col-type-right {

@@ -104,7 +104,7 @@
           @selection-change="handleSelectionChange">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="state" label="状态" width="70">
+          <el-table-column prop="state" label="启用状态" width="70">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope.row)">
@@ -122,6 +122,8 @@
             </template>
           </el-table-column>
         </JNPF-table>
+        <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
+          :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
       </div>
     </div>
 
@@ -160,8 +162,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'code',
-          label: '状态',
+          prop: 'state',
+          label: '启用状态',
           type: 'select',
           options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
         },
@@ -483,25 +485,13 @@ export default {
       if (row.id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(row)
+          this.$refs.depForm.init(row, row.btntype)
         })
         // }, 600);
       }
     },
-    removeUserRelationList(isRefresh) {
-      this.userRelationListVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
-    removeAuthorizeForm(isRefresh) {
-      this.authorizeFormVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
+
+   
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

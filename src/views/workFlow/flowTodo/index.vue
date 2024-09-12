@@ -19,14 +19,6 @@
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16" style="margin-top:5px">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-select v-model="listQuery.status" placeholder="请选择流程状态" clearable>
-                  <el-option v-for="(item, i) in statusList" :key="i" :label="item.fullName" :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-date-picker v-model="listQuery.pickerVal" type="daterange" start-placeholder="流程开始日期"
@@ -43,7 +35,7 @@
                 </el-button>
               </el-form-item>
             </el-col>
-            <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;line-height: 34px;">
+            <el-col :span="8" class="JNPF-common-head-right" style="display:flex;justify-content:flex-end;align-items:center;float: right;line-height: 34px;">
                 <el-tooltip content="高级查询" placement="top">
                   <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" style="margin-left:12px"
                     @click="superQueryVisible = true" />
@@ -61,7 +53,6 @@
 
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
-            <el-table-column prop="flowName" label="所属流程" min-width="130" />
             <el-table-column prop="startTime" label="发起时间" min-width="150" :formatter="jnpf.tableDateFormat" />
             <el-table-column prop="userName" label="发起人员" min-width="130" />
             <el-table-column prop="flowUrgent" label="紧急程度" min-width="100" align="center">

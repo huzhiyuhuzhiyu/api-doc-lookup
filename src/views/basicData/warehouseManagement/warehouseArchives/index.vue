@@ -78,7 +78,13 @@
               </el-popover>
             </template>
           </el-table-column> -->
-          <el-table-column prop="state" label="状态" width="80">
+          <el-table-column prop="state" label="仓库状态" width="80">
+            <template slot-scope="scope">
+              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
+                inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column prop="state" label="库位状态" width="80">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>

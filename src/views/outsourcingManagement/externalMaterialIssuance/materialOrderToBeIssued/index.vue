@@ -75,7 +75,7 @@
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
             <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-            <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" min-width="160" sortable="custom" />
@@ -130,7 +130,7 @@ import { purchaseOrderList, detailpurchaseOrderList, deleteProcessOrder, purPurc
 import { shipmentReport } from '@/api/purchasingAndOutsourcingOrders/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
-import AddForm from './AddForm.vue'
+import AddForm from '../materialsIssueNotice/Form.vue'
 import Form from "../../productOutsourcingOrder/orderList/Form.vue";
 import ExportForm from '@/components/no_mount/ExportBox/index'
 export default {
@@ -438,11 +438,11 @@ export default {
       // })
       if (!this.list.length) return this.$message.error('请选择您要发料的产品')
       let flag = this.hasDifferentCooperativePartnerCode(this.list)
-      if (flag) return this.$message.error('只能选择相同客户的明细订单')
+      if (flag) return this.$message.error('只能选择相同供应商的明细订单')
 
       this.addFormVisible = true
       this.$nextTick(() => {
-        this.$refs.addForm.init(this.list[0].purchaseOrderId, btntype, this.list)
+        this.$refs.addForm.init(id, btntype, false, this.list)
       })
     },
     hasDifferentCooperativePartnerCode(arr) {

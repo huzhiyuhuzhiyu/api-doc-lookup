@@ -145,11 +145,11 @@ export default {
       this.type = type
       console.log(this.type)
       this.dataFormTwo.data = JSON.parse(JSON.stringify(data))
-      if (this.dataFormTwo.data.length) {
-        this.dataFormTwo.data.forEach((item, index) => {
-          this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity)
-        })
-      }
+      // if (this.dataFormTwo.data.length) {
+      //   this.dataFormTwo.data.forEach((item, index) => {
+      //     this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity)
+      //   })
+      // }
       console.log(this.dataFormTwo.data)
       this.drawer = true
     },

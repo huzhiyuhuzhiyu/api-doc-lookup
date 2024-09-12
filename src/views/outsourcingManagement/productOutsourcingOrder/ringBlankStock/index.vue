@@ -75,7 +75,7 @@
     </div>
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
-    <Form v-if="formVisible" ref="form" />
+    <Form v-if="formVisible" ref="form" @close="closeForm" />
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -274,6 +274,10 @@ export default {
   },
 
   methods: {
+    closeForm(isRefresh) {
+      this.formVisible = false
+      if (isRefresh) { this.initData() }
+    },
     // 导出
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef

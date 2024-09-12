@@ -506,6 +506,7 @@ import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/Flow
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
+import { mapGetters } from 'vuex'
 export default {
   components: { Process , recordList},
   mixins: [busFlow],
@@ -774,6 +775,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userInfo']),
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0

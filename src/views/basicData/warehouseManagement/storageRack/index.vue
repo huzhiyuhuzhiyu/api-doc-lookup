@@ -122,6 +122,8 @@
             </template>
           </el-table-column>
         </JNPF-table>
+        <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
+          :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
       </div>
     </div>
 
@@ -483,25 +485,13 @@ export default {
       if (row.id) {
         // setTimeout(() => {
         this.$nextTick(() => {
-          this.$refs.depForm.init(row)
+          this.$refs.depForm.init(row, row.btntype)
         })
         // }, 600);
       }
     },
-    removeUserRelationList(isRefresh) {
-      this.userRelationListVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
-    removeAuthorizeForm(isRefresh) {
-      this.authorizeFormVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
+
+   
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'

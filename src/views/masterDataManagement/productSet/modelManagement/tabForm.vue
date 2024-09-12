@@ -200,15 +200,14 @@ export default {
       ],
       // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' },
-        { prop: 'name', label: '产品名称', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' },
       ],
       ProductMethodArr: [
-        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
       ],
       ProductMethodArr1: [
-        { label: '物料分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: 'semi_finished' } }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: 'semi_finished' } }
       ]
     }
   },

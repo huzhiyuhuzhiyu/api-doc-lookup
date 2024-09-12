@@ -679,6 +679,7 @@ export default {
         msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)
       }
+      this.approvalFlag = false
       // console.log(msgArr.join(' - '));
     },
     // 展开或折叠全部

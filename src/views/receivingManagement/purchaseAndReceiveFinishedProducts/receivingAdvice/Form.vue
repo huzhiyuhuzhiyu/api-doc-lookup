@@ -1392,7 +1392,7 @@ export default {
         this.$set(this.dataForm, 'orderNo', data.number)
       } catch (error) { }
     },
-    init(id, btnType, approvalFlag) {
+    init(id, btnType, approvalFlag, data) {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
@@ -1450,6 +1450,7 @@ export default {
       if (btnType == 'add' || btnType == 'copy') {
         console.log(this.userInfo, 'fiii')
         this.dataForm.salesman = this.userInfo.userName
+        this.dataFormTwo.productData = data
         this.formLoading = true
         this.getBusInfo()
         setTimeout(() => {

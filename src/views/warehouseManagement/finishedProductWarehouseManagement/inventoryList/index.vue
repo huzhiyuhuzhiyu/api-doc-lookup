@@ -48,17 +48,17 @@
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
-         
+
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
-          border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
+          :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="160">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look')">{{
+              <el-link type="primary" @click.native="viewFun(scope.row.id, 'look', scope.row)">{{
                 scope.row.orderNo
               }}</el-link>
             </template>
@@ -79,12 +79,16 @@
               <div v-if="scope.row.businessType == 'outbound_other'">直接出库</div>
               <div v-if="scope.row.businessType == 'outbound_transfer'">调拨出库</div>
               <div v-if="scope.row.businessType == 'inbound_transfer'">调拨入库</div>
-            </template> 
+              <div v-if="scope.row.businessType == 'inbound_receive_material'">直接领料入库</div>
+              <div v-if="scope.row.businessType == 'outbound_receive_material'">直接领料出库</div>
+              <div v-if="scope.row.businessType == 'inbound_production'">生产入库</div>
+              <div v-if="scope.row.businessType == 'inbound_order_production'">生产入库</div>
+            </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
-            
+
           </el-table-column>
-          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="160" ></el-table-column>
+          <el-table-column prop="partnerCode" label="客户/供应商编码" sortable="custom" min-width="160"></el-table-column>
           <el-table-column prop="inspectionResults" label="检验标志" min-width="120" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" v-if="scope.row.inspectionResults == 'qualified'">合格</el-tag>
@@ -108,8 +112,8 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
-                @edit="editFun(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
-                <el-button  size="mini" type="text" @click="viewFun(scope.row.id, 'look')">查看详情</el-button>
+                @edit="viewFun(scope.row.id, 'edit', scope.row)" @del="handleDel(scope.row.id)">
+                <el-button size="mini" type="text" @click="viewFun(scope.row.id, 'look', scope.row)">查看详情</el-button>
                 <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -135,6 +139,22 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
+    </ProductInboundForm>
+    <WorkInboundForm v-if="workInboundFormVisible" ref="workInboundREFForm" @close="closeForm">
+    </WorkInboundForm>
+    <OutboundSaleSendForm v-if="outboundSaleSendFormVisible" ref="outboundSaleSendREFForm" @close="closeForm">
+    </OutboundSaleSendForm>
+    <InboundSaleReturnForm v-if="inboundSaleReturnFormVisible" ref="inboundSaleReturnREFForm" @close="closeForm">
+    </InboundSaleReturnForm>
+    <InboundPurchaseForm v-if="inboundPurchaseFormVisible" ref="inboundPurchaseREFForm" @close="closeForm">
+    </InboundPurchaseForm>
+    <OutboundPurchaseForm v-if="outboundPurchaseFormVisible" ref="outboundPurchaseREFForm" @close="closeForm">
+    </OutboundPurchaseForm>
+    <OutboundExternalSendForm v-if="outboundExternalSendFormVisible" ref="outboundExternalSendREFForm" @close="closeForm">
+    </OutboundExternalSendForm>
+    <InboundExternalForm v-if="inboundExternalFormVisible" ref="inboundExternalREFForm" @close="closeForm">
+    </InboundExternalForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -143,20 +163,36 @@
 
 <script>
 import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouseManagement/inventory'
-import { getWarehouseList,deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
+import { getWarehouseList, deleteWarehouseData } from '@/api/warehouseManagement/inboundAndOutbound'
 import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
+import WorkInboundForm from '../dbIncomAndOutInventory/workInboundForm.vue'
+import OutboundSaleSendForm from '../dbIncomAndOutInventory/outboundSaleSendForm.vue'
+import InboundSaleReturnForm from '../dbIncomAndOutInventory/inboundSaleReturnForm.vue'
+import InboundPurchaseForm from '../dbIncomAndOutInventory/inboundPurchaseForm.vue'
+import OutboundPurchaseForm from '../dbIncomAndOutInventory/outboundPurchaseForm.vue'
+import OutboundExternalSendForm from '../dbIncomAndOutInventory/outboundExternalSendForm.vue'
+import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.vue'
 import Form from './Form'
 export default {
   name: 'finishedProductWarehouseManagement',
-  components: { Form, ExportForm, SuperQuery },
-  props:{
-    classAttribute:"",
+  components: { Form, ExportForm, SuperQuery, WorkInboundForm, ProductInboundForm, OutboundSaleSendForm, InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,OutboundExternalSendForm,InboundExternalForm },
+  props: {
+    classAttribute: "",
   },
   data() {
     return {
-      columnList: ["partnerCode","inspectionResults", "documentStatus", "remark", "createByName",],
+      outboundSaleSendFormVisible: false,
+      workInboundFormVisible: false,
+      productInboundFormVisible: false,
+      inboundSaleReturnFormVisible: false,
+      inboundPurchaseFormVisible: false,
+      outboundPurchaseFormVisible: false,
+      outboundExternalSendFormVisible:false,
+      inboundExternalFormVisible:false,
+      columnList: ["partnerCode", "inspectionResults", "documentStatus", "remark", "createByName",],
 
       exportFormVisible: false,
       visible: false,
@@ -170,11 +206,14 @@ export default {
         { label: "采购退货", value: "outbound_purchase" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
+        { label: "生产入库", value: "inbound_mock_production" },
         { label: "外协发料", value: "outbound_external_send" },
         { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
+        { label: "直接领料入库", value: "inbound_receive_material" },
+        { label: "直接领料出库", value: "outbound_receive_material" },
       ],
       superQueryVisible: false,
 
@@ -209,18 +248,21 @@ export default {
           label: "业务类型",
           type: 'select',
           options: [
-            { label: "销售发货", value: "outbound" },
-            { label: "销售退货", value: "inbound_return" },
+            { label: "销售发货", value: "outbound_sale_send" },
+            { label: "销售退货", value: "inbound_sale_return" },
             { label: "采购收货", value: "inbound_purchase" },
             { label: "采购退货", value: "outbound_purchase" },
             { label: "生产领料", value: "outbound_pick_out" },
             { label: "生产退料", value: "inbound_return_materials" },
-            { label: "外协发货", value: "outbound_sale_send" },
-            { label: "外协退料", value: "inbound_external" },
-            { label: "外协收货", value: "inbound_outsourcing" },
-            { label: "外协退货", value: "outbound_external" },
-            { label: "直接出库", value: "outbound_other" },
+            { label: "生产入库", value: "inbound_mock_production" },
+            { label: "外协发料", value: "outbound_external_send" },
+            { label: "外协退料", value: "inbound_external_return" },
+            { label: "外协收货", value: "inbound_external" },
             { label: "直接入库", value: "inbound_other" },
+            { label: "直接出库", value: "outbound_other" },
+            { label: "直接领料入库", value: "inbound_receive_material" },
+            { label: "直接领料出库", value: "outbound_receive_material" },
+
           ],
         },
         {
@@ -284,11 +326,71 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    viewFun(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, type)
-      })
+    // 关闭新建编辑页面
+    closeForm(isRefresh) {
+      this.formVisible = false
+      this.productInboundFormVisible = false
+      this.workInboundFormVisible = false
+      this.outboundSaleSendFormVisible = false
+      this.inboundSaleReturnFormVisible = false
+      this.inboundPurchaseFormVisible = false
+      this.outboundPurchaseFormVisible = false
+      this.outboundExternalSendFormVisible = false
+      this.inboundExternalFormVisible=false
+      if (isRefresh) {
+        this.keyword = ''
+        this.initData()
+      }
+    },
+    viewFun(id, type, row) {
+      console.log(row);
+      if (row.businessType == 'inbound_order_production') {
+        this.productInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.productInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_production') {
+        this.workInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else if (row.businessType == 'outbound_sale_send') {
+        this.outboundSaleSendFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_sale_return') {
+        this.inboundSaleReturnFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'inbound_purchase') {
+        this.inboundPurchaseFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'outbound_purchase') {
+        this.outboundPurchaseFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      } else if (row.businessType == 'outbound_external_send') {
+        this.outboundExternalSendFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttribute)
+        })
+      }else if (row.businessType == 'inbound_external') {
+            this.inboundExternalFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttribute)
+            })
+          } else {
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, type)
+        })
+      }
+
     },
     editFun(id, type) {
       this.formVisible = true
@@ -310,9 +412,8 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
-      this.listQuery.classAttribute=this.classAttribute
-      
+      this.listQuery.classAttribute = this.classAttribute
+
       getWarehouseList(this.listQuery).then(res => {
 
         this.tableData = res.data.records ? res.data.records : []
@@ -352,7 +453,7 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        this.initListQuery.classAttribute=this.classAttribute
+        this.initListQuery.classAttribute = this.classAttribute
         let query = this.initListQuery
         let _data = {
           ...query,
@@ -368,10 +469,10 @@ export default {
         }).catch(() => { })
       }
     },
- 
 
 
- 
+
+
 
 
 
@@ -396,14 +497,7 @@ export default {
       this.initData()
     },
 
-    // 关闭新建编辑页面
-    closeForm(isRefresh) {
-      this.formVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
+
     search() {
       this.initData()
     },
@@ -454,9 +548,9 @@ export default {
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
- .JNPF-common-search-box {
-  padding: 8px 0 0 0!important;
-  margin-left: 0!important;
+.JNPF-common-search-box {
+  padding: 8px 0 0 0 !important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

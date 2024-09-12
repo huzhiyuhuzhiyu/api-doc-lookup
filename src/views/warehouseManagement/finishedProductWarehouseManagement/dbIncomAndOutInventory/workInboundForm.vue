@@ -5,10 +5,10 @@
       <div :class="['JNPF-common-page-header', btnType == 'look' ? 'noButtons' : '']">
         <el-page-header @back="goBack" :content="title" />
         <div class="options">
-          <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
-            @click="handleConfirm('draft')">保存草稿</el-button>
+          <!-- <el-button v-if="btnType !== 'look'" type="success" :loading="btnLoading"
+            @click="handleConfirm('draft')">保存草稿</el-button> -->
           <el-button v-if="btnType !== 'look'" type="primary" :loading="btnLoading"
-            @click="handleConfirm('submit')">保存并提交</el-button>
+            @click="handleConfirm('submit')">提交</el-button>
           <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
@@ -31,11 +31,11 @@
                                 maxlength="300" />
                             </el-form-item>
                           </el-col>
-                          <!-- <el-col :sm="6" :xs="24">
+                          <el-col :sm="6" :xs="24">
                             <el-form-item label="业务单号" prop="sourceNo">
                               <el-input v-model="dataForm.sourceNo" placeholder="请输入业务单号" disabled maxlength="300" />
                             </el-form-item>
-                          </el-col> -->
+                          </el-col>
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="业务类型" prop="businessTypes">
                               <el-select v-model="businessTypes" placeholder="请选择业务类型" style="width: 100%;" disabled>
@@ -66,8 +66,8 @@
 
 
 
-                    <el-collapse-item title="产品信息" name="productInfo">
-                      <div v-if="btnType !== 'look'">
+                    <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
+                      <!-- <div v-if="btnType !== 'look'">
                         <el-button type="text" style="margin-right:8px; font-size:14px!important" icon="el-icon-plus"
                           :disabled="btnType == 'look' ? true : false"
                           @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -75,13 +75,11 @@
                           :disabled="btnType == 'look' ? true : false" icon="el-icon-delete"
                           @click="batchDelete">批量删除</el-button>
 
-                      </div>
+                      </div> -->
 
-                      <el-table ref="product" :data="productData" :fixedNO="true"
-                        @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                        <el-table-column type="selection" width="55" fixed="left" :key="2">
-                        </el-table-column>
-                        <el-table-column type="index" width="60" label="序号" :key="10"></el-table-column>
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true"
+                         border :key="165" style="width: 100%;">
+                        
 
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
@@ -94,14 +92,14 @@
                             <span class="required">*</span>库位
                           </template>
                           <template slot-scope="scope">
-                            <el-input v-model="scope.row.shelfSpaceName" readonly
+                            <el-input v-model="scope.row.shelfSpaceName" readonly :disabled='btnType=="look"'
                               @focus="openSeleceWareDialog(scope.row, scope.$index)" placeholder="库位">
                             </el-input>
 
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="140"></el-table-column>
+                        <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="140"  v-if="btnType!='look'"></el-table-column>
 
                         <el-table-column prop="num" label="入库数量" width="140" :key="77">
                           <template slot="header">
@@ -117,8 +115,8 @@
                             <el-input v-model="scope.row.remark" placeholder="备注"></el-input>
                           </template>
                         </el-table-column>
-                     
-                      </el-table>
+
+                      </JNPF-table>
 
 
 
@@ -262,6 +260,7 @@ export default {
         warehouseType: "",
         approvalFlag: false,
         remark: "",
+        sourceNo: "",
       },
       businessTypes: "inbound_mock_production",
       getWarehouseList,
@@ -427,8 +426,8 @@ export default {
       this.selectSaleProductArr = val
     },
     // 销售发货选择产品——重置
-    resetProductFun() { 
-      this.orderForm={
+    resetProductFun() {
+      this.orderForm = {
         productionOrderNo: "",
         orderNo: "",
         processName: "",
@@ -455,7 +454,7 @@ export default {
       this.productVisible = false
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       let list = [...this.productData, ...arr]
-      console.log("list",list);
+      console.log("list", list);
       let uniqueArr = [];
       let idSet = new Set();
 
@@ -465,7 +464,7 @@ export default {
           idSet.add(item.id);
         }
       });
-      uniqueArr.forEach(item=>{
+      uniqueArr.forEach(item => {
         this.$set(item, 'num', item.waitReceivedQuantity)
         item.ordersId = item.productionOrderId
       })
@@ -618,30 +617,42 @@ export default {
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
     init(data, btnType, classAttribute) {
-      this.productData=[]
-      console.log("11", data, btnType,classAttribute);
-      // this.visible = true
+      this.productData = []
+      console.log("11", data, btnType, classAttribute);
       this.classAttribute = classAttribute
-      this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       this.getBusInfo()
-      console.log("btnty", btnType);
-      // this.refeshDataFormItems()
 
       if (this.btnType == 'edit') {
         this.fetchData("RKDH", false)
-
+        this.title = '修改入库单'
       }
-      if (this.btnType == 'add') {
+
+      if (btnType == 'edit' || btnType == 'look') {
+        detailWarehouseData(data).then(res => {
+          console.log("入库单详情", res);
+          res.data.spaceLines.forEach(item => {
+            this.$set(item, 'productDrawingNo', item.drawingNo)
+          });
+          this.dataForm = res.data.stockMove
+          this.productData = res.data.spaceLines
+        })
+      } else {
         this.fetchData("RKDH", true)
-
+        this.dataForm.sourceNo = data[0].orderNo
+        this.title = '新建入库单'
+        data.forEach(item => {
+          this.$set(item, 'num', item.waitReceivedQuantity)
+          this.$set(item, 'sourceNo', item.orderNo)
+          item.ordersId = item.productionOrderId
+          item.ordersLineId = item.id
+        });
+        this.productData = data
       }
-      this.title = '新建入库单'
-      data.forEach(item => {
-        this.$set(item, 'num', item.waitReceivedQuantity)
-        item.ordersId = item.productionOrderId
-      });
-      this.productData = data
+      if (btnType == 'look') {
+        this.title = '查看入库单'
+      }
+
 
 
     },
@@ -713,8 +724,8 @@ export default {
             this.dataForm.sourceType = 'order'
             console.log("this.dataForm", this.dataForm);
 
-            // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
-            const formMethod = addWarehouseData
+            const formMethod = this.dataForm.id ? updateWarehouseData : addWarehouseData
+            // const formMethod = addWarehouseData
             // spaceLines每一项的产品id如果与linesList项的产品id相同，那么让spaceLines项的批次号也等于linesList项的批次号
 
             this.copyLinesData = JSON.parse(JSON.stringify(this.productData))
@@ -806,7 +817,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+  padding: 5px 10px;
 }
 
 .required {
@@ -856,7 +867,6 @@ export default {
   border-top: none;
   margin-bottom: 0;
   padding: 0 10px 0px;
-  border-top: none !important;
 
 }
 
@@ -899,5 +909,8 @@ export default {
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
+}
+.productInfo ::v-deep.el-collapse-item__wrap{
+  padding: 0;
 }
 </style>

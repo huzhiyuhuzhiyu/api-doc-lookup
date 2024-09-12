@@ -1211,7 +1211,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+  padding:5px 10px;
 }
 
 ::v-deep .el-form-item__content p {

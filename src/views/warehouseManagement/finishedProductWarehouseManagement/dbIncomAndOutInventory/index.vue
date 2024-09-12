@@ -595,8 +595,8 @@
 
               <div class="JNPF-common-head">
                 <div>
-                  <el-button :disabled="productData.length > 0 ? false : true" size="mini" type="primary"
-                    icon="el-icon-plus" @click="batchInbound('product')">批量入库</el-button>
+                  <!-- <el-button  size="mini" type="primary"
+                    icon="el-icon-plus" @click="batchInbound('product')">批量入库</el-button> -->
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
@@ -614,8 +614,7 @@
                 </div>
               </div>
               <JNPF-table ref="dataTableProductRef" v-loading="listLoading" :data="productData" :fixedNO="true"
-                custom-column @selection-change="handleSelectionProduct" hasC :setColumnDisplayList="productColumns"
-                v-show="categoryType == 'inbound_mock_production'">
+                custom-column :setColumnDisplayList="productColumns" v-show="categoryType == 'inbound_mock_production'">
                 <el-table-column prop="orderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderType" label="任务类型" width="120">
                   <template slot-scope="scope">
@@ -629,18 +628,24 @@
                 <el-table-column prop="productionQuantity" label="生产数量" width="120" />
                 <el-table-column prop="completedQuantity" label="已完成数量" width="130" />
                 <el-table-column prop="waitReceivedQuantity" label="待入库数量" width="160" />
-                <el-table-column v-if="classAttribute=='semi_finished'" prop="aperture" label="孔径" width="100" />
-                <el-table-column v-if="classAttribute=='semi_finished'" prop="productionPlanNo" label="计划单号" width="160" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="sealingCoverTyping" label="打字内容" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="accuracyLevel" label="精度等级" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="vibrationLevel" label="振动等级" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="oil" label="油脂" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="oilQuantity" label="油脂量" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="clearance" label="游隙" width="100" />
-                <el-table-column v-if="classAttribute=='finish_product'" prop="packagingMethod" label="包装方式" width="100"></el-table-column>
-                <el-table-column v-if="classAttribute=='finish_product'" prop="specialRequire" label="特殊要求" width="100"></el-table-column>
-                <el-table-column v-if="classAttribute=='finish_product'" prop="createTime" label="创建时间" width="180" />
-                <el-table-column v-if="classAttribute=='semi_finished'" prop="createByName" label="创建人" width="180" />
+                <el-table-column v-if="classAttribute == 'semi_finished'" prop="aperture" label="孔径" width="100" />
+                <el-table-column v-if="classAttribute == 'semi_finished'" prop="productionPlanNo" label="计划单号"
+                  width="160" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="sealingCoverTyping" label="打字内容"
+                  width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="accuracyLevel" label="精度等级"
+                  width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="vibrationLevel" label="振动等级"
+                  width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="oil" label="油脂" width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="oilQuantity" label="油脂量" width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="clearance" label="游隙" width="100" />
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="packagingMethod" label="包装方式"
+                  width="100"></el-table-column>
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="specialRequire" label="特殊要求"
+                  width="100"></el-table-column>
+                <el-table-column v-if="classAttribute == 'finish_product'" prop="createTime" label="创建时间" width="180" />
+                <el-table-column v-if="classAttribute == 'semi_finished'" prop="createByName" label="创建人" width="180" />
 
                 <el-table-column label="操作" width="100" fixed="right">
                   <template slot-scope="scope">
@@ -696,8 +701,8 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <div class="JNPF-common-head">
                 <div>
-                  <el-button size="mini" type="primary" icon="el-icon-plus"
-                    @click="batchInbound('work')">批量入库</el-button>
+                  <!-- <el-button size="mini" type="primary" icon="el-icon-plus"
+                    @click="batchInbound('work')">批量入库</el-button> -->
                 </div>
                 <div class="JNPF-common-head-right">
                   <el-tooltip content="高级查询" placement="top">
@@ -715,7 +720,7 @@
                 </div>
               </div>
               <JNPF-table ref="dataTableWorkRef" v-loading="listLoading" :data="workData" :fixedNO="true"
-                @sort-change="sortChange" custom-column @selection-change="handleSelectionWork" hasC>
+                @sort-change="sortChange" custom-column>
                 <el-table-column prop="productionOrderNo" label="任务单号" width="180" />
                 <el-table-column prop="orderNo" label="工单号" width="180" />
                 <el-table-column prop="productDrawingNo" label="品名规格" width="160" />
@@ -742,7 +747,9 @@
 
       </el-tabs>
     </div>
+
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <!-- 查看详情 -->
     <FHForm v-if="fhFormVisible" ref="FHREFForm" @close="closeForm" />
     <THForm v-if="thFormVisible" ref="THREFForm" @close="closeForm" />
     <CGTHREFForm v-if="cgthFormVisible" ref="CGTHREFForm" @close="closeForm" />
@@ -751,10 +758,28 @@
     <WXSHREFForm v-if="wxshFormVisible" ref="WXSHREFForm" @close="closeForm" />
     <PickForm v-if="pickFormVisible" ref="PickREFForm" @close="closeForm" />
     <ReturnMaterREFForm v-if="returnMaterFormVisible" ref="ReturnMaterREFForm" @close="closeForm" />
+
+
+
+
+    <!-- 出/入库 -->
     <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
     </ProductInboundForm>
     <WorkInboundForm v-if="workInboundFormVisible" ref="workInboundREFForm" @close="closeForm">
     </WorkInboundForm>
+    <OutboundSaleSendForm v-if="outboundSaleSendFormVisible" ref="outboundSaleSendREFForm" @close="closeForm">
+    </OutboundSaleSendForm>
+    <InboundSaleReturnForm v-if="inboundSaleReturnFormVisible" ref="inboundSaleReturnREFForm" @close="closeForm">
+    </InboundSaleReturnForm>
+    <InboundPurchaseForm v-if="inboundPurchaseFormVisible" ref="inboundPurchaseREFForm" @close="closeForm">
+    </InboundPurchaseForm>
+    <OutboundPurchaseForm v-if="outboundPurchaseFormVisible" ref="outboundPurchaseREFForm" @close="closeForm">
+    </OutboundPurchaseForm>
+    <OutboundExternalSendForm v-if="outboundExternalSendFormVisible" ref="outboundExternalSendREFForm"
+      @close="closeForm">
+    </OutboundExternalSendForm>
+    <InboundExternalForm v-if="inboundExternalFormVisible" ref="inboundExternalREFForm" @close="closeForm">
+    </InboundExternalForm>
 
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
@@ -782,12 +807,25 @@ import WXFLREFForm from "../../../outsourcingManagement/externalMaterialIssuance
 import PickForm from "@/views/productionManagement/assemblyPick/assemblyPickManagement/Form.vue"
 import ReturnMaterREFForm from "../../../productionManagement/assemblyPick/assemblyReturnMaterManagement/Form.vue"
 import ProductInboundForm from './productInboundForm.vue'
+import OutboundSaleSendForm from './outboundSaleSendForm.vue'
+import InboundSaleReturnForm from './inboundSaleReturnForm.vue'
 import WorkInboundForm from './workInboundForm.vue'
+import InboundPurchaseForm from './inboundPurchaseForm.vue'
+import OutboundPurchaseForm from './outboundPurchaseForm.vue'
+import OutboundExternalSendForm from './outboundExternalSendForm.vue'
+import InboundExternalForm from './inboundExternalForm.vue'
 import { WithdrawalList } from '@/api/productOrdes/index.js'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
-  components: { Form, SuperQuery, THForm, FHForm, CGSHREFForm, CGTHREFForm, WXSHREFForm, WXFLREFForm, PickForm, ReturnMaterREFForm, ProductInboundForm, WorkInboundForm },
+  components: {
+    Form, SuperQuery, THForm, FHForm,
+    CGSHREFForm, CGTHREFForm, WXSHREFForm,
+    WXFLREFForm, PickForm, ReturnMaterREFForm,
+    ProductInboundForm, WorkInboundForm, OutboundSaleSendForm,
+    InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
+    OutboundExternalSendForm, InboundExternalForm
+  },
   props: {
     classAttribute: "",
   },
@@ -799,6 +837,12 @@ export default {
       ],
       productInboundFormVisible: false,
       workInboundFormVisible: false,
+      outboundSaleSendFormVisible: false,
+      inboundSaleReturnFormVisible: false,
+      inboundPurchaseFormVisible: false,
+      outboundPurchaseFormVisible: false,
+      outboundExternalSendFormVisible: false,
+      inboundExternalFormVisible: false,
       productColumns: ["productCode", 'createByName'],
       productTotal: 0,
       productData: [],
@@ -1104,10 +1148,44 @@ export default {
     // 点击出库/入库按钮
     incomAndOutInventFun(data, btnType, ref) {
       if (this.categoryType) {
-        this.formVisible = true
-        this.$nextTick(() => {
-          this.$refs[ref].init(data, btnType, this.categoryType, this.classAttribute)
-        })
+        if (this.categoryType == 'outbound_sale_send') {
+          this.outboundSaleSendFormVisible = true
+          this.$nextTick(() => {
+            this.$refs.outboundSaleSendREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+          })
+        } else
+          if (this.categoryType == 'inbound_sale_return') {
+            this.inboundSaleReturnFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundSaleReturnREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          } else if (this.categoryType == 'inbound_purchase') {
+            this.inboundPurchaseFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          } else if (this.categoryType == 'outbound_purchase') {
+            this.outboundPurchaseFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.outboundPurchaseREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          } else if (this.categoryType == 'outbound_external_send') {
+            this.outboundExternalSendFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.outboundExternalSendREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          } else if (this.categoryType == 'inbound_external') {
+            this.inboundExternalFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundExternalREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          } else {
+            this.formVisible = true
+            this.$nextTick(() => {
+              this.$refs[ref].init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          }
+
 
       }
     },
@@ -1225,9 +1303,9 @@ export default {
       }
       // 生产入库
       if (this.categoryType == 'inbound_mock_production') {
-        if(this.activeName=='product'){
+        if (this.activeName == 'product') {
           this.searchProductData()
-        }else{
+        } else {
           this.searchWorkDta()
         }
       }
@@ -1293,28 +1371,28 @@ export default {
       arr.push(row)
       this.workInboundFormVisible = true
       this.$nextTick(() => {
-        console.log(666,this.classAttribute);
+        console.log(666, this.classAttribute);
         this.$refs.workInboundREFForm.init(arr, 'add', this.classAttribute)
       })
     },
-    // 生产批量入库
-    batchInbound(type) {
-      if (type == 'product') {
-        // 生产产品批量入库
-        if (!this.selectProductList.length) return this.$message.error("请选择您要入库的数据")
-        this.productInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.productInboundREFForm.init(this.selectProductList, 'add', this.classAttribute)
-        })
-      } else {
-        // 生产工单批量入库
-        if (!this.selectWorkList.length) return this.$message.error("请选择您要入库的数据")
-        this.workInboundFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.workInboundREFForm.init(this.selectWorkList, 'add', this.classAttribute)
-        })
-      }
-    },
+    // // 生产批量入库
+    // batchInbound(type) {
+    //   if (type == 'product') {
+    //     // 生产产品批量入库
+    //     if (!this.selectProductList.length) return this.$message.error("请选择您要入库的数据")
+    //     this.productInboundFormVisible = true
+    //     this.$nextTick(() => {
+    //       this.$refs.productInboundREFForm.init(this.selectProductList, 'add', this.classAttribute)
+    //     })
+    //   } else {
+    //     // 生产工单批量入库
+    //     if (!this.selectWorkList.length) return this.$message.error("请选择您要入库的数据")
+    //     this.workInboundFormVisible = true
+    //     this.$nextTick(() => {
+    //       this.$refs.workInboundREFForm.init(this.selectWorkList, 'add', this.classAttribute)
+    //     })
+    //   }
+    // },
     // 高级查询
     advancedQueryFun() {
       if (this.categoryType == 'outbound_sale_send' || this.categoryType == 'outbound_external_send') {
@@ -1667,6 +1745,12 @@ export default {
       this.returnMaterFormVisible = false
       this.productInboundFormVisible = false
       this.workInboundFormVisible = false
+      this.outboundSaleSendFormVisible = false
+      this.inboundSaleReturnFormVisible = false
+      this.inboundPurchaseFormVisible = false
+      this.outboundPurchaseFormVisible = false
+      this.outboundExternalSendFormVisible = false
+      this.inboundExternalFormVisible = false
       if (isRefresh) {
         this.getStockMovelistFun()
       }

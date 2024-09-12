@@ -11,17 +11,15 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-
         <el-collapse v-model="activeNames">
           <el-collapse-item title="基础信息" name="basicInfo" class="orderInfo">
             <JNPF-col v-model="dataForm" :tabContent="tabs[0].tabContent" ref="dataForm" :openMode="openMode" />
-            <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-              :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" />
-            <JNPF-col-table v-else v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
-              :openMode="openMode" />
+            <!-- <JNPF-col-table v-if="tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm" :tableItems="sleeveItems"
+              :openMode="openMode" @addth="addSleeveList" @deleteth="deleteth" /> -->
+            <JNPF-col-table v-if="!tableFlag" v-model="stockLimitsAuthorities" ref="sleeveForm"
+              :tableItems="sleeveItems" :openMode="openMode" />
           </el-collapse-item>
         </el-collapse>
-
       </div>
       <user-select ref="userselect" v-show="false" :multiple="true" @change="hangleSelectSales"></user-select>
     </div>
@@ -35,7 +33,8 @@ import {
   getList,
   deleteStockGoodsShelves,
   detailProductionResourceData,
-  editStockGoodsShelves
+  editStockGoodsShelves,
+  updateBatchStockGoodsShelves
 } from '@/api/basicData/stockGoodsShelves'
 import { addWarehouse, editWarehouse, getWarehouseInfo, checWarehouseCode } from '@/api/basicData/index'
 import { getWarehouseList } from '@/api/basicData/index'
@@ -161,6 +160,7 @@ export default {
         warehouseId: ''
       },
       areaOptions: [],
+      type: '',
       businessType: '' //  参数设置  自动  还是 手输
     }
   },
@@ -194,118 +194,123 @@ export default {
     }
   },
   methods: {
-    init(row) {
+    init(data, btntype) {
+      this.btnType = btntype
       this.visible = true
       this.formLoading = true
-      this.btnType = row.btntype
+      this.type = Array.isArray(data) ? 'Array' : 'Object'
+      if (this.type === 'Object') {
+        if (this.btnType == 'areaLook') {
+          this.isdisabled = false
+          this.title = '查看库区'
+          this.tableFlag = true
+          if (!!id) {
+            this.dataForm.id = id
 
-      // if (row.id) {
-      //   this.dataForm.id = id
-      //   // this.title = btnType ? '查看货架/库位' : '编辑货架/库位'
-      //   // 获取详情
-      //   detailProductionResourceData(id).then((res) => {
-      //     // 记录编码和图号，用于校验唯一性
-      //     this.dataForm = res.data
-      //     this.autoCode = res.data.code
-      //     this.dataForm.warehouseId = res.data.warehouseId
-      //     this.requestObj5.warehouseId = this.dataForm.warehouseId
+            // 获取详情
+            detailProductionResourceData(id).then((res) => {
+              // 记录编码和图号，用于校验唯一性
+              this.dataForm = res.data
+              this.autoCode = res.data.code
+              this.dataForm.warehouseNameNew = res.data.warehouseName
 
-      //     this.stockLimitsAuthorities = [
-      //       { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-      //     ]
+              this.stockLimitsAuthorities = [
+                { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+              ]
+              this.formLoading = false
+            })
+          }
+        } else if (this.btnType == 'edit') {
+          this.isdisabled = false
+          this.title = '编辑库位'
+          this.tableFlag = true
 
-      //     this.formLoading = false
-      //   })
-      // }
-
-      if (this.btnType == 'areaLook') {
-        this.isdisabled = false
-        this.title = '查看库区'
-        this.tableFlag = false
-        if (!!id) {
-          this.dataForm.id = id
-
-          // 获取详情
-          detailProductionResourceData(id).then((res) => {
-            // 记录编码和图号，用于校验唯一性
-            this.dataForm = res.data
-            this.autoCode = res.data.code
-            this.dataForm.warehouseNameNew = res.data.warehouseName
-
-            this.stockLimitsAuthorities = [
-              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-            ]
-            this.formLoading = false
+          this.tabs[0].tabContent.forEach((tc) => {
+            if (tc.prop == 'code') {
+              tc.itemDisabled = true
+            }
           })
-        }
-      } else if (this.btnType == 'edit') {
-        this.isdisabled = false
-        this.title = '编辑库位'
-        this.tableFlag = false
 
+          if (data.id) {
+            this.dataForm.id = data.id
+
+            // 获取详情
+            detailProductionResourceData(data.id).then((res) => {
+              // 记录编码和图号，用于校验唯一性
+              this.dataForm = res.data
+              this.autoCode = res.data.code
+              this.dataForm.warehouseNameNew = res.data.warehouseName
+
+              this.stockLimitsAuthorities = [
+                { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
+              ]
+              this.formLoading = false
+            })
+          }
+        } else if (this.btnType == 'add') {
+          this.title = '新建库位'
+          this.isdisabled = false
+          this.editFlag = false
+          this.dataForm.type = 'normal'
+          this.dataForm.warehouseName = data.warehouseName
+          this.dataForm.warehouseId = data.warehouseId
+
+          this.formLoading = false
+
+          // this.$forceUpdate()
+        }
+      } else {
+        this.tabs[0].tabContent.forEach((tc) => {
+          this.title = '批量修改库位'
+          if (tc.prop == 'name') {
+            tc.render = false
+          }
+          if (tc.prop == 'code') {
+            tc.render = false
+          }
+          if (tc.prop == 'remark') {
+            tc.render = false
+          }
+        })
         this.sleeveItems.forEach((tc) => {
           if (tc.prop == 'code') {
             tc.itemDisabled = true
           }
         })
-        if (row.id) {
-          this.dataForm.id = row.id
 
-          // 获取详情
-          detailProductionResourceData(row.id).then((res) => {
-            // 记录编码和图号，用于校验唯一性
-            this.dataForm = res.data
-            this.autoCode = res.data.code
-            this.dataForm.warehouseNameNew = res.data.warehouseName
-
-            this.stockLimitsAuthorities = [
-              { name: this.dataForm.name, code: this.dataForm.code, remark: this.dataForm.remark }
-            ]
-            this.formLoading = false
-          })
-        }
-      } else if (this.btnType == 'add') {
-        this.title = '新建库位'
-        this.isdisabled = false
-        this.editFlag = false
-        this.dataForm.type = 'normal'
-        this.dataForm.warehouseName = row.warehouseName
-        this.dataForm.warehouseId = row.warehouseId
-
+        this.tableFlag = false
+        this.dataForm.warehouseName = data[0].warehouseName
+        this.dataForm.warehouseId = data[0].warehouseId
+        this.stockLimitsAuthorities = data
         this.formLoading = false
-
-        // this.$forceUpdate()
       }
     },
     async handleConfirm() {
-      if (this.stockLimitsAuthorities.length == 0) return this.$message.error(`请添加${this.title.slice(-2)}`)
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
 
       // 校验tabs渲染表单
-      this.stockLimitsAuthorities.forEach((item, index) => {
-        if (!item.name) {
-          submitFlag = false
-          return this.$message.error(`第${index + 1}行库区名称为空`)
-        }
-        if (!item.code) {
-          submitFlag = false
-          return this.$message.error(`第${index + 1}行库区编码为空`)
-        }
-      })
-
-      // for (let i = 0; i < this.$refs['dataForm'].length; i++) {
-      //   const item = this.$refs['dataForm'][i]
-      //   const form = item.$refs.main
-
-      //   const valid_1 = await form.validate().catch(() => false)
-
-      //   if (!valid_1 && submitFlag) {
+      // this.stockLimitsAuthorities.forEach((item, index) => {
+      //   if (!item.name) {
       //     submitFlag = false
-      //     this.activeName = this.tabs[i].tabCode
-      //     this.jnpf.focusErrValidItem(form.fields)
+      //     return this.$message.error(`第${index + 1}行库区名称为空`)
       //   }
-      // }
+      //   if (!item.code) {
+      //     submitFlag = false
+      //     return this.$message.error(`第${index + 1}行库区编码为空`)
+      //   }
+      // })
+      console.log(this.$refs, 'this.$refs')
+
+      const form = this.$refs.dataForm.$refs.main
+
+      const valid_1 = await form.validate().catch(() => false)
+
+      if (!valid_1 && submitFlag) {
+        submitFlag = false
+        this.jnpf.focusErrValidItem(form.fields)
+        this.btnLoading = false
+      }
 
       // 判断条件后发送请求
       if (submitFlag) {
@@ -319,55 +324,68 @@ export default {
         }
 
         let obj = this.stockLimitsAuthorities
-        for (let i = 0; i < this.stockLimitsAuthorities.length; i++) {
-          this.dataForm.name = this.stockLimitsAuthorities[i].name
-          this.dataForm.code = this.stockLimitsAuthorities[i].code
-          this.dataForm.remark = this.stockLimitsAuthorities[i].remark
-        }
 
         const formMethod = this.dataForm.id ? editStockGoodsShelves : addStockGoodsShelves
-        if (this.dataForm.id) {
-          editStockGoodsShelves(this.dataForm)
-            .then((res) => {
-              let msg = res.msg
-              if (res.msg === 'Success') {
-                msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
-              }
-              this.$message({
-                message: msg,
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.visible = false
-                  this.btnLoading = false
-                  this.$emit('close', true)
+        if (this.type == 'Object') {
+          if (this.dataForm.id) {
+            editStockGoodsShelves(this.dataForm)
+              .then((res) => {
+                let msg = res.msg
+                if (res.msg === 'Success') {
+                  msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
                 }
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.btnLoading = false
+                    this.$emit('close', true)
+                  }
+                })
               })
-            })
-            .catch(() => {
-              this.btnLoading = false
-            })
+              .catch(() => {
+                this.btnLoading = false
+              })
+          } else {
+            addStockGoodsShelves(this.dataForm)
+              .then((res) => {
+                let msg = res.msg
+                if (res.msg === 'Success') {
+                  msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
+                }
+                this.$message({
+                  message: msg,
+                  type: 'success',
+                  duration: 1500,
+                  onClose: () => {
+                    this.visible = false
+                    this.btnLoading = false
+                    this.$emit('close', true)
+                  }
+                })
+              })
+              .catch(() => {
+                this.btnLoading = false
+              })
+          }
         } else {
-          addStockGoodsShelves(this.dataForm)
-            .then((res) => {
-              let msg = res.msg
-              if (res.msg === 'Success') {
-                msg = formMethod == addStockGoodsShelves ? '新建成功' : '修改成功'
+          this.stockLimitsAuthorities.forEach((item) => {
+            item.state = this.dataForm.state
+          })
+          updateBatchStockGoodsShelves(this.stockLimitsAuthorities).then((res) => {
+            this.$message({
+              message: '批量修改成功',
+              type: 'success',
+              duration: 1500,
+              onClose: () => {
+                this.visible = false
+                this.btnLoading = false
+                this.$emit('close', true)
               }
-              this.$message({
-                message: msg,
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.visible = false
-                  this.btnLoading = false
-                  this.$emit('close', true)
-                }
-              })
             })
-            .catch(() => {
-              this.btnLoading = false
-            })
+          })
         }
       } else {
         this.btnLoading = false
@@ -404,8 +422,8 @@ export default {
       }
     },
     // 对应套筒删除当前行
-    deleteth(row, index) {
-      this.stockLimitsAuthorities.splice(row.$index, 1)
+    deleteth(data, index) {
+      this.stockLimitsAuthorities.splice(data.$index, 1)
     },
     //批量选择人员
     hangleSelectSales(val, data) {

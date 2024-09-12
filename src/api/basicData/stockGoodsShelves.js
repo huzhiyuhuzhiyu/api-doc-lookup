@@ -20,6 +20,15 @@ export function addBatchStockGoodsShelves(data) {
   })
 }
 
+// 批量修改
+export function updateBatchStockGoodsShelves(data) {
+  return request({
+    url: `/api/wms/stockGoodsShelves/update/batch`,
+    method: 'put',
+    data
+  })
+}
+
 // 详情
 
 export function detailProductionResourceData(id) {

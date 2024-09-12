@@ -55,7 +55,7 @@
           </div>
           <JNPF-table :partentOrChild="'dataTable'" ref="dataTable" v-loading="listLoading" :data="tableData"
             :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="生产任务单号" min-width="200" sortable="custom">
+            <el-table-column prop="orderNo" label="任务单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'all')">{{
                   scope.row.orderNo
@@ -83,14 +83,16 @@
 
             <el-table-column prop="processSchedule" label="工单进度条" min-width="980">
               <template slot-scope="scope">
-                <div v-for="(item, index) in scope.row.processScheduleList" :key="index"
+                <div v-for="(item, index) in scope.row.processInfoList" :key="index"
                   style="width:100px;display: inline-block;">
                   <div style="position: relative;">
                     <div class="processSchedule_top"
-                      :class="item == 0 ? 'noValue' : item == '100' ? 'sucess' : 'normal'">{{ item
+                      :class="item.value == 0 ? 'noValue' : item.value == '100' ? 'sucess' : 'normal'">{{ item.value
                       }}%</div>
-                    <p style="margin-top: 10px;">工序{{ index + 1 }}</p>
-                    <img v-if="index != scope.row.processScheduleList.length - 1"
+                    <el-tooltip class="item" effect="dark" :content="item.name" placement="top-start">
+                      <p class="ProcessName">{{ item.name }}</p>
+                    </el-tooltip>
+                    <img v-if="index != scope.row.processInfoList.length - 1"
                       style="width: 30px;height: 30px;position: absolute; top: 13px; right: 10px;"
                       src="../../../../assets/images/right.png" alt="">
                   </div>
@@ -105,15 +107,7 @@
             <el-table-column prop="completedQuantity" label="已完成数量" min-width="140" sortable="custom" />
 
             <el-table-column prop="routingName" label="工艺路线名称" min-width="160" sortable="custom" />
-            <el-table-column prop="routingCode" label="工艺路线编码" min-width="160" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="100" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="100" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" />
-            <el-table-column prop="specialRequire" label="特殊要求" min-width="160" sortable="custom" />
+
             <el-table-column prop="productionPlanNo" label="生产计划单号" min-width="180" sortable="custom" />
 
 
@@ -161,7 +155,7 @@ export default {
   components: { SuperQuery, Form },
   data() {
     return {
-      columnList: ["orderType", "routingCode", "productionPlanNo", "createByName"],
+      columnList: ["orderType", "productionPlanNo", 'createByName'],
       form: {
         appendQuantity: "",
         productionQuantity: "",
@@ -169,7 +163,6 @@ export default {
       },
       reworkVisible: false,
       addOrderVisible: false,
-      columnList: ["productCode", "routingCode", "planStartDate", "planEndDate", "createByName",],
       orderNoS: "",
       productDrawingNoS: "",
       productionPlanNoS: "",
@@ -379,12 +372,98 @@ export default {
     this.getProductClassFun()
   },
   methods: {
+    // 新建返工
+    addTaskFun(id, type) {
+      this.reworkVisible = true
+      this.$nextTick(() => {
+        this.$refs.reworkForm.init(id, type)
+      })
+    },
+    // 追加
+    addition2() {
+      if (!this.selectArr.length) return this.$message.error("请选择您要追加生产的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("追加生产只支持单条数据操作")
+      if (this.selectArr[0].orderType == 'rework') return this.$message.error("返工任务不可追加生产")
+      this.form = this.selectArr[0]
+      this.addOrderVisible = true
+    },
+    addition1(data) {
+      this.form = data
+      this.addOrderVisible = true
 
 
 
+    },
+    reassignmentFun2() {
+      console.log(this.selectArr);
+      if (!this.selectArr.length) return this.$message.error("请选择您要改派的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("改派只支持单条数据操作")
+      this.reassignmentVisible = true
+      this.$nextTick(() => {
+        this.$refs.reassignmentForm.init(this.selectArr[0].id)
+      })
+    },
+    reassignmentFun1(data) {
 
+      this.reassignmentVisible = true
+      this.$nextTick(() => {
+        this.$refs.reassignmentForm.init(id)
+      })
+    },
+    // 追加生产数量 提交
+    submitFun() {
+      this.$refs['diaForm'].validate((valid) => {
+        if (valid) {
+          console.log(this.form);
+          this.btnLoading = true
+          addOrderNum(this.form).then(res => {
+            this.addOrderVisible = false
+            this.btnLoading = false
+            this.$message.success("追加生产数量成功")
+            this.search()
+          }).catch(error => {
+            this.btnLoading = false
+          })
+        }
+      })
 
+    },
+    // 多选
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
+    //禁用复选框
+    checkSelectable(row) {
+      if (row.orderStatus !== 'normal' || row.orderStatus == 'suspend' || row.documentStatus == 'draft') {
+        console.log(222);
+        return false
+      } else {
+        console.log(333);
+        return true
 
+      }
+    },
+
+    // 关单
+    Cancelshipment() {
+      if (!this.selectArr.length) return this.$message.error("请选择您要关单的任务")
+      this.$confirm('您确认关闭选中的任务吗？', this.$t('common.tipTitle'), {
+        type: 'warning',
+        customClass: 'custom-confirm',
+      }).then(() => {
+
+        let arr = this.selectArr.map(item => {
+          return item.id
+        })
+        console.log(arr)
+        prodOrderClose(arr).then(res => {
+          console.log(555);
+          this.$message.success("关单成功")
+          this.search()
+        }).catch(() => {
+        })
+      }).catch(() => { })
+    },
     // 获取打字内容等
     getProductClassFun() {
       this.requestArr.forEach((item, index) => {
@@ -496,22 +575,30 @@ export default {
         this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
       }
       ordershengchanList(this.orderForm).then(res => {
+        res.data.records.forEach(item => {
+          // 初始化 processInfoList 为一个空数组  
+          item.processInfoList = [];
 
-        res.data.records.forEach(element => {
-          if (item.processSchedule.indexOf(',')) {
-            item.processScheduleList = item.processSchedule.split(',')
+          // 检查 processSchedule 字段是否有值  
+          if (item.processSchedule) {
+            // 判断是否包含逗号  
+            if (item.processSchedule.includes(',')) {
+              // 以逗号分割为数组  
+              const processes = item.processSchedule.split(',');
 
-          } else {
-            item.processScheduleList.push(item.processSchedule)
-          }
-          if (item.processScheduleList.length) {
-            item.processInfoList = item.processScheduleList.map(items => {
-              const [key, value] = items.split(':');
-              return { name: key, value: parseInt(value, 10) }; // 创建包含name和value的对象  
-            });
+              // 遍历每一项并处理  
+              processes.forEach(process => {
+                const [name, value] = process.split(':');
+                item.processInfoList.push({ name, value: parseInt(value, 10) });
+              });
+            } else {
+              // 直接以冒号分割  
+              const [name, value] = item.processSchedule.split(':');
+              item.processInfoList.push({ name, value: parseInt(value, 10) });
+            }
           }
         });
-        console.log(res.data.records);
+        console.log("表格数据", res);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -520,6 +607,7 @@ export default {
       })
 
     },
+
     search() {
 
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
@@ -598,6 +686,18 @@ export default {
 
 .sucess {
   border-color: #67c23A
+}
+
+.ProcessName {
+  margin-top: 10px;
+  width: 70%;
+
+  overflow: hidden;
+  /*超出的部分隐藏起来。*/
+  white-space: nowrap;
+  /*不显示的地方用省略号...代替*/
+  text-overflow: ellipsis;
+  /* 支持 IE */
 }
 </style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

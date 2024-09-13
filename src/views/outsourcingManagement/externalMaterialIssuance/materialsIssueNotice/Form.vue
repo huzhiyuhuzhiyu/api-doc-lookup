@@ -166,10 +166,7 @@
                     </el-table>
                     <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                       <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
-                      <!-- <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">
-                        总待发料数量：{{ totalWaitDeliverNum }}
-                      </span>
-                      <span style="font-weight:500;margin:0 10px">总发料数量：{{ totalDeliveryQuantity }}</span> -->
+
                     </div>
                   </el-form>
                 </el-collapse-item>
@@ -181,20 +178,28 @@
                     <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                     <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"
+                    <el-table-column prop="qty" label="基本数量" min-width="140"
                       v-if="btnType !== 'look'"></el-table-column>
                     <el-table-column prop="demandQuantity" label="需发料数量" min-width="140"
                       v-if="btnType !== 'look'"></el-table-column>
-                    <el-table-column prop="undeliveredQuantity" label="发料数量" min-width="140"
+                    <el-table-column prop="deliveryQuantity" label="发料数量" min-width="140"
                       v-if="btnType == 'look'"></el-table-column>
-                    <el-table-column prop="undeliveredQuantity" label="已出库数量" min-width="140"
+                    <el-table-column prop="issuedQuantity" label="已出库数量" min-width="140"
                       v-if="btnType == 'look'"></el-table-column>
                     <el-table-column prop="undeliveredQuantity" label="未出库数量" min-width="140"
                       v-if="btnType == 'look'"></el-table-column>
                   </el-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
 
-                    <span style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity }}</span>
+                    <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity
+                      }}</span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">发料数量：{{ totalDeliveryQuantity
+                      }}</span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">已出库数量：{{ totalIssuedQuantity
+                      }}</span>
+                    <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">未出库数量：{{
+                      totalUndeliveredQuantity
+                    }}</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -360,10 +365,7 @@
                 </el-table>
                 <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
                   <span style="font-weight:500;margin:0 10px">总订单数量：{{ totalOrdersNum }}</span>
-                  <span style="font-weight:500;margin:0 10px" v-if="btnType != 'look'">
-                    总待发料数量：{{ totalWaitDeliverNum }}
-                  </span>
-                  <span style="font-weight:500;margin:0 10px">总发料数量：{{ totalDeliveryQuantity }}</span>
+
                 </div>
               </el-form>
             </el-collapse-item>
@@ -375,13 +377,27 @@
                 <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
                 <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <el-table-column prop="purchaseQuantity" label="基本数量" min-width="140"></el-table-column>
-                <el-table-column prop="demandQuantity" label="需发料数量" min-width="140"></el-table-column>
-                <!-- <el-table-column prop="undeliveredQuantity" label="待出库数量" min-width="140"></el-table-column> -->
+                <el-table-column prop="qty" label="基本数量" min-width="140" v-if="btnType !== 'look'"></el-table-column>
+                <el-table-column prop="demandQuantity" label="需发料数量" min-width="140"
+                  v-if="btnType !== 'look'"></el-table-column>
+                <el-table-column prop="deliveryQuantity" label="发料数量" min-width="140"
+                  v-if="btnType == 'look'"></el-table-column>
+                <el-table-column prop="issuedQuantity" label="已出库数量" min-width="140"
+                  v-if="btnType == 'look'"></el-table-column>
+                <el-table-column prop="undeliveredQuantity" label="未出库数量" min-width="140"
+                  v-if="btnType == 'look'"></el-table-column>
               </el-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
 
-                <span style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity }}</span>
+                <span v-if="btnType !== 'look'" style="font-weight:500;margin:0 10px">需发料数量：{{ totalDemandQuantity
+                  }}</span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">发料数量：{{ totalDeliveryQuantity
+                  }}</span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">已出库数量：{{ totalIssuedQuantity
+                  }}</span>
+                <span v-if="btnType == 'look'" style="font-weight:500;margin:0 10px">未出库数量：{{
+                  totalUndeliveredQuantity
+                }}</span>
               </div>
             </el-collapse-item>
           </el-collapse>
@@ -492,7 +508,7 @@ export default {
         { prop: 'processName', label: '工序名称', sortable: 'custom' },
 
         { prop: 'mainUnit', label: '单位', sortable: 'custom', },
-        { prop: 'demandQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 },
+        { prop: 'purchaseQuantity', label: '订单数量', sortable: 'custom', minWidth: 140 },
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
         { prop: 'orderNo', label: '订单号', type: 'input' },
@@ -736,22 +752,42 @@ export default {
     }
   },
   computed: {
-    // 总发料数量
-    totalDeliveryQuantity: function () {
+    // 发料数量
+    totalDemandQuantity: function () {
       var totalNum = 0
-      if (this.dataFormTwo.data.length !== 0) {
-        for (var i = 0; i < this.dataFormTwo.data.length; i++) {
-          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].deliveryQuantity])
+      if (this.linesList.length !== 0) {
+        for (var i = 0; i < this.linesList.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.linesList[i].demandQuantity])
         }
         return totalNum
       }
     },
-    // 总代发料数量
-    totalWaitDeliverNum: function () {
+    // 总发料数量
+    totalDeliveryQuantity: function () {
       var totalNum = 0
-      if (this.dataFormTwo.data.length !== 0) {
-        for (var i = 0; i < this.dataFormTwo.data.length; i++) {
-          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].waitDeliverNum])
+      if (this.linesList.length !== 0) {
+        for (var i = 0; i < this.linesList.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.linesList[i].deliveryQuantity])
+        }
+        return totalNum
+      }
+    },
+    // 已出库数量
+    totalIssuedQuantity: function () {
+      var totalNum = 0
+      if (this.linesList.length !== 0) {
+        for (var i = 0; i < this.linesList.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.linesList[i].issuedQuantity])
+        }
+        return totalNum
+      }
+    },
+    // 未出库数量
+    totalUndeliveredQuantity: function () {
+      var totalNum = 0
+      if (this.linesList.length !== 0) {
+        for (var i = 0; i < this.linesList.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.linesList[i].undeliveredQuantity])
         }
         return totalNum
       }
@@ -762,7 +798,7 @@ export default {
       console.log(this.dataFormTwo.data, 'ooo')
       if (this.dataFormTwo.data.length !== 0) {
         for (var i = 0; i < this.dataFormTwo.data.length; i++) {
-          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].demandQuantity])
+          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.data[i].purchaseQuantity])
         }
         return totalNum
       }
@@ -899,7 +935,7 @@ export default {
             ratio: item.ratio, // 转换系数
             calculationDirection: item.calculationDirection, // 计算方向
             mainUnit: item.mainUnit, // 主单位
-            demandQuantity: item.demandQuantity, // 数量
+            purchaseQuantity: item.purchaseQuantity, // 数量
             waitDeliverNum: item.waitDeliverNum,
             deliveryQuantity: item.waitDeliverNum,
             price: item.price, // 含税单价
@@ -1329,7 +1365,7 @@ export default {
             this.processingdata(res.data.purchaseOrderLineList)
             this.linesList.forEach((item) => {
               item.drawingNo = item.productDrawingNo
-              item.demandQuantity = item.ordersNum
+              item.purchaseQuantity = item.ordersNum
             })
             console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
             if (this.btnType === 'edit') {
@@ -1536,7 +1572,7 @@ export default {
               item.outShipmentVOList.forEach((it) => {
                 let dep = {
                   calculationDirection: it.calculationDirection ? it.calculationDirection : '',
-                  deliveryQuantity: it.deliveryQuantity ? it.deliveryQuantity : '',
+                  deliveryQuantity: it.deliveryQuantity ? it.deliveryQuantity : it.demandQuantity,
                   deputyUnit: it.deputyUnit ? it.deputyUnit : '',
                   mainUnit: it.mainUnit ? it.mainUnit : '',
                   ordersId: it.ordersId ? it.ordersId : it.purchaseOrderId,
@@ -1550,7 +1586,7 @@ export default {
                   outShipmentListId: it.outShipmentListId ? it.outShipmentListId : it.id,
                   pickingQuantity: it.pickingQuantity ? it.pickingQuantity : '',
                   ratio: it.ratio ? it.ratio : '',
-                  // receivedQuantity: it.receivedQuantity ? it.receivedQuantity : '',
+                  // demandQuantity: it.demandQuantity ? it.demandQuantity : '',
                   remark: it.remark ? it.remark : '',
                   returnDeliveryNoticeId: this.dataForm.id ? this.dataForm.id : '',
                   sourceNoticeLineList: [

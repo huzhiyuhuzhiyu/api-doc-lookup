@@ -6,12 +6,12 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入供应商名称" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -40,7 +40,7 @@
               <el-button size="mini" type="primary" icon="el-icon-plus" @click.native="addSupplier('', 'add')">
                 新建
               </el-button>
-         
+
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"
                 :loading="qxbtnLoading">
                 取消发料
@@ -79,7 +79,7 @@
             <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
             <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
 
-            <el-table-column prop="delivery" label="发料方式" width="160" sortable="custom">
+            <el-table-column prop="delivery" label="发料方式" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.delivery == 'deliver_goods'">
                   <span>送货</span>
@@ -146,7 +146,6 @@
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
-                 
 
                     <el-dropdown-item @click.native="addSupplier(scope.row.id, 'copy')">
                       复制通知单
@@ -216,25 +215,6 @@ export default {
       activeName: 'orderList',
       salespersonList: [],
       detailFlag: false,
-      exchangeList: [{ label: '正常发料', value: false }, { label: '换货发料', value: true }],
-      shipmentsStateList: [{ label: '未完成', value: 'undelivered' }, { label: '已完成', value: 'delivered' }],
-      orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
-      isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
-      documentStateList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
-
-      approvalStateList: [
-        { label: '审批中', value: 'ing' },
-        { label: ' 审批通过', value: 'ok' },
-        { label: '审批拒绝', value: 'rebut' }
-      ],
-
-      departMentList: [
-        { label: '送货', value: 'deliver_goods' },
-        { label: '自提', value: 'self_pickup' },
-        { label: '快递', value: 'express_delivery' },
-        { label: '货运', value: 'freight_transport' },
-        { label: '到付', value: 'collect_payment' }
-      ],
       paymentMethodList: [],
       paymentCycleList: [],
       orderForm: {},
@@ -244,7 +224,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         notifyType: 'external',
-        returnDeliveryType:'delivery',
+        returnDeliveryType: 'delivery',
         rdeDate: '',
         rdsDate: '',
         orderItems: [
@@ -286,15 +266,16 @@ export default {
           type: 'input'
         },
         {
-          prop: 'partnerCode',
-          label: '客户编码',
+          prop: 'partnerName',
+          label: '供应商名称',
           type: 'input'
         },
         {
-          prop: 'partnerName',
-          label: '客户名称',
+          prop: 'partnerCode',
+          label: '供应商编码',
           type: 'input'
         },
+
         {
           prop: 'deliverDate',
           label: '发料日期',
@@ -328,11 +309,40 @@ export default {
           ]
         },
         {
-          prop: 'exchangeGoodsFlag',
-          label: '发料标识',
+          prop: 'countryName',
+          label: '国家',
+          type: 'input'
+        },
+        {
+          prop: 'provinceName',
+          label: '省',
+          type: 'input'
+        },
+        {
+          prop: 'cityName',
+          label: '市',
+          type: 'input'
+        },
+        {
+          prop: 'areaName',
+          label: '区',
+          type: 'input'
+        },
+        {
+          prop: 'address',
+          label: '地址',
+          type: 'input'
+        },
+        {
+          prop: 'deliveryStatus',
+          label: '发料状态',
           type: 'select',
 
-          options: [{ label: '正常发料', value: false }, { label: '换货发料', value: true }]
+          options: [
+            { label: '未完成', value: 'not_finished' },
+            { label: '已完成', value: 'finished' },
+            { label: '已取消', value: 'canceled' }
+          ]
         },
 
         {
@@ -340,6 +350,20 @@ export default {
           label: '单据状态',
           type: 'select',
           options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'createByName',
+          label: '创建人',
+          type: 'input'
         }
       ]
     }
@@ -416,7 +440,7 @@ export default {
         })
         .catch(() => { })
     },
-  
+
     handleClick(e) {
       this.activeName = e.name
     },
@@ -520,7 +544,7 @@ export default {
         .catch(() => { })
     },
     handleUserRelation(id, btnType) {
-      console.log(id,'ojkjkjk')
+      console.log(id, 'ojkjkjk')
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btnType)

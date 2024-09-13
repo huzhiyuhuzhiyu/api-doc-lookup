@@ -252,3 +252,41 @@ export const userReHired = (data) => {
     data
   })
 }
+// 员工信息-新增
+export const addbaseEmployee = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/insert`,
+    method: 'post',
+    data
+  })
+}
+// 员工信息详情
+export const getbaseEmployeeInfo = (id) => {
+  return request({
+    url: `/api/crm/baseEmployee/detail/${id}`,
+    method: 'GET'
+  })
+}
+// 员工信息-列表
+export const getbaseEmployee = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/list`,
+    method: 'post',
+    data
+  })
+}
+// 员工信息-修改
+export const updatebaseEmployee = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/modify`,
+    method: 'put',
+    data
+  })
+}
+// 删除用户
+export const delbaseEmployee = (id) => {
+  return request({
+    url: `/api/crm/baseEmployee/remove/${id}`,
+    method: 'DELETE'
+  })
+}

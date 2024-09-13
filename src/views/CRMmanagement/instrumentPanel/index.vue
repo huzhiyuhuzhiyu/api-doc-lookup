@@ -75,6 +75,7 @@ import { mapGetters } from 'vuex'
 import chartlist from "./chartlist/index.vue";
 import draggable from 'vuedraggable';
 import flexbox from "./flexbox/index.vue";
+import { log } from 'mathjs';
 export default {
   components: {
     flexbox,
@@ -85,6 +86,7 @@ export default {
   },
   data() {
     return {
+      copylist:[],
       mainloading: false,
       crmlist: [
         { name: '合同/回款金额目标及完成情况', typeChart: 'contractAmount', isHidden: false },
@@ -153,8 +155,8 @@ export default {
     },
     //仪表盘模块设置
     submitSettings() {
-      let left = this.findMatchingObjects(this.summarylist.leftList, this.crmlist, 'typeChart')
-      let right = this.findMatchingObjects(this.summarylist.rightList, this.crmlist, 'typeChart')
+      let left = this.findMatchingObjects(this.copylist.leftList, this.crmlist, 'typeChart')
+      let right = this.findMatchingObjects(this.copylist.rightList, this.crmlist, 'typeChart')
       updatecrmBiPosition({ leftList: left, rightList: right }).then(res => {
         this.$message({
           message: '保存成功',
@@ -170,6 +172,7 @@ export default {
     crmModulesettings() {
       this.mainloading = true
       getcrmBiPosition().then(res => {
+        this.copylist = res.data
         let leftList = res.data.leftList.filter(item => item.isHidden)
         let rightList = res.data.rightList.filter(item => item.isHidden)
         this.summarylist = { leftList, rightList }

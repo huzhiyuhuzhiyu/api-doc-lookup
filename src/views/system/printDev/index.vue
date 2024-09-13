@@ -261,7 +261,7 @@ export default {
     flex: 1;
     // margin-top: 16px;
     overflow-y: auto;
-    padding: 0 10px;
+    padding: 0 10px 5px;
     .business-list {
       border: 1px solid #E4E4E4;
       border-bottom: none;

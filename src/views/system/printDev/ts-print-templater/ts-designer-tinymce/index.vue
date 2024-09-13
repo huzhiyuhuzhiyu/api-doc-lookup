@@ -1,7 +1,6 @@
 <template>
-  <editor ref="mceEditor" :id="id" v-model="dataValue" v-bind="$attrs" :init="showInit"
-    :plugins="showPlugins" :toolbar="showToolbar" tinymce-script-src="/cdn/tinymce/tinymce.min.js"
-    v-on="$listeners" />
+  <editor ref="mceEditor" :id="id" v-model="dataValue" v-bind="$attrs" :init="showInit" :plugins="showPlugins"
+    :toolbar="showToolbar" tinymce-script-src="/cdn/tinymce/tinymce.min.js" v-on="$listeners" />
 </template>
 
 <script>
@@ -46,6 +45,8 @@ export default {
     },
 
     showToolbar() {
+      console.log(toolbar,'toolbar');
+      
       return this.toolbar != undefined ? this.toolbar : toolbar
     },
 
@@ -148,19 +149,22 @@ export default {
   position: relative;
   line-height: normal;
 }
-.tinymce-container >>> .mce-fullscreen {
+
+.tinymce-container>>>.mce-fullscreen {
   z-index: 10000;
 }
+
 .tinymce-textarea {
   visibility: hidden;
   z-index: -1;
 }
+
 .tox-tinymce-aux {
   z-index: 10001 !important;
 }
+
 .tox .tox-toolbar,
 .tox .tox-toolbar__overflow,
 .tox .tox-toolbar__primary {
   background-color: #fff !important;
-}
-</style>
+}</style>

@@ -32,7 +32,7 @@ import { mapGetters } from "vuex"
 import { getData } from '@/api/system/printDev'
 import QRCode from 'qrcodejs2'
 export default {
-  props: ['id', 'formId', 'fullName','params'],
+  props: ['id', 'formId', 'fullName', 'params'],
   computed: {
     ...mapGetters(['userInfo'])
   },
@@ -51,11 +51,11 @@ export default {
       this.data = {}
       this.loading = true
       console.log(this.params);
-      
+
       let query = {
         id: this.id,
         formId: this.formId,
-        params:this.params ? Object.values(this.params).join(',') : ''
+        params: this.params ? Object.values(this.params).join(',') : ''
       }
       console.log(query);
       getData(query).then(res => {
@@ -63,14 +63,14 @@ export default {
         this.printTemplate = res.data.printTemplate
         this.data = res.data.printData
         if (this.data.pageType === 'custom') {
-          this.data.T1 && this.data.pageSize &&  (this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1))
+          this.data.T1 && this.data.pageSize && (this.data.T1 = this.printPageDataFn(this.data.T1, this.data.pageSize * 1))
         }
         console.log(this.data.T1, 'this.data.T1');
 
         this.recordList = res.data.operatorRecordList || []
         this.$nextTick(() => {
           console.log(this.$refs.tsPrint, 'this.$refs.tsPrint');
-         
+
           let barCodeEl = this.$refs.tsPrint.querySelector('[data-tag="headTable.bar_code"]')
           if (barCodeEl) {
             let str = barCodeEl.innerHTML
@@ -154,16 +154,48 @@ export default {
             let totalList = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.total"]')
             let pageNumList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageNum.pageNum"]')
             let pageSizeList = this.$refs.tsPrint.querySelectorAll('[data-tag="pageSize.pageSize"]')
-            if (upperMoneyList.length) {
-              if (this.data.T1.length) {
-                this.data.T1.forEach((e, i) => {
-                  // pageSizeList[i].innerHTML = this.data.T1.length
-                  pageSizeList && pageSizeList[i] && (pageSizeList[i].textContent = this.data.T1.length)
-                  upperMoneyList && upperMoneyList[i] && (upperMoneyList[i].textContent = e.UpperMoney)
-                  totalList && totalList[i] && (totalList[i].textContent = e.total)
-                  pageNumList && pageNumList[i] && (pageNumList[i].textContent = i + 1)
-                })
-              }
+            let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
+
+            // if (upperMoneyList.length) {
+            if (this.data.T1.length) {
+              this.data.T1.forEach((e, i) => {
+                // pageSizeList[i].innerHTML = this.data.T1.length
+                pageSizeList && pageSizeList[i] && (pageSizeList[i].textContent = this.data.T1.length)
+                upperMoneyList && upperMoneyList[i] && (upperMoneyList[i].textContent = e.UpperMoney)
+                totalList && totalList[i] && (totalList[i].textContent = e.total)
+                pageNumList && pageNumList[i] && (pageNumList[i].textContent = i + 1)
+                if (TbarCodeEl && TbarCodeEl[i]) {
+                  let str = TbarCodeEl[i].innerHTML
+                  TbarCodeEl[i].innerHTML = ''
+                  let qrcode = new QRCode(TbarCodeEl[i], {
+                    width: 65,
+                    height: 65,
+                    text: str, // 二维码内容
+                    correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+                  })
+                  qrcode._el.title = ''
+                }
+              })
+            }
+            // }
+          }else{
+            let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
+            console.log(TbarCodeEl);
+            
+            if (this.data.T1.length) {
+              this.data.T1.forEach((e, i) => {
+                if (TbarCodeEl && TbarCodeEl[i]) {
+                  let str = TbarCodeEl[i].innerHTML
+                  TbarCodeEl[i].innerHTML = ''
+                  let qrcode = new QRCode(TbarCodeEl[i], {
+                    width: 65,
+                    height: 65,
+                    text: str, // 二维码内容
+                    correctLevel: QRCode.CorrectLevel.H //容错级别 容错级别有：（1）QRCode.CorrectLevel.L （2）QRCode.CorrectLevel.M （3）QRCode.CorrectLevel.Q （4）QRCode.CorrectLevel.H
+                  })
+                  qrcode._el.title = ''
+                }
+              })
             }
           }
         })

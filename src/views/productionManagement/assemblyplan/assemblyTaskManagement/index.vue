@@ -131,7 +131,7 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)">
+                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)"  v-if="scope.row.taskMethod!='not_appoint'">
                       改派
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">

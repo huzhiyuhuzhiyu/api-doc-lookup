@@ -11,7 +11,7 @@
           </div>
         </div>
         <div class="main" v-loading="formLoading">
-          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table"  v-if="btnType == 'all'">
+          <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table" v-if="btnType == 'all'">
             <el-tab-pane label="任务信息" name="orderInfo">
               <el-collapse v-model="activeNames1" class="orderInfo">
                 <el-collapse-item title="任务信息" name="basicInfo">
@@ -183,7 +183,7 @@
 
               </el-collapse>
             </el-tab-pane>
-            <el-tab-pane label="工单信息" name="workOrderInfo"  >
+            <el-tab-pane label="工单信息" name="workOrderInfo">
               <el-collapse v-model="activeNames2" class="orderInfo">
                 <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
                   <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
@@ -203,10 +203,14 @@
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                    <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
-                    <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
-                    <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
+                      min-width="120">
+                    </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
+                      min-width="120">
+                    </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备" min-width="120">
+                    </el-table-column>
 
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
@@ -245,7 +249,7 @@
               </el-collapse>
             </el-tab-pane>
 
-            <el-tab-pane label="投料信息" name="feedInfo"  >
+            <el-tab-pane label="投料信息" name="feedInfo">
               <el-collapse v-model="activeNames3" class="orderInfo">
                 <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
                   <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
@@ -265,10 +269,10 @@
                 </el-collapse-item>
               </el-collapse>
             </el-tab-pane>
-            
+
           </el-tabs>
-          
-          <el-collapse v-model="activeNames2" v-if="btnType == 'work'"  class="orderInfo">
+
+          <el-collapse v-model="activeNames2" v-if="btnType == 'work'" class="orderInfo">
             <el-collapse-item title="工单信息" name="workOrderInfoForm" class="workOrderInfoForm">
               <JNPF-table ref="work" :data="workOrderData" fixedNo v-loading="tableloading">
                 <el-table-column prop="processName" label="工序名称" min-width="120" />
@@ -286,10 +290,14 @@
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
-                <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
-                <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="personName" label="人员"
+                  min-width="120">
+                </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="workGroupName" label="班组"
+                  min-width="120">
+                </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod != 'not_appoint'" prop="device" label="设备" min-width="120">
+                </el-table-column>
 
                 <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                   <template slot-scope="scope">
@@ -319,7 +327,7 @@
               </JNPF-table>
             </el-collapse-item>
           </el-collapse>
-          <el-collapse v-model="activeNames3" v-if="btnType == 'feed'"  class="orderInfo">
+          <el-collapse v-model="activeNames3" v-if="btnType == 'feed'" class="orderInfo">
             <el-collapse-item title="投料信息" name="feedInfoForm" class="feedInfoForm">
               <JNPF-table ref="feed" :data="feedData" fixedNo v-loading="tableloading" :key="Math.random()">
                 <el-table-column prop="productDrawingNo" label="用料规格"></el-table-column>
@@ -337,7 +345,7 @@
 
             </el-collapse-item>
           </el-collapse>
-          <el-collapse v-model="activeNames4" v-if="btnType == 'report'"  class="orderInfo">
+          <el-collapse v-model="activeNames4" v-if="btnType == 'report'" class="orderInfo">
             <el-collapse-item title="报工记录" name="record" class="feedInfoForm">
               <JNPF-table ref="feed" :data="recoredsData" fixedNo v-loading="tableloading" :key="Math.random()">
                 <el-table-column prop="workNo" label="工单号" min-width="180"></el-table-column>
@@ -635,7 +643,7 @@ $footerPadding: '10px';
   margin-top: 5px;
 }
 
- 
+
 ::v-deep.routingProRes .el-dialog__body {
   height: 500px;
 }

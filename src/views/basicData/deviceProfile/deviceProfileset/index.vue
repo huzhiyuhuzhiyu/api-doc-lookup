@@ -7,7 +7,7 @@
           <el-dropdown>
             <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item> -->
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
               <!-- <el-dropdown-item @click.native="showDiagram">架构图</el-dropdown-item> -->
@@ -68,15 +68,19 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle('', false, 'add')" />
+          <div>
+            <topOpts @add="addOrUpdateHandle('', false, 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printDevice('p038')">打印设备二维码</el-button>
+            </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable"
-          @sort-change="sortChange" custom-column>
+        <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true"  ref="dataTable"
+          @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="设备编码" min-width="200" sortable="custom"  />
           <el-table-column prop="name" label="设备名称" min-width="200" sortable="custom"  />
           <el-table-column prop="deviceType" label="设备类型" width="200" sortable="custom">
@@ -150,9 +154,8 @@
           @pagination="initData" />
       </div>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
-    <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
+    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" /> -->
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
 </template>
 
@@ -160,21 +163,18 @@
 import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList, plmsync } from '@/api/basicData/index'
 import Form from './Form'
-import Diagram from '@/views/permission/user/Diagram'
-import UserRelationList from './userRelation'
-import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
-  name: 'permission-position',
-  components: { Form, UserRelationList, Diagram },
+  name: 'deviceProfileSet',
+  components: { Form ,PrintBrowse},
   data() {
     return {
       treeData: [],
       tableData: [],
       treeLoading: false,
       listLoading: false,
-      authorizeFormVisible: false,
-      userRelationListVisible: false,
       organizeIdTree: [],
       listQuery: {
         name: "", // 设备名称
@@ -225,7 +225,9 @@ export default {
       formVisible: false,
       expands: true,
       refreshTree: true,
-      filterText: ''
+      filterText: '',
+      selectList:[],
+      printBrowseVisible:false,
     }
   },
   watch: {
@@ -234,8 +236,10 @@ export default {
     }
   },
   created() {
+    console.log(111);
+    
     this.getCategoryTrees(true)
-    this.getDictionaryType()
+    // this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -322,7 +326,7 @@ export default {
       getCategoryTrees(listQuery).then(res => {
         console.log(99, res)
         this.treeData = res.data
-        this.getTypeList(res.data)
+        // this.getTypeList(res.data)
         this.$nextTick(() => {
           this.treeLoading = false
           if (isInit) this.initData()
@@ -332,19 +336,19 @@ export default {
       })
     },
     // 获取设备类型
-    getTypeList(data) {
-      let arr = []
-      let fn = (data) => {
-        data.forEach(item => {
-          arr.push(item)
-          if (item.childrenList && item.childrenList.length) {
-            fn(item.childrenList)
-          }
-        })
-      }
-      fn(data)
-      this.typeList = arr
-    },
+    // getTypeList(data) {
+    //   let arr = []
+    //   let fn = (data) => {
+    //     data.forEach(item => {
+    //       arr.push(item)
+    //       if (item.childrenList && item.childrenList.length) {
+    //         fn(item.childrenList)
+    //       }
+    //     })
+    //   }
+    //   fn(data)
+    //   this.typeList = arr
+    // },
     initData() {
       this.listLoading = true
       this.listQuery = {
@@ -431,20 +435,8 @@ export default {
 
     },
 
-    removeUserRelationList(isRefresh) {
-      this.userRelationListVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
-    removeAuthorizeForm(isRefresh) {
-      this.authorizeFormVisible = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
-    },
+
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -459,7 +451,23 @@ export default {
         })
       }).catch(() => { })
     },
-
+    printDevice(enCode){
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    handleSelectionChange(val) {
+      this.selectList = val
+    },
   }
 }
 </script>

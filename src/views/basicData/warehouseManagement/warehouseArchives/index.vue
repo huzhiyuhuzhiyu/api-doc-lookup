@@ -34,7 +34,11 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addWarehouse('', '', 'add')" />
+          <div>
+            <topOpts @add="addWarehouse('', '', 'add')">
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printWarehouse('p036')">打印仓库二维码</el-button>
+            </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <!-- <el-tooltip effect="dark" content="展开" placement="top">
               <el-link v-show="!expands" type="text" icon="icon-ym icon-ym-btn-expand JNPF-common-head-icon"
@@ -58,7 +62,7 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :fixedNO="true" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList">
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC @selection-change="handleSelectWork">
           <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
@@ -128,6 +132,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
 </template>
 
@@ -137,12 +142,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import VueQr from 'vue-qr'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'warehouseArchives',
-  components: { Form, SuperQuery, VueQr },
+  components: { Form, SuperQuery, VueQr,PrintBrowse },
   data() {
     return {
       superQueryVisible: false,
+      printBrowseVisible:false,
       superQueryJson: [
         {
           prop: 'name',
@@ -208,7 +216,8 @@ export default {
             column: 'create_time'
           }
         ]
-      }
+      },
+      selectWarehouse:[]
     }
   },
   created() {
@@ -343,7 +352,24 @@ export default {
           })
         })
         .catch(() => { })
-    }
+    },
+    handleSelectWork(val){
+      this.selectWarehouse = val
+    },
+    printWarehouse(enCode){
+      if (!this.selectWarehouse.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectWarehouse.map(item=>item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
   }
 }
 </script>

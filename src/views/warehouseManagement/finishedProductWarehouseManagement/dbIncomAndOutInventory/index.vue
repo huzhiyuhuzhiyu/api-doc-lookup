@@ -780,7 +780,11 @@
     </OutboundExternalSendForm>
     <InboundExternalForm v-if="inboundExternalFormVisible" ref="inboundExternalREFForm" @close="closeForm">
     </InboundExternalForm>
-
+    <OutboundPickOutForm v-if="outboundPickOutFormVisible" ref="outboundPickOutREFForm" @close="closeForm">
+    </OutboundPickOutForm>
+    <InboundReturnMaterialsForm v-if="inboundReturnMaterialsFormVisible" ref="inboundReturnMaterialsREFForm" @close="closeForm">
+    </InboundReturnMaterialsForm>
+    
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -814,6 +818,8 @@ import InboundPurchaseForm from './inboundPurchaseForm.vue'
 import OutboundPurchaseForm from './outboundPurchaseForm.vue'
 import OutboundExternalSendForm from './outboundExternalSendForm.vue'
 import InboundExternalForm from './inboundExternalForm.vue'
+import OutboundPickOutForm from './outboundPickOutForm.vue'
+import InboundReturnMaterialsForm from './inboundReturnMaterialsForm.vue'
 import { WithdrawalList } from '@/api/productOrdes/index.js'
 export default {
   name: 'dbIncomAndOutInventory',
@@ -824,7 +830,7 @@ export default {
     WXFLREFForm, PickForm, ReturnMaterREFForm,
     ProductInboundForm, WorkInboundForm, OutboundSaleSendForm,
     InboundSaleReturnForm, InboundPurchaseForm, OutboundPurchaseForm,
-    OutboundExternalSendForm, InboundExternalForm
+    OutboundExternalSendForm, InboundExternalForm,OutboundPickOutForm,InboundReturnMaterialsForm
   },
   props: {
     classAttribute: "",
@@ -843,6 +849,8 @@ export default {
       outboundPurchaseFormVisible: false,
       outboundExternalSendFormVisible: false,
       inboundExternalFormVisible: false,
+      outboundPickOutFormVisible:false,
+      inboundReturnMaterialsFormVisible:false,
       productColumns: ["productCode", 'createByName'],
       productTotal: 0,
       productData: [],
@@ -1179,13 +1187,23 @@ export default {
             this.$nextTick(() => {
               this.$refs.inboundExternalREFForm.init(data, btnType, this.categoryType, this.classAttribute)
             })
+          } else if (this.categoryType == 'outbound_pick_out') {
+            this.outboundPickOutFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.outboundPickOutREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
+          }else if (this.categoryType == 'inbound_return_materials') {
+            this.inboundReturnMaterialsFormVisible = true
+            this.$nextTick(() => {
+              this.$refs.inboundReturnMaterialsREFForm.init(data, btnType, this.categoryType, this.classAttribute)
+            })
           } else {
             this.formVisible = true
             this.$nextTick(() => {
               this.$refs[ref].init(data, btnType, this.categoryType, this.classAttribute)
             })
           }
-
+          
 
       }
     },
@@ -1751,7 +1769,9 @@ export default {
       this.outboundPurchaseFormVisible = false
       this.outboundExternalSendFormVisible = false
       this.inboundExternalFormVisible = false
-      if (isRefresh) {
+      this.outboundPickOutFormVisible=false
+            this.inboundReturnMaterialsFormVisible = false
+            if (isRefresh) {
         this.getStockMovelistFun()
       }
     },

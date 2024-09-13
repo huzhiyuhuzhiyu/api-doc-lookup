@@ -23,42 +23,50 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="btnType == 'look' ? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工产品" prop="drawingNo">
                           <el-input v-model="dataForm.drawingNo" placeholder="返工产品"
                             @focus="openSelectProductFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
                           </el-date-picker>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="返工生产数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="返工生产数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="编排任务方式" prop="taskMethod">
+                          <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectTaskMethod">
+                            <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
-
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
                           <el-select v-model="dataForm.sealingCoverTyping" placeholder="打字内容" clearable
                             style="width: 100%;">
@@ -67,7 +75,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="精度等级" prop="accuracyLevel">
                           <el-select v-model="dataForm.accuracyLevel" placeholder="精度等级" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
@@ -76,7 +84,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="振动等级" prop="vibrationLevel">
                           <el-select v-model="dataForm.vibrationLevel" placeholder="振动等级" clearable
                             style="width: 100%;">
@@ -85,7 +93,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂" prop="oil">
                           <el-select v-model="dataForm.oil" placeholder="油脂" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
@@ -93,7 +101,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="油脂量" prop="oilQuantity">
                           <el-select v-model="dataForm.oilQuantity" placeholder="油脂量" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
@@ -102,7 +110,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="游隙" prop="clearance">
                           <el-select v-model="dataForm.clearance" placeholder="游隙" clearable style="width: 100%;">
                             <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
@@ -110,7 +118,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="包装方式" prop="packagingMethod">
                           <el-select v-model="dataForm.packagingMethod" placeholder="包装方式" clearable
                             style="width: 100%;">
@@ -119,7 +127,7 @@
                           </el-select>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="特殊要求" prop="specialRequire">
                           <el-select v-model="dataForm.specialRequire" placeholder="特殊要求" clearable
                             style="width: 100%;">
@@ -159,7 +167,8 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="150">
+                      <el-table-column prop="personId" label="人员" min-width="150"
+                        v-if="dataForm.taskMethod != 'not_appoint'">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
@@ -174,7 +183,8 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="workGroupId" label="班组" min-width="150">
+                      <el-table-column prop="workGroupId" label="班组" min-width="150"
+                        v-if="dataForm.taskMethod != 'not_appoint'">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                             style="width: 70%; display: none">
@@ -188,7 +198,8 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="equipmentId" label="设备" min-width="150">
+                      <el-table-column prop="equipmentId" label="设备" min-width="150"
+                        v-if="dataForm.taskMethod != 'not_appoint'">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
@@ -265,7 +276,7 @@
                   <el-form ref="collectForm" :model="collect" :rules="pickDataRule" label-width="160px"
                     label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="领料单号" prop="orderNo">
                           <el-input v-model="collect.orderNo"
                             :disabled="btnType == 'look' ? true : collectConfig.codeWay == 'auto' && !collectConfig.modifyFlag ? true : false" />
@@ -600,6 +611,7 @@ export default {
   },
   data() {
     return {
+      taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       reduceTypeList: [
         { label: "生成领料单", value: "picking" },
         { label: "自动扣减料", value: "auto" },
@@ -680,6 +692,7 @@ export default {
       activeNames: ["productInfo", "basicInfo"],
       routingVisible: false,
       dataForm: {
+        taskMethod: "appoint",
         planDate: [],
         orderNo: "",
         productsDrawingNo: "",
@@ -774,6 +787,7 @@ export default {
       isSame: false,
       previousroutingId: "",
       detailDiaFlag: false,
+      naturalResourcesFlag: true,
     }
   },
   computed: {
@@ -806,6 +820,13 @@ export default {
 
   },
   methods: {
+    selectTaskMethod() {
+      if (this.dataForm.taskMethod == 'not_appoint') {
+        this.naturalResourcesFlag = false
+      } else {
+        this.naturalResourcesFlag = true
+      }
+    },
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -965,7 +986,8 @@ export default {
     // 选择返工产品
     selectProductFun(data) {
       console.log("所选返工产品", data);
-      this.dataForm = data
+      this.dataForm = data 
+      this.$set(this.dataForm,'taskMethod','appoint')
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },
@@ -1183,7 +1205,7 @@ export default {
         // });
       }
       console.log("'this.dataFormTwo.data'", this.dataFormTwo.data);
-      
+
       this.routingProResMapDiaFlag = false;
     },
     // 选择工位
@@ -1419,25 +1441,25 @@ export default {
         this.dataForm.reportRulesFlag = res.data.routing.reportRulesFlag
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
-         
-         if (item.routingProResMap) {
-           if (item.routingProResMap.personnel) {
-             this.$set(item,'personId',item.routingProResMap.personnel[0].resourceId)
-             this.$set(item,'personName',item.routingProResMap.personnel[0].resourceName)
-           }
-           if (item.routingProResMap.work_group) {
-             this.$set(item,'workGroupId',item.routingProResMap.work_group[0].resourceId)
-             this.$set(item,'workGroupName',item.routingProResMap.work_group[0].resourceName) 
-           }
-           if (item.routingProResMap.device) {
 
-             this.$set(item,'equipmentId',item.routingProResMap.device[0].resourceId)
-             this.$set(item,'equipmentName',item.routingProResMap.device[0].resourceName) 
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
 
-           }
-         } else {
-         }
-       });
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+
+            }
+          } else {
+          }
+        });
       })
     },
     init(id, btnType) {
@@ -1508,22 +1530,32 @@ export default {
             this.dataForm.materialFlag = false
 
           }
-          for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-            const item = this.dataFormTwo.data[index];
-            if (
-              !item.workGroupId &&
-              !item.personId &&
-              !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
-              item.processingType == "self_produced"
-            ) {
-              submitFlag = false;
-              this.$message({
-                message: "第" + (index + 1) + "行班组、人员需要必填一项",
-                type: "error",
-              });
-              break;
+          if (this.naturalResourcesFlag) {
+
+            for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+              const item = this.dataFormTwo.data[index];
+              if (
+                !item.workGroupId &&
+                !item.personId &&
+                !item.equipmentId &&
+                item.processingType == "self_produced"
+              ) {
+                submitFlag = false;
+                this.$message({
+                  message: "第" + (index + 1) + "行班组、人员需要必填一项",
+                  type: "error",
+                });
+                break;
+              }
             }
+          } else {
+            this.dataFormTwo.data.forEach(item => {
+              item.personId = ""
+              item.equipmentId = ""
+              item.workGroupId = ""
+            });
           }
+
           this.dataFormTwo.data.forEach(item => {
             this.$set(item, 'productionQuantity', this.dataForm.productionQuantity)
             this.$set(item, 'planEndDate', this.dataForm.planEndDate)

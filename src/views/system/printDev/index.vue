@@ -4,7 +4,7 @@
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
         <el-radio-group v-model="listQuery.category" style="background-color:#fff;">
-          <el-radio-button style="margin:2px 0;" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{
+          <el-radio-button style="margin:2px 0;border-left: 1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{
             item.fullName }}
           </el-radio-button>
         </el-radio-group>
@@ -261,7 +261,7 @@ export default {
     flex: 1;
     // margin-top: 16px;
     overflow-y: auto;
-    padding: 0 10px;
+    padding: 0 10px 5px;
     .business-list {
       border: 1px solid #E4E4E4;
       border-bottom: none;

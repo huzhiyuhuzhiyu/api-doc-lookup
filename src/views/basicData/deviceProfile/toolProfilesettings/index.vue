@@ -61,7 +61,11 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
-          <topOpts @add="addOrUpdateHandle('', false,'add')" />
+          <div>
+            <topOpts @add="addOrUpdateHandle('', false,'add')">
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printTool('p039')">打印工具二维码</el-button>
+            </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
               <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
@@ -69,7 +73,7 @@
           </div>
         </div>
         <JNPF-table v-loading="listLoading" :data="tableData" :fixedNO="true" :customColumn="true" ref="dataTable"
-          @sort-change="sortChange" custom-column>
+          @sort-change="sortChange" custom-column hasC @selection-change="handleSelectionChange">
           <el-table-column prop="code" label="工具编码" min-width="200" sortable="custom"  />
 
           <el-table-column prop="name" label="工具名称" min-width="200" sortable="custom"  />
@@ -120,7 +124,7 @@
     </div>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
-    <UserRelationList v-if="userRelationListVisible" ref="UserRelationList" @refreshDataList="getOrganizeList" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
 </template>
 
@@ -129,12 +133,11 @@ import { getPositionList, deleteEquEquipment } from '@/api/permission/position'
 import { getCategoryTrees, getEquEquipmentList,plmsync } from '@/api/basicData/index'
 import Form from './Form'
 import Diagram from '@/views/permission/user/Diagram'
-import UserRelationList from './userRelation'
-import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
-  name: 'permission-position',
-  components: { Form, UserRelationList, Diagram },
+  name: 'toolProfilesettings',
+  components: { Form, UserRelationList, Diagram ,PrintBrowse},
   data() {
     return {
       treeData: [],
@@ -195,7 +198,9 @@ export default {
       formVisible: false,
       expands: true,
       refreshTree: true,
-      filterText: ''
+      filterText: '',
+      selectList:[],
+      printBrowseVisible:false,
     }
   },
   watch: {
@@ -351,12 +356,6 @@ export default {
       })
 
     },
-    handleUserRelation(id, btnType) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, btnType)
-      })
-    },
     removeUserRelationList(isRefresh) {
       this.userRelationListVisible = false
       if (isRefresh) {
@@ -385,12 +384,23 @@ export default {
         })
       }).catch(() => { })
     },
-    handleUserRelation(id, name) {
-      this.userRelationListVisible = true
-      this.$nextTick(() => {
-        this.$refs.UserRelationList.init(id, name)
-      })
-    }
+    printTool(enCode){
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
+    handleSelectionChange(val) {
+      this.selectList = val
+    },    
   }
 }
 </script>

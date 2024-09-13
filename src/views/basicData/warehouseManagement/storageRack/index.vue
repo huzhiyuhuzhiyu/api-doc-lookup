@@ -82,6 +82,7 @@
             <el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="batchEditFun">
               批量修改
             </el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printWarehouse('p037')">打印库位二维码</el-button>
           </div>
 
 
@@ -132,6 +133,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
 </template>
 
@@ -143,13 +145,15 @@ import AiForm from "./AiForm.vue";
 import moment from 'moment'
 import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'storageRack',
-  components: { DepForm, AiForm, SuperQuery },
+  components: { DepForm, AiForm, SuperQuery,PrintBrowse },
   data() {
     return {
       superQueryVisible: false,
+      printBrowseVisible:false,
       superQueryJson: [
         {
           prop: 'name',
@@ -523,7 +527,21 @@ export default {
       this.$nextTick(() => {
         this.$refs.depForm.init(id, parentId, newBtnType)
       })
-    }
+    },
+    printWarehouse(enCode){
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
   }
 }
 </script>

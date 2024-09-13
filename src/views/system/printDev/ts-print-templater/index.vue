@@ -188,6 +188,14 @@ export default {
         table_cell_advtab: false,
         table_row_advtab: false,
         setup: (editor) => {
+          // editor.ui.registry.addButton('testButton', {
+          //   text: '预览',
+          //   tooltip: 'preview',
+          //   onAction: () => {
+          //     console.log('成功预览');
+              
+          //   }
+          // })
           editor.on('init', function () {
             editor.execCommand('mceFocus')
           })

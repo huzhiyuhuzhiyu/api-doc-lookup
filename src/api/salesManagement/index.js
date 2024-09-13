@@ -235,6 +235,16 @@ export function getQuotationdatasenddatalist (data) {
     data
   })
 }
+
+//外协退发料通知单明细-列表
+export function getOutlineDatalist (data) {
+  return request({
+    url: `/api/erp/sale/orders/notice/out/line/list`,
+    method: 'post',
+    data
+  })
+}
+
 //列表
 export function getQuotationdatasendlist (data) {
   return request({

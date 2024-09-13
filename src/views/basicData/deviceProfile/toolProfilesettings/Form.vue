@@ -171,7 +171,6 @@ export default {
     return {
       datafilelist:[],
       activeName: "jcInfo",
-      action: 'https://jsonplaceholder.typicode.com/posts/', // 后期替换上传接口
       getCategoryTrees,
       areaList: [],
       title: '',
@@ -232,7 +231,7 @@ export default {
       requestObj: {
         orderItems: [{
           asc: false,
-          column: 'createTime'
+          column: 'create_time'
         }],
         pageNum: 1,
         pageSize: -1,
@@ -369,11 +368,11 @@ export default {
       // return isAccept
     },
     // 获取计量单位
-    gettypeOptions() {
-      getEffectUnitList().then(res => {
-        this.typeOptions = res.data
-      })
-    },
+    // gettypeOptions() {
+    //   getEffectUnitList().then(res => {
+    //     this.typeOptions = res.data
+    //   })
+    // },
     handlerEquChange(value, node) {
       console.log(value, node)
       if (node) {

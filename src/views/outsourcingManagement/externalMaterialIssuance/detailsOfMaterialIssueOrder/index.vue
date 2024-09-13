@@ -1,30 +1,23 @@
 <template>
   <div class="JNPF-common-layout">
-
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerDrawingNumber" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -32,12 +25,13 @@
             <el-col :span="6">
               <el-form-item>
                 <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+                  {{ $t('common.search') }}
+                </el-button>
+                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
+                  {{ $t('common.reset') }}
                 </el-button>
               </el-form-item>
             </el-col>
-
           </el-form>
         </el-row>
         <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -50,8 +44,9 @@
                 :loading="qxbtnLoading">
                 取消发料
               </el-button>
-              <el-button type="primary" size="mini" icon="el-icon-download"
-                @click="exportForm('dataTable')">导出</el-button>
+              <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">
+                导出
+              </el-button>
             </div>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -72,53 +67,41 @@
             @selection-change="handleSelectionChange" hasC :setColumnDisplayList="columnList">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">{{
-                  scope.row.orderNo
-                }}</el-link>
+                <el-link type="primary" @click.native="handleUserRelation(scope.row.returnDeliveryNoticeId, 'look')">
+                  {{ scope.row.orderNo }}
+                </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="deliveryQuantity" label="发料数量" width="160" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
-
-            <el-table-column prop="deliveryStatus" label="发料状态" width="120" sortable="custom" align="center">
-              <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'not_finished'">
-                  <el-tag type="primary">未完成</el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'finished'">
-                  <el-tag type="success">已完成 </el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'canceled'">
-                  <el-tag type="danger">已取消</el-tag>
-                </div>
-              </template>
-            </el-table-column>
+            <el-table-column prop="deliveryQuantity" label="订单数量" width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
-                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag> </div>
+                <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">
+                  编辑
+                </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="handleDel(scope.row.id)">删除</el-button>
+                  :disabled="scope.row.documentStatus == 'draft' ? false : true" @click="handleDel(scope.row.id)">
+                  删除
+                </el-button>
                 <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
                     </el-button>
                   </span>
                   <el-dropdown-menu slot="dropdown">
@@ -137,7 +120,6 @@
             @pagination="initData" />
         </div>
       </div>
-
     </div>
 
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" />
@@ -149,8 +131,17 @@
 </template>
 
 <script>
-import { getQuotationdatasendlist, deleteQuotationsendlist, getQuotationdatasenddatalist, Cancelshipmentlist, Cancelshipmentlinelist, mergelist, splitlist } from '@/api/salesManagement'
-import { UserListAll, } from '@/api/permission/user'
+import {
+  getQuotationdatasendlist,
+  deleteQuotationsendlist,
+  getQuotationdatasenddatalist,
+  Cancelshipmentlist,
+  Cancelshipmentlinelist,
+  mergelist,
+  splitlist,
+  getOutlineDatalist
+} from '@/api/salesManagement'
+import { UserListAll } from '@/api/permission/user'
 import Form from '../materialsIssueNotice/Form'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -159,7 +150,7 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      columnList: ["recipient", "phone", "createByName"],
+      columnList: ['partnerCode', 'productCode'],
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -170,7 +161,7 @@ export default {
       createTimeArrfahuo: [],
       deliveryDatefahuo: [],
       customList: [], // 列表中显示的自定义属性
-      title: "更多查询",
+      title: '更多查询',
       visible: false,
       detailVisible: false,
       treeData: [],
@@ -181,42 +172,27 @@ export default {
       authorizeFormVisible: false,
       userRelationListVisible: false,
       organizeIdTree: [],
-      activeName: "orderList",
+      activeName: 'orderList',
       salespersonList: [],
       detailFlag: false,
-      exchangeList: [
-        { label: "正常发料", value: false },
-        { label: "换货发料", value: true }
-      ],
-      shipmentsStateList: [
-        { label: "未完成", value: "undelivered" },
-        { label: "已完成", value: "delivered" }
-      ],
-      orderStateList: [
-        { label: "待检验", value: "unInspect" },
-        { label: "已检验", value: "inspected" },
-      ],
-      isfullReceiptFlag: [
-        { label: "是", value: 1 },
-        { label: "否", value: 0 },
-      ],
-      documentStateList: [
-        { label: "草稿", value: "draft" },
-        { label: "提交", value: "submit" },
-      ],
+      exchangeList: [{ label: '正常发料', value: false }, { label: '换货发料', value: true }],
+      shipmentsStateList: [{ label: '未完成', value: 'undelivered' }, { label: '已完成', value: 'delivered' }],
+      orderStateList: [{ label: '待检验', value: 'unInspect' }, { label: '已检验', value: 'inspected' }],
+      isfullReceiptFlag: [{ label: '是', value: 1 }, { label: '否', value: 0 }],
+      documentStateList: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }],
 
       approvalStateList: [
-        { label: "审批中", value: "ing" },
-        { label: " 审批通过", value: "ok" },
-        { label: "审批拒绝", value: "rebut" },
+        { label: '审批中', value: 'ing' },
+        { label: ' 审批通过', value: 'ok' },
+        { label: '审批拒绝', value: 'rebut' }
       ],
 
       departMentList: [
-        { label: "送货", value: "deliver_goods" },
-        { label: "自提", value: "self_pickup" },
-        { label: "快递", value: "express_delivery" },
-        { label: "货运", value: "freight_transport" },
-        { label: "到付", value: "collect_payment" },
+        { label: '送货', value: 'deliver_goods' },
+        { label: '自提', value: 'self_pickup' },
+        { label: '快递', value: 'express_delivery' },
+        { label: '货运', value: 'freight_transport' },
+        { label: '到付', value: 'collect_payment' }
       ],
       paymentMethodList: [],
       paymentCycleList: [],
@@ -224,9 +200,9 @@ export default {
       orderFormlist: {
         notifyType: 'external',
         returnDeliveryType: 'delivery',
-        orderNo: "",
-        partnerCode: "",
-        partnerName: "",
+        orderNo: '',
+        partnerCode: '',
+        partnerName: '',
         rdsDate: '',
         rdeDate: '',
         inspectionStatus: '',
@@ -238,13 +214,12 @@ export default {
         pageNum: 1,
         pageSize: 20,
         superQuery: {},
-        orderItems: [{
-          asc: false,
-          column: ""
-        }, {
-          asc: false,
-          column: "create_time"
-        }],
+        orderItems: [
+          {
+            asc: true,
+            column: 'order_no'
+          }
+        ]
       },
       linesQuery: {},
 
@@ -253,7 +228,7 @@ export default {
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
-        },
+        }
       },
       gradeList: [],
       defaultProps: {
@@ -270,133 +245,69 @@ export default {
       superQueryJson: [
         {
           prop: 'orderNo',
-          label: "单号",
+          label: '单号',
           type: 'input'
         },
         {
           prop: 'partnerName',
-          label: "客户名称",
+          label: '供应商名称',
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: '供应商编码',
           type: 'input'
         },
         {
           prop: 'deliverDate',
           label: '发料日期',
           type: 'daterange',
-          valueFormat: "yyyy-MM-dd",
+          valueFormat: 'yyyy-MM-dd',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'recipient',
-          label: "收件人",
-          type: 'input'
-        },
-        {
-          prop: 'phone',
-          label: "收件人电话",
-          type: 'input'
-        },
-        {
-          prop: 'customerProductNo',
-          label: "客户料号",
-          type: 'input'
-        },
-        {
           prop: 'productDrawingNo',
-          label: "品名规格",
+          label: '品名规格',
           type: 'input'
         },
         {
           prop: 'productCode',
-          label: "产品编码",
+          label: '产品编码',
+          type: 'input'
+        },
+        {
+          prop: 'processName',
+          label: '工序名称',
           type: 'input'
         },
         {
           prop: 'mainUnit',
-          label: "单位",
+          label: '单位',
           type: 'input'
         },
         {
           prop: 'deliveryQuantity',
-          label: "发料数量",
+          label: '订单数量',
           type: 'input'
         },
         {
-          prop: 'sealingCoverTyping',
-          label: "打字内容",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: "精度等级",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: "振动等级",
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: "油脂",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: "油脂量",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: "游隙",
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: "包装方式",
-          type: 'select',
-          options: []
-        }, {
-          prop: 'ordersNo',
-          label: "订单号",
-          type: 'input',
-        }, {
-          prop: 'exchangeGoodsFlag',
-          label: "发料标识",
-          type: 'select',
-          options: [{ label: "换货发料", value: true }, { label: "正常发料", value: false },]
-        },
-        {
-          prop: 'deliveryStatus',
-          label: "发料状态",
-          type: 'select',
-          options: [{ label: "未完成", value: "not_finished" }, { label: "已完成", value: "finished" }, { label: "已取消", value: "canceled" }]
-        },
-
-        {
-          prop: 'documentStatus',
-          label: "单据状态",
-          type: 'select',
-          options: [{ label: "草稿", value: "draft" }, { label: "提交", value: "submit" },]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
+          prop: 'deliveryDate',
+          label: '交货日期',
           type: 'daterange',
-          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
         },
-      ],
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
+        }
+      ]
     }
   },
   created() {
@@ -416,244 +327,235 @@ export default {
   methods: {
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
-
       let obj1 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa007",
+        typeCode: 'pa007',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj1).then(res => {
-
+      getbimProductAttributesList(obj1).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'sealingCoverTyping');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj2 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa006",
+        typeCode: 'pa006',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-
-      getbimProductAttributesList(obj2).then(res => {
+      getbimProductAttributesList(obj2).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'accuracyLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj3 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa005",
+        typeCode: 'pa005',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj3).then(res => {
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj3).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'vibrationLevel');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj4 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa002",
+        typeCode: 'pa002',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj4).then(res => {
-
-
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj4).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oil');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj5 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa003",
+        typeCode: 'pa003',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj5).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj5).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'oilQuantity');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj6 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa001",
+        typeCode: 'pa001',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
+            column: 'code'
+          }
+        ]
+      }
 
-      getbimProductAttributesList(obj6).then(res => {
+      getbimProductAttributesList(obj6).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'clearance');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
       let obj7 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa015",
+        typeCode: 'pa015',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj7).then(res => {
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj7).then((res) => {
         let arr = []
-        res.data.records.forEach(item => {
+        res.data.records.forEach((item) => {
           let obj = {
             label: item.name,
-            value: item.name,
+            value: item.name
           }
           arr.push(obj)
-        });
-        let oilObj = this.superQueryJson.find(item => item.prop === 'packagingMethod');
+        })
+        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
 
         if (oilObj) {
-          // 将options赋值为5  
-          oilObj.options = arr;
+          // 将options赋值为5
+          oilObj.options = arr
         }
       })
 
-
       // 获取税率(数据字典)
-      getbimProductAttributes("585438081021126405").then(res => {
-        res.data.list.forEach(item => {
+      getbimProductAttributes('585438081021126405').then((res) => {
+        res.data.list.forEach((item) => {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log("税率", this.taxRateList);
+        console.log('税率', this.taxRateList)
       })
-
     },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
@@ -664,12 +566,14 @@ export default {
     Cancelshipmentline(id) {
       this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        Cancelshipmentlinelist(id).then(res => {
-          this.$message.success('取消成功')
-          this.initData()
+      })
+        .then(() => {
+          Cancelshipmentlinelist(id).then((res) => {
+            this.$message.success('取消成功')
+            this.initData()
+          })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     //禁用复选框
     checkSelectable(row) {
@@ -682,70 +586,81 @@ export default {
     },
     //批量取消发料
     Cancelshipment() {
-      if (!this.selectArr.length) return this.$message.error("请先选择数据")
+      if (!this.selectArr.length) return this.$message.error('请先选择数据')
       let hasItemList = []
-      this.selectArr.map(i => {
+      this.selectArr.map((i) => {
         if (i.outboundQuantity > 0) hasItemList.push(i.orderNo)
       })
       if (hasItemList.length) return this.$message.error(`已出库的订单：${hasItemList.join('、')}不能取消发料`)
       this.$confirm('您确认取消选中的发料通知单吗（已备货商品需手动处理）？', this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        let a = this.selectArr.map(item => {
-          return item.id
+      })
+        .then(() => {
+          let a = this.selectArr.map((item) => {
+            return item.id
+          })
+          this.qxbtnLoading = true
+          Cancelshipmentlist(a)
+            .then((res) => {
+              this.qxbtnLoading = false
+              this.$message.success('取消成功')
+              this.initData()
+            })
+            .catch(() => {
+              this.qxbtnLoading = false
+            })
         })
-        this.qxbtnLoading = true
-        Cancelshipmentlist(a).then(res => {
-          this.qxbtnLoading = false
-          this.$message.success('取消成功')
-          this.initData()
-        }).catch(() => {
-          this.qxbtnLoading = false
-        })
-      }).catch(() => { })
+        .catch(() => { })
     },
     //合并订单
     mergeorderNo() {
-      if (this.selectArr.length < 2) return this.$message.error("请先选择多条订单数据")
+      if (this.selectArr.length < 2) return this.$message.error('请先选择多条订单数据')
       let hasItemList = []
-      this.selectArr.map(i => {
+      this.selectArr.map((i) => {
         if (i.stockStatus == 'finished') hasItemList.push(i.orderNo)
       })
       if (hasItemList.length) return this.$message.error(`已经备货的订单：${hasItemList.join('、')}不能合并`)
-      if (this.selectArr.some(item => item.partnerCode !== this.selectArr[0].partnerCode)) return this.$message.error("所选订单客户不同")
+      if (this.selectArr.some((item) => item.partnerCode !== this.selectArr[0].partnerCode))
+        return this.$message.error('所选订单客户不同')
       this.$confirm('确定合并所选订单', this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        let a = this.selectArr.map(item => {
-          return item.id
+      })
+        .then(() => {
+          let a = this.selectArr.map((item) => {
+            return item.id
+          })
+          this.hbbtnLoading = true
+          mergelist(a)
+            .then((res) => {
+              this.hbbtnLoading = false
+              this.$message.success('合并成功')
+              this.initData()
+            })
+            .catch(() => {
+              this.hbbtnLoading = false
+            })
         })
-        this.hbbtnLoading = true
-        mergelist(a).then(res => {
-          this.hbbtnLoading = false
-          this.$message.success('合并成功')
-          this.initData()
-        }).catch(() => {
-          this.hbbtnLoading = false
-        })
-      }).catch(() => { })
+        .catch(() => { })
     },
     //拆分订单
     splitorderNo(row) {
       if (row.stockStatus == 'finished') return this.$message.error(`该订单已经备货不能拆分`)
       this.$confirm('确定拆分所选订单', this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        splitlist(row.id).then(res => {
-          this.$message.success('拆分成功')
-          this.initData()
+      })
+        .then(() => {
+          splitlist(row.id).then((res) => {
+            this.$message.success('拆分成功')
+            this.initData()
+          })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     handleClick(e) {
       this.activeName = e.name
     },
     sortChange({ prop, order }) {
-      let newProp;
+      let newProp
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
         if (prop === 'createByName') {
           newProp = 'create_by'
@@ -753,10 +668,10 @@ export default {
           newProp = prop
         }
       } else {
-        newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+        newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       }
-      this.orderForm.orderItems[0].asc = order !== "descending"
-      this.orderForm.orderItems[0].column = order === null ? "" : newProp
+      this.orderForm.orderItems[0].asc = order !== 'descending'
+      this.orderForm.orderItems[0].column = order === null ? '' : newProp
 
       this.initData()
     },
@@ -771,14 +686,15 @@ export default {
     },
     initData() {
       this.listLoading = true
-      getQuotationdatasenddatalist(this.orderForm).then(res => {
-        this.tableData = res.data.records
-        this.total = res.data.total
-        this.listLoading = false
-      }).catch(() => {
-        this.listLoading = false
-      })
-
+      getOutlineDatalist(this.orderForm)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.total = res.data.total
+          this.listLoading = false
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
     },
     search() {
       if (this.orderDateArr && this.orderDateArr.length > 0) {
@@ -789,20 +705,21 @@ export default {
         this.orderForm.rdeDate = ''
       }
       if (this.deliveryDateArr && this.deliveryDateArr.length > 0) {
-        this.orderForm.dfsTime = this.deliveryDateArr[0].replace(/ 0(?!0)/g, " ")
-        this.orderForm.dfeDate = this.deliveryDateArr[1].replace(/ 0(?!0)/g, " ")
+        this.orderForm.dfsTime = this.deliveryDateArr[0].replace(/ 0(?!0)/g, ' ')
+        this.orderForm.dfeDate = this.deliveryDateArr[1].replace(/ 0(?!0)/g, ' ')
       } else {
         this.orderForm.dfsTime = ''
         this.orderForm.dfeDate = ''
       }
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0].replace(/ 0(?!0)/g, " ")
-        this.orderForm.endTime = this.createTimeArr[1].replace(/ 0(?!0)/g, " ")
+        this.orderForm.startTime = this.createTimeArr[0].replace(/ 0(?!0)/g, ' ')
+        this.orderForm.endTime = this.createTimeArr[1].replace(/ 0(?!0)/g, ' ')
       } else {
         this.orderForm.startTime = ''
         this.orderForm.endTime = ''
       }
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+      Object.keys(this.orderForm).forEach((key) => {
+        // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
@@ -820,7 +737,7 @@ export default {
       this.search()
     },
     addSupplier(id, btntype) {
-      console.log(id, btntype);
+      console.log(id, btntype)
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.Form.init(id, btntype)
@@ -829,7 +746,7 @@ export default {
     addOrUpdateHandle(id, btntype) {
       this.formVisible = true
       if (id) {
-        console.log(id);
+        console.log(id)
         // setTimeout(() => {
         this.$nextTick(() => {
           this.$refs.Form.init(id, btntype)
@@ -840,16 +757,18 @@ export default {
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
-      }).then(() => {
-        deleteQuotationsendlist(id).then(res => {
-          this.initData()
-          this.$message({
-            type: 'success',
-            message: "删除成功",
-            duration: 1500,
+      })
+        .then(() => {
+          deleteQuotationsendlist(id).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500
+            })
           })
         })
-      }).catch(() => { })
+        .catch(() => { })
     },
     handleUserRelation(id, btnType) {
       this.formVisible = true
@@ -871,15 +790,19 @@ export default {
     exportForm(exportTableRef) {
       this.exportTableRef = exportTableRef
       this.exportFormVisible = true
-      let columnList = this.$refs[exportTableRef].columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      let columnList = this.$refs[exportTableRef].columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       this.exportFormVisible = false
       let includeFieldMap = {}
       for (let i = 0; i < data.selectKey.length; i++) {
-        includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        includeFieldMap[data.selectKey[i]] = data.selectVal[i]
       }
       const targetListQuery = this.orderForm
       let _data = {
@@ -889,7 +812,7 @@ export default {
         includeFieldMap,
         pageSize: data.dataType == 0 ? targetListQuery.pageSize : -1
       }
-      excelExport(_data).then(res => {
+      excelExport(_data).then((res) => {
         this.exportFormVisible = false
         if (!res.data.url) return
         this.jnpf.downloadFile(res.data.url, res.data.name)

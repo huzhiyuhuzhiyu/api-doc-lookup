@@ -56,7 +56,15 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
-
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="编排任务方式" prop="taskMethod">
+                          <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectTaskMethod">
+                            <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
 
                       <el-col :sm="8" :xs="24">
                         <el-form-item label="打字内容" prop="sealingCoverTyping">
@@ -159,7 +167,7 @@
                           </div>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="personId" label="人员" min-width="150">
+                      <el-table-column prop="personId" v-if="dataForm.taskMethod != 'not_appoint'" label="人员" min-width="150">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.personId" placeholder="" clearable
@@ -174,7 +182,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="workGroupId" label="班组" min-width="150">
+                      <el-table-column prop="workGroupId" v-if="dataForm.taskMethod != 'not_appoint'" label="班组" min-width="150">
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.workGroupId" placeholder="" class="applySelect" disabled
                             style="width: 70%; display: none">
@@ -188,7 +196,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="equipmentId" label="设备" min-width="150">
+                      <el-table-column prop="equipmentId" v-if="dataForm.taskMethod != 'not_appoint'" label="设备" min-width="150">
 
                         <template slot-scope="scope">
                           <el-select v-model="scope.row.equipmentId" placeholder="请选择设备" clearable
@@ -680,6 +688,7 @@ export default {
       activeNames: ["productInfo", "basicInfo"],
       routingVisible: false,
       dataForm: {
+        taskMethod: "appoint",
         planDate: [],
         orderNo: "",
         productsDrawingNo: "",
@@ -774,6 +783,7 @@ export default {
       isSame: false,
       previousroutingId: "",
       detailDiaFlag: false,
+      naturalResourcesFlag: true,
     }
   },
   computed: {
@@ -806,6 +816,13 @@ export default {
 
   },
   methods: {
+    selectTaskMethod() {
+      if (this.dataForm.taskMethod == 'not_appoint') {
+        this.naturalResourcesFlag = false
+      } else {
+        this.naturalResourcesFlag = true
+      }
+    },
     handeleProductInfoData(val) {
       this.selectRows = val
     },
@@ -966,6 +983,7 @@ export default {
     selectProductFun(data) {
       console.log("所选返工产品", data);
       this.dataForm = data
+      this.$set(this.dataForm,'taskMethod','appoint')
       this.$set(this.dataForm, 'planDate', [])
       this.$set(this.dataForm, 'orderNo', this.codeConfig.number)
     },

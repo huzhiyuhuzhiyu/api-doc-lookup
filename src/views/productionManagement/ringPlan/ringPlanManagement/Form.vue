@@ -19,12 +19,12 @@
 
                   <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
                     <el-row :gutter="30" class="custom-row">
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产计划单号" prop="productionPlanNo">
                           <el-input v-model="dataForm.productionPlanNo" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="生产任务单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo"
                             :disabled="codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag ? true : false" />
@@ -32,31 +32,31 @@
                       </el-col>
 
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="品名规格" prop="productsDrawingNo">
                           <el-input v-model="dataForm.productsDrawingNo" placeholder="品名规格" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="产品编码" prop="productsCode">
                           <el-input v-model="dataForm.productsCode" placeholder="产品编码" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="单位" prop="mainUnit">
                           <el-input v-model="dataForm.mainUnit" placeholder="单位" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产数量" prop="planProductionQuantity">
                           <el-input v-model="dataForm.planProductionQuantity" placeholder="计划生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="可编排数量" prop="availableArrangeQuantity">
                           <el-input v-model="dataForm.availableArrangeQuantity" placeholder="可编排数量" disabled>
                           </el-input>
@@ -64,13 +64,22 @@
                       </el-col>
 
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="编排数量" prop="productionQuantity">
                           <el-input v-model="dataForm.productionQuantity" placeholder="编排数量">
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="编排任务方式" prop="taskMethod">
+                          <el-select v-model="dataForm.taskMethod" placeholder="请选择业务类型" style="width: 100%;"
+                            @change="selectTaskMethod">
+                            <el-option v-for="(item, index) in taskMethodList" :key="index" :label="item.label"
+                              :value="item.value"></el-option>
+                          </el-select>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="计划生产开始—结束日期" prop="planDate">
                           <el-date-picker v-model="dataForm.planDate" type="daterange" value-format="yyyy-MM-dd"
                             style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
@@ -78,7 +87,7 @@
                         </el-form-item>
                       </el-col>
 
-                      <el-col :sm="8" :xs="24">
+                      <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" readonly
                             @focus="openRoutingFun"></el-input>
@@ -474,6 +483,7 @@ export default {
   },
   data() {
     return {
+      taskMethodList: [{ label: "指定加工对象", value: "appoint" }, { label: "不指定加工对象", value: "not_appoint" },],
       activeNames: ["productInfo", "basicInfo"],
       allocationFlag: false,
       routingVisible: false,
@@ -497,6 +507,7 @@ export default {
         ],
       },
       dataForm: {
+        taskMethod: "",
         planDate: [],
         orderNo: "",
         productsDrawingNo: "",
@@ -570,7 +581,8 @@ export default {
       headerCellStyle: {
         backgroundColor: '#f5f7fa',
         fontWeight: 'bold'
-      }
+      },
+      naturalResourcesFlag:true,
     }
   },
   computed: {
@@ -603,6 +615,13 @@ export default {
 
   },
   methods: {
+    selectTaskMethod() {
+      if (this.dataForm.taskMethod == 'not_appoint') {
+        this.naturalResourcesFlag = false
+      } else {
+        this.naturalResourcesFlag = true
+      }
+    },
     // 获取领料设置 领料是否自动生成领料单
     getPickingConfig() {
 
@@ -925,31 +944,32 @@ export default {
         console.log("工艺详情", res);
         this.dataFormTwo.data = res.data.routingLineList;
         res.data.routingLineList.forEach((item) => {
-         
-         if (item.routingProResMap) {
-           if (item.routingProResMap.personnel) {
-             this.$set(item,'personId',item.routingProResMap.personnel[0].resourceId)
-             this.$set(item,'personName',item.routingProResMap.personnel[0].resourceName)
-           }
-           if (item.routingProResMap.work_group) {
-             this.$set(item,'workGroupId',item.routingProResMap.work_group[0].resourceId)
-             this.$set(item,'workGroupName',item.routingProResMap.work_group[0].resourceName) 
-           }
-           if (item.routingProResMap.device) {
 
-             this.$set(item,'equipmentId',item.routingProResMap.device[0].resourceId)
-             this.$set(item,'equipmentName',item.routingProResMap.device[0].resourceName) 
+          if (item.routingProResMap) {
+            if (item.routingProResMap.personnel) {
+              this.$set(item, 'personId', item.routingProResMap.personnel[0].resourceId)
+              this.$set(item, 'personName', item.routingProResMap.personnel[0].resourceName)
+            }
+            if (item.routingProResMap.work_group) {
+              this.$set(item, 'workGroupId', item.routingProResMap.work_group[0].resourceId)
+              this.$set(item, 'workGroupName', item.routingProResMap.work_group[0].resourceName)
+            }
+            if (item.routingProResMap.device) {
 
-           }
-         } else {
-         }
-       });
+              this.$set(item, 'equipmentId', item.routingProResMap.device[0].resourceId)
+              this.$set(item, 'equipmentName', item.routingProResMap.device[0].resourceName)
+
+            }
+          } else {
+          }
+        });
       })
     },
     init(data) {
       console.log("传递数据", data);
       this.$set(data[0], 'productionQuantity', '')
       this.dataForm = data[0]
+      this.$set(this.dataForm, 'taskMethod', 'appoint')
       // let num=JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
       // this.$set(this.dataForm,'productionQuantity',num)
       this.dataForm.productionQuantity = JSON.parse(JSON.stringify(this.dataForm.availableArrangeQuantity))
@@ -986,22 +1006,31 @@ export default {
     checkFun() {
       if (Number(this.dataForm.productionQuantity) > Number(this.dataForm.availableArrangeQuantity)) return this.$message.error("编排数量不可大于可编排数量")
       let submitFlag = null;
-      for (let index = 0; index < this.dataFormTwo.data.length; index++) {
-        const item = this.dataFormTwo.data[index];
-        if (
-          !item.workGroupId &&
-          !item.personId &&
-          !this.dataFormTwo.prodOrderList[0].blankingProductsId &&
-          item.processingType == "self_produced"
-        ) {
-          submitFlag = false;
-          this.btnLoading = false;
-          this.$message({
-            message: "第" + (index + 1) + "行班组、人员需要必填一项",
-            type: "error",
-          });
-          break;
+      if (this.naturalResourcesFlag) {
+
+        for (let index = 0; index < this.dataFormTwo.data.length; index++) {
+          const item = this.dataFormTwo.data[index];
+          if (
+            !item.workGroupId &&
+            !item.personId &&
+            !item.equipmentId &&
+            item.processingType == "self_produced"
+          ) {
+            submitFlag = false;
+            this.btnLoading = false;
+            this.$message({
+              message: "第" + (index + 1) + "行班组、人员需要必填一项",
+              type: "error",
+            });
+            break;
+          }
         }
+      } else {
+        this.dataFormTwo.data.forEach(item => {
+          item.personId = ""
+          item.equipmentId = ""
+          item.workGroupId = ""
+        });
       }
       if (this.allocationFlag) {
         this.dataForm.materialFlag = true

@@ -86,8 +86,8 @@
               <el-input v-model="form.qualifiedQuantity" placeholder="合格数量" />
             </el-form-item>
           </el-col>
-    
-          
+
+
           <el-col :sm="8" :xs="24">
             <el-form-item label="不合格数量">
               <el-input v-model="form.unqualifiedQuantity" placeholder="不合格数量" disabled />
@@ -116,12 +116,19 @@
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
-            <el-form-item label="生产人" prop="producerName">
+            <el-form-item label="生产人" prop="producerName" v-if="form.taskMethod == 'appoint'">
               <el-select v-model="form.producerName" placeholder="生产人" style="width: 100%;">
                 <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
                   :value="item.id"></el-option>
               </el-select>
+
               <!-- producerId -->
+            </el-form-item>
+            <el-form-item label="生产人" prop="producerId" v-if="form.taskMethod == 'not_appoint'">
+              <user-select v-model="form.producerId" placeholder="生产人" clearable style="width: 100%;"
+                @change="hangleSelectSales">
+              </user-select>
+
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -165,6 +172,9 @@ export default {
           { required: true, message: '报工时间不能为空', trigger: 'change' }
         ],
         producerName: [
+          { required: true, message: '生产人不能为空', trigger: 'change' }
+        ],
+        producerId: [
           { required: true, message: '生产人不能为空', trigger: 'change' }
         ],
         qualifiedQuantity: [
@@ -220,7 +230,13 @@ export default {
     }
   },
   methods: {
- 
+    //生产人
+    hangleSelectSales(e, r) {
+      this.$nextTick(() => {
+        this.$refs.form.validateField('producerId')
+      })
+      this.form.producerId = e
+    },
     init(workData) {
       console.log("workData", workData);
       this.customerVisible = true
@@ -264,7 +280,7 @@ export default {
           });
           this.personList = result
           console.log(result);
-         if (result.length > 0) {
+          if (result.length > 0) {
             this.$set(this.form, 'producerId', result[0].id)
             this.$set(this.form, 'producerName', result[0].label)
 

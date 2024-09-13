@@ -37,22 +37,7 @@
                             </el-select>
                           </el-form-item>
                         </el-col>
-                        <el-col :sm="6" :xs="24"
-                          v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
-                          <el-form-item label="客户" prop="cooperativePartnerId">
-                            <el-input v-model="dataForm.partnerName" placeholder="请选择所属客户" readonly @focus="openDialog"
-                              :disabled="btnType == 'look' ? true : false">
-                            </el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :sm="6" :xs="24"
-                          v-if="dataForm.businessType == 'inbound_purchase' || dataForm.businessType == 'outbound_purchase' || dataForm.businessType == 'outbound_external' || dataForm.businessType == 'inbound_external'">
-                          <el-form-item label="供应商" prop="cooperativePartnerId">
-                            <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                              :disabled="btnType == 'look' ? true : false">
-                            </el-input>
-                          </el-form-item>
-                        </el-col>
+                      
                         <el-col :sm="6" :xs="24">
                           <el-form-item label="仓库" prop="warehouseName">
                             <ComSelect-list :requestObj="{ type: 'normal', state: 'enable' }" :dialogTitle="'选择仓库'"
@@ -71,7 +56,7 @@
                       </el-row>
                     </el-form>
                   </el-collapse-item>
-                  <el-collapse-item title="产品信息" name="productInfo">
+                  <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
                     <div>
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
@@ -428,8 +413,7 @@
           {{ submitmethodsTitle }}啦！</span><span class="import_b">您还可以进行如下操作：</span></div>
 
 
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="goBack">返回列表</el-button>
+      <span slot="footer" class="dialog-footer"> 
         <el-button type="primary" @click="continueAdd()"> 继续新增</el-button>
       </span>
     </el-dialog>
@@ -1131,7 +1115,7 @@ export default {
         warehouseName: "",
         warehouseId: "",
         documentType: "",
-        businessType: "io_other",
+        businessType: "",
         sourceType: "io_other",
         id: "",
         warehouseType: "",

@@ -66,6 +66,7 @@
                           </el-input>
                         </el-form-item>
                       </el-col>
+                      
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工艺路线名称" prop="routingName">
                           <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
@@ -203,10 +204,10 @@
                     <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                    <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                    <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
-                    <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
-                    <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
+                    <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
+                 
 
                     <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                       <template slot-scope="scope">
@@ -286,10 +287,10 @@
                 <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
                 <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
                 <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-                <el-table-column prop="workGroupName" label="班组" min-width="120"> </el-table-column>
-                <el-table-column prop="personName" label="人员" min-width="120"> </el-table-column>
-                <el-table-column prop="productionLineName" label="产线" min-width="100"></el-table-column>
-                <el-table-column prop="workstationName" label="工位" min-width="100"></el-table-column>
+                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="workGroupName" label="班组" min-width="120"> </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="personName" label="人员" min-width="120"> </el-table-column>
+                <el-table-column v-if="dataForm.taskMethod!='not_appoint'" prop="device" label="设备" min-width="120"> </el-table-column>
+             
 
                 <el-table-column prop="pickingFlag" label="是否领料" min-width="100">
                   <template slot-scope="scope">

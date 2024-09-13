@@ -26,7 +26,7 @@
         <el-empty description="暂无数据" :image-size="120"></el-empty>
       </template>
     </el-table>
-    <ColumnSettings v-if="drawerVisible" ref="columnSettings" :defaultColumns="defaultColumns" :columnList="columnList"
+    <ColumnSettings v-if="drawerVisible" ref="columnSettings" :defaultColumns="defaultColumns" :columnList="columnList" :setColumnDisplayList="setColumnDisplayList"
       @setColumn="setColumn" />
   </div>
 </template>
@@ -181,6 +181,8 @@ export default {
       this.$nextTick(() => {
         this.columns = this.$slots.default // 代码传入的列
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
+        console.log("object,",defaultColumns);
+        console.log("object1,",this.setColumnDisplayList);
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
@@ -193,7 +195,7 @@ export default {
               item.columnVisible = true;
             }
           });
-          this.columnList = list
+        this.columnList = list
           // this.columnList = list.map(item => {
           //   return {
           //     ...item,

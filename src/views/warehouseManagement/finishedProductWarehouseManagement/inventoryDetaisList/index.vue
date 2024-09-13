@@ -42,7 +42,7 @@
           </div>
 
           <div class="JNPF-common-head-right">
-            <el-tooltip content="高级查询" placement="top" >
+            <el-tooltip content="高级查询" placement="top">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
             </el-tooltip>
@@ -54,11 +54,11 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table hasC @selection-change="handeleInfoData" ref="dataTable" v-loading="listLoading" :data="tableData"
-          border :setColumnDisplayList="columnList" :fixedNO="true" @sort-change="sortChange" custom-column>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" border :setColumnDisplayList="columnList"
+          :fixedNO="true" @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="单号" sortable="custom" min-width="180">
             <template slot-scope="scope">
-              <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look')">{{
+              <el-link type="primary" @click.native="viewFun(scope.row.moveId, 'look', scope.row)">{{
                 scope.row.orderNo
               }}</el-link>
             </template>
@@ -81,6 +81,8 @@
               <div v-if="scope.row.sourceType == 'inbound_transfer'">调拨入库</div>
               <div v-if="scope.row.sourceType == 'inbound_receive_material'">直接领料入库</div>
               <div v-if="scope.row.sourceType == 'outbound_receive_material'">直接领料出库</div>
+              <div v-if="scope.row.sourceType == 'inbound_production'">生产入库</div>
+              <div v-if="scope.row.sourceType == 'inbound_order_production'">生产入库</div>
             </template>
           </el-table-column>
           <el-table-column prop="partnerName" label="客户/供应商" sortable="custom" min-width="160">
@@ -96,24 +98,24 @@
 
           <el-table-column prop="costPrice" label="单价(含税)" sortable="custom" min-width="160" />
           <el-table-column prop="totalAmount" label="总金额(含税)" sortable="custom" min-width="180" />
- 
+
           <el-table-column prop="taxRate" label="税率(%)" sortable="custom" min-width="140" />
           <el-table-column prop="excludingTaxCostPrice" label="单价(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="taxAmount" label="税额" sortable="custom" min-width="120" />
           <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" sortable="custom" min-width="180" />
           <el-table-column prop="standardValue" label="规值" sortable="custom" min-width="120" />
           <el-table-column prop="colour" label="颜色" sortable="custom" min-width="120" />
-          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"  ></el-table-column>
-          <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"  ></el-table-column>
-          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" ></el-table-column>
-          <el-table-column prop="oil" label="油脂" min-width="120"  ></el-table-column>
-          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"  > </el-table-column>
-          <el-table-column prop="clearance" label="游隙" min-width="120"  ></el-table-column>
-          <el-table-column prop="aperture" label="孔径" min-width="120" ></el-table-column>
-          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"  ></el-table-column>
-          <el-table-column prop="specialRequire" label="特殊要求" min-width="120"  ></el-table-column>
-          <el-table-column prop="processName" label="工序" min-width="120"  ></el-table-column>
-          <el-table-column prop="documentStatus" label="单据状态" min-width="120"  >
+          <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120"></el-table-column>
+          <el-table-column prop="accuracyLevel" label="精度等级" min-width="120"></el-table-column>
+          <el-table-column prop="vibrationLevel" label="振动等级" min-width="120"></el-table-column>
+          <el-table-column prop="oil" label="油脂" min-width="120"></el-table-column>
+          <el-table-column prop="oilQuantity" label="油脂量" min-width="120"> </el-table-column>
+          <el-table-column prop="clearance" label="游隙" min-width="120"></el-table-column>
+          <el-table-column prop="aperture" label="孔径" min-width="120"></el-table-column>
+          <el-table-column prop="packagingMethod" label="包装方式" min-width="120"></el-table-column>
+          <el-table-column prop="specialRequire" label="特殊要求" min-width="120"></el-table-column>
+          <el-table-column prop="processName" label="工序" min-width="120"></el-table-column>
+          <el-table-column prop="documentStatus" label="单据状态" min-width="120">
             <template slot-scope="scope">
               <el-tag type="warning" v-if="scope.row.documentStatus == 'draft'">草稿</el-tag>
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
@@ -127,8 +129,8 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 :delDisabled="scope.row.documentStatus == 'submit'" :editDisabled="scope.row.documentStatus == 'submit'"
-                @edit="editFun(scope.row.moveId, 'edit')" @del="handleDel(scope.row.moveId)">
-                <el-button  size="mini" type="text" @click="viewFun(scope.row.moveId, 'look')">查看详情</el-button>
+                @edit="viewFun(scope.row.moveId, 'edit', scope.row)" @del="handleDel(scope.row.moveId)">
+                <el-button size="mini" type="text" @click="viewFun(scope.row.moveId, 'look', scope.row)">查看详情</el-button>
                 <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
@@ -160,6 +162,10 @@
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <ProductInboundForm v-if="productInboundFormVisible" ref="productInboundREFForm" @close="closeForm">
+    </ProductInboundForm>
+    <WorkInboundForm v-if="workInboundFormVisible" ref="workInboundREFForm" @close="closeForm">
+    </WorkInboundForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -171,18 +177,22 @@ import { getInventoryDetailList, getInventorySummaryData } from '@/api/warehouse
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import Form from '../inventoryList/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
+import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
+import WorkInboundForm from '../dbIncomAndOutInventory/workInboundForm.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'inventoryDetaisList',
-  components: { Form, SuperQuery, ExportForm },
-  props:{
-    classAttribute:"",
+  components: { Form, SuperQuery, ExportForm,ProductInboundForm,WorkInboundForm},
+  props: {
+    classAttribute: "",
   },
   data() {
     return {
-      columnList: ["partnerCode", 'productCode', "productName",  "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
+      workInboundFormVisible:false,
+      productInboundFormVisible:false,
+      columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
       taxAmount: 0,
@@ -201,12 +211,15 @@ export default {
         { label: "采购退货", value: "outbound_purchase" },
         { label: "生产领料", value: "outbound_pick_out" },
         { label: "生产退料", value: "inbound_return_materials" },
+        { label: "生产入库", value: "inbound_mock_production" },
         { label: "外协发料", value: "outbound_external_send" },
         // { label: "外协退料", value: "inbound_external_return" },
         { label: "外协收货", value: "inbound_external" },
         // { label: "外协退货", value: "outbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
+        { label: "直接领料入库", value: "inbound_receive_material" },
+        { label: "直接领料出库", value: "outbound_receive_material" },
       ],
 
       initListQuery: {
@@ -806,24 +819,28 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
-    viewFun(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, type)
-      })
+    viewFun(id, type, row) {
+      if (row.sourceType == 'inbound_order_production') {
+        console.log(444);
+        this.productInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.productInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_production') {
+        this.workInboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
+        })
+      } else {
+        console.log(555);
+        this.formVisible = true
+        this.$nextTick(() => {
+          this.$refs.Form.init(id, type)
+        })
+      }
     },
-    editFun(id, type) {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init(id, type)
-      })
-    },
-    addSupplier() {
-      this.formVisible = true
-      this.$nextTick(() => {
-        this.$refs.Form.init("", 'add')
-      })
-    },
+ 
+ 
 
     getInventorySummaryDataFun() {
       this.listLoading = true
@@ -833,7 +850,7 @@ export default {
       })
       this.totalList = []
       this.listQuery.pageNum = 1
-      this.listQuery.classAttribute=this.classAttribute
+      this.listQuery.classAttribute = this.classAttribute
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records
@@ -916,6 +933,8 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.recordFormVisible = false
+      this.productInboundFormVisible = false
+      this.workInboundFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()
@@ -937,7 +956,7 @@ export default {
       })
     },
 
-     
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -952,15 +971,15 @@ export default {
         })
       }).catch(() => { })
     },
-    
+
   }
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
- .JNPF-common-search-box { 
-  padding: 8px 0 0 0!important;
-  margin-left: 0!important;
+.JNPF-common-search-box {
+  padding: 8px 0 0 0 !important;
+  margin-left: 0 !important;
 
   margin-bottom: 5px;
 }

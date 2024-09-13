@@ -10,7 +10,7 @@
           style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 0px 0">
           <el-radio-group v-model="listQuery.flowCategory" style="background-color:#fff;">
             <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
-            <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+            <el-radio-button style="margin:2px 0;border-left: 1px solid #DCDFE6" v-for="item in categoryList" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
           </el-radio-group>
         </div>
         <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16" style="margin-top:5px">
@@ -74,8 +74,11 @@
           </div>
           <JNPF-table v-loading="listLoading" :data="list" custom-column ref="dataTable">
             <el-table-column prop="fullName" label="流程标题" show-overflow-tooltip min-width="150" />
-            <el-table-column prop="flowName" label="所属流程" width="130" />
-            <el-table-column prop="startTime" label="发起时间" width="150" :formatter="jnpf.tableDateFormat" />
+            <el-table-column prop="startTime" label="发起/结束时间" min-width="180">
+              <template slot-scope="scope">
+                {{scope.row.startTime | toDate()}} {{ (scope.row.startTime && scope.row.endTime) ?  '/' : '' }} {{ scope.row.endTime | toDate() }}
+              </template>
+            </el-table-column>
             <el-table-column prop="flowUrgent" label="紧急程度" width="100" align="center">
               <template slot-scope="scope">
                 {{ scope.row.flowUrgent | urgentText() }}

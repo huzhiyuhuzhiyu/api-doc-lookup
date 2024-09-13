@@ -5,7 +5,7 @@
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
         <el-radio-group v-model="listQuery.category" style="background-color:#fff;">
           <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
-          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+          <el-radio-button style="margin:2px 0;" v-for="item in categoryList"
             :key="item.enCode" :label="item.id">{{ item.fullName }}
           </el-radio-button>
         </el-radio-group>

@@ -1,46 +1,11 @@
 <template>
   <div class="JNPF-common-layout">
-    <!-- <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
-      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
-        <div class="title_box">
-          <h2 >业务分类</h2>
-          <span class="options" >
-            <el-dropdown>
-              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </span>
-        </div>
-        <div > <el-input placeholder="输入关键字进行过滤" v-model="filterText"
-            style="width:200px;margin:10px auto;display:block" suffix-icon="el-icon-search" clearable>
-          </el-input></div>
-      </div>
-
-      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="treeData" :props="defaultProps" :default-expand-all="expands" highlight-current
-          :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree"
-          v-if="refreshTree" :filter-node-method="filterNode">
-          <span class="custom-tree-node" slot-scope="{ data }" :title="data.fullName">
-
-            <span class="text" :title="data.fullName">{{ data.fullName }}</span>
-          </span>
-        </el-tree>
-      </el-scrollbar>
-      <div v-if="!leftFlag" class="retract" style="position: absolute" >
-        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>  
-      </div>
-      <div v-if="leftFlag" class="expand" style="position: absolute" >
-        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
-      </div>
-    </div> -->
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:5px 0 5px 0">
         <el-radio-group v-model="listQuery.category" style="background-color:#fff;">
           <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
-          <el-radio-button style="margin:2px 0;border-left:1px solid #DCDFE6" v-for="item in categoryList"
+          <el-radio-button style="margin:2px 0;" v-for="item in categoryList"
             :key="item.enCode" :label="item.id">{{ item.fullName }}
           </el-radio-button>
         </el-radio-group>

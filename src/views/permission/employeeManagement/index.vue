@@ -1,0 +1,714 @@
+<template>
+  <div class="JNPF-common-layout">
+    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+      <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
+        <div class="title_box">
+          <h2>部门</h2>
+          <span class="options">
+            <el-dropdown>
+              <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="getOrganizeList()">刷新数据</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
+                <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+                <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
+                <el-dropdown-item @click.native="showDiagram">架构图</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </span>
+        </div>
+        <div>
+          <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
+        </div>
+      </div>
+
+      <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
+        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree">
+          <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
+            <i :class="data.icon" />
+            <span class="text" :title="data.fullName">{{ node.label }}</span>
+          </span>
+        </el-tree>
+      </el-scrollbar>
+      <div v-if="!leftFlag" class="retract" style="position: absolute">
+        <el-button icon="el-icon-arrow-left" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+      <div v-if="leftFlag" class="expand" style="position: absolute">
+        <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>
+      </div>
+    </div>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <el-col :span="4">
+            <el-form-item>
+              <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable @keyup.enter.native="search()" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item>
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">{{ $t('common.search')
+                }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
+            </el-form-item>
+          </el-col>
+        </el-form>
+      </el-row>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head" style="padding:6px 10px">
+          <topOpts @add="addOrUpdateHandle()">
+            <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
+          </topOpts>
+          <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+            </el-tooltip>
+          </div>
+        </div>
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+          <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" /> <!-- 这里的 width 会被转成 min-width -->
+          <el-table-column prop="name" label="姓名" width="120" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
+                scope.row.realName
+              }}</el-link>
+            </template>
+          </el-table-column>
+          <!-- 这里的 width 会被转成 min-width -->
+          <el-table-column prop="sex" label="性别" width="90" align="center" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ scope.row.sex == 1 ? '男' : (scope.row.sex == 2 ? '女' : '保密') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom" />
+          <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
+          <el-table-column prop="nativePlace" label="籍贯" min-width="140" sortable="custom" />
+          <el-table-column prop="nation" label="民族" min-width="160" sortable="custom" />
+          <el-table-column prop="politicalOutlook" label="政治面貌" min-width="120" sortable="custom" />
+          <el-table-column prop="education" label="学历" min-width="140" sortable="custom" />
+          <el-table-column prop="health" label="健康状况" min-width="130" sortable="custom" />
+          <el-table-column prop="maritalStatus" label="婚姻状况" width="110" sortable="custom" />
+          <el-table-column prop="criminalRecords" label="有无刑事记录" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ scope.row.criminalRecords == 1 ? '有' : '无' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="infectiousDisease" label="有无传染病或职业病史" min-width="210" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ scope.row.infectiousDisease == 1 ? '有' : '无' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="driverLicenseType" label="驾照类型" min-width="130" sortable="custom" />
+          <el-table-column prop="driverLicenseGrade" label="驾照职称" min-width="160" sortable="custom" />
+          <el-table-column prop="languageProficiency" label="语言能力" min-width="160" sortable="custom" />
+          <el-table-column prop="idCardNo" label="身份证号" min-width="200" sortable="custom" />
+          <el-table-column prop="email" label="电子邮箱" width="180" sortable="custom" />
+          <el-table-column prop="residentialAddress" label="居住地址" min-width="200" sortable="custom" />
+          <el-table-column prop="homeLandlineTelephone" label="家庭固定电话" min-width="160" sortable="custom" />
+          <el-table-column prop="emergencyContact" label="紧急联系人" width="130" sortable="custom" />
+          <el-table-column prop="emergencyPhoneNumber" label="紧急联系人电话" width="160" sortable="custom" />
+          <el-table-column prop="creatorTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+          <!-- <el-table-column prop="organizeName" label="所属组织" min-width="280" />
+          <el-table-column prop="employeeType" label="员工类型" width="120" sortable="custom" />
+          <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
+            <template slot-scope="{row}">
+              <el-tag type="success" disable-transitions v-if="row.employeeStatus == 'on_job'">在职</el-tag>
+              <el-tag type="danger" disable-transitions v-else-if="row.employeeStatus == 'off_job'">离职</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="entryDate" label="入职日期" :formatter="jnpf.tableDateFormatDay" width="140"
+            sortable="custom" />
+          <el-table-column prop="resignationDate" label="离职日期" :formatter="jnpf.tableDateFormatDay" width="140"
+            sortable="custom" />
+          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180"
+            sortable="custom" />
+          <el-table-column prop="sortCode" label="排序" width="80" align="center" sortable="custom" />
+          <el-table-column prop="enabledMark" label="状态" width="80" align="center" sortable="custom">
+            <template slot-scope="scope">
+              <el-tag type="success" disable-transitions v-if="scope.row.enabledMark == 1">启用</el-tag>
+              <el-tag type="warning" disable-transitions v-else-if="scope.row.enabledMark == 2">锁定</el-tag>
+              <el-tag type="danger" disable-transitions v-else>禁用</el-tag>
+            </template>
+          </el-table-column> -->
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope" v-if="!scope.row.isAdministrator">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
+                <el-dropdown hide-on-click>
+                  <span class="el-dropdown-link">
+                    <el-button size="mini" type="text">
+                      {{ $t('common.moreBtn') }}
+                      <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <template v-if="scope.row.employeeStatus != 'off_job' || !scope.row.employeeStatus">
+                      <el-dropdown-item @click.native="jobTransfer(scope.row, scope)">岗位调动</el-dropdown-item>
+                      <el-dropdown-item @click.native="jobQuit(scope.row.id)">办理离职</el-dropdown-item>
+                    </template>
+                    <!-- <el-dropdown-item v-else @click.native="jobEntry(scope.row.id)">重新入职</el-dropdown-item> -->
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看详情</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </tableOpts>
+            </template>
+          </el-table-column>
+        </JNPF-table>
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
+      </div>
+    </div>
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
+    <Form v-if="formVisible" ref="Form" @close="removeForm" />
+    <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" />
+    <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" />
+    <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
+    <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
+    <!-- <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" /> -->
+  </div>
+</template>
+<script>
+import { getAdvancedQueryList } from "@/api/system/advancedQuery";
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { getDepartmentSelectorByAuth } from '@/api/permission/department'
+import {
+  delbaseEmployee,
+  getbaseEmployee
+} from '@/api/permission/user'
+import Form from './Form' // 新建
+import Diagram from './Diagram' // 树状列表-组织机构
+import ImportForm from './ImportForm' // 导入数据
+import ExportForm from './ExportForm' // 导出数据
+import JobTransfer from './JobTransfer' // 岗位调动
+import JobQuit from './JobQuit' // 办理离职
+// import JobEntry from './JobEntry' // 重新入职
+
+export default {
+  name: 'permission-user',
+  components: {
+    Form,
+    Diagram,
+    ExportForm,
+    ImportForm,
+    JobTransfer,
+    JobQuit,
+    SuperQuery
+  },
+  data() {
+    return {
+      superQueryJson: [
+        {
+          prop: 'jobNumber',
+          label: "工号",
+          type: 'input'
+        },
+        {
+          prop: 'name',
+          label: "姓名",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'sex',
+          label: '性别',
+          type: 'select',
+          options: [
+            { label: '男', value: '1' },
+            { label: '女', value: '2' },
+            { label: '保密', value: '3' }
+          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+        },
+        {
+          prop: 'departmentName',
+          label: "所属部门",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'birthday',
+          label: '出生日期',
+          type: 'daterange',
+          valueFormat: "yyyy-MM-dd",
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: {}
+        },
+        {
+          prop: 'nativePlace',
+          label: "籍贯",
+          type: 'input'
+        },
+        {
+          prop: 'nation',
+          label: "民族",
+          type: 'input'
+        },
+        {
+          prop: 'politicalOutlook',
+          label: "政治面貌",
+          type: 'input'
+        },
+        {
+          prop: 'education',
+          label: "学历",
+          type: 'input'
+        },
+        {
+          prop: 'health',
+          label: "健康状况",
+          type: 'input'
+        },
+        { // 下拉选
+          prop: 'maritalStatus',
+          label: '婚姻状况',
+          type: 'select',
+          options: [
+            { label: '已婚', value: '已婚' },
+            { label: '未婚', value: '未婚' }
+          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+        },
+        { // 下拉选
+          prop: 'criminalRecords',
+          label: '有无刑事记录',
+          type: 'select',
+          options: [
+            { label: '有', value: 1 },
+            { label: '无', value: 0 }
+          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+        },
+        { // 下拉选
+          prop: 'infectiousDisease',
+          label: '有无传染病或职业病史',
+          type: 'select',
+          options: [
+            { label: '有', value: 1 },
+            { label: '无', value: 0 }
+          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+        },
+        {
+          prop: 'driverLicenseType',
+          label: "驾照类型",
+          type: 'input'
+        },
+        {
+          prop: 'driverLicenseGrade',
+          label: "驾照职称",
+          type: 'input'
+        },
+        {
+          prop: 'languageProficiency',
+          label: "语言能力",
+          type: 'input'
+        },
+        {
+          prop: 'idCardNo',
+          label: "身份证号",
+          type: 'input'
+        },
+        {
+          prop: 'email',
+          label: "电子邮箱",
+          type: 'input'
+        },
+        {
+          prop: 'residentialAddress',
+          label: "居住地址",
+          type: 'input'
+        },
+        {
+          prop: 'homeLandlineTelephone',
+          label: "家庭固定电话",
+          type: 'input'
+        },
+        {
+          prop: 'emergencyContact',
+          label: "紧急联系人",
+          type: 'input'
+        },
+        {
+          prop: 'emergencyPhoneNumber',
+          label: "紧急联系人电话",
+          type: 'input'
+        },
+        { // 日期时间选择器（区间）
+          prop: 'creatorTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: "yyyy-MM-dd HH:mm:ss",
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+          pickerOptions: {}
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        }
+      ],
+      superQueryVisible: false,
+      columnList: ["createByName", "emergencyPhoneNumber", "emergencyContact", "homeLandlineTelephone", "residentialAddress", "email", "idCardNo", "languageProficiency", "driverLicenseGrade", "driverLicenseType", "infectiousDisease", "criminalRecords", "nativePlace", "nation", "politicalOutlook"],
+      filterText: "",
+      tableData: [],
+      treeLoading: false,
+      listLoading: true,
+      listQuery: {
+        account: "",
+        employeeStatus: "",
+        employeeType: "",
+        orderItems: [
+          {
+            asc: true,
+            column: ""
+          },
+          {
+            asc: false,
+            column: "create_time"
+          }
+        ],
+        organizeId: "",
+        pageNum: 1,
+        pageSize: 20,
+        realName: "",
+        superQuery: {}
+      },
+      employeeTypeList: [{ label: "劳务派遣", value: "labor_dispatch" }, { label: "正式员工", value: "formal" }, { label: "兼职", value: "sideline" }, { label: "实习", value: "pratice" }, { label: "试用", value: "trial" }, { label: "学徒", value: "apprentice" }],
+      employeeStatusList: [{ label: "在职", value: "on_job" }, { label: "离职", value: "off_job" }],
+      total: 0,
+      type: '',
+      formVisible: false,
+      diagramVisible: false,
+      resetFormVisible: false,
+      authorizeFormVisible: false,
+      importFormVisible: false,
+      exportFormVisible: false,
+      jobTransferFormVisible: false,
+      jobQuitFormVisible: false,
+      jobEntryFormVisible: false,
+      treeData: [], //树形结构所有的数据
+      filterText: '',
+      refreshTree: true,
+      defaultProps: {
+        children: 'children',
+        label: 'fullName'
+      },
+      expands: true,
+      filteredTree: [],
+      selectArr: [],
+      leftFlag: false,
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.filterTree();
+    },
+    // 监听树形数据变化
+    treeData: {
+      handler: function (val) {
+        this.filterTree();
+      },
+      deep: true,
+    }
+  },
+  created() {
+    this.getOrganizeList()
+    if (localStorage.getItem("userFlag")) {
+      let userFlag = JSON.parse(localStorage.getItem('userFlag'))
+      this.expands = userFlag
+      console.log("userFlag", userFlag);
+      this.toggleExpand(userFlag)
+
+    }
+  },
+  mounted() {
+    this.getAdvancedQuery()
+  },
+  methods: {
+    getAdvancedQuery() {
+      getAdvancedQueryList(this.currMenuId).then(row => {
+        this.datalist = row.data.list
+      })
+    },
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    changeLeft() {
+      this.leftFlag = !this.leftFlag
+
+    },
+    // // 设置默认展开
+    setexpand(expands) {
+      console.log("expands", expands);
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem("userFlag", expands)
+
+      })
+    },
+    columnSetFun() {
+      console.log("this.$refs.dataTable", this.$refs.dataTable);
+      this.$refs.dataTable.showDrawer()
+    },
+    // 选中得数据
+    handleSelectionChange(val) {
+      this.selectArr = val
+    },
+    columnSetFun() {
+      this.$refs.dataTable.showDrawer()
+    },
+    showDiagram() {
+      this.diagramVisible = true
+      this.$nextTick(() => {
+        this.$refs.Diagram.init()
+      })
+    },
+    search() {
+      Object.keys(this.listQuery).forEach(key => {
+        let item = this.listQuery[key]
+        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
+      })
+      this.listQuery.pageNum = 1
+      this.initData()
+    },
+    reset() {
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
+      this.listQuery = {
+        account: "",
+        employeeStatus: "",
+        employeeType: "",
+        orderItems: [{
+          asc: true,
+          column: ""
+        }, {
+          asc: false,
+          column: "create_time"
+        }],
+        organizeId: this.listQuery.organizeId,
+        pageNum: 1,
+        pageSize: 20,
+        realName: ""
+      }
+      this.search()
+    },
+    toggleExpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        this.$nextTick(() => {
+          this.$refs.treeBox.setCurrentKey(this.companyId)
+        })
+      })
+    },
+    filterNode(value, data) {
+      return !value || data.fullName.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    },
+    filterNodes(node) {
+      let matched = this.filterNode(this.filterText, node);
+      if (!matched && node.children) {
+        node.children = node.children.filter(childNode => {
+          const matchedChild = this.filterNodes(childNode);
+          return matchedChild;
+        });
+        matched = node.children.length > 0;
+      }
+      return matched;
+    },
+    filterTree() {
+      if (!this.filterText) {
+        // 如果搜索框内容为空，展示全部树形结构数据
+        this.filteredTree = this.treeData;
+        return;
+      }
+      const filteredTreeData = JSON.parse(JSON.stringify(this.treeData));
+      this.filteredTree = filteredTreeData.filter(node => {
+        return this.filterNodes(node);
+      });
+    },
+    getOrganizeList(isInit) {
+      this.filterText = ''
+      this.treeLoading = true
+      this.listQuery.organizeId = ''
+      this.initData()
+      getDepartmentSelectorByAuth().then(res => {
+        this.treeData = res.data.list
+        this.treeLoading = false
+        if (isInit) this.initData()
+      }).catch(() => {
+        this.treeLoading = false
+      })
+    },
+    initData() {
+      this.listLoading = true
+      getbaseEmployee(this.listQuery).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+    handleNodeClick(data) {
+      if (this.listQuery.organizeId === data.id) return
+      this.listQuery.organizeId = data.id
+      this.type = data.type
+      this.initData()
+    },
+    addOrUpdateHandle(id, onlyRead) {
+      this.formVisible = true
+      this.$nextTick(() => {
+        this.$refs.Form.init(id, this.type === 'department' ? this.listQuery.organizeId : '', onlyRead)
+      })
+    },
+    // 岗位调动
+    jobTransfer(row, scope) {
+      this.jobTransferFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.JobTransfer.init({ id: row.id, departmentName: row.organize })
+      })
+    },
+    // 办理离职
+    jobQuit(id) {
+      //查看是否有客户.then(res=>{
+      this.jobQuitFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.JobQuit.init(id)
+      })
+      // })
+    },
+    // // 重新入职
+    // jobEntry(id) {
+    //   this.jobEntryFormVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs.JobEntry.init(id)
+    //   })
+    // },
+    removeForm(isRefresh) {
+      this.formVisible = false
+      this.resetFormVisible = false
+      this.jobTransferFormVisible = false
+      this.jobQuitFormVisible = false
+      this.jobEntryFormVisible = false
+      if (isRefresh) {
+        this.initData()
+      }
+    },
+    handleDel(id) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        delbaseEmployee(id).then(res => {
+          this.$message({
+            type: 'success',
+            message: res.msg,
+            duration: 1500,
+            onClose: () => {
+              this.initData()
+            }
+          })
+        })
+      }).catch(() => { })
+    },
+    exportForm() {
+      this.exportFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(this.listQuery)
+      })
+    },
+    uploadForm() {
+      this.importFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.importForm.init()
+      })
+    },
+    sortChange({ prop, order }) {
+      let newProp
+      if (prop == 'employeeStatus' || prop == 'resignationDate' || prop == 'employeeType') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      else newProp = 'f_' + prop.toLowerCase()
+      this.listQuery.orderItems[0].asc = order === 'ascending'
+      this.listQuery.orderItems[0].column = newProp
+      this.initData()
+    },
+  }
+}
+</script>
+
+<style scoped>
+/* .JNPF-common-layout-left {
+  margin-right: 0;
+  border-right: 1px solid #cacaca;
+}
+
+::v-deep .el-tabs__content {
+  height: calc(100vh - 163px);
+} */
+
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+  padding: 0 10px;
+}
+
+.JNPF-common-search-box {
+  padding: 8px 0 0 0;
+  margin-left: 0 !important;
+  margin-bottom: 5px;
+}
+
+.JNPF-common-search-box .el-form-item {
+  margin-bottom: 8px !important;
+}
+
+.pagination-container {
+  background-color: #f5f7fa;
+  margin-top: 0px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.JNPF-common-layout-center .JNPF-common-layout-main {
+  padding: 0;
+}
+
+::v-deep.el-tree-node__content {
+  height: 30px;
+  line-height: 30px;
+}
+
+.JNPF-common-el-tree {
+  margin: 5px 0;
+}
+
+.el-tabs__nav-scroll {
+  padding-left: 0;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px;
+}
+
+.title_box {
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid #ebeef5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+</style>

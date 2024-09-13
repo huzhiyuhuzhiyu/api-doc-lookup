@@ -6,24 +6,18 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
+                <el-input v-model="orderForm.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
+                <el-input v-model="orderForm.partnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model="orderForm.customerDrawingNumber" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
+                <el-input v-model="orderForm.productDrawingNo" placeholder="品名规格" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
@@ -79,36 +73,20 @@
               </template>
             </el-table-column>
             <el-table-column prop="partnerName" label="供应商名称" width="200" sortable="custom" />
+            <el-table-column prop="partnerCode" label="供应商编码" width="200" sortable="custom" />
             <el-table-column prop="deliverDate" label="发料日期" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="recipient" label="收件人" width="140" sortable="custom" />
-            <el-table-column prop="phone" label="收件人电话" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
+            <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
             <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="deliveryQuantity" label="发料数量" width="160" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
-
-            <el-table-column prop="deliveryStatus" label="发料状态" width="120" sortable="custom" align="center">
-              <template slot-scope="scope">
-                <div v-if="scope.row.deliveryStatus == 'not_finished'">
-                  <el-tag type="primary">未完成</el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'finished'">
-                  <el-tag type="success">已完成</el-tag>
-                </div>
-                <div v-else-if="scope.row.deliveryStatus == 'canceled'">
-                  <el-tag type="danger">已取消</el-tag>
-                </div>
-              </template>
-            </el-table-column>
+            <el-table-column prop="deliveryQuantity" label="订单数量" width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
             <el-table-column prop="documentStatus" label="单据状态" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom"></el-table-column>
-            <el-table-column prop="createByName" label="创建人" width="140" sortable="custom" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
@@ -172,7 +150,7 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      columnList: ['recipient', 'phone', 'createByName'],
+      columnList: ['partnerCode', 'productCode'],
       superQueryVisible: false,
       exportFormVisible: false,
       qxbtnLoading: false,
@@ -238,12 +216,8 @@ export default {
         superQuery: {},
         orderItems: [
           {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
+            asc: true,
+            column: 'order_no'
           }
         ]
       },
@@ -276,7 +250,12 @@ export default {
         },
         {
           prop: 'partnerName',
-          label: '客户名称',
+          label: '供应商名称',
+          type: 'input'
+        },
+        {
+          prop: 'partnerCode',
+          label: '供应商编码',
           type: 'input'
         },
         {
@@ -289,21 +268,6 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
         {
-          prop: 'recipient',
-          label: '收件人',
-          type: 'input'
-        },
-        {
-          prop: 'phone',
-          label: '收件人电话',
-          type: 'input'
-        },
-        {
-          prop: 'customerProductNo',
-          label: '客户料号',
-          type: 'input'
-        },
-        {
           prop: 'productDrawingNo',
           label: '品名规格',
           type: 'input'
@@ -314,94 +278,34 @@ export default {
           type: 'input'
         },
         {
+          prop: 'processName',
+          label: '工序名称',
+          type: 'input'
+        },
+        {
           prop: 'mainUnit',
           label: '单位',
           type: 'input'
         },
         {
           prop: 'deliveryQuantity',
-          label: '发料数量',
+          label: '订单数量',
           type: 'input'
         },
         {
-          prop: 'sealingCoverTyping',
-          label: '打字内容',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'accuracyLevel',
-          label: '精度等级',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'vibrationLevel',
-          label: '振动等级',
-          type: 'select',
-          options: []
-        },
-
-        {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'packagingMethod',
-          label: '包装方式',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'ordersNo',
-          label: '订单号',
-          type: 'input'
-        },
-        {
-          prop: 'exchangeGoodsFlag',
-          label: '发料标识',
-          type: 'select',
-          options: [{ label: '换货发料', value: true }, { label: '正常发料', value: false }]
-        },
-        {
-          prop: 'deliveryStatus',
-          label: '发料状态',
-          type: 'select',
-          options: [
-            { label: '未完成', value: 'not_finished' },
-            { label: '已完成', value: 'finished' },
-            { label: '已取消', value: 'canceled' }
-          ]
-        },
-
-        {
-          prop: 'documentStatus',
-          label: '单据状态',
-          type: 'select',
-          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
-        },
-        {
-          prop: 'createTime',
-          label: '创建时间',
+          prop: 'deliveryDate',
+          label: '交货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
           endPlaceholder: '结束日期',
           pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'documentStatus',
+          label: '单据状态',
+          type: 'select',
+          options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
         }
       ]
     }

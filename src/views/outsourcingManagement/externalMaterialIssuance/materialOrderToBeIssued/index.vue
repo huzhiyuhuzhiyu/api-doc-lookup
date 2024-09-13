@@ -74,12 +74,12 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="160" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="160" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="160" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="120" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="160" sortable="custom" />
             <el-table-column prop="processName" label="工序名称" min-width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="160" sortable="custom" />
-            <el-table-column prop="qty" label="订单数量" min-width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
+            <el-table-column prop="purchaseQuantity" label="订单数量" width="120" sortable="custom" />
 
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">

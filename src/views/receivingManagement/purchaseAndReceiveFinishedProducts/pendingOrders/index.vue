@@ -84,7 +84,7 @@
             <el-table-column prop="waitReceiptNum" label="待收货数量" min-width="130" sortable="custom" />
             <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" sortable="custom" />
             <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="收货日期" min-width="140" sortable="custom" />
             <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
@@ -258,28 +258,8 @@ export default {
           type: 'input'
         },
         {
-          prop: 'deputyUnit',
-          label: '单位(副)',
-          type: 'input'
-        },
-        {
-          prop: 'purchaseQuantity2',
-          label: '数量(副)',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '交货日期',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
-          type: 'input'
-        },
-        {
           prop: 'deliveryDate',
-          label: '交货日期',
+          label: '收货日期',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',

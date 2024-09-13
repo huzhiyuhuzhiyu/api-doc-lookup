@@ -674,7 +674,7 @@ export default {
         .catch((err) => {
           this.loading = false
         })
-      console.log(this.scope.productsId, 'this.scope.productsId')
+      console.log(this.scope, 'this.scope.productsId')
       console.log(inspectionType, 'inspectionType**************************')
       await getInspectionItem({ id: this.scope.productsId, inspectionCategory: inspectionType })
         .then((res) => {

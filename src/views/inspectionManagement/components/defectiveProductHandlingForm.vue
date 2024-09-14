@@ -240,6 +240,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       qualifiedQuantityDisabled: false,
+      endNode: false,
     }
   },
   beforeCreate() {
@@ -1294,6 +1295,14 @@ export default {
               ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
               : null
             this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            let nodeCode = res.data.flowTaskInfo.thisStepId
+            let nodeList = res.data.flowTaskNodeList
+            let findItem = nodeList.find(item=>item.nodeCode === nodeCode)
+            if (findItem){
+              if (findItem.nodeNext === 'end'){
+                this.endNode = true
+              }
+            }
             this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
             let flowTaskNodeList = res.data.flowTaskNodeList
             if (flowTaskNodeList.length) {

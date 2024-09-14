@@ -1,21 +1,18 @@
 <template>
-  <el-dialog title="岗位调动" :close-on-click-modal="false" append-to-body :visible.sync="visible"
-    class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px">
-    <div v-loading="formLoading" >
+  <el-dialog title="岗位调动" :close-on-click-modal="false" append-to-body :visible.sync="visible" class="JNPF-dialog JNPF-dialog_center" lock-scroll width="1000px">
+    <div v-loading="formLoading">
       <el-row :gutter="15" class="">
         <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px" label-position="top">
           <template>
             <el-col :span="24">
               <el-form-item label="调动日期" prop="changeDate" ref="changeDate">
-                <el-date-picker v-model="dataForm.changeDate" type="date" placeholder="请选择调动日期" style="width: 100%;"
-                  value-format="timestamp">
+                <el-date-picker v-model="dataForm.changeDate" type="date" placeholder="请选择调动日期" style="width: 100%;" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="原组织" prop="departmentName" ref="departmentName">
-                <el-select v-model="dataForm.departmentName" placeholder="请选择原组织" style="width: 100%;" filterable clearable
-                  @change="departmentNameChange">
+                <el-select v-model="dataForm.departmentName" placeholder="请选择原组织" style="width: 100%;" filterable clearable @change="departmentNameChange">
                   <el-option v-for="item in organizeIdTree" :key="item.id" :label="item.fullName" :value="item.id">
                   </el-option>
                 </el-select>
@@ -23,26 +20,21 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="原岗位" prop="postName" ref="postName">
-                <el-select v-model="dataForm.postName" placeholder="请选择岗位" style="width: 100%;"
-                  @visible-change="visibleChange" filterable clearable @change="selectChange">
+                <el-select v-model="dataForm.postName" placeholder="请选择岗位" style="width: 100%;" @visible-change="visibleChange" filterable clearable @change="selectChange">
                   <el-option v-for="item in postName" :key="item.id" :label="item.fullName" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="现组织" prop="departmentName2" ref="departmentName2">
-                <ComSelect v-model="dataForm.departmentName2" placeholder="请选择现组织" @change="onOrganizeChange" clearable
-                  auth />
+                <ComSelect v-model="dataForm.departmentName2" placeholder="请选择现组织" @change="onOrganizeChange" clearable auth />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="现岗位" prop="postName2" ref="postName2">
-                <el-select v-model="dataForm.postName2" placeholder="请选择现岗位" style="width: 100%;" @change="selectChange2"
-                  @visible-change="visibleChange2" filterable clearable>
-                  <el-option-group v-for="group in positionTreeData2" :key="group.id"
-                    :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
-                    <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName"
-                      :value="item.id">
+                <el-select v-model="dataForm.postName2" placeholder="请选择现岗位" style="width: 100%;" @change="selectChange2" @visible-change="visibleChange2" filterable clearable>
+                  <el-option-group v-for="group in positionTreeData2" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
+                    <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
                     </el-option>
                   </el-option-group>
                 </el-select>
@@ -51,15 +43,13 @@
 
             <el-col :span="24">
               <el-form-item label="调动原因" prop="changeReason">
-                <el-input v-model="dataForm.changeReason" placeholder="请输入调动原因" :style='{ "width": "100%" }' true
-                  type="textarea" :autosize='{ "minRows": 4, "maxRows": 4 }' maxlength="200">
+                <el-input v-model="dataForm.changeReason" placeholder="请输入调动原因" :style='{ "width": "100%" }' true type="textarea" :autosize='{ "minRows": 4, "maxRows": 4 }' maxlength="200">
                 </el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注" prop="remark">
-                <el-input v-model="dataForm.remark" placeholder="请输入备注" :style='{ "width": "100%" }' true type="textarea"
-                  :autosize='{ "minRows": 4, "maxRows": 4 }' maxlength="200">
+                <el-input v-model="dataForm.remark" placeholder="请输入备注" :style='{ "width": "100%" }' true type="textarea" :autosize='{ "minRows": 4, "maxRows": 4 }' maxlength="200">
                 </el-input>
               </el-form-item>
             </el-col>
@@ -77,13 +67,14 @@
 </template>
 
 <script>
-import { userTransfer, getUserInfo } from '@/api/permission/user'
+import { updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
 import { getPositionByOrganize } from '@/api/permission/position'
 import { getDepartmentSelectorByAuth } from "@/api/permission/department";
 
 export default {
   data() {
     return {
+      copylist: [],
       visible: false,
       loading: true,
       formLoading: true,
@@ -146,9 +137,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.dataForm.resetFields();
         this.organizeIdTree2 = []
-        getUserInfo(id).then(res => {
-          this.dataForm.id = res.data.id
-          this.dataForm.realName = res.data.realName
+        getbaseEmployeeInfo(id).then(res => {
+          this.copylist = res.data
+          this.dataForm.id = res.data.employeeVO.id
+          this.dataForm.realName = res.data.employeeVO.realName
 
           getDepartmentSelectorByAuth().then(res2 => { // 获取全部组织
             this.origanizeTree = res2.data.list[0]
@@ -167,8 +159,8 @@ export default {
 
 
             // 获取原组织列表
-            if (res.data.organizeIdTree.length) {
-              let organizeIdList = res.data.organizeIdTree.map(item => item.join(","))
+            if (res.data.employeeVO.organizeIdTree.length) {
+              let organizeIdList = res.data.employeeVO.organizeIdTree.map(item => item.join(","))
               this.organizeIdTree = organizeIdList.map(item => {
                 let obj = {
                   id: item,
@@ -182,7 +174,7 @@ export default {
               // console.log("======this.organizeIdTree原组织列表======");
               // console.log(this.organizeIdTree);
               // 获取组织内岗位
-              let positionIdArr = res.data.positionId ? res.data.positionId.split(',') : []
+              let positionIdArr = res.data.employeeVO.positionId ? res.data.employeeVO.positionId.split(',') : []
               this.organizeIdTree.forEach(item => {
                 let organizeIdTree = [item.id ? item.id.split(",") : []]
                 const organizeIds = organizeIdTree.map(o => o[o.length - 1])
@@ -254,7 +246,7 @@ export default {
 
     // 表单提交
     dataFormSubmit() {
-      if (!this.checkAndFocus()) {}
+      if (!this.checkAndFocus()) { }
       else {
         this.request()
       }
@@ -308,6 +300,7 @@ export default {
       newDepartmentName = newDepartmentName[newDepartmentName.length - 1]
 
       let formData = {
+        id: this.dataForm.id,
         code: this.dataForm.id,
         changeDate: this.dataForm.changeDate,
         changeReason: this.dataForm.changeReason,
@@ -322,7 +315,13 @@ export default {
         realName: this.dataForm.realName,
         remark: this.dataForm.remark
       }
-      userTransfer(formData).then((res) => {
+      let obj = {
+        educationalExperience: this.copylist.educationalExperience,
+        employee: formData,
+        familyMembers: this.copylist.familyMembers,
+        workExperience: this.copylist.workExperience
+      }
+      updatebaseEmployee(obj).then((res) => {
         if (res.msg === 'Success') res.msg = '修改成功'
         this.$message({
           message: res.msg,

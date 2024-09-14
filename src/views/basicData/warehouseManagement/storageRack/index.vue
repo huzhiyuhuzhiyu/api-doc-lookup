@@ -82,11 +82,16 @@
             <el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="batchEditFun">
               批量修改
             </el-button>
-            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printWarehouse('p037')">打印库位二维码</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer"
+              @click="printWarehouse('p037')">打印库位二维码</el-button>
           </div>
 
 
           <div class="JNPF-common-head-right">
+            <el-tooltip effect="dark" content="折叠" placement="top">
+              <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
+                :underline="false" @click="toggleExpand()" />
+            </el-tooltip>
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -105,7 +110,7 @@
           @selection-change="handleSelectionChange">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
           <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="state" label="启用状态" width="70">
+          <el-table-column prop="state" label="启用状态" width="90">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope.row)">
@@ -123,6 +128,9 @@
             </template>
           </el-table-column>
         </JNPF-table>
+        <div v-else>
+          55555
+        </div>
         <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
           :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
       </div>
@@ -133,7 +141,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      ref="printForm" />
   </div>
 </template>
 
@@ -149,11 +158,11 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'storageRack',
-  components: { DepForm, AiForm, SuperQuery,PrintBrowse },
+  components: { DepForm, AiForm, SuperQuery, PrintBrowse },
   data() {
     return {
       superQueryVisible: false,
-      printBrowseVisible:false,
+      printBrowseVisible: false,
       superQueryJson: [
         {
           prop: 'name',
@@ -495,7 +504,7 @@ export default {
       }
     },
 
-   
+
     handleDel(id) {
       this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
         type: 'warning'
@@ -528,12 +537,12 @@ export default {
         this.$refs.depForm.init(id, parentId, newBtnType)
       })
     },
-    printWarehouse(enCode){
+    printWarehouse(enCode) {
       if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
-          this.formId = this.selectList.map(item=>item.id).join(',')
+          this.formId = this.selectList.map(item => item.id).join(',')
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')

@@ -36,7 +36,8 @@
         <div class="JNPF-common-head">
           <div>
             <topOpts @add="addWarehouse('', '', 'add')">
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printWarehouse('p036')">打印仓库二维码</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer"
+                @click="printWarehouse('p036')">打印仓库二维码</el-button>
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
@@ -48,6 +49,7 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip> -->
+            
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -62,7 +64,8 @@
         </div>
         <JNPF-table ref="tabForm" v-loading="listLoading" :data="treeList" row-key="id" v-if="refreshTable"
           :fixedNO="true" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC @selection-change="handleSelectWork">
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
+          @selection-change="handleSelectWork">
           <el-table-column prop="name" label="仓库名称" min-width="200" />
           <el-table-column prop="code" label="仓库编码" show-overflow-tooltip min-width="160">
             <template slot-scope="scope">
@@ -82,16 +85,16 @@
               </el-popover>
             </template>
           </el-table-column> -->
-          <el-table-column prop="state" label="仓库状态" width="80">
+          <el-table-column prop="state" label="仓库状态" width="90">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
                 inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="state" label="库位状态" width="80">
+          <el-table-column prop="locationStatus" label="库位状态" width="90">
             <template slot-scope="scope">
-              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
-                inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>
+              <el-switch v-model="scope.row.locationStatus" active-color="#13ce66" inactive-color="#ff4949"
+                active-value="enable" inactive-value="disabled" @change="locationStatusChange(scope.row)"></el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="workshop" label="车间" width="100">
@@ -107,16 +110,19 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-popover placement="top-start" trigger="click" style="margin: 0 10px;">
-                  <!--trigger属性值：hover、click、focus 和 manual-->
-               
-                    <vue-qr class="qr-code" :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true" :dot-scale="1"
-                      :text="scope.row.code" />
-                
+                <!-- <el-popover placement="top-start" trigger="click" style="margin: 0 10px;">
+        
+
+                  <vue-qr class="qr-code" :ref="'ref' + scope.row.id" :size="80" :margin="0" :auto-color="true"
+                    :dot-scale="1" :text="scope.row.code" />
+
                   <el-button type="text" size="mini" slot="reference">
                     查看二维码
                   </el-button>
-                </el-popover>
+                </el-popover> -->
+                <el-button type="text" size="mini" @click="openQr(scope.row)">
+                  查看二维码
+                </el-button>
                 <el-button type="text" size="mini"
                   @click="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">
                   查看详情
@@ -132,12 +138,24 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      ref="printForm" />
+    <el-dialog title="二维码" :visible.sync="dialogVisible" width="350px" :close-on-click-modal="false"
+      :show-close="false">
+      <div style="margin-left: 27px;">
+        <vue-qr ref="qrCode" :size="250" :margin="0" :auto-color="true" :dot-scale="1" :text="dialogVisibleCode" />
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { getWarehouseList, deleteWarehouse, editWarehouseState } from '@/api/basicData/index'
+import { getWarehouseList, deleteWarehouse, editWarehouse, editWarehouseState } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import Form from './Form'
@@ -146,11 +164,12 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'warehouseArchives',
-  components: { Form, SuperQuery, VueQr,PrintBrowse },
+  components: { Form, SuperQuery, VueQr, PrintBrowse },
   data() {
     return {
+      dialogVisible: false,
       superQueryVisible: false,
-      printBrowseVisible:false,
+      printBrowseVisible: false,
       superQueryJson: [
         {
           prop: 'name',
@@ -217,7 +236,7 @@ export default {
           }
         ]
       },
-      selectWarehouse:[]
+      selectWarehouse: []
     }
   },
   created() {
@@ -230,6 +249,19 @@ export default {
         this.$message({
           type: 'success',
           message: row.state == 'enable' ? '开启成功' : '禁用成功',
+          duration: 1500
+        })
+      })
+    },
+    locationStatusChange(row) {
+      let obj = {
+        stockLimitsAuthorities: row
+      }
+      editWarehouse(obj).then((res) => {
+        this.initData()
+        this.$message({
+          type: 'success',
+          message: row.locationStatus == 'enable' ? '开启成功' : '禁用成功',
           duration: 1500
         })
       })
@@ -279,6 +311,11 @@ export default {
       this.form.code = ''
       this.form.type = ''
       this.initData()
+    },
+    openQr(row) {
+
+      this.dialogVisibleCode = row.code
+      this.dialogVisible = true
     },
     addOrUpdateHandle(id, parentId, type) {
       this.formVisible = true
@@ -353,15 +390,15 @@ export default {
         })
         .catch(() => { })
     },
-    handleSelectWork(val){
+    handleSelectWork(val) {
       this.selectWarehouse = val
     },
-    printWarehouse(enCode){
+    printWarehouse(enCode) {
       if (!this.selectWarehouse.length) return this.$message.error("请选择您要打印的数据!")
       getPrintBusInfo(enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
-          this.formId = this.selectWarehouse.map(item=>item.id).join(',')
+          this.formId = this.selectWarehouse.map(item => item.id).join(',')
           this.printBrowseVisible = true
         } else {
           this.$message.warning('未找到相应打印模版')
@@ -389,5 +426,4 @@ export default {
   padding: 8px 0 0 0 !important;
   margin-left: 0 !important;
 }
-
 </style>

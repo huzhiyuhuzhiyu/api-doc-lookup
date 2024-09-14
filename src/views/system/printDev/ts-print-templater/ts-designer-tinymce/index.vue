@@ -45,8 +45,6 @@ export default {
     },
 
     showToolbar() {
-      console.log(toolbar,'toolbar');
-      
       return this.toolbar != undefined ? this.toolbar : toolbar
     },
 

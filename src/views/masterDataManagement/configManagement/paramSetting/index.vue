@@ -3,38 +3,43 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="display:flex;align-items:center;padding:5px 0 5px 10px;margin:0px 0 0px 0">
-        <el-radio-group v-model="activeName" style="background-color:#fff;">
-
-          <el-badge :value="item.todoNum" :max="99" v-for="(item, index) in treeData" :key="index">
-            <el-radio-button style="margin:2px 0;" :key="item.businessType" :label="item.businessType">{{ item.fullName
-              }}</el-radio-button>
-          </el-badge>
+        <el-radio-group v-model="activeName">
+          <el-radio-button label="product">产品设置</el-radio-button>
+          <el-radio-button label="produce">生产设置</el-radio-button>
+          <el-radio-button label="warehouse">仓库设置</el-radio-button>
+          <el-radio-button label="attachment">附件开关</el-radio-button>
         </el-radio-group>
       </div>
-      <el-table :data="tableData" stripe style="width: 100%"
-        :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
-        <el-table-column prop="configKey" label="功能" width="180">
-          <template slot-scope="scope">
-            {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
-          </template>
-        </el-table-column>
+      <div class="tag-group JNPF-common-search-box treeBox_bot"
+        style="height: 100vh;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+        <el-table :data="tableData" stripe style="margin-right: 10px;"
+          :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
+          <el-table-column prop="configKey" label="功能" width="180">
+            <template slot-scope="scope">
+              {{ $getLabel(configKeyList, scope.row.configKey, 'value', 'label') }}
+            </template>
+          </el-table-column>
 
-        <el-table-column prop="state" label="操作" width="100" align="center">
-          <template slot-scope="scope">
-            <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
-          </template>
-        </el-table-column>
-        <el-table-column prop="configValue2" label="比例">
-          <template slot-scope="scope">
-            <el-input style="width: 150px;"
-              v-if="scope.row.state && scope.row.configKey == 'work_exceed_report' || scope.row.state && scope.row.configKey == 'collect_exceed_picking'"
-              v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
-              <template slot="append">%</template>
-            </el-input>
-          </template>
-        </el-table-column>
-        </el-table-column>
-      </el-table>
+          <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
+            <template slot-scope="scope">
+              <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+              <el-input style="width: 150px;margin-left: 10px;" v-if="
+                (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
+                (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+              " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
+                <template slot="append">
+                  %
+                </template>
+              </el-input>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="说明">
+            <template slot-scope="scope">
+              {{ $getLabel(descriptionList, scope.row.description, 'value', 'label') }}
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </div>
   </div>
 </template>
@@ -47,7 +52,7 @@ export default {
   name: 'ParamSetting',
   data() {
     return {
-      activeName: 'warehouse',
+      activeName: 'product',
       dataForm: {},
       productForm: {},
       formLoading: false,
@@ -56,59 +61,161 @@ export default {
         businessCode: '' //attachment——附件   warehouse——仓库
       },
       codeSetData: [],
-      treeData: [
-        { businessType: 'product', fullName: '产品设置' },
-        { businessType: 'produce', fullName: '生产设置' },
-        { businessType: 'warehouse', fullName: '仓库设置' },
-        { businessType: 'attachment', fullName: '附件开关' },
-      ],
       tableData: [],
       configKeyList: [
         {
-          label: '启用产品型号', value: 'enable_model'
+          label: '启用产品型号',
+          value: 'enable_model'
         },
         {
-          label: '允许生产报工超报', value: 'work_exceed_report'
+          label: '允许生产报工超报',
+          value: 'work_exceed_report'
         },
         {
-          label: '允许生产超领料', value: 'collect_exceed_picking'
+          label: '允许生产超领料',
+          value: 'collect_exceed_picking'
         },
         {
-          label: '启用自动生成领料单', value: 'arrange_auto_picking'
+          label: '启用自动生成领料单',
+          value: 'arrange_auto_picking'
         },
         {
-          label: '启用仓库库位', value: 'allocation'
+          label: '启用仓库库位',
+          value: 'allocation'
         },
         {
-          label: '启用成交客户附件', value: 'fj_zskh'
+          label: '启用成交客户附件',
+          value: 'fj_zskh'
         },
         {
-          label: '启用我的客户附件', value: 'fj_wdkh'
+          label: '启用我的客户附件',
+          value: 'fj_wdkh'
         },
         {
-          label: '启用潜在客户附件', value: 'fj_qzkh'
+          label: '启用潜在客户附件',
+          value: 'fj_qzkh'
         },
         {
-          label: '启用公海客户附件', value: 'fj_ghkh'
+          label: '启用公海客户附件',
+          value: 'fj_ghkh'
         },
         {
-          label: '启用采购供应商附件', value: 'fj_cggysgl'
+          label: '启用采购供应商附件',
+          value: 'fj_cggysgl'
         },
         {
-          label: '启用外协供应商附件', value: 'fj_wxgysgl'
+          label: '启用外协供应商附件',
+          value: 'fj_wxgysgl'
+        }
+      ],
+      descriptionList: [
+        {
+          label: '启用产品型号管理后，创建成品产品时，需先创建型号，再创建产品。',
+          value: 'enable_model'
         },
+        {
+          label: '允许超报后，生产报工总数量将大于计划生产数量。',
+          value: 'work_exceed_report'
+        },
+        {
+          label: '允许超领料后，生产领料总数量将大于计划用料总数量。',
+          value: 'collect_exceed_picking'
+        },
+        {
+          label: '启用后，在编辑任务后，将会自动生成领料单。',
+          value: 'arrange_auto_picking'
+        },
+        {
+          label: '开启后，在仓库库位新建、编辑、查看都会显示附件操作。',
+          value: 'allocation'
+        },
+        {
+          label: '开启后，在成交客户新建、编辑、查看都会显示附件操作。',
+          value: 'fj_zskh'
+        },
+        {
+          label: '开启后，在我的客户新建、编辑、查看都会显示附件操作。',
+          value: 'fj_wdkh'
+        },
+        {
+          label: '开启后，在潜在客户新建、编辑、查看都会显示附件操作。',
+          value: 'fj_qzkh'
+        },
+        {
+          label: '开启后，在公海客户新建、编辑、查看都会显示附件操作。',
+          value: 'fj_ghkh'
+        },
+        {
+          label: '开启后，在采购供应新建、编辑、查看都会显示附件操作。',
+          value: 'fj_cggysgl'
+        },
+        {
+          label: '开启后，在外协供应商附件新建、编辑、查看都会显示附件操作。',
+          value: 'fj_wxgysgl'
+        }
       ]
     }
   },
   watch: {
     activeName() {
       this.initData()
-    },
-
+    }
   },
   created() {
     this.initData()
+  },
+  computed: {
+    stateWidth() {
+      let width = 60
+      let flag = true
+      this.tableData.forEach((item) => {
+        if (item.configKey == 'work_exceed_report') {
+          if (item.state) {
+            width = 200
+            flag = false
+          } else {
+            width = 60
+            flag = true
+          }
+        }
+        if (flag) {
+          if (item.configKey == 'collect_exceed_picking') {
+            if (item.state) {
+              width = 200
+            } else {
+              width = 60
+            }
+          }
+        }
+      })
 
+      return width
+    },
+    stateAlign() {
+      let align = 'center'
+      let flag = true
+      this.tableData.forEach((item) => {
+        if (item.configKey == 'work_exceed_report') {
+          if (item.state) {
+            align = 'left'
+            flag = false
+          } else {
+            align = 'center'
+            flag = true
+          }
+        }
+        if (flag) {
+          if (item.configKey == 'collect_exceed_picking') {
+            if (item.state) {
+              align = 'left'
+            } else {
+              align = 'center'
+            }
+          }
+        }
+      })
+      return align
+    }
   },
   methods: {
     initData() {
@@ -145,7 +252,6 @@ export default {
       this.formLoading = true
       getBimBusinessSwitchConfigList(this.listQuery)
         .then((res) => {
-          console.log(res, 'oooo')
           if (this.activeName == 'product') {
             this.tableData = res.data.product
           } else if (this.activeName == 'produce') {
@@ -156,14 +262,13 @@ export default {
             this.tableData = res.data.attachment
           }
 
-          this.tableData.forEach(item => {
+          this.tableData.forEach((item) => {
             if (item.configValue1 == '1') {
-              // item.state = true
-              this.$set(item, 'state', true);
+              this.$set(item, 'state', true)
             } else {
-              // item.state = false
-              this.$set(item, 'state', false);
+              this.$set(item, 'state', false)
             }
+            this.$set(item, 'description', item.configKey)
           })
 
           this.formLoading = false
@@ -172,7 +277,7 @@ export default {
     },
     stateChange(data) {
       let _data = []
-      console.log(data, 'iii')
+
       if (data.state) {
         data.configValue1 = 1
       } else {
@@ -180,63 +285,58 @@ export default {
       }
       let query = {
         ...data,
-        configKey: data.configKey,
+        configKey: data.configKey
       }
       _data.push(query)
-      editBimBusinessData(_data)
-        .then((res) => {
-          if (res.code == '200') {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            });
-            this.formLoading = false
-            this.initData()
-          } else {
-            this.formLoading = false
-          }
-        })
+      editBimBusinessData(_data).then((res) => {
+        if (res.code == '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.formLoading = false
+        } else {
+          this.formLoading = false
+        }
+      })
     },
     configValue2Change(data) {
       function isNumber(value) {
-        return typeof value === 'number' && !isNaN(value);
+        return typeof value === 'number' && !isNaN(value)
       }
 
       function isInteger(value) {
-        return isNumber(value) && Number.isInteger(value);
+        return isNumber(value) && Number.isInteger(value)
       }
 
       if (Number(data.configValue2) > 100 || Number(data.configValue2) < 0) {
-        return this.$message.error('请输入0到100的整数');
+        return this.$message.error('请输入0到100的整数')
       }
       if (!isNumber(Number(data.configValue2))) {
-        return this.$message.error('请输入正确的数字');
+        return this.$message.error('请输入正确的数字')
       }
       if (!isInteger(Number(data.configValue2))) {
-        return this.$message.error('请输入整数');
+        return this.$message.error('请输入整数')
       }
       let _data = []
-      console.log(data, 'iii')
 
       let query = {
         ...data,
-        configKey: data.configKey,
+        configKey: data.configKey
       }
-      console.log(query, 'ii')
+
       _data.push(query)
-      editBimBusinessData(_data)
-        .then((res) => {
-          if (res.code == '200') {
-            this.$message({
-              message: '修改成功',
-              type: 'success'
-            });
-            this.formLoading = false
-            this.initData()
-          } else {
-            this.formLoading = false
-          }
-        })
+      editBimBusinessData(_data).then((res) => {
+        if (res.code == '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.formLoading = false
+        } else {
+          this.formLoading = false
+        }
+      })
     }
   }
 }

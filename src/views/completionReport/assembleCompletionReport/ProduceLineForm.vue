@@ -114,7 +114,7 @@ export default {
       codeConfig: {},//单据规则配置
       workList: [],
       form: {
-        workGroupId: "",
+        productionLineId: "",
         prodOrderStatus: 'normal',
         workReportFlag: true,
         processingType: "self_produced",
@@ -148,7 +148,7 @@ export default {
     init(row) {
       console.log("供需信息", row);
       this.processData = row
-      this.form.workGroupId = row.id
+      this.form.productionLineId = row.id
       this.getWorkListFun()
     },
     getWorkListFun() {

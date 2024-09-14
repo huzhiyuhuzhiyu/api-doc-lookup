@@ -130,16 +130,16 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="taxRate" label="税率(%)" min-width="140">
+                        <el-table-column prop="taxRate" label="税率" min-width="140">
                           <template slot="header">
                             <span class="required">*</span>
-                            税率(%)
+                            税率
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :rules="productRules.taxRate">
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                  :value="item.id"></el-option>
+                                  :value="item.enCode"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
@@ -891,7 +891,7 @@ export default {
         const item = i.all
         console.log(item, 'oooo')
         if (this.purchasingType == 'pool') {
-          
+
         } else {
           item.productDrawingNo = item.drawingNo
         }
@@ -918,7 +918,7 @@ export default {
             this.$set(this.dataFormTwo.data[i], 'price', '') // 	价税合计
           }
           this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-          this.$set(this.dataFormTwo.data[i], 'taxRate', '13') // taxRate
+          this.$set(this.dataFormTwo.data[i], 'taxRate', 13) // taxRate
           if (!this.dataFormTwo.data[i].totalAmount) {
             this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
           }
@@ -1230,7 +1230,7 @@ export default {
         this.btnLoading = true
         let dataTwo = []
         dataTwo = this.dataFormTwo.data.map((obj) => {
-          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.id, id: null }
+          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.productsId ? obj.productsId : obj.id, id: null }
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo
@@ -1238,7 +1238,7 @@ export default {
           ...this.dataForm,
           flowData: this.flowData
         }
-
+        console.log(_data, 'data')
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'

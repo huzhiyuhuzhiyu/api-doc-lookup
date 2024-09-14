@@ -13,7 +13,7 @@
                 <el-radio-button label="" style="margin:3px 0">全部</el-radio-button>
               </el-badge>
               <el-badge :value="item.num" :max="99" v-for="item in countItems" :key="item.id">
-              <el-radio-button style="margin:2px 0;border-left: 1px solid #DCDFE6" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
+              <el-radio-button style="margin:2px 0;" :key="item.enCode" :label="item.enCode">{{ item.fullName }}</el-radio-button>
             </el-badge>
             </el-radio-group>
         </div>
@@ -359,5 +359,8 @@ export default {
 }
 ::v-deep .el-radio-button__inner{
   border-radius:0px !important;
+}
+::v-deep .el-radio-button__inner{
+  border-left: 1px solid #DCDFE6
 }
 </style>

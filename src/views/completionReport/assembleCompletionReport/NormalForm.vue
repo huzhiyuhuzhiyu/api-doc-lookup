@@ -95,12 +95,12 @@
           </el-col>
           <el-col :sm="8" :xs="24">
             <el-form-item label="责废数量">
-              <el-input v-model="form.responsibilityWasteQuantity" placeholder="责废数量" disabled />
+              <el-input v-model="form.responsibilityWasteQuantity" placeholder="责废数量"  @blur="handleBlur2"/>
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
             <el-form-item label="料废数量">
-              <el-input v-model="form.materialWasteQuantity" placeholder="料废数量" disabled />
+              <el-input v-model="form.materialWasteQuantity" placeholder="料废数量"   @blur="handleBlur3" />
             </el-form-item>
           </el-col>
           <el-col :sm="8" :xs="24">
@@ -230,6 +230,14 @@ export default {
     }
   },
   methods: {
+    handleBlur2() {
+      this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
+ 
+    },
+    handleBlur3() {
+      this.form.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.form.materialWasteQuantity, this.form.responsibilityWasteQuantity]), 6)
+       
+    },
     //生产人
     hangleSelectSales(e, r) {
       this.$nextTick(() => {
@@ -329,7 +337,6 @@ export default {
             "unqualifiedQuantity": this.form.unqualifiedQuantity,
             "vibrationLevel": this.form.vibrationLevel,
             "workOrderId": this.form.id,
-
           }
           arr.push(obj)
           addWorkReport(arr).then(res => {

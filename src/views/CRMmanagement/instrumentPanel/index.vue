@@ -62,7 +62,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitSettings">确 定</el-button>
+        <el-button type="primary" @click="submitSettings" :loading="btnLoading">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -86,7 +86,8 @@ export default {
   },
   data() {
     return {
-      copylist:[],
+      btnLoading: false,
+      copylist: [],
       mainloading: false,
       crmlist: [
         { name: '合同/回款金额目标及完成情况', typeChart: 'contractAmount', isHidden: false },
@@ -155,6 +156,7 @@ export default {
     },
     //仪表盘模块设置
     submitSettings() {
+      this.btnLoading = true
       let left = this.findMatchingObjects(this.copylist.leftList, this.crmlist, 'typeChart')
       let right = this.findMatchingObjects(this.copylist.rightList, this.crmlist, 'typeChart')
       updatecrmBiPosition({ leftList: left, rightList: right }).then(res => {
@@ -163,6 +165,7 @@ export default {
           type: 'success',
           duration: 1500,
           onClose: () => {
+            this.btnLoading = false
             this.dialogVisible = false
             this.crmModulesettings()
           }

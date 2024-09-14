@@ -112,7 +112,6 @@ export default {
       return this.$refs.createTinymce.editor
     },
     newData() {
-      console.log(this.treeData, 'newData');
       let hasPageRow = this.treeData.find(item=>item.hasPage)
       console.log(hasPageRow);
       if (hasPageRow){
@@ -134,8 +133,6 @@ export default {
         return
       }
       const tableParent = this.getCurrentParentByTag('table[data-wk-table-tag="table"]')
-      console.log(item);
-      console.log(node);
       
       if (!tableParent) {
         this.editor.insertContent(this.getSpanNode(item, node))

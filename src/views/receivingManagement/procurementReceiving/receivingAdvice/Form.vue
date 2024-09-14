@@ -1409,10 +1409,13 @@ export default {
       this.dataForm.id = id || ''
 
       this.btnType = btnType
+      console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
+
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
+
           if (res.data.attachmentList) {
             res.data.attachmentList.forEach((item) => {
               this.datafilelist.push({
@@ -1448,7 +1451,9 @@ export default {
               item.receivedQuantity = ''
             })
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
+            this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
+              console.log('ooooooo', item)
               item.drawingNo = item.productDrawingNo
             })
             if (this.btnType === 'edit') {
@@ -1458,7 +1463,7 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-          this.dataFormTwo.productData = res.data.noticeLineList
+
         })
       }
       if (btnType == 'add' || btnType == 'copy') {

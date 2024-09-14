@@ -64,7 +64,7 @@
                           <template slot-scope="scope">
                             <el-form-item :prop="'data.' + scope.$index + '.' + 'productDrawingNo'"
                               :rules="productRules.productDrawingNo">
-                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" />
+                              <el-input v-model="scope.row.productDrawingNo" placeholder="请输入品名规格" disabled />
                             </el-form-item>
                           </template>
                         </el-table-column>
@@ -130,16 +130,16 @@
                             </el-form-item>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="taxRate" label="税率(%)" min-width="140">
+                        <el-table-column prop="taxRate" label="税率" min-width="140">
                           <template slot="header">
                             <span class="required">*</span>
-                            税率(%)
+                            税率
                           </template>
                           <template slot-scope="scope">
                             <el-form-item :rules="productRules.taxRate">
                               <el-select v-model="scope.row.taxRate" placeholder="请选择" style="width: 100%;">
                                 <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
-                                  :value="item.id"></el-option>
+                                  :value="item.enCode"></el-option>
                               </el-select>
                             </el-form-item>
                           </template>
@@ -306,8 +306,12 @@
       </div>
     </transition>
     <sourceForm v-if="sourceFormVisible" ref="sourceForm" @confirm="sourceFormConfirm" />
-    <ComSelect-page ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
-      dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList" :listRequestObj="ProductListRequestObjs"
+    <ComSelect-page v-if="purchasingType == 'pool'" ref="comSelect-page" @change="submitCustomerProduct"
+      :tableItems="ProductPoolTableItems" dialogTitle="选择产品" :listMethod="purProcurementDemandPoolList"
+      :listRequestObj="ProductPoolListRequestObjs" :listDataFormatting="listDataFormatting"
+      :searchList="ProductTableSearchList" :elementShow="false" :multiple="true" :renderTree="false" />
+    <ComSelect-page v-else ref="comSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems"
+      dialogTitle="选择产品" :listMethod="getProductList" :listRequestObj="ProductListRequestObjs"
       :listDataFormatting="listDataFormatting" :searchList="ProductTableSearchList" :elementShow="false"
       :multiple="true" :renderTree="false" />
   </div>
@@ -318,6 +322,7 @@ import { insertPurchaseOrder, partnerProductPrice, priceList } from '@/api/purch
 import { getCooperativeData, getcategoryTree } from '@/api/basicData/index'
 import { mapGetters, mapState } from 'vuex'
 import { purProcurementDemandPoolList } from '@/api/purchasingManagement/purchaseInquirySheet'
+import { getProductList } from '@/api/masterDataManagement/productManage'
 import {
   getOrderDetail,
   addOrders,
@@ -341,10 +346,27 @@ export default {
   data() {
     return {
       purProcurementDemandPoolList,
+      getProductList,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       // 选择客户产品参数
       ProductListRequestObjs: {
+        productSource: 'purchase', // 产品来源
+        safeInventoryWarnFlag: 1,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20
+      },
+      ProductPoolListRequestObjs: {
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
@@ -361,11 +383,17 @@ export default {
         pageSize: 20
       },
       ProductTableItems: [
-        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
-
-        { prop: 'productName', label: '产品名称', sortable: 'custom' },
+        { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
-
+        { prop: 'mainUnit', label: '单位' },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
+        { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
+        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+      ],
+      ProductPoolTableItems: [
+        { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
         { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
@@ -374,8 +402,7 @@ export default {
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productName', label: '产品名称', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         { prop: 'productCode', label: '产品编码', type: 'input' }
       ],
       getcooperativeProduct,
@@ -438,6 +465,7 @@ export default {
       },
       type: '',
       dataFormArr: [],
+
       rules: {
         // applicationReason: [{ required: true, message: '请输入申请理由', trigger: ['blur'] }],
         cooperativePartnerName: [{ required: true, message: '请选择供应商名称', trigger: ['change'] }],
@@ -591,6 +619,7 @@ export default {
         children: 'children',
         label: 'fullName'
       },
+      purchasingType: '',
       demandDelivery: '',
       demandDelivery2: '',
       olddeliveryDateArr: [], // 表格中旧的数据值
@@ -860,7 +889,12 @@ export default {
       data = data.filter((obj1) => !this.dataFormTwo.data.some((obj2) => obj2.id === obj1.id))
       data.forEach((i) => {
         const item = i.all
+        console.log(item, 'oooo')
+        if (this.purchasingType == 'pool') {
 
+        } else {
+          item.productDrawingNo = item.drawingNo
+        }
         if (item.taxRate) {
           item.excludingTaxPrice = this.jnpf.numberFormat(Number(item.price) / (1 + Number(item.taxRate) / 100), 6)
         } else {
@@ -884,7 +918,7 @@ export default {
             this.$set(this.dataFormTwo.data[i], 'price', '') // 	价税合计
           }
           this.$set(this.dataFormTwo.data[i], 'taxAmount', '') // 税额
-          this.$set(this.dataFormTwo.data[i], 'taxRate', '13') // taxRate
+          this.$set(this.dataFormTwo.data[i], 'taxRate', 13) // taxRate
           if (!this.dataFormTwo.data[i].totalAmount) {
             this.$set(this.dataFormTwo.data[i], 'totalAmount', '') // 	价税合计
           }
@@ -1067,7 +1101,15 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(data, classAttributeFlag) {
+    init(data, classAttributeFlag, type) {
+      console.log(data, 'uuuu')
+      console.log(classAttributeFlag, 'classAttributeFlag')
+      this.purchasingType = type
+      if (data[0].productDrawingNo) {
+        data[0].productDrawingNo = data[0].productDrawingNo
+      } else {
+        data[0].productDrawingNo = data[0].drawingNo
+      }
       this.dataForm.classAttribute = classAttributeFlag
       this.getProductClassFun()
 
@@ -1188,7 +1230,7 @@ export default {
         this.btnLoading = true
         let dataTwo = []
         dataTwo = this.dataFormTwo.data.map((obj) => {
-          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.id, id: null }
+          return { ...obj, procurementDemandPoolId: obj.id, productsId: obj.productsId ? obj.productsId : obj.id, id: null }
         })
         this.dataForm.attachmentList = this.datafilelist
         this.dataForm.purchaseOrderLines = dataTwo
@@ -1196,7 +1238,7 @@ export default {
           ...this.dataForm,
           flowData: this.flowData
         }
-
+        console.log(_data, 'data')
         insertPurchaseOrder(_data)
           .then((res) => {
             if (res.msg === 'Success') res.msg = '保存成功'

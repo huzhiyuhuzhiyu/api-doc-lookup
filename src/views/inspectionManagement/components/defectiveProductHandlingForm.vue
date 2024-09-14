@@ -65,8 +65,8 @@
                   :btnType="btnType === 'setLoss' ? 'look' : btnType" />
               </el-collapse-item>
               <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
-                  </el-collapse-item>
+                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+              </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
                 <el-row :gutter="30" style="padding:10px">
                   <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
@@ -240,6 +240,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       qualifiedQuantityDisabled: false,
+      endNode: false,
     }
   },
   beforeCreate() {
@@ -896,7 +897,7 @@ export default {
           detailQcUnqualifiedData(id)
             .then(async (res) => {
               console.log(res, 'oooo')
-              if (res.data.attachmentList) {
+              if (res.data.attachmentList.length !== 0) {
                 res.data.attachmentList.forEach((item) => {
                   this.datafilelist.push({
                     name: item.document.fullName,
@@ -907,8 +908,10 @@ export default {
                   })
                 })
               }
-
+              console.log(res.data, 'pppppppppp')
               this.dataForm = res.data.unqualified
+              this.dataForm.inspectionMethod = res.data.inspection.inspectionMethod
+              console.log(this.dataForm, 'op')
               this.dataForm.inspectionResults = res.data.inspection.inspectionResults
               this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
               this.inspectionList = res.data.itemList
@@ -1292,6 +1295,14 @@ export default {
               ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
               : null
             this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            let nodeCode = res.data.flowTaskInfo.thisStepId
+            let nodeList = res.data.flowTaskNodeList
+            let findItem = nodeList.find(item=>item.nodeCode === nodeCode)
+            if (findItem){
+              if (findItem.nodeNext === 'end'){
+                this.endNode = true
+              }
+            }
             this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
             let flowTaskNodeList = res.data.flowTaskNodeList
             if (flowTaskNodeList.length) {
@@ -1374,7 +1385,7 @@ export default {
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding:0 10px 10px;
+  padding: 0 10px 10px;
 }
 
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
@@ -1461,9 +1472,11 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
 }
+
 ::v-deep .JNPF-common-layout-main.JNPF-flex-main {
-  padding:0 10px 10px;
+  padding: 0 10px 10px;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }

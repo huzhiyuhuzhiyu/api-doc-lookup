@@ -364,7 +364,8 @@ export default {
           iframe.contentWindow.print();
           iframe.contentWindow.location.reload(true)
           // 6.重置工作
-          document.body.removeChild(iframe);
+          // document.body.removeChild(iframe);
+          iframe.remove()
           this.$refs.tsPrint.removeAttribute('style');
         }
 

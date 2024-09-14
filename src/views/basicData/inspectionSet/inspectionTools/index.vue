@@ -302,7 +302,7 @@ export default {
           },
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ],
         pageNum: 1,

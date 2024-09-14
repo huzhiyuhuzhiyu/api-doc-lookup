@@ -57,7 +57,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column v-if="tableDataList.length">
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column >
             <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -426,8 +426,8 @@ export default {
       this.initData()
     },
     reset() {
-
-      this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      console.log(this.$refs);
+      this.$refs.tableForm.$refs.JNPFTable.clearSort()
       this.form = JSON.parse(JSON.stringify(this.formlist))
       this.quotationNoS = ""
       this.cooperativePartnerIdTextS = ""

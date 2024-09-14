@@ -620,7 +620,7 @@ export default {
           demandDelivery = maxDate.toISOString().split('T')[0]
           this.formVisible = true
           this.$nextTick(() => {
-            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute)
+            this.$refs.procureForm.init(this.selectData, this.listQuery.classAttribute, 'pool')
           })
         }
       }

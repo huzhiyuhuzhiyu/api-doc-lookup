@@ -166,6 +166,25 @@
     </ProductInboundForm>
     <WorkInboundForm v-if="workInboundFormVisible" ref="workInboundREFForm" @close="closeForm">
     </WorkInboundForm>
+    <OutboundSaleSendForm v-if="outboundSaleSendFormVisible" ref="outboundSaleSendREFForm" @close="closeForm">
+    </OutboundSaleSendForm>
+    <InboundSaleReturnForm v-if="inboundSaleReturnFormVisible" ref="inboundSaleReturnREFForm" @close="closeForm">
+    </InboundSaleReturnForm>
+    <InboundPurchaseForm v-if="inboundPurchaseFormVisible" ref="inboundPurchaseREFForm" @close="closeForm">
+    </InboundPurchaseForm>
+    <OutboundPurchaseForm v-if="outboundPurchaseFormVisible" ref="outboundPurchaseREFForm" @close="closeForm">
+    </OutboundPurchaseForm>
+    <OutboundExternalSendForm v-if="outboundExternalSendFormVisible" ref="outboundExternalSendREFForm"
+      @close="closeForm">
+    </OutboundExternalSendForm>
+    <InboundExternalForm v-if="inboundExternalFormVisible" ref="inboundExternalREFForm" @close="closeForm">
+    </InboundExternalForm>
+    <OutboundPickOutForm v-if="outboundPickOutFormVisible" ref="outboundPickOutREFForm" @close="closeForm">
+    </OutboundPickOutForm>
+    <InboundReturnMaterialsForm v-if="inboundReturnMaterialsFormVisible" ref="inboundReturnMaterialsREFForm"
+      @close="closeForm">
+    </InboundReturnMaterialsForm>
+    <Transfer v-if="transferFormVisible" ref="transferREFForm" @close="closeForm"></Transfer>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -179,19 +198,40 @@ import Form from '../inventoryList/Form.vue'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import ProductInboundForm from '../dbIncomAndOutInventory/productInboundForm.vue'
 import WorkInboundForm from '../dbIncomAndOutInventory/workInboundForm.vue'
+import OutboundSaleSendForm from '../dbIncomAndOutInventory/outboundSaleSendForm.vue'
+import InboundSaleReturnForm from '../dbIncomAndOutInventory/inboundSaleReturnForm.vue'
+import InboundPurchaseForm from '../dbIncomAndOutInventory/inboundPurchaseForm.vue'
+import OutboundPurchaseForm from '../dbIncomAndOutInventory/outboundPurchaseForm.vue'
+import OutboundExternalSendForm from '../dbIncomAndOutInventory/outboundExternalSendForm.vue'
+import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.vue'
+import OutboundPickOutForm from '../dbIncomAndOutInventory/outboundPickOutForm.vue'
+import InboundReturnMaterialsForm from '../dbIncomAndOutInventory/inboundReturnMaterialsForm.vue'
+import Transfer from '../dbIncomAndOutInventory/transferForm.vue'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
 export default {
   name: 'inventoryDetaisList',
-  components: { Form, SuperQuery, ExportForm,ProductInboundForm,WorkInboundForm},
+  components: { Form, SuperQuery, ExportForm,ProductInboundForm,WorkInboundForm,OutboundSaleSendForm, InboundSaleReturnForm,
+    InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
+    InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
+    Transfer},
   props: {
     classAttribute: "",
   },
   data() {
     return {
-      workInboundFormVisible:false,
-      productInboundFormVisible:false,
+      outboundSaleSendFormVisible: false,
+      workInboundFormVisible: false,
+      productInboundFormVisible: false,
+      inboundSaleReturnFormVisible: false,
+      inboundPurchaseFormVisible: false,
+      outboundPurchaseFormVisible: false,
+      outboundExternalSendFormVisible: false,
+      inboundExternalFormVisible: false,
+      outboundPickOutFormVisible: false,
+      inboundReturnMaterialsFormVisible: false,
+      transferFormVisible: false,
       columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
@@ -831,6 +871,56 @@ export default {
         this.$nextTick(() => {
           this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
         })
+      } else if (row.sourceType == 'outbound_sale_send') {
+        this.outboundSaleSendFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundSaleSendREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_sale_return') {
+        this.inboundSaleReturnFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundSaleReturnREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_purchase') {
+        this.inboundPurchaseFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundPurchaseREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'outbound_purchase') {
+        this.outboundPurchaseFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundPurchaseREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'outbound_external_send') {
+        this.outboundExternalSendFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundExternalSendREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_external') {
+        this.inboundExternalFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundExternalREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'outbound_pick_out') {
+        this.outboundPickOutFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.outboundPickOutREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_return_materials') {
+        this.inboundReturnMaterialsFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_return_materials') {
+        this.inboundReturnMaterialsFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.sourceType, this.classAttribute)
+        })
+      } else if (row.sourceType == 'inbound_transfer' || row.sourceType == 'outbound_transfer') {
+        this.transferFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.transferREFForm.init(id, type,)
+        })
       } else {
         console.log(555);
         this.formVisible = true
@@ -935,6 +1025,15 @@ export default {
       this.recordFormVisible = false
       this.productInboundFormVisible = false
       this.workInboundFormVisible = false
+      this.outboundSaleSendFormVisible = false
+      this.inboundSaleReturnFormVisible = false
+      this.inboundPurchaseFormVisible = false
+      this.outboundPurchaseFormVisible = false
+      this.outboundExternalSendFormVisible = false
+      this.inboundExternalFormVisible = false
+      this.outboundPickOutFormVisible = false
+      this.inboundReturnMaterialsFormVisible = false
+      this.transferFormVisible = false
       if (isRefresh) {
         this.keyword = ''
         this.initData()

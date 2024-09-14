@@ -1,6 +1,6 @@
 <template>
   <el-drawer title="列表显示设置" :visible.sync="drawerVisible" :wrapperClosable="false" size="320px" append-to-body
-    class="JNPF-common-drawer columnSettings-drawer" >
+    class="JNPF-common-drawer columnSettings-drawer">
     <div class="JNPF-flex-main" :class="classObj">
       <!-- <div class="columnSetting-head">
         <div></div>
@@ -59,6 +59,10 @@ export default {
       type: Array,
       default: () => []
     },
+    setColumnDisplayList: {
+      type: Array,
+      default: () => []
+    },
   },
   data() {
     return {
@@ -87,12 +91,16 @@ export default {
       this.list = JSON.parse(JSON.stringify(this.columnList))
     },
     reset() {
-      this.list = this.defaultColumns.map(item => {
-        return {
-          ...item,
-          columnVisible: true
+      console.log(123, this.defaultColumns, this.setColumnDisplayList);
+      this.defaultColumns.forEach(item => {
+        if (this.setColumnDisplayList.includes(item.prop)) {
+          this.$set(item, 'columnVisible', false)
+        } else {
+          this.$set(item, 'columnVisible', true)
         }
-      })
+      });
+      this.list = this.defaultColumns
+
     },
     saveSettings() {
       let flag = this.list.some(item => !!item.columnVisible)

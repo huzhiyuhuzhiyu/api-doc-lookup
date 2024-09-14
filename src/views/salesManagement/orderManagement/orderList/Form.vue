@@ -902,7 +902,7 @@
         </el-dialog>
 
         <el-dialog title="选择产品" :close-on-click-modal="false" :close-on-press-escape="false"
-          :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
+          :visible.sync="allProVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
           append-to-body>
 
           <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">

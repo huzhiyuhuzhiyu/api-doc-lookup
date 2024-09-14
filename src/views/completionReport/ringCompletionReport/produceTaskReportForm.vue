@@ -117,7 +117,7 @@
             <div>
 
               <div style="margin-top: 5px; border-bottom: 1px solid #EBEEF5;padding: 0 10px;" >
-                <div v-for="(item, index) in processData" :key="index" class="workInfo"
+                <div v-for="(item, index) in workList" :key="index" class="workInfo"
                   style="text-align: center;display: inline-block;">
                   <div class="processInfoBox" style="cursor: pointer;"
                     :class="item.processId == currentProcessId ? 'processInfo' : ''" @click="getProcessFun(item)">
@@ -276,7 +276,9 @@ export default {
       this.id = id
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
-        this.getRoutingDetailFun(this.dataForm.routingId)
+        this.workList = res.data.workOrderList 
+        this.currentProcessId = res.data.workOrderList[0].processId
+        this.currentProcess = res.data.workOrderList[0]
       })
     },
     getProcessFun(item) {

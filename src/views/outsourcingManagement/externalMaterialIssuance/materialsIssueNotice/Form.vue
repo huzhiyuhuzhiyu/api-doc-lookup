@@ -142,11 +142,11 @@
 
                       <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="290" key="6"
+                      <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="processName" label="工序名称" width="290" key="5"
+                      <el-table-column prop="processName" label="工序名称" width="100" key="5"
                         show-overflow-tooltip></el-table-column>
-                      <el-table-column prop="mainUnit" label="单位" width="290" key="13"
+                      <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                         show-overflow-tooltip></el-table-column>
                       <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
                         show-overflow-tooltip></el-table-column>
@@ -174,19 +174,19 @@
                   <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                     id="table">
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                    <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
-                    <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                    <el-table-column prop="qty" label="基本数量" min-width="140"
+                    <el-table-column prop="drawingNo" label="品名规格" min-width="200"
+                      show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
+                    <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
+                    <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
+                    <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
+                    <el-table-column prop="demandQuantity" label="需发料数量" width="140"
                       v-if="btnType !== 'look'"></el-table-column>
-                    <el-table-column prop="demandQuantity" label="需发料数量" min-width="140"
-                      v-if="btnType !== 'look'"></el-table-column>
-                    <el-table-column prop="deliveryQuantity" label="发料数量" min-width="140"
+                    <el-table-column prop="deliveryQuantity" label="发料数量" width="100"
                       v-if="btnType == 'look'"></el-table-column>
-                    <el-table-column prop="issuedQuantity" label="已出库数量" min-width="140"
+                    <el-table-column prop="issuedQuantity" label="已出库数量" width="140"
                       v-if="btnType == 'look'"></el-table-column>
-                    <el-table-column prop="undeliveredQuantity" label="未出库数量" min-width="140"
+                    <el-table-column prop="undeliveredQuantity" label="未出库数量" width="140"
                       v-if="btnType == 'look'"></el-table-column>
                   </el-table>
                   <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">
@@ -216,111 +216,97 @@
           </el-tabs>
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-                <el-row :gutter="30" class="custom-row">
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="单号" prop="orderNo">
-                      <el-input v-model="dataForm.orderNo" :disabled="btnType == 'look'
-                        ? true
-                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                          ? false
-                          : true
-                        " />
-                    </el-form-item>
-                  </el-col>
+              <div style="padding: 10px;">
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="单号" prop="orderNo">
+                        <el-input v-model="dataForm.orderNo" :disabled="btnType == 'look'
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
+                          " />
+                      </el-form-item>
+                    </el-col>
 
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="供应商名称" prop="partnerName">
-                      <!-- 供应商选择弹窗  -->
-                      <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
-                        v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
-                        @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
-                        treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
-                        :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
-                        :searchList="PartnerTableSearchList" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="发料日期" prop="deliverDate">
-                      <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择发料日期" type="date"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
-                        style="width: 100%;"></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
-                    <el-form-item label="收件人" prop="recipient">
-                      <el-input v-model="dataForm.recipient" placeholder="请输入收件人"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="20" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
-                    <el-form-item label="收件人电话" prop="phone">
-                      <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24">
-                    <el-form-item label="发料方式" prop="delivery">
-                      <el-select v-model="dataForm.delivery" placeholder="请选择发料方式" clearable style="width: 100%;"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'">
-                        <el-option v-for="(item, index) in orderListfhfs" :key="index" :label="item.label"
-                          @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="供应商名称" prop="partnerName">
+                        <!-- 供应商选择弹窗  -->
+                        <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
+                          v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
+                          @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
+                          treeTitle="供应商分类" :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                          :listRequestObj="PartnerListRequestObj" :paramsObj="{ oldData }"
+                          :searchList="PartnerTableSearchList" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="发料日期" prop="deliverDate">
+                        <el-date-picker v-model="dataForm.deliverDate" placeholder="请选择发料日期" type="date"
+                          :disabled="btnType == 'look' || btnType == 'qrsh'" value-format="yyyy-MM-dd"
+                          style="width: 100%;"></el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                      <el-form-item label="收件人" prop="recipient">
+                        <el-input v-model="dataForm.recipient" placeholder="请输入收件人"
+                          :disabled="btnType == 'look' || btnType == 'qrsh'" maxlength="20" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                      <el-form-item label="收件人电话" prop="phone">
+                        <el-input v-model="dataForm.phone" placeholder="请输入电话" maxlength="20"
+                          :disabled="btnType == 'look' || btnType == 'qrsh'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="发料方式" prop="delivery">
+                        <el-select v-model="dataForm.delivery" placeholder="请选择发料方式" clearable style="width: 100%;"
+                          :disabled="btnType == 'look' || btnType == 'qrsh'">
+                          <el-option v-for="(item, index) in orderListfhfs" :key="index" :label="item.label"
+                            @click.native="changeDelivery(item.value)" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
 
-                  <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                    <el-form-item label="发料状态" prop="deliveryStatus">
-                      <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发料状态" clearable style="width: 100%;"
-                        :disabled="btnType == 'look' ? true : false">
-                        <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                    <el-form-item label="发料完成时间" prop="deliveryCompletionDate">
-                      <el-date-picker v-model="dataForm.deliveryCompletionDate" type="datetime" placeholder="请选择发料完成时间"
-                        :disabled="btnType == 'look'" style="width: 100%;" clearable></el-date-picker>
-                    </el-form-item>
-                  </el-col>
+                    <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                          <el-form-item label="发料状态" prop="deliveryStatus">
+                            <el-select v-model="dataForm.deliveryStatus" placeholder="请选择发料状态" clearable
+                              style="width: 100%;" :disabled="btnType == 'look' ? true : false">
+                              <el-option v-for="(item, index) in deliveryStatusList" :key="index" :label="item.label"
+                                :value="item.value"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col> -->
 
-                  <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                    <el-form-item label="创建时间" prop="createTime">
-                      <el-date-picker v-model="dataForm.createTime" type="datetime" placeholder="请选择创建时间"
-                        :disabled="btnType == 'look'" style="width: 100%;" clearable></el-date-picker>
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                    <el-form-item label="创建人" prop="createByName">
-                      <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
-                        maxlength="20" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="12" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
-                    <el-form-item label="收件地址">
-                      <template slot="label">
-                        <span>
-                          地址
-                          <span class="required">*</span>
-                        </span>
-                        <span>>></span>
-                        <el-button :disabled="btnType == 'look'" type="text" @click="changeAddress">
-                          更换地址
-                        </el-button>
-                      </template>
-                      <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'"
-                        type="textarea" maxlength="50" :rows="2" />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :sm="12" :xs="24">
-                    <el-form-item label="备注" prop="remark">
-                      <el-input v-model="dataForm.remark" placeholder="请输入备注"
-                        :disabled="btnType == 'look' || btnType == 'qrsh'" type="textarea" maxlength="200" :rows="2" />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-              </el-form>
+                    <el-col :sm="12" :xs="24" v-if="dataForm.delivery != 'self_pickup'">
+                      <el-form-item label="收件地址">
+                        <template slot="label">
+                          <span>
+                            地址
+                            <span class="required">*</span>
+                          </span>
+                          <span>>></span>
+                          <el-button :disabled="btnType == 'look'" type="text" @click="changeAddress">
+                            更换地址
+                          </el-button>
+                        </template>
+                        <el-input v-model="defaultAddress" readonly :disabled="btnType == 'look' || btnType == 'qrsh'"
+                          type="textarea" maxlength="50" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注"
+                          :disabled="btnType == 'look' || btnType == 'qrsh'" type="textarea" maxlength="200"
+                          :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </div>
             </el-collapse-item>
             <el-collapse-item title="产品信息" name="productInfo">
               <div v-if="btnType == 'add' || btnType == 'edit' || btnType == 'copy'">
@@ -341,11 +327,11 @@
 
                   <el-table-column prop="drawingNo" label="品名规格" width="290" key="3"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="290" key="6"
+                  <el-table-column v-if="btnType == 'look'" prop="productCode" label="产品编码" width="120" key="6"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="processName" label="工序名称" width="290" key="5"
+                  <el-table-column prop="processName" label="工序名称" width="100" key="5"
                     show-overflow-tooltip></el-table-column>
-                  <el-table-column prop="mainUnit" label="单位" width="290" key="13"
+                  <el-table-column prop="mainUnit" label="单位" width="80" key="13"
                     show-overflow-tooltip></el-table-column>
                   <el-table-column prop="purchaseQuantity" label="订单数量" width="120" key="7"
                     show-overflow-tooltip></el-table-column>
@@ -373,18 +359,18 @@
               <el-table style="border: 1px solid #e3e7ee;" hasNO fixedNO v-bind="linesList" :data="linesList"
                 id="table">
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <el-table-column prop="drawingNo" label="品名规格" min-width="160"></el-table-column>
-                <el-table-column prop="productCode" label="产品编码" min-width="140"></el-table-column>
-                <el-table-column prop="processName" label="工序名称" min-width="140"></el-table-column>
-                <el-table-column prop="mainUnit" label="单位" min-width="140"></el-table-column>
-                <el-table-column prop="qty" label="基本数量" min-width="140" v-if="btnType !== 'look'"></el-table-column>
-                <el-table-column prop="demandQuantity" label="需发料数量" min-width="140"
+                <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="120"></el-table-column>
+                <el-table-column prop="processName" label="工序名称" width="100"></el-table-column>
+                <el-table-column prop="mainUnit" label="单位" width="80"></el-table-column>
+                <el-table-column prop="qty" label="基本数量" width="100" v-if="btnType !== 'look'"></el-table-column>
+                <el-table-column prop="demandQuantity" label="需发料数量" width="140"
                   v-if="btnType !== 'look'"></el-table-column>
-                <el-table-column prop="deliveryQuantity" label="发料数量" min-width="140"
+                <el-table-column prop="deliveryQuantity" label="发料数量" width="100"
                   v-if="btnType == 'look'"></el-table-column>
-                <el-table-column prop="issuedQuantity" label="已出库数量" min-width="140"
+                <el-table-column prop="issuedQuantity" label="已出库数量" width="140"
                   v-if="btnType == 'look'"></el-table-column>
-                <el-table-column prop="undeliveredQuantity" label="未出库数量" min-width="140"
+                <el-table-column prop="undeliveredQuantity" label="未出库数量" width="140"
                   v-if="btnType == 'look'"></el-table-column>
               </el-table>
               <div style="height: 40px; line-height: 40px;background: #f5f7fa;" class="text">

@@ -137,7 +137,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 export default {
   name: 'toolProfilesettings',
-  components: { Form, UserRelationList, Diagram ,PrintBrowse},
+  components: { Form, Diagram ,PrintBrowse},
   data() {
     return {
       treeData: [],

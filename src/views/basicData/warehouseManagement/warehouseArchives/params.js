@@ -14,7 +14,7 @@ export default () => [
         type: 'input',
         itemRules: [{ required: true, trigger: 'blur' }, { validator: formValidate('enCode'), trigger: 'blur' }],
         render: true,
-         sm: 8
+        sm: 8
         // itemDisabled: false
       },
       {
@@ -24,9 +24,10 @@ export default () => [
         type: 'input',
         maxlength: 100,
         itemRules: [{ required: true, trigger: 'blur' }],
-         sm: 8
+        sm: 8
       },
-      { prop: "state", label: "启用状态", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }],  sm: 8 },
+      { prop: "state", label: "启用状态", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8 },
+      { prop: "locationStatus", label: "开启库位", value: "enable", type: 'select', render: true, itemRules: [{ required: true, trigger: "change" }], options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], sm: 8 },
       {
         prop: 'type',
         label: '仓库类型',
@@ -40,7 +41,7 @@ export default () => [
           { label: '虚拟仓库', value: 'virtually' },
           { label: '线边仓库', value: 'line_edge' }
         ],
-         sm: 8
+        sm: 8
       },
       {
         prop: 'workshop',
@@ -49,10 +50,10 @@ export default () => [
         type: 'select',
         options: [{ label: '装配车间', value: 'assemble' }, { label: '套圈车间', value: 'ferrule' }],
         render: false,
-         sm: 8
+        sm: 8
       },
-      { prop: 'position', label: '位置', value: '', type: 'input', maxlength: 100,  sm: 8 },
-      { prop: 'sort', label: '排序值', value: '', type: 'input', maxlength: 100,  sm: 8 },
+      { prop: 'position', label: '位置', value: '', type: 'input', maxlength: 100, sm: 8 },
+      { prop: 'sort', label: '排序值', value: '', type: 'input', maxlength: 100, sm: 8 },
       { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
     ]
   }

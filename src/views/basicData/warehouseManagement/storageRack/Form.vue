@@ -129,6 +129,7 @@ export default {
         code: '',
         noId: '',
         type: '',
+        state: 'enable',
         category: 'warehouse'
       },
       requestObj5: {

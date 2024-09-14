@@ -10,186 +10,297 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-        <el-collapse v-model="activeNames" >
-          <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
-            <el-form ref="dataForm" :model="dataForm" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="生产任务单号" prop="orderNo">
-                    <el-input v-model="dataForm.orderNo" disabled />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="任务类型" prop="orderType">
-                    <el-select v-model="dataForm.orderType" placeholder="任务类型" style="width: 100%;" disabled>
-                      <el-option v-for="(item, index) in orderTypeList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="品名规格" prop="productDrawingNo">
-                    <el-input v-model="dataForm.productDrawingNo" placeholder="品名规格" disabled>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="产品编码" prop="productCode">
-                    <el-input v-model="dataForm.productCode" placeholder="产品编码" disabled>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="总生产数量" prop="productionQuantity">
-                    <el-input v-model="dataForm.productionQuantity" placeholder="总生产数量" disabled>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="已完成数量" prop="completedQuantity">
-                    <el-input v-model="dataForm.completedQuantity" placeholder="已完成数量" disabled>
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="工艺路线名称" prop="routingName">
-                    <el-input v-model="dataForm.routingName" placeholder="工艺路线名称" disabled></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="工艺路线编码" prop="routingCode">
-                    <el-input v-model="dataForm.routingCode" placeholder="工艺路线名称" disabled></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="打字内容" prop="sealingCoverTyping">
-                    <el-input v-model="dataForm.sealingCoverTyping" placeholder="打字内容" disabled></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="精度等级" prop="accuracyLevel">
-                    <el-input v-model="dataForm.accuracyLevel" placeholder="精度等级" disabled></el-input>
-                  </el-form-item>
-                </el-col>
+        <el-collapse v-model="activeNames">
+          <el-collapse-item title="生产任务报工" name="basicInfo" class="orderInfo" style="margin-top: 5px;">
+            <el-col :span="6" class="eol">
+              <el-form ref="dataForm" :model="dataForm" label-width="120px" label-position="left" class="taskInfo">
+                <el-form-item label="任务单号：" prop="orderNo">
+                  <div>{{ dataForm.orderNo }}</div>
+                </el-form-item>
+                <el-form-item label="品名规格：" prop="productDrawingNo">
+                  <div>{{ dataForm.productDrawingNo }}</div>
+                </el-form-item>
 
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="振动等级" prop="vibrationLevel">
-                    <el-input v-model="dataForm.vibrationLevel" placeholder="振动等级" disabled></el-input>
 
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="油脂" prop="oil">
-                    <el-input v-model="dataForm.oil" placeholder="油脂" disabled></el-input>
+                <el-form-item label="产品编码：" prop="productCode">
+                  <div>{{ dataForm.productCode }}</div>
 
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="油脂量" prop="oilQuantity">
-                    <el-input v-model="dataForm.oilQuantity" placeholder="油脂量" disabled></el-input>
+                </el-form-item>
 
-                  </el-form-item>
-                </el-col>
 
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="游隙" prop="clearance">
-                    <el-input v-model="dataForm.clearance" placeholder="游隙" disabled></el-input>
+                <el-form-item label="总生产数量：" prop="productionQuantity">
+                  <div>{{ dataForm.productionQuantity }}{{ dataForm.mainUnit }}</div>
 
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="包装方式" prop="packagingMethod">
-                    <el-input v-model="dataForm.packagingMethod" placeholder="包装方式" disabled></el-input>
+                </el-form-item>
 
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="特殊要求" prop="specialRequire">
-                    <el-input v-model="dataForm.specialRequire" placeholder="特殊要求" disabled></el-input>
 
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-          </el-collapse-item>
-          <el-collapse-item title="报工信息" name="productInfo" class="reportInfo">
 
-            <div>
 
-              <div style="margin-top: 5px; border-bottom: 1px solid #EBEEF5;padding: 0 10px;" >
-                <div v-for="(item, index) in processData" :key="index" class="workInfo"
-                  style="text-align: center;display: inline-block;">
-                  <div class="processInfoBox" style="cursor: pointer;"
-                    :class="item.processId == currentProcessId ? 'processInfo' : ''" @click="getProcessFun(item)">
-                    {{ item.processName }} <div>({{ item.processCode }})</div>
+                <el-form-item label="工艺名称：" prop="routingName">
+                  <div>{{ dataForm.routingName }}</div>
+                </el-form-item>
+                <el-form-item label="打字内容：" prop="sealingCoverTyping">
+                  <div>{{ dataForm.sealingCoverTyping }}</div>
+                </el-form-item>
+
+
+                <el-form-item label="精度等级：" prop="accuracyLevel">
+                  <div>{{ dataForm.accuracyLevel }}</div>
+                </el-form-item>
+
+
+
+                <el-form-item label="振动等级：" prop="vibrationLevel">
+                  <div>{{ dataForm.vibrationLevel }}</div>
+
+                </el-form-item>
+
+
+                <el-form-item label="油脂：" prop="oil">
+                  <div>{{ dataForm.oil }}</div>
+
+                </el-form-item>
+
+
+                <el-form-item label="油脂量：" prop="oilQuantity">
+                  <div>{{ dataForm.oilQuantity }}</div>
+
+                </el-form-item>
+
+
+
+                <el-form-item label="游隙：" prop="clearance">
+                  <div>{{ dataForm.clearance }}</div>
+
+                </el-form-item>
+
+
+                <el-form-item label="包装方式：" prop="packagingMethod">
+                  <div>{{ dataForm.packagingMethod }}</div>
+
+                </el-form-item>
+
+
+                <el-form-item label="特殊要求：" prop="specialRequire">
+                  <div>{{ dataForm.specialRequire }}</div>
+
+                </el-form-item>
+
+              </el-form>
+            </el-col>
+            <el-col :span="18">
+
+              <div>
+
+                <div style="margin-top: 5px; border-bottom: 1px solid #EBEEF5;padding: 0 10px;">
+                  <div v-for="(item, index) in workList" :key="index" class="workInfo"
+                    style="text-align: center;display: inline-block;">
+                    <div class="processInfoBox" style="cursor: pointer;"
+                      :class="item.processId == currentProcessId ? 'processInfo' : ''" @click="getProcessFun(item)">
+                      {{ item.processName }} <div>({{ item.processCode }})</div>
+                    </div>
+
                   </div>
-
                 </div>
-              </div>
-
-              <div  class="info">
-                <el-card class="box-card" shadow="hover" v-for="(item, index) in workList" :key="index"
-                 >
-                  <el-form label-width="160px" label-position="top">
+                <div class="information">
+                  <div class="tit">工单信息</div>
+                  <el-form label-width="160px" label-position="top" :model="workForm" ref="reportRef">
 
                     <el-row :gutter="30" class="custom-row">
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工单单号" prop="orderNo">
-                          <el-input v-model="item.orderNo" disabled />
+                          <el-input v-model="currentProcess.orderNo" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工序名称" prop="processName">
-                          <el-input v-model="item.processName" disabled />
+                          <el-input v-model="currentProcess.processName" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="工序编码" prop="processCode">
-                          <el-input v-model="item.processCode" disabled />
+                          <el-input v-model="currentProcess.processCode" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="班组" prop="workGroupName">
-                          <el-input v-model="item.workGroupName" disabled />
+                          <el-input v-model="currentProcess.workGroupName" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="人员" prop="personName">
-                          <el-input v-model="item.personName" disabled />
+                          <el-input v-model="currentProcess.personName" disabled />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="设备" prop="equipmentName">
+                          <el-input v-model="currentProcess.equipmentId" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划开始日期" prop="planStartDate">
-                          <el-input v-model="item.planStartDate" disabled />
+                          <el-input v-model="currentProcess.planStartDate" disabled />
                         </el-form-item>
                       </el-col>
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="计划结束日期" prop="planEndDate">
-                          <el-input v-model="item.planEndDate" disabled />
+                          <el-input v-model="currentProcess.planEndDate" disabled />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="item.processingType == 'self_produced'">
+                      <el-col :sm="6" :xs="24" v-if="currentProcess.processingType == 'self_produced'">
                         <el-form-item label="生产数量" prop="productionQuantity">
-                          <el-input v-model="item.productionQuantity" placeholder="生产数量" disabled>
+                          <el-input v-model="currentProcess.productionQuantity" placeholder="生产数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="item.processingType == 'self_produced'">
+                      <el-col :sm="6" :xs="24" v-if="currentProcess.processingType == 'self_produced'">
                         <el-form-item label="可报工数量" prop="waitReportNum">
-                          <el-input v-model="item.waitReportNum" placeholder="可报工数量" disabled>
+                          <el-input v-model="currentProcess.waitReportNum" placeholder="可报工数量" disabled>
                           </el-input>
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="item.processingType == 'self_produced'">
+
+
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="不合格数量">
+                          <el-input v-model="currentProcess.unqualifiedQuantity" placeholder="不合格数量" disabled />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="责废数量">
+                          <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量" disabled />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="料废数量">
+                          <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量" disabled />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="返工数量">
+                          <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" disabled/>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="报工时间" prop="reportingTime">
+                          <el-date-picker v-model="currentProcess.reportingTime" :default-value="new Date()" disabled
+                            type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;"
+                            placeholder="请选择报工时间">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="生产人" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'">
+                          <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable disabled
+                            style="width: 100%;" @change="hangleSelectSales">
+                          </user-select>
+
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="设备">
+                          <el-select v-model="currentProcess.equipmentName" placeholder="设备" style="width: 100%;"
+                            disabled>
+                            <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.name"
+                              :value="item.value"></el-option>
+                          </el-select>
+                          <!-- equipmentId -->
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="currentProcess.remark" placeholder="请输入备注" type="textarea" maxlength="200"
+                          disabled :rows="2" />
+                        </el-form-item>
+                      </el-col>
+
+
+                    </el-row>
+                  </el-form>
+                </div>
+                <div class="info" v-if="currentProcess.reportFlag">
+                  <div class="tit">报工信息</div>
+                  <el-form label-width="160px" label-position="top" :model="currentProcess" :rules="dataRule"
+                    ref="reportRef">
+
+                    <el-row :gutter="30" class="custom-row">
+
+
+
+
+                      <el-col :sm="6" :xs="24" v-if="!currentProcess.vibrateReportFlag">
                         <el-form-item label="合格数量" prop="qualifiedQuantity">
-                          <el-input v-model="item.qualifiedQuantity" placeholder="合格数量" disabled>
-                          </el-input>
+                          <el-input v-model="currentProcess.qualifiedQuantity" placeholder="合格数量" />
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="6" :xs="24" v-if="item.processingType == 'self_produced'">
-                        <el-form-item label="不合格数量" prop="unqualifiedQuantity">
-                          <el-input v-model="item.unqualifiedQuantity" placeholder="不合格数量" disabled>
-                          </el-input>
+                      <el-col :sm="6" :xs="24" v-for="(item, index) in vibrationLevelList" :key="index"
+                        v-if="currentProcess.vibrateReportFlag">
+                        <el-form-item :label="item.name + '(合格数量)'" :prop="item.name">
+                          <el-input v-model="currentProcess.item[item.name]" placeholder="合格数量" @input="forceUpdata"
+                            @blur="handleBlur(item, currentProcess.item[item.name])" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="不合格数量">
+                          <el-input v-model="currentProcess.unqualifiedQuantity" placeholder="不合格数量" disabled />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="责废数量">
+                          <el-input v-model="currentProcess.responsibilityWasteQuantity" placeholder="责废数量"
+                            @blur="handleBlur2" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="料废数量">
+                          <el-input v-model="currentProcess.materialWasteQuantity" placeholder="料废数量"
+                            @blur="handleBlur3" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="返工数量">
+                          <el-input v-model="currentProcess.reworkQuantity" placeholder="返工数量" />
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="报工时间" prop="reportingTime">
+                          <el-date-picker v-model="currentProcess.reportingTime" :default-value="new Date()"
+                            type="datetime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 100%;"
+                            placeholder="请选择报工时间">
+                          </el-date-picker>
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="生产人" prop="producerName" v-if="currentProcess.taskMethod != 'not_appoint'">
+                          <el-select v-model="currentProcess.producerName" placeholder="生产人" style="width: 100%;">
+                            <el-option v-for="(item, index) in personList" :key="index" :label="item.label"
+                              :value="item.id"></el-option>
+                          </el-select>
+
+                          <!-- producerId -->
+                        </el-form-item>
+                        <el-form-item label="生产人" prop="producerId" v-if="currentProcess.taskMethod == 'not_appoint'">
+                          <user-select v-model="currentProcess.producerId" placeholder="生产人" clearable
+                            style="width: 100%;" @change="hangleSelectSales">
+                          </user-select>
+
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="6" :xs="24">
+                        <el-form-item label="设备">
+                          <el-select v-model="currentProcess.equipmentName" placeholder="设备" style="width: 100%;">
+                            <el-option v-for="(item, index) in equipmentList" :key="index" :label="item.name"
+                              :value="item.value"></el-option>
+                          </el-select>
+                          <!-- equipmentId -->
+                        </el-form-item>
+                      </el-col>
+                      <el-col :sm="12" :xs="24">
+                        <el-form-item label="备注" prop="remark">
+                          <el-input v-model="currentProcess.remark" placeholder="请输入备注" type="textarea" maxlength="200"
+                            :disabled="!currentProcess.reportFlag" :rows="2" />
                         </el-form-item>
                       </el-col>
 
@@ -197,19 +308,16 @@
                   </el-form>
                   <!-- <div class="label_title"> 品名规格:{{item.productDrawingNo}}</div>                    -->
 
-                  <div v-if="item.processingType == 'self_produced' && item.reportFlag == true">
-                    <el-button type="primary" size="mini" @click='report(item)'>报 工</el-button>
-                    <el-button type="primary" size="mini" @click="reportRecordsFun(item)">查看报工记录</el-button>
+                  <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true" class="reportBtn">
+                    <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
+                    <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                   </div>
-                </el-card>
 
 
 
+                </div>
               </div>
-            </div>
-
-
-
+            </el-col>
           </el-collapse-item>
         </el-collapse>
 
@@ -231,6 +339,8 @@ import {
 } from "@/api/masterDataManagement/index";
 import { detailProcess, } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
+import { producePersonList } from "@/api/warehouseManagement/packingList.js"
+
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
@@ -262,6 +372,25 @@ export default {
       currentProcessId: "",
       id: "",
       sort: "",//测震工序序号
+      personList: [],
+      totalReportNum: "",
+      dataRule: {
+        reportingTime: [
+          { required: true, message: '报工时间不能为空', trigger: 'change' }
+        ],
+        producerName: [
+          { required: true, message: '生产人不能为空', trigger: 'change' }
+        ],
+        producerId: [
+          { required: true, message: '生产人不能为空', trigger: 'change' }
+        ],
+        qualifiedQuantity: [
+          { required: true, message: '合格数量不能为空', trigger: 'blur' },
+          { validator: this.formValidate({ type: "decimal", params: [20, 2, "请输入正确的数量(最多保留2位小数,整数8位)"], }), trigger: "blur", },
+          { validator: this.formValidate('noZero', '合格数量不能为0', (errMsg) => { this.$message.error(errMsg) }), trigger: 'blur' },
+        ]
+      },
+      workForm: {}
     }
   },
 
@@ -276,94 +405,244 @@ export default {
       this.id = id
       detailordershengchan(id).then(res => {
         this.dataForm = res.data.prodOrder
-        this.getRoutingDetailFun(this.dataForm.routingId)
+        this.workList = res.data.workOrderList
+        this.currentProcessId = res.data.workOrderList[0].processId
+        this.currentProcess = res.data.workOrderList[0]
+        this.workForm = JSON.parse(JSON.stringify(this.currentProcess))
+        this.commonFun()
+        // this.getRoutingDetailFun(this.dataForm.routingId)
       })
     },
     getProcessFun(item) {
       this.currentProcess = item
       this.currentProcessId = item.processId
+      this.workForm = JSON.parse(JSON.stringify(this.currentProcess))
       console.log("当前current", item);
-      this.getWorkListFun()
-    },
-    getRoutingDetailFun(id) {
-      detailProcess(id).then((res) => {
-        console.log("工艺详情", res);
-        this.currentProcessId = res.data.routingLineList[0].processId
-        this.currentProcess = res.data.routingLineList[0]
-        this.processData = res.data.routingLineList
-        this.getWorkListFun()
-        let vibrateData = this.processData.find(item => item.processType === "vibrate");
+      this.commonFun()
 
-        if (vibrateData) {
-          this.sort = vibrateData.sort + ''
-        } else {
+    },
+    handleBlur(item, data) {
+      console.log("item", item, data, this.currentProcess.item);
+      let total = Object.values(this.currentProcess.item)
+        .map(Number) // 将每个值转换为数字  
+        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
+      this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
+    },
+    handleBlur2() {
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
+      let total = Object.values(this.currentProcess.item)
+        .map(Number) // 将每个值转换为数字  
+        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
+      this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
+    },
+    handleBlur3() {
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
+      let total = Object.values(this.currentProcess.item)
+        .map(Number) // 将每个值转换为数字  
+        .reduce((acc, curr) => acc + curr, 0); // 使用 reduce 方法计算总和
+      this.totalReportNum = this.jnpf.numberFormat(this.jnpf.math('add', [total, this.currentProcess.unqualifiedQuantity]), 6)
+      this.$set(this.currentProcess, 'reportingQuantity', this.totalReportNum)
+    },
+    commonFun() {
+      this.currentProcess.unqualifiedQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.materialWasteQuantity, this.currentProcess.responsibilityWasteQuantity]), 6)
+      if (this.currentProcess.vibrateReportFlag) {
+        this.$set(this.currentProcess, 'item', {})
+        this.getvibrationLevelFun()
+      }
+      this.producePersonListFun(this.currentProcess.id)
+      const end = new Date();//获取当前的日期
+      this.currentProcess.reportingTime = this.dateFormat(end)
+    },
+    // 获取生产人员数据
+    producePersonListFun(id) {
+      producePersonList(id).then(res => {
+
+        console.log("生产人", res);
+        if (res.data) {
+          let result = Object.entries(res.data).map(([key, value]) => {
+            return {
+              id: key,
+              label: value
+            };
+          });
+          this.personList = result
+          console.log(result);
+          if (result.length > 0) {
+            this.$set(this.currentProcess, 'producerId', result[0].id)
+            this.$set(this.currentProcess, 'producerName', result[0].label)
+
+            this.$nextTick(() => {
+              this.$refs.reportRef.clearValidate('producerName')
+            })
+          }
+
         }
       })
     },
-    getWorkListFun() {
-      let obj = {
-        processId: this.currentProcessId,
-        productionOrderId: this.dataForm.id
-      }
-      getWorkList(obj).then(res => {
-        this.workList = res.data.records
+    // 获取振动等级数据
+    getvibrationLevelFun() {
+
+      let obj3 = {
+        pageNum: -1,
+        pageSize: 20,
+        typeCode: "pa005",
+        orderItems: [
+          {
+            asc: false,
+            column: "",
+          },
+          {
+            asc: false,
+            column: "code",
+          },
+        ]
+      };
+      getbimProductAttributesList(obj3).then(res => {
+        console.log("振动等级数据", res);
+        this.vibrationLevelList = res.data.records
+        res.data.records.forEach(item => {
+          this.currentProcess.item[item.name] = ""
+        });
+        console.log(666666, this.currentProcess);
       })
     },
+
     goBack() {
       this.$emit("close", false)
     },
-    // 查看报工记录
-    viewReportRecords(item) {
-      console.log("item记录", item);
-    },
-    reportRecordsFun(row) {
+   
+    reportRecordsFun() {
       this.recordFormVisible = true
       this.$nextTick(() => {
-        this.$refs.recordForm.init(row.orderNo)
+        this.$refs.recordForm.init(this.currentProcess.orderNo)
       })
     },
     // 报工
-    report(item) {
+    report() {
       // 先判断是否有测震工序(sort有值表示有测震工序)  
       // 如果有 拿当前工序排序值大于等于测震工序值 则表示是测震工序或测震后工序
       // 如果没有 则是测震前工序
-      console.log('scort', this.sort, this.currentProcess.sort);
+      console.log(this.currentProcess);
+      this.$refs['reportRef'].validate((valid) => {
+        if (valid) {
+          let submitFlag = null
+          if (this.totalReportNum > Number(this.currentProcess.waitReportNum)) {
+            this.submitFlag = false
+            this.$message.error("合格数量加上不合格数量不能超过可报工数量")
+            return
+          }
+          if (submitFlag === false) return
+          let arr = []
+          if (this.currentProcess.vibrateReportFlag) {
 
-      if (item.vibrateReportFlag) {
-        this.vibrateFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.VibrateForm.init(item)
+            if (this.vibrationLevelList.length) {
+              this.vibrationLevelList.forEach((item, index) => {
+                let obj = {}
+                if (index == 0) {
+                  obj.classAttribute = this.currentProcess.classAttribute
+                  obj.orderType = this.currentProcess.orderType
+                  obj.productDrawingNo = this.currentProcess.productDrawingNo
+                  obj.processName = this.currentProcess.processName
+                  obj.productionQuantity = this.currentProcess.productionQuantity
+                  obj.equipmentId = this.currentProcess.equipmentId
+                  obj.remark = this.currentProcess.remark
+                  obj.reportingTime = this.currentProcess.reportingTime
+                  obj.reworkQuantity = this.currentProcess.reworkQuantity
+                  obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+                  obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+                  obj.pricingType = this.currentProcess.pricingType
+                  obj.processId = this.currentProcess.processId
+                  obj.producerId = this.currentProcess.producerId
+                  obj.productionOrderId = this.currentProcess.productionOrderId
+                  obj.qualifiedQuantity = this.currentProcess.item[item.name]
+                  obj.reportingQuantity = this.jnpf.numberFormat(this.jnpf.math('add', [this.currentProcess.item[item.name], this.currentProcess.unqualifiedQuantity, this.currentProcess.reworkQuantity]), 6)
+                  obj.reportingType = "normal"
+                  obj.unqualifiedQuantity = this.currentProcess.unqualifiedQuantity
+                  obj.vibrationLevel = item.name
+                  obj.workOrderId = this.currentProcess.id
+                  arr.push(obj)
+                } else {
+                  obj.classAttribute = this.currentProcess.classAttribute
+                  obj.orderType = this.currentProcess.orderType
+                  obj.productDrawingNo = this.currentProcess.productDrawingNo
+                  obj.processName = this.currentProcess.processName
+                  obj.productionQuantity = this.currentProcess.productionQuantity
+                  obj.equipmentId = this.currentProcess.equipmentId
+                  obj.remark = this.currentProcess.remark
+                  obj.reportingTime = this.currentProcess.reportingTime
+                  obj.reworkQuantity = 0
+                  obj.responsibilityWasteQuantity = this.currentProcess.responsibilityWasteQuantity
+                  obj.materialWasteQuantity = this.currentProcess.materialWasteQuantity
+                  obj.pricingType = this.currentProcess.pricingType
+                  obj.processId = this.currentProcess.processId
+                  obj.producerId = this.currentProcess.producerId
+                  obj.productionOrderId = this.currentProcess.productionOrderId
+                  obj.qualifiedQuantity = this.currentProcess.item[item.name]
+                  obj.reportingQuantity = this.currentProcess.item[item.name]
+                  obj.reportingType = "normal"
+                  obj.unqualifiedQuantity = 0
+                  obj.vibrationLevel = item.name
+                  obj.workOrderId = this.currentProcess.id
+                  arr.push(obj)
+                }
+              });
+            }
+          } else {
+            let obj = {
+              "classAttribute": this.currentProcess.classAttribute,
+              orderType: this.currentProcess.orderType,
+              productDrawingNo: this.currentProcess.productDrawingNo,
+              processName: this.currentProcess.processName,
+              productionQuantity: this.currentProcess.productionQuantity,
+              equipmentId: this.currentProcess.equipmentId,
+              remark: this.currentProcess.remark,
+              reportingTime: this.currentProcess.reportingTime,
+              reworkQuantity: this.currentProcess.reworkQuantity,
+              responsibilityWasteQuantity: this.currentProcess.responsibilityWasteQuantity,
+              reworkQuantity: this.currentProcess.reworkQuantity,
+              "materialWasteQuantity": this.currentProcess.materialWasteQuantity,
+              "orderNo": this.currentProcess.orderNo,
+              "pricingType": this.currentProcess.pricingType,
+              "processId": this.currentProcess.processId,
+              "producerId": this.currentProcess.producerId,
+              "productionOrderId": this.currentProcess.productionOrderId,
+              "qualifiedQuantity": this.currentProcess.qualifiedQuantity,
+              "reportingQuantity": this.currentProcess.qualifiedQuantity,
+              "reportingType": "normal ",
+              "unqualifiedQuantity": this.currentProcess.unqualifiedQuantity,
+              "vibrationLevel": this.currentProcess.vibrationLevel,
+              "workOrderId": this.currentProcess.id,
+            }
+            arr.push(obj)
+          }
+          addWorkReport(arr).then(res => {
+            this.$message.success("报工成功")
+            this.init(this.id)
+          })
+        }
+      })
 
-        })
-      } else {
-        this.normalFormVisible = true
-        this.$nextTick(() => {
-          this.$refs.normalForm.init(item)
 
-        })
-      }
-
-      // let arr = [];
-      // let obj = {
-      //   "classAttribute": item.classAttribute,
-
-      //   "materialWasteQuantity": item.materialWasteQuantity,
-      //   "orderNo": item.orderNo,
-      //   "pricingType": item.pricingType,
-      //   "processId": item.processId,
-      //   "producerId": item.personId,
-      //   "productionOrderId": item.productionOrderId,
-      //   "qualifiedQuantity": item.qualifiedQuantity,
-      //   "reportingQuantity": item.waitReportNum,
-      //   "reportingType": "normal ",
-      //   "unqualifiedQuantity": item.unqualifiedQuantity,
-      //   "vibrationLevel": item.vibrationLevel,
-      //   "workOrderId": item.id,
-      // }
-      // arr.push(obj)
-      // addWorkReport(arr).then(res => {
-      //   this.getRoutingDetailFun(this.dataForm.routingId)
-      // })
+    },
+    // 选择生产人
+    hangleSelectSales(e, r) {
+      this.$nextTick(() => {
+        this.$refs.reportRef.validateField('producerId')
+      })
+      this.currentProcess.producerId = e
+    },
+    dateFormat(dateData) {
+      var date = new Date(dateData);
+      var year = date.getFullYear();
+      var month = (date.getMonth() + 1).toString().padStart(2, "0");
+      var day = date.getDate().toString().padStart(2, "0");
+      var hours = date.getHours().toString().padStart(2, "0");
+      var minutes = date.getMinutes().toString().padStart(2, "0");
+      var seconds = date.getSeconds().toString().padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+      return formattedDate
     },
   }
 }
@@ -386,14 +665,13 @@ export default {
 //.el-button--small {
 // padding: 1;
 //}</style>
-<style scoped>
 ::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0;
+height: auto !important;
+padding: 0;
 }
 
 ::v-deep .JNPF-common-page-header.noButtons {
-  padding: 9px 10px;
+padding: 9px 10px;
 }
 </style>
 <style scoped lang="scss">
@@ -443,6 +721,10 @@ export default {
   padding-left: 0px !important
 }
 
+::v-deep.el-collapse {
+  height: 100%;
+}
+
 ::v-deep .el-collapse-item__header {
   line-height: 33px;
   font-size: 18px;
@@ -460,13 +742,19 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
-  border-top: none !important;
+  padding: 0px;
+  height: calc(100% - 48px);
 
 }
-.reportInfo ::v-deep .el-collapse-item__wrap{
+
+::v-deep .el-collapse-item__content {
+  height: 100%;
+}
+
+.reportInfo ::v-deep .el-collapse-item__wrap {
   padding: 0;
 }
+
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px
 }
@@ -489,8 +777,15 @@ export default {
   display: inline-block;
 }
 
-.orderInfo ::v-deep .el-collapse-item__wrap {
-  border-bottom: none !important
+.orderInfo {
+  height: 100%;
+}
+
+.eol {
+  height: 100%;
+  border-right: 1px solid #dcdfe6;
+  background: #f5f7fa;
+  padding-left: 10px;
 }
 
 .options {
@@ -569,20 +864,69 @@ export default {
   display: inline-block;
   vertical-align: top;
   overflow-y: auto;
-}
 
+}
+.info ::v-deep .el-form{
+  padding-left: 10px;
+  padding-right: 10px;
+  background: #ffa07a;
+}
+.information ::v-deep.el-form {
+  padding-left: 10px;
+  padding-right: 10px;
+  background: #add8e6;
+}
+.reportBtn{
+  text-align: center;
+  margin-top: 20px;
+}
+.tit{
+  background: #fafafa;
+    height: 48px;
+    line-height: 48px;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 0 10px;
+}
 .info::-webkit-scrollbar {
   display: none;
   /* 对于 Chrome, Safari 和 Opera 的写法 */
 }
- .el-card{
+
+.el-card {
   border: 0;
   border-top: 1px solid #EBEEF5;
- }
+}
+
 box-card:nth-child(n+3) {
   margin-top: 10px
 }
-.workInfo:nth-child(n+2){
+
+.workInfo:nth-child(n+2) {
   margin-left: -8px;
+}
+
+.taskInfo ::v-deep.el-form-item {
+  margin-bottom: 0;
+}
+
+.taskInfo::v-deep .el-form-item__content {
+  line-height: 40px !important;
+}
+
+.taskInfo::v-deep .el-form-item__label {
+  line-height: 40px !important;
+
+}
+
+.taskInfo ::v-deep.el-form-item__content div {
+  width: 170px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+::v-deep .el-col .el-form-item--small .el-form-item__content {
+  line-height: 32px;
 }
 </style>

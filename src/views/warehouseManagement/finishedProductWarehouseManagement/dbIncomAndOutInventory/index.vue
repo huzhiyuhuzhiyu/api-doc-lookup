@@ -1927,7 +1927,7 @@ export default {
 
 ::v-deep .el-badge__content.is-fixed {
   top: 5px;
-  right: 21px;
+  right: 24px;
 }
 
 .JNPF-common-search-box {
@@ -1960,5 +1960,8 @@ export default {
 
 .JNPF-common-head {
   padding: 8px;
+}
+::v-deep .el-radio-button:first-child .el-radio-button__inner{
+  border-radius: 0;
 }
 </style>

@@ -37,20 +37,19 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="性别" prop="sex" style="width: 100%;">
                         <el-select v-model="dataForm.sex" placeholder="请选择性别" :disabled="onlyRead" style="width: 100%;">
-                          <el-option label="男" value="1" />
-                          <el-option label="女" value="2" />
-                          <el-option label="保密" value="3" />
+                          <el-option v-for="item in [{label:'男',value:1},{label:'女',value:2},{label:'保密',value:3}]" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="部门" prop="departmentId" ref="departmentId">
-                        <ComSelect v-model="dataForm.departmentId" placeholder="请选择部门" :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
+                      <el-form-item label="部门" prop="organizeIdTree" ref="organizeIdTree">
+                        <ComSelect v-model="dataForm.organizeIdTree" placeholder="请选择部门" :disabled="onlyRead || !!this.dataForm.id" multiple @change="onOrganizeChange" clearable auth />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="岗位" prop="postId" ref="postId">
-                        <el-select v-model="postId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id" style="width: 100%;" @change="onChange('postId')" @visible-change="visibleChange" multiple filterable clearable>
+                      <el-form-item label="岗位" prop="postId" ref="positionId">
+                        <el-select v-model="positionId" placeholder="请选择岗位" :disabled="onlyRead || !!this.dataForm.id" style="width: 100%;" @change="onChange('postId')" @visible-change="visibleChange" multiple filterable clearable>
                           <el-option-group v-for="group in positionTreeData" :key="group.id" :label="group.fullName + (group.num ? '【' + group.num + '】' : '')">
                             <el-option v-for="item in group.children" :key="group.id + item.id" :label="item.fullName" :value="item.id">
                             </el-option>
@@ -109,16 +108,16 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有无刑事记录" prop="criminalRecords" style="width: 100%;">
                         <el-select v-model="dataForm.criminalRecords" placeholder="请选择有无刑事记录" :disabled="onlyRead" style="width: 100%;">
-                          <el-option label="无" value="0" />
-                          <el-option label="有" value="1" />
+                          <el-option label="无" value=0 />
+                          <el-option label="有" value=1 />
                         </el-select>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="有无传染病或职业病史" prop="infectiousDisease" style="width: 100%;">
                         <el-select v-model="dataForm.infectiousDisease" placeholder="请选择有无传染病或职业病史" :disabled="onlyRead" style="width: 100%;">
-                          <el-option label="无" value="0" />
-                          <el-option label="有" value="1" />
+                          <el-option label="无" value=0 />
+                          <el-option label="有" value=1 />
                         </el-select>
                       </el-form-item>
                     </el-col>
@@ -473,7 +472,7 @@ export default {
         jobNumber: '', //工号
         name: '',//姓名
         sex: null, //性别
-        departmentId: [], //组织id树
+        organizeIdTree: [], //组织id树
         postId: '', //岗位id
         managerId: '', //直属主管
         birthday: '', //出生日期
@@ -512,9 +511,7 @@ export default {
         socialSecurityEndDate: '', //社保断交日期
         selfEvaluation: '', //自我评价及主要业绩描述
       },
-      roleId: [],
-      groupId: [],
-      postId: [],
+      positionId: [],
       positionTreeData: [],
       roleTreeData: [],
       groupTreeData: [],
@@ -541,7 +538,7 @@ export default {
         sex: [
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
-        departmentId: [
+        organizeIdTree: [
           { required: true, message: '请选择部门', trigger: 'blur' }
         ],
         postId: [
@@ -604,10 +601,8 @@ export default {
       this.visible = true
       this.dataForm.id = id || ''
       this.onlyRead = onlyRead
-      this.roleId = []
-      this.groupId = []
-      this.postId = []
-      this.dataForm.departmentId = []
+      this.positionId = []
+      this.dataForm.organizeIdTree = []
       this.$nextTick(() => {
         this.formLoading = true
         this.$refs['dataForm'].resetFields()
@@ -633,18 +628,18 @@ export default {
         })
         if (this.dataForm.id) {
           getbaseEmployeeInfo(this.dataForm.id).then(res => {
-            this.dataForm = res.data
-            if (this.dataForm.roleId) this.roleId = this.dataForm.roleId.split(',')
-            if (this.dataForm.groupId) this.groupId = this.dataForm.groupId.split(',')
-            if (this.dataForm.postId) this.postId = this.dataForm.postId.split(',')
-            if (this.dataForm.departmentId && this.dataForm.departmentId.length) {
-              this.getOptionsByOrgIds(this.dataForm.departmentId)
+            this.memberfamilyList = res.data.familyMembers
+            this.workList = res.data.workExperience
+            this.contactsList = res.data.educationalExperience
+            this.dataForm = res.data.employeeVO
+            if (this.dataForm.postId) this.positionId = this.dataForm.postId.split(',')
+            if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
+              this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
             }
             if (res.data.employeeStatus === "off_job") {
               this.rules.employeeStatus[0].required = false
               this.rules.postId[0].required = false
-              this.rules.departmentId[0].required = false
-              console.log(this.rules);
+              this.rules.organizeIdTree[0].required = false
             }
             this.formLoading = false
           }).catch(() => this.formLoading = false)
@@ -657,24 +652,23 @@ export default {
       this.$emit('close')
     },
     onChange(key) {
-      this.dataForm[key] = this[key].join()
+      this.dataForm[key] = this.positionId.join()
     },
     onOrganizeChange(val) {
       this.dataForm.postId = ''
       this.dataForm.roleId = ''
-      this.dataForm.organizeId = ''
-      this.postId = []
-      this.roleId = []
+      this.dataForm.departmentId = ''
+      this.positionId = []
       this.$nextTick(() => {
-        this.$refs.dataForm.clearValidate(['departmentId']);
-        this.$refs.dataForm.clearValidate(['postId']);
+        this.$refs.dataForm.clearValidate(['organizeIdTree']);
+        this.$refs.dataForm.clearValidate(['positionId']);
       })
       if (!val || !val.length) return
       this.getOptionsByOrgIds(val)
     },
-    getOptionsByOrgIds(departmentId) {
-      const organizeIds = departmentId.map(o => o[o.length - 1])
-      this.dataForm.organizeId = organizeIds.join()
+    getOptionsByOrgIds(organizeIdTree) {
+      const organizeIds = organizeIdTree.map(o => o[o.length - 1])
+      this.dataForm.departmentId = organizeIds.join()
       getPositionByOrganize(organizeIds).then(res => {
         this.positionTreeData = res.data.list.filter(o => o.children && Array.isArray(o.children) && o.children.length)
       })
@@ -684,7 +678,7 @@ export default {
     },
     visibleChange(val) {
       if (!val) return
-      if (!this.dataForm.departmentId || !this.dataForm.departmentId.length) {
+      if (!this.dataForm.organizeIdTree || !this.dataForm.organizeIdTree.length) {
         this.positionTreeData = []
         this.postId = []
         this.$message.warning('请先选择部门')

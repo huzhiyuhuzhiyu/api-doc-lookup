@@ -73,22 +73,22 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" row-key="id">
           <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="name" label="姓名" width="120" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, true)">{{
-                scope.row.realName
+                scope.row.name
               }}</el-link>
             </template>
           </el-table-column>
           <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="sex" label="性别" width="90" align="center" sortable="custom">
+          <el-table-column prop="sex" label="性别" width="90" sortable="custom">
             <template slot-scope="scope">
               <span>{{ scope.row.sex == 1 ? '男' : (scope.row.sex == 2 ? '女' : '保密') }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="departmentName" label="所属部门" width="160" sortable="custom" />
+          <el-table-column prop="organizeName" label="所属部门" width="160" sortable="custom" />
           <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
           <el-table-column prop="nativePlace" label="籍贯" min-width="140" sortable="custom" />
           <el-table-column prop="nation" label="民族" min-width="160" sortable="custom" />
@@ -155,7 +155,7 @@
                       <el-dropdown-item @click.native="jobQuit(scope.row.id)">办理离职</el-dropdown-item>
                     </template>
                     <!-- <el-dropdown-item v-else @click.native="jobEntry(scope.row.id)">重新入职</el-dropdown-item> -->
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看详情</el-dropdown-item>
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看简历</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
@@ -165,17 +165,34 @@
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
+      <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text"><em>点击选取文件上传</em></div>
+        <div class="el-upload__tip" slot="tip">只能上传.xls/.xlsx文件 <el-button type="text" class="topButton" icon="el-icon-download" @click="downLoadTemplate">下载模板</el-button></div>
+
+      </el-upload>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelFun">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="formLoading" @click="submit()">
+          提交</el-button>
+      </span>
+    </el-dialog>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form v-if="formVisible" ref="Form" @close="removeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" />
-    <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" />
+    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" /> -->
+    <!-- <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" /> -->
     <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
+    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" /> -->
   </div>
 </template>
 <script>
+import ExportForm from '@/components/no_mount/ExportBox/index'
+import { saleCluemanagementpoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
@@ -185,8 +202,8 @@ import {
 } from '@/api/permission/user'
 import Form from './Form' // 新建
 import Diagram from './Diagram' // 树状列表-组织机构
-import ImportForm from './ImportForm' // 导入数据
-import ExportForm from './ExportForm' // 导出数据
+// import ImportForm from './ImportForm' // 导入数据
+// import ExportForm from './ExportForm' // 导出数据
 import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
 // import JobEntry from './JobEntry' // 重新入职
@@ -197,13 +214,15 @@ export default {
     Form,
     Diagram,
     ExportForm,
-    ImportForm,
+    // ImportForm,
     JobTransfer,
     JobQuit,
     SuperQuery
   },
   data() {
     return {
+      formLoading:false,
+      uploadVisib: false,
       superQueryJson: [
         {
           prop: 'jobNumber',
@@ -224,11 +243,6 @@ export default {
             { label: '女', value: '2' },
             { label: '保密', value: '3' }
           ] // 注意，此options从接口异步获取，改变值时注意内存地址
-        },
-        {
-          prop: 'departmentName',
-          label: "所属部门",
-          type: 'input'
         },
         { // 日期时间选择器（区间）
           prop: 'birthday',
@@ -429,6 +443,116 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    // 导出
+    exportForm() {
+      this.exportFormVisible = true
+      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    },
+    download(data) {
+      if (data) {
+        this.exportFormVisible = false
+        let includeFieldMap = {}
+        for (let i = 0; i < data.selectKey.length; i++) {
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+        }
+        let _data = {
+          ...this.listQuery,
+          exportType: '1223',
+          exportName: '员工档案',
+          includeFieldMap,
+          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+        }
+        excelExport(_data).then(res => {
+          this.exportFormVisible = false
+          if (!res.data.url) return
+          this.jnpf.downloadFile(res.data.url)
+        }).catch(() => { })
+      }
+    },
+    // 上传
+    UploadProduct(data) {
+      this.loadingText = '正在导入数据'
+      this.formLoading = true
+      var formData = new FormData()
+      formData.append("file", data)
+      //调用上传文件接口
+      saleCluemanagementpoolModel(formData).then(res => {
+        if (!res.data) {
+          this.$message.success(`导入成功`)
+          this.formLoading = false
+          this.loadingText = ''
+        } else {
+          this.handleMessage(res.data)
+        }
+        this.uploadVisib = false
+        this.initData()
+      }).catch(err => {
+        this.$message.error(`文件上传失败`)
+        this.uploadVisib = false
+        this.formLoading = false
+        this.loadingText = ''
+      })
+    },
+    // 提示
+    handleMessage(data) {
+      const h = this.$createElement
+      this.$message({
+        type: "error",
+        duration: 0,
+        showClose: true,
+        customClass: 'my-message', // 自定义类名，用于设置样式
+        message: h('div',
+          {
+            style: "padding-right:20px;display:flex;align-items:center;color:#f56c6c;"
+          },
+          [
+            h('p', { style: 'font-size:14px;' }, '导入成功，存在信息错误！'),
+            h('el-button', {
+              props: {
+                type: 'text',
+                size: "mini",
+                icon: 'el-icon-download'
+              },
+              on: {
+                click: () => {
+                  this.downNoProduct(data)
+                }
+              },
+              style: {
+                border: "none",
+                textAlign: "center",
+                // width:"20%",
+                margin: "0 5px 0 5px ",
+              },
+            }, '下载导入错误数据')
+          ]
+        ),
+      })
+      return
+    },
+    // 导入产品  下载导入错误数据
+    downNoProduct(res) {
+      this.jnpf.downloadFile(res.url, res.name)
+    },
+    submit() {
+      this.UploadProduct(this.file)
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles();
+    },
+    // 下载模板
+    downLoadTemplate() {
+      const a = document.createElement('a')
+      a.setAttribute('download', '')
+      a.setAttribute('href', location.origin + '/static/员工档案导入模板.xlsx')
+      a.click()
+    },
+    handleFileChange(file) {
+      this.file = file.raw
+    },
     getAdvancedQuery() {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
@@ -618,17 +742,18 @@ export default {
         })
       }).catch(() => { })
     },
-    exportForm() {
-      this.exportFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.exportForm.init(this.listQuery)
-      })
-    },
+    // exportForm() {
+    //   this.exportFormVisible = true
+    //   this.$nextTick(() => {
+    //     this.$refs.exportForm.init(this.listQuery)
+    //   })
+    // },
     uploadForm() {
-      this.importFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.importForm.init()
-      })
+      // this.importFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.importForm.init()
+      // })
+      this.uploadVisib = true
     },
     sortChange({ prop, order }) {
       let newProp

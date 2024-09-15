@@ -40,8 +40,7 @@
 </template>
 
 <script>
-import { userQuit, getUserInfo } from '@/api/permission/user'
-
+import { updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
 export default {
   data() {
     return {
@@ -74,9 +73,10 @@ export default {
       this.formLoading = true
       this.$nextTick(() => {
         this.$refs.dataForm.resetFields();
-        getUserInfo(id).then(res => {
-          this.dataForm.id = res.data.id
-          this.dataForm.realName = res.data.realName
+        getbaseEmployeeInfo(id).then(res => {
+          this.copylist = res.data
+          this.dataForm.id = res.data.employeeVO.id
+          this.dataForm.realName = res.data.employeeVO.realName
           this.loading = false
           this.formLoading = false
         }).catch(() => {
@@ -148,7 +148,8 @@ export default {
     request() {
       this.btnLoading = true
       this.dataForm.code = this.dataForm.id
-      userQuit(this.dataForm).then((res) => {
+      this.copylist.employeeVO = this.dataForm
+      updatebaseEmployee(this.dataForm).then((res) => {
         if (res.msg === 'Success') res.msg = '修改成功'
         this.$message({
           message: res.msg,

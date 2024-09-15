@@ -11,7 +11,7 @@
         </el-radio-group>
       </div>
       <div class="tag-group JNPF-common-search-box treeBox_bot"
-        style="height: 100vh;padding:5px 0 5px 10px;margin:0px 0 0px 0">
+        style="height: 100vh;padding:5px 10px 5px 10px;margin:0px 0 0px 0">
         <el-table :data="tableData" stripe style="margin-right: 10px;"
           :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
           <el-table-column prop="configKey" label="功能" width="180">

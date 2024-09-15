@@ -88,10 +88,10 @@
 
 
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" content="折叠" placement="top">
+            <!-- <el-tooltip effect="dark" content="可视化" placement="top">
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
-            </el-tooltip>
+                :underline="false" @click="visualization()" />
+            </el-tooltip> -->
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -104,35 +104,39 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
-          :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
-          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
-          @selection-change="handleSelectionChange">
-          <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
-          <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
-          <el-table-column prop="state" label="启用状态" width="90">
-            <template slot-scope="scope">
-              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
-                inactive-value="disabled" @change="stateChange(scope.row)">
-              </el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
-          <el-table-column prop="remark" label="备注" min-width="160" />
-          <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-          <el-table-column label="操作" width="100" fixed="right">
-            <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
-              </tableOpts>
-            </template>
-          </el-table-column>
-        </JNPF-table>
-        <div v-else>
-          55555
+        <div v-if="visualizationTable">
+          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
+            @sort-change="sortChange" custom-column :default-expand-all="expands"
+            :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
+            @selection-change="handleSelectionChange">
+            <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
+            <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
+            <el-table-column prop="state" label="启用状态" width="90">
+              <template slot-scope="scope">
+                <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949"
+                  active-value="enable" inactive-value="disabled" @change="stateChange(scope.row)">
+                </el-switch>
+              </template>
+            </el-table-column>
+            <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
+            <el-table-column prop="remark" label="备注" min-width="160" />
+            <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
+            <el-table-column label="操作" width="100" fixed="right">
+              <template slot-scope="scope">
+                <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
+                </tableOpts>
+              </template>
+            </el-table-column>
+          </JNPF-table>
+
+          <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
+            :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
         </div>
-        <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
-          :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
+
+        <div v-else>
+          测试
+        </div>
       </div>
     </div>
 
@@ -161,6 +165,7 @@ export default {
   components: { DepForm, AiForm, SuperQuery, PrintBrowse },
   data() {
     return {
+      visualizationTable: true,
       superQueryVisible: false,
       printBrowseVisible: false,
       superQueryJson: [
@@ -276,6 +281,9 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    visualization() {
+      this.visualizationTable = !this.visualizationTable
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },

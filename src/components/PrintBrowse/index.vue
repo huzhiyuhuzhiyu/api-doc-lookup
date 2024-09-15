@@ -209,7 +209,7 @@ export default {
       outer: for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
         cell.style.height = '22px'
-        // cell.style.border = '1px solid gray'
+        cell.style.border = '1px solid gray'
         let spanList = cells[j].getElementsByTagName('span')
         if (!spanList.length) break outer;
         let hasChildTable = false
@@ -233,7 +233,7 @@ export default {
       for (let key in data) {
         for (let j = 0; j < tds.cells.length; j++) {
           tds.cells[j].style.height = '22px'
-          // tds.cells[j].style.border = '1px solid gray'
+          tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {

@@ -30,15 +30,7 @@
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker disabled v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
                             style="width: 100%;" :picker-options="dataPickerOptions2"
-                            placeholder="请选择交货日期"></el-date-picker>
-                        </el-form-item>
-                      </el-col>
-                      <el-col :span="6" v-if="type === 'look'">
-                        <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
-                          <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
-                            <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
-                              :value="item.value"></el-option>
-                          </el-select>
+                            placeholder="请选择交货日期" ></el-date-picker>
                         </el-form-item>
                       </el-col>
                     </el-form>
@@ -89,7 +81,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="purchaseQuantity" label="采购数量" min-width="160">
+                      <el-table-column prop="purchaseQuantity" label="采购数量" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
@@ -100,7 +92,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="receiptQuantity" label="已入库数量" min-width="160">
+                      <el-table-column prop="receiptQuantity" label="已入库数量" width="110">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptQuantity'"
                             :rules="productRules.receiptQuantity">
@@ -111,7 +103,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" min-width="140" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="70" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -121,17 +113,7 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                            <div class="viewData">
-                              <span>{{ scope.row.deputyUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column> -->
-
-                      <el-table-column prop="price" label="含税单价" min-width="120">
+                      <el-table-column prop="price" label="含税单价" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                             <div class="viewData">
@@ -141,42 +123,17 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxRate" label="税率%" min-width="100">
+                      <el-table-column prop="taxRate" label="税率" width="80">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <div class="viewData">
-                              <span>{{ scope.row.taxRate }}</span>
+                              <span>{{ scope.row.taxRate }}%</span>
                             </div>
                           </el-form-item>
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="excludingTaxPrice" label="不含税单价" min-width="160">
-                
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
-                 
-                        <div class="viewData">
-                          <span>{{ scope.row.excludingTaxPrice  ? scope.row.excludingTaxPrice  : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
-
-
-                  <el-table-column prop="excludingTaxAmount" label="总金额" min-width="160">
-               
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxAmount'">
-                 
-                        <div class="viewData">
-                          <span>{{ scope.row.excludingTaxAmount ? scope.row.excludingTaxAmount  : 0 }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column> -->
-
-                      <el-table-column prop="taxAmount" label="税额" min-width="120">
+                      <el-table-column prop="taxAmount" label="税额" width="80">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                             <div class="viewData">
@@ -186,7 +143,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="totalAmount" label="价税合计" min-width="140">
+                      <el-table-column prop="totalAmount" label="价税合计" width="100">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                             <div class="viewData">
@@ -196,7 +153,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="deliveryDate" label="交货日期" min-width="240">
+                      <el-table-column prop="deliveryDate" label="交货日期" width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'">
                             <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
@@ -205,15 +162,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="receivingStatus" label="收货状态" width="130">
-                        <template slot-scope="scope">
-                          <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag></div>
-                          <div v-if="scope.row.receivingStatus == 'received'">
-                            <el-tag type="success">已完成</el-tag>
-                          </div>
-                          <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
-                        </template>
-                      </el-table-column>
+
                       <el-table-column prop="remark" label="备注" min-width="220">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" disabled maxlength="20"
@@ -269,14 +218,6 @@
                         placeholder="请选择交货日期"></el-date-picker>
                     </el-form-item>
                   </el-col>
-                  <el-col :span="6" v-if="type === 'look'">
-                    <el-form-item label="收货状态" prop="receivingStatus" ref="receivingStatus">
-                      <el-select v-model="value" placeholder="请选择" :disabled="type !== 'add' ? true : false">
-                        <el-option v-for="item in receivingStatusOptions" :key="item.value" :label="item.label"
-                          :value="item.value"></el-option>
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
                 </el-form>
               </el-row>
             </el-collapse-item>
@@ -326,7 +267,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="purchaseQuantity" label="采购数量" min-width="160">
+                  <el-table-column prop="purchaseQuantity" label="采购数量" width="100">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                         :rules="productRules.purchaseQuantity">
@@ -337,7 +278,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="receiptQuantity" label="已入库数量" min-width="160">
+                  <el-table-column prop="receiptQuantity" label="已入库数量" width="110">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'receiptQuantity'"
                         :rules="productRules.receiptQuantity">
@@ -348,7 +289,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="mainUnit" label="单位(主)" min-width="140" show-overflow-tooltip>
+                  <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                         <div class="viewData">
@@ -358,17 +299,8 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                        <div class="viewData">
-                          <span>{{ scope.row.deputyUnit }}</span>
-                        </div>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
 
-                  <el-table-column prop="price" label="含税单价" min-width="120">
+                  <el-table-column prop="price" label="含税单价" width="100">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                         <div class="viewData">
@@ -378,17 +310,17 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="taxRate" label="税率%" min-width="100">
+                  <el-table-column prop="taxRate" label="税率" width="80">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                         <div class="viewData">
-                          <span>{{ scope.row.taxRate }}</span>
+                          <span>{{ scope.row.taxRate }}%</span>
                         </div>
                       </el-form-item>
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="taxAmount" label="税额" min-width="120">
+                  <el-table-column prop="taxAmount" label="税额" width="80">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'taxAmount'">
                         <div class="viewData">
@@ -398,7 +330,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="totalAmount" label="价税合计" min-width="140">
+                  <el-table-column prop="totalAmount" label="价税合计" width="100">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'totalAmount'">
                         <div class="viewData">
@@ -408,22 +340,13 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="deliveryDate" label="交货日期" min-width="240">
+                  <el-table-column prop="deliveryDate" label="交货日期" width="180">
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'deliveryDate'">
                         <el-date-picker v-model="scope.row.deliveryDate" type="date" value-format="yyyy-MM-dd"
                           style="width: 100%;" disabled :picker-options="dataPickerOptions"
                           placeholder="请选择交货日期"></el-date-picker>
                       </el-form-item>
-                    </template>
-                  </el-table-column>
-                  <el-table-column prop="receivingStatus" label="收货状态" width="130">
-                    <template slot-scope="scope">
-                      <div v-if="scope.row.receivingStatus == 'receiving'"><el-tag>未完成</el-tag></div>
-                      <div v-if="scope.row.receivingStatus == 'received'">
-                        <el-tag type="success">已完成</el-tag>
-                      </div>
-                      <div v-if="scope.row.receivingStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
                     </template>
                   </el-table-column>
                   <el-table-column prop="remark" label="备注" min-width="220">

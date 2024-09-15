@@ -1105,11 +1105,14 @@ export default {
       console.log(data, 'uuuu')
       console.log(classAttributeFlag, 'classAttributeFlag')
       this.purchasingType = type
-      if (data[0].productDrawingNo) {
-        data[0].productDrawingNo = data[0].productDrawingNo
-      } else {
-        data[0].productDrawingNo = data[0].drawingNo
-      }
+      data.forEach(item => {
+        if (item.productDrawingNo) {
+          item.productDrawingNo = item.productDrawingNo
+        } else {
+          item.productDrawingNo = item.drawingNo
+        }
+      })
+
       this.dataForm.classAttribute = classAttributeFlag
       this.getProductClassFun()
 

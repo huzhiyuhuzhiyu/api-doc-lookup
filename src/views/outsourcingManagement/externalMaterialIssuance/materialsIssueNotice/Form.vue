@@ -5,14 +5,14 @@
         <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
           <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
           <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建发料通知单'
+            ? '新建外协发料通知单'
             : btnType == 'edit'
-              ? '编辑发料通知单'
+              ? '编辑外协发料通知单'
               : btnType == 'qrsh'
                 ? '确认收货'
                 : btnType == 'copy'
-                  ? '新建发料通知单'
-                  : '查看发料通知单'
+                  ? '新建外协发料通知单'
+                  : '查看外协发料通知单'
             " />
           <div class="options">
             <el-button type="success" v-if="btnType != 'look'" :loading="btnLoading" @click="handleConfirm('draft')">

@@ -112,11 +112,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
-            <el-table-column label="操作" width="220" fixed="right">
+            <el-table-column label="操作" width="140" fixed="right">
               <template slot-scope="scope">
                 <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                   @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, 'edit')">
-                  <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
+                  <!-- <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button> -->
                   <el-button size="mini" type="text"
                     @click.native="handleUserRelation(scope.row.id, scope.row.partnerCategoryId, 'look')">查看详情</el-button>
 

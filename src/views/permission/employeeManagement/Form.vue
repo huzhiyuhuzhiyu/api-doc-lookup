@@ -445,6 +445,9 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
+          <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
+            <UploadWj v-model="datafilelist" :disabled="onlyRead" :detailed="onlyRead"></UploadWj>
+          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -461,6 +464,8 @@ import moment from 'moment'
 export default {
   data() {
     return {
+      isattachmentswitch: '1',
+      datafilelist: [],
       activeNames: ["basicInfo"],
       memberfamilyList: [],
       workList: [],
@@ -632,6 +637,19 @@ export default {
             this.workList = res.data.workExperience
             this.contactsList = res.data.educationalExperience
             this.dataForm = res.data.employeeVO
+            if (res.data.attachmentList && res.data.attachmentList.length) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
             if (this.dataForm.postId) this.positionId = this.dataForm.postId.split(',')
             if (this.dataForm.organizeIdTree && this.dataForm.organizeIdTree.length) {
               this.getOptionsByOrgIds(this.dataForm.organizeIdTree)
@@ -824,21 +842,22 @@ export default {
               })
             }
           });
-          // if (this.datafilelist.length) {
-          //   this.datafilelist.map((item, index) => {
-          //     item.bimAttachments = {
-          //       businessType: 'customer',
-          //       documentId: item.id,
-          //       fileFlag: '',
-          //       sort: index
-          //     }
-          //   })
-          // }
+          if (this.datafilelist.length) {
+            this.datafilelist.map((item, index) => {
+              item.bimAttachments = {
+                businessType: 'customer',
+                documentId: item.id,
+                fileFlag: '',
+                sort: index
+              }
+            })
+          }
           let obj = {
             educationalExperience: this.contactsList,
             employee: this.dataForm,
             familyMembers: this.memberfamilyList,
-            workExperience: this.workList
+            workExperience: this.workList,
+            attachmentList: this.datafilelist
           }
           if (flag === false) return
           this.btnLoading = true

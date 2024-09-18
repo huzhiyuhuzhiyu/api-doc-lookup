@@ -290,3 +290,11 @@ export const delbaseEmployee = (id) => {
     method: 'DELETE'
   })
 }
+// 员工信息-调岗
+export const baseEmployeemove = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/move/post`,
+    method: 'post',
+    data
+  })
+}

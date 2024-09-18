@@ -37,7 +37,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="性别" prop="sex" style="width: 100%;">
                         <el-select v-model="dataForm.sex" placeholder="请选择性别" :disabled="onlyRead" style="width: 100%;">
-                          <el-option v-for="item in [{label:'男',value:1},{label:'女',value:2},{label:'保密',value:3}]" :key="item.value" :label="item.label" :value="item.value">
+                          <el-option v-for="item in genderTreeData" :key="item.id" :label="item.fullName" :value="item.id">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -617,10 +617,10 @@ export default {
           this.$store.dispatch('base/getDictionaryData', { sort: 'Education' }).then(res => {
             this.educationTreeData = res
           })
-          // 获取证件类型
-          this.$store.dispatch('base/getDictionaryData', { sort: 'certificateType' }).then(res => {
-            this.certificatesTypeTreeData = res
-          })
+          // // 获取证件类型
+          // this.$store.dispatch('base/getDictionaryData', { sort: 'certificateType' }).then(res => {
+          //   this.certificatesTypeTreeData = res
+          // })
           // 获取性别
           this.$store.dispatch('base/getDictionaryData', { sort: 'sex' }).then(res => {
             this.genderTreeData = res

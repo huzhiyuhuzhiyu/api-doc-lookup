@@ -100,9 +100,9 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="100" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="直接处理" :hasDel="false">
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
                     查看详情
                   </el-button>
@@ -377,7 +377,7 @@ export default {
         this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, btnType,false, this.pageData.type)
+          this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
         })
       } else {
 

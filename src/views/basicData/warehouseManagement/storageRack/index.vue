@@ -82,16 +82,15 @@
             <el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="batchEditFun">
               批量修改
             </el-button>
-            <el-button size="mini" type="primary" icon="el-icon-printer"
-              @click="printWarehouse('p037')">打印库位二维码</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p037')">打印库位二维码</el-button>
           </div>
 
 
           <div class="JNPF-common-head-right">
-            <el-tooltip effect="dark" content="折叠" placement="top">
+            <!-- <el-tooltip effect="dark" content="可视化" placement="top">
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
-                :underline="false" @click="toggleExpand()" />
-            </el-tooltip>
+                :underline="false" @click="visualization()" />
+            </el-tooltip> -->
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -104,8 +103,9 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" v-if="refreshTable"
-          :fixedNO="true" @sort-change="sortChange" custom-column :default-expand-all="expands"
+
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
+          @sort-change="sortChange" custom-column :default-expand-all="expands"
           :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
           @selection-change="handleSelectionChange">
           <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
@@ -128,11 +128,11 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <div v-else>
-          55555
-        </div>
+
         <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
           :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
+
+
       </div>
     </div>
 
@@ -143,6 +143,9 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       ref="printForm" />
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
@@ -151,16 +154,17 @@ import { deleteStockGoodsShelves, getStockGoodsShelves, editStockGoodsShelves, g
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import AiForm from "./AiForm.vue";
-import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   name: 'storageRack',
-  components: { DepForm, AiForm, SuperQuery, PrintBrowse },
+  components: { DepForm, AiForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
+      printVisible: false,
+      visualizationTable: true,
       superQueryVisible: false,
       printBrowseVisible: false,
       superQueryJson: [
@@ -263,7 +267,12 @@ export default {
       refreshTable: true,
       filterText: '',
       warehouseName: '',
-      selectList: []
+      selectList: [],
+      printQuery: {
+        category: 'Warehousemanage'
+      },
+      enCode: '',
+      printList: []
     }
   },
   watch: {
@@ -276,6 +285,9 @@ export default {
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
+    visualization() {
+      this.visualizationTable = !this.visualizationTable
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },
@@ -550,6 +562,17 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      this.enCode = enCode
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
     },
   }
 }

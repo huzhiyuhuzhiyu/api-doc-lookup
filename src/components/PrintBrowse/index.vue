@@ -89,7 +89,7 @@ export default {
             })
             qrcode._el.title = ''
           }
-          if (this.data.pageType === 'custom') {
+          if (this.data.pageType === 'custom' && this.data.T1) {
             for (let t = 0; t < this.data.T1.length; t++) {
               const tableList = this.$refs['tsPrintItem' + t][0].getElementsByTagName('table')
               if (tableList.length) {
@@ -157,7 +157,7 @@ export default {
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
 
             // if (upperMoneyList.length) {
-            if (this.data.T1.length) {
+            if (this.data.T1 && this.data.T1.length) {
               this.data.T1.forEach((e, i) => {
                 // pageSizeList[i].innerHTML = this.data.T1.length
                 pageSizeList && pageSizeList[i] && (pageSizeList[i].textContent = this.data.T1.length)
@@ -182,7 +182,7 @@ export default {
             let TbarCodeEl = this.$refs.tsPrint.querySelectorAll('[data-tag="T1.bar_code"]')
             console.log(TbarCodeEl);
             
-            if (this.data.T1.length) {
+            if (this.data.T1 && this.data.T1.length) {
               this.data.T1.forEach((e, i) => {
                 if (TbarCodeEl && TbarCodeEl[i]) {
                   let str = TbarCodeEl[i].innerHTML
@@ -209,7 +209,7 @@ export default {
       outer: for (let j = 0; j < cells.length; j++) {
         const cell = cells[j];
         cell.style.height = '22px'
-        // cell.style.border = '1px solid gray'
+        cell.style.border = '1px solid gray'
         let spanList = cells[j].getElementsByTagName('span')
         if (!spanList.length) break outer;
         let hasChildTable = false
@@ -233,7 +233,7 @@ export default {
       for (let key in data) {
         for (let j = 0; j < tds.cells.length; j++) {
           tds.cells[j].style.height = '22px'
-          // tds.cells[j].style.border = '1px solid gray'
+          tds.cells[j].style.border = '1px solid gray'
           let spanList = tds.cells[j].getElementsByTagName('span')
           for (let i = 0; i < spanList.length; i++) {
             if (`{${key}}` === spanList[i].innerHTML) {

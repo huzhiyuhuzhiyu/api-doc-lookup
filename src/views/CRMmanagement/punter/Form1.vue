@@ -23,8 +23,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="所属分类" prop="partnerCategoryIdText">
-                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择所属分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
+                      <el-form-item label="客户分类" prop="partnerCategoryIdText">
+                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择客户分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -657,7 +657,7 @@ export default {
         ],
         // 编码、税号、名称、地区、国家、省、市、区、地址、联系人、电话和手机选填一项、付款方式、含税计价精度（默认2）、不含简况计价精度
         partnerCategoryIdText: [
-          { required: false, message: '所属分类不能为空', trigger: 'change' }
+          { required: true, message: '客户分类不能为空', trigger: 'change' }
         ],
         departmentId: [
           { required: false, message: '所属部门不能为空', trigger: 'change' }

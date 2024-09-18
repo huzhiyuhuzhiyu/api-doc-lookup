@@ -11,12 +11,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productName" placeholder="产品名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -60,10 +60,8 @@
         <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable" :data="tableDataList"
           @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
           <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
-          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
-
           <el-table-column prop="code" label="产品编码" min-width="140" sortable="custom" />
-
+          <el-table-column prop="name" label="产品名称" min-width="140" sortable="custom" />
           <!-- <el-table-column prop="spec" label="规格型号" min-width="140" sortable="custom" /> -->
           <el-table-column prop="classAttributeList" label="类别属性" min-width="120" sortable="custom">
             <template slot-scope="scope">

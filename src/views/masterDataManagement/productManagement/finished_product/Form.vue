@@ -17,7 +17,7 @@
           <!-- <el-tab-pane v-for="item in tabs" :key="item.tabCode" :label="item.tabName" :name="item.tabCode"> -->
           <el-collapse v-model="activeNames" v-for="item in tabs" :key="item.tabCode">
             <el-collapse-item title="型号信息" name="modelInfo" class="orderInfo">
-              <JNPF-col v-model="modelForm" ref="sleeveForm" :tabContent="modelItems" :openMode="openMode" />
+              <JNPF-col v-model="modelForm" ref="modelForm" :tabContent="modelItems" :openMode="openMode" />
             </el-collapse-item>
             <el-collapse-item title="产品信息" name="basicInfo" class="orderInfo">
               <JNPF-col v-model="dataForm" :tabContent="item.tabContent" ref="dataForm" :openMode="openMode" />
@@ -136,7 +136,7 @@ export default {
           filterable: true,
           remote: true,
           maxlength: 50,
-          itemRules: [{ required: true, trigger: 'change' }],
+          itemRules: [{ required: true, trigger: "change" }],
           itemDisabled: false
         },
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
@@ -662,7 +662,17 @@ export default {
     async handleConfirm() {
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
-
+      for (let i = 0; i < this.$refs['modelForm'].length; i++) {
+        const item = this.$refs['modelForm'][i]
+        console.log(item, 'iyee')
+        const form = item.$refs.main
+        const valid_1 = await form.validate().catch(() => false)
+        if (!valid_1 && submitFlag) {
+          submitFlag = false
+          this.activeName = this.tabs[i].tabCode
+          this.jnpf.focusErrValidItem(form.fields)
+        }
+      }
       // 校验tabs渲染表单
       for (let i = 0; i < this.$refs['dataForm'].length; i++) {
         const item = this.$refs['dataForm'][i]

@@ -3,8 +3,8 @@
     <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
-          <h2 >{{ $t('common.organization') }}</h2>
-          <span class="options" >
+          <h2>{{ $t('common.organization') }}</h2>
+          <span class="options">
             <el-dropdown>
               <el-link icon="icon-ym icon-ym-mpMenu" :underline="false" />
               <el-dropdown-menu slot="dropdown">
@@ -18,15 +18,13 @@
             </el-dropdown>
           </span>
         </div>
-        <div   >
+        <div>
           <el-input placeholder="输入关键字" v-model="filterText" suffix-icon="el-icon-search" clearable style="width:200px;margin:10px auto;display:block" />
         </div>
       </div>
 
       <el-scrollbar class="JNPF-common-el-tree-scrollbar" v-loading="treeLoading" v-if="!leftFlag">
-        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands"
-          highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick"
-          class="JNPF-common-el-tree" v-if="refreshTree">
+        <el-tree ref="treeBox" :data="filteredTree" :props="defaultProps" :default-expand-all="expands" highlight-current :expand-on-click-node="false" node-key="id" @node-click="handleNodeClick" class="JNPF-common-el-tree" v-if="refreshTree">
           <span class="custom-tree-node" slot-scope="{ data, node }" :title="data.fullName">
             <i :class="data.icon" />
             <span class="text" :title="data.fullName">{{ node.label }}</span>
@@ -55,9 +53,8 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
-                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
+              <el-select v-model="listQuery.enabledMark" placeholder="请选择状态" clearable>
+                <el-option v-for="item in [{label:'禁用',value:0},{label:'启用',value:1},{label:'锁定',value:2}]" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -68,18 +65,25 @@
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
             </el-form-item>
           </el-col>
-
-          <el-button style="float: right;margin-right: 20px;" size="mini" type="primary" icon="el-icon-search"
-            @click="moreQueries()">更多查询</el-button>
         </el-form>
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:6px 10px">
-          <topOpts @add="addOrUpdateHandle()">
+          <div>
+            <el-dropdown style="margin-right:10px;">
+              <el-button size="mini" type="primary" icon="el-icon-plus">
+                新建
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="addOrUpdateHandle('',false,true)">从员工新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('',false,false)">直接新建</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
-          </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -89,8 +93,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange"
-          @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList">
           <el-table-column prop="account" label="账户" width="100" fixed /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="realName" label="姓名" width="100" fixed="left" sortable="custom">
             <template slot-scope="scope">
@@ -100,28 +103,20 @@
             </template>
           </el-table-column>
           <!-- 这里的 width 会被转成 min-width -->
-          <el-table-column prop="gender" label="性别" width="90" align="center" sortable="custom">
-            <template slot-scope="scope">
-              <span>{{ scope.row.gender == 1 ? '男' : (scope.row.gender == 2 ? '女' : '保密') }}</span>
-            </template>
-          </el-table-column>
+
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
           <el-table-column prop="organizeName" label="所属组织" min-width="280" />
-          <el-table-column prop="employeeType" label="员工类型" width="120" sortable="custom" />
-          <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
+          <!-- <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.employeeStatus == 'on_job'">在职</el-tag>
               <el-tag type="danger" disable-transitions v-else-if="row.employeeStatus == 'off_job'">离职</el-tag>
-              <!-- <el-tag type="warning" disable-transitions v-else>未知</el-tag> -->
             </template>
-          </el-table-column>
-          <el-table-column prop="entryDate" label="入职日期" :formatter="jnpf.tableDateFormatDay" width="140"
-            sortable="custom" />
-          <el-table-column prop="resignationDate" label="离职日期" :formatter="jnpf.tableDateFormatDay" width="140"
-            sortable="custom" />
-          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180"
-            sortable="custom" />
-          <el-table-column prop="sortCode" label="排序" width="80" align="center" sortable="custom" />
+          </el-table-column> -->
+          <!-- <el-table-column prop="entryDate" label="入职日期" :formatter="jnpf.tableDateFormatDay" width="140"
+            sortable="custom" /> -->
+          <!-- <el-table-column prop="resignationDate" label="离职日期" :formatter="jnpf.tableDateFormatDay" width="140"
+            sortable="custom" /> -->
+          <!-- <el-table-column prop="sortCode" label="排序" width="80" align="center" sortable="custom" /> -->
           <el-table-column prop="enabledMark" label="状态" width="80" align="center" sortable="custom">
             <template slot-scope="scope">
               <el-tag type="success" disable-transitions v-if="scope.row.enabledMark == 1">启用</el-tag>
@@ -129,6 +124,7 @@
               <el-tag type="danger" disable-transitions v-else>禁用</el-tag>
             </template>
           </el-table-column>
+          <el-table-column prop="creatorTime" label="创建时间" :formatter="jnpf.tableDateFormat" width="180" sortable="custom" />
           <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope" v-if="!scope.row.isAdministrator">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)">
@@ -141,68 +137,23 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <template v-if="scope.row.employeeStatus != 'off_job' || !scope.row.employeeStatus">
-                      <el-dropdown-item @click.native="jobTransfer(scope.row, scope)">岗位调动</el-dropdown-item>
-                      <el-dropdown-item @click.native="jobQuit(scope.row.id)">办理离职</el-dropdown-item>
+                      <!-- <el-dropdown-item @click.native="jobTransfer(scope.row, scope)">岗位调动</el-dropdown-item>
+                      <el-dropdown-item @click.native="jobQuit(scope.row.id)">办理离职</el-dropdown-item> -->
                     </template>
                     <el-dropdown-item v-else @click.native="jobEntry(scope.row.id)">重新入职</el-dropdown-item>
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看详情</el-dropdown-item>
                     <el-dropdown-item @click.native="handleResetPwd(scope.row.id)"> {{ $t('user.resetPassword') }}
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="unlockUser(scope.row.id)"
-                      v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
+                    <el-dropdown-item @click.native="unlockUser(scope.row.id)" v-if="scope.row.enabledMark == 2">解除锁定</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </tableOpts>
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" />
+        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
-
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-
-          <el-col :span="12">
-            <el-form-item label="账户">
-              <el-input v-model="listQuery.account" placeholder="请输入账户" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="姓名">
-              <el-input v-model="listQuery.realName" placeholder="请输入姓名" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="员工类型">
-              <el-select v-model="listQuery.employeeType" placeholder="请选择员工类型" clearable>
-                <el-option v-for="item in employeeTypeList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="员工状态">
-              <el-select v-model="listQuery.employeeStatus" placeholder="请选择员工状态" clearable>
-                <el-option v-for="item in employeeStatusList" :key="item.value" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          搜索
-        </el-button>
-      </span>
-    </el-dialog>
     <Form v-if="formVisible" ref="Form" @close="removeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <ResetPwdForm v-if="resetFormVisible" ref="ResetPwdForm" @refreshDataList="initData" />
@@ -244,7 +195,7 @@ export default {
   },
   data() {
     return {
-      columnList: ["sortCode", "creatorTime", "resignationDate", "entryDate", "gender", "employeeType", "enabledMark"],
+      columnList: [],
       filterText: "",
       tableData: [],
       treeLoading: false,
@@ -252,7 +203,7 @@ export default {
       listQuery: {
         account: "",
         employeeStatus: "",
-        employeeType: "",
+        enabledMark: "",
         orderItems: [
           {
             asc: true,
@@ -341,9 +292,6 @@ export default {
     handleSelectionChange(val) {
       this.selectArr = val
     },
-    moreQueries() {
-      this.visible = true
-    },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
@@ -367,7 +315,7 @@ export default {
       this.listQuery = {
         account: "",
         employeeStatus: "",
-        employeeType: "",
+        enabledMark: "",
         orderItems: [{
           asc: true,
           column: ""
@@ -446,10 +394,10 @@ export default {
       this.type = data.type
       this.initData()
     },
-    addOrUpdateHandle(id, onlyRead) {
+    addOrUpdateHandle(id, onlyRead, val) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, this.type === 'department' ? this.listQuery.organizeId : '', onlyRead)
+        this.$refs.Form.init(id, this.type === 'department' ? this.listQuery.organizeId : '', onlyRead, val)
       })
     },
     // 岗位调动

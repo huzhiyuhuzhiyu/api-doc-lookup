@@ -426,8 +426,8 @@ export default {
           width: 120,
           options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
         }
-      ],
-        this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
+      ]
+      this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
       this.initData()
       this.filterText = ''
       this.getcategoryTree()

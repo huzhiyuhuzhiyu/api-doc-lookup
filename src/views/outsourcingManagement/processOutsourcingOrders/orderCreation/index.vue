@@ -273,8 +273,7 @@
 
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                          <el-button size="mini" type="text" :disabled="sourceDisabled"
-                            @click="handlerOpenSource(scope.$index, 'source')">
+                          <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                             配置发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"

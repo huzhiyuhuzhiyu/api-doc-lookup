@@ -153,16 +153,16 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'safeInventory',
-          label: "安全库存",
-          type: 'input'
-        },
-        {
-          prop: 'inventoryQuantity',
-          label: "库存数量",
-          type: 'input'
-        },
+        // {
+        //   prop: 'safeInventory',
+        //   label: "安全库存",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'inventoryQuantity',
+        //   label: "库存数量",
+        //   type: 'input'
+        // },
 
 
 

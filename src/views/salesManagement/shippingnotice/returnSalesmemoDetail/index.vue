@@ -317,11 +317,11 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'deliveryQuantity',
-          label: "退货数量",
-          type: 'input'
-        },
+        // {
+        //   prop: 'deliveryQuantity',
+        //   label: "退货数量",
+        //   type: 'input'
+        // },
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",

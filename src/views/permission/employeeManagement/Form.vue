@@ -37,7 +37,7 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="性别" prop="sex" style="width: 100%;">
                         <el-select v-model="dataForm.sex" placeholder="请选择性别" :disabled="onlyRead" style="width: 100%;">
-                          <el-option v-for="item in genderTreeData" :key="item.id" :label="item.fullName" :value="item.id">
+                          <el-option v-for="item in genderTreeData" :key="item.id" :label="item.fullName" :value="item.enCode">
                           </el-option>
                         </el-select>
                       </el-form-item>

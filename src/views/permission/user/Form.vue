@@ -101,11 +101,12 @@ export default {
       ],
       partnerRequestObj: {
         account: "",
+        userFlag: 1,
         employeeStatus: "",
         employeeType: "",
         orderItems: [{
           asc: true,
-          column: ""
+          column: "job_number"
         }, {
           asc: false,
           column: "create_time"

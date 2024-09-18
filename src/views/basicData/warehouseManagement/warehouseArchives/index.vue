@@ -37,7 +37,7 @@
           <div>
             <topOpts @add="addWarehouse('', '', 'add')">
               <el-button size="mini" type="primary" icon="el-icon-printer"
-                @click="printWarehouse('p036')">打印仓库二维码</el-button>
+                @click="printView('p036')">打印仓库二维码</el-button>
             </topOpts>
           </div>
           <div class="JNPF-common-head-right">
@@ -150,7 +150,9 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
-
+     <!-- 选择打印模版弹窗 -->
+     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse" :printQuery="printQuery"
+      :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
@@ -162,12 +164,15 @@ import Form from './Form'
 import VueQr from 'vue-qr'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'warehouseArchives',
-  components: { Form, SuperQuery, VueQr, PrintBrowse },
+  components: { Form, SuperQuery, VueQr, PrintBrowse ,PrintDialog},
   data() {
     return {
       dialogVisible: false,
+      printVisible: false,
       superQueryVisible: false,
       printBrowseVisible: false,
       superQueryJson: [
@@ -236,7 +241,12 @@ export default {
           }
         ]
       },
-      selectWarehouse: []
+      selectWarehouse: [],
+      printQuery: {
+        category: 'Warehousemanage'
+      },
+      enCode: '',
+      printList: []
     }
   },
   created() {
@@ -406,6 +416,17 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      this.enCode = enCode
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
     },
   }
 }

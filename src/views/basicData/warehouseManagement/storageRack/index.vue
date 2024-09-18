@@ -83,7 +83,7 @@
               批量修改
             </el-button>
             <el-button size="mini" type="primary" icon="el-icon-printer"
-              @click="printWarehouse('p037')">打印库位二维码</el-button>
+              @click="printView('p037')">打印库位二维码</el-button>
           </div>
 
 
@@ -147,6 +147,9 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       ref="printForm" />
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse" :printQuery="printQuery"
+      :enCode="enCode" ref="printTemplate" />  
   </div>
 </template>
 
@@ -155,16 +158,16 @@ import { deleteStockGoodsShelves, getStockGoodsShelves, editStockGoodsShelves, g
 import { getWarehouseList } from '@/api/basicData/index'
 import DepForm from './Form'
 import AiForm from "./AiForm.vue";
-import moment from 'moment'
-import { getDictionaryType, getDictionaryDataList } from '@/api/systemData/dictionary'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   name: 'storageRack',
-  components: { DepForm, AiForm, SuperQuery, PrintBrowse },
+  components: { DepForm, AiForm, SuperQuery, PrintBrowse ,PrintDialog},
   data() {
     return {
+      printVisible: false,
       visualizationTable: true,
       superQueryVisible: false,
       printBrowseVisible: false,
@@ -268,7 +271,12 @@ export default {
       refreshTable: true,
       filterText: '',
       warehouseName: '',
-      selectList: []
+      selectList: [],
+      printQuery: {
+        category: 'Warehousemanage'
+      },
+      enCode: '',
+      printList: []
     }
   },
   watch: {
@@ -558,6 +566,17 @@ export default {
       }).catch(() => {
         this.printBrowseVisible = false
       });
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      this.enCode = enCode
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
     },
   }
 }

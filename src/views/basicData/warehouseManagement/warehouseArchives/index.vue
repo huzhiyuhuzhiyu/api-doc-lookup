@@ -165,7 +165,6 @@ import VueQr from 'vue-qr'
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
-import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'warehouseArchives',
   components: { Form, SuperQuery, VueQr, PrintBrowse ,PrintDialog},

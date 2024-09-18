@@ -119,7 +119,9 @@ export default {
         code: '',
         noId: '',
         type: '',
-        category: 'warehouse'
+        category: 'warehouse',
+        state: 'enable',
+        locationStatus: 'enable',
       },
       requestObj5: {
         category: 'area',

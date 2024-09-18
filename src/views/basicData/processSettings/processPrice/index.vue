@@ -280,7 +280,7 @@ export default {
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.listQuery.superQuery = query
       this.superQueryVisible = false
       this.search()
     },
@@ -357,6 +357,7 @@ export default {
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.listQuery.pageNum = 1
+      
       this.initData()
     },
     reset() {

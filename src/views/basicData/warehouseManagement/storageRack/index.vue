@@ -226,7 +226,8 @@ export default {
         code: '',
         name: '',
         category: 'warehouse',
-        state: 'enable'
+        state: 'enable',
+        locationStatus: 'enable',
       },
       tableQuery: {
         areaId: '',

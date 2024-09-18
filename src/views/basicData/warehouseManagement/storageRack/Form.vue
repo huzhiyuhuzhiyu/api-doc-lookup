@@ -130,6 +130,7 @@ export default {
         noId: '',
         type: '',
         state: 'enable',
+        locationStatus: 'enable',
         category: 'warehouse'
       },
       requestObj5: {

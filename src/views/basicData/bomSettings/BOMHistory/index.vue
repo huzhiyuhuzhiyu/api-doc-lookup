@@ -52,14 +52,15 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
+              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" @keyup.enter.native="search()" placeholder="产品编码" clearable />
+              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="产品名称" clearable />
             </el-form-item>
           </el-col>
+
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
@@ -179,6 +180,11 @@ export default {
       superQueryVisible: false,
       superQueryJson: [
         {
+          prop: 'drawNo',
+          label: '品名规格',
+          type: 'input'
+        },
+        {
           prop: 'productCode',
           label: '产品编码',
           type: 'input'
@@ -186,12 +192,6 @@ export default {
         {
           prop: 'productName',
           label: '产品名称',
-          type: 'input'
-        },
-
-        {
-          prop: 'drawNo',
-          label: '品名规格',
           type: 'input'
         },
 

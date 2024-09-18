@@ -69,7 +69,7 @@
 
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="false"
             @sort-change="sortChange" custom-column :checkSelectable="checkSelectable"
-            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange" >
+            :setColumnDisplayList="columnList" @selection-change="handleSelectionChange">
             <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary"
@@ -166,7 +166,7 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { excelExport } from '@/api/basicData/index'
 export default {
-  name:'outsourceReceivingDetails',
+  name: 'outsourceReceivingDetails',
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
@@ -224,7 +224,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'external',
-        classAttribute: 'finish_product',
+        classAttribute: '',
         notificationTypeList: [],
         orderItems: [
           {

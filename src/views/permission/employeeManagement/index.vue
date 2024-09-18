@@ -85,15 +85,23 @@
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="sex" label="性别" width="90" sortable="custom">
             <template slot-scope="scope">
-              <span>{{ scope.row.sex == 1 ? '男' : (scope.row.sex == 2 ? '女' : '保密') }}</span>
+              <span>{{ genderTreeDatafun(scope.row.sex) }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="organizeName" label="所属部门" width="160" sortable="custom" />
           <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
           <el-table-column prop="nativePlace" label="籍贯" min-width="140" sortable="custom" />
-          <el-table-column prop="nation" label="民族" min-width="160" sortable="custom" />
+          <el-table-column prop="nation" label="民族" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ DictionaryDatafun(scope.row.nation) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="politicalOutlook" label="政治面貌" min-width="120" sortable="custom" />
-          <el-table-column prop="education" label="学历" min-width="140" sortable="custom" />
+          <el-table-column prop="education" label="学历" min-width="140" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ educationfun(scope.row.education) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="health" label="健康状况" min-width="130" sortable="custom" />
           <el-table-column prop="maritalStatus" label="婚姻状况" width="110" sortable="custom" />
           <el-table-column prop="criminalRecords" label="有无刑事记录" min-width="160" sortable="custom">
@@ -191,6 +199,7 @@
   </div>
 </template>
 <script>
+import { excelExport } from '@/api/basicData/index'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { saleCluemanagementpoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
@@ -221,7 +230,10 @@ export default {
   },
   data() {
     return {
-      formLoading:false,
+      genderTreeData: [],
+      educationTreeData: [],
+      nationTreeData: [],
+      formLoading: false,
       uploadVisib: false,
       superQueryJson: [
         {
@@ -239,9 +251,6 @@ export default {
           label: '性别',
           type: 'select',
           options: [
-            { label: '男', value: '1' },
-            { label: '女', value: '2' },
-            { label: '保密', value: '3' }
           ] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         { // 日期时间选择器（区间）
@@ -261,7 +270,8 @@ export default {
         {
           prop: 'nation',
           label: "民族",
-          type: 'input'
+          type: 'select',
+          options: []
         },
         {
           prop: 'politicalOutlook',
@@ -271,7 +281,8 @@ export default {
         {
           prop: 'education',
           label: "学历",
-          type: 'input'
+          type: 'select',
+          options: []
         },
         {
           prop: 'health',
@@ -459,7 +470,7 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1223',
+          exportType: '1222',
           exportName: '员工档案',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
@@ -557,6 +568,51 @@ export default {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
       })
+      // 获取民族
+      this.$store.dispatch('base/getDictionaryData', { sort: 'Nation' }).then(res => {
+        this.nationTreeData = res
+        this.superQueryJson.forEach(item => {
+          if (item.prop == 'nation') {
+            item.options = res.map(o => {
+              return { label: o.fullName, value: o.id }
+            })
+          }
+        })
+        // 获取学历
+        this.$store.dispatch('base/getDictionaryData', { sort: 'Education' }).then(res => {
+          this.educationTreeData = res
+          this.superQueryJson.forEach(item => {
+            if (item.prop == 'education') {
+              item.options = res.map(o => {
+                return { label: o.fullName, value: o.id }
+              })
+            }
+          })
+        })
+        // 获取性别
+        this.$store.dispatch('base/getDictionaryData', { sort: 'sex' }).then(res => {
+          this.genderTreeData = res
+          this.superQueryJson.forEach(item => {
+            if (item.prop == 'sex') {
+              item.options = res.map(o => {
+                return { label: o.fullName, value: o.id }
+              })
+            }
+          })
+        })
+      })
+    },
+    educationfun(val) {
+      let _data = this.educationTreeData.filter(item => item.id == val)[0]
+      return _data ? _data.fullName : val
+    },
+    DictionaryDatafun(val) {
+      let _data = this.nationTreeData.filter(item => item.id == val)[0]
+      return _data ? _data.fullName : val
+    },
+    genderTreeDatafun(val) {
+      let _data = this.genderTreeData.filter(item => item.id == val)[0]
+      return _data ? _data.fullName : val
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query

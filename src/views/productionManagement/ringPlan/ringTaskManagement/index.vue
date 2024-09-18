@@ -187,10 +187,17 @@
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
-        <el-form ref="workOrderForm" :model="workOrderForm" label-width="92px" label-position="left">
+        <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px" label-position="left">
           <el-col :span="12">
             <el-form-item label="生产数量：" prop="productionQuantity">
               <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="打印模版：" prop="enCode">
+              <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
+                <el-option :key="item.id" :label="item.fullName" :value="item.printBus" v-for="item in printList" />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-form>
@@ -229,6 +236,7 @@ import {
 } from "@/api/masterDataManagement/index";
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'assemblyTaskManagement',
   components: { SuperQuery, Form, ReworkForm,BatchDispatchForm ,PrintBrowse},
@@ -243,6 +251,7 @@ export default {
       workOrderVisible: false,
       workOrderForm: {
         productionQuantity: '',
+        enCode: ''
       },
       BatchDispatchVisible:false,
       reworkVisible: false,
@@ -448,7 +457,16 @@ export default {
       },
       workOrderData: [],
       selectWorkOrder: [],
-      flowCardCode:''
+      flowCardCode:'',
+      workOrderRule: {
+        productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
+        enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
+      },
+      printQuery: {
+        category: 'Productionmanage'
+      },
+      enCode: '',
+      printList: []
     }
   },
   created() {
@@ -729,6 +747,13 @@ export default {
       detailordershengchan(this.selectArr[0].id).then(res => {
         this.workOrderData = res.data.workOrderList
       })
+      getPrintList(this.printQuery).then(res => {
+        if (res.data) {
+          if (res.data.hasOwnProperty(enCode)) {
+            this.printList = res.data[enCode]
+          }
+        }
+      }).catch(() => { })
     },
     handleSelectWork(val){
       this.selectWorkOrder = val

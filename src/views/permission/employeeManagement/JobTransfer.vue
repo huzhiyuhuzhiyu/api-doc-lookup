@@ -6,7 +6,7 @@
           <template>
             <el-col :span="24">
               <el-form-item label="调动日期" prop="changeDate" ref="changeDate">
-                <el-date-picker v-model="dataForm.changeDate" type="date" placeholder="请选择调动日期" style="width: 100%;" value-format="yyyy-MM-dd">
+                <el-date-picker v-model="dataForm.changeDate" type="date" placeholder="请选择调动日期" style="width: 100%;" value-format="timestamp">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
+import { baseEmployeemove, getbaseEmployeeInfo } from '@/api/permission/user'
 import { getPositionByOrganize } from '@/api/permission/position'
 import { getDepartmentSelectorByAuth } from "@/api/permission/department";
 
@@ -315,13 +315,7 @@ export default {
         realName: this.dataForm.realName,
         remark: this.dataForm.remark
       }
-      let obj = {
-        educationalExperience: this.copylist.educationalExperience,
-        employee: formData,
-        familyMembers: this.copylist.familyMembers,
-        workExperience: this.copylist.workExperience
-      }
-      updatebaseEmployee(obj).then((res) => {
+      baseEmployeemove(formData).then((res) => {
         if (res.msg === 'Success') res.msg = '修改成功'
         this.$message({
           message: res.msg,

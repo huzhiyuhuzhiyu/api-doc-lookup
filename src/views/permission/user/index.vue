@@ -69,11 +69,21 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:6px 10px">
-          <topOpts @add="addOrUpdateHandle()">
+          <div>
+            <el-dropdown style="margin-right:10px;">
+              <el-button size="mini" type="primary" icon="el-icon-plus">
+                新建
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="addOrUpdateHandle('',false,true)">从员工新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle('',false,false)">直接新建</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
-          </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
@@ -384,10 +394,10 @@ export default {
       this.type = data.type
       this.initData()
     },
-    addOrUpdateHandle(id, onlyRead) {
+    addOrUpdateHandle(id, onlyRead, val) {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init(id, this.type === 'department' ? this.listQuery.organizeId : '', onlyRead)
+        this.$refs.Form.init(id, this.type === 'department' ? this.listQuery.organizeId : '', onlyRead, val)
       })
     },
     // 岗位调动

@@ -69,6 +69,7 @@
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
               <el-button type="primary" icon="el-icon-bangzhu" size="mini" @click="releaseFun">释放</el-button>
+              <el-button type="primary" icon="el-icon-set-up" size="mini" @click="shareFun()">移交</el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top">
@@ -103,11 +104,11 @@
             </el-table-column>
             <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
-            <el-table-column label="操作" width="140" fixed="right">
+            <el-table-column label="操作" width="120" fixed="right">
               <template slot-scope="scope">
                 <!-- <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id,'edit')">转正式</el-button> -->
-                <el-button size="mini" type="text" @click="handleRecord(scope.row)">写记录</el-button>
-                <el-dropdown hide-on-click>
+                <el-button size="mini" type="text" @click="addOrUpdateHandle(scope.row.id, 'look')">查看详情</el-button>
+                <!-- <el-dropdown hide-on-click>
                   <span class="el-dropdown-link">
                     <el-button type="text" size="mini">
                       {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -118,7 +119,7 @@
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
+                </el-dropdown> -->
               </template>
             </el-table-column>
           </JNPF-table>
@@ -127,6 +128,7 @@
         </div>
       </div>
     </div>
+    <share v-if="shareVisible" ref="share" @close="closeForm"></share>
     <programme :columnOptions="superQueryJson" :programmefrom="programmefrom" @superQuery="superQuerySearch" v-show="false"></programme>
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" @saveproject="getAdvancedQuery" />
     <Form1 v-if="formVisible" ref="Form1" @close="closeForm" />
@@ -136,6 +138,7 @@
 </template>
 
 <script>
+import share from './share'
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import { getcategoryTree } from '@/api/basicData/index'
 import { getPartnerList, releasePartner } from '@/api/customerManagement/index'
@@ -145,9 +148,10 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import RecordForm1 from './RecordForm1'
 export default {
   name: 'myCustomer',
-  components: { Form1, RecordForm1, programme, SuperQuery },
+  components: { Form1, RecordForm1, programme, SuperQuery,share },
   data() {
     return {
+      shareVisible:false,
       superQueryJson: [
         {
           prop: 'name',
@@ -270,6 +274,14 @@ export default {
     window.onresize = null
   },
   methods: {
+    shareFun() {
+      if (!this.selectData.length) return this.$message.error("请先选择你要移交的客户")
+      let idList = this.selectData.map(item => item.id);
+      this.shareVisible = true
+      this.$nextTick(() => {
+        this.$refs.share.init(idList)
+      })
+    },
     // // 设置默认展开
     setexpand(expands) {
       this.refreshTree = false
@@ -392,6 +404,7 @@ export default {
 
     // 关闭新建编辑页面
     closeForm(isRefresh) {
+      this.shareVisible=false
       this.formVisible = false
       this.recordFormVisible = false
       if (isRefresh) {

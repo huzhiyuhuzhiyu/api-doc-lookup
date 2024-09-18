@@ -60,7 +60,7 @@
                 </template>
               </el-table-column>
 
-              <el-table-column prop="demandQuantity" label="发料总数量" min-width="120">
+              <el-table-column prop="demandQuantity" label="发料数量" min-width="120">
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.demandQuantity" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity'"
@@ -103,13 +103,12 @@
                   </el-form-item>
                 </template>
               </el-table-column>
-
+<!-- 
               <el-table-column prop="demandQuantity1" label="发料数量" min-width="140">
                 <template slot="header">
                   <span class="required">*</span>发料数量
                 </template>
                 <template slot-scope="scope">
-                  <!-- <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'demandQuantity1'"
                     :rules='productRule.demandQuantity1'>
                     <el-input v-model="scope.row.demandQuantity1" :disabled="type === 'look'" maxlength="20"
@@ -117,7 +116,7 @@
                     </el-input>
                   </el-form-item>
                 </template>
-              </el-table-column>
+              </el-table-column> -->
 
               <!-- 操作 -->
               <!-- <el-table-column label="操作" width="90" v-if="dataFormTwo.data.length>1">

@@ -42,7 +42,7 @@
               </el-button>
               <el-button size="mini" type="primary" icon="el-icon-plus" @click="addition2()">追加生产</el-button>
               <el-button size="mini" type="primary" icon="el-icon-edit" @click="reassignmentFun2()">改派</el-button>
-              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printOrder('p035')">打印装配单</el-button>
+              <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p035')">打印装配单</el-button>
               <el-button size="mini" type="primary" icon="el-icon-printer"
                 @click="printFlowCard('p020')">打印流转卡</el-button>
               <el-button size="mini" type="danger" icon="el-icon-close" @click.native="Cancelshipment()"> 关单
@@ -131,7 +131,8 @@
                     <el-dropdown-item @click.native="addition1(scope.row)">
                       追加生产
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)"  v-if="scope.row.taskMethod!='not_appoint'">
+                    <el-dropdown-item @click.native="updataDispatch(scope.row.id)"
+                      v-if="scope.row.taskMethod != 'not_appoint'">
                       改派
                     </el-dropdown-item>
                     <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'all')">
@@ -186,20 +187,30 @@
     <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm">
     </BatchDispatchForm>
 
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      ref="printForm" />
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
       <el-row :gutter="20">
-        <el-form ref="workOrderForm" :model="workOrderForm" label-width="92px" label-position="left">
+        <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px"
+          label-position="left">
           <el-col :span="12">
             <el-form-item label="生产数量：" prop="productionQuantity">
               <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="打印模版：" prop="enCode">
+              <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
+                <el-option :key="item.id" :label="item.fullName" :value="item.printBus" v-for="item in printList" />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-form>
       </el-row>
-      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border>
+      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo
+        v-loading="tableloading" border>
         <el-table-column prop="orderNo" label="工单号" min-width="160" />
         <el-table-column prop="processName" label="工序名称" min-width="120" />
         <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
@@ -217,6 +228,9 @@
           打 印</el-button>
       </span>
     </el-dialog>
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder" :printQuery="printQuery"
+      :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
@@ -233,16 +247,20 @@ import {
 } from "@/api/masterDataManagement/index";
 import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
+import { getPrintList } from '@/api/system/printDev'
 export default {
   name: 'assemblyTaskManagement',
-  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse },
+  components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog },
   data() {
     return {
+      printVisible: false,
       BatchDispatchVisible: false,
       printBrowseVisible: false,
       workOrderVisible: false,
       workOrderForm: {
         productionQuantity: '',
+        enCode: ''
       },
       form: {
         appendQuantity: "",
@@ -452,7 +470,16 @@ export default {
       },
       workOrderData: [],
       selectWorkOrder: [],
-      flowCardCode:''
+      flowCardCode: '',
+      workOrderRule: {
+        productionQuantity: [{ required: true, message: '请输入生产数量', trigger: 'blur' }],
+        enCode: [{ required: true, message: '请选择打印模版', trigger: 'change' }]
+      },
+      printQuery: {
+        category: 'Productionmanage'
+      },
+      enCode: '',
+      printList: []
     }
   },
   created() {
@@ -728,6 +755,17 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      this.enCode = enCode
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
     // 打印 装配单
     printOrder(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
@@ -754,14 +792,21 @@ export default {
       detailordershengchan(this.selectArr[0].id).then(res => {
         this.workOrderData = res.data.workOrderList
       })
+      getPrintList(this.printQuery).then(res => {
+        if (res.data) {
+          if (res.data.hasOwnProperty(enCode)) {
+            this.printList = res.data[enCode]
+          }
+        }
+      }).catch(() => { })
     },
-    handleSelectWork(val){
+    handleSelectWork(val) {
       this.selectWorkOrder = val
     },
-    printSubmit(){
+    printSubmit() {
       if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
-      getPrintBusInfo(this.flowCardCode).then(res => {
+      getPrintBusInfo(this.workOrderForm.enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
           this.formId = this.selectWorkOrder[0].id
@@ -782,6 +827,5 @@ export default {
   margin-left: 0 !important;
 
   margin-bottom: 5px;
-}
-</style>
+}</style>
 <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />

@@ -310,6 +310,7 @@
 
                   <div v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true" class="reportBtn">
                     <el-button type="primary" size="mini" @click='report()'>报 工</el-button>
+                    <el-button type="primary" size="mini" @click='transferOutFun()'>转外协</el-button>
                     <el-button type="primary" size="mini" @click="reportRecordsFun()">查看报工记录</el-button>
                   </div>
 
@@ -328,7 +329,7 @@
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
     <recordForm v-if="recordFormVisible" ref="recordForm"></recordForm>
-
+    
   </div>
 </template>
 
@@ -340,7 +341,6 @@ import {
 import { detailProcess, } from '@/api/basicData/processSettingss.js'
 import { detailordershengchan, getWorkList, addWorkReport } from '@/api/productOrdes/index.js'
 import { producePersonList } from "@/api/warehouseManagement/packingList.js"
-
 import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
@@ -348,10 +348,11 @@ import recordForm from './recordForm.vue'
 export default {
 
   components: {
-    NormalForm, VibrateForm, recordForm
+    NormalForm, VibrateForm, recordForm,
   },
   data() {
     return {
+      processOutFormVisible:false,
       recordFormVisible: false,
       normalFormVisible: false,
       vibrateFormVisible: false,
@@ -398,6 +399,7 @@ export default {
   },
 
   methods: {
+    
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },

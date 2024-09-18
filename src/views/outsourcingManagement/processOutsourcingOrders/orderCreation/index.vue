@@ -1067,8 +1067,8 @@ export default {
     goBack() {
       this.$emit('close')
     },
-    init(id, type) {
-      console.log(id, type)
+    init(id, type,data) {
+      console.log(id, type,data)
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''

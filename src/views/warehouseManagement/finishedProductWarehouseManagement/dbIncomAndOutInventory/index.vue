@@ -1963,5 +1963,7 @@ export default {
 }
 ::v-deep .el-radio-button:first-child .el-radio-button__inner{
   border-radius: 0;
+} .tag-group{
+  padding-bottom: 8px!important;
 }
 </style>

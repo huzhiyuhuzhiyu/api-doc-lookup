@@ -183,9 +183,9 @@ export default {
       wareVisibled: false,
       ProductListRequestObjs: {},
       ProductTableItemss: [
-        { prop: 'code', label: '产品编码' },
-        { prop: 'name', label: '产品名称' },
         { prop: 'drawingNo', label: '品名规格' },
+        { prop: 'code', label: '产品编码' },
+        // { prop: 'name', label: '产品名称' },
         { prop: 'sheetName', label: '图纸名称' },
         { prop: 'version', label: '版本' }
       ],
@@ -376,7 +376,7 @@ export default {
             itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
           },
           // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-          { prop: "description", label: "处理说明", value: "", type: "textarea" }
+          { prop: "remark", label: "备注", value: "", type: "textarea" }
         ]
     },
     // 刷新子表结构

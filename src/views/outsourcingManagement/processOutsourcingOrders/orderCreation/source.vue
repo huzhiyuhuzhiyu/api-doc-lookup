@@ -12,13 +12,19 @@
               <el-table-column prop="drawingNo" label="品名规格" min-width="200" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'">
-                    <div class="viewData">
+                    <!-- <div class="viewData">
                       <span>{{ scope.row.drawingNo }}</span>
-                    </div>
+                    </div> -->
+                    <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
+                      v-model="scope.row.drawingNo" ref="ComSelect-page" @change="productChange"
+                      :tableItems="ProductTableItems" :placeholder="'请选择产品'" title="选择产品" treeTitle="产品分类"
+                      :methodArr="ProductMethodArr" :listMethod="getProductWithOut"
+                      :listRequestObj="ProductListRequestObj" :paramsObj="{ scope }"
+                      :searchList="ProcessTableSearchList" />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="productCode" label="产品编码" min-width="120" show-overflow-tooltip>
+              <el-table-column prop="productCode" label="产品编码" min-width="150" show-overflow-tooltip>
                 <template slot-scope="scope">
                   <!-- <el-input v-model="scope.row.productCode" :disabled="type === 'look'" placeholder="请输入订购比例"  /> -->
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'productCode'" :rules="productRule.productCode">
@@ -28,17 +34,18 @@
                     <div class="viewData">
                       <span>{{ scope.row.productCode }}</span>
                     </div>
+
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column prop="productName" label="工序名称" min-width="160" show-overflow-tooltip>
+              <el-table-column prop="processName" label="工序名称" min-width="160" show-overflow-tooltip>
                 <template slot="header">
                   <span class="required">*</span>
                   工序名称
                 </template>
                 <template slot-scope="scope">
                   <el-form-item :prop="'data.' + scope.$index + '.' + 'processName'" :rules="productRule.processName">
-                    <!-- <el-input v-model="scope.row.productName" placeholder="请输入产品名称" /> -->
+                    <!-- <el-input v-model="scope.row.processName" placeholder="请输入产品名称" /> -->
                     <!-- 工序选择弹窗  -->
                     <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="scope.row.processName" ref="ComSelect-page" @change="onOrganizeChangeTwo"
@@ -81,8 +88,12 @@
               </el-table-column>
 
               <!-- 操作 -->
-              <el-table-column label="操作" width="90" v-if="dataFormTwo.data.length > 1">
+              <el-table-column label="操作" width="110">
                 <template slot-scope="scope">
+                  <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'" style="color:#606266"
+                    @click="handlerAdd(scope.$index, 'personnel')">
+                    添加
+                  </el-button>
                   <el-button type="text" v-if="type != 'look'" :disabled="type === 'look'"
                     style="color:rgb(245,108,108)" @click="handlerDelete(scope.$index, 'personnel')">
                     删除
@@ -107,6 +118,7 @@
 import formValidate from '@/utils/formValidate'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
+import { getProductWithOut } from '@/api/purchasingManagement/purchaseInquirySheet'
 export default {
   components: {},
   data() {
@@ -116,6 +128,47 @@ export default {
       direction: 'rtl',
       type: '',
       activeName: 'personnel',
+      // 产品
+      getProductWithOut, // 产品选择弹出框树状列表请求api
+      ProductMethodArr: [
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+      ], // 产品选择弹出框树状列表
+      ProductListRequestObj: {
+        createByName: '',
+        keyword: '',
+        pageNum: 1,
+        pageSize: 20,
+        productDrawingNo: '',
+        productName: '',
+        productCode: '',
+        startTime: '',
+        endTime: '',
+        productWithout: 'price',
+        productWithout: 'bom',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        createTimeArr: []
+      }, // 产品选择弹出框列表请求参数
+      ProductTableItems: [
+        { prop: 'code', label: '产品编码', fixed: 'left' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'drawingNo', label: '品名规格' },
+        // { prop: 'spec', label: '规格型号' },
+        { prop: 'classAttributeName', label: '类别属性' }
+      ], // 产品选择弹出框表单展示字段
+      ProductTableSearchList: [
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        // { prop: "name", label: "产品名称", type: 'input', },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' }
+      ], // 产品选择弹出框搜索条件
       // 工序
       getBimProcessList,
       getcategoryTree,
@@ -125,8 +178,8 @@ export default {
       ProcessTableItems: [
         { prop: 'code', label: '工序编码' },
         { prop: 'name', label: '工序名称' },
-        { prop: 'nameEn', label: '英文名称' },
-        { prop: 'taxId', label: '税号' }
+        // { prop: 'nameEn', label: '英文名称' },
+        // { prop: 'taxId', label: '税号' }
       ],
       // 供应商搜索条件
       ProcessTableSearchList: [
@@ -169,6 +222,12 @@ export default {
   },
 
   methods: {
+    handlerAdd() {
+      this.dataFormTwo.data.push({
+        drawingNo: '', processName: '', demandQuantity1: this.purchaseQuantity
+      })
+      console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
+    },
     handlerDelete(index) {
       this.dataFormTwo.data.splice(index, 1)
     },
@@ -185,14 +244,26 @@ export default {
         }
       }
     },
-    init(data, type) {
+    init(data, type, parentId, purchaseQuantity) {
       console.log(data, '资源')
+      this.parentId = parentId
+      this.purchaseQuantity = purchaseQuantity
+      if (data.length !== 0) {
+
+      } else {
+        data = [{
+          drawingNo: '', demandQuantity1: this.purchaseQuantity
+        }]
+      }
       // this.dataForm = data
       this.type = type
       console.log(this.type)
+      console.log(data, 'data')
       this.dataFormTwo.data = JSON.parse(JSON.stringify(data))
+      console.log(this.dataFormTwo.data, 'this.dataFormTwo.data')
       if (this.dataFormTwo.data.length) {
         this.dataFormTwo.data.forEach((item, index) => {
+          console.log(item, 'p')
           this.$set(this.dataFormTwo.data[index], 'demandQuantity1', item.demandQuantity1)
         })
       }
@@ -202,8 +273,28 @@ export default {
     handleClick(tab, event) {
       this.activeName = tab.name
     },
-
     // 选择产品名称的弹框
+    productChange(val, data, paramsObj) {
+      let index = paramsObj.scope.$index
+      if (!data || !data.length) return
+      console.log(data)
+      console.log(paramsObj, '1111')
+      if (data[0].all.id == this.parentId) {
+        this.dataFormTwo.data[index].drawingNo = ''
+        return this.$message.error('不能选择与产品信息相同的产品')
+      }
+
+      console.log(index, '索引')
+      if (data.length) {
+        this.dataFormTwo.data[index].drawingNo = data[0].all.drawingNo
+        this.dataFormTwo.data[index].productCode = data[0].all.code
+        this.dataFormTwo.data[index].productsId = data[0].all.id
+        this.dataFormTwo.data[index].mainUnit = data[0].all.mainUnit
+      }
+
+      console.log(this.dataFormTwo, 'this.dataFormTwo')
+    },
+    // 选择工序的弹框
     onOrganizeChangeTwo(val, data, paramsObj) {
       if (!data || !data.length) return
       console.log(data)
@@ -226,7 +317,10 @@ export default {
         if (valid) {
           let sourceData = []
           this.dataFormTwo.data.forEach((item) => {
+            console.log(item, '=')
             sourceData.push({
+              drawingNo: item.drawingNo,
+              productCode: item.productCode,
               outShipmentListId: item.id,
               processId: item.processId,
               processName: item.processName,

@@ -1393,10 +1393,49 @@ export default {
 
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
-        // 审批
-        // this.getApproverData()
-        this.fetchData("XSBJ", true)
-        this.getBusInfo()
+        this.formLoading = true
+        if(this.btnType=='copy'){
+
+          getQuotationInfo(this.dataForm.id).then(res => {
+            // this.$nextTick(() => {
+            this.dataForm = res.data.sale
+            this.dataFormTwo.lines = res.data.lines
+  
+            this.dataForm.totalAmount = 0
+            this.dataForm.approvalStatus = ''
+            this.dataForm.submitDate = ''
+            this.dataForm.approvalCompletionDate = ''
+            this.dataForm.id = ''
+            this.dataForm.reasonRejection = ''
+  
+            if (res.data.attachmentList) {
+              res.data.attachmentList.forEach((item) => {
+                this.datafilelist.push(
+                  {
+                    name: item.document.fullName,
+                    fileSize: item.document.fileSize,
+                    filename: item.document.filePath,
+                    id: item.document.id,
+                    url: item.url
+                  }
+                )
+              })
+            }
+            this.fetchData("XSBJ", true)
+            // 审批
+            this.$nextTick(() => {
+              this.getBusInfo()
+            })//暂时注释
+            this.formLoading = false
+            // })
+          }).catch(err => {
+            this.formLoading = false
+          })
+        }else{
+          this.fetchData("XSBJ", true)
+          this.getBusInfo()
+
+        }
       }
 
       // 重新提交
@@ -1453,7 +1492,7 @@ export default {
         })
 
       }
-      if (this.dataForm.id && this.btnType !== 'add') {
+      if ( this.btnType !== 'add'&&this.btnType!=='copy') {
         this.formLoading = true
         this.fetchData("XSBJ", false)
         getQuotationInfo(this.dataForm.id).then(res => {
@@ -1553,7 +1592,7 @@ export default {
         let formMethod = null;
         if (this.btnType == 'edit' || this.btnType == 'bjkh') {
           formMethod = editQuotationMData
-        } else if (this.btnType == 'add') {
+        } else if (this.btnType == 'add'||this.btnType == 'copy') {
           formMethod = addQuotationData
         }
         formMethod(obj).then(res => {
@@ -1567,7 +1606,7 @@ export default {
           if (this.btnType == 'edit') {
             msg = "提交成功"
             this.btnText = "继续修改"
-          } else if (this.btnType == 'add') {
+          } else if (this.btnType == 'add'||this.btnType=='copy') {
             msg = "新建成功"
             this.btnText = "继续新增"
           } else {

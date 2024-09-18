@@ -2,12 +2,12 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form" ref="main">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <!-- <el-page-header @back="goBack" content="BOM创建" /> -->
-        <div style="font-size: 20px;">BOM创建</div>
+        <el-page-header @back="goBack" :content="content" v-if="content" />
+        <div style="font-size: 20px;" v-else>BOM创建</div>
         <div class="options" v-if="btnType !== 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">保存草稿</el-button>
           <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">保存并提交</el-button>
-          <!-- <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button> -->
+          <el-button @click="goBack" v-if="content">{{ $t('common.cancelButton') }}</el-button>
         </div>
       </div>
       <div class="contain">
@@ -299,6 +299,9 @@ export default {
     this.getclassAttributeList()
   },
   created() {
+    if (this.$route.query.alert) {
+      this.content = '新建'
+    }
     this.dataFormItems.forEach((tc) => {
       this.dataForm[tc.prop] = tc.value || '' // 设置默认value
       // 添加自定义表单元素方法和参数
@@ -825,7 +828,9 @@ export default {
       this.dataForm.productId = data[0].id
     },
     goBack() {
-      this.$emit('close')
+      this.$router.push({
+        path: '/basicData/bomSettings/productionBom'
+      })
     },
     goBom() {
       this.$router.push({

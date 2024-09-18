@@ -205,21 +205,21 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'planQuantity',
-          label: "计划数量",
-          type: 'input'
-        },
-        {
-          prop: 'relaxQuantity',
-          label: "宽放计划数量",
-          type: 'input'
-        },
-        {
-          prop: 'finalPlanQuantity',
-          label: "最终计划数量",
-          type: 'input'
-        },
+        // {
+        //   prop: 'planQuantity',
+        //   label: "计划数量",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'relaxQuantity',
+        //   label: "宽放计划数量",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'finalPlanQuantity',
+        //   label: "最终计划数量",
+        //   type: 'input'
+        // },
         // {
         //   prop: 'sealingCoverTyping',
         //   label: "打字内容",

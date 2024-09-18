@@ -11,7 +11,7 @@
       </div>
       <div class="main" v-loading="formLoading">
 
-            <el-collapse v-model="activeNames" style="margin-top: 10px;">
+            <el-collapse v-model="activeNames" style="margin-top: 5px;">
 
               <el-collapse-item title="工单信息" name="productInfo">
 
@@ -47,18 +47,14 @@
                     <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="120" sortable="custom" />
                     <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="140" sortable="custom" />
                     <el-table-column prop="waitReportNum" label="可报工数量" min-width="140" sortable="custom" />
-                    <el-table-column label="操作" width="180" fixed="right">
+                    <el-table-column label="操作" width="240" fixed="right">
                       <template slot-scope="scope">
                         <el-button size="mini" type="text" @click="reportFun(scope.row)">报工</el-button>
+                        <el-button size="mini" type="text" @click="transferOutFun(scope.row)">转外协</el-button>
                         <el-button size="mini" type="text" @click="reportRecordsFun(scope.row)">查看报工记录</el-button>
                       </template>
                     </el-table-column>
-                  </JNPF-table>
-
-                  <!-- <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-                        @pagination="initData"> -->
-
-                  <!-- </pagination> -->
+                  </JNPF-table> 
 
                 </div>
 
@@ -75,6 +71,7 @@
     <NormalForm v-if="normalFormVisible" ref="normalForm" @close="closeForm"></NormalForm>
     <VibrateForm v-if="vibrateFormVisible" ref="VibrateForm" @close="closeForm"></VibrateForm>
     <recordForm  v-if="recordFormVisible" ref="recordForm" ></recordForm> 
+    <ProcessOutsourcingOrders v-if="processOutFormVisible" ref="processOutForm" @close="closeForm"></ProcessOutsourcingOrders>
 
   </div>
 </template>
@@ -90,14 +87,16 @@ import { log } from 'mathjs'
 import NormalForm from './NormalForm.vue'
 import VibrateForm from './VibrateForm.vue'
 import recordForm from './recordForm.vue'
+import ProcessOutsourcingOrders from  '@/views/outsourcingManagement/processOutsourcingOrders/orderCreation'
 
 export default {
 
   components: {
-    NormalForm, VibrateForm,recordForm
+    NormalForm, VibrateForm,recordForm,ProcessOutsourcingOrders
   },
   data() {
     return {
+      processOutFormVisible:false,
       recordFormVisible:false,
       columnList: ["processCode"],
       normalFormVisible: false,
@@ -144,6 +143,16 @@ export default {
   },
 
   methods: {
+    transferOutFun(data){
+      this.processOutFormVisible=true
+      this.$nextTick(()=>{
+        this.$refs.processOutForm.init('','add',data)
+      })
+    },
+    closeForm(){
+      this.processOutFormVisible=false
+      this.getWorkListFun()
+    },
     init(row) {
       console.log("供需信息", row);
       this.processData = row

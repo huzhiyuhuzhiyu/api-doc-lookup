@@ -255,11 +255,11 @@ export default {
           label: "传真",
           type: 'input'
         },
-        {
-          prop: 'totalAmount',
-          label: "总金额",
-          type: 'input'
-        },
+        // {
+        //   prop: 'totalAmount',
+        //   label: "总金额",
+        //   type: 'input'
+        // },
         {
           prop: 'documentStatus',
           label: "单据状态",

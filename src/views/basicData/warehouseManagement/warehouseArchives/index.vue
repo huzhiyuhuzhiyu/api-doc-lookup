@@ -264,7 +264,7 @@ export default {
     },
     locationStatusChange(row) {
       let obj = {
-        stockLimitsAuthorities: row
+        stockWarehouse: row
       }
       editWarehouse(obj).then((res) => {
         this.initData()

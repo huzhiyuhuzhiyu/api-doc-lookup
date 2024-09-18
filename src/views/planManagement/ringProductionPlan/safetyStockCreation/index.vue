@@ -148,21 +148,21 @@ export default {
           label: "产品分类",
           type: 'input'
         },
-        {
-          prop: 'mainUnit',
-          label: "单位",
-          type: 'input'
-        },
-        {
-          prop: 'safeInventory',
-          label: "安全库存",
-          type: 'input'
-        },
-        {
-          prop: 'inventoryQuantity',
-          label: "可用库存",
-          type: 'input'
-        },
+        // {
+        //   prop: 'mainUnit',
+        //   label: "单位",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'safeInventory',
+        //   label: "安全库存",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'inventoryQuantity',
+        //   label: "可用库存",
+        //   type: 'input'
+        // },
 
 
 

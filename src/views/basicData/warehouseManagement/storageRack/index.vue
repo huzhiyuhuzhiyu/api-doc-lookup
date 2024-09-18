@@ -82,8 +82,7 @@
             <el-button type="primary" size="mini" icon="el-icon-edit-outline" @click="batchEditFun">
               批量修改
             </el-button>
-            <el-button size="mini" type="primary" icon="el-icon-printer"
-              @click="printView('p037')">打印库位二维码</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p037')">打印库位二维码</el-button>
           </div>
 
 
@@ -104,39 +103,36 @@
             </el-tooltip>
           </div>
         </div>
-        <div v-if="visualizationTable">
-          <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
-            @sort-change="sortChange" custom-column :default-expand-all="expands"
-            :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
-            @selection-change="handleSelectionChange">
-            <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
-            <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
-            <el-table-column prop="state" label="启用状态" width="90">
-              <template slot-scope="scope">
-                <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949"
-                  active-value="enable" inactive-value="disabled" @change="stateChange(scope.row)">
-                </el-switch>
-              </template>
-            </el-table-column>
-            <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
-            <el-table-column prop="remark" label="备注" min-width="160" />
-            <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
-            <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
-            <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
-                </tableOpts>
-              </template>
-            </el-table-column>
-          </JNPF-table>
 
-          <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
-            :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
-        </div>
+        <JNPF-table ref="tabForm" v-loading="listLoading" :data="tableDataList" row-key="id" :fixedNO="true"
+          @sort-change="sortChange" custom-column :default-expand-all="expands"
+          :tree-props="{ children: 'childrenList', hasChildren: '' }" :setColumnDisplayList="columnList" hasC
+          @selection-change="handleSelectionChange">
+          <el-table-column prop="name" label="库位名称" min-width="140"></el-table-column>
+          <el-table-column prop="code" label="库位编码" min-width="140" sortable="custom"></el-table-column>
+          <el-table-column prop="state" label="启用状态" width="90">
+            <template slot-scope="scope">
+              <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
+                inactive-value="disabled" @change="stateChange(scope.row)">
+              </el-switch>
+            </template>
+          </el-table-column>
+          <el-table-column prop="warehouseName" label="所属仓库" min-width="180"></el-table-column>
+          <el-table-column prop="remark" label="备注" min-width="160" />
+          <el-table-column prop="createByName" label="创建人" min-width="180"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" min-width="180"></el-table-column>
+          <el-table-column label="操作" width="100" fixed="right">
+            <template slot-scope="scope">
+              <tableOpts @edit="addOrUpdateHandle(scope.row)" @del="handleDel(scope.row.id, scope.row.parentId)">
+              </tableOpts>
+            </template>
+          </el-table-column>
+        </JNPF-table>
 
-        <div v-else>
-          测试
-        </div>
+        <pagination :total="total" :page.sync="tableQuery.pageNum" :background="background"
+          :limit.sync="tableQuery.pageSize" @pagination="initData"></pagination>
+
+
       </div>
     </div>
 
@@ -148,8 +144,8 @@
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
       ref="printForm" />
     <!-- 选择打印模版弹窗 -->
-    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse" :printQuery="printQuery"
-      :enCode="enCode" ref="printTemplate" />  
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
@@ -164,7 +160,7 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   name: 'storageRack',
-  components: { DepForm, AiForm, SuperQuery, PrintBrowse ,PrintDialog},
+  components: { DepForm, AiForm, SuperQuery, PrintBrowse, PrintDialog },
   data() {
     return {
       printVisible: false,
@@ -230,7 +226,8 @@ export default {
         code: '',
         name: '',
         category: 'warehouse',
-        state: 'enable'
+        state: 'enable',
+        locationStatus: 'enable',
       },
       tableQuery: {
         areaId: '',

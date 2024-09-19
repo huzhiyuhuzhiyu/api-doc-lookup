@@ -283,12 +283,12 @@ export default {
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
   >.dataTable:first-child {
-    flex: 3;
+    flex: 2;
     margin: 0 3px 0 0;
   }
 
   >.dataTable:last-child {
-    flex: 2;
+    flex: 3;
   }
 }
 </style>

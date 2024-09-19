@@ -154,7 +154,7 @@
           @pagination="initData" />
       </div>
     </div>
-    <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" /> -->
+    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
     <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
   </div>
 </template>
@@ -471,8 +471,8 @@ export default {
   }
 }
 </script>
-
-<style scoped>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<!-- <style scoped>
 /* .JNPF-common-layout-left {
   margin-right: 0;
   border-right: 1px solid #cacaca;
@@ -516,4 +516,4 @@ export default {
 
 .JNPF-common-el-tree {
   margin: 5px 0;
-}</style>
+}</style> -->

@@ -16,7 +16,7 @@
         @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="60" :fixed="hasFixed ? 'left' : false" align="center"
           v-if="openMode !== '只读'" />
-        <el-table-column type="index" width="60" label="序号" align="center" :fixed="hasFixed ? 'left' : false" />
+        <!-- <el-table-column type="index" width="60" label="序号" align="center" :fixed="hasFixed ? 'left' : false" /> -->
 
         <template v-for="item in tableItems">
           <el-table-column v-if="item.hasOwnProperty('render') ? item.render : true" :key="item.prop" :prop="item.prop"

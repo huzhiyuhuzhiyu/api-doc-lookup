@@ -178,12 +178,6 @@ export default {
           pickerOptions: {}
         },
         { // 下拉选
-          prop: 'level',
-          label: '客户级别',
-          type: 'select',
-          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
-        },
-        { // 下拉选
           prop: 'source',
           label: '线索来源',
           type: 'select',
@@ -212,6 +206,12 @@ export default {
         { // 下拉选
           prop: 'industry',
           label: '客户行业',
+          type: 'select',
+          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
+        },
+        { // 下拉选
+          prop: 'level',
+          label: '客户级别',
           type: 'select',
           options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
         },

@@ -21,7 +21,7 @@ export default () => [
       { prop: "deputyUnit", label: "副单位", value: "", type: 'select',options:[], itemRules: [{ required: true, trigger: "blur" }] },
       { prop: "ratio", label: "转换系数", value: "", type: 'input', itemRules: [{ required: true, trigger: "blur" }, { validator: formValidate({ type: 'decimal', params: [12, 6] }), trigger: 'blur' }, { validator: formValidate('positiveNumber'), trigger: "blur" }] },
       { prop: "calculationDirection", label: "计算方向", value: "", type: "select", options: [{ label: "乘", value: "multiplication" }, { label: "除", value: "division" }], itemRules: [{ required: true, trigger: "change" }] },
-      { prop: "productSource", label: "产品来源", value: "", type: "select", options: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], itemRules: [{ required: true, trigger: "change" }],itemDisabled: false},
+      { prop: "productSource", label: "产品来源", value: "", type: "select", options: [{ label: "生产", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], itemRules: [{ required: true, trigger: "change" }],itemDisabled: false},
       { prop: "productStatus", label: "产品状态", value: "enable", type: "select", options: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], itemRules: [{ required: true, trigger: "change" }] },
       { prop: "brand", label: "品牌", value: "",typeCode:'pa011', type: 'select',options:[], maxlength: 200 },
       // { prop: "saleFlag", label: "是否可销售", value: true, type: "select",options: [{ label: "是", value: true }, { label: "否", value: false }],clearable:false,render:true},

@@ -298,3 +298,18 @@ export const baseEmployeemove = (data) => {
     data
   })
 }
+// 员工信息-离职
+export const Resination = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/user/Resination`,
+    method: 'post',
+    data
+  })
+}
+// 调岗记录详情
+export const getrecordInfo = (id) => {
+  return request({
+    url: `/api/crm/baseEmployee/change/record/${id}`,
+    method: 'GET'
+  })
+}

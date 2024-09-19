@@ -295,6 +295,11 @@ export default {
     columnSetFun() {
       this.$refs.tabForm.showDrawer()
     },
+    superQuerySearch(query) {
+      this.tableQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
       this.tableQuery.orderItems[0].asc = order === 'ascending'

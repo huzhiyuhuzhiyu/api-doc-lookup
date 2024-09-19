@@ -91,6 +91,9 @@
               </el-collapse-item>
               <el-collapse-item title="产品信息" name="productInfo">
                 <div v-if="btnType !== 'look'">
+                  <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                    :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                      class="iconfont icon-saoma"></i>扫码录入</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" @click="openSeleceProductDialog()">
                     选择产品
@@ -171,7 +174,7 @@
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
@@ -240,6 +243,9 @@
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                  class="iconfont icon-saoma"></i>扫码录入</el-button>|
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">
                 选择产品
@@ -477,6 +483,14 @@
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+        @close="closeScanDiaFun()">
+        <div class="scand">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
+            @keyup.enter.native="getProductFun()"></el-input>
+        </div>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -502,7 +516,7 @@ import {
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 export default {
@@ -510,6 +524,7 @@ export default {
   mixins: [busFlow],
   data() {
     return {
+      scanDialog: false,
       tipsvisible: false,
       submitmethodsTitle: '',
       btnText: '',
@@ -767,7 +782,7 @@ export default {
       warehouseIdList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -777,11 +792,15 @@ export default {
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0
-      for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+      console.log(this.dataFormTwo.productData, 'oooo')
+      if (this.dataFormTwo.productData) {
+        for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+        }
       }
+
       return totalNum
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -800,6 +819,16 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+    },
     getWarehouseList() {
       let obj = {
         type: 'virtually',
@@ -1223,7 +1252,6 @@ export default {
     },
     // 选择客户
     seleceCustomer(e) {
-      console.log(this.dataForm.cooperativePartnerId, 'this.dataForm.cooperativePartnerId')
       getCooperativeInfo(e.id).then((res) => {
         if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
           this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
@@ -1464,14 +1492,10 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-
         })
       }
       if (btnType == 'add' || btnType == 'copy') {
         this.dataForm.salesman = this.userInfo.userName
-        console.log(data, 'ppp')
-        this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
-        this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataFormTwo.productData = data
         this.formLoading = true
         this.getBusInfo()
@@ -1715,51 +1739,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b034').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b034')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

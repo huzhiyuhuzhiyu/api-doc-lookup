@@ -170,21 +170,23 @@ export default {
       let flag = true
       this.tableData.forEach((item) => {
         if (item.configKey == 'work_exceed_report') {
-          if (item.state) {
-            width = 200
-            flag = false
-          } else {
-            width = 60
-            flag = true
-          }
+          // if (item.state) {
+          //   width = 200
+          //   flag = false
+          // } else {
+          //   width = 60
+          //   flag = true
+          // }
+          width = 200
         }
         if (flag) {
           if (item.configKey == 'collect_exceed_picking') {
-            if (item.state) {
-              width = 200
-            } else {
-              width = 60
-            }
+            // if (item.state) {
+            //   width = 200
+            // } else {
+            //   width = 60
+            // }
+            width = 200
           }
         }
       })
@@ -196,21 +198,23 @@ export default {
       let flag = true
       this.tableData.forEach((item) => {
         if (item.configKey == 'work_exceed_report') {
-          if (item.state) {
-            align = 'left'
-            flag = false
-          } else {
-            align = 'center'
-            flag = true
-          }
+          // if (item.state) {
+          //   align = 'left'
+          //   flag = false
+          // } else {
+          //   align = 'center'
+          //   flag = true
+          // }
+          align = 'left'
         }
         if (flag) {
           if (item.configKey == 'collect_exceed_picking') {
-            if (item.state) {
-              align = 'left'
-            } else {
-              align = 'center'
-            }
+            // if (item.state) {
+            //   align = 'left'
+            // } else {
+            //   align = 'center'
+            // }
+            align = 'left'
           }
         }
       })

@@ -188,7 +188,7 @@ export default {
           ]
         },
         {
-          prop: 'type',
+          prop: 'classType',
           label: '类型',
           type: 'select',
           options: [{ label: '包装物', value: 'packaging' },

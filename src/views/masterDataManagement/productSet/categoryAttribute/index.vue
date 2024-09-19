@@ -51,13 +51,13 @@
         </div>
         <JNPF-table ref="dataTable" v-loading="listLoading" row-key="id" highlight-current-row :data="tableData"
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
-          <el-table-column prop="name" label="类别名称" sortable="custom" />
-          <el-table-column prop="code" label="类别编码" sortable="custom" />
+          <el-table-column prop="name" label="类别名称" width="110" sortable="custom" />
+          <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
           <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
           </el-table-column>
-          <el-table-column prop="remark" label="备注" />
-          <el-table-column prop="createTime" label="创建时间" sortable="custom" />
+          <el-table-column prop="remark" label="备注" width="160" />
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right" align="center">
             <template slot-scope="scope">

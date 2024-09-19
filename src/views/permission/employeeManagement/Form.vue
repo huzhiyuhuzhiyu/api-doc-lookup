@@ -26,7 +26,7 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="工号" prop="jobNumber">
-                        <el-input v-model="dataForm.jobNumber" placeholder="请输入工号" maxlength="20" :disabled="onlyRead" />
+                        <el-input v-model="dataForm.jobNumber" placeholder="请输入工号" maxlength="20" :disabled="onlyRead? true : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag  ? true : false" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -464,6 +464,7 @@ import moment from 'moment'
 export default {
   data() {
     return {
+      codeConfig: {},//单据规则配置
       isattachmentswitch: '1',
       datafilelist: [],
       activeNames: ["basicInfo"],
@@ -560,6 +561,16 @@ export default {
     }
   },
   methods: {
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (!this.dataForm.id) {
+          this.dataForm.jobNumber = data.number
+        }
+      } catch (error) {
+      }
+    },
     // 教育经历信息删除当前行
     deltable(row, index) {
       this.contactsList.splice(row.$index, 1)
@@ -606,6 +617,7 @@ export default {
       this.visible = true
       this.dataForm.id = id || ''
       this.onlyRead = onlyRead
+      if (!onlyRead) this.fetchData('YGGH')
       this.positionId = []
       this.dataForm.organizeIdTree = []
       this.$nextTick(() => {

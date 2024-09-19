@@ -108,7 +108,7 @@
               {{ $getLabel(classAttributeList, scope.row.classAttribute, 'value', 'label') }}
             </template>
           </el-table-column>
-          <el-table-column prop="productCategoryName" label="产品分类" width="100" sortable="custom" />
+          <el-table-column prop="productCategoryName" label="产品分类" width="120" sortable="custom" />
           <el-table-column prop="mainUnit" label="单位" min-width="120" />
           <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
           <el-table-column prop="availableQuantity" label="可用库存" min-width="130" sortable="custom" />
@@ -279,16 +279,16 @@ export default {
           label: '单位',
           type: 'input',
         },
-        {
-          prop: 'safeInventory',
-          label: '安全库存',
-          type: 'input'
-        },
-        {
-          prop: 'availableQuantity',
-          label: '可用库存',
-          type: 'input'
-        }
+        // {
+        //   prop: 'safeInventory',
+        //   label: '安全库存',
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'availableQuantity',
+        //   label: '可用库存',
+        //   type: 'input'
+        // }
       ],
       uploadVisib: false
     }
@@ -395,7 +395,10 @@ export default {
       this.visible = true
     },
     sortChange({ prop, order }) {
-      const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      let newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
+      if (newProp === 'product_category_name') {
+        newProp = 'productCategoryName'
+      }
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = order === null ? '' : newProp
       this.initData()

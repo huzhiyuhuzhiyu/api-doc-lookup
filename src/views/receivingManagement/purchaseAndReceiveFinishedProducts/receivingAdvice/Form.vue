@@ -777,9 +777,12 @@ export default {
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0
-      for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+      if (this.dataFormTwo.productData) {
+        for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+        }
       }
+
       return totalNum
     },
   },

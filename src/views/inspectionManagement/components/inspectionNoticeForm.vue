@@ -23,7 +23,7 @@
                   </el-collapse-item>
 
                   <el-collapse-item title="检验项目" name="inspectionItem">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="padding-bottom:10px">
                       <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                         :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                         @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -31,7 +31,7 @@
                     </el-row>
                   </el-collapse-item>
                   <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                    <el-row :gutter="30" style="padding:10px">
+                    <el-row :gutter="30" style="padding-bottom:10px">
                       <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                         :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                         @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -332,6 +332,8 @@ export default {
                     callback(new Error('检验数量不能大于报检数量'))
                   } else if (value < Number(this.autosamplingQuantity)) {
                     callback(new Error('检验数量不能小于规定的抽检数量'))
+                  } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
+                    callback(new Error("请输入正整数"));
                   } else {
                     callback()
                   }
@@ -366,6 +368,8 @@ export default {
                     callback(new Error('不合格数量不能大于检验数量'))
                   } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
                     callback(new Error('不合格数量不能为0'))
+                  } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
+                    callback(new Error("请输入正整数"));
                   } else {
                     callback()
                   }
@@ -378,7 +382,7 @@ export default {
           //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
           //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
           // },
-          { prop: 'remark', label: '备注', value: '', type: 'textarea' }
+          { prop: 'remark', label: '备注', value: '', type: 'textarea',sm: 12, }
         ]
     },
     // 设置子表结构
@@ -1511,7 +1515,9 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }
-.el-table {  
-  border: 1px solid #ebeef5; /* 默认边框颜色 */  
-}  
+
+.el-table {
+  border: 1px solid #ebeef5;
+  /* 默认边框颜色 */
+}
 </style>

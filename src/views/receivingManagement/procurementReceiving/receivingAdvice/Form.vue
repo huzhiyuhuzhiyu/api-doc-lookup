@@ -1223,6 +1223,7 @@ export default {
     },
     // 选择客户
     seleceCustomer(e) {
+      console.log(this.dataForm.cooperativePartnerId, 'this.dataForm.cooperativePartnerId')
       getCooperativeInfo(e.id).then((res) => {
         if (this.dataForm.cooperativePartnerId && res.msg == 'Success') {
           this.$confirm('已选择过客户，是否切换，切换后将清空订单和产品信息，是否继续！', '提示', {
@@ -1468,6 +1469,9 @@ export default {
       }
       if (btnType == 'add' || btnType == 'copy') {
         this.dataForm.salesman = this.userInfo.userName
+        console.log(data, 'ppp')
+        this.dataForm.cooperativePartnerCode = data[0].cooperativePartnerCode
+        this.dataForm.partnerName = data[0].cooperativePartnerName
         this.dataFormTwo.productData = data
         this.formLoading = true
         this.getBusInfo()

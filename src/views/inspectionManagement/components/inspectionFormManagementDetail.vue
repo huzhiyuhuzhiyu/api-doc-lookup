@@ -78,7 +78,7 @@
               </el-collapse-item>
 
               <el-collapse-item title="检验项目" name="inspectionItem">
-                <el-row :gutter="30" style="padding:10px">
+                <el-row :gutter="30" style="padding-bottom:10px">
                   <TableForm-ware :value="inspectionList" @input="contentChanges" ref="linesForm"
                     :tableItems="inspectionItems" :openMode="openMode" @addth="addOrDelInspectionItem"
                     @deleteth="addOrDelInspectionItem" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -87,7 +87,7 @@
 
               </el-collapse-item>
               <el-collapse-item title="不良原因" name="adverseCausesInfo">
-                <el-row :gutter="30" style="padding:10px">
+                <el-row :gutter="30" style="padding-bottom:10px">
                   <TableForm-ware-two :value="linesListTwo" @input="contentChangesTwo" ref="linesFormTwo"
                     :tableItems="linesListItemsTwo" :openMode="openMode" @addth="addOrDelLinesItemTwo"
                     @deleteth="addOrDelLinesItemTwo" :productsId="scope ? scope.productsId : ''" :num="rowNum"
@@ -376,7 +376,7 @@ export default {
             itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读'
           },
           // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
-          { prop: "remark", label: "备注", value: "", type: "textarea" }
+          { prop: "remark", label: "备注", value: "", type: "textarea", sm: 12, }
         ]
     },
     // 刷新子表结构

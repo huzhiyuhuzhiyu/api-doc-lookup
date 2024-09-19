@@ -18,12 +18,13 @@
             <el-tabs v-model="activeName" v-if="!approvalFlag">
               <el-tab-pane label="基础信息" name="jcInfo">
                 <el-collapse v-model="activeNames">
-                  <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <el-collapse-item title="处理信息" name="basicInfo" class="orderInfo">
                     <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                       :btnType="btnType === 'setLoss' ? 'look' : btnType" />
                   </el-collapse-item>
                   <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                    <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="inspectionInfo"
+                      :openMode="openMode" />
                   </el-collapse-item>
                   <el-collapse-item title="检验项目" name="inspectionItem">
                     <el-row :gutter="30" style="padding:10px">
@@ -52,20 +53,20 @@
                   :detailed="btnType === 'look' || btnType === 'setLoss'"></UploadWj>
               </el-tab-pane>
 
-              <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <!-- <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
                 <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
-              </el-tab-pane>
+              </el-tab-pane> -->
               <el-tab-pane v-if="btnType == 'look' || btnType === 'setLoss'" label="流转记录" name="transferList">
                 <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
               </el-tab-pane>
             </el-tabs>
             <el-collapse v-model="activeNames" v-else>
-              <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-collapse-item title="处理信息" name="basicInfo" class="orderInfo">
                 <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm"
                   :btnType="btnType === 'setLoss' ? 'look' : btnType" />
               </el-collapse-item>
               <el-collapse-item title="检验信息" name="inspectionInfo" class="orderInfo">
-                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="dataForm" :openMode="openMode" />
+                <JNPF-col v-model="dataForm" :tabContent="inspectionInfo" ref="inspectionInfo" :openMode="openMode" />
               </el-collapse-item>
               <el-collapse-item title="检验项目" name="inspectionItem">
                 <el-row :gutter="30" style="padding:10px">
@@ -114,7 +115,8 @@ import {
   updateQcUnqualifiedData,
   detailQcUnqualifiedData,
   detailInspectionData,
-  lossQcUnqualifiedData
+  lossQcUnqualifiedData,
+  treatmentData
 } from '@/api/inspectionManagement/index' // 产品检验项目列表
 import { inspectionTypeList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import TableFormProduct from './TableForm-product.vue'
@@ -135,7 +137,7 @@ export default {
       datafilelist: [],
       activeName: 'jcInfo',
       activeNames: ['basicInfo', 'inspectionInfo'],
-      title: '新建不良品处理单',
+      title: '直接处理',
       inspectionTypeList,
       inspectionResultsList,
       inspectionMethodList,
@@ -270,7 +272,7 @@ export default {
         ],
         minWidth: 180
       },
-      { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120 }
+      { prop: 'remark', label: '备注', value: '', type: 'input', minWidth: 120, sm: 12, }
     ]
   },
   methods: {
@@ -354,28 +356,28 @@ export default {
         ].filter((o) => !o.disabled)
       }
       this.dataFormItems = [
-        {
-          prop: 'orderNo',
-          label: '处理单号',
-          value: '',
-          type: 'input',
-          itemDisabled: true,
-          itemRules: [{ required: true, trigger: 'blur' }],
-          sm: 6
-        },
+        // {
+        //   prop: 'orderNo',
+        //   label: '处理单号',
+        //   value: '',
+        //   type: 'input',
+        //   itemDisabled: true,
+        //   itemRules: [{ required: true, trigger: 'blur' }],
+        //   sm: 6
+        // },
         {
           prop: 'treatmentResults',
           label: '处理结果',
-          value: undefined,
+          value: '',
           type: 'select',
           options: generateTreatmentResultsList(this.inspectionType),
           change: this.treatmentResultsChange,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemRules: [{ required: true, trigger: 'change' }],
           sm: 6,
-          itemDisabled: this.btnType === 'look' ? true : false
+          // itemDisabled: this.dataForm.approvalStatus === 'ok' ? true : false
         },
-
+        // { prop: 'description', label: '备注', value: '', type: 'textarea', sm: 12, },
         {
           prop: 'qualifiedQuantity',
           label: '合格数量',
@@ -383,9 +385,8 @@ export default {
           type: 'input',
           sm: 6,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          // itemDisabled: this.qualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
-
         {
           prop: 'unqualifiedQuantity',
           label: '不合格数量',
@@ -393,11 +394,11 @@ export default {
           type: 'input',
           sm: 6,
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
-          itemDisabled: this.btnType === 'look' ? true : false
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
         },
-        { prop: 'description', label: '处理说明', value: '', type: 'textarea' },
 
-        // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
+
+        { prop: "description", label: "处理说明", value: "", type: "textarea", itemRules: [{ required: true, trigger: 'blur' }], sm: 12 },
       ],
         this.inspectionInfo = [
           {
@@ -879,10 +880,14 @@ export default {
       if (id) {
         if (btnType === 'add') {
           this.inspectionOrderNoChange(id)
-          this.fetchData('UQDH', true)
+          // this.fetchData('UQDH', true)
+          console.log(this.$refs.dataForm.$refs.main, 'o')
+
           this.refeshDataFormItems()
           this.refeshLinesListItems()
-          this.title = '新建不良品处理单'
+          this.title = '直接处理'
+          this.dataForm.treatmentResults = 'unqualified'
+          this.dataForm.qualifiedQuantity = 0
           this.formLoading = false
         }
         if (btnType === 'anew') {
@@ -892,7 +897,7 @@ export default {
         } else if (btnType === 'edit') {
           this.title = '编辑不良品处理单'
         } else if (btnType === 'look') {
-          this.fetchData('UQDH', false)
+          // this.fetchData('UQDH', false)
           // this.refeshDataFormItems()
           this.refeshLinesListItems()
           this.title = '查看不良品处理单'
@@ -988,7 +993,7 @@ export default {
           // if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
         }
       } else {
-        this.fetchData('UQDH', true)
+        // this.fetchData('UQDH', true)
         this.refeshDataFormItems()
         this.refeshLinesListItems()
         this.title = '新建不良品处理单'
@@ -1139,7 +1144,7 @@ export default {
         let formMethod = ''
 
         if (!this.btnType || this.btnType === 'add' || this.btnType === 'anew') {
-          formMethod = addQcUnqualifiedData
+          formMethod = treatmentData
         } else if (this.btnType === 'edit') {
           formMethod = updateQcUnqualifiedData
         } else if (this.btnType === 'setLoss') {
@@ -1151,8 +1156,14 @@ export default {
           unqualified: this.dataForm,
           flowData: this.flowData
         }
-
-        formMethod(dataObj)
+        console.log(this.dataForm, 'ooooooo')
+        this.dataForm.treatmentDescription = this.dataForm.description
+        this.dataForm.treatmentResults = this.dataForm.treatmentResults
+        this.dataForm.treatmentQualifiedQuantity = this.dataForm.qualifiedQuantity
+        this.dataForm.treatmentUnqualifiedQuantity = this.dataForm.unqualifiedQuantity
+        // this.dataForm.treatmentDescription = this.dataForm.description
+        // this.dataForm.treatmentDescription = this.dataForm.description
+        formMethod(this.dataForm)
           .then((res) => {
             let msg = res.msg
             if (res.msg === 'Success') {
@@ -1219,8 +1230,9 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
+          console.log(res.data, 'jjj')
           this.dataForm = { ...res.data.inspection, approvalFlag: false }
-
+          this.dataForm.treatmentResults = 'unqualified'
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
           this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
 

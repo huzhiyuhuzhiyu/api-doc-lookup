@@ -71,25 +71,25 @@
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
 
-            <el-table-column prop="mainUnit" label="单位" min-width="180" />
-            <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="inspectionQuantity" label="报检数量" width="110" sortable="custom" />
 
-            <el-table-column prop="inspectionMethod" label="检验方式" min-width="180" sortable="custom">
+            <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.inspectionMethod == 'exempt'">免检</div>
                 <div v-if="scope.row.inspectionMethod == 'spot_check'">抽检</div>
                 <div v-if="scope.row.inspectionMethod == 'all'">全检</div>
               </template>
             </el-table-column>
-            <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectionResults" label="检验结果" min-width="180" sortable="custom">
+            <el-table-column prop="samplingQuantity" label="检验数量" width="110" sortable="custom" />
+            <el-table-column prop="inspectionResults" label="检验结果" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
                 <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
               </template>
             </el-table-column>
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
-            <el-table-column prop="processingStatus" label="处理状态" min-width="180" sortable="custom">
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
+            <el-table-column prop="processingStatus" label="处理状态" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.processingStatus == 'untreated'">未处理</div>
                 <div v-if="scope.row.processingStatus == 'processing'">处理中</div>
@@ -100,9 +100,12 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="280" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="直接处理" :hasDel="false">
+                <tableOpts @edit="demandProcessing(scope.row, 'add')" editText="直接处理" :hasDel="false">
+                  <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'add')">
+                    发起处理评审
+                  </el-button>
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
                     查看详情
                   </el-button>
@@ -117,6 +120,7 @@
     </div>
 
     <Form v-if="formVisible" ref="Form" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
+    <DemandForm v-if="demandVisible" ref="DemandForm" @close="closeForm" :inspectionMethodList="inspectionMethodList" />
     <DetailForm v-if="detailFormVisible" ref="DetailForm" @close="closeForm"
       :inspectionMethodList="inspectionMethodList" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
@@ -130,15 +134,14 @@
 import { getInspectionList, deleteInspectionData, getInspectionLinesList } from '@/api/inspectionManagement/index' // 检验单
 import { documentStatusList, approvalStatusList, inspectionResultsList, inspectionMethodList } from '../data.js'
 import Form from './defectiveProductHandlingForm.vue'
+import DemandForm from './defectiveProductHandlingDemandForm.vue'
 import DetailForm from './inspectionFormManagementDetail.vue'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import {
-  getbimProductAttributesList, getbimProductAttributes
-} from "@/api/masterDataManagement/index";
+import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 export default {
-  components: { Form, ExportForm, DetailForm, SuperQuery },
+  components: { Form, DemandForm, ExportForm, DetailForm, SuperQuery },
   props: {
     pageData: {
       // 页面配置
@@ -236,12 +239,13 @@ export default {
           prop: 'remark',
           label: '备注',
           type: 'input'
-        },
+        }
       ],
-      columnList: ["remark", "productCode", "processingStatus", "createByName"],
+      columnList: ['remark', 'productCode', 'processingStatus', 'createByName'],
       visible: false,
       activeName: 'dataTable',
       formVisible: false,
+      demandVisible: false,
       detailFormVisible: false,
       listLoading: false,
       documentStatusList, // 单据状态
@@ -259,6 +263,8 @@ export default {
         approvalStatus: '',
         notificationType: this.pageData.type,
         businessCode: this.pageData.businessCode,
+        inspectionResults: 'unqualified',
+        processingStatus: 'untreated',
         orderItems: [
           {
             asc: false,
@@ -372,6 +378,12 @@ export default {
 
       this.initData()
     },
+    demandProcessing(row, btnType) {
+      this.demandVisible = true
+      this.$nextTick(() => {
+        this.$refs.DemandForm.init(row.id, btnType, false, this.pageData.type)
+      })
+    },
     addOrUpdateHandle(row, btnType) {
       if (btnType == 'look') {
         this.detailFormVisible = true
@@ -380,7 +392,6 @@ export default {
           this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
         })
       } else {
-
         this.formVisible = true
         this.$nextTick(() => {
           this.$refs.Form.init(row.id, btnType, false, this.pageData.type)
@@ -404,6 +415,7 @@ export default {
     closeForm(isRefresh) {
       this.formVisible = false
       this.detailFormVisible = false
+      this.demandVisible = false
       this.initData()
     },
     handleDel(id) {

@@ -526,7 +526,7 @@ export default {
           type: 'select',
           options: [
             { label: '组装', value: 'assemble' },
-            { label: '自制', value: 'produce' },
+            { label: '生产', value: 'produce' },
             { label: '采购', value: 'purchase' },
             { label: '外协', value: 'out' }
           ],

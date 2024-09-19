@@ -100,7 +100,7 @@
           <el-table-column prop="barCode" label="条形码" width="180" sortable="custom" />
           <el-table-column prop="productSource" label="产品来源" width="120" sortable="custom">
             <template slot-scope="{row}">
-              <template v-if="row.productSource == 'produce'">自制</template>
+              <template v-if="row.productSource == 'produce'">生产</template>
               <template v-else-if="row.productSource == 'purchase'">采购</template>
               <template v-else-if="row.productSource == 'out'">外协</template>
             </template>
@@ -274,7 +274,7 @@ export default {
         showExtra: true
       },
       productStatusList: [{ label: "启用", value: "enable" }, { label: "禁用", value: "disabled" }], // 产品状态
-      productSourceList: [{ label: "自制", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], // 产品来源
+      productSourceList: [{ label: "生产", value: "produce" }, { label: "采购", value: "purchase" }, { label: "外协", value: "out" }], // 产品来源
       defaultProps: {
         children: 'childrenList',
         label: 'name'

@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-            ? '新建外协收货通知单'
-            : btnType == 'edit'
-              ? '编辑外协收货通知单'
-              : btnType == 'copy'
-                ? '新建外协收货通知单'
-                : '查看收货单'
+          ? '新建外协收货通知单'
+          : btnType == 'edit'
+            ? '编辑外协收货通知单'
+            : btnType == 'copy'
+              ? '新建外协收货通知单'
+              : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                            ? true
-                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                              ? false
-                              : true
+                          ? true
+                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                            ? false
+                            : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -97,6 +97,12 @@
               </el-collapse-item>
               <el-collapse-item title="产品信息" name="productInfo">
                 <div v-if="btnType !== 'look'">
+                  <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                    :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                    <i class="iconfont icon-saoma"></i>
+                    扫码录入
+                  </el-button>
+                  |
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" @click="openSeleceProductDialog()">
                     选择产品
@@ -180,10 +186,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                        ? true
-                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                          ? false
-                          : true
+                      ? true
+                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                        ? false
+                        : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -244,6 +250,12 @@
             </el-form>
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="productInfo">
+            <el-button type="text" style="margin-right:8px;font-size:14px!important"
+              :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+              <i class="iconfont icon-saoma"></i>
+              扫码录入
+            </el-button>
+            |
             <div v-if="btnType !== 'look'">
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">
@@ -329,6 +341,17 @@
       <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" title="选择产品" treeTitle="产品分类"
         :methodArr="ProductMethodArr" :listMethod="detailpurchaseOrderList" :listRequestObj="ProductListRequestObj"
         :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+        @close="closeScanDiaFun()">
+        <div class="scand">
+          <div class="box">
+            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
+              @keyup.enter.native="getProductFun()"></el-input>
+            <div class="tip">说明：根据产品码自动添加对应的产品</div>
+          </div>
+        </div>
+      </el-dialog>
     </div>
   </transition>
 </template>
@@ -417,7 +440,7 @@ export default {
         startTime: '',
         productCode: '',
         productName: '',
-        classAttribute: 'finish_product',
+        classAttribute: '',
         receivingStatus: 'receiving'
       }, // 产品选择弹出框列表请求参数
       ProductTableItems: [
@@ -705,7 +728,10 @@ export default {
       flowData: {},
       approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      scanDialog: false,
+      scanResult: '',
+
     }
   },
   computed: {
@@ -739,6 +765,37 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+      this.ProductListRequestObj.productCode = ''
+    },
+    getProductFun() {
+      console.log(21341234)
+      console.log(this.scanResult)
+      this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.ProductListRequestObj.productCode = this.scanResult
+      detailpurchaseOrderList(this.ProductListRequestObj).then((res) => {
+        console.log(res.data.records[0], 'p')
+        console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
+        if (!this.dataFormTwo.productData) {
+          this.dataFormTwo.productData = []
+          this.dataFormTwo.productData.push(res.data.records[0])
+        } else {
+          this.dataFormTwo.productData.forEach((item) => {
+            if (item.id !== res.data.records[0].id) {
+              this.dataFormTwo.productData.push(res.data.records[0])
+            }
+          })
+        }
+      })
+    },
     getWarehouseList() {
       let obj = {
         type: 'virtually',
@@ -1733,5 +1790,22 @@ $footerPadding: '10px';
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
+}
+
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

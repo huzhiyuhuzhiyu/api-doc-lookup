@@ -91,6 +91,12 @@
               </el-collapse-item>
               <el-collapse-item title="产品信息" name="productInfo">
                 <div v-if="btnType !== 'look'">
+                  <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                    :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                    <i class="iconfont icon-saoma"></i>
+                    扫码录入
+                  </el-button>
+                  |
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" @click="openSeleceProductDialog()">
                     选择产品
@@ -240,6 +246,12 @@
           </el-collapse-item>
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType !== 'look'">
+              <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                <i class="iconfont icon-saoma"></i>
+                扫码录入
+              </el-button>
+              |
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">
                 选择产品
@@ -476,6 +488,17 @@
           <el-button v-if="btnType == 'edit'" type="primary" @click="continueEdit()">{{ btnText }}</el-button>
           <el-button v-else type="primary" @click="continueAdd()">{{ btnText }}</el-button>
         </span>
+      </el-dialog>
+      <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+        :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+        @close="closeScanDiaFun()">
+        <div class="scand">
+          <div class="box">
+            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
+              @keyup.enter.native="getProductFun()"></el-input>
+            <div class="tip">说明：根据产品码自动添加对应的产品</div>
+          </div>
+        </div>
       </el-dialog>
     </div>
   </transition>
@@ -769,7 +792,9 @@ export default {
       flowData: {},
       approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime: 0
+      endTime: 0,
+      scanDialog: false,
+      scanResult: '',
     }
   },
   computed: {
@@ -803,6 +828,45 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+      this.orderForm.productCode = ''
+    },
+    getProductFun() {
+      console.log(21341234)
+      console.log(this.scanResult)
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartTime = ''
+        this.orderForm.deliveryEndTime = ''
+      }
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.orderForm.productCode = this.scanResult
+      detailpurchaseOrderList(this.orderForm).then((res) => {
+        console.log(res.data.records[0], 'p')
+
+        if (this.dataFormTwo.productData.length == 0) {
+          this.dataFormTwo.productData = []
+          this.dataFormTwo.productData.push(res.data.records[0])
+        } else {
+          this.dataFormTwo.productData.forEach((item) => {
+            if (item.id !== res.data.records[0].id) {
+              this.dataFormTwo.productData.push(res.data.records[0])
+            }
+          })
+        }
+        console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
+      })
+    },
     getWarehouseList() {
       let obj = {
         type: 'virtually',
@@ -1916,5 +1980,22 @@ $footerPadding: '10px';
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
+}
+
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

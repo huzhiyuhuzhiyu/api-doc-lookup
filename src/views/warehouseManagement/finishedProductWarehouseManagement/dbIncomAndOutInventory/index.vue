@@ -1245,6 +1245,7 @@ export default {
         this.cgForm.receiptReturnType = 'receipt'
         // this.$set(this.cgForm,'receiptInboundFlag',1)
         this.cgForm.classAttribute = this.classAttribute
+        this.cgForm.receiptInboundFlag=true
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total

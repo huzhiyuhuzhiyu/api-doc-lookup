@@ -49,7 +49,7 @@
               <el-link v-show="expands" type="text" icon="icon-ym icon-ym-btn-collapse JNPF-common-head-icon"
                 :underline="false" @click="toggleExpand()" />
             </el-tooltip> -->
-            
+
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
                 @click="superQueryVisible = true" />
@@ -106,7 +106,7 @@
           <el-table-column prop="position" label="位置" width="120"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="270" fixed="right">
+          <el-table-column label="操作" width="360" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
@@ -120,6 +120,9 @@
                     查看二维码
                   </el-button>
                 </el-popover> -->
+                <el-button type="text" size="mini" @click="enableWareFun(scope.row)">
+                  开启仓库菜单
+                </el-button>
                 <el-button type="text" size="mini" @click="openQr(scope.row)">
                   查看二维码
                 </el-button>
@@ -150,13 +153,61 @@
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
-     <!-- 选择打印模版弹窗 -->
-     <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse" :printQuery="printQuery"
-      :enCode="enCode" ref="printTemplate" />
+    <!-- 选择产品类别属性 -->
+    <el-dialog title="选择产品类别属性" :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false"
+      :visible.sync="productClassAttribute" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="50%"
+      append-to-body>
+      <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
+
+        <div class="JNPF-common-layout-center JNPF-flex-main productClass">
+          <el-row class="JNPF-common-search-box" :gutter="16">
+            <el-form @submit.native.prevent>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-input v-model="orderForm.name" placeholder="类别名称" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-input v-model="orderForm.code" placeholder="类别编码" clearable />
+                </el-form-item>
+              </el-col>
+              <el-col :span="6">
+                <el-form-item>
+                  <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductClassAttribute()">
+                    {{ $t('common.search') }}</el-button>
+                  <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductClassAttribute()">{{
+                    $t('common.reset') }}
+                  </el-button>
+                </el-form-item>
+              </el-col>
+            </el-form>
+          </el-row>
+          <div class="JNPF-common-layout-main JNPF-flex-main">
+            <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
+              @selection-change="handleSelection" ref="form">
+              <el-table-column prop="name" label="类别名称"  />
+              <el-table-column prop="code" label="类别编码" ></el-table-column>
+            </JNPF-table>
+            <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+              @pagination="searchProductClassAttribute" />
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click=" productClassAttribute = false">{{ $t('common.cancelButton') }}</el-button>
+        <el-button type="primary" :loading="btnLoading" @click="submitAllProduct()">
+          确定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printWarehouse"
+      :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
   </div>
 </template>
 
 <script>
+import {getclassAttributeList} from '@/api/masterDataManagement/index'
 import { getWarehouseList, deleteWarehouse, editWarehouse, editWarehouseState } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
@@ -167,12 +218,27 @@ import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 export default {
   name: 'warehouseArchives',
-  components: { Form, SuperQuery, VueQr, PrintBrowse ,PrintDialog},
+  components: { Form, SuperQuery, VueQr, PrintBrowse, PrintDialog },
   data() {
     return {
+      productClassAttribute: false,
       dialogVisible: false,
       printVisible: false,
       superQueryVisible: false,
+      productTotal:0,
+      orderForm: {
+        code: '',
+        name: '',
+        pageNum: 1,
+        pageSize: 20,
+
+        orderItems: [
+          {
+            asc: true,
+            column: 'sort'
+          }
+        ]
+      },
       printBrowseVisible: false,
       superQueryJson: [
         {
@@ -245,13 +311,35 @@ export default {
         category: 'Warehousemanage'
       },
       enCode: '',
-      printList: []
+      printList: [],
+      currentWarehouseInfo:{},
+      productList:[],
+      selectData:[],
+
     }
   },
   created() {
     this.initData()
   },
   methods: {
+    // 开启仓库菜单
+    enableWareFun(row) {
+      console.log(row);
+      this.currentWarehouseInfo=row
+      this.productClassAttribute=true
+      getclassAttributeList(this.orderForm).then(res=>{
+        console.log("类别属性");
+        this.productList=res.data.records
+        this.productTotal=res.data.total
+      })
+    },
+    handleSelection(val){
+      this.selectData=val
+    },
+    submitAllProduct() {
+      if(!this.selectData.length)return this.$message.error("至少选择一个类别属性")
+
+    },
     stateChange(row) {
       editWarehouseState(row).then((res) => {
         this.initData()
@@ -445,5 +533,15 @@ export default {
 .JNPF-common-search-box {
   padding: 8px 0 0 0 !important;
   margin-left: 0 !important;
+}
+
+.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__header{
+  padding: 0 10px;
+}
+.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body{
+  padding: 0!important;
+}
+.productClass .JNPF-common-layout-main{
+  padding: 10px 10px 0;
 }
 </style>

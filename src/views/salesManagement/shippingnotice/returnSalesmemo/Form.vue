@@ -1478,6 +1478,9 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
+          res.data.noticeLineList.forEach(item => {
+            item.drawingNo=item.productDrawingNo
+          });
           this.dataFormTwo.productData = res.data.noticeLineList
         })
       }

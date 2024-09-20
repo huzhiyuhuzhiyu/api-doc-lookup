@@ -430,7 +430,11 @@
       :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
       @close="closeScanDiaFun()">
       <div class="scand">
-        <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()"> </el-input>
+        <div class="box">
+            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()">
+            </el-input>
+            <div class="tip">说明：根据产品码自动添加对应的产品</div>
+          </div>
       </div>
     </el-dialog>
     <!-- 选客户 -->
@@ -472,15 +476,15 @@ export default {
         { label: "直接入库", value: "inbound", },
       ],
       list: [
-        // { label: "销售发货", value: "outbound_sale_send" },
-        // { label: "销售退货", value: "inbound_sale_return" },
-        // { label: "采购收货", value: "inbound_purchase" },
-        // { label: "采购退货", value: "outbound_purchase" },
-        // { label: "生产领料", value: "outbound_pick_out" },
-        // { label: "生产退料", value: "inbound_return_materials" },
-        // { label: "外协发料", value: "outbound_external_send" },
-        // { label: "外协退料", value: "inbound_external_return" },
-        // { label: "外协收货", value: "inbound_external" },
+        { label: "销售发货", value: "outbound_sale_send" },
+        { label: "销售退货", value: "inbound_sale_return" },
+        { label: "采购收货", value: "inbound_purchase" },
+        { label: "采购退货", value: "outbound_purchase" },
+        { label: "生产领料", value: "outbound_pick_out" },
+        { label: "生产退料", value: "inbound_return_materials" },
+        { label: "外协发料", value: "outbound_external_send" },
+        { label: "外协退料", value: "inbound_external_return" },
+        { label: "外协收货", value: "inbound_external" },
         { label: "直接入库", value: "inbound_other" },
         { label: "直接出库", value: "outbound_other" },
       ],
@@ -635,6 +639,7 @@ export default {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
+        classAttribute:this.classAttribute,
         orderItems: [
           {
             asc: false,
@@ -1070,13 +1075,13 @@ export default {
       console.log(val);
       // 判断当前所选的业务类型是否与上一次一样 不一样 则清空产品列表数据及客户/供应商信息
 
-      // if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
-        if (  val == 'outbound_other') {
+      if (val == 'outbound_sale_send' || val == 'outbound_purchase' || val == 'outbound_pick_out' || val == 'outbound_external_send' || val == 'outbound_other') {
+        // if (  val == 'outbound_other') {
         this.dataForm.documentType = 'outbound'
         this.fetchData("CKDH")
       }
-      // if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
-        if ( val == 'inbound_other') {
+      if (val == 'inbound_sale_return' || val == 'inbound_purchase' || val == 'inbound_return_materials' || val == 'inbound_external_return' || val == 'inbound_external' || val == 'inbound_other') {
+        // if ( val == 'inbound_other') {
         this.dataForm.documentType = 'inbound'
         this.fetchData("RKDH")
 
@@ -1666,15 +1671,19 @@ export default {
   padding: 0;
 }
 
-.scand ::v-deep.el-input {
-  padding: 40px 20px;
-}
-
 .scand ::v-deep.el-input__inner {
   height: 60px;
   line-height: 60px;
   font-size: 20px !important;
   font-weight: 600;
   border-color: #3fb9f8;
+}
+.scand .box{
+  padding: 40px 20px;
+
+}
+.scand .tip{
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

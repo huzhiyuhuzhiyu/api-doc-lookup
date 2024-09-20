@@ -442,62 +442,65 @@ export default {
     this.otherItems.forEach((tc) => {
       if (tc.prop == 'tradeFlag') {
         tc.change = (val, data) => {
-          if (!val) {
-            this.tabs[0].tabContent.forEach((ele) => {
-              if (
-                [
-                  'sealingCoverStructure',
-                  // 'sealingCoverTyping',
-                  'structureType',
-                  'clearance',
-                  'steelBallManufacturerName',
-                  'oil',
-                  // 'oilQuantity',
-                  'noise',
-                  'holder'
-                  // 'vibrationLevel',
-                  // 'accuracyLevel',
-                  // 'colour',
-                  // 'aperture'
-                ].includes(ele.prop)
-              ) {
-                ele.itemRules[0].required = true
-              }
-              if (ele.prop == 'productSource') {
-                ele.options = [
-                  { label: '组装', value: 'assemble' },
-                  { label: '生产', value: 'produce' },
-                  { label: '采购', value: 'purchase' },
-                  { label: '外协', value: 'out' }
-                ]
-              }
-            })
-          } else {
-            this.tabs[0].tabContent.forEach((ele) => {
-              if (
-                [
-                  'sealingCoverStructure',
-                  // 'sealingCoverTyping',
-                  'structureType',
-                  'clearance',
-                  'steelBallManufacturerName',
-                  'oil',
-                  // 'oilQuantity',
-                  'noise',
-                  'holder'
-                  // 'vibrationLevel',
-                  // 'accuracyLevel',
-                  // 'colour',
-                  // 'aperture'
-                ].includes(ele.prop)
-              ) {
-                ele.itemRules[0].required = false
-              }
-              if (ele.prop == 'productSource') {
-                ele.options = [{ label: '采购', value: 'purchase' }]
-              }
-            })
+          if (this.flag) {
+            if (!val) {
+              this.tabs[0].tabContent.forEach((ele) => {
+                if (
+                  [
+                    'sealingCoverStructure',
+                    // 'sealingCoverTyping',
+                    'structureType',
+                    'clearance',
+                    'steelBallManufacturerName',
+                    'oil',
+                    // 'oilQuantity',
+                    'noise',
+                    'holder'
+                    // 'vibrationLevel',
+                    // 'accuracyLevel',
+                    // 'colour',
+                    // 'aperture'
+                  ].includes(ele.prop)
+                ) {
+                  ele.itemRules[0].required = true
+                }
+                if (ele.prop == 'productSource') {
+                  ele.options = [
+                    { label: '组装', value: 'assemble' },
+                    { label: '生产', value: 'produce' },
+                    { label: '采购', value: 'purchase' },
+                    { label: '外协', value: 'out' }
+                  ]
+                }
+              })
+            } else {
+              this.tabs[0].tabContent.forEach((ele) => {
+                if (
+                  [
+                    'sealingCoverStructure',
+                    // 'sealingCoverTyping',
+                    'structureType',
+                    'clearance',
+                    'steelBallManufacturerName',
+                    'oil',
+                    // 'oilQuantity',
+                    'noise',
+                    'holder'
+                    // 'vibrationLevel',
+                    // 'accuracyLevel',
+                    // 'colour',
+                    // 'aperture'
+                  ].includes(ele.prop)
+                ) {
+                  ele.itemRules[0].required = false
+                }
+                if (ele.prop == 'productSource') {
+                  ele.options = [{ label: '采购', value: 'purchase' }]
+                }
+              })
+            }
           }
+
         }
       }
     })
@@ -589,7 +592,62 @@ export default {
       this.formLoading = true
       this.btnType = btnType
       this.flag = flag
-
+      if (flag) {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (
+            [
+              'sealingCoverStructure',
+              // 'sealingCoverTyping',
+              'structureType',
+              'clearance',
+              'steelBallManufacturerName',
+              'oil',
+              // 'oilQuantity',
+              'noise',
+              'holder'
+              // 'vibrationLevel',
+              // 'accuracyLevel',
+              // 'colour',
+              // 'aperture'
+            ].includes(ele.prop)
+          ) {
+            ele.itemRules[0].required = true
+          }
+          if (ele.prop == 'productSource') {
+            ele.options = [
+              { label: '组装', value: 'assemble' },
+              { label: '生产', value: 'produce' },
+              { label: '采购', value: 'purchase' },
+              { label: '外协', value: 'out' }
+            ]
+          }
+        })
+      } else {
+        this.tabs[0].tabContent.forEach((ele) => {
+          if (
+            [
+              'sealingCoverStructure',
+              // 'sealingCoverTyping',
+              'structureType',
+              'clearance',
+              'steelBallManufacturerName',
+              'oil',
+              // 'oilQuantity',
+              'noise',
+              'holder'
+              // 'vibrationLevel',
+              // 'accuracyLevel',
+              // 'colour',
+              // 'aperture'
+            ].includes(ele.prop)
+          ) {
+            ele.itemRules[0].required = false
+          }
+          if (ele.prop == 'productSource') {
+            ele.options = [{ label: '采购', value: 'purchase' }]
+          }
+        })
+      }
       // getByCode('CPBM').then((res) => {
       //   this.businessType = res.data.codeWay
       //   if (this.businessType !== 'input') {

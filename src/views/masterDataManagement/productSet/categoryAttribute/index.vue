@@ -91,11 +91,8 @@
 
 <script>
 import {
-  getBimProductAttributesInfo,
-  updataBimProductAttributes,
   updataClassAttribute,
   delClassAttribute,
-  addBimProductAttributes,
   getclassAttributeList,
   disabledClassAttributeState
 } from '@/api/masterDataManagement/index'
@@ -103,7 +100,7 @@ import Form from './Form'
 import WarehouseForm from './WarehouseForm.vue'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes, enableClassAttributeState, updateSortBatch } from '@/api/masterDataManagement/index'
+import { updateSortBatch } from '@/api/masterDataManagement/index'
 export default {
   name: 'supplierProfile',
   components: { Form, SuperQuery, WarehouseForm },
@@ -192,12 +189,9 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
-  // mounted() {
-  //   this.getProductClassFun()
-  // },
+
   created() {
     this.initData()
-    // this.getbimProductAttributesFun()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -228,17 +222,7 @@ export default {
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },
-    // 获取左侧属性分类
-    getbimProductAttributesFun() {
-      getbimProductAttributes('575966014227880773').then((res) => {
-        this.treeData = res.data.list
-        this.$nextTick(() => {
-          this.$refs.treeBox.setCurrentKey(this.treeData[0].enCode) // 默认选中节点第一个
 
-          this.initData()
-        })
-      })
-    },
 
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
@@ -349,186 +333,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.warehouseForm.init(row, btn)
       })
-      // if (row.warehouseCode) {
-      //   console.log(row, 'ooooo')
-      //   let obj = {
-      //     classAttribute: row,
-      //     directory: {
-      //       category: 'Web',
-      //       description: '',
-      //       enCode: row.warehouseCode,
-      //       enabledMark: 1,
-      //       fullName: row.warehouseName,
-      //       id: '',
-      //       isButtonAuthorize: 0,
-      //       isColumnAuthorize: 0,
-      //       isDataAuthorize: 0,
-      //       isFormAuthorize: 0,
-      //       linkTarget: '_self',
-      //       parentId: '568721982921638149',
-      //       propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //       systemId: '309228585019769285',
-      //       type: 1,
-      //       urlAddress: ''
-      //     },
-      //     menuList: [
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'dbIncomAndOutInventory',
-      //         enabledMark: 1,
-      //         fullName: `待办出入库`,
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 10,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' +
-      //           row.code +
-      //           '}/dbIncomAndOutInventory' +
-      //           '?' +
-      //           row.code
-      //       },
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'directInandOutWarehouse',
-      //         enabledMark: 1,
-      //         fullName: `直接出入库`,
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 20,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' +
-      //           row.code +
-      //           '}/directInandOutWarehouse' +
-      //           '?' +
-      //           row.code
-      //       },
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'inventoryList',
-      //         enabledMark: 1,
-      //         fullName: '出入库列表',
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 30,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' + row.code + '}/inventoryList' + '?' + row.code
-      //       },
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'inventoryDetaisList',
-      //         enabledMark: 1,
-      //         fullName: '出入库明细',
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 40,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' +
-      //           row.code +
-      //           '}/inventoryDetaisList' +
-      //           '?' +
-      //           row.code
-      //       },
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'transferManagement',
-      //         enabledMark: 1,
-      //         fullName: '调拨管理',
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 50,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' +
-      //           row.code +
-      //           '}/transferManagement' +
-      //           '?' +
-      //           row.code
-      //       },
-      //       {
-      //         category: 'Web',
-      //         description: '',
-      //         enCode: 'inventory',
-      //         enabledMark: 1,
-      //         fullName: '库存查询',
-      //         icon: 'icon-ym icon-ym-webForm',
-      //         id: '',
-      //         isButtonAuthorize: 1,
-      //         isColumnAuthorize: 1,
-      //         isDataAuthorize: 1,
-      //         isFormAuthorize: 1,
-      //         linkTarget: '_self',
-      //         parentId: '',
-      //         propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
-      //         sortCode: 60,
-      //         systemId: '309228585019769285',
-      //         type: 2,
-      //         urlAddress:
-      //           'warehouseManagement/${' + row.code + '}/inventory' + '?' + row.code
-      //       }
-      //     ]
-      //   }
-      //   enableClassAttributeState(obj).then(res => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '开启成功',
-      //       duration: 1500
-      //     })
-      //     location.reload()
-      //   })
-      // } else {
-      //   this.$nextTick(() => {
-      //     this.$refs.warehouseForm.init(row, btn)
-      //   })
-      // }
+
 
     },
     offHandle(id, btn) {
@@ -585,237 +390,7 @@ export default {
         this.$refs.Form.init(id, parentId, btnType)
       })
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-      let obj1 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa007',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj1).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'sealingCoverTyping')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj2 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa006',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj2).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'accuracyLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj3 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa005',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj3).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'vibrationLevel')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj4 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa002',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj4).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oil')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj5 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa003',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj5).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'oilQuantity')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj6 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa001',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-
-      getbimProductAttributesList(obj6).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'clearance')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-      let obj7 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa015',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj7).then((res) => {
-        let arr = []
-        res.data.records.forEach((item) => {
-          let obj = {
-            label: item.name,
-            value: item.name
-          }
-          arr.push(obj)
-        })
-        let oilObj = this.superQueryJson.find((item) => item.prop === 'packagingMethod')
-
-        if (oilObj) {
-          // 将options赋值为5
-          oilObj.options = arr
-        }
-      })
-
-      // 获取税率(数据字典)
-      getbimProductAttributes('585438081021126405').then((res) => {
-        res.data.list.forEach((item) => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
-      })
-    }
+ 
   }
 }
 </script>

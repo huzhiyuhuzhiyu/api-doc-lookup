@@ -137,18 +137,7 @@
                         </template>
                       </el-table-column>
 
-                      <!-- <el-table-column prop="deputyUnit" label="单位(副)" min-width="200" show-overflow-tooltip>
-                        <template slot-scope="scope">
-                          <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                  
-                            <div class="viewData">
-                              <span>{{ scope.row.deputyUnit }}</span>
-                            </div>
-                          </el-form-item>
-                        </template>
-                      </el-table-column>
-
-                      <el-table-column prop="price" label="单价" min-width="180">
+                     <!--  <el-table-column prop="price" label="单价" min-width="180">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'price'">
                             <div class="viewData">

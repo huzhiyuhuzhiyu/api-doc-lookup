@@ -232,24 +232,41 @@
       </span>
     </el-dialog>
     <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose">
-      <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px">
+      <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
+        hide-required-asterisk="fasle">
         <el-form-item label="产品编码" prop="code">
+          <template slot="label">
+            产品编码<span class="required">*</span>
+          </template>
           <el-input v-model="quickForm.code" placeholder="请输入产品编码"
             :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
         </el-form-item>
 
         <el-form-item label="品名规格" prop="drawingNo">
+          <template slot="label">
+            品名规格<span class="required">*</span>
+          </template>
           <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
         </el-form-item>
-        <el-form-item label="单位" prop="unit">
-          <el-input v-model="quickForm.unit" placeholder="请输入单位"></el-input>
-        </el-form-item>
+
         <el-form-item label="产品分类" prop="productCategoryName">
+          <template slot="label">
+            产品分类<span class="required">*</span>
+          </template>
           <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
             @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
             :dataFormatting="dataFormatting" />
         </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <template slot="label">
+            单位<span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.unit" placeholder="请输入单位"></el-input>
+        </el-form-item>
         <el-form-item label="产品来源" prop="productSource">
+          <template slot="label">
+            产品来源<span class="required">*</span>
+          </template>
           <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
             <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
@@ -1453,3 +1470,23 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+::v-deep .el-dialog__body {
+  padding: 0px 20px;
+  color: #606266;
+  font-size: 14px;
+  word-break: break-all;
+}
+</style>

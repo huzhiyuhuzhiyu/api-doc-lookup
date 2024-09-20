@@ -350,7 +350,7 @@ export default {
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
-      if(!scanResult) return
+      if(!this.scanResult) return
       let obj = {
         productName: "",
         productCode: this.scanResult,
@@ -374,8 +374,12 @@ export default {
         res.data.records.forEach(item => {
           item.productCode = item.code
         });
-        this.productData.push(res.data.records[0])
+        this.$nextTick(()=>{
+        if(res.data.records.length){
+          this.productData.push(res.data.records[0])
+        }
         this.scanResult = ""
+       })
       })
     },
     scanFun() {

@@ -1671,7 +1671,14 @@ export function saleCluemanagementpoolModel(data) {
     data
   })
 }
-
+// 员工导入
+export function salecooperativepoolModel(data) {
+  return request({
+    url: `/api/crm/baseEmployee/upload`,
+    method: 'post',
+    data
+  })
+}
 // 查找批次号
 
 export function getBatchNumber(data) {

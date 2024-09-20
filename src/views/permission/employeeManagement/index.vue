@@ -58,8 +58,8 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:6px 10px">
           <topOpts @add="addOrUpdateHandle()">
-            <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
-            <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
             <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p041')">打印员工二维码</el-button>
             <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p042')">打印员工工牌</el-button>
           </topOpts>
@@ -209,7 +209,7 @@ import { getPrintBusInfo } from '@/api/system/printDev'
 import PrintBrowse from '@/components/PrintBrowse'
 import PrintDialog from '@/components/no_mount/printDialog'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { excelExport, saleCluemanagementpoolModel } from "@/api/basicData/index";
+import { excelExport, salecooperativepoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
@@ -541,12 +541,14 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleCluemanagementpoolModel(formData).then(res => {
+      salecooperativepoolModel(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.formLoading = false
           this.loadingText = ''
         } else {
+          this.loadingText = ''
+          this.formLoading = false
           this.handleMessage(res.data)
         }
         this.uploadVisib = false

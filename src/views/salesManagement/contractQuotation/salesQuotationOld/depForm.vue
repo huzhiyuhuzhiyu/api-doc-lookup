@@ -1393,9 +1393,8 @@ export default {
 
         this.dataForm.bidder = this.userInfo.userName
         this.dataForm.quotationType = 'latest'
-        this.formLoading = true
         if(this.btnType=='copy'){
-
+          this.formLoading = true
           getQuotationInfo(this.dataForm.id).then(res => {
             // this.$nextTick(() => {
             this.dataForm = res.data.sale

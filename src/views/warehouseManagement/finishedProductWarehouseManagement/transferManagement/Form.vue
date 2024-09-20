@@ -234,7 +234,10 @@
       :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
       @close="closeScanDiaFun()">
       <div class="scand">
-        <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()"> </el-input>
+        <div class="box">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()"> </el-input>
+        <div class="tip">说明：根据产品码自动添加对应的产品</div>
+      </div>
       </div>
     </el-dialog>
       <!-- 选库位 -->
@@ -359,6 +362,7 @@ export default {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
+        classAttribute:this.classAttribute,
         orderItems: [
           {
             asc: false,
@@ -890,5 +894,23 @@ export default {
 }
 .JNPF-common-layout-main.JNPF-flex-main{
   padding-top: 5px;
+}
+
+ 
+
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+.scand .box{
+  padding: 40px 20px;
+
+}
+.scand .tip{
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

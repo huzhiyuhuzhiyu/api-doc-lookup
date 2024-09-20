@@ -231,7 +231,8 @@
         </el-button>
       </span>
     </el-dialog>
-    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose">
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
+      class="JNPF-dialog JNPF-dialog_center">
       <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
         hide-required-asterisk="fasle">
         <el-form-item label="产品编码" prop="code">

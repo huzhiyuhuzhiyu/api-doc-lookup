@@ -189,7 +189,7 @@ export default {
       productList: [],
       codeConfig: {},
       flowTemplateJson: {},
-      flowData: {},
+      flowData: {}
     }
   },
   methods: {
@@ -232,11 +232,10 @@ export default {
             label: '免检',
             value: 'exempt',
             disabled: !['procure', 'external', 'back_material', 'produce'].includes(inspectionType)
-          },
-
+          }
         ].filter((o) => !o.disabled)
       }
-      this.dataFormItems = [
+      ; (this.dataFormItems = [
         {
           prop: 'orderNo',
           label: '单号',
@@ -277,7 +276,18 @@ export default {
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        },
+        {
+          prop: 'processName',
+          label: '工序名称',
+          value: '',
+          type: 'input',
+          itemRules: [{ required: true, trigger: 'blur' }],
+          sm: 6,
+          render: ['sale_back'].includes(this.inspectionType),
+          itemDisabled: true
         },
         {
           prop: 'mainUnit',
@@ -286,7 +296,8 @@ export default {
           type: 'input',
           itemRules: [{ required: true, trigger: 'blur' }],
           sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
         },
         {
           prop: 'inspectionQuantity',
@@ -294,10 +305,11 @@ export default {
           value: '',
           type: 'input',
           sm: 6,
-          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag
-        },
-      ],
-        this.inspectionInfo = [
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: true
+        }
+      ]),
+        (this.inspectionInfo = [
           {
             prop: 'inspectionMethod',
             label: '检验方式',
@@ -308,7 +320,7 @@ export default {
             itemRules: [{ required: true, trigger: 'change' }],
             sm: 6,
             // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-            options: generateInspectionMethodList(this.inspectionType),
+            options: generateInspectionMethodList(this.inspectionType)
             // options: [
             //   { label: '免检', value: 'exempt' },
             //   { label: '抽检', value: 'spot_check' },
@@ -333,7 +345,7 @@ export default {
                   } else if (value < Number(this.autosamplingQuantity)) {
                     callback(new Error('检验数量不能小于规定的抽检数量'))
                   } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
-                    callback(new Error("请输入正整数"));
+                    callback(new Error('请输入正整数'))
                   } else {
                     callback()
                   }
@@ -369,7 +381,7 @@ export default {
                   } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
                     callback(new Error('不合格数量不能为0'))
                   } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
-                    callback(new Error("请输入正整数"));
+                    callback(new Error('请输入正整数'))
                   } else {
                     callback()
                   }
@@ -382,8 +394,8 @@ export default {
           //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
           //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
           // },
-          { prop: 'remark', label: '备注', value: '', type: 'textarea',sm: 12, }
-        ]
+          { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
+        ])
     },
     // 设置子表结构
     setLinesListItems() {
@@ -711,7 +723,6 @@ export default {
         // })
       }
       if (inspectionType === 'process') {
-
         // 生产巡检
         // let rowData = id
         // this.dataForm = {
@@ -752,7 +763,6 @@ export default {
         this.dataForm.notificationType = inspectionType
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
-
       } else if (typeof id === 'object' && inspectionType === 'finished_batch') {
         // 批量完工检验
         let selectedData = id
@@ -813,7 +823,6 @@ export default {
         this.formLoading = false
       } else if (inspectionType === 'procure' || inspectionType === 'external') {
         // 采购收货、外协收货
-
 
         // getpurPurchaseReceiptReturnGoodsdetail(id).then(res => {
         //   if (res.data.attachmentList) {
@@ -972,8 +981,7 @@ export default {
         this.dataForm.submitMethod = 'add'
         this.formLoading = false
         console.log(this.dataForm, 'form123')
-      }
-      else if (inspectionType === 'finished') {
+      } else if (inspectionType === 'finished') {
         // 完工
 
         // let rowData = id
@@ -1149,7 +1157,6 @@ export default {
         // dataObj.unqualifiedFlag = dataObj.lines.some(line => line.unqualifiedQuantity !== undefined && line.unqualifiedQuantity != '0')
         delete dataObj.active
         console.log(dataObj, 'dataObj')
-
 
         formMethod(dataObj)
           .then((res) => {
@@ -1348,24 +1355,35 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      let code = this.inspectionType === 'procure' ? 'b040' : this.inspectionType === 'external' ? 'b041' : this.inspectionType === 'sale_back' ? 'b042' : this.inspectionType === 'process' ? 'b043' : 'b044'
-      getBusinessFlowInfo(code).then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      let code =
+        this.inspectionType === 'procure'
+          ? 'b040'
+          : this.inspectionType === 'external'
+            ? 'b041'
+            : this.inspectionType === 'sale_back'
+              ? 'b042'
+              : this.inspectionType === 'process'
+                ? 'b043'
+                : 'b044'
+      getBusinessFlowInfo(code)
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   },
   beforeCreate() {
     this.initLinesListItems = () => [

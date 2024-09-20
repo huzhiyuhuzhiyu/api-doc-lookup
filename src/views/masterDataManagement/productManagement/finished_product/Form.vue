@@ -735,17 +735,20 @@ export default {
     async handleConfirm() {
       this.btnLoading = true
       let submitFlag = true // 提交可行性判断
-      for (let i = 0; i < this.$refs['modelForm'].length; i++) {
-        const item = this.$refs['modelForm'][i]
-        console.log(item, 'iyee')
-        const form = item.$refs.main
-        const valid_1 = await form.validate().catch(() => false)
-        if (!valid_1 && submitFlag) {
-          submitFlag = false
-          this.activeName = this.tabs[i].tabCode
-          this.jnpf.focusErrValidItem(form.fields)
+      if (this.$refs['modelForm']) {
+        for (let i = 0; i < this.$refs['modelForm'].length; i++) {
+          const item = this.$refs['modelForm'][i]
+          console.log(item, 'iyee')
+          const form = item.$refs.main
+          const valid_1 = await form.validate().catch(() => false)
+          if (!valid_1 && submitFlag) {
+            submitFlag = false
+            this.activeName = this.tabs[i].tabCode
+            this.jnpf.focusErrValidItem(form.fields)
+          }
         }
       }
+
       // 校验tabs渲染表单
       for (let i = 0; i < this.$refs['dataForm'].length; i++) {
         const item = this.$refs['dataForm'][i]

@@ -321,7 +321,7 @@ export default {
           {
             label: '合格',
             value: 'qualified',
-            disabled: !['procure', 'external', 'sale_back', 'back_material', 'produce', 'process', 'finished'].includes(
+            disabled: !['procure', 'external', 'back_material', 'produce', 'process', 'finished'].includes(
               inspectionType
             )
           },
@@ -395,7 +395,29 @@ export default {
           // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
           itemDisabled: this.btnType === 'look' ? true : false
         },
-        { prop: 'description', label: '处理说明', value: '', type: 'textarea' },
+        {
+          prop: 'scrapQuantity',
+          label: '报废数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        {
+          prop: 'repairQuantity',
+          label: '返修数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render:
+            !['procure', 'external', 'produce', 'back_material'].includes(this.inspectionType)
+          // render: this.userInfo.deptType === 'JSB' || this.dataForm.approvalStatus === 'ok',
+          // itemDisabled: this.unqualifiedQuantityDisabled || this.dataForm.approvalStatus === 'ok' ? true : false
+        },
+        { prop: 'description', label: '备注', value: '', type: 'textarea' },
 
         // { prop: "description", label: "处理说明", value: "", type: "input", itemRules: [{ required: true, trigger: 'blur' }], sm: 6 },
       ],
@@ -1035,8 +1057,8 @@ export default {
       } else if (val === 'discard') {
         // 报废
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
-        this.dataForm.scrapQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.scrapQuantity = this.dataForm.inspectionQuantity
         this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
@@ -1045,9 +1067,9 @@ export default {
       } else if (val === 'repair') {
         // 返工返修
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
         this.dataForm.scrapQuantity = 0
-        this.dataForm.repairQuantity = this.dataForm.inspectionUnqualifiedQuantity
+        this.dataForm.repairQuantity = this.dataForm.inspectionQuantity
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
         this.dataForm.scrapQuantityDisabled = true
@@ -1055,8 +1077,9 @@ export default {
       } else if (val === 'discard_repair') {
         // 报废和返修
         this.dataForm.qualifiedQuantity = 0
-        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionUnqualifiedQuantity
-
+        this.dataForm.unqualifiedQuantity = this.dataForm.inspectionQuantity
+        this.dataForm.scrapQuantity = 0
+        this.dataForm.repairQuantity = 0
         this.qualifiedQuantityDisabled = true
         this.unqualifiedQuantityDisabled = true
         this.dataForm.scrapQuantityDisabled = false
@@ -1071,7 +1094,10 @@ export default {
         console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
         if (Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('合格数量+不合格数量不等于检验单报检数量。');
       }
-
+      if (this.dataForm.treatmentResults == 'discard_repair') {
+        console.log(Number(this.dataForm.unqualifiedQuantity) + Number(this.dataForm.qualifiedQuantity), 'oooppppp')
+        if (Number(this.dataForm.scrapQuantity) + Number(this.dataForm.repairQuantity) !== Number(this.dataForm.inspectionQuantity)) return this.$message.error('报废数量+返修数量不等于不合格数量。');
+      }
       this.btnLoading = true
       let submitFlag = true // 自动聚焦是否可用
 
@@ -1219,10 +1245,12 @@ export default {
       this.formLoading = true
       detailInspectionData(id)
         .then((res) => {
-          this.dataForm = { ...res.data.inspection, approvalFlag: false }
+          let oldObj = { ...res.data.inspection, approvalFlag: false }
+          delete oldObj.treatmentResults
+          this.dataForm = oldObj
 
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
-          this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
+          // this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
 
           this.inspectionList = res.data.itemList
           this.linesListTwo = res.data.causesList

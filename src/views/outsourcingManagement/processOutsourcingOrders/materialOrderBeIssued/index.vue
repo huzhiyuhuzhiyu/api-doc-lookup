@@ -243,29 +243,11 @@ export default {
         },
         {
           prop: 'mainUnit',
-          label: '单位(主)',
+          label: '单位',
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: '数量(主)',
-          type: 'input'
-        },
-        {
-          prop: 'waitDeliverNum',
-          label: '待发料数量',
-          type: 'input'
-        },
-        {
-          prop: 'deputyUnit',
-          label: '单位(副)',
-          type: 'input'
-        },
-        {
-          prop: 'assistantNum',
-          label: '数量(副)',
-          type: 'input'
-        },
+      
+       
         {
           prop: 'deliveryDate',
           label: '交货日期',

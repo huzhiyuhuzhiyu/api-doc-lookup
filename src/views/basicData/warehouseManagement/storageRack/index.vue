@@ -574,6 +574,7 @@ export default {
     },
     // 选择模版弹窗
     printView(enCode) {
+      if (!this.selectList.length) return this.$message.error("请选择您要打印的数据!")
       this.enCode = enCode
       this.printVisible = true
       this.$nextTick(() => {

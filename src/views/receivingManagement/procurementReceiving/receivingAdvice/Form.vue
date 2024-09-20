@@ -92,8 +92,11 @@
               <el-collapse-item title="产品信息" name="productInfo">
                 <div v-if="btnType !== 'look'">
                   <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                    :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                      class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                    :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                    <i class="iconfont icon-saoma"></i>
+                    扫码录入
+                  </el-button>
+                  |
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     icon="el-icon-plus" @click="openSeleceProductDialog()">
                     选择产品
@@ -244,8 +247,11 @@
           <el-collapse-item title="产品信息" name="productInfo">
             <div v-if="btnType !== 'look'">
               <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                  class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                :disabled="btnType == 'look' ? true : false" @click="scanFun()">
+                <i class="iconfont icon-saoma"></i>
+                扫码录入
+              </el-button>
+              |
               <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                 icon="el-icon-plus" @click="openSeleceProductDialog()">
                 选择产品
@@ -487,8 +493,11 @@
         :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
         @close="closeScanDiaFun()">
         <div class="scand">
-          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
-            @keyup.enter.native="getProductFun()"></el-input>
+          <div class="box">
+            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
+              @keyup.enter.native="getProductFun()"></el-input>
+            <div class="tip">说明：根据产品码自动添加对应的产品</div>
+          </div>
         </div>
       </el-dialog>
     </div>
@@ -559,6 +568,7 @@ export default {
         classAttribute: 'other',
         receivingStatus: 'receiving'
       },
+      scanResult: '',
       // orderList: [
       //   { label: "外协通知", value: "external" },
       //   { label: "采购通知", value: "sale" },
@@ -828,34 +838,33 @@ export default {
     closeScanDiaFun() {
       this.scanDialog = false
       this.scanResult = ''
+      this.orderForm.productCode = ''
     },
     getProductFun() {
-      console.log(21341234);
-      console.log(this.scanResult);
-      let obj = {
-        productName: "",
-        productCode: this.scanResult,
-        productDrawingNo: '', // 图号
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'create_time'
-          }
-        ],
-        pageNum: 1,
-        pageSize: 20,
+      console.log(21341234)
+      console.log(this.scanResult)
+      if (this.deliveryDateArr.length) {
+        this.orderForm.deliveryStartTime = this.deliveryDateArr[0]
+        this.orderForm.deliveryEndTime = this.deliveryDateArr[1]
+      } else {
+        this.orderForm.deliveryStartTime = ''
+        this.orderForm.deliveryEndTime = ''
       }
-      getProductList(obj).then(res => {
-        console.log("产品信息", res);
-        res.data.records.forEach(item => {
-          item.productCode = item.code
-        });
-        this.productData.push(res.data.records[0])
-        this.scanResult = ""
+      this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
+      this.orderForm.productCode = this.scanResult
+      detailpurchaseOrderList(this.orderForm).then((res) => {
+        console.log(res.data.records[0], 'p')
+        console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
+        if (!this.dataFormTwo.productData) {
+          this.dataFormTwo.productData = []
+          this.dataFormTwo.productData.push(res.data.records[0])
+        } else {
+          this.dataFormTwo.productData.forEach((item) => {
+            if (item.id !== res.data.records[0].id) {
+              this.dataFormTwo.productData.push(res.data.records[0])
+            }
+          })
+        }
       })
     },
     getWarehouseList() {
@@ -1998,5 +2007,22 @@ $footerPadding: '10px';
 
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
+}
+
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

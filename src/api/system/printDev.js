@@ -24,9 +24,9 @@ export function getPrintDevInfo(id) {
   })
 }
 // 获取打印模版详情
-export function getPrintBusInfo(enCode) {
+export function getPrintBusInfo(id) {
   return request({
-    url: `/api/system/printDev/detailByCode?printBus=${enCode}`,
+    url: `/api/system/printDev/detailByCode?id=${id}`,
     method: 'get'
   })
 }

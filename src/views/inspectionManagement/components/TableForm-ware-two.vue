@@ -1,14 +1,14 @@
 <template>
   <div>
 
-    <div v-if="openMode !== '只读'">
+    <div v-if="openMode !== '只读'" style="padding:9px 0;">
       <el-button type="text" class="topButton" icon="el-icon-plus" @click="openSeleceWareDialog">选择不良原因</el-button>|
       <el-button type="text" class="topButton" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-      <span style="margin: 0 8px;">总不良数量：{{ num }}</span>|
-      <span style="margin: 0 8px;">未分配不良数量：{{ nowNum }}</span>
+      <span style="margin: 0 8px;font-size: 16px;">总不良数量：{{ num }}</span>|
+      <span style="margin: 0 8px;font-size: 16px;">未分配不良数量：{{ nowNum }}</span>
     </div>
     <div v-else style="padding: 9px 0;">
-      <span style="margin: 0 8px;">总不良数量：{{ num }}</span>
+      <span style="margin: 0 8px;font-size: 16px;">总不良数量：{{ num }}</span>
     </div>
 
     <el-form :model="JNPFColTableData" ref="main">

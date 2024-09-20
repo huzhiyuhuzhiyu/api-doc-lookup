@@ -81,8 +81,8 @@
               </el-dropdown-menu>
             </el-dropdown>
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
-            <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
-            <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
@@ -106,6 +106,7 @@
 
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
           <el-table-column prop="organizeName" label="所属组织" min-width="280" />
+          <el-table-column prop="roleName" label="角色" min-width="140" />
           <!-- <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.employeeStatus == 'on_job'">在职</el-tag>
@@ -171,13 +172,13 @@
     <Form v-if="formVisible" ref="Form" @close="removeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <ResetPwdForm v-if="resetFormVisible" ref="ResetPwdForm" @refreshDataList="initData" />
-    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" /> -->
-    <!-- <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" /> -->
+    <ExportForm v-if="exportFormVisible" ref="exportForm" />
+    <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" />
     <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
     <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" />
 
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
   </div>
 </template>
 <script>
@@ -192,9 +193,9 @@ import {
 import Form from './Form' // 新建
 import Diagram from './Diagram' // 树状列表-组织机构
 import ResetPwdForm from './ResetPassword' // 重设密码
-// import ImportForm from './ImportForm' // 导入数据
-// import ExportForm from './ExportForm' // 导出数据
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import ImportForm from './ImportForm' // 导入数据
+import ExportForm from './ExportForm' // 导出数据
+// import ExportForm from '@/components/no_mount/ExportBox/index'
 import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
 import JobEntry from './JobEntry' // 重新入职
@@ -206,7 +207,7 @@ export default {
     Diagram,
     ResetPwdForm,
     ExportForm,
-    // ImportForm,
+    ImportForm,
     JobTransfer,
     JobQuit,
     JobEntry
@@ -578,46 +579,46 @@ export default {
         })
       }).catch(() => { })
     },
-    // exportForm() {
-    //   this.exportFormVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.exportForm.init(this.listQuery)
-    //   })
-    // },
-    // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(this.listQuery)
+      })
     },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1223',
-          exportName: '用户信息',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
-      }
-    },
+    // 导出
+    // exportForm() {
+    //   this.exportFormVisible = true
+    //   let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+    //   columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+    //   this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    // },
+    // download(data) {
+    //   if (data) {
+    //     this.exportFormVisible = false
+    //     let includeFieldMap = {}
+    //     for (let i = 0; i < data.selectKey.length; i++) {
+    //       includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+    //     }
+    //     let _data = {
+    //       ...this.listQuery,
+    //       exportType: '1223',
+    //       exportName: '用户信息',
+    //       includeFieldMap,
+    //       pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+    //     }
+    //     excelExport(_data).then(res => {
+    //       this.exportFormVisible = false
+    //       if (!res.data.url) return
+    //       this.jnpf.downloadFile(res.data.url)
+    //     }).catch(() => { })
+    //   }
+    // },
     uploadForm() {
-      // this.importFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs.importForm.init()
-      // })
-      this.uploadVisib = true
+      this.importFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.importForm.init()
+      })
+      // this.uploadVisib = true
     },
     plhandleResetPwd() {
       if (!this.selectArr.length) return this.$message.error('请先选择数据')

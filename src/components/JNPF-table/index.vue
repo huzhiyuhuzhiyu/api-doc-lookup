@@ -181,8 +181,6 @@ export default {
       this.$nextTick(() => {
         this.columns = this.$slots.default // 代码传入的列
         let defaultColumns = this.columns.map(o => o.componentOptions && o.componentOptions.propsData).filter(item => item)
-        console.log("object,",defaultColumns);
-        console.log("object1,",this.setColumnDisplayList);
         this.defaultColumns = JSON.parse(JSON.stringify(defaultColumns.filter(o => o.prop))) // 
         let list = JSON.parse(JSON.stringify(this.defaultColumns))
         const cacheList = this.jnpf.storageGet(this.menuId + this.partentOrChild)
@@ -290,7 +288,6 @@ export default {
             }
             att.push(obj)
           });
-          console.log(att);
           this.$emit('changeMove', att)
           // updateSortBatch(att).then(res => {
           //   this.$message.success("批量修改排序成功")

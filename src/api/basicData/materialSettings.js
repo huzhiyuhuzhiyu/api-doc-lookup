@@ -262,3 +262,84 @@ export function batchUpdataProductIncentory(data) {
     data
   })
 }
+// 保养等级-列表
+export function getequMaintenanceLevel(data) {
+  return request({
+    url: `/api/zgt/equMaintenanceLevel/list`,
+    method: 'POST',
+    data
+  })
+}
+// 保养等级 新增
+export function addequMaintenanceLevel(data) {
+  return request({
+    url: `/api/zgt/equMaintenanceLevel/add`,
+    method: 'POST',
+    data
+  })
+}
+
+// 保养等级 删除
+export function deleteequMaintenanceLevel(id) {
+  return request({
+    url: `/api/zgt/equMaintenanceLevel/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 保养等级 详情
+export function detailequMaintenanceLevel(id) {
+  return request({
+    url: `/api/zgt/equMaintenanceLevel/detail/${id}`,
+    method: 'GET'
+  })
+}
+// 保养等级 修改
+export function updateequMaintenanceLevel(data) {
+  return request({
+    url: `/api/zgt/equMaintenanceLevel/update`,
+    method: 'PUT',
+    data
+  })
+}
+
+
+
+// 设备安装地点-列表
+export function getequMountedPlaces(data) {
+  return request({
+    url: `/api/zgt/equMountedPlaces/list`,
+    method: 'POST',
+    data
+  })
+}
+// 设备安装地点 新增
+export function addequMountedPlaces(data) {
+  return request({
+    url: `/api/zgt/equMountedPlaces/add`,
+    method: 'POST',
+    data
+  })
+}
+
+// 设备安装地点 删除
+export function deleteequMountedPlaces(id) {
+  return request({
+    url: `/api/zgt/equMountedPlaces/del/${id}`,
+    method: 'DELETE'
+  })
+}
+// 设备安装地点 详情
+export function detaileequMountedPlaces(id) {
+  return request({
+    url: `/api/zgt/equMountedPlaces/detail/${id}`,
+    method: 'GET'
+  })
+}
+// 设备安装地点 修改
+export function updateequMountedPlaces(data) {
+  return request({
+    url: `/api/zgt/equMountedPlaces/update`,
+    method: 'PUT',
+    data
+  })
+}

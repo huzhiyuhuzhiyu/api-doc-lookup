@@ -51,25 +51,25 @@
                   </el-row>
                 </el-form>
               </el-collapse-item>
-              <el-collapse-item title="设备信息" name="sbxx">
+              <el-collapse-item title="工具信息" name="sbxx">
                 <div v-if="btnType !== 'look'">
-                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择设备</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择工具</el-button>|
                   <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
                 </div>
                 <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
                   <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO @selection-change="handeleProductInfoData">
                     <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                    <el-table-column prop="equipmentIdCode" label="设备编码" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="equipmentIdCode" label="工具编码" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="equipmentIdName" label="设备名称" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="equipmentIdName" label="工具名称" min-width="120" show-overflow-tooltip>
                       <template slot="header">
-                        <span class="required">*</span>设备名称
+                        <span class="required">*</span>工具名称
                       </template>
                     </el-table-column>
-                    <el-table-column prop="categoryName" label="设备分类" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="categoryName" label="工具分类" min-width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="specModel" label="设备规格" min-width="120" show-overflow-tooltip>
+                    <el-table-column prop="specModel" label="工具规格" min-width="120" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
                       <template slot-scope="scope">
@@ -86,7 +86,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
+      <ComSelect-page ref="ComSelect-page" @change="submitCustomerProduct" :tableItems="ProductTableItems" title="选择工具" treeTitle="工具分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'tool' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple />
     </div>
   </transition>
 </template>
@@ -122,18 +122,18 @@ export default {
         name: "",
         state: 'normal',
         deviceType: 'normal',
-        classAttribute: "equipment",
+        classAttribute: "tool",
       },
       index: '',
       ProductTableSearchList: [
-        { prop: "code", label: "设备编码", type: 'input' },
-        { prop: "name", label: "设备名称", type: 'input' },
+        { prop: "code", label: "工具编码", type: 'input' },
+        { prop: "name", label: "工具名称", type: 'input' },
       ],
       ProductTableItems: [
-        { prop: 'code', label: '设备编码', fixed: 'left' },
-        { prop: 'name', label: '设备名称', fixed: 'left' },
-        { prop: 'categoryName', label: '设备分类' },
-        { prop: 'specModel', label: '设备规格' },
+        { prop: 'code', label: '工具编码', fixed: 'left' },
+        { prop: 'name', label: '工具名称', fixed: 'left' },
+        { prop: 'categoryName', label: '工具分类' },
+        { prop: 'specModel', label: '工具规格' },
       ],
       salesList: [],
       dataFormTwo: {
@@ -144,7 +144,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
-        classAttribute:'equipment',
+        classAttribute: 'tool',
         applicantTime: '',
         reasonScrapping: '',
         departmentId: '',
@@ -183,7 +183,7 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
-    //设备选择
+    //工具选择
     submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
         this.dataFormTwo.productData.map((item1) => {
@@ -203,14 +203,14 @@ export default {
           })
         } else {
           this.$message({
-            message: "所选设备重复",
+            message: "所选工具重复",
             type: 'error',
             duration: 1500,
           })
         }
       })
     },
-    // 打开设备
+    // 打开工具
     openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
     },
@@ -324,7 +324,6 @@ export default {
                 this.salesList = res.data
               })
             } else {
-              console.log("没有bumen");
               this.salesFlag = true
             }
             if (this.btnType == 'edit') {
@@ -333,7 +332,7 @@ export default {
                 if (item.equipmentState != 'normal') {
                   a.push(item.equipmentIdName)
                   this.$message({
-                    message: `${a.join(',')} 设备未处于闲置状态`,
+                    message: `${a.join(',')} 工具未处于闲置状态`,
                     type: 'error',
                     duration: 1500,
                   })
@@ -353,7 +352,7 @@ export default {
           if (valid) {
             if (!this.dataFormTwo.productData.length) {
               this.$message({
-                message: '请添加设备',
+                message: '请添加工具',
                 type: 'error',
                 duration: 1500,
               })
@@ -366,7 +365,7 @@ export default {
             //     if (item.equipmentState != 'normal') {
             //       a.push(item.equipmentIdName)
             //       this.$message({
-            //         message: `${a.join(',')} 设备未处于闲置状态`,
+            //         message: `${a.join(',')} 工具未处于闲置状态`,
             //         type: 'error',
             //         duration: 1500,
             //       })

@@ -203,7 +203,7 @@
           <el-col :span="12">
             <el-form-item label="打印模版：" prop="enCode">
               <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
-                <el-option :key="item.id" :label="item.fullName" :value="item.printBus" v-for="item in printList" />
+                <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -760,6 +760,8 @@ export default {
     },
     // 选择模版弹窗
     printView(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.enCode = enCode
       this.printVisible = true
       this.$nextTick(() => {

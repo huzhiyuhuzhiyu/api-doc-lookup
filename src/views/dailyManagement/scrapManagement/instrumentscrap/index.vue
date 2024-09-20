@@ -213,7 +213,7 @@ export default {
         { label: "草稿", value: "draft" },
       ],
       orderForm: {
-        classAttribute: 'equipment',
+        classAttribute: 'tool',
         orderNo: '',
         documentStatus: '',
         pageNum: 1,
@@ -274,6 +274,7 @@ export default {
     initData() {
       this.listLoading = true
       ScrapApplicationFormList(this.orderForm).then(res => {
+        console.log("res++", res);
         this.tableData = res.data.records
         this.total = res.data.total
         this.listLoading = false
@@ -285,7 +286,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
-        classAttribute: 'equipment',
+        classAttribute: 'tool',
         orderNo: '',
         documentStatus: '',
         pageNum: 1,

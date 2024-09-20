@@ -120,13 +120,15 @@ import SuperQuery from '@/components/SuperQuery/index.vue'
 import { inventoryWarehouseList } from '@/api/warehouseManagement/inventory'
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 import Form from './Form'
 
 export default {
   name: 'inventory',
   components: { Form, SuperQuery, ExportForm },
   props: {
-    classAttribute: "",
+    warehouseCode: "",
   },
   data() {
     return {
@@ -167,7 +169,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
-        classAttribute: "finish_product",
+        classAttribute: "",
       },
       selectedNodeKey: "",
       totalData: {
@@ -234,6 +236,7 @@ export default {
 
 
       ],
+      classAttributeList:[],
     }
   },
   watch: {
@@ -242,10 +245,17 @@ export default {
     }
   },
   created() {
-    this.initData()
+    this.getclassAttributeList()
 
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.initData()
+      })
+    },
     // 导出
     exportForm(exportTableRef) {
       console.log("object,", exportTableRef);
@@ -298,7 +308,7 @@ export default {
 
 
     initData() {
-      this.tableQuery.classAttribute = this.classAttribute
+      this.tableQuery.classAttributeList = this.classAttributeList
       inventoryWarehouseList(this.tableQuery).then((res) => {
         console.log(res);
         if (res.data.whPage.records.length) {
@@ -339,7 +349,7 @@ export default {
         productDrawingNo: "",
         productCode: "",
         superQuery: {},
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
       }
       this.initData()
     },

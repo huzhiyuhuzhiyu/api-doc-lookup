@@ -743,11 +743,11 @@ export default {
   margin-left: 0 !important;
 }
 
-.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__header {
+.selectPro  ::v-deep .el-dialog .el-dialog__header {
   padding: 0 10px;
 }
 
-.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body {
+.selectPro   ::v-deep .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
 

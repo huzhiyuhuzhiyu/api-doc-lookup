@@ -207,6 +207,7 @@ import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.v
 import OutboundPickOutForm from '../dbIncomAndOutInventory/outboundPickOutForm.vue'
 import InboundReturnMaterialsForm from '../dbIncomAndOutInventory/inboundReturnMaterialsForm.vue'
 import Transfer from '../dbIncomAndOutInventory/transferForm.vue'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -217,7 +218,7 @@ export default {
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
     Transfer},
   props: {
-    classAttribute: "",
+    warehouseCode: "",
   },
   data() {
     return {
@@ -459,17 +460,24 @@ export default {
           type: 'input',
         },
       ],
+      classAttributeList:[],
     }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
-
-    this.getInventorySummaryDataFun()
+    this.getclassAttributeList()
   },
   mounted() {
     this.getProductClassFun()
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.initData()
+      })
+    },
     getProductClassFun() {
       // 孔径
       let objO = {
@@ -940,7 +948,7 @@ export default {
       })
       this.totalList = []
       this.listQuery.pageNum = 1
-      this.listQuery.classAttribute = this.classAttribute
+      this.listQuery.classAttributeList = this.classAttributeList
       getInventorySummaryData(this.listQuery).then(res => {
 
         this.tableData = res.data.page.records

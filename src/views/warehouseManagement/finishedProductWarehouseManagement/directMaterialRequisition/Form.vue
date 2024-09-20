@@ -257,6 +257,8 @@ import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from 
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -349,6 +351,8 @@ export default {
 
       taxRateList: [],
       classAttribute:"",
+      warehouseCode:"",
+      classAttributeList:[],
     }
   },
   created() {
@@ -359,11 +363,12 @@ export default {
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
+      if(!scanResult) return
       let obj = {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttribute:this.classAttribute,
+        classAttributeList:this.classAttributeList,
         orderItems: [
           {
             asc: false,
@@ -425,7 +430,7 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttribute: "",
+        classAttributeList: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -447,7 +452,7 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.classAttribute=this.classAttribute
+      this.ProductListRequestObj.classAttributeList=this.classAttributeList
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -468,7 +473,7 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttribute: "",
+        classAttributeList: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
@@ -574,13 +579,15 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(id, btnType,classAttribute) {
+  
+    init(id, btnType,classAttributeList) {
+      console.log(classAttributeList);
       // this.visible = true
       this.formLoading = true
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.dataForm.id = id
-      this.classAttribute=classAttribute
+      this.classAttributeList=classAttributeList
       this.btnType = btnType
       console.log("btnty", btnType);
       // this.refeshDataFormItems()
@@ -698,7 +705,7 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'receive_material'
 

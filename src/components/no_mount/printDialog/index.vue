@@ -59,6 +59,11 @@ export default {
         if (res.data) {
           if (res.data.hasOwnProperty(this.enCode)) {
             this.printList = res.data[this.enCode]
+            this.printList && this.printList.forEach(item=>{
+              if (item.enabledMark){
+                this.printDataForm.enCode = item.id
+              }
+            })
           }
         }
       }).catch(() => { })

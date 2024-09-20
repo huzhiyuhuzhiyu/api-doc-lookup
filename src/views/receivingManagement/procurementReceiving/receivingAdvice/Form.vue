@@ -829,6 +829,35 @@ export default {
       this.scanDialog = false
       this.scanResult = ''
     },
+    getProductFun() {
+      console.log(21341234);
+      console.log(this.scanResult);
+      let obj = {
+        productName: "",
+        productCode: this.scanResult,
+        productDrawingNo: '', // 图号
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      getProductList(obj).then(res => {
+        console.log("产品信息", res);
+        res.data.records.forEach(item => {
+          item.productCode = item.code
+        });
+        this.productData.push(res.data.records[0])
+        this.scanResult = ""
+      })
+    },
     getWarehouseList() {
       let obj = {
         type: 'virtually',

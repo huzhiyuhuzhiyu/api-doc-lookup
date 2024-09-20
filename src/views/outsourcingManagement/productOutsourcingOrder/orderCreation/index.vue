@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle" />
+          <el-page-header @back="goBack" :content="dialogTitle + `外协订单`" v-if="!!dialogTitle" />
           <div style="font-size:18px" v-else>新建外协订单</div>
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -146,7 +146,7 @@
                             :rules="productRules.purchaseQuantity">
                             <el-input v-model="scope.row.purchaseQuantity"
                               @input="changePurchaseQuantity(scope.$index, scope.row.purchaseQuantity)" maxlength="20"
-                              placeholder="请输入主数量"></el-input>
+                              placeholder="请输入数量"></el-input>
                           </el-form-item>
                         </template>
                       </el-table-column>
@@ -175,7 +175,7 @@
                           </el-form-item>
                         </template>
                       </el-table-column>
-                      <el-table-column prop="taxRate" label="税率(%)" min-width="140">
+                      <el-table-column prop="taxRate" label="税率" min-width="140">
                         <template slot="header">
                           <span class="required">*</span>
                           税率(%)
@@ -334,7 +334,8 @@ import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowE
 import Process from '@/components/Process/Preview'
 export default {
   components: {
-    SourceArea, Process
+    SourceArea,
+    Process
   },
   data() {
     return {
@@ -405,7 +406,7 @@ export default {
                 4,
                 '',
                 (errMsg) => {
-                  this.$message.error('主数量：' + errMsg)
+                  this.$message.error('数量：' + errMsg)
                 }
               ]
             }),
@@ -496,7 +497,7 @@ export default {
         productDrawingNo: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         productName: [{ required: true, message: '请输入产品名称', trigger: ['blur'] }],
         purchaseQuantity: [
-          // 主数量
+          // 数量
           {
             validator: this.formValidate({
               type: 'noEmtry',
@@ -639,7 +640,7 @@ export default {
       taxRateList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -659,7 +660,6 @@ export default {
       // 在这里计算第三个输入框的值
       let count = 0
       this.dataFormTwo.data.forEach((item) => {
-        console.log(item.totalAmount, 'item.totalAmount')
         count += item.totalAmount * 1
       })
       this.dataForm.totalAmount = this.jnpf.numberFormat(count)
@@ -705,7 +705,9 @@ export default {
   mounted() { },
   created() {
     this.fetchData('WXDH')
-
+    if (this.$route.query.alert) {
+      this.dialogTitle = '新建'
+    }
     if (this.$route.query.data) {
       const data = JSON.parse(this.$route.query.data)
 
@@ -735,11 +737,10 @@ export default {
           item.deliveryDate = '' // 交期
         })
         this.dataFormTwo.data = data
-        console.log(this.dataFormTwo.data, 'two')
+
         this.getProductClassFun()
       }
     } else {
-
     }
     this.getBusInfo()
   },
@@ -752,7 +753,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log(this.taxRateList, 'loisi')
       })
     },
     async fetchData(code) {
@@ -761,12 +761,10 @@ export default {
         this.codeConfig = data
         this.dataForm.orderNo = data.number
         this.$set(this.dataForm, 'orderNo', data.number)
-        console.log('dataForm', this.dataForm)
       } catch (error) { }
     },
     // 产品组件回调
     addth(id, data) {
-      console.log(data)
       this.getProductClassFun()
       if (data.length) {
         let selectArr = []
@@ -809,8 +807,6 @@ export default {
             }
             return true
           })
-          console.log(data, '删除后的数据')
-          console.log(deletedArray, '被删掉的数据')
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 审批
@@ -819,19 +815,17 @@ export default {
     },
     // 配置资源
     handlerOpenSource(index, type) {
-      console.log(this.dataFormTwo.data[index].purchaseQuantity, 'this.dataFormTwo.data[index].id')
       if (!this.dataFormTwo.data[index].purchaseQuantity) return this.$message.error('请先输入数量')
-      console.log(index, 'index')
+
       this.sourceVisibled = true
       this.index = index
-      console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index].id')
+
       let obj = {
         productsId: this.dataFormTwo.data[index].productsId,
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
       }
       // 通过需求池id 获取明细的数据
       getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
         this.sourceData = res.data
         if (this.dataFormTwo.data[this.index].outShipmentList) {
           this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
@@ -849,14 +843,13 @@ export default {
             )
           })
         }
-        console.log(this.sourceData, '1111')
 
-        if (this.sourceData.length === 0) {
-          this.sourceDisabled = true
-        } else {
-          this.sourceDisabled = false
-        }
-        console.log(this.dataFormTwo.data, 'daaaa')
+        // if (this.sourceData.length === 0) {
+        //   this.sourceDisabled = true
+        // } else {
+        //   this.sourceDisabled = false
+        // }
+
         this.$nextTick(() => {
           this.$refs['sourceRef'].init(this.sourceData, '')
         })
@@ -930,17 +923,16 @@ export default {
       var formatted = parseFloat(number)
         .toFixed(2)
         .replace(/\.?0+$/, '')
-      console.log(formatted, '8888')
+
       if (isNaN(formatted)) {
         return 0
       } else {
         return formatted
       }
     },
-    //主数量输入事件
+    //数量输入事件
     changePlanQuantity(index, val) {
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
-        console.log(this.dataFormTwo.data[index].ratio)
         this.dataFormTwo.data[index].planQuantity2 = this.numberFormat(
           this.dataFormTwo.data[index].planQuantity * this.dataFormTwo.data[index].ratio
         )
@@ -949,8 +941,6 @@ export default {
           this.dataFormTwo.data[index].planQuantity / this.dataFormTwo.data[index].ratio
         )
       }
-
-      console.log(this.dataFormTwo.data[index].planQuantity2, '数量')
     },
     // 副数量输入事件
     changePlanQuantity2(index, val) {
@@ -963,7 +953,6 @@ export default {
           this.dataFormTwo.data[index].planQuantity2 * this.dataFormTwo.data[index].ratio
         )
       }
-      console.log(this.dataFormTwo.data[index].planQuantity, '数量')
     },
     // 产品弹窗
     openSeleceProductDialog() {
@@ -1010,20 +999,16 @@ export default {
     },
     //下单数量输入事件
     changePurchaseQuantity(index, val) {
-      console.log(val, 'kkk')
       // this.dataFormTwo.data[index].purchaseQuantity = val
       this.$set(this.dataFormTwo.data[index], 'purchaseQuantity', val)
-      console.log(this.dataFormTwo.data[index], 'this.dataFormTwo.data[index]')
+
       let obj = {
         productsId: this.dataFormTwo.data[index].productsId,
         purchaseQuantity: this.dataFormTwo.data[index].purchaseQuantity
       }
       // 通过需求池id 获取明细的数据
       getShipmentList(obj).then((res) => {
-        console.log(res, '清单数据')
         this.dataFormTwo.data[index].outShipmentList = res.data
-
-        console.log(this.dataFormTwo.data, 'daaaa')
       })
 
       if (this.dataFormTwo.data[index].calculationDirection === 'multiplication') {
@@ -1053,10 +1038,11 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$emit('close')
+      this.$router.push({
+        path: '/outsourcingManagement/productOutsourcingOrder/orderList'
+      })
     },
     init(id, type) {
-      console.log(id, type)
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
@@ -1115,7 +1101,6 @@ export default {
             purProcurementRequirementsList(this.dataForm.id).then((res) => {
               this.dataFormTwo.data = res.data
             })
-
           })
         }
       })
@@ -1167,7 +1152,7 @@ export default {
           orderType: 'external'
         }
       }
-      console.log(_data, '参数')
+
       let msg = ''
       if (this.dataForm.documentStatus === 'draft') {
         msg = '保存成功'
@@ -1184,27 +1169,59 @@ export default {
               this.$message.error('请至少选择一项产品')
             } else {
               if (!valid_2) {
-                console.log(1)
-                this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]
-                  if (!item.planQuantity) {
-                    this.$message({
-                      type: 'error',
-                      message: '请输入第' + (i + 1) + '行的主数量',
-                      duration: 1500
-                    })
-                    break
-                  }
+
                   if (!item.deliveryDate) {
                     this.$message({
                       type: 'error',
                       message: '请选择第' + (i + 1) + '行的交货日期',
                       duration: 1500
                     })
+                    this.btnLoading = false
+                    break
+                  }
+                  if (!item.purchaseQuantity) {
+                    this.$message({
+                      type: 'error',
+                      message: '请输入第' + (i + 1) + '行的数量',
+                      duration: 1500
+                    })
+
+                    this.btnLoading = false
+                    break
+                  }
+                  if (!item.price) {
+                    this.$message({
+                      type: 'error',
+                      message: '请选择第' + (i + 1) + '行的含税单价',
+                      duration: 1500
+                    })
+
+                    this.btnLoading = false
+                    break
+                  }
+                  if (!item.taxRate) {
+                    this.$message({
+                      type: 'error',
+                      message: '请选择第' + (i + 1) + '行的税率',
+                      duration: 1500
+                    })
+
+                    this.btnLoading = false
+                    break
+                  }
+                  if (item.outShipmentList.length == 0) {
+                    this.$message({
+                      type: 'error',
+                      message: '第' + (i + 1) + '行没有发料清单',
+                      duration: 1500
+                    })
+                    this.btnLoading = false
                     break
                   }
                 }
+
                 return
               } else {
                 this.btnLoading = true
@@ -1285,23 +1302,25 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b010').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b010')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>
@@ -1398,6 +1417,7 @@ export default {
 ::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
   padding-left: 0px !important;
 }
+
 ::v-deep .el-tabs__header {
   margin-bottom: 5px;
 }

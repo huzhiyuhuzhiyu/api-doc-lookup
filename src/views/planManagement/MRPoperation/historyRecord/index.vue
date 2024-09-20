@@ -838,11 +838,11 @@ export default {
             label: "单位",
             type: 'input',
           },
-          {
-            prop: 'outputQuantity',
-            label: "需组装数量",
-            type: 'input',
-          },
+          // {
+          //   prop: 'outputQuantity',
+          //   label: "需组装数量",
+          //   type: 'input',
+          // },
           {
             prop: 'sealingCoverTyping',
             label: "打字内容",

@@ -12,7 +12,7 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName">
-            <el-collapse v-model="activeNames" style="margin-top: 10px;">
+            <el-collapse v-model="activeNames" style="margin-top: 5px;">
 
               <el-collapse-item title="工单信息" name="productInfo">
 

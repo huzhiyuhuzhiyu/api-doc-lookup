@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建外协收货通知单'
-          : btnType == 'edit'
-            ? '编辑外协收货通知单'
-            : btnType == 'copy'
-              ? '新建外协收货通知单'
-              : '查看外协收货通知单'
+            ? '新建外协收货通知单'
+            : btnType == 'edit'
+              ? '编辑外协收货通知单'
+              : btnType == 'copy'
+                ? '新建外协收货通知单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -23,7 +23,7 @@
       </div>
       <div class="main" v-loading="formLoading">
         <el-tabs v-model="activeName" v-if="!approvalFlag" @tab-click="handleClick">
-          <el-tab-pane label="订单信息" name="orderInfo">
+          <el-tab-pane label="基础信息" name="orderInfo">
             <el-collapse v-model="activeNames">
               <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                 <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -116,12 +116,13 @@
                     <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                    <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                    <!-- </el-table-column> -->
+
                     <el-table-column prop="drawingNo" label="品名规格" width="160" />
+                    <el-table-column prop="productCode" label="产品编码" width="200"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" />
-                    <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" />
+                    <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" /> -->
                     <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
@@ -139,23 +140,16 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
+
+                    <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
+                    <el-table-column prop="processName" label="工序" width="160" />
+                    <el-table-column prop="ordersNo" label="订单号" min-width="160" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
                           :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                       </template>
                     </el-table-column>
-                    <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
-                    <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" /> -->
-                    <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="160" />
-
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
                         <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -176,7 +170,7 @@
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
@@ -186,10 +180,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -270,13 +264,13 @@
                 <el-table-column type="selection" width="60" fixed="left" align="center" v-if="btnType !== 'look'"
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                <!-- <el-table-column prop="customerProductNo" label="客户产品编码" width="200" show-overflow-tooltip> -->
-                <!-- </el-table-column> -->
+
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="140" />
-                <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
-                  sortable="custom" />
+                <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
+                  sortable="custom" /> -->
                 <el-table-column prop="receivedQuantity" label="收货数量" width="140" v-if="!dataForm.exchangeGoodsFlag"
                   key="789">
                   <template slot="header">
@@ -293,23 +287,16 @@
                     </el-form-item>
                   </template>
                 </el-table-column>
+
+                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
+                <el-table-column prop="processName" label="工序" width="160" />
+                <el-table-column prop="ordersNo" label="订单号" width="180" />
                 <el-table-column prop="remark" label="备注" min-width="200">
                   <template slot-scope="scope">
                     <el-input v-model="scope.row.remark" placeholder="请输入备注"
                       :disabled="btnType == 'look' ? true : false" maxlength="200" show-overflow-tooltip />
                   </template>
                 </el-table-column>
-                <el-table-column prop="standardValue" label="规值" min-width="200"></el-table-column>
-                <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
-                    <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
-                    <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
-                    <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
-                    <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
-                    <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                    <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" /> -->
-                <el-table-column prop="processName" label="工序" width="160" />
-                <el-table-column prop="ordersNo" label="订单号" width="180" />
-
                 <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                   <template slot-scope="scope">
                     <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
@@ -367,7 +354,7 @@ import {
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 export default {
@@ -716,7 +703,7 @@ export default {
       warehouseIdList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -726,11 +713,14 @@ export default {
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0
-      for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+      if (this.dataFormTwo.productData) {
+        for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+        }
       }
+
       return totalNum
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -926,7 +916,6 @@ export default {
     },
     // 产品组件回调
     addth(id, data) {
-
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -973,7 +962,6 @@ export default {
             }
             return true
           })
-
         }
         this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
 
@@ -1208,10 +1196,10 @@ export default {
       } catch (error) { }
     },
     init(id, btnType, approvalFlag, data) {
-
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
+      console.log(this.btnType, 'this.btnType')
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1250,7 +1238,10 @@ export default {
               item.receivedQuantity = ''
             })
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
+            this.dataFormTwo.productData = res.data.noticeLineList
+            console.log(this.dataFormTwo.productData, 'k')
             this.dataFormTwo.productData.forEach((item) => {
+              console.log(item, 'item')
               item.drawingNo = item.productDrawingNo
             })
             if (this.btnType === 'edit') {
@@ -1260,11 +1251,12 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-          this.dataFormTwo.productData = res.data.noticeLineList
         })
       }
       if (btnType == 'add' || btnType == 'copy') {
         this.dataForm.salesman = this.userInfo.userName
+        console.log(data, 'ooo')
+
         this.dataFormTwo.productData = data
         this.formLoading = true
         this.getBusInfo()
@@ -1392,7 +1384,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-
             let dep = {
               accuracyLevel: item.accuracyLevel,
               billStatus: item.billStatus,
@@ -1512,51 +1503,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b036').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b036')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

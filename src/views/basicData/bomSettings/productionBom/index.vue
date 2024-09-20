@@ -135,7 +135,8 @@
               <el-tag type="success" v-else-if="scope.row.documentStatus == 'submit'">提交</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
+          <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+            v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus !== 'draft'">审批中</el-tag>
               <el-tag type="success"
@@ -309,7 +310,7 @@ export default {
       btnLoading: false,
       selectedData: [],
       columnList: ['productName', 'pickingWay', 'createByName', 'createTime'],
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   watch: {
@@ -317,7 +318,7 @@ export default {
       this.$refs.treeBox.filter(val)
     }
   },
- async created() {
+  async created() {
     this.getcategoryTree()
     if (localStorage.getItem("productionBomFlag")) {
       let roleFlag = JSON.parse(localStorage.getItem('productionBomFlag'))
@@ -325,9 +326,9 @@ export default {
       this.toggleExpand(roleFlag)
     }
     const res = await this.jnpf.getBusInfo('b023')
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
     // this.initData()
@@ -466,7 +467,7 @@ export default {
     },
     add() {
       this.$router.push({
-        path: '/basicData/bomSettings/BOMCreate'
+        path: '/basicData/bomSettings/BOMCreate', query: { alert: "新建" }
       })
     },
     handleDel(id) {

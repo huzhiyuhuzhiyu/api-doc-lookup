@@ -214,7 +214,7 @@ export default {
         inspectionStatus: '',
         keyword: '',
         notificationType: 'external',
-        classAttribute: 'finish_product',
+        classAttribute: '',
         notificationTypeList: [],
         orderItems: [
           {

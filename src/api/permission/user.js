@@ -290,3 +290,26 @@ export const delbaseEmployee = (id) => {
     method: 'DELETE'
   })
 }
+// 员工信息-调岗
+export const baseEmployeemove = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/move/post`,
+    method: 'post',
+    data
+  })
+}
+// 员工信息-离职
+export const Resination = (data) => {
+  return request({
+    url: `/api/crm/baseEmployee/user/Resination`,
+    method: 'post',
+    data
+  })
+}
+// 调岗记录详情
+export const getrecordInfo = (id) => {
+  return request({
+    url: `/api/crm/baseEmployee/change/record/${id}`,
+    method: 'GET'
+  })
+}

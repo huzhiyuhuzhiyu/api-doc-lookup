@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
+    <!-- <div class="JNPF-common-layout-left treeBox" :style="leftFlag ? 'width:15px;background:#fff' : ''">
       <div class="JNPF-common-title" style="display: block;padding:0" v-if="!leftFlag">
         <div class="title_box">
           <h2  >{{ $t('common.organization') }}</h2>
@@ -39,7 +39,7 @@
       <div v-if="leftFlag" class="expand" style="position: absolute" >
         <el-button icon="el-icon-arrow-right" type="text" @click.native="changeLeft()"></el-button>  
       </div>
-    </div>
+    </div> -->
     <div class="JNPF-common-layout-center">
       <el-row class="JNPF-common-search-box treeBox_bot" :gutter="16">
         <el-form @submit.native.prevent>
@@ -339,6 +339,7 @@ export default {
   }
 }
 </script>
+<style src="@/assets/scss/index-list.scss" lang="scss" scoped />
 <style scoped>
   .title_box {
   width: 100%;

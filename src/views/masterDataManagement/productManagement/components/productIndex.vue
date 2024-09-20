@@ -75,7 +75,17 @@
       </el-row>
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head" style="padding:8px">
-          <topOpts :isJudgePer="true" :addPerCode="'btn_add'" @add="addOrUpdateHandle()">
+          <div>
+            <el-dropdown style="margin-right:10px;">
+              <el-button size="mini" type="primary" icon="el-icon-plus">
+                新建
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </el-button>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item @click.native="quickAdd()">快速新建</el-dropdown-item>
+                <el-dropdown-item @click.native="addOrUpdateHandle()">普通新建</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
             <el-button v-has="'btn_import'" size="mini" type="primary" icon="el-icon-plus" @click="importForm">
               导入
@@ -84,7 +94,7 @@
               icon="el-icon-download" @click="exportForm">
               导出
             </el-button>
-          </topOpts>
+          </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
               <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
@@ -115,7 +125,7 @@
           <el-table-column prop="productSource" label="产品来源" width="120">
             <template slot-scope="{ row }">
               <template v-if="row.productSource == 'produce'">
-                自制
+                生产
               </template>
               <template v-else-if="row.productSource == 'purchase'">
                 采购
@@ -192,13 +202,61 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <el-dialog title="快速创建" :visible.sync="quickVisible" width="30%" :before-close="handleClose"
+      class="JNPF-dialog JNPF-dialog_center">
+      <el-form :model="quickForm" :rules="quickRules" ref="quickForm" label-width="100px" labelPosition="top"
+        hide-required-asterisk="fasle">
+        <el-form-item label="产品编码" prop="code">
+          <template slot="label">
+            产品编码<span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.code" placeholder="请输入产品编码"
+            :disabled="btntype ? true : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true ? false : true"></el-input>
+        </el-form-item>
+
+        <el-form-item label="品名规格" prop="drawingNo">
+          <template slot="label">
+            品名规格<span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.drawingNo" placeholder="请输入品名规格"></el-input>
+        </el-form-item>
+
+        <el-form-item label="产品分类" prop="productCategoryName">
+          <template slot="label">
+            产品分类<span class="required">*</span>
+          </template>
+          <ComSelect-list v-model="quickForm.productCategoryName" placeholder="请选择产品分类" auth
+            @change="productCategoryChange" :title="'选择产品分类'" :method="getcategoryCoop" :requestObj="quickRequestObj"
+            :dataFormatting="dataFormatting" />
+        </el-form-item>
+        <el-form-item label="单位" prop="unit">
+          <template slot="label">
+            单位<span class="required">*</span>
+          </template>
+          <el-input v-model="quickForm.unit" placeholder="请输入单位"></el-input>
+        </el-form-item>
+        <el-form-item label="产品来源" prop="productSource">
+          <template slot="label">
+            产品来源<span class="required">*</span>
+          </template>
+          <el-select v-model="quickForm.productSource" placeholder="请选择产品来源" style="width: 100%;">
+            <el-option v-for="item in productSourceOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleClose">取 消</el-button>
+        <el-button type="primary" @click="submitForm('quickForm')">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
-import { getProductList, deleteProduct, uploadProductData } from '@/api/masterDataManagement/productManage'
+import { getProductList, deleteProduct, uploadProductData, addProduct } from '@/api/masterDataManagement/productManage'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import Form from './Form'
 import { mapState } from 'vuex'
@@ -210,6 +268,8 @@ import {
 } from '@/api/masterDataManagement/index'
 import { getUnitData, detailUnitData } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getCooperativeData } from '@/api/basicData/index'
+import { getcategoryTree as getcategoryCoop } from '@/api/basicData/materialSettings'
+
 export default {
   components: { Form, ExportForm, SuperQuery },
   name: 'productCom',
@@ -254,6 +314,32 @@ export default {
   },
   data() {
     return {
+      quickVisible: false,
+      quickForm: {
+        code: '',
+        drawingNo: '',
+        unit: '',
+        productCategoryName: '',
+        productSource: ''
+      },
+      codeConfig: {},
+      quickRules: {
+        code: [{ required: true, message: '请输入活动名称', trigger: 'blur' }],
+        drawingNo: [{ required: true, message: '请输入品名规格', trigger: 'blur' }],
+        unit: [{ required: true, message: '请输入单位', trigger: 'blur' }],
+        productCategoryName: [{ required: true, message: '请选择产品分类', trigger: 'change' }],
+        productSource: [{ required: true, message: '请选择产品来源', trigger: 'change' }]
+      },
+      getcategoryCoop,
+      productSourceOptions: [
+        // { label: '组装', value: 'assemble' },
+        { label: '生产', value: 'produce' },
+        { label: '采购', value: 'purchase' },
+        { label: '外协', value: 'out' }
+      ],
+      quickRequestObj: {
+        classAttribute: this.initListQuery.classAttribute
+      },
       filterText: '',
       superQueryVisible: false,
       superQueryJson: [
@@ -288,7 +374,7 @@ export default {
           label: '产品来源',
           type: 'select',
           options: [
-            { label: '自制', value: 'produce' },
+            { label: '生产', value: 'produce' },
             { label: '采购', value: 'purchase' },
             { label: '外协', value: 'out' }
           ]
@@ -422,7 +508,7 @@ export default {
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
       productSourceList: [
-        { label: '自制', value: 'produce' },
+        { label: '生产', value: 'produce' },
         { label: '采购', value: 'purchase' },
         { label: '外协', value: 'out' }
       ], // 产品来源
@@ -460,6 +546,62 @@ export default {
     ...mapState('user', ['token'])
   },
   methods: {
+    quickAdd() {
+      this.quickVisible = true
+
+      this.fetchData('CPBM')
+      this.quickForm.productSource = 'produce'
+    },
+    dataFormatting(res) {
+      return res.data[0].childrenList
+    },
+    productCategoryChange(val, data) {
+      this.quickForm.productCategoryName = data[0].name
+      this.quickForm.productCategoryId = data[0].id
+    },
+    handleClose() {
+      this.quickVisible = false
+      this.$refs.quickForm.resetFields()
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.quickForm.mainUnit = this.quickForm.unit
+          this.quickForm.deputyUnit = this.quickForm.unit
+          this.quickForm.ratio = 1
+          this.quickForm.calculationDirection = 'multiplication'
+          this.quickForm.classAttribute = this.listQuery.classAttribute
+          this.quickForm.saleFlag = true
+          this.quickForm.tradeFlag = false
+          this.quickForm.productStatus = 'enable'
+          console.log(this.quickForm, 'qi')
+          addProduct(this.quickForm).then((res) => {
+            if (res.code == '200') {
+              this.$message({
+                message: '新建成功',
+                type: 'success',
+                duration: 1500,
+                onClose: () => {
+                  this.quickVisible = false
+                  this.initData()
+                }
+              })
+            }
+          })
+        } else {
+          return false
+        }
+      })
+    },
+    async fetchData(code) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code)
+        this.codeConfig = data
+        if (!data.modifyFlag && data.codeWay == 'auto') {
+          this.quickForm.code = data.number
+        }
+      } catch (error) { }
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -1242,3 +1384,23 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+.custom_title {
+  line-height: 24px;
+  font-size: 18px;
+  color: #303133;
+  margin-left: -12px;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+::v-deep .el-dialog__body {
+  padding: 0px 20px;
+  color: #606266;
+  font-size: 14px;
+  word-break: break-all;
+}
+</style>

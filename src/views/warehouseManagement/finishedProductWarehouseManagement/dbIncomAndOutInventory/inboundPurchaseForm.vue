@@ -86,9 +86,9 @@
 
                       </div>
 
-                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType!='look'"
+                      <JNPF-table ref="product" :data="productData" :fixedNO="true" :hasC="btnType != 'look'"
                         @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                       
+
                         <el-table-column prop="productDrawingNo" label="品名规格" min-width="320" :key="6"
                           show-overflow-tooltip> </el-table-column>
                         <el-table-column prop="productCode" label="产品编码" width="120" :key="4" show-overflow-tooltip />
@@ -107,7 +107,8 @@
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525" v-if="btnType!='look'">
+                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="525"
+                          v-if="btnType != 'look'">
                         </el-table-column>
 
 
@@ -233,7 +234,7 @@
 
 
                 <el-table-column prop="standardValue" label="规值" width="100" sortable="custom" />
-                <el-table-column prop="colour" label="颜色" width="100"  sortable="custom"/>
+                <el-table-column prop="colour" label="颜色" width="100" sortable="custom" />
                 <el-table-column prop="sealingCoverTyping" label="打字内容" width="160" sortable="custom" />
                 <el-table-column prop="accuracyLevel" label="精度等级" width="160" sortable="custom" />
                 <el-table-column prop="vibrationLevel" label="振动等级" width="160" sortable="custom" />
@@ -409,7 +410,6 @@ export default {
     }
   },
   created() {
-    this.getWarehouseConfig()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -466,6 +466,8 @@ export default {
         deliveryEndDate: "",
         deliveryStartDate: "",
         classAttribute: this.classAttribute,
+        receiptInboundFlag: true,
+
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
@@ -665,14 +667,7 @@ export default {
 
 
 
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
 
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -718,6 +713,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
@@ -997,7 +993,7 @@ export default {
   padding: 5px 10px;
 }
 
- 
+
 
 .required {
   color: red;

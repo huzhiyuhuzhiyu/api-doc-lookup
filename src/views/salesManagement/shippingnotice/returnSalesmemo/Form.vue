@@ -54,7 +54,7 @@
                     </el-col>
 
 
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                    <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                       <el-form-item label="退货状态" prop="deliveryStatus">
                         <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable
                           style="width: 100%;" :disabled="btnType == 'look' ? true : false">
@@ -91,7 +91,7 @@
                         <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
                           maxlength="20" />
                       </el-form-item>
-                    </el-col>
+                    </el-col> -->
 
                     <el-col :sm="12" :xs="24">
                       <el-form-item label="备注" prop="remark">
@@ -225,7 +225,7 @@
                 </el-col>
 
 
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                <!-- <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
                   <el-form-item label="退货状态" prop="deliveryStatus">
                     <el-select v-model="dataForm.deliveryStatus" placeholder="请选择退货状态" clearable style="width: 100%;"
                       :disabled="btnType == 'look' ? true : false">
@@ -262,7 +262,7 @@
                     <el-input v-model="dataForm.createByName" placeholder="请输入创建人" :disabled="btnType == 'look'"
                       maxlength="20" />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
                 <el-col :sm="12" :xs="24">
                   <el-form-item label="备注" prop="remark">
@@ -1478,6 +1478,9 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
+          res.data.noticeLineList.forEach(item => {
+            item.drawingNo=item.productDrawingNo
+          });
           this.dataFormTwo.productData = res.data.noticeLineList
         })
       }

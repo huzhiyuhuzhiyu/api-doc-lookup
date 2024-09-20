@@ -425,7 +425,6 @@ export default {
     }
   },
   created() {
-    this.getWarehouseConfig()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -681,14 +680,7 @@ export default {
 
 
 
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
+  
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -734,6 +726,7 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
+      this.allocationFlag=data[0].all.locationStatus=='disabled'?false:true
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type

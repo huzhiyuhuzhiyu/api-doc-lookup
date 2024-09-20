@@ -71,25 +71,25 @@
             <el-table-column prop="productDrawingNo" label="品名规格" min-width="180" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" min-width="180" sortable="custom" />
 
-            <el-table-column prop="mainUnit" label="单位" min-width="180" />
-            <el-table-column prop="inspectionQuantity" label="报检数量" min-width="180" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="inspectionQuantity" label="报检数量" width="110" sortable="custom" />
 
-            <el-table-column prop="inspectionMethod" label="检验方式" min-width="180" sortable="custom">
+            <el-table-column prop="inspectionMethod" label="检验方式" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.inspectionMethod == 'exempt'">免检</div>
                 <div v-if="scope.row.inspectionMethod == 'spot_check'">抽检</div>
                 <div v-if="scope.row.inspectionMethod == 'all'">全检</div>
               </template>
             </el-table-column>
-            <el-table-column prop="samplingQuantity" label="检验数量" min-width="180" sortable="custom" />
-            <el-table-column prop="inspectionResults" label="检验结果" min-width="180" sortable="custom">
+            <el-table-column prop="samplingQuantity" label="检验数量" width="110" sortable="custom" />
+            <el-table-column prop="inspectionResults" label="检验结果" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
                 <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
               </template>
             </el-table-column>
-            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="180" sortable="custom" />
-            <el-table-column prop="processingStatus" label="处理状态" min-width="180" sortable="custom">
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" width="130" sortable="custom" />
+            <el-table-column prop="processingStatus" label="处理状态" width="110" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.processingStatus == 'untreated'">未处理</div>
                 <div v-if="scope.row.processingStatus == 'processing'">处理中</div>
@@ -100,25 +100,12 @@
             <el-table-column prop="remark" label="备注" min-width="200" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column label="操作" width="100" fixed="right">
               <template slot-scope="scope">
-                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasDel="false">
+                <tableOpts @edit="addOrUpdateHandle(scope.row, 'add')" editText="处理" :hasEdit="false" :hasDel="false">
                   <el-button size="mini" type="text" @click.native="addOrUpdateHandle(scope.row, 'look')">
                     查看详情
                   </el-button>
-                  <!-- <el-dropdown hide-on-click>
-                    <span class="el-dropdown-link">
-                      <el-button type="text" size="mini">
-                        {{ $t('common.moreBtn') }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </el-button>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                      <el-dropdown-item @click.native="addOrUpdateHandle(scope.row, 'look')">
-                        查看详情
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </el-dropdown> -->
                 </tableOpts>
               </template>
             </el-table-column>
@@ -390,7 +377,7 @@ export default {
         this.detailFormVisible = true
 
         this.$nextTick(() => {
-          this.$refs.DetailForm.init(row.id, btnType,false, this.pageData.type)
+          this.$refs.DetailForm.init(row.id, btnType, false, this.pageData.type)
         })
       } else {
 

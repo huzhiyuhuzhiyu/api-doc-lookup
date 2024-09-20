@@ -208,11 +208,11 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: "数量",
-          type: 'input'
-        },
+        // {
+        //   prop: 'num',
+        //   label: "数量",
+        //   type: 'input'
+        // },
 
         {
           prop: 'sealingCoverTyping',

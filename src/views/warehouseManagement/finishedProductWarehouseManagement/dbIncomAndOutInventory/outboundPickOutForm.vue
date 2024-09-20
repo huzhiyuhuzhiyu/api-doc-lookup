@@ -110,8 +110,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112"
-                          v-if="allocationFlag">
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" >
 
                           <template slot-scope="scope">
 

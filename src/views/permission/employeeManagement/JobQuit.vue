@@ -17,7 +17,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-checkbox v-model="dataForm.checked">同步停用账号</el-checkbox>
+              <el-checkbox v-model="dataForm.userFlag">同步停用账号</el-checkbox>
             </el-col>
             <el-col :span="24">
               <el-form-item label="备注" prop="remark">
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { updatebaseEmployee, getbaseEmployeeInfo } from '@/api/permission/user'
+import { Resination, getbaseEmployeeInfo } from '@/api/permission/user'
 export default {
   data() {
     return {
@@ -49,7 +49,7 @@ export default {
       formLoading: true,
       btnLoading: false,
       dataForm: {
-        checked: true,
+        userFlag: true,
         id: '',
         changeDate: "",
         changeReason: "",
@@ -74,9 +74,8 @@ export default {
       this.$nextTick(() => {
         this.$refs.dataForm.resetFields();
         getbaseEmployeeInfo(id).then(res => {
-          this.copylist = res.data
           this.dataForm.id = res.data.employeeVO.id
-          this.dataForm.realName = res.data.employeeVO.realName
+          this.dataForm.realName = res.data.employeeVO.name
           this.loading = false
           this.formLoading = false
         }).catch(() => {
@@ -87,6 +86,7 @@ export default {
     },
     clearData() {
       this.dataForm = {
+        userFlag: true,
         id: '',
         changeDate: "",
         changeReason: "",
@@ -148,8 +148,7 @@ export default {
     request() {
       this.btnLoading = true
       this.dataForm.code = this.dataForm.id
-      this.copylist.employeeVO = this.dataForm
-      updatebaseEmployee(this.dataForm).then((res) => {
+      Resination(this.dataForm).then((res) => {
         if (res.msg === 'Success') res.msg = '修改成功'
         this.$message({
           message: res.msg,

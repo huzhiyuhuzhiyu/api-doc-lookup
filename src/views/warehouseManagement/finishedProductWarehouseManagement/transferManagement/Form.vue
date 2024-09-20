@@ -46,6 +46,9 @@
                 </el-collapse-item>
                 <el-collapse-item title="产品信息" name="productInfo">
                   <div>
+                    <el-button type="text" style="margin-right:8px;font-size:14px!important"
+                        :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                          class="iconfont icon-saoma"></i>扫码录入</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -227,6 +230,16 @@
           <el-button v-else type="primary" @click="continueAdd()"> {{ btnText }}</el-button>
         </span>
       </el-dialog>
+      <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+      @close="closeScanDiaFun()">
+      <div class="scand">
+        <div class="box">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()"> </el-input>
+        <div class="tip">说明：根据产品码自动添加对应的产品</div>
+      </div>
+      </div>
+    </el-dialog>
       <!-- 选库位 -->
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
@@ -255,6 +268,7 @@ export default {
 
   data() {
     return {
+      scanDialog:false,
       getWarehouseList,
       treeLoading: false,
       ProductTreeData: [],
@@ -341,6 +355,46 @@ export default {
   },
 
   methods: {
+    getProductFun() {
+      console.log(21341234);
+      console.log(this.scanResult);
+      let obj = {
+        productName: "",
+        productCode: this.scanResult,
+        productDrawingNo: '', // 图号
+        classAttribute:this.classAttribute,
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        pageNum: 1,
+        pageSize: 20,
+      }
+      getProductList(obj).then(res => {
+        console.log("产品信息", res);
+        res.data.records.forEach(item => {
+          item.productCode=item.code
+        });
+        this.productData.push(res.data.records[0])
+        this.scanResult = ""
+      })
+    },
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+      this.$refs.inputRef.$refs.input.focus();
+    });
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ""
+    },
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
@@ -840,5 +894,23 @@ export default {
 }
 .JNPF-common-layout-main.JNPF-flex-main{
   padding-top: 5px;
+}
+
+ 
+
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+.scand .box{
+  padding: 40px 20px;
+
+}
+.scand .tip{
+  margin-top: 10px;
+  font-size: 18px;
 }
 </style>

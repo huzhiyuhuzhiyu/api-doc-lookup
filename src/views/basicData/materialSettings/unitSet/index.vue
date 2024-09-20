@@ -76,7 +76,7 @@
           </JNPF-table>
         </div>
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
-          @pagination="initData" class="pagination" style="text-align: left; padding-left: 20px;" />
+          @pagination="initData" class="pagination" style="text-align: right; padding-right: 60%;" />
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="JNPFForm" @refresh="refresh" />
@@ -228,7 +228,7 @@ export default {
     addOrUpdateHandle() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.JNPFForm.init('{}','add')
+        this.$refs.JNPFForm.init('{}', 'add')
       })
     },
     // 编辑数据
@@ -283,12 +283,12 @@ export default {
   // border: 1px solid #dedede;
   // box-shadow: inset 0 0 0 1px #dedede;
   >.dataTable:first-child {
-    flex: 3;
+    flex: 2;
     margin: 0 3px 0 0;
   }
 
   >.dataTable:last-child {
-    flex: 2;
+    flex: 3;
   }
 }
 </style>

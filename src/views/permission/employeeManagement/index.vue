@@ -60,6 +60,8 @@
           <topOpts @add="addOrUpdateHandle()">
             <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
             <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p041')">打印员工二维码</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-printer" @click="printView('p042')">打印员工工牌</el-button>
           </topOpts>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top">
@@ -73,7 +75,7 @@
             </el-tooltip>
           </div>
         </div>
-        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" ref="dataTable" :setColumnDisplayList="columnList" row-key="id">
+        <JNPF-table v-loading="listLoading" :data="tableData" custom-column fixedNO @sort-change="sortChange" @selection-change="handleSelectionChange" hasC ref="dataTable" :setColumnDisplayList="columnList" row-key="id">
           <el-table-column prop="jobNumber" label="工号" min-width="140" sortable="custom" /> <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="name" label="姓名" width="120" sortable="custom">
             <template slot-scope="scope">
@@ -85,15 +87,23 @@
           <!-- 这里的 width 会被转成 min-width -->
           <el-table-column prop="sex" label="性别" width="90" sortable="custom">
             <template slot-scope="scope">
-              <span>{{ scope.row.sex == 1 ? '男' : (scope.row.sex == 2 ? '女' : '保密') }}</span>
+              <span>{{ genderTreeDatafun(scope.row.sex) }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="organizeName" label="所属部门" width="160" sortable="custom" />
           <el-table-column prop="birthday" label="出生日期" width="160" sortable="custom" />
           <el-table-column prop="nativePlace" label="籍贯" min-width="140" sortable="custom" />
-          <el-table-column prop="nation" label="民族" min-width="160" sortable="custom" />
+          <el-table-column prop="nation" label="民族" min-width="160" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ DictionaryDatafun(scope.row.nation) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="politicalOutlook" label="政治面貌" min-width="120" sortable="custom" />
-          <el-table-column prop="education" label="学历" min-width="140" sortable="custom" />
+          <el-table-column prop="education" label="学历" min-width="140" sortable="custom">
+            <template slot-scope="scope">
+              <span>{{ educationfun(scope.row.education) }}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="health" label="健康状况" min-width="130" sortable="custom" />
           <el-table-column prop="maritalStatus" label="婚姻状况" width="110" sortable="custom" />
           <el-table-column prop="criminalRecords" label="有无刑事记录" min-width="160" sortable="custom">
@@ -153,6 +163,7 @@
                     <template v-if="scope.row.employeeStatus != 'off_job' || !scope.row.employeeStatus">
                       <el-dropdown-item @click.native="jobTransfer(scope.row, scope)">岗位调动</el-dropdown-item>
                       <el-dropdown-item @click.native="jobQuit(scope.row.id)">办理离职</el-dropdown-item>
+                      <el-dropdown-item @click.native="jobtransferrecord(scope.row.id)">调岗记录</el-dropdown-item>
                     </template>
                     <!-- <el-dropdown-item v-else @click.native="jobEntry(scope.row.id)">重新入职</el-dropdown-item> -->
                     <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, true)">查看简历</el-dropdown-item>
@@ -165,6 +176,8 @@
         <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="initData" />
       </div>
     </div>
+    <!-- 选择打印模版弹窗 -->
+    <PrintDialog :visible.sync="printVisible" @closePrint="closePrint" @printSubmit="printOrder" :printQuery="printQuery" :enCode="enCode" ref="printTemplate" />
     <el-dialog title="导入数据" append-to-body :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="uploadVisib" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="400px">
       <el-upload cass="upload-demo" action="#" accept=".xls, .xlsx" :multiple="false" drag :auto-upload="false" :limit="1" :on-change="handleFileChange" ref="uploadRef">
         <i class="el-icon-upload"></i>
@@ -186,13 +199,17 @@
     <!-- <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" /> -->
     <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
+    <JobCode v-if="JobCodeFormVisible" ref="JobCode" @close="removeForm" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
     <!-- <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" /> -->
   </div>
 </template>
 <script>
+import { getPrintBusInfo } from '@/api/system/printDev'
+import PrintBrowse from '@/components/PrintBrowse'
+import PrintDialog from '@/components/no_mount/printDialog'
 import ExportForm from '@/components/no_mount/ExportBox/index'
-import { saleCluemanagementpoolModel } from "@/api/basicData/index";
+import { excelExport, saleCluemanagementpoolModel } from "@/api/basicData/index";
 import { getAdvancedQueryList } from "@/api/system/advancedQuery";
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
@@ -206,6 +223,7 @@ import Diagram from './Diagram' // 树状列表-组织机构
 // import ExportForm from './ExportForm' // 导出数据
 import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
+import JobCode from './JobCode' // 调岗记录
 // import JobEntry from './JobEntry' // 重新入职
 
 export default {
@@ -217,11 +235,24 @@ export default {
     // ImportForm,
     JobTransfer,
     JobQuit,
-    SuperQuery
+    SuperQuery,
+    PrintBrowse,
+    PrintDialog,
+    JobCode
   },
   data() {
     return {
-      formLoading:false,
+      JobCodeFormVisible: false,
+      printQuery: {
+        category: 'Humanresources'   // 对应数据字典 分类编码
+      },
+      enCode: '',
+      printVisible: false,
+      printList: [],
+      genderTreeData: [],
+      educationTreeData: [],
+      nationTreeData: [],
+      formLoading: false,
       uploadVisib: false,
       superQueryJson: [
         {
@@ -238,11 +269,7 @@ export default {
           prop: 'sex',
           label: '性别',
           type: 'select',
-          options: [
-            { label: '男', value: '1' },
-            { label: '女', value: '2' },
-            { label: '保密', value: '3' }
-          ] // 注意，此options从接口异步获取，改变值时注意内存地址
+          options: [] // 注意，此options从接口异步获取，改变值时注意内存地址
         },
         { // 日期时间选择器（区间）
           prop: 'birthday',
@@ -261,7 +288,8 @@ export default {
         {
           prop: 'nation',
           label: "民族",
-          type: 'input'
+          type: 'select',
+          options: []
         },
         {
           prop: 'politicalOutlook',
@@ -271,7 +299,8 @@ export default {
         {
           prop: 'education',
           label: "学历",
-          type: 'input'
+          type: 'select',
+          options: []
         },
         {
           prop: 'health',
@@ -443,6 +472,40 @@ export default {
     this.getAdvancedQuery()
   },
   methods: {
+    //调岗记录
+    jobtransferrecord(id) {
+      this.JobCodeFormVisible = true
+      this.$nextTick(() => {
+        this.$refs.JobCode.init(id)
+      })
+    },
+    closePrint() {
+      this.printVisible = false
+    },
+    // 选择模版弹窗
+    printView(enCode) {
+      this.enCode = enCode
+      this.printVisible = true
+      this.$nextTick(() => {
+        this.$refs.printTemplate.init(enCode)
+      })
+    },
+    // 打印 员工二维码
+    printOrder(enCode) {
+      if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
+      if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      getPrintBusInfo(enCode).then(res => {
+        if (res.data) {
+          this.prindId = res.data.id
+          this.formId = this.selectArr[0].id
+          this.printBrowseVisible = true
+        } else {
+          this.$message.warning('未找到相应打印模版')
+        }
+      }).catch(() => {
+        this.printBrowseVisible = false
+      });
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -459,7 +522,7 @@ export default {
         }
         let _data = {
           ...this.listQuery,
-          exportType: '1223',
+          exportType: '1222',
           exportName: '员工档案',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
@@ -557,6 +620,51 @@ export default {
       getAdvancedQueryList(this.currMenuId).then(row => {
         this.datalist = row.data.list
       })
+      // 获取民族
+      this.$store.dispatch('base/getDictionaryData', { sort: 'Nation' }).then(res => {
+        this.nationTreeData = res
+        this.superQueryJson.forEach(item => {
+          if (item.prop == 'nation') {
+            item.options = res.map(o => {
+              return { label: o.fullName, value: o.id }
+            })
+          }
+        })
+        // 获取学历
+        this.$store.dispatch('base/getDictionaryData', { sort: 'Education' }).then(res => {
+          this.educationTreeData = res
+          this.superQueryJson.forEach(item => {
+            if (item.prop == 'education') {
+              item.options = res.map(o => {
+                return { label: o.fullName, value: o.id }
+              })
+            }
+          })
+        })
+        // 获取性别
+        this.$store.dispatch('base/getDictionaryData', { sort: 'sex' }).then(res => {
+          this.genderTreeData = res
+          this.superQueryJson.forEach(item => {
+            if (item.prop == 'sex') {
+              item.options = res.map(o => {
+                return { label: o.fullName, value: o.enCode }
+              })
+            }
+          })
+        })
+      })
+    },
+    educationfun(val) {
+      let _data = this.educationTreeData.filter(item => item.id == val)[0]
+      return _data ? _data.fullName : val
+    },
+    DictionaryDatafun(val) {
+      let _data = this.nationTreeData.filter(item => item.id == val)[0]
+      return _data ? _data.fullName : val
+    },
+    genderTreeDatafun(val) {
+      let _data = this.genderTreeData.filter(item => item.enCode == val)[0]
+      return _data ? _data.fullName : val
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
@@ -702,12 +810,10 @@ export default {
     },
     // 办理离职
     jobQuit(id) {
-      //查看是否有客户.then(res=>{
       this.jobQuitFormVisible = true
       this.$nextTick(() => {
         this.$refs.JobQuit.init(id)
       })
-      // })
     },
     // // 重新入职
     // jobEntry(id) {
@@ -717,6 +823,7 @@ export default {
     //   })
     // },
     removeForm(isRefresh) {
+      this.JobCodeFormVisible = false
       this.formVisible = false
       this.resetFormVisible = false
       this.jobTransferFormVisible = false
@@ -757,8 +864,8 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop == 'employeeStatus' || prop == 'resignationDate' || prop == 'employeeType') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
-      else newProp = 'f_' + prop.toLowerCase()
+      if (prop == 'jobNumber' || prop == 'criminalRecords' || prop == 'driverLicenseGrade' || prop == 'driverLicenseType' || prop == 'emergencyContact' || prop == 'emergencyPhoneNumber' || prop == 'homeLandlineTelephone' || prop == 'idCardNo' || prop == 'infectiousDisease' || prop == 'languageProficiency' || prop == 'maritalStatus' || prop == 'nativePlace' || prop == 'politicalOutlook' || prop == 'residentialAddress') newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
+      else newProp = prop.toLowerCase()
       this.listQuery.orderItems[0].asc = order === 'ascending'
       this.listQuery.orderItems[0].column = newProp
       this.initData()

@@ -126,7 +126,7 @@
 
 
 
-                    <el-table-column prop="mainUnit" label="单位(主)" min-width="140" show-overflow-tooltip>
+                    <el-table-column prop="mainUnit" label="单位" min-width="140" show-overflow-tooltip>
                       <template slot-scope="scope">
                         <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                           <div class="viewData">
@@ -136,26 +136,8 @@
                       </template>
                     </el-table-column>
 
-                  <el-table-column prop="purchaseQuantity2" label="数量(副)" min-width="180">
-                    <template slot-scope="scope">
-                      <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity2'"
-                        :rules='productRules.purchaseQuantity2'>
-                        <el-input @input="changePlanQuantity2(scope.$index, scope.row.purchaseQuantity2)"
-                          v-model="scope.row.purchaseQuantity2" maxlength="20" placeholder="请输入副数量">
-                        </el-input>
-                      </el-form-item>
-                    </template>
-                  </el-table-column>
+      
 
-                    <el-table-column prop="deputyUnit" label="单位(副)" min-width="140" show-overflow-tooltip>
-                      <template slot-scope="scope">
-                        <el-form-item :prop="'data.' + scope.$index + '.' + 'deputyUnit'">
-                          <div class="viewData">
-                            <span>{{ scope.row.deputyUnit }}</span>
-                          </div>
-                        </el-form-item>
-                      </template>
-                    </el-table-column>
 
                   <el-table-column prop="fixedPrice" label="定价" min-width="180">
                     <template slot-scope="scope">

@@ -94,6 +94,14 @@ export function addQcUnqualifiedData(data) {
     data
   })
 }
+// 不合格品处理单 新建
+export function treatmentData(data) {
+  return request({
+    url: `/api/wms/qc/inspection/treatment`,
+    method: 'POST',
+    data
+  })
+}
 // 不合格品处理单 修改
 export function updateQcUnqualifiedData(data) {
   return request({

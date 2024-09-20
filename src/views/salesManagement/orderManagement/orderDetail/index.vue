@@ -295,11 +295,11 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: "数量",
-          type: 'input'
-        },
+        // {
+        //   prop: 'num',
+        //   label: "数量",
+        //   type: 'input'
+        // },
 
         {
           prop: 'deliveryDate',
@@ -315,27 +315,27 @@ export default {
           label: "单价(含税)",
           type: 'input'
         },
-        {
-          prop: 'taxRate',
-          label: "税率",
-          type: 'select',
-          options:[]
-        },
-        {
-          prop: 'totalAmount',
-          label: "金额(含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: "单价(不含税)",
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxAmount',
-          label: "金额(不含税)",
-          type: 'input'
-        },
+        // {
+        //   prop: 'taxRate',
+        //   label: "税率",
+        //   type: 'select',
+        //   options:[]
+        // },
+        // {
+        //   prop: 'totalAmount',
+        //   label: "金额(含税)",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'excludingTaxPrice',
+        //   label: "单价(不含税)",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: 'excludingTaxAmount',
+        //   label: "金额(不含税)",
+        //   type: 'input'
+        // },
         {
           prop: 'sealingCoverTyping',
           label: "打字内容",

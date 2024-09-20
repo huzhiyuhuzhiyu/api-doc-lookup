@@ -255,16 +255,16 @@ export default {
           label: "单位",
           type: 'input'
         },
-        {
-          prop: 'num',
-          label: "数量",
-          type: 'input'
-        },
-        {
-          prop: "waitDeliverNum",
-          label: "待发货数量",
-          type: "input"
-        },
+        // {
+        //   prop: 'num',
+        //   label: "数量",
+        //   type: 'input'
+        // },
+        // {
+        //   prop: "waitDeliverNum",
+        //   label: "待发货数量",
+        //   type: "input"
+        // },
 
         {
           prop: 'deliveryDate',

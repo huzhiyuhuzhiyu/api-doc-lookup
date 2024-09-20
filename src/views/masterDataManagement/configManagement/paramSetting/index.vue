@@ -22,15 +22,24 @@
 
           <el-table-column prop="state" label="操作" :width="stateWidth" :align="stateAlign">
             <template slot-scope="scope">
-              <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
-              <el-input style="width: 150px;margin-left: 10px;" v-if="
-                (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
-                (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
-              " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
-                <template slot="append">
-                  %
-                </template>
-              </el-input>
+              <div v-if="scope.row.businessCode == 'warehouse'">
+                <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
+                  <el-radio :label="0">{{ scope.row.radioOff }}</el-radio>
+                  <el-radio :label="1">{{ scope.row.radioOn }}</el-radio>
+                </el-radio-group>
+              </div>
+              <div v-else>
+                <el-checkbox v-model="scope.row.state" @change="stateChange(scope.row)"></el-checkbox>
+                <el-input style="width: 150px;margin-left: 10px;" v-if="
+                  (scope.row.state && scope.row.configKey == 'work_exceed_report') ||
+                  (scope.row.state && scope.row.configKey == 'collect_exceed_picking')
+                " v-model="scope.row.configValue2" @change="configValue2Change(scope.row)">
+                  <template slot="append">
+                    %
+                  </template>
+                </el-input>
+              </div>
+
             </template>
           </el-table-column>
           <el-table-column prop="description" label="说明">
@@ -84,6 +93,18 @@ export default {
           value: 'allocation'
         },
         {
+          label: '采购收货',
+          value: 'inbound_purchase'
+        },
+        {
+          label: '外协收货',
+          value: 'inbound_external'
+        },
+        {
+          label: '销售发货',
+          value: 'outbound_sale_send'
+        },
+        {
           label: '启用成交客户附件',
           value: 'fj_zskh'
         },
@@ -130,6 +151,18 @@ export default {
           value: 'allocation'
         },
         {
+          label: '仓库待办出入库中，会根据您设置的规则，显示收货单还是采购订单进行入库。',
+          value: 'inbound_purchase'
+        },
+        {
+          label: '仓库待办出入库中，会根据您设置的规则，显示收货单还是采购订单进行入库。',
+          value: 'inbound_external'
+        },
+        {
+          label: '仓库待办出入库中，会根据您设置的规则，显示发货通知单还是销售订单进行出库。',
+          value: 'outbound_sale_send'
+        },
+        {
           label: '开启后，在成交客户新建、编辑、查看都会显示附件操作。',
           value: 'fj_zskh'
         },
@@ -169,24 +202,30 @@ export default {
       let width = 60
       let flag = true
       this.tableData.forEach((item) => {
-        if (item.configKey == 'work_exceed_report') {
-          if (item.state) {
-            width = 200
-            flag = false
-          } else {
-            width = 60
-            flag = true
-          }
+        if (item.configKey == 'work_exceed_report' || item.configKey == 'collect_exceed_picking') {
+          // if (item.state) {
+          //   width = 200
+          //   flag = false
+          // } else {
+          //   width = 60
+          //   flag = true
+          // }
+          width = 200
         }
-        if (flag) {
-          if (item.configKey == 'collect_exceed_picking') {
-            if (item.state) {
-              width = 200
-            } else {
-              width = 60
-            }
-          }
+        if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
+
+          width = 200
         }
+        // if (flag) {
+        //   if (item.configKey == 'collect_exceed_picking') {
+        //     // if (item.state) {
+        //     //   width = 200
+        //     // } else {
+        //     //   width = 60
+        //     // }
+        //     width = 200
+        //   }
+        // }
       })
 
       return width
@@ -196,21 +235,23 @@ export default {
       let flag = true
       this.tableData.forEach((item) => {
         if (item.configKey == 'work_exceed_report') {
-          if (item.state) {
-            align = 'left'
-            flag = false
-          } else {
-            align = 'center'
-            flag = true
-          }
+          // if (item.state) {
+          //   align = 'left'
+          //   flag = false
+          // } else {
+          //   align = 'center'
+          //   flag = true
+          // }
+          align = 'left'
         }
         if (flag) {
           if (item.configKey == 'collect_exceed_picking') {
-            if (item.state) {
-              align = 'left'
-            } else {
-              align = 'center'
-            }
+            // if (item.state) {
+            //   align = 'left'
+            // } else {
+            //   align = 'center'
+            // }
+            align = 'left'
           }
         }
       })
@@ -265,8 +306,17 @@ export default {
           this.tableData.forEach((item) => {
             if (item.configValue1 == '1') {
               this.$set(item, 'state', true)
+              this.$set(item, 'radio', 1)
             } else {
               this.$set(item, 'state', false)
+              this.$set(item, 'radio', 0)
+            }
+            if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
+              item.radioOff = '收货单'
+              item.radioOn = '订单'
+            } else if (item.configKey == 'outbound_sale_send') {
+              item.radioOff = '通知单'
+              item.radioOn = '订单'
             }
             this.$set(item, 'description', item.configKey)
           })
@@ -279,6 +329,31 @@ export default {
       let _data = []
 
       if (data.state) {
+        data.configValue1 = 1
+      } else {
+        data.configValue1 = 0
+      }
+      let query = {
+        ...data,
+        configKey: data.configKey
+      }
+      _data.push(query)
+      editBimBusinessData(_data).then((res) => {
+        if (res.code == '200') {
+          this.$message({
+            message: '修改成功',
+            type: 'success'
+          })
+          this.formLoading = false
+        } else {
+          this.formLoading = false
+        }
+      })
+    },
+    radioChange(data) {
+      console.log(data, 'o')
+      let _data = []
+      if (data.radio) {
         data.configValue1 = 1
       } else {
         data.configValue1 = 0

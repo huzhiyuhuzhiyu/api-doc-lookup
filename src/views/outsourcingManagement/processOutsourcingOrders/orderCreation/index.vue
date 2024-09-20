@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `请购单`" v-if="!!dialogTitle" />
+          <el-page-header @back="goBack" :content="dialogTitle + `工序外协订单`" v-if="!!dialogTitle" />
           <div style="font-size:18px" v-else>新建工序外协订单</div>
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="handleSubmit('draft')">
@@ -49,7 +49,7 @@
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="交货日期" prop="deliveryDate">
                           <el-date-picker v-model="dataForm.deliveryDate" type="date" value-format="yyyy-MM-dd"
-                            style="width: 100%;" placeholder="请选择交货日期"></el-date-picker>
+                            style="width: 100%;" placeholder="请选择交货日期" @change="deliveryDateChange"></el-date-picker>
                         </el-form-item>
                       </el-col>
                       <el-col :span="24">
@@ -76,7 +76,7 @@
                     |
                   </div>
                   <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm">
-                    <el-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
+                    <JNPF-table style="border: 1px solid #e3e7ee;" :fixedNO="true"
                       @selection-change="handeleProductInfoData" v-bind="dataFormTwo.data" :data="dataFormTwo.data"
                       id="table" border height="460">
                       <el-table-column type="selection" width="55" fixed="left" :key="2"></el-table-column>
@@ -134,7 +134,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" min-width="60" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -273,8 +273,7 @@
 
                       <el-table-column label="操作" width="180" fixed="right">
                         <template slot-scope="scope">
-                          <el-button size="mini" type="text" :disabled="sourceDisabled"
-                            @click="handlerOpenSource(scope.$index, 'source')">
+                          <el-button size="mini" type="text" @click="handlerOpenSource(scope.$index, 'source')">
                             配置发料清单
                           </el-button>
                           <el-button size="mini" type="text" class="JNPF-table-delBtn"
@@ -283,7 +282,7 @@
                           </el-button>
                         </template>
                       </el-table-column>
-                    </el-table>
+                    </jnpf-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
                     <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
@@ -731,15 +730,26 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    console.log(this.$route.query.alert, 'this.$route.query.alert')
+    if (this.$route.query.alert) {
+      this.dialogTitle = '新建'
+    }
     this.fetchData('EPDH')
     this.getBusInfo()
   },
   methods: {
+    deliveryDateChange(e) {
+      console.log(e, 'e')
+    },
     // 抽屉提交
     handlerConfirm(data) {
-      console.log('1111111111111111111111111')
+      console.log(this.index, '1111111111111111111111111')
       console.log(data, '资源资源数据')
       this.dataFormTwo.data[this.index].outShipmentList = data
+      console.log(
+        this.dataFormTwo.data[this.index].outShipmentList,
+        'this.dataFormTwo.data[this.index].outShipmentList***'
+      )
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
@@ -829,21 +839,19 @@ export default {
       getShipmentList(obj).then((res) => {
         console.log(res, '清单数据')
         this.sourceData = res.data
-        if (this.dataFormTwo.data[this.index].outShipmentList) {
-          this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
-            this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
-            this.sourceData[ind].processId = item.processId
-            this.sourceData[ind].processName = item.processName
-            // this.sourceData[ind].demandQuantity1 = item.demandQuantity-item.issuedQuantity-item.undeliveredQuantity
-          })
+        if (this.dataFormTwo.data[this.index].outShipmentList.length !== 0) {
+          this.sourceData = this.dataFormTwo.data[this.index].outShipmentList
+
+          // this.dataFormTwo.data[this.index].outShipmentList.forEach((item, ind) => {
+          //   console.log(item, 'p{{}}')
+          //   console.log(this.sourceData[ind], 'this.sourceData[ind]')
+          //   this.sourceData[ind].demandQuantity1 = item.demandQuantity1 ? item.demandQuantity1 : item.demandQuantity
+          //   this.sourceData[ind].processId = item.processId
+          //   this.sourceData[ind].processName = item.processName
+          // })
         } else {
           this.sourceData.forEach((item, index) => {
-            this.$set(
-              this.sourceData[index],
-              'demandQuantity1',
-              item.demandQuantity
-            )
-
+            this.$set(this.sourceData[index], 'demandQuantity1', item.demandQuantity)
           })
         }
         console.log(this.sourceData, '1111')
@@ -855,7 +863,12 @@ export default {
         }
         console.log(this.dataFormTwo.data, 'daaaa')
         this.$nextTick(() => {
-          this.$refs['sourceRef'].init(this.sourceData, '')
+          this.$refs['sourceRef'].init(
+            this.sourceData,
+            '',
+            this.dataFormTwo.data[this.index].productsId,
+            this.dataFormTwo.data[this.index].purchaseQuantity
+          )
         })
       })
     },
@@ -1065,10 +1078,10 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$emit('close')
+      this.$emit('close',true)
     },
-    init(id, type) {
-      console.log(id, type)
+    init(id, type,data) {
+      console.log(id, type,data)
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''

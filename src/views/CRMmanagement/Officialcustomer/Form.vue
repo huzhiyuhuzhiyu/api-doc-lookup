@@ -24,8 +24,8 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="所属分类" prop="partnerCategoryId">
-                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择所属分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
+                      <el-form-item label="客户分类" prop="partnerCategoryId">
+                        <ComSelect-list :isdisabled="btnType === 'look'" v-model="dataForm.partnerCategoryIdText" placeholder="请选择客户分类" auth @change="onOrganizeChange" :title="'选择分类'" :method="getcategoryTree" :requestObj="requestObjTwo" :paramsObj="{}" />
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
@@ -629,7 +629,7 @@ export default {
       },
       dataRule: {
         partnerCategoryId: [
-          { required: true, message: '所属分类不能为空', trigger: 'change' }
+          { required: true, message: '客户分类不能为空', trigger: 'change' }
         ],
         mobilePhone: [{ validator: this.formValidate('iphone'), trigger: 'blur' }, { validator: this.validateField2, trigger: 'blur' }],
         // phone: [{ validator: this.validateField2, trigger: 'blur' }],

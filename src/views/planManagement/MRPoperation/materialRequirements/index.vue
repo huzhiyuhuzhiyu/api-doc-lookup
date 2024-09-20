@@ -1032,51 +1032,51 @@ export default {
             label: "单位",
             type: 'input',
           },
-          {
-            prop: 'safeInventory',
-            label: "安全库存",
-            type: 'input',
-          },
-          {
-            prop: 'inventoryQuantity',
-            label: "库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'availableQuantity',
-            label: "可用库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'demandQuantity',
-            label: "需求数量",
-            type: 'input',
-          },
-          {
-            prop: 'lossNum',
-            label: "损耗数量",
-            type: 'input',
-          },
-          {
-            prop: 'planInTransitQuantity',
-            label: "计划在制数量",
-            type: 'input',
-          },
-          {
-            prop: 'inTransitUnOccupancyQuantity',
-            label: "实际在制数量",
-            type: 'input',
-          },
-          {
-            prop: 'occupancyQuantity',
-            label: "占用数量",
-            type: 'input',
-          },
-          {
-            prop: 'outputQuantity',
-            label: "需生产数量",
-            type: 'input',
-          },
+          // {
+          //   prop: 'safeInventory',
+          //   label: "安全库存",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'inventoryQuantity',
+          //   label: "库存数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'availableQuantity',
+          //   label: "可用库存数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'demandQuantity',
+          //   label: "需求数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'lossNum',
+          //   label: "损耗数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'planInTransitQuantity',
+          //   label: "计划在制数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'inTransitUnOccupancyQuantity',
+          //   label: "实际在制数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'occupancyQuantity',
+          //   label: "占用数量",
+          //   type: 'input',
+          // },
+          // {
+          //   prop: 'outputQuantity',
+          //   label: "需生产数量",
+          //   type: 'input',
+          // },
 
 
 

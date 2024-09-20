@@ -742,7 +742,6 @@ export default {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.workOrderVisible = true
-      this.flowCardCode = enCode
       this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
       detailordershengchan(this.selectArr[0].id).then(res => {
         this.workOrderData = res.data.workOrderList
@@ -761,7 +760,7 @@ export default {
     printSubmit(){
       if (!this.selectWorkOrder.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectWorkOrder.length > 1) return this.$message.error("打印只支持单条数据操作！")
-      getPrintBusInfo(this.flowCardCode).then(res => {
+      getPrintBusInfo(this.workOrderForm.enCode).then(res => {
         if (res.data) {
           this.prindId = res.data.id
           this.formId = this.selectWorkOrder[0].id

@@ -203,7 +203,7 @@
           <el-col :span="12">
             <el-form-item label="打印模版：" prop="enCode">
               <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
-                <el-option :key="item.id" :label="item.fullName" :value="item.printBus" v-for="item in printList" />
+                <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
               </el-select>
             </el-form-item>
           </el-col>

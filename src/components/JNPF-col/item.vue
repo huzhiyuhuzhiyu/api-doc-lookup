@@ -204,7 +204,6 @@ export default {
           }
         }
       }
-      console.log("readOnly",readOnly);
       return readOnly
     },
     rowOptions() {

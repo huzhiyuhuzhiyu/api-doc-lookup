@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <component :is="listPageComponent" :classAttribute="classAttribute" v-if="depFormVisible" ref="depForm" @close="close" />
+    <component :is="listPageComponent" :warehouseCode="warehouseCode" v-if="depFormVisible" ref="depForm" @close="close" />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ export default {
     return {
       businessType:"",
       listPageComponent:null,
-      classAttribute:"",
+      warehouseCode:"",
       depFormVisible:true,
       form: {
         code: '',
@@ -46,7 +46,7 @@ export default {
     console.log("this",this.$route);
     let path=this.$route.path
     let pathInfo=this.$route
-    this.classAttribute=pathInfo.fullPath.split("?")[1]
+    this.warehouseCode=pathInfo.fullPath.split("?")[1]
     let arr=path.split('/')
     this.businessType=arr[arr.length-1] 
     if(this.businessType=='dbIncomAndOutInventory'){

@@ -461,10 +461,12 @@ import CustomerForm from './customerForm.vue'
 import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 export default {
   components: { WareHouseForm, BatchNumberForm, CustomerForm, Process },
   props: {
-    classAttribute: "",
+    warehouseCode: "",
   },
   data() {
     return {
@@ -612,17 +614,19 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        classAttribute: 'finish_product'
+        classAttribute: ''
       },
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      classAttributeList:[],
     }
   },
   created() {
     this.getProductClassFun()
     this.getprocessList()
     this.getBusInfo()
+    this.getclassAttributeList()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -632,14 +636,21 @@ export default {
     }
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data 
+      })
+    },
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
+      if(!scanResult) return
       let obj = {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttribute:this.classAttribute,
+        classAttributeList:this.classAttributeList,
         orderItems: [
           {
             asc: false,
@@ -755,7 +766,7 @@ export default {
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
       if (this.dataForm.documentType == 'outbound') {
-        this.orderForm.classAttribute = this.classAttribute
+        this.orderForm.classAttributeList = this.classAttributeList
         getBatchNumber(this.orderForm).then(res => {
           console.log("产品", res);
 
@@ -773,7 +784,7 @@ export default {
         })
         // this.listQuery.pageNum = 1
         this.jnpf.searchTimeFormat(this.listQuery, this.listQuery.createTimeArr, 'startTime', 'endTime')
-        this.listQuery.classAttribute = this.classAttribute
+        this.listQuery.classAttributeList = this.classAttributeList
         getProductList(this.listQuery)
           .then((res) => {
             console.log("res.", res);
@@ -827,7 +838,7 @@ export default {
           ],
           pageNum: 1,
           pageSize: 20,
-          classAttribute: this.classAttribute
+          classAttributeList: this.classAttributeList
         },
         this.searchProductFun()
 
@@ -1261,7 +1272,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             let dataObj = {
               stockMove: this.dataForm,
               lines: this.productData,

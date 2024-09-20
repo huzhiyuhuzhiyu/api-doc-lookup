@@ -470,3 +470,30 @@ export const disabledClassAttributeState = (data) => {
     data: data
   })
 }
+// 开启仓库菜单
+export const enableWarehouseMenu = (data) => {
+  return request({
+    url: `/api/wms/stockWarehouse/update/state/enable`,
+    method: 'put',
+    data: data
+  })
+}
+// 关闭仓库菜单
+export const closeWarehouseMenu = (data) => {
+  return request({
+    url: `/api/wms/stockWarehouse/update/state/disabled`,
+    method: 'put',
+    data: data
+  })
+}
+
+// 根据仓库编码获取类别属性
+export const getclassAttributelistByCode = (data) => {
+  return request({
+    url: `/api/wms/stockWarehouse/classAttribute/listByCode`,
+    method: 'get',
+    data:data
+  })
+}
+
+

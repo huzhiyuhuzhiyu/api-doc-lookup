@@ -185,6 +185,8 @@ import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.v
 import OutboundPickOutForm from '../dbIncomAndOutInventory/outboundPickOutForm.vue'
 import InboundReturnMaterialsForm from '../dbIncomAndOutInventory/inboundReturnMaterialsForm.vue'
 import Transfer from '../dbIncomAndOutInventory/transferForm.vue'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 import Form from './Form'
 export default {
   name: 'finishedProductWarehouseManagement',
@@ -196,7 +198,7 @@ export default {
     Transfer
   },
   props: {
-    classAttribute: "",
+    warehouseCode: "",
   },
   data() {
     return {
@@ -334,14 +336,22 @@ export default {
         },
 
       ],
+      classAttributeList:[],
     }
   },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
-    this.getInventorySummaryDataFun()
+    this.getclassAttributeList()
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.initData()
+      })
+    },
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
@@ -371,57 +381,57 @@ export default {
       if (row.businessType == 'inbound_order_production') {
         this.productInboundFormVisible = true
         this.$nextTick(() => {
-          this.$refs.productInboundREFForm.init(id, type, this.classAttribute)
+          this.$refs.productInboundREFForm.init(id, type, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_production') {
         this.workInboundFormVisible = true
         this.$nextTick(() => {
-          this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
+          this.$refs.workInboundREFForm.init(id, type, this.classAttributeList)
         })
       } else if (row.businessType == 'outbound_sale_send') {
         this.outboundSaleSendFormVisible = true
         this.$nextTick(() => {
-          this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_sale_return') {
         this.inboundSaleReturnFormVisible = true
         this.$nextTick(() => {
-          this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.inboundSaleReturnREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_purchase') {
         this.inboundPurchaseFormVisible = true
         this.$nextTick(() => {
-          this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.inboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'outbound_purchase') {
         this.outboundPurchaseFormVisible = true
         this.$nextTick(() => {
-          this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.outboundPurchaseREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'outbound_external_send') {
         this.outboundExternalSendFormVisible = true
         this.$nextTick(() => {
-          this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.outboundExternalSendREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_external') {
         this.inboundExternalFormVisible = true
         this.$nextTick(() => {
-          this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.inboundExternalREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'outbound_pick_out') {
         this.outboundPickOutFormVisible = true
         this.$nextTick(() => {
-          this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.outboundPickOutREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_return_materials') {
         this.inboundReturnMaterialsFormVisible = true
         this.$nextTick(() => {
-          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_return_materials') {
         this.inboundReturnMaterialsFormVisible = true
         this.$nextTick(() => {
-          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttribute)
+          this.$refs.inboundReturnMaterialsREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
       } else if (row.businessType == 'inbound_transfer' || row.businessType == 'outbound_transfer') {
         this.transferFormVisible = true
@@ -457,7 +467,7 @@ export default {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.classAttribute = this.classAttribute
+      this.listQuery.classAttributeList = this.classAttributeList
 
       getWarehouseList(this.listQuery).then(res => {
 
@@ -498,7 +508,7 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i];
         }
-        this.initListQuery.classAttribute = this.classAttribute
+        this.initListQuery.classAttributeList = this.classAttributeList
         let query = this.initListQuery
         let _data = {
           ...query,

@@ -127,11 +127,13 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
   props:{
-    classAttribute:"",
+    warehouseCode: "", 
   },
   data() {
     return {
@@ -217,15 +219,23 @@ export default {
 
       ],
       selectList: [],
+      classAttributeList:[],
     }
   },
 
 
 
   created() {
-    this.initData()
+   this.getclassAttributeList()
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data 
+        this.initData()
+      })
+    },
     viewFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
@@ -307,7 +317,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.form.classAttribute=this.classAttribute
+      this.form.classAttributeList=this.classAttributeList
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -353,7 +363,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',this.classAttribute)
+        this.$refs.Form.init('', 'add',this.warehouseCode)
       })
 
     },

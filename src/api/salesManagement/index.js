@@ -256,8 +256,9 @@ export function getQuotationdatasendlist (data) {
 // 获取分类类型
 export function getStockMovelist (data) {
   return request({
-    url: `/api/wms/stock/move/todo/list?classAttribute=`+data,
-    method: 'get',
+    url: `/api/wms/stock/move/todo/list`,
+    method: 'POST',
+    data
   })
 }
 // 新增

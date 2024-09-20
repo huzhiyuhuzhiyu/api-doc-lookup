@@ -822,6 +822,7 @@ import InboundExternalForm from './inboundExternalForm.vue'
 import OutboundPickOutForm from './outboundPickOutForm.vue'
 import InboundReturnMaterialsForm from './inboundReturnMaterialsForm.vue'
 import { WithdrawalList } from '@/api/productOrdes/index.js'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 export default {
   name: 'dbIncomAndOutInventory',
   mixins: [mixin],
@@ -834,7 +835,7 @@ export default {
     OutboundExternalSendForm, InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm
   },
   props: {
-    classAttribute: "",
+    warehouseCode: "",
   },
   data() {
     return {
@@ -1091,6 +1092,7 @@ export default {
       cgTableList: [],
       selectProductList: [],
       selectWorkList: [],
+      classAttributeList: [],
     }
   },
   watch: {
@@ -1101,14 +1103,20 @@ export default {
   mounted() {
     // 进入页面  默认查询销售发货通知单数据
 
-    this.getStockMovelistFun()
-    console.log(this.classAttribute);
+    console.log(this.warehouseCode);
+    this.getclassAttributeList()
   },
   methods: {
-
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.getStockMovelistFun()
+      })
+    },
 
     getStockMovelistFun() {
-      getStockMovelist(this.classAttribute).then(res => {
+      getStockMovelist(this.classAttributeList).then(res => {
         console.log("左侧分类数据", res);
         if (res.data.length) {
           res.data.forEach(item => {
@@ -1245,7 +1253,7 @@ export default {
         this.cgForm.receiptReturnType = 'receipt'
         // this.$set(this.cgForm,'receiptInboundFlag',1)
         this.cgForm.classAttribute = this.classAttribute
-        this.cgForm.receiptInboundFlag=true
+        this.cgForm.receiptInboundFlag = true
         purPurchaseReceiptReturnGoodsList(this.cgForm).then(res => {
           this.cgTableList = res.data.records
           this.cgTotal = res.data.total

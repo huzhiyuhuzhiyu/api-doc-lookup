@@ -66,7 +66,6 @@
             </template>
             <template slot-scope="scope">
               <FormItem :item="item" :lineItem="JNPFColTableData.data[scope.$index]"
-               
                 :value="JNPFColTableData.data[scope.$index][scope.column.property]"
                 @input="handleInput($event, scope.column.property, scope.$index)" :ref="scope.column.property"
                 :openMode="realOpenMode" :scope="scope" :paramsObj="{ scope }" />
@@ -96,8 +95,9 @@
     </el-form>
 
     <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
-      treeTitle="子件分类" :methodArr="ProductMethodArr" :listMethod="getProductList" :listRequestObj="ProductListRequestObj"
-      :searchList="ProductTableSearchList" :elementShow="false" multiple :listDataFormatting="listDataFormatting" />
+      treeTitle="子件分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
+      :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
+      :listDataFormatting="listDataFormatting" />
   </div>
 </template>
 
@@ -118,7 +118,7 @@ export default {
         data: this.value
       },
       tableVisible: true,
-      classAttributeList:[],
+      classAttributeList: [],
       customStyleData: {},
       getProductList, // 产品选择弹出框树状列表请求api
       ProductMethodArr: { method: getcategoryTree, requestObj: { classAttribute: "" } }, // 产品选择弹出框树状列表
@@ -220,7 +220,7 @@ export default {
     this.getclassAttributeList()
     this.setDefaultValue();
   },
-  
+
   beforeDestroy() {
     window.onresize = null
   },
@@ -361,7 +361,7 @@ export default {
   }
 }
 </script>
-<style  scoped>
+<style scoped>
 ::v-deep .el-form-item--small.el-form-item {
   margin-bottom: 0px;
 }
@@ -381,5 +381,13 @@ export default {
   text-align: 'center';
   padding: '10%';
   color: #aaa;
+}
+
+::v-deep .JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
+  overflow: auto;
+  overflow-x: hidden;
+  max-height: 70vh;
+  margin-left: -10px;
+  padding: 10px 20px 10px !important;
 }
 </style>

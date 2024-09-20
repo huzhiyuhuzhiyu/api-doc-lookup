@@ -4,12 +4,12 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建外协收货通知单'
-          : btnType == 'edit'
-            ? '编辑外协收货通知单'
-            : btnType == 'copy'
-              ? '新建外协收货通知单'
-              : '查看收货单'
+            ? '新建外协收货通知单'
+            : btnType == 'edit'
+              ? '编辑外协收货通知单'
+              : btnType == 'copy'
+                ? '新建外协收货通知单'
+                : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
           <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
@@ -31,10 +31,10 @@
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="单号" prop="orderNo">
                         <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                           "></el-input>
                       </el-form-item>
                     </el-col>
@@ -118,8 +118,8 @@
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                     <el-table-column prop="drawingNo" label="品名规格" width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip>
-                    </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="200"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="80" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" />
                     <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" /> -->
@@ -170,7 +170,7 @@
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
@@ -180,10 +180,10 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="单号" prop="orderNo">
                     <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="btnType == 'look'
-                      ? true
-                      : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                        ? false
-                        : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                       "></el-input>
                   </el-form-item>
                 </el-col>
@@ -266,8 +266,7 @@
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip>
-                </el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="80" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="140" />
                 <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -355,7 +354,7 @@ import {
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 export default {
@@ -704,7 +703,7 @@ export default {
       warehouseIdList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0
     }
@@ -714,11 +713,14 @@ export default {
     // 总发货数量
     totalDeliveryQuantity: function () {
       var totalNum = 0
-      for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
-        totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+      if (this.dataFormTwo.productData) {
+        for (var i = 0; i < this.dataFormTwo.productData.length; i++) {
+          totalNum = this.jnpf.math('add', [totalNum, this.dataFormTwo.productData[i].receivedQuantity])
+        }
       }
+
       return totalNum
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -914,7 +916,6 @@ export default {
     },
     // 产品组件回调
     addth(id, data) {
-
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -961,7 +962,6 @@ export default {
             }
             return true
           })
-
         }
         this.dataFormTwo.productData = [...this.dataFormTwo.productData, ...selectArr]
 
@@ -1196,7 +1196,6 @@ export default {
       } catch (error) { }
     },
     init(id, btnType, approvalFlag, data) {
-
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
@@ -1252,15 +1251,12 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-
         })
       }
       if (btnType == 'add' || btnType == 'copy') {
         this.dataForm.salesman = this.userInfo.userName
         console.log(data, 'ooo')
-        data.forEach(item => {
 
-        })
         this.dataFormTwo.productData = data
         this.formLoading = true
         this.getBusInfo()
@@ -1388,7 +1384,6 @@ export default {
             return
           }
           this.dataFormTwo.productData.forEach((item, index) => {
-
             let dep = {
               accuracyLevel: item.accuracyLevel,
               billStatus: item.billStatus,
@@ -1508,51 +1503,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b036').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b036')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

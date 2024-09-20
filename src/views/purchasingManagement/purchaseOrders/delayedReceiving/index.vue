@@ -747,6 +747,7 @@ export default {
 
         superQuery: {}
       }
+      this.orderForm.deliveryStartTime = ''
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },

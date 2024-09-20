@@ -103,7 +103,7 @@
 
 
               <el-collapse-item title="产品信息" name="productInfo" class="productInfo">
-                <div v-if="btnType == 'add' || btnType == 'edit'">
+                <div v-if="btnType!='look'">
 
                   <el-button type="text" style="margin-right:8px;margin-left:5px ;font-size:14px!important"
                     icon="el-icon-plus" @click="importProductFun">导入产品</el-button>|
@@ -119,7 +119,7 @@
                     <el-table-column type="selection" width="60" fixed='left' align="center"
                       v-if="this.btnType !== 'look'" key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                    <el-table-column prop="customerDrawingNumber" label=" 客户料号" width="200">
+                    <el-table-column prop="customerDrawingNumber" label=" 客户料号" min-width="120">
                       <template slot="header">
                         <span class="required">*</span> 客户料号
                       </template>
@@ -127,13 +127,13 @@
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'customerDrawingNumber'"
                           :rules='productRules.customerDrawingNumber'>
                           <el-input :title="scope.row.customerDrawingNumber" v-model="scope.row.customerDrawingNumber"
-                            placeholder="请输入" :disabled="status" style="width: 135px;">
+                            placeholder="请输入" :disabled="status" >
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="productDrawingNo" label="品名规格" width="400">
+                    <el-table-column prop="productDrawingNo" label="品名规格" min-width="160">
                       <template slot="header">
                         <span class="required">*</span> 品名规格
                       </template>
@@ -147,36 +147,36 @@
                           style="width: 100%;"  /> -->
                       </template>
                     </el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="160" show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="num" label="数量" width="160">
+                    <el-table-column prop="mainUnit" label="单位" width="80" show-overflow-tooltip></el-table-column>
+                    <el-table-column prop="num" label="数量" width="120">
                       <template slot="header">
                         <span class="required">*</span>数量
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'num'" :rules='productRules.num'>
-                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="请输入数量"
+                          <el-input :title="scope.row.num" v-model="scope.row.num" placeholder="数量"
                             :disabled="status" maxlength="11" @input="watchnums(scope.row, scope.$index)"
-                            style="width: 135px;" oninput="value=value.replace(/[^0-9.]/g,'')">
+                             oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="unitPrice" label="单价(含税)" width="160">
+                    <el-table-column prop="unitPrice" label="单价(含税)" width="120">
                       <template slot="header">
                         <span class="required">*</span>单价(含税)
                       </template>
                       <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'unitPrice'"
                           :rules='productRules.unitPrice'>
-                          <el-input v-model="scope.row.unitPrice" placeholder="请输入单价" :disabled="status" maxlength="20"
-                            @input="watchPrice(scope.row, scope.$index)" style="width: 135px;"
+                          <el-input v-model="scope.row.unitPrice" placeholder="单价" :disabled="status" maxlength="20"
+                            @input="watchPrice(scope.row, scope.$index)" 
                             oninput="value=value.replace(/[^0-9.]/g,'')">
                           </el-input>
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="160">
+                    <el-table-column prop="taxRate" label="税率(%)" width="100">
                       <template slot="header">
                         <span class="required">*</span>税率(%)
                       </template>
@@ -188,18 +188,18 @@
                         </el-form-item>
                       </template> -->
                       <template slot-scope="scope">
-                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
                           :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
+                    <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="120" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="totalTaxAmount" label="税额" width="150" show-overflow-tooltip>
+                    <el-table-column prop="totalTaxAmount" label="税额" width="100" show-overflow-tooltip>
                     </el-table-column>
-                    <el-table-column prop="amounts" label="金额(含税)" width="150" show-overflow-tooltip>
+                    <el-table-column prop="amounts" label="金额(含税)" width="100" show-overflow-tooltip>
                     </el-table-column>
                     <el-table-column prop="excludingTaxAmounts" label="金额(不含税)" width="160" show-overflow-tooltip>
                     </el-table-column>

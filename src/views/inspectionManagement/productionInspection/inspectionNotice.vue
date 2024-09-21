@@ -6,20 +6,21 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.productionOrderNo" placeholder="生产订单号" @keyup.enter.native="search()"
                 clearable />
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.workNo" placeholder="工单号" @keyup.enter.native="search()" clearable />
+              <el-input v-model="listQuery.orderNo" placeholder="工单号" @keyup.enter.native="search()" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.orderNo" placeholder="派工单号" @keyup.enter.native="search()" clearable />
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" @keyup.enter.native="search()"
+                clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -35,8 +36,14 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
-                <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
-              icon="el-icon-download" @click="exportForm">导出</el-button>
+            <el-button size="mini" type="primary" @click="scanFun">
+              <i class="iconfont icon-saoma"></i>
+              扫码检验
+            </el-button>
+            <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
+              icon="el-icon-download" @click="exportForm">
+              导出
+            </el-button>
           </div>
           <div class="JNPF-common-head-right">
             <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -127,8 +134,19 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    ] 
+    ]
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+      @close="closeScanDiaFun()">
+      <div class="scand">
+        <div class="box">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫工单码"
+            @keyup.enter.native="getProductFun()"></el-input>
+          <div class="tip">说明：扫工单码会自动匹配需要检验的产品。</div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -152,7 +170,7 @@ export default {
         'oilQuantity',
         'clearance',
         'packagingMethod',
-        'createByName',
+        'createByName'
       ],
       columnList: [],
       superQueryVisible: false,
@@ -163,7 +181,7 @@ export default {
           type: 'input'
         },
         {
-          prop: 'workNo',
+          prop: 'orderNo',
           label: '工单单号',
           type: 'input'
         },
@@ -336,7 +354,9 @@ export default {
         pageSize: 20
       },
       total: 0,
-      formVisible: false
+      formVisible: false,
+      scanDialog: false,
+      scanResult: ''
     }
   },
   created() {
@@ -344,6 +364,46 @@ export default {
     this.initData()
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+      this.listQuery.orderNo = ''
+    },
+    getProductFun() {
+      console.log(21341234)
+      console.log(this.scanResult)
+
+      this.listQuery.orderNo = this.scanResult
+      this.listLoading = true
+
+      getWorkList(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.listQuery.productDrawingNo = this.tableData[0].productDrawingNo
+
+          this.total = res.data.total
+          this.listLoading = false
+          this.scanDialog = false
+          if (this.tableData.length == 1) {
+            this.formVisible = true
+            this.$nextTick(() => {
+              this.$refs.Form.init(this.tableData[0], false, 'process', 'notice', 'QCDH')
+            })
+          }
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
+
+      this.listLoading = true
+      this.scanResult = ''
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -355,31 +415,37 @@ export default {
     // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
-        console.log(includeFieldMap);
+        console.log(includeFieldMap)
         let _data = {
           ...this.listQuery,
           exportType: '1018',
           exportName: '生产巡检待检工单',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: true,
+          totalRowFlag: true
         }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
       }
     },
     initData() {
@@ -423,7 +489,7 @@ export default {
     },
     sortChange({ prop, order }) {
       let newProp
-      if (prop === 'productionOrderNo' || prop === 'workNo') {
+      if (prop === 'productionOrderNo' || prop === 'orderNo') {
         newProp = prop
       } else {
         newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -444,3 +510,21 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
+}
+</style>

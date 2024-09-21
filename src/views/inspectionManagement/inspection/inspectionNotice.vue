@@ -5,21 +5,21 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.orderNo" @keyup.enter.native="search()" placeholder="请输入生产订单号" clearable />
+              <el-input v-model="listQuery.workNo" @keyup.enter.native="search()" placeholder="工单单号" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" @keyup.enter.native="search()" placeholder="请输入产品名称"
+              <el-input v-model="listQuery.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
                 clearable />
             </el-form-item>
           </el-col>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="listQuery.workOrderNo" @keyup.enter.native="search()" placeholder="请输入工作令号"
                 clearable />
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="6">
             <el-form-item>
@@ -34,6 +34,10 @@
       <div class="JNPF-common-layout-main JNPF-flex-main">
         <div class="JNPF-common-head">
           <div>
+            <el-button size="mini" type="primary" @click="scanFun">
+              <i class="iconfont icon-saoma"></i>
+              扫码检验
+            </el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -113,6 +117,17 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
 
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+      @close="closeScanDiaFun()">
+      <div class="scand">
+        <div class="box">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫报工单码"
+            @keyup.enter.native="getProductFun()"></el-input>
+          <div class="tip">说明：扫工单码会自动匹配需要检验的产品。</div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -294,7 +309,9 @@ export default {
       planEndArr: [],
       total: 0,
       formVisible: false,
-      selectedData: []
+      selectedData: [],
+      scanDialog: false,
+      scanResult: ''
     }
   },
   created() {
@@ -302,6 +319,46 @@ export default {
     this.initData()
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+      this.listQuery.workNo = ''
+    },
+    getProductFun() {
+      console.log(21341234)
+      console.log(this.scanResult)
+
+      this.listQuery.workNo = this.scanResult
+      this.listLoading = true
+
+      getWorkReportList(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.listQuery.productDrawingNo = this.tableData[0].productDrawingNo
+
+          this.total = res.data.total
+          this.listLoading = false
+          this.scanDialog = false
+          if (this.tableData.length == 1) {
+            this.formVisible = true
+            this.$nextTick(() => {
+              this.$refs.Form.init(this.tableData[0], false, 'finished', 'notice', 'QCDH', 'QCDH')
+            })
+          }
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
+
+      this.listLoading = true
+      this.scanResult = ''
+    },
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
@@ -383,7 +440,7 @@ export default {
       this.planEndArr = []
       this.search()
     },
-    addOrUpdateHandle(id, readOnly) {
+    addOrUpdateHandle(row, readOnly) {
       if (readOnly) {
         this.detailFormVisible = true
         this.$nextTick(() => {
@@ -392,7 +449,7 @@ export default {
       } else {
         this.formVisible = true
         this.$nextTick(() => {
-          this.$refs.Form.init(id, readOnly, 'finished', 'notice', 'QCDH', 'QCDH')
+          this.$refs.Form.init(row, readOnly, 'finished', 'notice', 'QCDH', 'QCDH')
         })
       }
     },
@@ -428,3 +485,21 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style lang="scss" scoped>
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
+}
+</style>

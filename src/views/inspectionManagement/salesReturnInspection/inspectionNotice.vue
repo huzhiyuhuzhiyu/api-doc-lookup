@@ -36,6 +36,10 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <div class="JNPF-common-head" style="padding:10px">
             <div>
+              <el-button size="mini" type="primary" @click="scanFun">
+                <i class="iconfont icon-saoma"></i>
+                扫码检验
+              </el-button>
               <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
                 icon="el-icon-download" @click="exportForm">
                 导出
@@ -114,6 +118,17 @@
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+      @close="closeScanDiaFun()">
+      <div class="scand">
+        <div class="box">
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码"
+            @keyup.enter.native="getProductFun()"></el-input>
+          <div class="tip">说明：扫产品码会自动匹配需要检验的产品。</div>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -130,6 +145,7 @@ import { getbimProductAttributesList, getbimProductAttributes, getbimProductsMod
 import ExportForm from '@/components/no_mount/ExportBox/index'
 import { excelExport } from '@/api/basicData/index'
 import { getUnitData } from '@/api/basicData/materialSettings'
+import { getCooperativeData } from '@/api/basicData/index'
 export default {
   components: { Form, DetailForm, SuperQuery, ExportForm },
   data() {
@@ -287,7 +303,9 @@ export default {
       linesQuery: {},
 
       total: 0,
-      formVisible: false
+      formVisible: false,
+      scanDialog: false,
+      scanResult: ''
     }
   },
   watch: {
@@ -304,6 +322,46 @@ export default {
     this.initData()
   },
   methods: {
+    scanFun() {
+      this.scanDialog = true
+      this.$nextTick(() => {
+        this.$refs.inputRef.$refs.input.focus()
+      })
+    },
+    closeScanDiaFun() {
+      this.scanDialog = false
+      this.scanResult = ''
+      this.listQuery.productCode = ''
+    },
+    getProductFun() {
+      console.log(21341234)
+      console.log(this.scanResult)
+
+      this.listQuery.productCode = this.scanResult
+      this.listLoading = true
+
+      getQuotationdatasenddatalist(this.listQuery)
+        .then((res) => {
+          this.tableData = res.data.records
+          this.listQuery.productDrawingNo = this.tableData[0].productDrawingNo
+
+          this.total = res.data.total
+          this.listLoading = false
+          this.scanDialog = false
+          if (this.tableData.length == 1) {
+            this.formVisible = true
+            this.$nextTick(() => {
+              this.$refs.Form.init(this.tableData[0], false, 'sale_back', 'notice', 'QCDH')
+            })
+          }
+        })
+        .catch(() => {
+          this.listLoading = false
+        })
+
+      this.listLoading = true
+      this.scanResult = ''
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -942,3 +1000,21 @@ export default {
 }
 </script>
 <!-- <style src="@/assets/scss/tabs-list.scss" lang="scss" scoped /> -->
+<style lang="scss" scoped>
+.scand ::v-deep.el-input__inner {
+  height: 60px;
+  line-height: 60px;
+  font-size: 20px !important;
+  font-weight: 600;
+  border-color: #3fb9f8;
+}
+
+.scand .box {
+  padding: 40px 20px;
+}
+
+.scand .tip {
+  margin-top: 10px;
+  font-size: 18px;
+}
+</style>

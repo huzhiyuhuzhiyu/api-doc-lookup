@@ -644,7 +644,12 @@ export default {
             ele.itemRules[0].required = false
           }
           if (ele.prop == 'productSource') {
-            ele.options = [{ label: '采购', value: 'purchase' }]
+            ele.options = [
+              { label: '组装', value: 'assemble' },
+              { label: '生产', value: 'produce' },
+              { label: '采购', value: 'purchase' },
+              { label: '外协', value: 'out' }
+            ]
           }
         })
       }

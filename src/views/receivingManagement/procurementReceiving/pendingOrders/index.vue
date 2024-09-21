@@ -257,7 +257,7 @@ export default {
           label: '待收货数量',
           type: 'input'
         },
-    
+
         {
           prop: 'deliveryDate',
           label: '收货日期',
@@ -474,6 +474,7 @@ export default {
     // 关闭新建编辑页面
     closeForm(isRefresh) {
       this.formVisible = false
+      this.detailVisible = false
       this.orderFollowVisible = false
       if (isRefresh) {
         this.keyword = ''

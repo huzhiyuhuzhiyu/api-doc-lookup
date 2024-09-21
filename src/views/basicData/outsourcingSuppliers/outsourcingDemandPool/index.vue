@@ -5,13 +5,13 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
+              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model.trim="listQuery.productName" placeholder="请输入产品名称" clearable
+              <el-input v-model.trim="listQuery.productCode" placeholder="产品编码" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
@@ -135,95 +135,7 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="来源">
-              <el-select v-model="listQuery.source" placeholder="请选择来源" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in sourceList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
 
-          <el-col :span="12">
-            <el-form-item label="来源单号">
-              <el-input v-model.trim="listQuery.sourceOrderNo" placeholder="请输入来源单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="产品编码">
-              <el-input v-model.trim="listQuery.productCode" placeholder="请输入产品编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="产品名称">
-              <el-input v-model.trim="listQuery.productName" placeholder="请输入产品名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="品名规格">
-              <el-input v-model.trim="listQuery.productDrawingNo" placeholder="请输入品名规格" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="需求状态">
-              <el-select v-model="listQuery.demandStatus" placeholder="需求状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in demandStatusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="有无价格">
-              <el-select v-model="listQuery.hasPrice" placeholder="请选择有无价格" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '有价格', value: true }, { label: '无价格', value: false }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="立即外协">
-              <el-select v-model="listQuery.immediatelyBuyFlag" placeholder="请选择是否立即外协" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in [{ label: '是', value: true }, { label: '否', value: false }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <!-- 订单来源明细 -->
     <el-dialog title="订单来源明细" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="sourceDialog"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -290,7 +202,7 @@ export default {
         endTime: '',
         pageNum: 1,
         pageSize: 20,
-        // demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
+        demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
         poolType: 'external', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
@@ -508,7 +420,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-        poolType: 'procure', //外协池类型  外协 procure、外协 external,可用值:external,procure
+        poolType: 'external', //外协池类型  外协 procure、外协 external,可用值:external,procure
         productCode: '', //产品编码
         productName: '', //产品名称
         productDrawingNo: '', //品名规格
@@ -712,44 +624,4 @@ export default {
   }
 }
 </script>
-<style scoped>
-::v-deep .el-tabs__header {
-  margin-bottom: 5px;
-  padding: 0 10px;
-}
 
-.JNPF-common-search-box {
-  padding: 8px 0 0 0;
-  margin-left: 0 !important;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 8px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding: 0;
-}
-
-::v-deep.el-tree-node__content {
-  height: 30px;
-  line-height: 30px;
-}
-
-.JNPF-common-el-tree {
-  margin: 5px 0;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 0;
-}
-</style>

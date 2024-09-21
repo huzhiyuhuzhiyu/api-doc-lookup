@@ -376,6 +376,7 @@ export default {
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
       productSourceList: [
+        { label: "组装", value: "assemble" },
         { label: '生产', value: 'produce' },
         { label: '采购', value: 'purchase' },
         { label: '外协', value: 'out' }

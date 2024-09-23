@@ -6,20 +6,26 @@
           <el-form @submit.native.prevent>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
+                <el-input v-model.trim="listQuery.orderNo" placeholder="采购单号" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
+            <!-- <el-col :span="4">
+              <el-form-item>
+                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
+                  @keyup.enter.native="search()" />
+              </el-form-item>
+            </el-col> -->
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
+                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="search()" />
               </el-form-item>
             </el-col>
-            <el-col :span="4">
+            <el-col :span="8">
               <el-form-item>
-                <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                  @keyup.enter.native="search()" />
+                <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                  style="width: 100%" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -63,7 +69,7 @@
           <JNPF-table @selection-change="handeleFinshData" hasC v-if="flag" v-loading="listLoading"
             highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange"
             custom-column :checkSelectable="checkSelectable" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="采购单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="采购单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   {{ scope.row.orderNo }}
@@ -72,14 +78,10 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-
-            <!-- <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
-                <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180"
-                  sortable="custom" /> -->
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="180" sortable="custom" />
-            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" min-width="180" sortable="custom" />
-            <el-table-column prop="taxAmount" label="税额" min-width="180" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="180" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="110" sortable="custom" />
+            <el-table-column prop="excludingTaxTotalAmount" label="总金额(不含税)" width="160" sortable="custom" />
+            <el-table-column prop="taxAmount" label="税额" width="80" sortable="custom" />
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
             <el-table-column prop="receivingStatus" label="订单状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'not_finished'">
@@ -363,7 +365,7 @@ export default {
         ],
         receivingStatus: 'receiving'
       },
-
+      deliveryDateArr: [],
       total: 0,
       formVisible: false,
       createRequirementDate: [],
@@ -410,14 +412,14 @@ export default {
       //	收货状态 待收货 receiving、已收货 received,可用值:received,receiving,returned,returning
       receiptReturnType: [{ label: '未完成', value: 'receiving' }, { label: '已完成', value: 'received' }],
       columnList: ['cooperativePartnerCode', 'excludingTaxTotalAmount', 'taxAmount', 'receivingStatus', 'createByName'],
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   async created() {
     const res = await this.jnpf.getBusInfo('b009')
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
     this.initData()

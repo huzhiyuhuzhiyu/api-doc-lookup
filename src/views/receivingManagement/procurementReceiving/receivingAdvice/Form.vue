@@ -830,6 +830,7 @@ export default {
   },
   methods: {
     scanFun() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
       this.$nextTick(() => {
         this.$refs.inputRef.$refs.input.focus()
@@ -853,17 +854,30 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.orderForm.productCode = this.scanResult
       detailpurchaseOrderList(this.orderForm).then((res) => {
-        console.log(res.data.records[0], 'p')
+        console.log(res.data.records, 'p')
+        this.scanResult = ''
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
-        if (!this.dataFormTwo.productData) {
-          this.dataFormTwo.productData = []
-          this.dataFormTwo.productData.push(res.data.records[0])
+        const newRecord = res.data.records
+
+        if (newRecord.length !== 0) {
+          if (!this.dataFormTwo.productData || this.dataFormTwo.productData.length == 0) {
+            this.dataFormTwo.productData = newRecord
+          } else {
+            // 使用 Map 来确保唯一性并更新对象
+            const mergedMap = new Map()
+
+            this.dataFormTwo.productData.forEach((item) => mergedMap.set(item.id, item))
+
+            newRecord.forEach((item) => mergedMap.set(item.id, item))
+
+            this.dataFormTwo.productData = Array.from(mergedMap.values())
+          }
         } else {
-          this.dataFormTwo.productData.forEach((item) => {
-            if (item.id !== res.data.records[0].id) {
-              this.dataFormTwo.productData.push(res.data.records[0])
-            }
+          this.$message({
+            message: '未匹配到产品',
+            type: 'warning'
           })
+          this.scanResult = ''
         }
       })
     },

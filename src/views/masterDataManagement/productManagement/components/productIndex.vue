@@ -44,20 +44,19 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productCode" placeholder="请输入产品编码" clearable
-                @keyup.enter.native="search()" />
+              <el-input v-model="listQuery.productCode" placeholder="产品编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="listQuery.productName" placeholder="请输入产品名称" clearable
+              <el-input v-model="listQuery.productDrawingNo" placeholder="品名规格" clearable
                 @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.productSource" placeholder="请选择产品来源" clearable style="width: 100%;">
+              <el-select v-model="listQuery.productSource" placeholder="产品来源" clearable style="width: 100%;">
                 <el-option v-for="(item, index) in productSourceList" :key="index" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>
@@ -233,7 +232,10 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-input v-model="quickForm.unit" placeholder="请输入单位"></el-input>
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;">
+            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="产品来源" prop="productSource">
           <template slot="label">
@@ -521,7 +523,8 @@ export default {
         label: 'name'
       },
       uploadVisib: false,
-      leftFlag: false
+      leftFlag: false,
+      unitOptions: []
     }
   },
   watch: {
@@ -842,6 +845,7 @@ export default {
           }
           arr.push(obj)
         })
+        this.unitOptions = arr
         // let oilObj = this.superQueryJson.find((item) => item.prop === 'mainUnit')
         this.superQueryJson.forEach((tc) => {
           if (tc.prop === 'mainUnit') {

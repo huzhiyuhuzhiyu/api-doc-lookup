@@ -185,6 +185,7 @@
       @close="closeForm">
     </InboundReturnMaterialsForm>
     <Transfer v-if="transferFormVisible" ref="transferREFForm" @close="closeForm"></Transfer>
+    <SaleOutboundForm v-if="saleOutboundFormVisible" ref="saleOutboundREFForm" @close="closeForm"></SaleOutboundForm>
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -207,6 +208,8 @@ import InboundExternalForm from '../dbIncomAndOutInventory/inboundExternalForm.v
 import OutboundPickOutForm from '../dbIncomAndOutInventory/outboundPickOutForm.vue'
 import InboundReturnMaterialsForm from '../dbIncomAndOutInventory/inboundReturnMaterialsForm.vue'
 import Transfer from '../dbIncomAndOutInventory/transferForm.vue'
+import SaleOutboundForm from '../dbIncomAndOutInventory/saleOutboundForm.vue'
+
 import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
 import {
   getbimProductAttributesList, getbimProductAttributes
@@ -216,7 +219,7 @@ export default {
   components: { Form, SuperQuery, ExportForm,ProductInboundForm,WorkInboundForm,OutboundSaleSendForm, InboundSaleReturnForm,
     InboundPurchaseForm, OutboundPurchaseForm, OutboundExternalSendForm,
     InboundExternalForm, OutboundPickOutForm, InboundReturnMaterialsForm,
-    Transfer},
+    Transfer,SaleOutboundForm},
   props: {
     warehouseCode: "",
   },
@@ -233,6 +236,8 @@ export default {
       outboundPickOutFormVisible: false,
       inboundReturnMaterialsFormVisible: false,
       transferFormVisible: false,
+      saleOutboundFormVisible:false,
+
       columnList: ["partnerCode", 'productCode', "productName", "taxRate", "excludingTaxCostPrice", "taxAmount", "excludingTaxAmount", "createByName", "taxAmount"],
       num: 0,
       superQueryVisible: false,
@@ -880,10 +885,17 @@ export default {
           this.$refs.workInboundREFForm.init(id, type, this.classAttribute)
         })
       } else if (row.sourceType == 'outbound_sale_send') {
+        if(row.sourceType=='order'){
+        this.saleOutboundFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.saleOutboundREFForm.init(id, type, row.businessType, this.classAttributeList)
+        })
+       }else if(row.sourceType=='notice'){
         this.outboundSaleSendFormVisible = true
         this.$nextTick(() => {
-          this.$refs.outboundSaleSendREFForm.init(id, type, row.sourceType, this.classAttribute)
+          this.$refs.outboundSaleSendREFForm.init(id, type, row.businessType, this.classAttributeList)
         })
+       }
       } else if (row.sourceType == 'inbound_sale_return') {
         this.inboundSaleReturnFormVisible = true
         this.$nextTick(() => {
@@ -1042,6 +1054,8 @@ export default {
       this.outboundPickOutFormVisible = false
       this.inboundReturnMaterialsFormVisible = false
       this.transferFormVisible = false
+      this.saleOutboundFormVisible=false
+
       if (isRefresh) {
         this.keyword = ''
         this.initData()

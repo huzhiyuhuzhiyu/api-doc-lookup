@@ -532,7 +532,11 @@
                 <el-table-column prop="mainUnit" label="单位" width="80" sortable="custom" />
                 <el-table-column prop="num" label="数量" width="80" sortable="custom" />
                 <el-table-column prop="unitPrice" label="单价(含税)" width="130" sortable="custom" />
-                <el-table-column prop="taxRate" label="税率(%)" width="110" sortable="custom" />
+                <el-table-column prop="taxRate" label="税率" width="110" sortable="custom" >
+                  <template slot-scope="scope">
+                    <div>{{ scope.row.taxRate }}%</div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="140" sortable="custom" />
                 <el-table-column prop="ask" label="要求" width="140" sortable="custom" />
                 <el-table-column prop="remark" label="备注" width="180" sortable="custom" />

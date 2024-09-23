@@ -6,7 +6,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent :rules="rules">
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="form.name" placeholder="类别名称" clearable />
             </el-form-item>
@@ -15,16 +15,34 @@
             <el-form-item>
               <el-input v-model="form.code" placeholder="类别编码" clearable />
             </el-form-item>
-          </el-col>
+          </el-col> -->
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
+
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="8">
             <el-form-item>
-              <el-date-picker v-model="createTimeArr" type="datetimerange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+              <el-date-picker v-model="createTimeArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
                 style="width: 100%" start-placeholder="创建开始时间" end-placeholder="创建结束时间" clearable></el-date-picker>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
@@ -106,6 +124,10 @@ export default {
   components: { Form, SuperQuery, WarehouseForm },
   data() {
     return {
+      searchList: [
+        { field: 'code', fieldValue: '', label: '类别编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '类别名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       superQueryVisible: false,
       title: '更多查询',
       background: true, //分页器背景颜色
@@ -191,6 +213,7 @@ export default {
   },
 
   created() {
+    this.superForm = this.form
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
@@ -208,7 +231,7 @@ export default {
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     sortChange({ prop, order }) {
       const newProp = prop.replace(/[A-Z]/g, (match) => '_' + match.toLowerCase())
@@ -257,14 +280,14 @@ export default {
     },
     initData() {
       if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.form.startTime = this.createTimeArr[0] + ' 00:00:00'
-        this.form.endTime = this.createTimeArr[1] + ' 23:59:59'
+        this.superForm.startTime = this.createTimeArr[0] + ' 00:00:00'
+        this.superForm.endTime = this.createTimeArr[1] + ' 23:59:59'
       } else {
-        this.form.startTime = ''
-        this.form.endTime = ''
+        this.superForm.startTime = ''
+        this.superForm.endTime = ''
       }
       this.listLoading = true
-      getclassAttributeList(this.form)
+      getclassAttributeList(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -275,12 +298,30 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
+    search(type) {
       Object.keys(this.form).forEach((key) => {
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
       })
       this.form.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -303,13 +344,17 @@ export default {
           }
         ]
       }
+      this.searchList = [
+        { field: 'code', fieldValue: '', label: '类别编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '类别名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.$refs.SuperQuery.conditionList = []
 
-      this.search()
+      this.search('basic')
     },
     handleNodeClick(data, node) {
       this.form.typeCode = node.data.enCode
-      this.search()
+      this.search('basic')
     },
 
     addSupplier() {
@@ -390,7 +435,7 @@ export default {
         this.$refs.Form.init(id, parentId, btnType)
       })
     },
- 
+
   }
 }
 </script>

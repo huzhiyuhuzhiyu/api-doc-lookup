@@ -172,7 +172,7 @@ export default {
           ],
           minWidth: 120
         },
-        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 120 },
+        { prop: 'mainUnit', label: '单位', value: '', type: 'view', minWidth: 60 },
         {
           prop: 'lossRate',
           label: '损耗率(%)',

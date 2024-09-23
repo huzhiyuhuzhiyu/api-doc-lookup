@@ -544,7 +544,7 @@ export default {
     addSupplier(id, btntype) {
 
       if (!this.list.length) return this.$message.error("请选择您要新建的订单")
-      let flag = this.hasDifferentCooperativePartnerCode(this.list)
+      let flag = this.hasDifferentCooperativePartnerId(this.list)
       if (flag) return this.$message.error("只能选择相同供应商的明细订单")
       console.log(this.list);
       this.formVisible = true
@@ -552,11 +552,11 @@ export default {
         this.$refs.Form.init(id, btntype, false, this.list)
       })
     },
-    hasDifferentCooperativePartnerCode(arr) {
+    hasDifferentCooperativePartnerId(arr) {
       const codes = new Set();
 
       for (const item of arr) {
-        codes.add(item.cooperativePartnerCode);
+        codes.add(item.cooperativePartnerId);
       }
 
       return codes.size > 1; // 如果有多个不同的代码，则返回 true  

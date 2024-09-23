@@ -12,7 +12,7 @@
       </div>
       <div class="tag-group JNPF-common-search-box treeBox_bot"
         style="height: 100vh;padding:5px 10px 5px 10px;margin:0px 0 0px 0">
-        <el-table :data="tableData" stripe style="margin-right: 10px;"
+        <el-table :data="tableData" stripe style="margin-right: 10px;" :row-style="{ height: '50px' }"
           :header-cell-style="{ background: '#FAFAFA', color: '#606266', 'text-align': 'center' }">
           <el-table-column prop="configKey" label="功能" width="180">
             <template slot-scope="scope">
@@ -24,8 +24,15 @@
             <template slot-scope="scope">
               <div v-if="scope.row.businessCode == 'warehouse'">
                 <el-radio-group v-model="scope.row.radio" @input="radioChange(scope.row)">
-                  <el-radio :label="0">{{ scope.row.radioOff }}</el-radio>
-                  <el-radio :label="1">{{ scope.row.radioOn }}</el-radio>
+                  <div style="display: flex;">
+                    <el-radio :label="0">
+                      <div class="multiline">{{ scope.row.radioOff }}</div>
+                    </el-radio>
+                    <el-radio :label="1">
+                      <div class="multiline">{{ scope.row.radioOn }}</div>
+                    </el-radio>
+                  </div>
+
                 </el-radio-group>
               </div>
               <div v-else>
@@ -312,11 +319,11 @@ export default {
               this.$set(item, 'radio', 0)
             }
             if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
-              item.radioOff = '收货单'
-              item.radioOn = '订单'
+              item.radioOff = '按收货单入库'
+              item.radioOn = '按订单入库'
             } else if (item.configKey == 'outbound_sale_send') {
-              item.radioOff = '通知单'
-              item.radioOn = '订单'
+              item.radioOff = '按通知单入库'
+              item.radioOn = '按订单入库'
             }
             this.$set(item, 'description', item.configKey)
           })
@@ -438,5 +445,10 @@ export default {
       line-height: 60px;
     }
   }
+}
+
+.multiline {
+  width: 100px;
+  white-space: pre-wrap;
 }
 </style>

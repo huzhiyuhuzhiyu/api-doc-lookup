@@ -4,11 +4,11 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购收货通知单'
+          ? '新建收货单'
           : btnType == 'edit'
-            ? '编辑采购收货通知单'
+            ? '编辑收货单'
             : btnType == 'copy'
-              ? '新建采购收货通知单'
+              ? '新建收货单'
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
@@ -1531,6 +1531,8 @@ export default {
         console.log(this.userInfo, 'fiii')
         this.dataForm.salesman = this.userInfo.userName
         this.dataFormTwo.productData = data
+        this.dataForm.partnerName = data[0].cooperativePartnerName
+        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.formLoading = true
         this.getBusInfo()
         setTimeout(() => {

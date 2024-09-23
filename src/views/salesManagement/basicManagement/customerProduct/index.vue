@@ -71,7 +71,6 @@
                 <el-table-column prop="excludingTaxPrice" label="销售单价(不含税)" width="160" />
                 <el-table-column prop="dateOrderStart" label="有效日期起" sortable="custom" min-width="160" />
                 <el-table-column prop="dateOrderStop" label="有效日期止" sortable="custom" min-width="160" />
-                <el-table-column prop="dateOrderStop" label="要求" sortable="custom" min-width="160" />
                 <el-table-column prop="remark" min-width="200" label="备注" />
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 

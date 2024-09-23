@@ -764,7 +764,7 @@ export default {
 
     // 点击选择产品 
     openSeleceProductDialog() {
-      if (!this.dataForm.documentType) return this.$message.error("请先选择单据类型")
+      if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
       this.productVisible = true
       this.searchProductFun()
     },

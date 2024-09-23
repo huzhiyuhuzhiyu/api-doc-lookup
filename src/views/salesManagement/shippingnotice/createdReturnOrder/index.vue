@@ -14,7 +14,7 @@
     <div class="main" v-loading="formLoading">
 
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="订单信息" name="orderInfo">
+        <el-tab-pane label="基础信息" name="orderInfo">
           <el-collapse v-model="activeNames">
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
               <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">

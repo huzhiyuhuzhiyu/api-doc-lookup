@@ -243,8 +243,8 @@
                 <el-table-column prop="oil" label="油脂" width="160" sortable="custom" />
                 <el-table-column prop="oilQuantity" label="油脂量" width="160" sortable="custom" />
                 <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
-                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" ></el-table-column>
-                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" ></el-table-column>
+                <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom"></el-table-column>
+                <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom"></el-table-column>
                 <!-- { label: "销售发货", value: "outbound_sale_send" },
         { label: "销售退货", value: "inbound_sale_return" },
         { label: "采购收货", value: "inbound_purchase" },
@@ -280,7 +280,7 @@
 
         <span slot="footer" class="dialog-footer">
           <el-button @click="goBack">返回列表</el-button>
-           
+
         </span>
       </el-dialog>
       <!-- 选客户 -->
@@ -288,9 +288,7 @@
       <!-- 选库位 -->
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
-      <!-- 选批次号 -->
-      <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
-      </BatchNumberForm>
+
     </div>
   </transition>
 </template>
@@ -298,7 +296,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList, getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -422,6 +420,8 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      classAttributeList: [],
+      warehouseCode: "",
     }
   },
   created() {
@@ -434,26 +434,8 @@ export default {
     }
   },
   methods: {
-    // 打开选择批次号弹框
-    openSeleceBatchNumberDialog(data, index) {
-      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库")
-      this.batchNumVisible = true
-      data.warehouseId = this.dataForm.warehouseId
-      this.$nextTick(() => {
-        this.$refs.BatchNumberForms.init(data, index)
-      })
-    },
-    // 选择批次
-    selectBatchNumberFun(data, index) {
-      console.log("批次号数据", data, index);
 
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.shelfSpaceId)
-      this.$set(this.productData[index], 'shelfSpaceName', data.shelfSpaceName)
-      let num = this.jnpf.numberFormat(this.jnpf.math('subtract', [data.availableQuantity, data.occupancyQuantity]), 6)
-      this.$set(this.productData[index], 'availableBatchNumber', num)
-      this.$set(this.productData[index], 'batchNumber', data.batchNumber)
-    },
+
     // 打开选择库位弹框
     openSeleceWareDialog(row, index) {
       if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
@@ -498,7 +480,7 @@ export default {
         customerProductDrawingNo: "",
         rdsDate: "",
         rdeDate: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
@@ -551,7 +533,7 @@ export default {
         item.num = item.undeliveredQuantity
 
         item.costPrice = item.price
-        item.classAttribute = this.classAttribute
+        item.classAttribute = item.classAttribute
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
@@ -680,7 +662,7 @@ export default {
 
 
 
-  
+
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -717,7 +699,7 @@ export default {
       this.dataForm['partnerName'] = data.name
       this.customerInfo = data
     },
-
+    // 切换仓库
     changeWarehousex(val, data) {
       console.log("data", data);
       if (!val && !data.length) {
@@ -726,10 +708,23 @@ export default {
         this.dataForm.warehouseType = ""
         return
       }
-      this.allocationFlag=data[0].all.locationStatus=='disabled'?false:true
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+    },
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = res.data
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
     },
     goBack() {
       this.$emit('close', true)
@@ -748,20 +743,28 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
-      console.log("22", data, btnType, businessType);
-      // this.visible = true
-      this.dataForm.businessType = businessType
-      this.classAttribute = classAttribute
-      this.btnType = btnType
-      this.getBusInfo()
-      console.log("btnty", btnType);
-      // this.refeshDataFormItems()
+    init(data, btnType, businessType, classAttributeList, warehouseCode) {
 
+      console.log("11", data, btnType, businessType);
+      // this.visible = true
+      this.warehouseCode = warehouseCode
+      this.dataForm.businessType = businessType
+      this.classAttributeList = classAttributeList
+      this.btnType = btnType
       this.selectcustomerObj.type = 'customer'
       this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
       this.warehouseRequestObj.virtuallyFlag = false
       this.warehouseRequestObj.type = ""
+      this.getWarehouseListFun()
+      this.getBusInfo()
+
+
+
+      // this.visible = true
+      // this.refeshDataFormItems()
+
+
+
 
 
 
@@ -783,7 +786,7 @@ export default {
         this.title = '新建入库单'
         getQuotationsendlist(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute)); 
           if (filteredArray.length) {
             filteredArray.forEach(item => {
               item.num = item.undeliveredQuantity
@@ -894,7 +897,7 @@ export default {
                 break
               }
 
-               
+
               if (!totals[item.ordersLineId]) {
                 totals[item.ordersLineId] = { totalNum: 0, ordersNum: item.ordersNum };
               }
@@ -912,7 +915,7 @@ export default {
                 break
               }
             }
-            
+
           }
 
 
@@ -920,8 +923,8 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-              this.dataForm.documentType = "inbound"
-          
+            this.dataForm.documentType = "inbound"
+
             this.dataForm.documentStatus = submitModel
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
             const formMethod = addWarehouseData
@@ -1120,6 +1123,7 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

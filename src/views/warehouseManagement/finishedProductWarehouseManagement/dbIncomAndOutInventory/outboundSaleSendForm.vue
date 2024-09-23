@@ -278,9 +278,7 @@
       </el-dialog>
       <!-- 选客户 -->
       <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
-      <!-- 选库位 -->
-      <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
-      </WareHouseForm>
+      
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
@@ -291,11 +289,10 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
-import CustomerForm from './customerForm.vue'
-import WareHouseForm from './wareHouseForm.vue'
+import CustomerForm from './customerForm.vue' 
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
@@ -303,7 +300,7 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
-  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process },
+  components: { CustomerForm, BatchNumberForm, Process },
 
   data() {
     return {
@@ -411,6 +408,8 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      classAttributeList: [],
+      warehouseCode: "",
     }
   },
   created() {
@@ -444,23 +443,8 @@ export default {
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
-    // 打开选择库位弹框
-    openSeleceWareDialog(row, index) {
-      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
-      this.wareHouseVisible = true
-      this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId)
-      })
-      this.currentProductIndex = index
-    },
-    // 所选的库位信息
-    selectWareHouseFun(data) {
-      console.log("库位信息", data);
-      let index = this.currentProductIndex
-      this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.id)
-    },
+ 
+    
 
 
     // 产品信息列表复制功能
@@ -488,7 +472,7 @@ export default {
         customerProductDrawingNo: "",
         rdsDate: "",
         rdeDate: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
@@ -726,11 +710,24 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
     },
     goBack() {
       this.$emit('close', true)
     },
-
+  // 获取仓库id
+  getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = res.data
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -744,24 +741,30 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
+    init(data, btnType, businessType, classAttributeList,warehouseCode) {
+
       console.log("11", data, btnType, businessType);
       // this.visible = true
+      this.warehouseCode = warehouseCode
       this.dataForm.businessType = businessType
-      this.classAttribute = classAttribute
+      this.classAttributeList = classAttributeList
       this.btnType = btnType
+      this.selectcustomerObj.type = 'customer' 
+      this.$set(this.orderForm, 'deliveryStatus', 'not_finished') 
+      this.getWarehouseListFun()
       this.getBusInfo()
+    
 
-      this.selectcustomerObj.type = 'customer'
-      this.$set(this.orderForm, 'deliveryStatus', 'not_finished')
-      console.log("btnty", btnType);
+
+ 
+
       if (this.btnType == 'edit') {
         this.fetchData("CKDH", false)
         this.title = '修改出库单'
       }
 
       if (this.btnType == 'look') {
-        this.title = '查看入库单'
+        this.title = '查看出库单'
       }
       if (btnType == 'look' || btnType == 'edit') {
         detailWarehouseData(data).then(res => {
@@ -781,10 +784,10 @@ export default {
         // this.refeshDataFormItems()
         getQuotationsendlist(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
+          // let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
           if (filteredArray.length) {
-            filteredArray.forEach(item => {
-              item.classAttribute = this.classAttribute
+            filteredArray.forEach(item => { 
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
               item.costPrice = item.price

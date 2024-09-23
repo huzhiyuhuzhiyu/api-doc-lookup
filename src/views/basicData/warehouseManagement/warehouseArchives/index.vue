@@ -121,10 +121,10 @@
                     查看二维码
                   </el-button>
                 </el-popover> -->
-                <el-button v-if="scope.row.warehouseManagementStatus=='disabled'"  type="text" size="mini" @click="enableWareFun(scope.row)">
+                <el-button v-if="scope.row.warehouseManagementStatus=='disabled'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'"  type="text" size="mini" @click="enableWareFun(scope.row)">
                   开启仓库菜单
                 </el-button>
-                <el-button v-if="scope.row.warehouseManagementStatus=='enable'" type="text" size="mini" @click="closeWareFun(scope.row)">
+                <el-button v-if="scope.row.warehouseManagementStatus=='enable'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'" type="text" size="mini" @click="closeWareFun(scope.row)">
                   关闭仓库菜单
                 </el-button>
                 <el-button type="text" size="mini" @click="openQr(scope.row)">

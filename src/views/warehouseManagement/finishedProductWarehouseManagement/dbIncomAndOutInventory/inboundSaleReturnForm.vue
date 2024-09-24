@@ -729,7 +729,7 @@ export default {
         this.dataForm.inspectionResults = 'unqualified'
 
       }
-    },
+    }, 
     // 获取仓库id
     getWarehouseListFun() {
       getWarehouseList({ code: this.warehouseCode }).then(res => {

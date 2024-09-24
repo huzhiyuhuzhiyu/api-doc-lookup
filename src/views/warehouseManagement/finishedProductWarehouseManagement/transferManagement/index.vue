@@ -152,8 +152,7 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "",
-        classAttribute: "finish_product",
+        documentStatus: "", 
         transferType:"allocate_transfer",
         pageNum: 1,
         pageSize: 20,
@@ -245,7 +244,7 @@ export default {
     editFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,this.classAttribute)
+          this.$refs.Form.init(id,btnType,this.warehouseCode)
       })
     },
 
@@ -271,12 +270,9 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop === 'productCode' ) {
         newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
-
-      } else {
+      }   else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       if (prop == "createByName") {
@@ -340,8 +336,7 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "",
-        classAttribute: "finish_product",
+        documentStatus: "", 
         pageNum: 1,
         transferType:"allocate_transfer",
         pageSize: 20,

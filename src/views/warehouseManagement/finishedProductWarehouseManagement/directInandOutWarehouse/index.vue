@@ -74,7 +74,7 @@
 
                     <JNPF-table ref="product" :data="productData" :fixedNO="true" hasC
                       @selection-change="handeleProductInfoData" border :key="165" style="width: 100%;">
-                     
+
                       <el-table-column prop="productDrawingNo" label="品名规格" min-width="160" :key="105"
                         v-if="dataForm.documentType == 'outbound'" />
 
@@ -431,10 +431,10 @@
       @close="closeScanDiaFun()">
       <div class="scand">
         <div class="box">
-            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()">
-            </el-input>
-            <div class="tip">说明：根据产品码自动添加对应的产品</div>
-          </div>
+          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()">
+          </el-input>
+          <div class="tip">说明：根据产品码自动添加对应的产品</div>
+        </div>
       </div>
     </el-dialog>
     <!-- 选客户 -->
@@ -450,7 +450,7 @@
 
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { getBimProcessList } from '@/api/bimProcess/index'
 import {
@@ -619,10 +619,11 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
-      classAttributeList:[],
+      classAttributeList: [],
     }
   },
   created() {
+    this.getWarehouseListFun()
     this.getProductClassFun()
     this.getprocessList()
     this.getBusInfo()
@@ -639,18 +640,18 @@ export default {
     getclassAttributeList() {
       getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
         console.log("类别属性", res);
-        this.classAttributeList = res.data 
+        this.classAttributeList = res.data
       })
     },
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
-      if(!this.scanResult) return
+      if (!this.scanResult) return
       let obj = {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttributeList:this.classAttributeList,
+        classAttributeList: this.classAttributeList,
         orderItems: [
           {
             asc: false,
@@ -667,22 +668,22 @@ export default {
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
-          item.productCode=item.code
-          this.$set(item,'num','')
+          item.productCode = item.code
+          this.$set(item, 'num', '')
         });
-       this.$nextTick(()=>{
-        if(res.data.records.length){
-          this.productData.push(res.data.records[0])
-        }
-        this.scanResult = ""
-       })
+        this.$nextTick(() => {
+          if (res.data.records.length) {
+            this.productData.push(res.data.records[0])
+          }
+          this.scanResult = ""
+        })
       })
     },
     scanFun() {
       this.scanDialog = true
       this.$nextTick(() => {
-      this.$refs.inputRef.$refs.input.focus();
-    });
+        this.$refs.inputRef.$refs.input.focus();
+      });
     },
     closeScanDiaFun() {
       this.scanDialog = false
@@ -713,7 +714,7 @@ export default {
       console.log(row, index);
       let productArr = [...this.productData]
       productArr[index].excludingTaxCostPrice = this.jnpf.numberFormat(row.costPrice / (1 + (row.taxRate * 1 / 100)), 4)
-      console.log("productArr[index].excludingTaxCostPrice",productArr[index].excludingTaxCostPrice);
+      console.log("productArr[index].excludingTaxCostPrice", productArr[index].excludingTaxCostPrice);
       productArr[index].excludingTaxTotalAmount = this.jnpf.numberFormat((row.excludingTaxCostPrice * row.num), 4)
       productArr[index].taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [row.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [row.costPrice, row.excludingTaxCostPrice]), 6)]), 6)
       this.productData = productArr
@@ -765,6 +766,7 @@ export default {
     // 点击选择产品 
     openSeleceProductDialog() {
       if (!this.dataForm.documentType) return this.$message.error("请先选择业务类型")
+
       this.productVisible = true
       this.searchProductFun()
     },
@@ -863,7 +865,7 @@ export default {
     submitAllProduct() {
       if (!this.selectSaleProductArr.length) return this.$message.error("请选择产品！")
       this.productVisible = false
-    console.log("this.selectSaleProductArr",this.selectSaleProductArr);
+      console.log("this.selectSaleProductArr", this.selectSaleProductArr);
       let arr = JSON.parse(JSON.stringify(this.selectSaleProductArr))
       console.log("arr", arr);
       arr.forEach(item => {
@@ -1102,18 +1104,18 @@ export default {
         this.fetchData("RKDH")
 
       }
-  if(this.productData.length){
-    this.productData.forEach(item => {
-      if(item.productDrawingNo){
+      if (this.productData.length) {
+        this.productData.forEach(item => {
+          if (item.productDrawingNo) {
 
-        item.drawingNo=item.productDrawingNo
-      }
-      if(item.drawingNo){
+            item.drawingNo = item.productDrawingNo
+          }
+          if (item.drawingNo) {
 
-        item.productDrawingNo=item.drawingNo
+            item.productDrawingNo = item.drawingNo
+          }
+        });
       }
-    });
-  }
       this.getBusInfo()
       this.orderForm = { //获取产品数据
         cooperativePartnerId: "",
@@ -1163,7 +1165,19 @@ export default {
         path: "/warehouseManagement/finishedProductWarehouseManagement/inventoryList",
       })
     },
-
+    
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => { 
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -1232,7 +1246,7 @@ export default {
             submitFlag = false
             this.$message.error('请至少选择一个产品')
           }
-          if (this.allocationFlag ) {
+          if (this.allocationFlag) {
             this.productData.forEach((item, index) => {
               if (!item.shelfSpaceId) {
                 submitFlag = false
@@ -1266,7 +1280,7 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-          
+
             this.dataForm.documentStatus = submitModel
             this.productData.forEach(item => item.id = "")
             // const formMethod = this.dataForm.id ? updateInboundOutbound : addInboundOutbound
@@ -1694,11 +1708,13 @@ export default {
   font-weight: 600;
   border-color: #3fb9f8;
 }
-.scand .box{
+
+.scand .box {
   padding: 40px 20px;
 
 }
-.scand .tip{
+
+.scand .tip {
   margin-top: 10px;
   font-size: 18px;
 }

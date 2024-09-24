@@ -217,7 +217,7 @@
 
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getbimProductAttributesList } from '@/api/masterDataManagement/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 import { ordershengchanList, getWorkPage } from '@/api/productOrdes/index.js'
@@ -319,7 +319,6 @@ export default {
         orderNo: "",
         processName: "",
         productDrawingNo: "",
-        classAttribute: "",
         stockFlag: true,
         orderItems: [{
           asc: false,
@@ -332,7 +331,6 @@ export default {
         pageNum: 1,
         pageSize: 20,
       },
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -431,7 +429,7 @@ export default {
         orderNo: "",
         processName: "",
         productDrawingNo: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         stockFlag: true,
         orderItems: [{
           asc: false,
@@ -596,7 +594,18 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+   // 获取仓库id
+   getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => { 
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -610,13 +619,14 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, classAttribute) {
+    init(data, btnType, classAttributeList,warehouseCode) {
       this.productData = []
-      console.log("11", data, btnType, classAttribute);
-      this.classAttribute = classAttribute
+      console.log("11", data, btnType, classAttributeList);
+      this.classAttributeList = classAttributeList
+      this.warehouseCode=warehouseCode
       this.btnType = btnType
       this.getBusInfo()
-
+      this.getWarehouseListFun()
       if (this.btnType == 'edit') {
         this.fetchData("RKDH", false)
         this.title = '修改入库单'
@@ -714,7 +724,7 @@ export default {
 
             this.dataForm.documentType = "inbound"
             this.dataForm.documentStatus = submitModel
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'order'
             console.log("this.dataForm", this.dataForm);
 

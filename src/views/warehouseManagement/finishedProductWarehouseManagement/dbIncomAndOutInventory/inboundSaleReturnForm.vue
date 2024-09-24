@@ -60,14 +60,17 @@
                                 :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
                                 @change="changeWarehousex"></ComSelect-list>
-
-
-
-
-
                             </el-form-item>
                           </el-col>
-
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="检验结果" prop="inspectionResults">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
 
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
@@ -350,7 +353,8 @@ export default {
         documentType: "",
         id: "",
         warehouseType: "",
-        approvalFlag: false
+        approvalFlag: false,
+        inspectionResults: "",
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -384,6 +388,12 @@ export default {
         ],
       },
 
+      inspectionResultsList: [
+        { label: "待检验", value: "" },
+        { label: "合格", value: "qualified" },
+        { label: "不合格", value: "unqualified" },
+        { label: "报废", value: "discard" },
+      ],
       productList: [],
       productTotal: 0,
       deliveryDateArr: [],
@@ -416,7 +426,6 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -533,7 +542,6 @@ export default {
         item.num = item.undeliveredQuantity
 
         item.costPrice = item.price
-        item.classAttribute = item.classAttribute
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
@@ -712,6 +720,15 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      if (this.dataForm.warehouseType == 'scrap') {
+        this.dataForm.inspectionResults = 'discard'
+      } else if (this.dataForm.warehouseType == 'normal') {
+        this.dataForm.inspectionResults = 'qualified'
+
+      } else if (this.dataForm.warehouseType == 'unqualified') {
+        this.dataForm.inspectionResults = 'unqualified'
+
+      }
     },
     // 获取仓库id
     getWarehouseListFun() {
@@ -723,6 +740,15 @@ export default {
           this.wareHouseInfo = res.data
           this.dataForm.warehouseType = res.data.type
           this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+          if (this.dataForm.warehouseType == 'scrap') {
+            this.dataForm.inspectionResults = 'discard'
+          } else if (this.dataForm.warehouseType == 'normal') {
+            this.dataForm.inspectionResults = 'qualified'
+
+          } else if (this.dataForm.warehouseType == 'unqualified') {
+            this.dataForm.inspectionResults = 'unqualified'
+
+          }
         })
       })
     },
@@ -786,11 +812,10 @@ export default {
         this.title = '新建入库单'
         getQuotationsendlist(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute)); 
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
           if (filteredArray.length) {
             filteredArray.forEach(item => {
               item.num = item.undeliveredQuantity
-              item.classAttribute = this.classAttribute
               item.noticeId = item.returnDeliveryNoticeId
               item.noticeLineId = item.id
               item.costPrice = item.price
@@ -934,7 +959,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

@@ -32,17 +32,26 @@
         <div class="JNPF-common-layout-main JNPF-flex-main">
           <JNPF-table v-loading="listLoading" :data="tableDataList" :fixedNO="true">
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
-            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
-            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
-            <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120"/>
-            <el-table-column prop="accuracyLevel" label="精度等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120"/>
-            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120"/>
-            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120"/>
+            <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
+            <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120" />
+            <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+              <template slot-scope="scope">
+                <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
+                <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+                <div v-if="scope.row.inspectionResults == 'partially_qualified'">部分合格</div>
+                <div v-if="scope.row.inspectionResults == 'discard'">报废</div>
+                <div v-if="scope.row.inspectionResults == 'concessive_acceptance'">让步接收</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120" />
+            <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120" />
+            <el-table-column prop="accuracyLevel" label="精度等级" sortable="custom" min-width="120" />
+            <el-table-column prop="vibrationLevel" label="振动等级" sortable="custom" min-width="120" />
+            <el-table-column prop="oil" label="油脂" sortable="custom" min-width="120" />
+            <el-table-column prop="clearance" label="游隙" sortable="custom" min-width="120" />
             <el-table-column label="操作" width="100" fixed="right">
-              <template slot-scope="scope" >
+              <template slot-scope="scope">
                 <el-button type="text" @click="selectBatchNum(scope.row)">选择</el-button>
               </template>
             </el-table-column>
@@ -79,11 +88,11 @@ export default {
         warehouseId: "",
         vibrationLevel: "",
         sealingCoverTyping: "",
-        availableBatch:1,
+        availableBatch: 1,
         oil: "",
         clearance: "",
         accuracyLevel: "",
-        productsId:"",
+        productsId: "",
       },
       refreshTree: true,
       listLoading: false,
@@ -96,19 +105,19 @@ export default {
   },
   methods: {
     init(data, index) {
-      console.log(data,index);
+      console.log(data, index);
       this.customerVisible = true
       this.cpData = JSON.parse(JSON.stringify(data))
       this.cpIndex = JSON.parse(JSON.stringify(index))
-      this.form.productsId=data.productsId
-      this.form.vibrationLevel=data.vibrationLevel
-      this.form.sealingCoverTyping=data.sealingCoverTyping
-      this.form.oil=data.oil
-      this.form.clearance=data.clearance
-      this.form.accuracyLevel=data.accuracyLevel
-      this.form.warehouseId=data.warehouseId
-    
-      this.form.productsId=data.productsId
+      this.form.productsId = data.productsId
+      this.form.vibrationLevel = data.vibrationLevel
+      this.form.sealingCoverTyping = data.sealingCoverTyping
+      this.form.oil = data.oil
+      this.form.clearance = data.clearance
+      this.form.accuracyLevel = data.accuracyLevel
+      this.form.warehouseId = data.warehouseId
+
+      this.form.productsId = data.productsId
       this.getbatchNumList()
     },
     // 选择批次
@@ -120,8 +129,8 @@ export default {
       this.listLoading = true
       getBatchNumber(this.form).then(res => {
         console.log("批次号数据", res);
-        this.tableDataList=res.data.records
-        this.total=res.data.total
+        this.tableDataList = res.data.records
+        this.total = res.data.total
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

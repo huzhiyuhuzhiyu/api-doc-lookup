@@ -317,7 +317,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -437,10 +437,11 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      warehouseCode:"",
+      classAttributeList:[],
     }
   },
   created() {
@@ -518,7 +519,7 @@ export default {
         customerProductDrawingNo: "",
         deliverDateEnd: "",
         deliverDateStart: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
@@ -582,8 +583,7 @@ export default {
 
 
 
-
-        item.classAttribute = this.classAttribute
+ 
 
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
@@ -763,7 +763,18 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+   // 获取仓库id
+   getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -777,12 +788,12 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
+    init(data, btnType, businessType, classAttributeList,warehouseCode) {
       console.log("11", data, btnType, businessType);
       // this.visible = true
       this.dataForm.businessType = businessType
-      this.classAttribute = classAttribute
-      this.oldType = JSON.parse(JSON.stringify(btnType))
+      this.warehouseCode=warehouseCode
+      this.classAttributeList = classAttributeList 
       this.btnType = btnType
       this.selectcustomerObj.type = 'supplier'
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
@@ -808,14 +819,13 @@ export default {
 
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) ); 
 
           // if(businessType == 'inbound_purchase'){
           //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
           // }
           if (filteredArray.length) {
-            filteredArray.forEach(item => {
-              item.classAttribute = this.classAttribute
+            filteredArray.forEach(item => { 
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -974,7 +984,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

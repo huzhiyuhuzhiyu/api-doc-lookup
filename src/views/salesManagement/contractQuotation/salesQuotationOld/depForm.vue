@@ -78,12 +78,7 @@
                         <el-input v-model="dataForm.fax" placeholder="输入传真" maxlength="20" :disabled="status" />
                       </el-form-item>
                     </el-col>
-                    <el-col :sm="6" :xs="24" v-if="btnType == 'look' && dataForm.documentStatus != 'draft'">
-                      <el-form-item label="是否生成客户产品" prop="generateFlag">
-                        <el-input :value="dataForm.generateFlag ? '是' : '否'" placeholder="请选择是否生成客户产品"
-                          :disabled="status" />
-                      </el-form-item>
-                    </el-col>
+                
                     <el-col :sm="6" :xs="24" v-if="dataForm.approvalStatus == 'review_failed'">
                       <el-form-item label="驳回理由" prop="reasonRejection">
                         <el-input v-model="dataForm.reasonRejection" placeholder="输入驳回理由" :disabled="status"
@@ -176,9 +171,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="100">
+                    <el-table-column prop="taxRate" label="税率" width="100">
                       <template slot="header">
-                        <span class="required">*</span>税率(%)
+                        <span class="required">*</span>税率
                       </template>
                       <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -187,12 +182,15 @@
                             @input="watchnums(scope.row, scope.$index)" />
                         </el-form-item>
                       </template> -->
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" v-if="!status">
                         <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
-                          :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
+                           @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
+                      </template>
+                      <template slot-scope="scope"v-if="status">
+                         <div>{{ scope.row.taxRate }}%</div>
                       </template>
                     </el-table-column>
                     <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="120" show-overflow-tooltip>
@@ -397,9 +395,9 @@
                         </el-form-item>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="taxRate" label="税率(%)" width="160">
+                    <el-table-column prop="taxRate" label="税率" width="160">
                       <template slot="header">
-                        <span class="required">*</span>税率(%)
+                        <span class="required">*</span>税率
                       </template>
                       <!-- <template slot-scope="scope">
                         <el-form-item :prop="'lines.' + scope.$index + '.' + 'taxRate'" :rules='productRules.taxRate'>
@@ -823,11 +821,11 @@ export default {
       this.getHistoryPriceFun()
     },
     querySearchAsync(queryString, cb) {
-      if (!this.dataForm.cooperativePartnerId) {
-        let air = []
-        cb(air)
-        this.$message.error("请先选择客户!")
-      } else {
+      // if (!this.dataForm.cooperativePartnerId) {
+      //   let air = []
+      //   cb(air)
+      //   this.$message.error("请先选择客户!")
+      // } else {
         if (queryString && queryString.length >= 3) {
           let ProductListRequestObj = {
             classAttributeList: [],
@@ -883,7 +881,7 @@ export default {
           cb(air)
 
         }
-      }
+      // }
 
 
 

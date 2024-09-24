@@ -94,7 +94,7 @@
       </el-table>
     </el-form>
 
-    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
+    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择子件"
       treeTitle="子件分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
       :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
       :listDataFormatting="listDataFormatting" />

@@ -232,7 +232,7 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable >
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
             <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
@@ -250,6 +250,20 @@
       <span slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="submitForm('quickForm')">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="提示" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
+      :show-close="false" :visible.sync="tipsvisible" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px">
+      <div>
+        <img src="@/assets/images/importSuccess.gif" alt="" style="width:100px" />
+        <span class="import_t">{{ submitmethodsTitle }}啦！</span>
+        <span class="import_b">您还可以进行如下操作：</span>
+      </div>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="closeTip()">返回列表</el-button>
+
+        <el-button type="primary" @click="continueAdd()">继续新增</el-button>
       </span>
     </el-dialog>
   </div>
@@ -301,7 +315,7 @@ export default {
           productStatus: '', // 产品状态
           customerQueryFields: [],
           createTimeArr: [],
-          classAttribute: 'raw_material'
+          classAttribute: 'raw_material',
         }
       }
     },
@@ -524,7 +538,8 @@ export default {
       },
       uploadVisib: false,
       leftFlag: false,
-      unitOptions: []
+      unitOptions: [],
+      tipsvisible: false,
     }
   },
   watch: {
@@ -585,8 +600,10 @@ export default {
                 type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.quickVisible = false
-                  this.initData()
+                  console.log(this.tipsvisible, 'this.tipsvisible')
+                  // this.quickVisible = false
+                  // this.initData()
+                  this.tipsvisible = true
                 }
               })
             }
@@ -604,6 +621,19 @@ export default {
           this.quickForm.code = data.number
         }
       } catch (error) { }
+    },
+    // 继续新增
+    continueAdd() {
+      this.quickForm = {}
+      this.fetchData('CPBM')
+      this.quickForm.productSource = 'produce'
+      this.tipsvisible = false
+      this.btnLoading = false
+    },
+    closeTip() {
+      this.tipsvisible = false
+      this.quickVisible = false
+      this.initData()
     },
     superQuerySearch(query) {
       this.listQuery.superQuery = query

@@ -67,6 +67,7 @@ export default {
         classAttribute: 'finish_product',
         sealingCoverStructure: ''
       },
+      steelBallManufacturerOption: [],
       unitRelList: [],
       modelQuery: {
         startTime: '',
@@ -136,7 +137,7 @@ export default {
           filterable: true,
           remote: true,
           maxlength: 50,
-          itemRules: [{ required: true, trigger: "change" }],
+          itemRules: [{ required: true, trigger: 'change' }],
           itemDisabled: false
         },
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
@@ -188,7 +189,6 @@ export default {
           } else {
             tc.render = false
           }
-
         }
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
@@ -373,7 +373,6 @@ export default {
                   })
                 })
               }
-
             }
           }
 
@@ -500,7 +499,6 @@ export default {
               })
             }
           }
-
         }
       }
     })
@@ -570,7 +568,6 @@ export default {
             this.dataForm.noise +
             this.dataForm.holder
         }
-
       } else {
         // 不选择任何内容，置空绑定的值
         this.dataForm[paramsObj.prop] = ''
@@ -587,7 +584,7 @@ export default {
         }
       } catch (error) { }
     },
-    init(id, btnType = false, flag) {
+    async init(id, btnType = false, flag) {
       this.visible = true
       this.formLoading = true
       this.btnType = btnType
@@ -663,6 +660,10 @@ export default {
       if (!!id) {
         this.dataForm.id = id
         this.title = btnType ? '查看成品档案' : '编辑成品档案'
+        const steelBallRes = await getCooperativeData(this.PartnerListRequestObj)
+
+        this.steelBallManufacturerOption = steelBallRes.data.records
+
         // 获取详情
         detailProduct(id).then((res) => {
           // 记录编码和图号，用于校验唯一性
@@ -674,33 +675,71 @@ export default {
           for (const key in detailObj) {
             this.dataForm[key] = detailObj[key]
           }
-          // 编辑时，如果已经品名规格那些，不允许修改
-          this.tabs[0].tabContent.forEach((tc) => {
-            if (
-              [
-                'productCategoryName',
-                'code',
-                'drawingNo',
-                'model',
-                'sealingCoverStructure',
-                'structureType',
-                'sealingCoverTyping',
-                'clearance',
-                'steelBallManufacturerName',
-                'oil',
-                'noise',
-                'holder',
-                'productSource'
-              ].includes(tc.prop)
-            ) {
-              tc.itemDisabled = true
+
+          this.steelBallManufacturerOption.forEach((item) => {
+            if (item.code == this.dataForm.steelBallManufacturer) {
+              this.dataForm.steelBallManufacturerName = item.name
             }
-            this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
-              if (!res.modifyFlag) {
-                if (tc.prop === 'code') tc.itemDisabled = true
-              }
-            })
           })
+          if (btnType) {
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (
+                [
+                  'productCategoryName',
+                  'code',
+                  'drawingNo',
+                  'model',
+                  'sealingCoverStructure',
+                  'structureType',
+                  'sealingCoverTyping',
+                  'clearance',
+                  'steelBallManufacturerName',
+                  'oil',
+                  'noise',
+                  'holder',
+                  'productSource'
+                ].includes(tc.prop)
+              ) {
+                tc.itemDisabled = true
+              }
+              this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
+                if (!res.modifyFlag) {
+                  if (tc.prop === 'code') tc.itemDisabled = true
+                }
+              })
+            })
+          } else {
+            // 编辑时，如果已经品名规格那些，不允许修改
+            this.tabs[0].tabContent.forEach((tc) => {
+              if (
+                [
+                  'productCategoryName',
+                  'code',
+                  'drawingNo',
+                  'model',
+                  // 'sealingCoverStructure',
+                  // 'structureType',
+                  // 'sealingCoverTyping',
+                  // 'clearance',
+                  // 'steelBallManufacturerName',
+                  // 'oil',
+                  // 'noise',
+                  // 'holder',
+                  'productSource'
+                ].includes(tc.prop)
+              ) {
+                tc.itemDisabled = true
+              }
+             
+
+              this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
+                if (!res.modifyFlag) {
+                  if (tc.prop === 'code') tc.itemDisabled = true
+                }
+              })
+            })
+          }
+
           this.modelForm.model = this.dataForm.model
           const obj = {
             startTime: '',
@@ -743,7 +782,7 @@ export default {
       if (this.$refs['modelForm']) {
         for (let i = 0; i < this.$refs['modelForm'].length; i++) {
           const item = this.$refs['modelForm'][i]
-          console.log(item, 'iyee')
+
           const form = item.$refs.main
           const valid_1 = await form.validate().catch(() => false)
           if (!valid_1 && submitFlag) {

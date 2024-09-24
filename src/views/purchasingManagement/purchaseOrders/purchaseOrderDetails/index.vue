@@ -12,7 +12,7 @@
             </el-col>
             <el-col :span="4">
               <el-form-item>
-                <el-input v-model.trim="listsQuery.cooperativePartnerCode" placeholder="供应商编码" clearable
+                <el-input v-model.trim="listsQuery.cooperativePartnerName" placeholder="供应商名称" clearable
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col>
@@ -22,6 +22,12 @@
                   @keyup.enter.native="searchDetail()" />
               </el-form-item>
             </el-col> -->
+            <el-col :span="8">
+              <el-form-item>
+                <el-date-picker v-model="deliveryDateArr" type="daterange" format="yyyy-MM-dd" value-format="yyyy-MM-dd"
+                  style="width: 100%" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable></el-date-picker>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="searchDetail()">
@@ -63,7 +69,7 @@
           <JNPF-table @selection-change="handeleFinshData" v-loading="listLoading" highlight-current-row :fixedNO="true"
             ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column
             :checkSelectable="checkSelectable" :partentOrChild="'child'" :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="单号" min-width="200" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.purchaseOrderId, 'look')">
                   {{ scope.row.orderNo }}
@@ -72,19 +78,23 @@
             </el-table-column>
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="180" sortable="custom" />
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="180" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" min-width="200" sortable="custom" />
+            <el-table-column prop="drawingNo" label="品名规格" min-width="160" sortable="custom" />
             <!-- <el-table-column prop="productName" label="产品名称" min-width="140" sortable="custom" /> -->
             <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" min-width="120" />
-            <el-table-column prop="purchaseQuantity" label="数量" min-width="100" sortable="custom" />
-            <el-table-column prop="receiptQuantity" label="已入库数量" min-width="130" sortable="custom" />
-            <el-table-column prop="price" label="单价(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率(%)" min-width="120" sortable="custom" />
-            <el-table-column prop="totalAmount" label="总金额(含税)" min-width="140" sortable="custom" />
-            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" min-width="120" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="60" />
+            <el-table-column prop="purchaseQuantity" label="数量" width="80" sortable="custom" />
+            <el-table-column prop="receiptQuantity" label="已入库数量" width="130" sortable="custom" />
+            <el-table-column prop="price" label="单价(含税)" width="140" sortable="custom" />
+            <el-table-column prop="taxRate" label="税率" width="120" sortable="custom">
+              <template slot-scope="scope">
+                {{ scope.row.taxRate }}%
+              </template>
+            </el-table-column>
+            <el-table-column prop="totalAmount" label="总金额(含税)" width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxPrice" label="单价(不含税)" width="130" sortable="custom" />
             <el-table-column prop="taxAmount" label="税额" min-width="80" />
-            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" min-width="150" sortable="custom" />
-            <el-table-column prop="deliveryDate" label="交货日期" min-width="140" sortable="custom" />
+            <el-table-column prop="excludingTaxAmount" label="总金额(不含税)" width="150" sortable="custom" />
+            <el-table-column prop="deliveryDate" label="交货日期" width="140" sortable="custom" />
             <el-table-column prop="receivingStatus" label="收货状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.receivingStatus == 'receiving' || scope.row.receivingStatus == 'returning'">
@@ -96,15 +106,15 @@
                 <div v-if="scope.row.approvalStatus == 'stopped'"><el-tag type="danger">已停止</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="standardValue" label="规值" min-width="180" sortable="custom" />
-            <el-table-column prop="sealingCoverTyping" min-width="140" label="打字内容" sortable="custom" />
-            <el-table-column prop="accuracyLevel" label="精度等级" min-width="140" sortable="custom" />
-            <el-table-column prop="vibrationLevel" label="振动等级" min-width="140" sortable="custom" />
-            <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
-            <el-table-column prop="oilQuantity" label="油脂量" min-width="140" sortable="custom" />
-            <el-table-column prop="clearance" label="游隙" min-width="120" sortable="custom" />
-            <el-table-column prop="packagingMethod" label="包装方式" min-width="140" sortable="custom" />
-            <el-table-column prop="processName" label="工序" min-width="140" sortable="custom" />
+            <el-table-column prop="standardValue" label="规值" width="180" sortable="custom" />
+            <el-table-column prop="sealingCoverTyping" width="140" label="打字内容" sortable="custom" />
+            <el-table-column prop="accuracyLevel" label="精度等级" width="140" sortable="custom" />
+            <el-table-column prop="vibrationLevel" label="振动等级" width="140" sortable="custom" />
+            <el-table-column prop="oil" label="油脂" width="120" sortable="custom" />
+            <el-table-column prop="oilQuantity" label="油脂量" width="140" sortable="custom" />
+            <el-table-column prop="clearance" label="游隙" width="120" sortable="custom" />
+            <el-table-column prop="packagingMethod" label="包装方式" width="140" sortable="custom" />
+            <el-table-column prop="processName" label="工序" width="140" sortable="custom" />
             <el-table-column prop="remark" label="备注" min-width="120" />
             <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" min-width="120" sortable="custom" />
@@ -138,71 +148,6 @@
       </div>
     </div>
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
-    <el-dialog :title="title" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-          <el-col :span="12">
-            <el-form-item label="采购单号">
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入采购单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="供应商名称">
-              <el-input v-model.trim="listQuery.cooperativePartnerName" placeholder="请输入供应商名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="供应商编码">
-              <el-input v-model.trim="listQuery.cooperativePartnerCode" placeholder="请输入供应商编码" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="审批状态">
-              <el-select v-model="listQuery.approvalStatus" placeholder="审批状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in statusList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="订单状态">
-              <el-select v-model="listQuery.receivingStatus" placeholder="订单状态" style="width: 100%;" clearable>
-                <el-option v-for="(item, index) in receiptReturnType" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="交货日期">
-              <el-date-picker v-model="deliveryDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;"
-                clearable start-placeholder="请选择交货开始日期" end-placeholder="请选择交货结束日期"
-                :picker-options="pickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="createRequirementDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                :default-time="['00:00:00', '23:59:59']" style="width: 100%;" start-placeholder="请选择创建开始时间"
-                end-placeholder="请选择创建结束时间" clearable :picker-options="global.timePickerOptions"></el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
 
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
     <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
@@ -214,10 +159,9 @@
 </template>
 
 <script>
-// import { purchaseOrderList } from '@/api/purchasingManagement/purchaseInquirySheet'
+
 import {
   purchaseOrderList,
-  purchaseOrderReport,
   detailpurchaseOrderList,
   purPurchaseOrderExport,
   purPurchaseOrderdetail,
@@ -470,6 +414,7 @@ export default {
         ],
         receivingStatus: 'receiving'
       },
+      deliveryDateArr: [],
       // 明细参数
       listsQuery: {
         cooperativePartnerCode: '',
@@ -569,7 +514,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.searchDetail()
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
@@ -1022,14 +967,7 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
-      Object.keys(this.listQuery).forEach((key) => {
-        let item = this.listQuery[key]
-        this.listQuery[key] = typeof item === 'string' ? item.trim() : item
-      })
-      this.listQuery.pageNum = 1
-      this.initData()
-    },
+
     // 搜索明细
     searchDetail() {
       Object.keys(this.listsQuery).forEach((key) => {
@@ -1041,6 +979,7 @@ export default {
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
+      this.deliveryDateArr = []
       this.listQuery = {
         pageNum: 1,
         pageSize: 20,
@@ -1070,7 +1009,7 @@ export default {
       this.createRequirementDate = []
       this.deliveryDate = []
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.detailData()
     },
     // 重置明细
     resetDetail() {

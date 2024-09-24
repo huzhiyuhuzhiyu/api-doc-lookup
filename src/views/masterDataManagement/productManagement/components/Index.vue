@@ -232,7 +232,7 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;">
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
             <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
           </el-select>

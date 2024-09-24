@@ -4,24 +4,6 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <!-- <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.orderNo" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="供应商名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="listQuery.cooperativePartnerName" placeholder="品名规格" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col> -->
             <template v-for="item in searchList">
               <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
                 <el-form-item>
@@ -40,6 +22,14 @@
                 </el-form-item>
               </el-col>
             </template>
+            <el-col :span="4">
+              <el-form-item>
+                <el-select v-model="listQuery.documentStatus" placeholder="请选择" clearable style="width: 100%;">
+                  <el-option v-for="(item, index) in documentStatusList" :key="index" :label="item.label"
+                    :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="6">
               <el-form-item>
                 <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -57,7 +47,9 @@
           <div class="JNPF-common-head">
             <topOpts @add="addOrUpdateHandle('', 'add')">
               <el-button :disabled="tableDataList.length > 0 ? false : true" size="mini" type="primary"
-                icon="el-icon-download" @click="exportForm">导出</el-button>
+                icon="el-icon-download" @click="exportForm">
+                导出
+              </el-button>
             </topOpts>
             <div class="JNPF-common-head-right">
               <el-tooltip content="高级查询" placement="top" v-if="true">
@@ -76,38 +68,28 @@
 
           <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="dataTable"
             :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="orderNo" label="单号" min-width="180" sortable="custom">
+            <el-table-column prop="orderNo" label="单号" min-width="180">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.fixedPointPricingId, 'look')">
+                <el-link type="primary" @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                   {{ scope.row.orderNo }}
                 </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="cooperativePartnerName" label="供应商名称" min-width="150" sortable="custom" />
             <el-table-column prop="cooperativePartnerCode" label="供应商编码" min-width="150" sortable="custom" />
-            <el-table-column prop="drawingNo" label="品名规格" width="150" sortable="custom" />
-            <el-table-column prop="productsCode" label="产品编码" width="150" sortable="custom" />
-            <el-table-column prop="price" label="协议价(含税)" width="140" sortable="custom" />
-            <el-table-column prop="excludingTaxPrice" label="协议价(不含税)" width="160" sortable="custom" />
-            <el-table-column prop="taxRate" label="税率" width="80" sortable="custom" />
-            <el-table-column prop="effectiveTimeStart" label="有效时间起" width="150" sortable="custom" />
-            <el-table-column prop="effectiveTimeEnd" label="有效时间止" width="150" sortable="custom" />
-            <el-table-column prop="standardValue" label="规值" width="80" sortable="custom" />
-            <el-table-column prop="colour" label="颜色" width="80" sortable="custom" />
-            <el-table-column prop="remark" label="备注" width="150" />
             <el-table-column prop="documentStatus" label="单据状态" align="center" sortable="custom" width="120">
               <template slot-scope="scope">
                 <div v-if="scope.row.documentStatus == 'draft'"><el-tag type="warning">草稿</el-tag></div>
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-
-            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
             <el-table-column prop="createByName" label="创建人" />
+            <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
+
             <el-table-column label="操作" min-width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus !== 'draft'"
-                  @click="addOrUpdateHandle(scope.row.fixedPointPricingId, 'edit')">
+                  @click="addOrUpdateHandle(scope.row.id, 'edit')">
                   编辑
                 </el-button>
                 <el-button size="mini" type="text" class="JNPF-table-delBtn"
@@ -124,14 +106,14 @@
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
                       v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'"
-                      @click.native="addOrUpdateHandle(scope.row.fixedPointPricingId, 'add')">
+                      @click.native="addOrUpdateHandle(scope.row.id, 'add')">
                       重新提交
                     </el-dropdown-item>
                     <el-dropdown-item v-if="scope.row.approvalStatus === 'ing'"
                       @click.native="withdrawnHandle(scope.row.id, 'withdrawn')">
                       审批撤回
                     </el-dropdown-item>
-                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.fixedPointPricingId, 'look')">
+                    <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                       查看详情
                     </el-dropdown-item>
                   </el-dropdown-menu>
@@ -149,18 +131,18 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-     
+
     <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
   </div>
 </template>
 
 <script>
 import {
-  buyFixedPointPricingDetailList,
+  getbuyFixedPointPricingList,
   deletebuyFixedPointPricing,
   linesbuyFixedPointPricing
 } from '@/api/purchasingManagement/purchaseInquirySheet'
-import JNPFForm from '../pricingListedSeparately/Form.vue'
+import JNPFForm from './Form'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 import moment from 'moment'
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -172,19 +154,9 @@ export default {
   components: { JNPFForm, SuperQuery, ExportForm },
   data() {
     return {
-      columnList: ['cooperativePartnerCode', 'productsCode', 'remark', 'createByName'],
-      basicQuery: {},
-      superQuery: {},
+      columnList: ['cooperativePartnerCode', 'documentStatus', 'createByName'],
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
-        {
-          field: 'cooperativePartnerCode',
-          fieldValue: '',
-          label: '供应商名称',
-          symbol: 'like',
-          searchType: 1,
-          width: 120
-        },
         {
           field: 'cooperativePartnerName',
           fieldValue: '',
@@ -192,8 +164,7 @@ export default {
           symbol: 'like',
           searchType: 1,
           width: 120
-        },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        }
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -202,72 +173,16 @@ export default {
           label: '单号',
           type: 'input'
         },
+
         {
           prop: 'cooperativePartnerName',
           label: '供应商名称',
           type: 'input'
         },
-
         {
           prop: 'cooperativePartnerCode',
           label: '供应商编码',
           type: 'input'
-        },
-        {
-          prop: 'productDrawingNo',
-          label: '品名规格',
-          type: 'input'
-        },
-        {
-          prop: 'productCode',
-          label: '产品编码',
-          type: 'input'
-        },
-        {
-          prop: 'price',
-          label: '协议价(含税)',
-          type: 'input'
-        },
-        {
-          prop: 'excludingTaxPrice',
-          label: '协议价(不含税)',
-          type: 'input'
-        },
-        {
-          prop: 'taxRate',
-          label: '税率',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'createTime',
-          label: '有效时间起',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'createTime',
-          label: '有效时间止',
-          type: 'daterange',
-          valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
-          pickerOptions: this.global.timePickerOptions
-        },
-        {
-          prop: 'standardValue',
-          label: '规值',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'colour',
-          label: '颜色',
-          type: 'select',
-          options: []
         },
         {
           prop: 'documentStatus',
@@ -275,6 +190,7 @@ export default {
           type: 'select',
           options: [{ label: '草稿', value: 'draft' }, { label: '提交', value: 'submit' }]
         },
+
         {
           prop: 'createTime',
           label: '创建时间',
@@ -287,11 +203,6 @@ export default {
         {
           prop: 'createByName',
           label: '创建人',
-          type: 'input'
-        },
-        {
-          prop: 'remark',
-          label: '备注',
           type: 'input'
         }
       ],
@@ -308,7 +219,7 @@ export default {
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        classAttribute: 'other',
+        classAttribute: 'finish_product',
         orderItems: [
           {
             asc: false,
@@ -316,7 +227,7 @@ export default {
           },
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ],
         approvalStatus: '', // 审批状态 审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
@@ -407,9 +318,6 @@ export default {
       this.initData()
     }
   },
-  mounted() {
-    this.getProductClassFun()
-  },
   created() {
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
     this.superForm = this.listQuery
@@ -424,122 +332,40 @@ export default {
       this.superQueryVisible = false
       this.search('super')
     },
-    // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
-    getProductClassFun() {
-      let obj0 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa008',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj0).then((res) => {
-        console.log(res, 'res123')
-        let arr = []
-        arr = res.data.records.map(item => {
-          return {
-            label: item.name,
-            value: item.name
-          }
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'standardValue')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-
-      let obj16 = {
-        pageNum: -1,
-        pageSize: 20,
-        typeCode: 'pa010',
-        orderItems: [
-          {
-            asc: false,
-            column: ''
-          },
-          {
-            asc: false,
-            column: 'code'
-          }
-        ]
-      }
-      getbimProductAttributesList(obj16).then((res) => {
-        let arr = []
-        arr = res.data.records.map(item => {
-          return {
-            label: item.name,
-            value: item.name
-          }
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'colour')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-      })
-
-      // 获取税率(数据字典)
-      getbimProductAttributes('585438081021126405').then((res) => {
-        res.data.list.forEach((item) => {
-          item.taxRate = item.enCode.replace('%', '') * 1
-        })
-        this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
-        let arr = []
-        arr = res.data.list.map(item => {
-          return {
-            label: item.fullName,
-            value: item.taxRate
-          }
-        })
-        let tcObj = this.superQueryJson.find((item) => item.prop === 'taxRate')
-
-        if (tcObj) {
-          // 将options赋值为5
-          tcObj.options = arr
-        }
-        console.log(tcObj, 'tcObj')
-      })
-    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      let columnList = this.$refs.dataTable.columnList.filter((item) => !!item.label && !!item.prop)
+      columnList = columnList.map((item) => {
+        return { label: item.label, prop: item.prop }
+      })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(columnList)
+      })
     },
     download(data) {
       if (data) {
         this.exportFormVisible = false
         let includeFieldMap = {}
         for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+          includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
-        console.log(includeFieldMap);
+        console.log(includeFieldMap)
         let _data = {
           ...this.listQuery,
-          exportType: '1067',
-          exportName: '定点定价明细列表',
+          exportType: '1066',
+          exportName: '成品定点定价',
           includeFieldMap,
           pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: false,
+          totalRowFlag: false
         }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
+        excelExport(_data)
+          .then((res) => {
+            this.exportFormVisible = false
+            if (!res.data.url) return
+            this.jnpf.downloadFile(res.data.url)
+          })
+          .catch(() => { })
       }
     },
     sortChange({ prop, order }) {
@@ -590,7 +416,7 @@ export default {
         this.listQuery.startTime = ''
         this.listQuery.endTime = ''
       }
-      buyFixedPointPricingDetailList(this.superForm)
+      getbuyFixedPointPricingList(this.superForm)
         .then((res) => {
           console.log(res, '询价单列表')
           this.tableDataList = res.data.records
@@ -635,22 +461,13 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'cooperativePartnerCode',
-          fieldValue: '',
-          label: '供应商名称',
-          symbol: 'like',
-          searchType: 1,
-          width: 120
-        },
-        {
           field: 'cooperativePartnerName',
           fieldValue: '',
           label: '供应商编码',
           symbol: 'like',
           searchType: 1,
           width: 120
-        },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        }
       ]
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 

@@ -94,7 +94,7 @@
       </el-table>
     </el-form>
 
-    <ComSelect-page ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
+    <DkcComSelectPage ref="ComSelect-page" @change="addth" :tableItems="ProductTableItems" dialogTitle="选择产品"
       treeTitle="子件分类" :methodArr="ProductMethodArr" :listMethod="getProductList"
       :listRequestObj="ProductListRequestObj" :searchList="ProductTableSearchList" :elementShow="false" multiple
       :listDataFormatting="listDataFormatting" />
@@ -107,9 +107,10 @@ import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getLabel } from '@/utils/index'
+import DkcComSelectPage from "../ComSelect-page/index.vue";
 Vue.prototype.$getLabel = getLabel
 export default {
-  components: { FormItem },
+  components: { FormItem, DkcComSelectPage },
   name: 'TableForm-product',
   data() {
     return {
@@ -381,13 +382,5 @@ export default {
   text-align: 'center';
   padding: '10%';
   color: #aaa;
-}
-
-::v-deep .JNPF-dialog.JNPF-dialog_center .el-dialog .el-dialog__body {
-  overflow: auto;
-  overflow-x: hidden;
-  max-height: 70vh;
-  margin-left: -10px;
-  padding: 10px 20px 10px !important;
 }
 </style>

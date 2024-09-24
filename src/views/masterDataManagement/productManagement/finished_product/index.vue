@@ -175,7 +175,8 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
+                :hasDel="false">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
@@ -262,7 +263,7 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;">
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
             <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
           </el-select>

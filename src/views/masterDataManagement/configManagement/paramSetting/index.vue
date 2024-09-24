@@ -221,7 +221,7 @@ export default {
         }
         if (item.configKey == 'inbound_purchase' || item.configKey == 'inbound_external') {
 
-          width = 200
+          width = 240
         }
         // if (flag) {
         //   if (item.configKey == 'collect_exceed_picking') {

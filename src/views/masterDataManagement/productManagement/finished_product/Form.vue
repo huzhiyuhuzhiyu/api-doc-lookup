@@ -730,6 +730,8 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
+             
+
               this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
                 if (!res.modifyFlag) {
                   if (tc.prop === 'code') tc.itemDisabled = true

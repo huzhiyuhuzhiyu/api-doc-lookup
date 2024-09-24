@@ -425,7 +425,6 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -563,7 +562,6 @@ export default {
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
 
-        item.classAttribute = this.classAttribute
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
 
@@ -798,16 +796,13 @@ export default {
         this.fetchData("CKDH", true)
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
           console.log("classAttributeList",classAttributeList);
-          console.log("详情", res,);
-          // let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
-          // 筛选出 classAttribute 在 classAttributeList 中的对象 
+          console.log("详情", res,); 
 
           let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
           console.log(filteredArray);
 
           if (filteredArray.length) {
-            filteredArray.forEach(item => {
-              item.classAttribute = item.classAttribute
+            filteredArray.forEach(item => { 
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -956,7 +951,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

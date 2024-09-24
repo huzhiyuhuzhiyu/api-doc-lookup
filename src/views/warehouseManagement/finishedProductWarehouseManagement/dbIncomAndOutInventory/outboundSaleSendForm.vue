@@ -528,7 +528,7 @@ export default {
         item.ordersNum = JSON.parse(JSON.stringify(item.num))
         item.costPrice = item.price
         item.num = item.undeliveredQuantity
-        item.classAttribute = this.classAttribute
+        item.classAttribute = item.classAttribute
         item.noticeId = item.returnDeliveryNoticeId
         item.noticeLineId = item.id
         item.sourceNo = this.dataForm.sourceNo
@@ -953,7 +953,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

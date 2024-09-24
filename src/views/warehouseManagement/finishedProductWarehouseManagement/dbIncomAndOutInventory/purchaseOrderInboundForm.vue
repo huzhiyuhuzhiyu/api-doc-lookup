@@ -60,6 +60,16 @@
                                 placeholder="请选择仓库"></ComSelect-list>
                             </el-form-item>
                           </el-col>
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="检验结果" prop="inspectionResults">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
+
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
                               <el-input v-model="dataForm.remark" placeholder="请输入备注"
@@ -348,14 +358,17 @@ export default {
         businessType: [
           { required: true, message: '业务类型不能为空', trigger: 'change' }
         ],
-        inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
+        inspectionResults: [{ required: true, message: "检验结果不能为空", trigger: 'change' }],
 
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
       },
-
+      inspectionResultsList: [
+        { label: "待检验", value: "" },
+        { label: "检验合格", value: "qualified" },
+      ],
       productList: [],
       productTotal: 0,
       deliveryDateArr: [],
@@ -388,7 +401,6 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -528,7 +540,6 @@ export default {
         item.noticeLineId = item.id
 
 
-        item.classAttribute = item.classAttribute
 
 
         item.sourceNo = this.dataForm.sourceNo
@@ -658,7 +669,7 @@ export default {
 
 
 
- 
+
     goBack() {
       this.$emit('close', true)
     },
@@ -717,14 +728,13 @@ export default {
         this.title = '新建入库单'
         this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
         this.dataForm.partnerName = data[0].cooperativePartnerName
-   
+
         // this.refeshDataFormItems()
         data.forEach((item, index) => {
           item.productDrawingNo = item.drawingNo
           item.num = item.waitReceiptNum
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.costPrice = item.price
-          item.classAttribute = item.classAttribute
           item.ordersLineId = item.id
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
           let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

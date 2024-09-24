@@ -274,9 +274,6 @@ export default {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
-
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }

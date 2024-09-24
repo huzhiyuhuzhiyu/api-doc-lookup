@@ -283,7 +283,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -402,7 +402,6 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -529,8 +528,6 @@ export default {
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
 
-
-        item.classAttribute = this.classAttribute
 
 
         item.sourceNo = this.dataForm.sourceNo
@@ -723,13 +720,14 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
-      console.log("11", data, btnType, businessType);
+    init(data, btnType, businessType, classAttributeList,warehouseCode) {
+      console.log("11", data, btnType, businessType,classAttributeList,warehouseCode);
       // this.visible = true
       this.dataForm.businessType = businessType
+      this.warehouseCode=warehouseCode
       this.selectcustomerObj.type = 'supplier'
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
-      this.classAttribute = classAttribute
+      this.classAttributeList = classAttributeList
       this.btnType = btnType
       this.getBusInfo()
       if (btnType == 'look') {
@@ -758,7 +756,6 @@ export default {
           // }
           if (filteredArray.length) {
             filteredArray.forEach(item => {
-              item.classAttribute = item.classAttribute
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -892,7 +889,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

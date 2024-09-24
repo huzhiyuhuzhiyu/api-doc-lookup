@@ -399,7 +399,6 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
@@ -528,7 +527,6 @@ export default {
 
         item.costPrice = item.price
         item.num = item.waitDeliverNum
-        item.classAttribute = item.classAttribute
         item.ordersLineId = item.id
 
         this.productData.push(item)
@@ -754,7 +752,6 @@ export default {
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
           item.costPrice = item.price
           item.num = item.waitDeliverNum
-          item.classAttribute = item.classAttribute
           item.ordersLineId = item.id
           item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
           let taxrate = 1 * 1 + (item.taxRate) / 100 * 1

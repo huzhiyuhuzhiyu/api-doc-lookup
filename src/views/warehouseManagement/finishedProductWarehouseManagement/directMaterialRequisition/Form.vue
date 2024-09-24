@@ -178,6 +178,15 @@
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
                   v-if="btnType != 'look'" />
+                  <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.inspectionResults=='qualified'">合格</div>
+                    <div v-if="scope.row.inspectionResults=='unqualified'">不合格</div>
+                    <div v-if="scope.row.inspectionResults=='partially_qualified'">部分合格</div>
+                    <div v-if="scope.row.inspectionResults=='discard'">报废</div>
+                    <div v-if="scope.row.inspectionResults=='concessive_acceptance'">让步接收</div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
                 <el-table-column prop="standardValue" label="规值" width="120" :key="211" sortable="custom"
@@ -301,6 +310,7 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
         productCode: "",
         productName: "",
         orderItems: [{
@@ -439,6 +449,7 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
         productCode: "",
         productName: "",
         orderItems: [{
@@ -482,6 +493,7 @@ export default {
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
         productCode: "",
         productName: "",
         orderItems: [{

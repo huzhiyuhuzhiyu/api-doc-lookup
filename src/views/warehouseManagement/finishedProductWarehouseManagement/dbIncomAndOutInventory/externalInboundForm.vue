@@ -55,15 +55,18 @@
                               <ComSelect-list :requestObj="warehouseRequestObj" :dialogTitle="'选择仓库'"
                                 :isdisabled="btnType == 'look'" v-model="dataForm.warehouseName"
                                 :method="getWarehouseList" placeholder="请选择仓库"
-                                @change="changeWarehousex"></ComSelect-list>
-
-
-
-
-
+                                @change="changeWarehousex"></ComSelect-list> 
                             </el-form-item>
                           </el-col>
-
+                          <el-col :sm="6" :xs="24">
+                            <el-form-item label="检验结果" prop="inspectionResults">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
 
                           <el-col :sm="12" :xs="24">
                             <el-form-item label="备注" prop="remark">
@@ -118,7 +121,7 @@
 
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="140" :key="777" v-if="btnType!='look'">
+                        <el-table-column prop="waitReceiptNum" label="待收货数量" width="140" :key="777" v-if="btnType!='look'">
                         </el-table-column>
 
 
@@ -179,45 +182,11 @@
 
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
-              <!-- 销售发退货 -->
-              <el-form @submit.native.prevent
-                v-if="dataForm.businessType == 'outbound_sale_send' || dataForm.businessType == 'inbound_sale_return'">
-
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.customerProductDrawingNo" placeholder="请输入客户料号" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-input v-model="orderForm.drawingNo" placeholder="请输入品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;"
-                      :start-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货开始日期' : '退货开始日期'"
-                      :end-placeholder="dataForm.businessType == 'outbound_sale_send' ? '发货结束日期' : '退货结束日期'" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="searchProductFun()">
-                      {{ $t('common.search') }}</el-button>
-                    <el-button size="mini" icon="el-icon-refresh-right" @click="resetProductFun()">{{
-                      $t('common.reset') }}
-                    </el-button>
-                  </el-form-item>
-                </el-col>
-
-              </el-form>
+             
               <el-form @submit.native.prevent>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-input v-model="orderForm.orderNo" placeholder="收货单号" clearable />
+                    <el-input v-model="orderForm.cooperativePartnerName" placeholder="供应商名称" clearable />
                   </el-form-item>
                 </el-col>
                 <el-col :span="6">
@@ -228,7 +197,7 @@
                 <el-col :span="6">
                   <el-form-item>
                     <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="收货开始日期" end-placeholder="收货结束日期" clearable>
+                      style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -238,42 +207,15 @@
             <div class="JNPF-common-layout-main JNPF-flex-main">
               <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
                 @selection-change="handleSelectionChangeAllPruduct" ref="form">
-                <el-table-column prop="orderNo" label="收货单号" width="180" sortable="custom"></el-table-column>
-
-
-                <el-table-column prop="deliverDate" label="收货日期" width="160" sortable="custom" />
-
-
-                <el-table-column prop="ordersNo" label="订单号" width="160" sortable="custom" />
-                <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+                <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom"> </el-table-column>
+                <el-table-column prop="cooperativePartnerName" label="供应商名称" width="160" sortable="custom" />
+                <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-
-                <el-table-column prop="mainUnit" label="单位" width="90" sortable="custom" />
-
-
-                <el-table-column prop="purchaseQuantity" label="数量" width="120" sortable="custom" />
-
-
-
-                <el-table-column prop="requiredReceivedQuantity" label="待收货数量" width="160" sortable="custom" />
-
-
-
-
-                <!-- { label: "销售发货", value: "outbound_sale_send" },
-        { label: "销售退货", value: "inbound_sale_return" },
-        { label: "采购收货", value: "inbound_purchase" },
-        { label: "采购退货", value: "outbound_purchase" },
-        { label: "生产领料", value: "outbound_pick_out" },
-        { label: "生产退料", value: "inbound_return_materials" },
-        { label: "外协发料", value: "outbound_external_send" },
-        { label: "外协退料", value: "inbound_external_return" },
-        { label: "外协收货", value: "inbound_external" },
-        { label: "外协退货", value: "outbound_external" }, -->
-
-                <el-table-column prop="processName" label="工序" width="160" sortable="custom" />
-
-                <el-table-column prop="remark" label="备注" width="160" sortable="custom" />
+                <el-table-column prop="processName" label="工序名称" width="160" sortable="custom" />
+                <el-table-column prop="mainUnit" label="单位" width="80" />
+                <el-table-column prop="purchaseQuantity" label="数量" width="100" sortable="custom" />
+                <el-table-column prop="waitReceiptNum" label="待收货数量" width="160" sortable="custom" />
+                <el-table-column prop="deliveryDate" label="交货日期" width="160" sortable="custom" />
                 <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
               </JNPF-table>
               <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
@@ -313,8 +255,9 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
+import { purPurchaseReceiptReturnGoodsList, detailpurchaseOrderList } from "@/api/purchasingAndOutsourcingOrders/index"
 
 import CustomerForm from './customerForm.vue'
 import WareHouseForm from './wareHouseForm.vue'
@@ -393,14 +336,17 @@ export default {
         businessType: [
           { required: true, message: '业务类型不能为空', trigger: 'change' }
         ],
-        inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
+        inspectionResults: [{ required: true, message: "检验结果不能为空", trigger: 'change' }],
 
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
           { required: true, message: '仓库不能为空', trigger: 'change' }
         ],
       },
-
+      inspectionResultsList: [
+        { label: "待检验", value: "" },
+        { label: "检验合格", value: "qualified" },
+      ],
       productList: [],
       productTotal: 0,
       deliveryDateArr: [],
@@ -437,6 +383,9 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      wareHouseInfo:{},
+      classAttributeList:[],
+      warehouseCode:"",
     }
   },
   created() {
@@ -506,19 +455,20 @@ export default {
     },
     // 销售发货选择产品——搜索 如果是销售订单  需要计算待出库数量=订单数量-已出库数量  如果是通知单 则直接取接口返回的待出库数量
     searchProductFun() {
-      this.deliveryDateArr = []
 
       this.orderForm = { //获取产品数据
-        cooperativePartnerId: "",
+        cooperativePartnerId: this.dataForm.cooperativePartnerId,
         drawingNo: "",        // customerProductNo: "",
         customerProductDrawingNo: "",
         deliverDateEnd: "",
         deliverDateStart: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
+        externalFlag:true,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
         receivingStatus: "not_finished",
+        receiptQueryFlag:true,
         orderItems: [{
           asc: false,
           column: ""
@@ -534,7 +484,7 @@ export default {
         this.orderForm.deliverDateStart = ""
         this.orderForm.deliverDateEnd = ""
       }
-      purPurchaseReceiptReturnGoodsDetailList(this.orderForm).then(res => {
+      detailpurchaseOrderList(this.orderForm).then(res => {
         console.log("采购明细",);
         this.productList = res.data.records
         this.productTotal = res.data.total
@@ -563,7 +513,11 @@ export default {
       arr.forEach(item => {
         let taxrate = 1 * 1 + (item.taxRate) / 100 * 1
         item.excludingTaxCostPrice = this.jnpf.numberFormat(this.jnpf.math('divide', [item.price, taxrate]), 6)
-
+        if(item.orderType=="external"){
+            item.processId=""
+            item.processName=""
+            item.processCode=""
+          }
         item.num = item.requiredReceivedQuantity
         item.ordersId = item.purchaseOrderId
         item.noticeId = item.purchaseReceiptReturnGoodsId
@@ -573,14 +527,6 @@ export default {
         item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
-
-
-
-
-
-
-        item.classAttribute = this.classAttribute
-
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
 
@@ -759,7 +705,19 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+  // 获取仓库id
+  getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = res.data
+          this.dataForm.warehouseType = res.data.type
+          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -807,6 +765,11 @@ export default {
         this.dataForm.partnerName = data[0].cooperativePartnerName
         // this.refeshDataFormItems()
         data.forEach((item, index) => {
+          if(item.orderType=="external"){
+            item.processId=""
+            item.processName=""
+            item.processCode=""
+          }
           item.productDrawingNo = item.drawingNo
           item.num = item.waitReceiptNum
           item.totalAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, item.price]), 6)
@@ -959,7 +922,7 @@ export default {
               element.warehouseType = this.dataForm.warehouseType
             });
             this.dataForm.classAttribute = this.classAttribute
-            this.dataForm.sourceType = 'notice'
+            this.dataForm.sourceType = 'order'
             let dataObj = {
               stockMove: this.dataForm,
               lines: this.productData,

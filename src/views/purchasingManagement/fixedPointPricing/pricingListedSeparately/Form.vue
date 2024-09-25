@@ -25,10 +25,10 @@
                       <el-col :span="12">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="单号" :disabled="type === 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -260,10 +260,10 @@
                   <el-col :span="12">
                     <el-form-item label="单号" prop="orderNo">
                       <el-input v-model="dataForm.orderNo" placeholder="单号" :disabled="type === 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                         "></el-input>
                     </el-form-item>
                   </el-col>
@@ -625,8 +625,8 @@ export default {
         { prop: 'colour', label: '颜色' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       dataFormTwo: {
@@ -935,6 +935,10 @@ export default {
     },
     handleFileChange(file) {
       this.file = file.raw
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
       this.UploadProduct(this.file)

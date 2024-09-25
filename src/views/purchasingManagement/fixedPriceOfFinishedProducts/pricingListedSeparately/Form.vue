@@ -3,7 +3,7 @@
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
         <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
-          <el-page-header @back="goBack" :content="dialogTitle + `定点定价单`" />
+          <el-page-header @back="goBack" :content="dialogTitle + `成品定点定价单`" />
           <div class="options" v-if="type != 'look'">
             <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿
@@ -25,10 +25,10 @@
                       <el-col :span="12">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="单号" :disabled="type === 'look'
-                              ? true
-                              : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                                ? false
-                                : true
+                            ? true
+                            : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                              ? false
+                              : true
                             "></el-input>
                         </el-form-item>
                       </el-col>
@@ -331,10 +331,10 @@
                   <el-col :span="12">
                     <el-form-item label="单号" prop="orderNo">
                       <el-input v-model="dataForm.orderNo" placeholder="单号" :disabled="type === 'look'
-                          ? true
-                          : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
-                            ? false
-                            : true
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
                         "></el-input>
                     </el-form-item>
                   </el-col>
@@ -765,8 +765,8 @@ export default {
         { prop: 'colour', label: '颜色' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       dataFormTwo: {
@@ -1076,6 +1076,10 @@ export default {
     handleFileChange(file) {
       this.file = file.raw
     },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
+    },
     saveSubmit() {
       this.UploadProduct(this.file)
     },
@@ -1113,7 +1117,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/定点定价导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/成品定点定价导入模板.xlsx')
       a.click()
     },
     checktaxRate() {

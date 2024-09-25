@@ -145,6 +145,7 @@ export default {
   },
 
   methods: {
+   
     init(row) {
       console.log("供需信息", row);
       this.processData = row

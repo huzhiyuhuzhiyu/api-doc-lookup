@@ -418,13 +418,7 @@ export default {
         pageNum: 1,
         pageSize: 20,
         partnerCategoryId: '',
-        type: 'supplier',
-        orderItems: [
-          {
-            asc: false,
-            column: 'code'
-          }
-        ],
+        type: 'supplier'
       },
       getCooperativeData,
       activeName: 'jcInfo',
@@ -451,7 +445,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: 'code'
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
           }
         ],
         productStatus: 'enable',

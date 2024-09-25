@@ -518,7 +518,7 @@ export default {
         {
           category: 'Web',
           description: '',
-          enCode: 'inventory',
+          enCode: 'awaitInspectionInventory',
           enabledMark: 1,
           fullName: '待检验库存',
           icon: 'icon-ym icon-ym-webForm',

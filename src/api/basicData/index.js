@@ -1688,6 +1688,15 @@ export function getBatchNumber(data) {
     data
   })
 }
+// 库存明细报表
+export function getInventoryLineReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/report`,
+    method: 'post',
+    data
+  })
+}
+
 
 // 查找批次号
 

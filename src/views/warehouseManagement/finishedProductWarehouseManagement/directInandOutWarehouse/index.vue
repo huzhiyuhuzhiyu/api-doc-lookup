@@ -47,6 +47,15 @@
                               @change="changeWarehousex"></ComSelect-list>
                           </el-form-item>
                         </el-col>
+                        <el-col :sm="6" :xs="24"  v-if="dataForm.documentType == 'inbound'">
+                            <el-form-item label="检验结果" prop="inspectionResults">
+                              <el-select v-model="dataForm.inspectionResults" placeholder="请选择检验结果"
+                                style="width: 100%;">
+                                <el-option v-for="(item, index) in inspectionResultsList" :key="index"
+                                  :label="item.label" :value="item.value"></el-option>
+                              </el-select>
+                            </el-form-item>
+                          </el-col>
 
 
                         <el-col :sm="12" :xs="24">
@@ -530,13 +539,13 @@ export default {
       getWarehouseList,
 
       inspectionResultsList: [//检验下拉框数据
-        { label: "合格", value: "qualified" },
-        { label: "待检验", value: "unInspect" },
+      { label: "待检验", value: "unInspect" },
+      { label: "检验合格", value: "qualified" },
       ],
       dataRule: {
         documentType: [{ required: true, message: "单据类型不能为空", trigger: 'change' }],
 
-        inspectionResults: [{ required: true, message: "检验标志不能为空", trigger: 'change' }],
+        inspectionResults: [{ required: true, message: "检验结果不能为空", trigger: 'change' }],
 
         orderNo: [{ required: true, message: "请输入单号", trigger: 'blur' }],
         warehouseName: [
@@ -1173,8 +1182,8 @@ export default {
         this.dataForm.warehouseId = res.data[0].id
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => { 
-          this.dataForm.warehouseType = res.data.type
-          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
       })
     },

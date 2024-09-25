@@ -12,9 +12,10 @@ import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseM
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
+import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory},
   data() {
     return {
       businessType:"",
@@ -69,6 +70,9 @@ export default {
     }
     if(this.businessType=='directMaterialRequisition'){
       this.listPageComponent=directMaterialRequisition
+    }
+    if(this.businessType=='awaitInspectionInventory'){
+      this.listPageComponent=awaitInspectionInventory
     }
     // if()
 

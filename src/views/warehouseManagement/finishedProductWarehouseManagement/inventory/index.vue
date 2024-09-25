@@ -316,7 +316,8 @@ export default {
           this.totalData = res.data.stockSts
           this.total = res.data.whPage.total
         }else{
-
+          this.tableData=[]
+          this.totalData = 0
         }
 
         this.listLoading = false

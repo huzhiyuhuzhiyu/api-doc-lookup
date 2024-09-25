@@ -239,7 +239,7 @@ export default {
       ],
       getProductWithOut, // 产品选择弹出框树状列表请求api
       ProductMethodArr: [
-        { label: '子件分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
+        { label: '产品分类', classAttribute: '', method: getcategoryTree, requestObj: { classAttribute: '' } }
       ], // 产品选择弹出框树状列表
       ProductListRequestObj: {
         createByName: '',
@@ -308,7 +308,7 @@ export default {
       if (tc.type == 'custom') {
         // 若干需要选择的产品
         if (tc.prop === 'drawNo') {
-          tc.dialogTitle = '选择产品'
+          tc.dialogTitle = '选择子件'
           tc.placeholder = '请选择产品'
           // tc.treeTitle = '产品分类'
           // tc.methodArr = this.ProductMethodArr

@@ -606,7 +606,11 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: 'code'
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
           }
         ],
         productStatus: 'enable',

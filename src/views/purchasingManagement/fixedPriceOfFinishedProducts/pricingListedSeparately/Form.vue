@@ -2,25 +2,25 @@
   <div>
     <transition name="el-zoom-in-center">
       <div class="JNPF-preview-main org-form">
-        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']">
-          <el-page-header @back="goBack" :content="dialogTitle + `定点定价单`" />
+        <div :class="['JNPF-common-page-header', type === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
+          <el-page-header @back="goBack" :content="dialogTitle + `成品定点定价单`" />
           <div class="options" v-if="type != 'look'">
-            <el-button type="success" :loading="btnLoading" @click="dataFormSubmit('draft')">
+            <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
               保存草稿
             </el-button>
-            <el-button type="primary" :loading="btnLoading" @click="dataFormSubmit('submit')">
+            <el-button type="primary" :loading="btnLoading" @click="handleConfirm('submit')">
               保存并提交
             </el-button>
             <el-button @click="goBack">{{ $t('common.cancelButton') }}</el-button>
           </div>
         </div>
         <div class="main">
-          <el-tabs v-model="activeName">
+          <el-tabs v-model="activeName" v-if="!approvalFlag">
             <el-tab-pane label="基础信息" name="jcInfo">
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="12">
                         <el-form-item label="单号" prop="orderNo">
@@ -316,89 +316,303 @@
             <el-tab-pane label="附件" name="annex">
               <UploadWj v-model="datafilelist" :disabled="type === 'look'" :detailed="type === 'look'"></UploadWj>
             </el-tab-pane>
-            <el-tab-pane label="流程信息" name="approvalFlow">
-              <workFlow v-if="workVisible" :nodeFirst="firstOneNode" :btnType="type" :nodeConfig.sync="busNodeConfig"
-                ref="workflowRef" />
-              <div class="noDataTip" v-if="!workVisible">
-                <span class="el-table__empty-text">
-                  <div data-v-4d190d64="" class="el-empty">
-                    <div class="el-empty__image" style="width: 120px;">
-                      <svg viewBox="0 0 79 86" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <defs>
-                          <linearGradient id="linearGradient-1-48" x1="38.8503086%" y1="0%" x2="61.1496914%" y2="100%">
-                            <stop stop-color="#FCFCFD" offset="0%"></stop>
-                            <stop stop-color="#EEEFF3" offset="100%"></stop>
-                          </linearGradient>
-                          <linearGradient id="linearGradient-2-48" x1="0%" y1="9.5%" x2="100%" y2="90.5%">
-                            <stop stop-color="#FCFCFD" offset="0%"></stop>
-                            <stop stop-color="#E9EBEF" offset="100%"></stop>
-                          </linearGradient>
-                          <rect id="path-3-48" x="0" y="0" width="17" height="36"></rect>
-                        </defs>
-                        <g id="Illustrations" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                          <g id="B-type" transform="translate(-1268.000000, -535.000000)">
-                            <g id="Group-2" transform="translate(1268.000000, 535.000000)">
-                              <path id="Oval-Copy-2"
-                                d="M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z"
-                                fill="#F7F8FC"></path>
-                              <polygon id="Rectangle-Copy-14" fill="#E5E7E9"
-                                transform="translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) "
-                                points="13 58 53 58 42 45 2 45"></polygon>
-                              <g id="Group-Copy"
-                                transform="translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)">
-                                <polygon id="Rectangle-Copy-10" fill="#E5E7E9"
-                                  transform="translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) "
-                                  points="2.84078316e-14 3 18 3 23 7 5 7"></polygon>
-                                <polygon id="Rectangle-Copy-11" fill="#EDEEF2"
-                                  points="-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"></polygon>
-                                <rect id="Rectangle-Copy-12" fill="url(#linearGradient-1-48)"
-                                  transform="translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) "
-                                  x="38" y="7" width="17" height="36"></rect>
-                                <polygon id="Rectangle-Copy-13" fill="#F8F9FB"
-                                  transform="translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) "
-                                  points="24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"></polygon>
-                              </g>
-                              <rect id="Rectangle-Copy-15" fill="url(#linearGradient-2-48)" x="13" y="45" width="40"
-                                height="36">
-                              </rect>
-                              <g id="Rectangle-Copy-17" transform="translate(53.000000, 45.000000)">
-                                <mask id="mask-4-48" fill="white">
-                                  <use xlink:href="#path-3-48"></use>
-                                </mask>
-                                <use id="Mask" fill="#E0E3E9"
-                                  transform="translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) "
-                                  xlink:href="#path-3-48"></use>
-                                <polygon id="Rectangle-Copy" fill="#D5D7DE" mask="url(#mask-4-48)"
-                                  transform="translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) "
-                                  points="7 0 24 0 20 18 -1.70530257e-13 16"></polygon>
-                              </g>
-                              <polygon id="Rectangle-Copy-18" fill="#F8F9FB"
-                                transform="translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) "
-                                points="62 45 79 45 70 58 53 58"></polygon>
-                            </g>
-                          </g>
-                        </g>
-                      </svg>
-                    </div>
-                    <div class="el-empty__description">
-                      <p>暂无流程信息</p>
-                    </div>
-                  </div>
-                </span>
-              </div>
+            <el-tab-pane label="流程信息" name="approvalFlow" v-if="dataForm.approvalFlag">
+              <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
             </el-tab-pane>
-            <el-tab-pane v-if="type == 'look'" label="流转记录" name="transferList">
-              <el-table v-loading="formLoading" :data="transferData">
-                <el-table-column prop="businessName" label="审批业务名称" min-width="160" />
-                <el-table-column prop="processedName" label="办理人名称" min-width="160" />
-                <el-table-column prop="remark" label="备注" min-width="160" />
-                <el-table-column prop="startDate" label="开始时间" min-width="160" />
-                <el-table-column prop="endDate" label="结束时间" min-width="160" />
-                <el-table-column prop="consumingTime" label="耗时" min-width="160" />
-              </el-table>
+            <el-tab-pane v-if="type == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
+              <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
             </el-tab-pane>
           </el-tabs>
+          <el-collapse v-model="activeNames" v-else>
+            <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+              <el-row :gutter="15" class="">
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                  label-position="top">
+                  <el-col :span="12">
+                    <el-form-item label="单号" prop="orderNo">
+                      <el-input v-model="dataForm.orderNo" placeholder="单号" :disabled="type === 'look'
+                        ? true
+                        : codeConfig.codeWay == 'auto' && codeConfig.modifyFlag == true
+                          ? false
+                          : true
+                        "></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
+                      <ComSelect-page clearable :treeNodeClick="treeNodeClick" :isdisabled="type === 'look'"
+                        :value="dataForm.cooperativePartnerName" ref="ComSelect-page" @change="supplierdata"
+                        :tableItems="PartnerTableItems" :placeholder="'请选择供应商'" title="选择供应商" treeTitle="供应商分类"
+                        :methodArr="PartnerMethodArr" :listMethod="getCooperativeData"
+                        :listRequestObj="PartnerListRequestObj" :paramsObj="{}" :searchList="PartnerTableSearchList" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="备注">
+                      <el-input v-model="dataForm.remark" type="textarea" placeholder="备注"
+                        :disabled="type === 'look'"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-form>
+              </el-row>
+            </el-collapse-item>
+
+            <el-collapse-item title="产品信息" name="productInfo">
+              <div v-if="type !== 'look'" style="margin-left: -12px;">
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" :disabled="type == 'look' ? true : false" @click="openSeleceProductDialog()">
+                  选择产品
+                </el-button>
+                |
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                  删除产品
+                </el-button>
+                |
+
+                <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                  icon="el-icon-plus" :disabled="type == 'look'" @click="addtable()">
+                  导入产品
+                </el-button>
+              </div>
+
+              <el-form :model="dataFormTwo" ref="productForm" style="margin: 0 -12px;">
+                <el-table style="border: 1px solid #e3e7ee;" @selection-change="handeleProductInfoData" hasC hasNO
+                  fixedNO v-bind="dataFormTwo.data" :data="dataFormTwo.data" id="table">
+                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                  <el-table-column type="index" key="index" width="60" label="序号" align="center" fixed="left" />
+                  <!-- <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="200"
+                        show-overflow-tooltip>
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'"
+                            :rules="productRules.drawingNo">
+                            <div class="viewData">
+                              <span>{{ scope.row.drawingNo }}</span>
+                            </div>
+                          </el-form-item>
+                        </template>
+</el-table-column> -->
+
+                  <el-table-column prop="drawingNo" key="drawingNo" label="品名规格" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'drawingNo'" :rules="productRules.drawingNo">
+                        <el-input v-model="scope.row.drawingNo" :disabled="type === 'look'" maxlength="20"
+                          :placeholder="type == 'look' ? '' : '请输入品名规格'">
+                          {{ scope.row.drawingNo }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="mainUnit" key="mainUnit" label="单位" width="100">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'" :rules="productRules.mainUnit">
+                        <el-input v-model="scope.row.mainUnit" :disabled="type === 'look'" maxlength="20"
+                          :placeholder="type == 'look' ? '' : '请输入单位'">
+                          {{ scope.row.mainUnit }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="price" key="price" label="协议价" min-width="140">
+                    <template slot="header">
+                      协议价(含税)
+                      <span class="required">*</span>
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'price'" :rules="productRules.price">
+                        <el-input v-model="scope.row.price" @input="priceChange($event, scope)"
+                          :disabled="type === 'look'" maxlength="20" placeholder="请输入协议价">
+                          {{ scope.row.price }}
+                        </el-input>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="taxRate" key="taxRate" label="税率" min-width="140">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      税率
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'" :rules="productRules.taxRate">
+                        <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
+                          :disabled="type === 'look' ? true : false">
+                          <el-option v-for="item in taxRateList" size="small" :key="item.enCode" :label="item.fullName"
+                            :value="item.enCode"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <!-- <el-table-column prop="excludingTaxPrice" key="excludingTaxPrice" label="协议价(不含税)"
+                        min-width="180">
+                        <template slot-scope="scope">
+                          <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'"
+                            :rules='productRules.excludingTaxPrice'>
+                            <el-input v-model="scope.row.excludingTaxPrice" :disabled="type === 'look'" maxlength="20"
+                              placeholder="请输入不含税价">{{
+                                scope.row.excludingTaxPrice }}
+                            </el-input>
+                          </el-form-item>
+
+                        </template>
+                      </el-table-column> -->
+                  <el-table-column prop="excludingTaxPrice" key="excludingTaxPrice" label="协议价(不含税)" width="150"
+                    show-overflow-tooltip>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'excludingTaxPrice'">
+                        <div class="viewData">
+                          <span>{{ scope.row.excludingTaxPrice }}</span>
+                        </div>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="effectiveTimeStart" key="effectiveTimeStart" label="有效起始时间" min-width="240">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      有效起始时间
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeStart'"
+                        :rules="productRules.effectiveTimeStart">
+                        <el-date-picker v-model="scope.row.effectiveTimeStart" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择有效起始时间"
+                          :disabled="type == 'look' ? true : false"></el-date-picker>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="effectiveTimeEnd" key="effectiveTimeEnd" label="有效结束时间" min-width="240">
+                    <template slot="header">
+                      <span class="required">*</span>
+                      有效结束时间
+                    </template>
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'effectiveTimeEnd'"
+                        :rules="productRules.effectiveTimeEnd">
+                        <el-date-picker v-model="scope.row.effectiveTimeEnd" type="date" value-format="yyyy-MM-dd"
+                          style="width: 100%;" placeholder="请选择有效结束时间"
+                          :disabled="type == 'look' ? true : false"></el-date-picker>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" :key="211">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'sealingCoverTyping'"
+                        :rules="productRules.sealingCoverTyping">
+                        <el-select v-model="scope.row.sealingCoverTyping" placeholder="请选择" clearable
+                          style="width: 100%;" :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list0" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="accuracyLevel" key="accuracyLevel" label="精度等级" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'accuracyLevel'"
+                        :rules="productRules.accuracyLevel">
+                        <el-select v-model="scope.row.accuracyLevel" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list1" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="vibrationLevel" key="vibrationLevel" label="振动等级" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'vibrationLevel'"
+                        :rules="productRules.vibrationLevel">
+                        <el-select v-model="scope.row.vibrationLevel" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list2" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="oil" key="oil" label="油脂" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'oil'" :rules="productRules.oil">
+                        <el-select v-model="scope.row.oil" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list3" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="oilQuantity" key="oilQuantity" label="油脂量" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'oilQuantity'"
+                        :rules="productRules.oilQuantity">
+                        <el-select v-model="scope.row.oilQuantity" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list4" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="clearance" key="clearance" label="游隙" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'clearance'" :rules="productRules.clearance">
+                        <el-select v-model="scope.row.clearance" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list5" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="packagingMethod" key="packagingMethod" label="包装方式" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'packagingMethod'"
+                        :rules="productRules.packagingMethod">
+                        <el-select v-model="scope.row.packagingMethod" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list6" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="specialRequire" key="specialRequire" label="特殊要求" min-width="180">
+                    <template slot-scope="scope">
+                      <el-form-item :prop="'data.' + scope.$index + '.' + 'specialRequire'"
+                        :rules="productRules.specialRequire">
+                        <el-select v-model="scope.row.specialRequire" placeholder="请选择" clearable style="width: 100%;"
+                          :disabled="type === 'look'">
+                          <el-option v-for="(item, index) in list7" :key="index" :label="item.name"
+                            :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="remark" label="备注" key="remark" min-width="220">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.remark" maxlength="20" :disabled="type === 'look'"
+                        :placeholder="type == 'look' ? '' : '请输入备注'">
+                        {{ scope.row.remark }}
+                      </el-input>
+                    </template>
+                  </el-table-column>
+
+                  <el-table-column label="操作" width="180" fixed="right" v-if="type != 'look'" key="look">
+                    <template slot-scope="scope">
+                      <el-button type="text" class="JNPF-table-delBtn" :disabled="type === 'look'"
+                        @click="delequipment_process_relList(scope.$index)">
+                        删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
         </div>
       </div>
     </transition>
@@ -445,7 +659,7 @@ import {
 } from '@/api/purchasingManagement/purchaseInquirySheet' // 询价单
 import { getcategoryTree as productCategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
-import workFlow from '@/components/WorkFlow/settingBus.vue'
+
 import {
   getApprovalTemplate,
   getApprovalDetailTree,
@@ -456,16 +670,26 @@ import {
 } from '@/api/basicData/approvalAdministrator'
 import { getbimProductAttributes, getbimProductAttributesList } from '@/api/masterDataManagement/index'
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
-import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import { mapGetters, mapState } from 'vuex'
 import { getLabel } from '@/utils/index'
 Vue.prototype.$getLabel = getLabel
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import Process from '@/components/Process/Preview'
+import busFlow from '@/mixins/generator/busFlow'
+import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
   components: {
-    workFlow
+    Process,
+    recordList
   },
+  mixins: [busFlow],
   data() {
     return {
+      flowTemplateJson: {},
+      flowData: {},
+      approvalFlag: false, // 待办事宜等页面 需要
+      flowTaskOperatorRecordList: [],
+      endTime: 0,
       activeNames: ['productInfo', 'basicInfo'],
       datafilelist: [],
       //  供应商 树请求
@@ -541,8 +765,8 @@ export default {
         { prop: 'colour', label: '颜色' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
 
       dataFormTwo: {
@@ -804,7 +1028,6 @@ export default {
     },
     // 产品组件回调
     addth(id, data) {
-      console.log(data)
       if (data.length) {
         let selectArr = []
         let list = data.map((item) => item.all)
@@ -842,8 +1065,6 @@ export default {
             }
             return true
           })
-          console.log(data, '删除后的数据')
-          console.log(deletedArray, '被删掉的数据')
         }
         this.dataFormTwo.data = [...this.dataFormTwo.data, ...selectArr]
         // 获取审批模版
@@ -853,15 +1074,17 @@ export default {
       }
     },
     handleFileChange(file) {
-      console.log(file, 'file')
       this.file = file.raw
+    },
+    cancelFun() {
+      this.uploadVisib = false
+      this.$refs['uploadRef'].clearFiles()
     },
     saveSubmit() {
       this.UploadProduct(this.file)
     },
     // 上传产品
     UploadProduct(data) {
-      console.log(data, 'o')
       this.loadingText = '正在导入数据'
       this.formLoading = true
       var formData = new FormData()
@@ -894,7 +1117,7 @@ export default {
     downLoadTemplate() {
       const a = document.createElement('a')
       a.setAttribute('download', '')
-      a.setAttribute('href', location.origin + '/static/定点定价导入模板.xlsx')
+      a.setAttribute('href', location.origin + '/static/成品定点定价导入模板.xlsx')
       a.click()
     },
     checktaxRate() {
@@ -926,9 +1149,8 @@ export default {
       this.$refs['SupplierRef'].openDialog()
     },
     supplierdata(id, data) {
-      console.log(data, '供应商数据')
       this.$nextTick(() => {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       })
       if (data.length === 0) {
         this.dataForm.cooperativePartnerName = ''
@@ -983,31 +1205,32 @@ export default {
       }
     },
 
-    init(id, type, pool, fixedData) {
-      console.log(id, type)
+    init(id, type, approvalFlag, fixedData) {
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''
-      this.pool = pool
+      // this.pool = pool
       this.dialogTitle = !this.dataForm.id ? '新建' : type == 'edit' ? '编辑' : `查看`
       this.type = type
-
+      this.approvalFlag = approvalFlag
       this.getProductClassFun()
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
           this.fetchData('DDDJ', true)
-          if (pool == 'fixPool') {
-            this.dataFormTwo.data = fixedData
-            // 审批
-            this.$nextTick(() => {
-              this.getBusInfo()
-            })
-          }
+          // if (pool == 'fixPool') {
+          //   this.dataFormTwo.data = fixedData
+          //   // 审批
+          //   this.$nextTick(() => {
+          //     this.getBusInfo()
+          //   })
+          // }
+          this.$nextTick(() => {
+            this.getBusInfo()
+          })
         } else if (this.type == 'add' && this.dataForm.id) {
           this.loading = true
           getbuyFixedPointPricingDetail(this.dataForm.id).then((res) => {
-            console.log(res, '详情')
             this.dataForm = {
               id: res.data.id,
               cooperativePartnerCode: res.data.cooperativePartnerCode,
@@ -1042,7 +1265,6 @@ export default {
         } else {
           this.loading = true
           getbuyFixedPointPricingDetail(this.dataForm.id).then((res) => {
-            console.log(res, '详情')
             this.dataForm = {
               id: res.data.id,
               cooperativePartnerCode: res.data.cooperativePartnerCode,
@@ -1066,9 +1288,10 @@ export default {
                 })
               })
             }
+            // 流程信息和流转记录
+            if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
           })
           getSaleBusDetail(this.dataForm.id).then((res) => {
-            console.log(res, '业务详情')
             if (res.data) {
               this.firstOneNode = []
               this.approvalForm = res.data.form
@@ -1087,10 +1310,8 @@ export default {
                 // })
               }
               if (this.type == 'look') {
-                console.log(this.approvalForm, '++++++++++')
                 this.transferQuery.documentId = this.dataForm.id
                 approvalTransferList(this.transferQuery).then((res) => {
-                  console.log(res, '流转记录')
                   this.transferData = res.data.records
                 })
               }
@@ -1118,7 +1339,6 @@ export default {
       getclassAttributeList(obj).then((res) => {
         let arr = []
         res.data.records.forEach((item) => {
-          console.log(item, 'ooo')
           let obj = {
             label: item.name,
             value: item.code
@@ -1133,7 +1353,7 @@ export default {
       res.data.records.forEach((item, index) => {
         item.classAttributeName = this.$getLabel(this.classAttributeList, item.classAttribute, 'value', 'label')
       })
-      console.log(res.data.records, 'res.data.records')
+
       return res.data.records
     },
     addtable() {
@@ -1177,9 +1397,7 @@ export default {
       }
 
       getbimProductAttributesList(obj1).then((res) => {
-
         this.list0 = res.data.records
-        console.log(this.list0, '0')
       })
       let obj2 = {
         pageNum: -1,
@@ -1198,7 +1416,6 @@ export default {
       }
 
       getbimProductAttributesList(obj2).then((res) => {
-
         this.list1 = res.data.records
       })
       let obj3 = {
@@ -1217,7 +1434,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj3).then((res) => {
-
         this.list2 = res.data.records
       })
       let obj4 = {
@@ -1236,7 +1452,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj4).then((res) => {
-
         this.list3 = res.data.records
       })
       let obj5 = {
@@ -1255,7 +1470,6 @@ export default {
         ]
       }
       getbimProductAttributesList(obj5).then((res) => {
-
         this.list4 = res.data.records
       })
       let obj6 = {
@@ -1275,7 +1489,6 @@ export default {
       }
 
       getbimProductAttributesList(obj6).then((res) => {
-
         this.list5 = res.data.records
       })
       let obj7 = {
@@ -1294,32 +1507,27 @@ export default {
         ]
       }
       getbimProductAttributesList(obj7).then((res) => {
-
         this.list6 = res.data.records
       })
-
 
       let obj8 = {
         pageNum: -1,
         pageSize: 20,
-        typeCode: "pa016",
+        typeCode: 'pa016',
         orderItems: [
           {
             asc: false,
-            column: "",
+            column: ''
           },
           {
             asc: false,
-            column: "code",
-          },
-        ],
-      };
-      getbimProductAttributesList(obj8).then(res => {
-
+            column: 'code'
+          }
+        ]
+      }
+      getbimProductAttributesList(obj8).then((res) => {
         this.list7 = res.data.records
       })
-
-
 
       // 获取税率(数据字典)
       getbimProductAttributes('585438081021126405').then((res) => {
@@ -1330,7 +1538,7 @@ export default {
       })
     },
     // 表单提交
-    dataFormSubmit(type) {
+    handleConfirm(type) {
       this.request(type)
     },
 
@@ -1544,35 +1752,36 @@ export default {
           }
         }
       }
-      if (type === 'submit' && this.dataForm.approvalFlag) {
-        if (!this.busNodeConfig.childNode) {
-          hasCostPrice = false
-          this.btnLoading = false
-          this.$message.error('未找到匹配的审批流程，请联系管理员！')
-        }
-        if (formNodeList.length) {
-          formNodeList.forEach((item) => {
-            if (item.approvalType === 'option') {
-              if (!item.designatedMembersId) {
-                hasCostPrice = false
-                this.btnLoading = false
-                this.$message.error('未配置发起人自选！')
-              }
-            }
-          })
-        }
-      }
+      // if (type === 'submit' && this.dataForm.approvalFlag) {
+      //   if (!this.busNodeConfig.childNode) {
+      //     hasCostPrice = false
+      //     this.btnLoading = false
+      //     this.$message.error('未找到匹配的审批流程，请联系管理员！')
+      //   }
+      //   if (formNodeList.length) {
+      //     formNodeList.forEach((item) => {
+      //       if (item.approvalType === 'option') {
+      //         if (!item.designatedMembersId) {
+      //           hasCostPrice = false
+      //           this.btnLoading = false
+      //           this.$message.error('未配置发起人自选！')
+      //         }
+      //       }
+      //     })
+      //   }
+      // }
 
       _data = {
         attachmentList: this.datafilelist,
         buyFixedPointPricing: this.dataForm,
         buyFixedPointPricingLineList: this.dataFormTwo.data,
         form: form,
+        flowData: this.flowData,
         formNodeList,
         nodeCondList: nodeJudg,
         ccList: ccLists
       }
-      console.log(_data, '参数')
+
       let msg = ''
       if (this.dataForm.documentStatus === 'draft') {
         msg = '保存成功'
@@ -1582,14 +1791,13 @@ export default {
       let form_2 = this.$refs['productForm']
       let valid_2 = await form_2.validate().catch((err) => false)
       if (hasCostPrice) {
-        this.$refs['elForm'].validate((valid) => {
+        this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             if (this.dataFormTwo.data.length === 0) {
               this.btnLoading = false
               this.$message.error('请至少选择一项产品')
             } else {
               if (!valid_2) {
-                console.log(1)
                 this.btnLoading = false
                 for (let i = 0; i < this.dataFormTwo.data.length; i++) {
                   const item = this.dataFormTwo.data[i]
@@ -1716,27 +1924,12 @@ export default {
           }
           return true
         })
-        console.log(data, '删除后的数据')
-        console.log(deletedArray, '被删掉的数据')
-
-        // return
       }
       this.dataFormTwo.data = [...this.dataFormTwo.data, ...data]
-      console.log(this.dataFormTwo.data, '传递数据')
     },
-    // 对比物料弹窗传递数据
-    productSubmit(data) {
-      console.log(data, '对比物料数据')
-      this.$set(this.dataFormTwo.data[this.index], 'contrastProductsId', data.id)
-      this.$set(this.dataFormTwo.data[this.index], 'contrastProductsName', data.contrastProductsName)
-      this.$set(this.dataFormTwo.data[this.index], 'contrastProductsPrice', data.contrastProductsPrice)
-      // this.dataFormTwo.data[this.index].contrastProductsId = data.id
-      // this.dataFormTwo.data[this.index].contrastProductsName = data.contrastProductsName
-      // this.dataFormTwo.data[this.index].contrastProductsPrice = data.contrastProductsPrice
-    },
+
     // 获取审批流参数递归处理
     addNodeTypeAndNodeName(obj) {
-      console.log(obj)
       if (obj) {
         if (obj.name === '审核人') {
           obj.nodeType = 1
@@ -1810,7 +2003,6 @@ export default {
     // // 审批 提交参数递归处理
     flattenNodes(node, flattenedNodes = [], previousCode = '') {
       if (node) {
-        console.log(node, '提交数1')
         if (node.name !== '路由') flattenedNodes.push({ ...node, childNode: null, conditionNodes: null })
         if (node.type === 'node') {
           if (node.childNode) {
@@ -1838,120 +2030,11 @@ export default {
       }
       return flattenedNodes
     },
-    // // 获取审批模版
-    getApproverData2() {
-      this.firstOneNode = []
-      let condArr = ['>', '<', '>=', '<=', '=']
-      let state = ''
-      let condExpress = ''
-      let foundSymbol = '' // 条件符号
-      let result = null // 判断条件是否成立
-      let condList = []
-      getBusDetail('b002').then((res) => {
-        console.log(res)
-        state = res.data.business.state
-        condExpress = res.data.business.condExpress
-        // if (res.data.businessConditionList.length) {
-        //   res.data.businessConditionList.forEach(item => {
-        //     condList.push({
-        //       code: item.code,
-        //       val: item.code === 'numCode' ? this.totalNum : this.totalPrice
-        //     })
-        //   })
-        // }
-        if (state === 'condition') {
-          this.dataForm.approvalFlag = 1
-          for (var i = 0; i < condArr.length; i++) {
-            if (condExpress.includes(condArr[i])) {
-              foundSymbol = condArr[i]
-              break
-            }
-          }
-          // 找到符号并进行销售报价业务判断
-          if (foundSymbol) {
-            const parts = condExpress.split(foundSymbol) // 使用 ">" 符号拆分字符串
-            const leftValue = parts[0] // 提取 ">" 符号左边的值
-            const rightValue = parts[1] // 提取 ">" 符号右边的值
-            console.log(leftValue)
-            console.log(rightValue)
-            // if (leftValue == 'numCode') {
-            //   const condition = `${this.totalNum} ${foundSymbol} ${this.totalPrice}`; // 构建条件表达式
-            //   result = eval(condition); // 执行条件判断
-            // } else {
-            //   const condition = `${this.totalPrice} ${foundSymbol} ${this.totalNum}`; // 构建条件表达式
-            //   result = eval(condition); // 执行条件判断
-            // }
-            if (result) {
-              let query = {
-                businessCode: 'b002',
-                condList
-              }
-              busApprovalFlowTree(query).then((res) => {
-                console.log(res, '树详情')
-                if (res.data) {
-                  this.firstOneNode = []
-                  this.approvalForm = res.data.template
-                  this.firstOneNode.push({
-                    name: this.userInfo.userName
-                  })
-                  let data = res.data.tempLineTree.childNode
-                  if (data) {
-                    this.addNodeTypeAndNodeName(data)
-                    this.busNodeConfig.childNode = data
-                    this.workVisible = true
-                    this.$nextTick(() => {
-                      this.$refs.workflowRef.initData('busing', this.type)
-                    })
-                  }
-                } else {
-                  this.busNodeConfig.childNode = null
-                }
-              })
-            } else {
-              this.busNodeConfig.childNode = null
-            }
-          }
-        }
-        if (state === 'enable') {
-          this.dataForm.approvalFlag = 1
-          let query = {
-            businessCode: 'b002',
-            condList
-          }
-          busApprovalFlowTree(query).then((res) => {
-            console.log(res, '树详情')
-            if (res.data) {
-              this.firstOneNode = []
-              this.approvalForm = res.data.template
-              this.firstOneNode.push({
-                name: this.userInfo.userName
-              })
-              let data = res.data.tempLineTree.childNode
-              if (data) {
-                this.addNodeTypeAndNodeName(data)
-                this.busNodeConfig.childNode = data
-                this.workVisible = true
-                this.$nextTick(() => {
-                  this.$refs.workflowRef.initData('busing', this.type)
-                })
-              }
-            } else {
-              this.busNodeConfig.childNode = null
-            }
-          })
-        }
-        if (state === 'disabled') {
-          this.dataForm.approvalFlag = 0
-          this.busNodeConfig.childNode = null
-        }
-      })
-    },
 
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b023')
+      getBusinessFlowInfo('b048')
         .then((res) => {
-          console.log(res, 'res123')
           if (res.data) {
             if (res.data.enabledMark) {
               this.flowData = res.data
@@ -1977,9 +2060,11 @@ export default {
             this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
               ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
               : null
+
             this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
             this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
             let flowTaskNodeList = res.data.flowTaskNodeList
+
             if (flowTaskNodeList.length) {
               for (let i = 0; i < flowTaskNodeList.length; i++) {
                 const nodeItem = flowTaskNodeList[i]

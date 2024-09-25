@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { getequMaintenanceLevel } from "@/api/basicData/materialSettings";
+import { getequLifeCyclelist } from "@/api/basicData/materialSettings";
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
@@ -171,10 +171,10 @@ export default {
         {
           prop: 'createTime',
           label: '创建时间',
-          type: 'daterange',
+          type: 'datetimerange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
         },
         {
           prop: 'createByName',
@@ -236,18 +236,18 @@ export default {
       this.initData()
     },
     initData() {
-      // this.listLoading = true
+      this.listLoading = true
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      // getequMaintenanceLevel(this.listQuery).then(res => {
-      //   this.tableData = res.data.records
-      //   this.total = res.data.total
-      //   this.listLoading = false
-      // }).catch(() => {
-      //   this.listLoading = false
-      // })
+      getequLifeCyclelist(this.listQuery).then(res => {
+        this.tableData = res.data.records
+        this.total = res.data.total
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
     },
   }
 }

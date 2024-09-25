@@ -16,28 +16,24 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="任务信息" name="orderInfo">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
+            <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
               <h5>基本信息</h5>
             </div>
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="任务名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入任务名称" :disabled="btnType == 'look'"
-                      maxlength="20" />
+                    <el-input v-model="dataForm.name" placeholder="请输入任务名称" :disabled="btnType == 'look'" maxlength="20" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="设备名称" prop="equipmentId">
-                    <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly
-                      @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'"></el-input>
+                    <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="计划保养部门" prop="departmentId">
-                    <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划保养部门" auth
-                      :dialogTitle="'请选择计划保养部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
+                    <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划保养部门" auth :dialogTitle="'请选择计划保养部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
@@ -45,42 +41,39 @@
                     <!-- <el-input v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" :disabled="btnType == 'look'"
                       maxlength="50" /> -->
                     <!-- <el-form-item label="所属销售" prop="salesName"> -->
-                    <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;"
-                      :disabled="btnType === 'look'" filterable @change="selectsales">
-                      <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
-                        :disabled="btnType == 'look'" :value="item.id"></el-option>
+                    <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
+                      <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
                     </el-select>
                     <!-- </el-form-item> -->
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="周期类型" prop="cycleType">
-                    <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;"
-                      @change="cycleTypeaction" :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
+                    <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;" @change="cycleTypeaction" :disabled="btnType == 'look'">
+                      <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label" :value="item.value"></el-option>
                     </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="369">
+                  <el-form-item label="保养等级" prop="maintenanceLevelId">
+                    <el-cascader v-model="level" ref="mycascader" :props="props" :options="options" @change=changelevel placeholder="请选择保养等级" style="width: 100%;line-height:29px;"></el-cascader>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="3">
                   <el-form-item label="周期" prop="cycle">
-                    <el-input v-model="dataForm.cycle" placeholder="请输入周期" :disabled="btnType == 'look'" maxlength="50" />
+                    <el-input v-model="dataForm.cycle" placeholder="请输入周期" :disabled="true" maxlength="50" />
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="2">
                   <el-form-item label="单位" prop="unit">
-                    <el-select v-model="dataForm.unit" placeholder="请选择单位" clearable style="width: 100%;"
-                      :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in unitStateList" :key="index" :label="item.label"
-                        :value="item.label"></el-option>
+                    <el-select v-model="dataForm.unit" placeholder="请选择单位" clearable style="width: 100%;" :disabled="true">
+                      <el-option v-for="(item, index) in unitStateList" :key="index" :label="item.label" :value="item.label"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="下次保养时间" prop="nextMaintenanceTime">
-                    <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd"
-                      style="width: 100%;" placeholder="请选择下次保养时间" :picker-options="pickerOptions"
-                      :disabled="btnType == 'look'">
+                    <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择下次保养时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
                     </el-date-picker>
                     <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择下次保养时间"
                       readonly default-time="12:00:00" style="width: 100%;" :disabled="btnType == 'look'">
@@ -94,36 +87,28 @@
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="状态" prop="state">
                     <!-- <el-input v-model="dataForm.state" placeholder="请选择状态" :disabled="btnType == 'look'" maxlength="50" /> -->
-                    <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
+                    <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
+                      <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :sm="12" :xs="24">
+                <el-col :sm="6" :xs="24">
                   <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea"
-                      maxlength="200" :rows="2" />
+                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
                   </el-form-item>
                 </el-col>
               </el-row>
             </el-form>
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
+            <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
               <h5>项目信息</h5>
             </div>
             <div v-if="btnType !== 'look'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
+              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
             </div>
             <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" fixedNO
-                @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
-                  key="1" />
+              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" fixedNO @selection-change="handeleProductInfoData">
+                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
                 <el-table-column prop="itemCode" label="项目编码" width="200" show-overflow-tooltip>
                   <template slot="header">
@@ -150,9 +135,7 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="选择保养项目" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-        append-to-body @close="productVisible = false">
+      <el-dialog title="选择保养项目" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="productVisible = false">
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
@@ -184,14 +167,12 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable"
-                @selection-change="handleSelectionChange">
+              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable" @selection-change="handleSelectionChange">
                 <el-table-column prop="name" label="项目名称" />
                 <el-table-column prop="code" label="项目编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="itemRequirements" label="保养要求" />
               </JNPF-table>
-              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
-                @pagination="getcooperativeProduct" />
+              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="getcooperativeProduct" />
             </div>
 
           </div>
@@ -202,26 +183,58 @@
             确定</el-button>
         </span>
       </el-dialog>
-      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备"
-        treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }"
-        :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists"
-        :elementShow="false" />
+      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
 </template>
     
 <script>
-import { getcategoryTree } from '@/api/basicData/materialSettings'
+import { getcategoryTree, getequMaintenanceLevel } from '@/api/basicData/materialSettings'
 import { addcheckmaintenance, updatecheckmaintenance, detailcheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getOrganization } from '@/api/permission/user'
+import { log } from 'mathjs'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
   data() {
     return {
+      level: [],
+      options: [
+        { label: "日常保养", value: "日常保养" },
+        { label: "二级保养", value: "二级保养" },
+        { label: "三级保养", value: "三级保养" },
+        { label: "四级保养", value: "四级保养" },
+        { label: "年度保养", value: "年度保养" }
+      ],
+      props: {
+        lazy: true,
+        lazyLoad(node, resolve) {
+          const { level } = node;
+          setTimeout(() => {
+            const nodes = []
+            let initListQuery = {
+              level: node.value,
+              pageNum: 1,
+              pageSize: -1,
+            }
+            if (level > 1) return
+            getequMaintenanceLevel(initListQuery).then(res => {
+              res.data.records.map(item => {
+                let obj = {
+                  value: item.id,
+                  label: item.cycle + ' ' + item.unit,
+                  leaf: level >= 1
+                }
+                nodes.push(obj)
+              })
+              resolve(nodes);
+            })
+          }, 500);
+        }
+      },
       datafilelist: [],
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
@@ -306,6 +319,7 @@ export default {
       btnLoading: false,
       formLoading: false,
       dataForm: {
+        maintenanceLevelId: '',
         nextMaintenanceTime: '',
         state: '',
         unit: '',
@@ -329,6 +343,9 @@ export default {
       },
       organizeIdTrees: [],
       dataRule: {
+        maintenanceLevelId: [
+          { required: true, message: '保养等级不能为空', trigger: 'change' }
+        ],
         name: [
           { required: true, message: '任务名称不能为空', trigger: 'change' }
         ],
@@ -369,6 +386,12 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    changelevel(e) {
+      let a = this.$refs['mycascader'].getCheckedNodes()[0].pathLabels[1].split(' ')
+      this.dataForm.maintenanceLevelId = e[1]
+      this.dataForm.cycle = a[0]
+      this.dataForm.unit = a[1]
+    },
     openSeleceProductDialogss() {
       this.$refs['ComSelect-pagesb'].openDialog()
     },
@@ -415,7 +438,6 @@ export default {
     //选择保养项目
     submitCustomerProduct() {
       this.productVisible = false
-      console.log("选中的项目", this.selectlist);
       this.selectlist.map(item => {
         this.dataFormTwo.productData.map((item1) => {
           if (item.code == item1.itemCode) {
@@ -683,7 +705,7 @@ export default {
           }
           this.dataForm.documentStatus = value
           if (this.datafilelist.length) {
-            this.datafilelist.map((item,index) => {
+            this.datafilelist.map((item, index) => {
               item.bimAttachments = {
                 businessType: '',
                 documentId: item.id,

@@ -125,7 +125,7 @@
           <el-table-column prop="homeLandlineTelephone" label="家庭固定电话" min-width="160" sortable="custom" />
           <el-table-column prop="emergencyContact" label="紧急联系人" width="130" sortable="custom" />
           <el-table-column prop="emergencyPhoneNumber" label="紧急联系人电话" width="160" sortable="custom" />
-          <el-table-column prop="creatorTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
           <!-- <el-table-column prop="organizeName" label="所属组织" min-width="280" />
           <el-table-column prop="employeeType" label="员工类型" width="120" sortable="custom" />
@@ -380,7 +380,7 @@ export default {
           type: 'input'
         },
         { // 日期时间选择器（区间）
-          prop: 'creatorTime',
+          prop: 'createTime',
           label: '创建时间',
           type: 'datetimerange',
           valueFormat: "yyyy-MM-dd HH:mm:ss",

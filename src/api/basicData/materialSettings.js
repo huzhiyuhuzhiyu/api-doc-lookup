@@ -343,3 +343,12 @@ export function updateequMountedPlaces(data) {
     data
   })
 }
+
+// 设备履历-列表
+export function getequLifeCyclelist(data) {
+  return request({
+    url: `/api/mes/equLifeCycle/list`,
+    method: 'POST',
+    data
+  })
+}

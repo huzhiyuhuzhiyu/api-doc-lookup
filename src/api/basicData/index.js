@@ -1679,6 +1679,14 @@ export function salecooperativepoolModel(data) {
     data
   })
 }
+// 用户导入
+export function salecooperativeUsers(data) {
+  return request({
+    url: `/api/permission/Users/upload`,
+    method: 'post',
+    data
+  })
+}
 // 查找批次号
 
 export function getBatchNumber(data) {

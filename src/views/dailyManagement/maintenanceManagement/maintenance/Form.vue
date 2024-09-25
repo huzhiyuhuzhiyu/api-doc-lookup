@@ -226,15 +226,11 @@
 <script>
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addRepairRequest, updateRepairRequest, detailRepairRequest } from '@/api/dailyManagement/Maintenance'
-import ComSelectListone from "@/views/dailyManagement/Maintenance/maintenanceTasks/ComSelect-listone/index.vue";
 import { getOrganizeInfo } from '@/api/permission/organize'
 import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/index'
 import { getOrganization } from '@/api/permission/user'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
-  components: {
-    ComSelectListone
-  },
   data () {
     return {
       datafilelist: [],

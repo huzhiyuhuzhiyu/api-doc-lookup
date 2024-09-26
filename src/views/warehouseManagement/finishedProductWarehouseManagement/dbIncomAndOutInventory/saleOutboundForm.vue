@@ -697,8 +697,8 @@ export default {
         this.dataForm.warehouseId = res.data[0].id
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
-          this.wareHouseInfo = res.data
-          this.dataForm.warehouseType = res.data.type
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
         })
       })
     },

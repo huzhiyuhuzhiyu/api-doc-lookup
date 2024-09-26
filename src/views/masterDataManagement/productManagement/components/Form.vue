@@ -226,15 +226,20 @@ export default {
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
               if (val) {
-                detailUnitData(val).then((res) => {
-                  this.unitRelList = res.data.unitRelList
-                  this.unitRelList.forEach((it) => {
-                    if (it.targetName == this.dataForm.deputyUnit) {
-                      this.dataForm.ratio = it.ratio
-                      this.dataForm.calculationDirection = it.calculationDirection
-                    }
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  detailUnitData(val).then((res) => {
+                    this.unitRelList = res.data.unitRelList
+                    this.unitRelList.forEach((it) => {
+                      if (it.targetName == this.dataForm.deputyUnit) {
+                        this.dataForm.ratio = it.ratio
+                        this.dataForm.calculationDirection = it.calculationDirection
+                      }
+                    })
                   })
-                })
+                }
               }
             }
           }
@@ -246,13 +251,19 @@ export default {
               })
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
+
               if (this.unitRelList && this.unitRelList.length !== 0) {
-                this.unitRelList.forEach((item) => {
-                  if (item.targetName === val) {
-                    this.dataForm.ratio = item.ratio
-                    this.dataForm.calculationDirection = item.calculationDirection
-                  }
-                })
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  this.unitRelList.forEach((item) => {
+                    if (item.targetName === val) {
+                      this.dataForm.ratio = item.ratio
+                      this.dataForm.calculationDirection = item.calculationDirection
+                    }
+                  })
+                }
               }
             }
           }

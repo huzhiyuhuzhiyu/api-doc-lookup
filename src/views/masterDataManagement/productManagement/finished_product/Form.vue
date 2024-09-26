@@ -143,9 +143,9 @@ export default {
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
         { prop: 'outerCircle', label: '外圈', type: 'input', itemDisabled: true },
         { prop: 'steelBall', label: '钢球型号', type: 'input', itemDisabled: true },
-        { prop: 'steelBallNum', label: '钢球用量', type: 'input', itemDisabled: true },
-        { prop: 'oilNum', label: '油脂用量', type: 'input', itemDisabled: true },
-        { prop: 'holderNum', label: '保持架用量', type: 'input', itemDisabled: true }
+        { prop: 'steelBallNum', label: '钢球用量(粒)', type: 'input', itemDisabled: true },
+        { prop: 'oilNum', label: '油脂用量(毫克)', type: 'input', itemDisabled: true },
+        { prop: 'holderNum', label: '保持架用量(个)', type: 'input', itemDisabled: true }
       ],
       otherItems: [
         {
@@ -370,15 +370,20 @@ export default {
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
               if (val) {
-                detailUnitData(val).then((res) => {
-                  this.unitRelList = res.data.unitRelList
-                  this.unitRelList.forEach((it) => {
-                    if (it.targetName == this.dataForm.deputyUnit) {
-                      this.dataForm.ratio = it.ratio
-                      this.dataForm.calculationDirection = it.calculationDirection
-                    }
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  detailUnitData(val).then((res) => {
+                    this.unitRelList = res.data.unitRelList
+                    this.unitRelList.forEach((it) => {
+                      if (it.targetName == this.dataForm.deputyUnit) {
+                        this.dataForm.ratio = it.ratio
+                        this.dataForm.calculationDirection = it.calculationDirection
+                      }
+                    })
                   })
-                })
+                }
               }
             }
           }
@@ -392,12 +397,17 @@ export default {
               this.dataForm.calculationDirection = ''
 
               if (this.unitRelList && this.unitRelList.length !== 0) {
-                this.unitRelList.forEach((item) => {
-                  if (item.targetName === val) {
-                    this.dataForm.ratio = item.ratio
-                    this.dataForm.calculationDirection = item.calculationDirection
-                  }
-                })
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  this.unitRelList.forEach((item) => {
+                    if (item.targetName === val) {
+                      this.dataForm.ratio = item.ratio
+                      this.dataForm.calculationDirection = item.calculationDirection
+                    }
+                  })
+                }
               }
             }
           }
@@ -443,7 +453,6 @@ export default {
           getbimProductsModelList(obj).then((res) => {
             this.modelForm = res.data.records[0]
           })
-
         }
       }
     })
@@ -549,7 +558,6 @@ export default {
               this.dataForm.noise +
               this.dataForm.holder
           }
-
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -601,7 +609,6 @@ export default {
               this.dataForm.noise +
               this.dataForm.holder
           }
-
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -772,7 +779,6 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-
 
               this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
                 if (!res.modifyFlag) {

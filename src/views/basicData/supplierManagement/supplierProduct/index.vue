@@ -22,7 +22,7 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}
                     </el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -109,7 +109,7 @@
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}
                     </el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">
@@ -321,111 +321,67 @@ export default {
       lastSuperQueryVisible: false,
       lastSuperQueryJson: [
         {
-          prop: 'code',
-          label: '产品编码',
+          prop: 'cooperativePartnerName',
+          label: '供应商名称',
           type: 'input'
         },
+        {
+          prop: 'cooperativePartnerCode',
+          label: '供应商编码',
+          type: 'input'
+        },
+
         {
           prop: 'drawingNo',
           label: '品名规格',
           type: 'input'
         },
-
         {
-          prop: 'name',
-          label: '产品名称',
-          type: 'input'
-        },
-        {
-          prop: 'productCategoryName',
-          label: '产品分类',
+          prop: 'productsCode',
+          label: '产品编码',
           type: 'input'
         },
         {
           prop: 'mainUnit',
-          label: '主单位',
-          type: 'select'
-        },
-        {
-          prop: 'productSource',
-          label: '产品来源',
-          type: 'select',
-          options: [
-            { label: '生产', value: 'produce' },
-            { label: '采购', value: 'purchase' },
-            { label: '外协', value: 'out' }
-          ]
-        },
-        {
-          prop: 'productStatus',
-          label: '产品状态',
-          type: 'select',
-          options: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }]
-        },
-        {
-          prop: 'brand',
-          label: '品牌',
+          label: '单位',
           type: 'select',
           options: []
         },
         {
-          prop: 'model',
-          label: '型号',
+          prop: 'effectiveTimeStart',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+        {
+          prop: 'effectiveTimeEnd',
+          label: '创建时间',
+          type: 'daterange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始日期',
+          endPlaceholder: '结束日期',
+          pickerOptions: this.global.timePickerOptions
+        },
+
+        {
+          prop: 'standardValue',
+          label: '规值',
           type: 'select',
           options: []
         },
         {
-          prop: 'sealingCoverStructure',
-          label: '密封盖-结构',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'sealingCoverTyping',
-          label: '密封盖-打字',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'structureType',
-          label: '结构类型',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'clearance',
-          label: '游隙',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'steelBallManufacturer',
-          label: '钢球厂家',
+          prop: 'colour',
+          label: '颜色',
           type: 'select',
           options: []
         },
 
         {
-          prop: 'oil',
-          label: '油脂',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'oilQuantity',
-          label: '油脂量',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'noise',
-          label: '噪音',
-          type: 'select',
-          options: []
-        },
-        {
-          prop: 'holder',
-          label: '保持架',
+          prop: 'sealingCoverTyping',
+          label: '打字内容',
           type: 'select',
           options: []
         },
@@ -442,16 +398,39 @@ export default {
           options: []
         },
         {
-          prop: 'colour',
-          label: '颜色',
+          prop: 'oil',
+          label: '油脂',
           type: 'select',
           options: []
         },
         {
-          prop: 'aperture',
-          label: '孔径',
+          prop: 'oilQuantity',
+          label: '油脂量',
           type: 'select',
           options: []
+        },
+        {
+          prop: 'clearance',
+          label: '游隙',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'packagingMethod',
+          label: '包装方式',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'specialRequire',
+          label: '特殊要求',
+          type: 'select',
+          options: []
+        },
+        {
+          prop: 'remark',
+          label: '备注',
+          type: 'input'
         },
         {
           prop: 'createTime',
@@ -467,11 +446,7 @@ export default {
           label: '创建人',
           type: 'input'
         },
-        {
-          prop: 'remark',
-          label: '备注',
-          type: 'input'
-        }
+
       ],
       historyColumnList: [
         'cooperativePartnerCode',
@@ -665,7 +640,16 @@ export default {
         this.$refs.dataTable.showDrawer()
       }
     },
-
+    lastSuperQuerySearch(query) {
+      this.superQuery = query
+      this.lastSuperQueryVisible = false
+      this.search('super')
+    },
+    historySuperQuerySearch(query) {
+      this.superQuery = query
+      this.historySuperQueryVisible = false
+      this.search('super')
+    },
     // 导出
     exportForm() {
       this.exportFormVisible = true
@@ -770,12 +754,30 @@ export default {
           })
       }
     },
-    search() {
+    search(type) {
       Object.keys(this.lastListQuery).forEach((key) => {
         let item = this.lastListQuery[key]
         this.lastListQuery[key] = typeof item === 'string' ? item.trim() : item
       })
       this.lastListQuery.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {

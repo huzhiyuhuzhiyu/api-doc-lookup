@@ -630,7 +630,9 @@ export default {
                 duration: 1500,
                 onClose: () => {
                   this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
                   this.initData()
+                  
                 }
               })
             }

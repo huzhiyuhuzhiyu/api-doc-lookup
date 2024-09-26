@@ -160,7 +160,7 @@
             </template>
           </el-table-column>
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+        <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
           @pagination="initData" />
       </div>
     </div>
@@ -754,6 +754,7 @@ export default {
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
 
       ]
+      this.superForm = JSON.parse(JSON.stringify(this.listQuery))
       this.$refs.SuperQuery.conditionList = []
       this.filterText = ''
       this.getcategoryTree()

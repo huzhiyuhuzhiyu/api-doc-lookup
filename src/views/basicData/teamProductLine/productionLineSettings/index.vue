@@ -89,7 +89,7 @@
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, 'edit')"
                 @del="handleDel(scope.row.id, scope.row.parentId)">
-                <el-button type="text" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
+                <el-button type="text" size="mini" @click="handleUserRelation(scope.row.id, 'look')">查看详情</el-button>
               </tableOpts>
 
               <!--     <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
@@ -137,8 +137,8 @@ export default {
   data() {
     return {
       searchList: [
-        { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
-        { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'code', fieldValue: '', label: '产线编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '产线名称', symbol: 'like', searchType: 1, width: 120 },
 
       ],
       superForm: {},
@@ -233,6 +233,7 @@ export default {
     }
   },
   created() {
+    this.superForm = this.tableQuery
     this.getDepartmentList()
     this.initData()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')

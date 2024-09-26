@@ -143,9 +143,9 @@ export default {
         { prop: 'innerCircle', label: '内圈', type: 'input', itemDisabled: true },
         { prop: 'outerCircle', label: '外圈', type: 'input', itemDisabled: true },
         { prop: 'steelBall', label: '钢球型号', type: 'input', itemDisabled: true },
-        { prop: 'steelBallNum', label: '钢球用量', type: 'input', itemDisabled: true },
-        { prop: 'oilNum', label: '油脂用量', type: 'input', itemDisabled: true },
-        { prop: 'holderNum', label: '保持架用量', type: 'input', itemDisabled: true }
+        { prop: 'steelBallNum', label: '钢球用量(粒)', type: 'input', itemDisabled: true },
+        { prop: 'oilNum', label: '油脂用量(毫克)', type: 'input', itemDisabled: true },
+        { prop: 'holderNum', label: '保持架用量(个)', type: 'input', itemDisabled: true }
       ],
       otherItems: [
         {
@@ -183,13 +183,8 @@ export default {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
-        if (tc.prop == 'model') {
-          if (this.flag) {
-            tc.render = true
-          } else {
-            tc.render = false
-          }
-        }
+        console.log(this.flag, '')
+
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
           // 产品分类
@@ -288,16 +283,28 @@ export default {
           tc.clearable = true
           tc.change = (val) => {
             if (this.flag) {
-              this.dataForm.drawingNo =
-                this.dataForm.model +
-                this.dataForm.sealingCoverStructure +
-                this.dataForm.structureType +
-                '.' +
-                this.dataForm.clearance +
-                this.dataForm.steelBallManufacturer +
-                this.dataForm.oil +
-                this.dataForm.noise +
-                this.dataForm.holder
+              if (this.dataForm.steelBallManufacturer) {
+                this.dataForm.drawingNo =
+                  this.dataForm.model +
+                  this.dataForm.sealingCoverStructure +
+                  this.dataForm.structureType +
+                  '.' +
+                  this.dataForm.clearance +
+                  this.dataForm.steelBallManufacturer +
+                  this.dataForm.oil +
+                  this.dataForm.noise +
+                  this.dataForm.holder
+              } else {
+                this.dataForm.drawingNo =
+                  this.dataForm.model +
+                  this.dataForm.sealingCoverStructure +
+                  this.dataForm.structureType +
+                  '.' +
+                  this.dataForm.clearance +
+                  this.dataForm.oil +
+                  this.dataForm.noise +
+                  this.dataForm.holder
+              }
             }
           }
           // tc.change = this.ProductChange
@@ -363,15 +370,20 @@ export default {
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
               if (val) {
-                detailUnitData(val).then((res) => {
-                  this.unitRelList = res.data.unitRelList
-                  this.unitRelList.forEach((it) => {
-                    if (it.targetName == this.dataForm.deputyUnit) {
-                      this.dataForm.ratio = it.ratio
-                      this.dataForm.calculationDirection = it.calculationDirection
-                    }
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  detailUnitData(val).then((res) => {
+                    this.unitRelList = res.data.unitRelList
+                    this.unitRelList.forEach((it) => {
+                      if (it.targetName == this.dataForm.deputyUnit) {
+                        this.dataForm.ratio = it.ratio
+                        this.dataForm.calculationDirection = it.calculationDirection
+                      }
+                    })
                   })
-                })
+                }
               }
             }
           }
@@ -385,12 +397,17 @@ export default {
               this.dataForm.calculationDirection = ''
 
               if (this.unitRelList && this.unitRelList.length !== 0) {
-                this.unitRelList.forEach((item) => {
-                  if (item.targetName === val) {
-                    this.dataForm.ratio = item.ratio
-                    this.dataForm.calculationDirection = item.calculationDirection
-                  }
-                })
+                if (val == this.dataForm.deputyUnit) {
+                  this.dataForm.ratio = 1
+                  this.dataForm.calculationDirection = 'multiplication'
+                } else {
+                  this.unitRelList.forEach((item) => {
+                    if (item.targetName === val) {
+                      this.dataForm.ratio = item.ratio
+                      this.dataForm.calculationDirection = item.calculationDirection
+                    }
+                  })
+                }
               }
             }
           }
@@ -415,6 +432,7 @@ export default {
         tc.clearable = true
         tc.change = (val, data, paramsObj) => {
           this.modelForm.model = data[0].all.model
+          this.dataForm.model = data[0].all.model
           const obj = {
             startTime: '',
             endTime: '',
@@ -518,16 +536,28 @@ export default {
         // 数据有效，进行更新
         this.dataForm[paramsObj.prop] = data[0].all.model
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -557,16 +587,28 @@ export default {
         this.dataForm[paramsObj.prop] = data[0].all.name
         this.dataForm.steelBallManufacturer = data[0].all.code
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -618,6 +660,10 @@ export default {
               { label: '外协', value: 'out' }
             ]
           }
+          if (ele.prop == 'model') {
+            ele.render = true
+            ele.itemDisabled = true
+          }
         })
       } else {
         this.tabs[0].tabContent.forEach((ele) => {
@@ -647,6 +693,9 @@ export default {
               { label: '采购', value: 'purchase' },
               { label: '外协', value: 'out' }
             ]
+          }
+          if (ele.prop == 'model') {
+            ele.render = false
           }
         })
       }
@@ -730,7 +779,6 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-             
 
               this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
                 if (!res.modifyFlag) {
@@ -808,16 +856,28 @@ export default {
       // 判断条件后发送请求
       if (submitFlag) {
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
         }
         const formMethod = this.dataForm.id ? updateProductData : cpAddProduct
         formMethod(this.dataForm)

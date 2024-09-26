@@ -310,7 +310,8 @@ export default {
         documentType: "",
         id: "",
         warehouseType: "",
-        approvalFlag: false
+        approvalFlag: false,
+        inspectionResults:'',
       },
       customerInfo: {},//所选客户信息
       getWarehouseList,
@@ -344,7 +345,7 @@ export default {
         ],
       },
       inspectionResultsList: [
-        { label: "待检验", value: "" },
+        { label: "待检验", value: "unInspect" },
         { label: "检验合格", value: "qualified" },
       ],
       productList: [],
@@ -712,9 +713,9 @@ export default {
         this.dataForm.warehouseId = res.data[0].id
         // 获取仓库详情信息
         getWarehouseInfo(res.data[0].id).then(response => {
-          this.wareHouseInfo = res.data
-          this.dataForm.warehouseType = res.data.type
-          this.allocationFlag = res.data.locationStatus == 'disabled' ? false : true
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
         })
       })
     },

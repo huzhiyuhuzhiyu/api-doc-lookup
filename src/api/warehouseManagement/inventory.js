@@ -101,4 +101,12 @@ export function getLocationList(data) {
   })
 }
 
- 
+//  批量检验
+
+export function batchInspect(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/inspect/batch`,
+    method: 'POST',
+    data
+  })
+}

@@ -12,7 +12,7 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
@@ -197,7 +197,7 @@
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
               <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
@@ -532,9 +532,9 @@ export default {
     supplierdata(data) {
       console.log(data, '供应商数据')
       if (data.length === 0) {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       } else {
-        this.$refs['elForm'].fields[0].resetField()
+        this.$refs['dataForm'].fields[0].resetField()
         this.dataForm.cooperativePartnerName = data.name
         this.dataForm.cooperativePartnerCode = data.code
         this.dataForm.cooperativePartnerId = data.id
@@ -575,7 +575,7 @@ export default {
       this.type = type
       this.approvalFlag = approvalFlag
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else {

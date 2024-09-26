@@ -58,7 +58,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="sortCode" label="排序" width="100" align="center">
             <template slot-scope="scope">
-              <el-input @blur="switchShow(scope.row, 'sortCode')" clearable v-model="scope.row.sortCode"></el-input>
+              <el-input @change="switchShow(scope.row, 'sortCode')" v-model="scope.row.sortCode"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" width="300">
@@ -69,8 +69,8 @@
               <el-button type="text" @click="handleDel(scope.row.id, scope.row.parentId)"
                 style=" color: #ff3a3a">删除</el-button> -->
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId)"
-                @del="handleDel(scope.row.id, scope.row.parentId)"/>
-            
+                @del="handleDel(scope.row.id, scope.row.parentId)" />
+
             </template>
           </el-table-column>
         </JNPF-table>
@@ -84,7 +84,7 @@
 
 <script>
 import { getOrganizeList, delOrganize } from '@/api/permission/organize'
-import { getcategoryTree, deleteCategory,editCategory } from '@/api/basicData/index'
+import { getcategoryTree, deleteCategory, editCategory } from '@/api/basicData/index'
 import DepForm from './depForm'
 import CheckUser from './checkUser.vue'
 export default {
@@ -115,6 +115,7 @@ export default {
   },
   methods: {
     switchShow(row) {
+      if (!row.sortCode) return this.$message.error('请输入排序值')
       let obj = row
       delete obj.burdenSortCode
       editCategory(obj)
@@ -218,13 +219,13 @@ export default {
             duration: 1500,
           })
         }).catch((error) => {
-          if(error=="Error: 当前标签分类存在子标签分类"){
+          if (error == "Error: 当前标签分类存在子标签分类") {
             this.$message({
-              message:"当前供应商分类存在档案数据，不允许删除！",
-              type:"error"
+              message: "当前供应商分类存在档案数据，不允许删除！",
+              type: "error"
             })
           }
-      })
+        })
       }).catch((error) => {
         console.log(error);
       })

@@ -1366,4 +1366,7 @@ $footerPadding: '10px';
   background-color: #5d9bd5;
   color: #fff;
 }
+::v-deep .UploadFile-container-main{
+  margin-top: 5px;
+}
 </style>

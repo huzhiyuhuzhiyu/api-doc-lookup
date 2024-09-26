@@ -86,7 +86,7 @@
             <el-table-column prop="createByName" label="创建人" />
             <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
 
-            <el-table-column label="操作" min-width="180" fixed="right">
+            <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
                 <el-button size="mini" type="text" :disabled="scope.row.documentStatus !== 'draft'"
                   @click="addOrUpdateHandle(scope.row.id, 'edit')">
@@ -219,7 +219,6 @@ export default {
       listLoading: false,
       listQuery: {},
       initListQuery: {
-        classAttribute: 'other',
         orderItems: [
           {
             asc: false,
@@ -350,14 +349,14 @@ export default {
         for (let i = 0; i < data.selectKey.length; i++) {
           includeFieldMap[data.selectKey[i]] = data.selectVal[i]
         }
-        console.log(includeFieldMap)
+
         let _data = {
-          ...this.listQuery,
-          exportType: '1066',
-          exportName: '定点定价列表',
+          ...this.dataForm,
+          exportType: '1110',
+          exportName: '报工记录查询',
           includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1,
-          totalRowFlag: false
+          pageSize: data.dataType == 0 ? this.dataForm.pageSize : -1,
+          totalRowFlag: true
         }
         excelExport(_data)
           .then((res) => {
@@ -369,7 +368,6 @@ export default {
       }
     },
     sortChange({ prop, order }) {
-      console.log(prop)
       let newProp
       if (
         prop === 'cooperativePartnerCode' ||
@@ -418,7 +416,6 @@ export default {
       }
       getbuyFixedPointPricingList(this.superForm)
         .then((res) => {
-          console.log(res, '询价单列表')
           this.tableDataList = res.data.records
           this.total = res.data.total
           this.listLoading = false

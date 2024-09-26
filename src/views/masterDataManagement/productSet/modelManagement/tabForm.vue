@@ -66,6 +66,7 @@ export default {
                   } else {
                     console.log('未找到匹配的对象')
                   }
+                  console.log(id, ';o')
                   console.log('rule,', rule, value, this.sleeveList)
                   updataBimProductsModelCheck(value, id)
                     .then((res) => {
@@ -110,7 +111,7 @@ export default {
         },
         {
           prop: 'steelBallNum',
-          label: '钢球用量',
+          label: '钢球用量(粒)',
           value: '',
           type: 'input',
           itemRules: [
@@ -131,14 +132,14 @@ export default {
         },
         {
           prop: 'oilNum',
-          label: '油脂用量',
+          label: '油脂用量(毫克)',
           value: '',
           type: 'input',
           itemRules: [{ required: true, message: '油脂用量不能为空', trigger: 'blur' }]
         },
         {
           prop: 'holderNum',
-          label: '保持架用量',
+          label: '保持架用量(个)',
           value: 0,
           type: 'input',
           itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }]
@@ -193,8 +194,8 @@ export default {
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'mainUnit', label: '主单位', minWidth: 0 }
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'mainUnit', label: '单位', minWidth: 0 }
         // { prop: 'productType', label: '产品类别', minWidth: 0 },
         // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
       ],
@@ -221,6 +222,7 @@ export default {
       let index = this.sleeveList.length
       this.sleeveList.push({
         index,
+        model: '',
         holderNum: 1,
         oilNum: 1,
         steelBallNum: 1,
@@ -235,17 +237,40 @@ export default {
 
       this.sleeveList.map((item, index) => {
         console.log(item, 'iy')
-        if (!item.steelBallNum) {
+        if (!item.model) {
           submitFlag = false
-          this.$message.error(index)
+          this.$message.error(`第${index + 1}行，型号为空`)
+        } if (item.model) {
+          submitFlag = false
+          updataBimProductsModelCheck(item.model, '')
+            .then((res) => {
+              if (!res.data) {
+                submitFlag = true
+              } else {
+                this.$message.error(`第${index + 1}行，型号已存在`)
+              }
+            })
+        } else if (!item.innerCircle) {
+          submitFlag = false
+          this.$message.error(`第${index + 1}行，内圈为空`)
+        } else if (!item.outerCircle) {
+          submitFlag = false
+          this.$message.error(`第${index + 1}行，外圈为空`)
+        } else if (!item.steelBall) {
+          submitFlag = false
+          this.$message.error(`第${index + 1}行，钢球型号为空`)
+        } else if (!item.steelBallNum) {
+          submitFlag = false
+          this.$message.error(`第${index + 1}行，钢球用量为空`)
         } else if (!item.oilNum) {
           submitFlag = false
-          this.$message.error('222')
+          this.$message.error(`第${index + 1}行，油脂用量为空`)
         } else if (!item.holderNum) {
           submitFlag = false
-          this.$message.error('222')
+          this.$message.error(`第${index + 1}行，保持架用量为空`)
         }
       })
+
 
       // 校验表格表单（套筒属性）
       let sleeveForm = this.$refs['sleeveForm'].$refs.main
@@ -343,6 +368,15 @@ export default {
       } else {
         this.openMode = '新建'
         this.sleeveList = []
+        this.sleeveList.push({
+          model: '',
+          holderNum: 1,
+          oilNum: 1,
+          steelBallNum: 1,
+          steelBall: '',
+          outerCircle: '',
+          innerCircle: ''
+        })
       }
       this.sleeveItems.forEach((tc) => {
         // 添加自定义表单元素方法和参数

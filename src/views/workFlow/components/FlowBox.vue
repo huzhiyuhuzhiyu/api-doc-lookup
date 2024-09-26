@@ -301,6 +301,8 @@ export default {
       isValidate: false,
       pageView: {
         'b001': 'salesManagement/contractQuotation/salesQuotationOld/depForm.vue',
+        'b002': 'purchasingManagement/fixedPointPricing/pricingListedSeparately/Form.vue',
+        'b048': 'purchasingManagement/fixedPriceOfFinishedProducts/pricingListedSeparately/Form.vue',
         'b012': 'purchasingManagement/purReconciliationManagement/purReconciliation/Form.vue',
         'b013': 'salesManagement/saleReconciliationManagement/salesReconManagement/Form.vue',
         'b014': 'externalProcessManagement/reconciliationManagement/externalReconciliation/Form.vue',

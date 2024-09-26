@@ -120,31 +120,35 @@
             </template>
           </el-table-column>
           <el-table-column prop="taxId" label="税号" min-width="200" />
-          <el-table-column prop="name" label="名称" min-width="120" sortable="custom" />
-          <el-table-column prop="regionCodeText" label="地区" min-width="100" />
-          <el-table-column prop="countryText" label="国家" min-width="150" />
-          <el-table-column prop="provinceText" label="省" min-width="160" />
-          <el-table-column prop="cityText" label="市" min-width="160" />
-          <el-table-column prop="areaText" label="区" min-width="160" />
-          <el-table-column prop="address" label="地址" min-width="160" />
-          <el-table-column prop="billingTypeText" label="开票类型" min-width="160" />
-          <el-table-column prop="taxRate" label="税率%" min-width="100" sortable="custom" />
+          <el-table-column prop="name" label="名称" min-width="150" sortable="custom" />
+          <el-table-column prop="regionCodeText" label="地区" width="80" />
+          <el-table-column prop="countryText" label="国家" width="80" />
+          <el-table-column prop="provinceText" label="省" width="90" />
+          <el-table-column prop="cityText" label="市" width="90" />
+          <el-table-column prop="areaText" label="区" width="90" />
+          <el-table-column prop="address" label="地址" width="140" />
+          <el-table-column prop="billingTypeText" label="开票类型" width="100" />
+          <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+            <template slot-scope="scope">
+              {{ scope.row.taxRate }}%
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
-          <el-table-column prop="personResponsible" label="负责人" min-width="160" />
-          <el-table-column prop="contacts" label="联系人" min-width="160" />
-          <el-table-column prop="phone" label="电话" min-width="160" />
-          <el-table-column prop="mobilePhone" label="手机号" min-width="160" />
+          <el-table-column prop="personResponsible" label="负责人" width="90" />
+          <el-table-column prop="contacts" label="联系人" width="90" />
+          <el-table-column prop="phone" label="电话" width="100" />
+          <el-table-column prop="mobilePhone" label="手机号" width="120" />
           <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
           <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
-          <el-table-column prop="email" label="邮箱" min-width="160" />
-          <el-table-column prop="bank" label="开户银行" min-width="160" />
-          <el-table-column prop="bankInfo" label="银行账号" min-width="160" />
-          <el-table-column prop="gradeText" label="等级" min-width="160"></el-table-column>
-          <el-table-column prop="reconciliationStartDate" label="对账开始日期" min-width="160"></el-table-column>
-          <el-table-column prop="reconciliationEndDate" label="对账结束日期" min-width="160"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="160" />
-          <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column prop="email" label="邮箱" width="100" />
+          <el-table-column prop="bank" label="开户银行" width="160" />
+          <el-table-column prop="bankInfo" label="银行账号" width="160" />
+          <el-table-column prop="gradeText" label="等级" width="100"></el-table-column>
+          <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="120"></el-table-column>
+          <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="130"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
                 @del="handleDel(scope.row.id)">

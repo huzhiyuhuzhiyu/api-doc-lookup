@@ -261,7 +261,7 @@
 
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
@@ -313,6 +313,7 @@ export default {
         availableBatch: 1,
         inspectStockFlag:true,
         productCode: "",
+        warehouseId:"",
         productName: "",
         orderItems: [{
           "asc": false,
@@ -350,10 +351,10 @@ export default {
       classAttribute: "",
       warehouseCode:"",
       classAttributeList:[],
+      wareHouseInfo:{},
     }
   },
-  created() {
-    this.getWarehouseConfig()
+  created() { 
   },
 
   methods: {
@@ -437,6 +438,8 @@ export default {
         batchNumber: "",
         availableBatch: 1,
         inspectStockFlag:true,
+        warehouseId:"",
+
         productCode: "",
         productName: "",
         orderItems: [{
@@ -455,6 +458,8 @@ export default {
     initData2() {
       this.listLoading = true
       this.ProductListRequestObj.classAttributeList = this.classAttributeList
+      this.ProductListRequestObj.warehouseId=this.wareHouseInfo.id
+      console.log(this.wareHouseInfo);
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -483,6 +488,7 @@ export default {
         inspectStockFlag:true,
         productCode: "",
         productName: "",
+        warehouseId:"",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -554,14 +560,7 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
+    
     currentIndexFun(index) {
       console.log(index);
     },
@@ -573,6 +572,7 @@ export default {
         this.productData[index.index].warehouseType = ""
         return
       }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
       this.$set(this.productData[index.index], 'inWarehouseId', data[0].id)
       this.$set(this.productData[index.index], 'inWarehouseName', data[0].name)
       this.$set(this.productData[index.index], 'warehouseType', data[0].all.type)
@@ -581,6 +581,19 @@ export default {
     },
     goBack() {
       this.$emit('close', true)
+    },
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
     },
     init(id, btnType, warehouseCode) {
       // this.visible = true
@@ -592,6 +605,7 @@ export default {
       this.btnType = btnType
       console.log("btnty", btnType);
       this.getclassAttributeList()
+      this.getWarehouseListFun()
       // this.refeshDataFormItems()
       if (id) {
         this.title = btnType == 'look' ? '查看调拨单' : '编辑调拨单'

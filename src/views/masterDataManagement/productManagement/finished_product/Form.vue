@@ -283,16 +283,28 @@ export default {
           tc.clearable = true
           tc.change = (val) => {
             if (this.flag) {
-              this.dataForm.drawingNo =
-                this.dataForm.model +
-                this.dataForm.sealingCoverStructure +
-                this.dataForm.structureType +
-                '.' +
-                this.dataForm.clearance +
-                this.dataForm.steelBallManufacturer +
-                this.dataForm.oil +
-                this.dataForm.noise +
-                this.dataForm.holder
+              if (this.dataForm.steelBallManufacturer) {
+                this.dataForm.drawingNo =
+                  this.dataForm.model +
+                  this.dataForm.sealingCoverStructure +
+                  this.dataForm.structureType +
+                  '.' +
+                  this.dataForm.clearance +
+                  this.dataForm.steelBallManufacturer +
+                  this.dataForm.oil +
+                  this.dataForm.noise +
+                  this.dataForm.holder
+              } else {
+                this.dataForm.drawingNo =
+                  this.dataForm.model +
+                  this.dataForm.sealingCoverStructure +
+                  this.dataForm.structureType +
+                  '.' +
+                  this.dataForm.clearance +
+                  this.dataForm.oil +
+                  this.dataForm.noise +
+                  this.dataForm.holder
+              }
             }
           }
           // tc.change = this.ProductChange
@@ -410,6 +422,7 @@ export default {
         tc.clearable = true
         tc.change = (val, data, paramsObj) => {
           this.modelForm.model = data[0].all.model
+          this.dataForm.model = data[0].all.model
           const obj = {
             startTime: '',
             endTime: '',
@@ -430,6 +443,7 @@ export default {
           getbimProductsModelList(obj).then((res) => {
             this.modelForm = res.data.records[0]
           })
+
         }
       }
     })
@@ -513,16 +527,29 @@ export default {
         // 数据有效，进行更新
         this.dataForm[paramsObj.prop] = data[0].all.model
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
+
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -552,16 +579,29 @@ export default {
         this.dataForm[paramsObj.prop] = data[0].all.name
         this.dataForm.steelBallManufacturer = data[0].all.code
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
+
         }
       } else {
         // 不选择任何内容，置空绑定的值
@@ -615,6 +655,7 @@ export default {
           }
           if (ele.prop == 'model') {
             ele.render = true
+            ele.itemDisabled = true
           }
         })
       } else {
@@ -809,16 +850,28 @@ export default {
       // 判断条件后发送请求
       if (submitFlag) {
         if (this.flag) {
-          this.dataForm.drawingNo =
-            this.dataForm.model +
-            this.dataForm.sealingCoverStructure +
-            this.dataForm.structureType +
-            '.' +
-            this.dataForm.clearance +
-            this.dataForm.steelBallManufacturer +
-            this.dataForm.oil +
-            this.dataForm.noise +
-            this.dataForm.holder
+          if (this.dataForm.steelBallManufacturer) {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.steelBallManufacturer +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          } else {
+            this.dataForm.drawingNo =
+              this.dataForm.model +
+              this.dataForm.sealingCoverStructure +
+              this.dataForm.structureType +
+              '.' +
+              this.dataForm.clearance +
+              this.dataForm.oil +
+              this.dataForm.noise +
+              this.dataForm.holder
+          }
         }
         const formMethod = this.dataForm.id ? updateProductData : cpAddProduct
         formMethod(this.dataForm)

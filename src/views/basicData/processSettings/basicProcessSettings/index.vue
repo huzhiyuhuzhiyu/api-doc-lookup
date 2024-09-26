@@ -721,6 +721,7 @@ export default {
             })
         }
         this.superForm.superQuery = this.basicQuery
+        this.superForm.processingType = this.listQuery.processingType
       }
       if (type === 'super') {
         this.superForm.superQuery = this.superQuery

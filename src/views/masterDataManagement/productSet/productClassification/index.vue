@@ -88,7 +88,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180" />
           <el-table-column prop="sort" label="排序" width="100" align="center">
             <template slot-scope="scope">
-              <el-input @blur="switchShow(scope.row, 'sort')" clearable v-model="scope.row.sort"></el-input>
+              <el-input @blur="switchShow(scope.row, 'sort')" v-model="scope.row.sort"></el-input>
             </template>
           </el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200" />
@@ -471,6 +471,7 @@ export default {
       })
     },
     switchShow(row) {
+      console.log(row.sort, 'so')
       if (!row.sort) return this.$message.error('请输入排序值')
       let obj = row
       updateCategory(obj)

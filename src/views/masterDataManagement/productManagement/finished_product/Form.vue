@@ -183,13 +183,8 @@ export default {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
-        if (tc.prop == 'model') {
-          if (this.flag) {
-            tc.render = true
-          } else {
-            tc.render = false
-          }
-        }
+        console.log(this.flag, '')
+
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
           // 产品分类
@@ -618,6 +613,9 @@ export default {
               { label: '外协', value: 'out' }
             ]
           }
+          if (ele.prop == 'model') {
+            ele.render = true
+          }
         })
       } else {
         this.tabs[0].tabContent.forEach((ele) => {
@@ -647,6 +645,9 @@ export default {
               { label: '采购', value: 'purchase' },
               { label: '外协', value: 'out' }
             ]
+          }
+          if (ele.prop == 'model') {
+            ele.render = false
           }
         })
       }
@@ -730,7 +731,7 @@ export default {
               ) {
                 tc.itemDisabled = true
               }
-             
+
 
               this.jnpf.getBillRuleConfigFun('CPBM').then((res) => {
                 if (!res.modifyFlag) {

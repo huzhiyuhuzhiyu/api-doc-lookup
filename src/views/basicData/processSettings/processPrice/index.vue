@@ -130,7 +130,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="150" />
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+        <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
           @pagination="initData" />
       </div>
     </div>

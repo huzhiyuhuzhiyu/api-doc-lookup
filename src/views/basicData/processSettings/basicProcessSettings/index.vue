@@ -50,7 +50,7 @@
             </el-form-item>
           </el-col> -->
           <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -121,8 +121,8 @@
           <el-table-column prop="unitPrice" label="正品单价" min-width="180" />
           <el-table-column prop="rejectUnitPrice" label="次品单价" min-width="180" />
           <el-table-column prop="scrapUnitPrice" label="废品单价" min-width="120" />
-          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="pricingTypeName" label="计价类型" width="180"> </el-table-column>
+          <el-table-column prop="timePrice" label="计时单价" min-width="120"></el-table-column>
           <el-table-column prop="processingType" label="加工类型" width="120" sortable="custom">
             <template slot-scope="scope">
               <div v-if="scope.row.processingType == 'self_produced'">自制</div>
@@ -289,6 +289,7 @@ export default {
         label: 'name'
       },
       processingTypeOptions: [
+        { label: "所有选项", value: "" },
         { label: "自制", value: "self_produced" },
         { label: "外协", value: "external_production" },
       ],
@@ -619,8 +620,8 @@ export default {
       }
     },
     handleNodeClick(data, node) {
-      if (this.listQuery.productCategoryId === data.id) return
-      this.listQuery.productCategoryId = data.id
+      if (this.superForm.productCategoryId === data.id) return
+      this.superForm.productCategoryId = data.id
       this.search('basic')
     },
     // 展开或折叠全部

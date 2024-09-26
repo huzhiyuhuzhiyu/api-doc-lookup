@@ -194,8 +194,8 @@ export default {
       ProductTableItems: [
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' },
-        { prop: 'mainUnit', label: '主单位', minWidth: 0 }
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
+        { prop: 'mainUnit', label: '单位', minWidth: 0 }
         // { prop: 'productType', label: '产品类别', minWidth: 0 },
         // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
       ],
@@ -245,7 +245,7 @@ export default {
           updataBimProductsModelCheck(item.model, '')
             .then((res) => {
               if (!res.data) {
-
+                submitFlag = true
               } else {
                 this.$message.error(`第${index + 1}行，型号已存在`)
               }

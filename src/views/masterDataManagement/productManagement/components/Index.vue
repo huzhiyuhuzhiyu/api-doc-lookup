@@ -147,7 +147,7 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
-                <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
@@ -575,6 +575,7 @@ export default {
                 duration: 1500,
                 onClose: () => {
                   this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
                   this.initData()
                 }
               })

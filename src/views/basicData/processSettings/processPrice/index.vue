@@ -187,15 +187,6 @@ export default {
       searchList: [
         { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        // {
-        //   field: 'pricingType',
-        //   fieldValue: 'by_time',
-        //   label: '计价类型',
-        //   symbol: 'like',
-        //   searchType: 4,
-        //   width: 120,
-        //   options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        // }
       ],
       leftFlag: false,
       filterText: '',

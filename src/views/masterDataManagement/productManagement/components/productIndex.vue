@@ -147,7 +147,7 @@
             <template slot-scope="scope">
               <tableOpts :isJudgePer="true" :editPerCode="'btn_edit'" :delPerCode="'btn_remove'"
                 @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
-                <el-button type="text" @click.native="addOrUpdateHandle(scope.row.id, true)">
+                <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
                 <!-- <el-dropdown hide-on-click>
@@ -232,7 +232,7 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable >
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
             <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
               :value="item.value"></el-option>
           </el-select>
@@ -586,6 +586,7 @@ export default {
                 duration: 1500,
                 onClose: () => {
                   this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
                   this.initData()
                 }
               })

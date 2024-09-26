@@ -1138,6 +1138,7 @@ export default {
               }
             }
           } else {
+            this.dataForm.documentStatus = ''
             this.btnLoading = false
           }
         })

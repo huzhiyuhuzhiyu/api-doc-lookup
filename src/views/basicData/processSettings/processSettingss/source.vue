@@ -141,10 +141,10 @@
       :listMethod="getGroupList" :listRequestObj="WorkgroupRequestObj" :renderTree="false"
       :searchList="WorkgroupTableSearchList" :elementShow="false" multiple />
     <ComSelect-page ref="ComSelect-page" @change="DeviceSubmit" :tableItems="DeviceTableItems" title="选择设备"
-      treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="stateEquEquipment" :listRequestObj="DeviceRequestObj"
+      treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="getEquEquipmentList" :listRequestObj="DeviceRequestObj"
       :searchList="DeviceTableSearchList" :elementShow="false" multiple />
     <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具"
-      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
+      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="getEquEquipmentList" :listRequestObj="ToolRequestObj"
       :searchList="ToolTableSearchList" :elementShow="false" multiple />
   </div>
 </template>

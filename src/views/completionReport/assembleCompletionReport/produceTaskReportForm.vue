@@ -119,7 +119,7 @@
 
                 </div>
               </div>
-              <el-col :span="11" class="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
+              <el-col :span="11" class="fixedInfo" ref="fixedInfo" :style="{ height: targetHeight + 'px!important' }"
                 style="width: 48%!important;">
                 <el-row>
                   <el-col :sm="24" :xs="24">
@@ -228,7 +228,7 @@
                   </el-col>
                 </el-row>
               </el-col>
-              <el-col :span="12" class="rightInfo" ref="mycol"
+              <el-col :span="12" class="rightInfo" :style="{ height: targetHeight2 + 'px!important' }" ref="mycol"
                 v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true">
                 <el-form ref="reportRef" :model="currentProcess" :rules="dataRule" label-width="160px"
                   label-position="left">
@@ -308,7 +308,7 @@
                           <!-- equipmentId -->
                         </el-form-item>
                       </el-col>
-                      <el-col :sm="24" :xs="24" v-if="currentProcess.vibrateReportFlag">
+                      <el-col :sm="24" :xs="24" v-if="!currentProcess.vibrateReportFlag">
                         <div
                           v-if="currentProcess.processingType == 'self_produced' && currentProcess.reportFlag == true"
                           class="reportBtn_right">
@@ -560,6 +560,7 @@ export default {
   data() {
     return {
       targetHeight: "",
+      targetHeight2:"",
       processOutFormVisible: false,
       recordFormVisible: false,
       normalFormVisible: false,
@@ -659,6 +660,13 @@ export default {
       if (this.currentProcess.vibrateReportFlag) {
         this.$set(this.currentProcess, 'item', {})
         this.getvibrationLevelFun()
+      }else{
+        
+        this.$nextTick(() => {
+          const height = this.$refs.fixedInfo.$el.clientHeight
+          console.log('el-col的高度是：', height);
+          this.targetHeight2 = height;
+        });
       }
       this.producePersonListFun(this.currentProcess.id)
       const end = new Date();//获取当前的日期
@@ -1093,7 +1101,7 @@ padding: 9px 10px;
 }
 
 .reportBtn {
-  text-align: center;
+  // text-align: center;
   margin-top: 20px;
 }
 

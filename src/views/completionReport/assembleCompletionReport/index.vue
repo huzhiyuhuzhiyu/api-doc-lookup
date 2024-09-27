@@ -73,8 +73,8 @@
                     <div class="label_title"> 计划日期:{{ item.planStartDate }}—{{ item.planEndDate }}</div>
                     <div>
                       <el-button style="color:red;" type="text">关单</el-button>
-                      <el-button type="primary" size="mini" @click='produceTaskReportFun(item.id)'>报 工</el-button>
-                      <el-button type="primary" size="mini" @click="viewTask(item)">查看任务</el-button>
+                      <el-button type="primary" size="mini" @click='produceTaskReportFun(item.id)' style="margin-left: 5px;">报 工</el-button>
+                      <el-button type="primary" size="mini" @click="viewTask(item)" style="margin-left: 5px;">查看任务</el-button>
                     </div>
                   </el-card>
 

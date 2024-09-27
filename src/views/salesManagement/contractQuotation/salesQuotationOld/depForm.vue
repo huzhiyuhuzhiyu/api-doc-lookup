@@ -182,16 +182,14 @@
                             @input="watchnums(scope.row, scope.$index)" />
                         </el-form-item>
                       </template> -->
-                      <template slot-scope="scope" v-if="!status">
-                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;"
+                      <template slot-scope="scope" >
+                        <el-select v-model="scope.row.taxRate" placeholder="税率" style="width: 100%;" :disabled="status"
                            @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
                       </template>
-                      <template slot-scope="scope"v-if="status">
-                         <div>{{ scope.row.taxRate }}%</div>
-                      </template>
+                    
                     </el-table-column>
                     <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="120" show-overflow-tooltip>
                     </el-table-column>
@@ -406,12 +404,15 @@
                             @input="watchnums(scope.row, scope.$index)" />
                         </el-form-item>
                       </template> -->
-                      <template slot-scope="scope">
+                      <template slot-scope="scope" v-if="!status">
                         <el-select v-model="scope.row.taxRate" placeholder="请选择税率" style="width: 100%;"
                           :disabled="status" @change="changeTaxRate(scope.row, scope.$index)">
                           <el-option v-for="(item, index) in taxRateList" :key="index" :label="item.fullName"
                             :value="item.taxRate"></el-option>
                         </el-select>
+                      </template>
+                      <template slot-scope="scope"v-if="status">
+                         <div>{{ scope.row.taxRate }}%</div>
                       </template>
                     </el-table-column>
                     <el-table-column prop="excludingTaxUnitPrice" label="单价(不含税)" width="150" show-overflow-tooltip>
@@ -1364,7 +1365,7 @@ export default {
       this.$nextTick(() => { this.switchStyle('onresize') });
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
-      console.log(id,'id');
+      console.log(id,'id',btnType);
       
       // this.oldId = JSON.parse(JSON.stringify(id)) || ""
       // this.oldType = JSON.parse(JSON.stringify(btnType))
@@ -1378,6 +1379,7 @@ export default {
         let obj = JSON.parse(JSON.stringify(this.createdData))
         this.dataFormTwo.lines.push(obj)
       }
+      console.log('status',this.status);
 
       // 新建
       if ((this.btnType == 'add' && !this.dataForm.id) || this.btnType == 'copy') {
@@ -1567,6 +1569,16 @@ export default {
             return true
           }
         });
+      }
+      if(this.dataFormTwo.lines.length){
+        for (let index = 0; index < this.dataFormTwo.lines.length; index++) {
+          const item = this.dataFormTwo.lines[index];
+          if(!item.productDrawingNo){
+            submitFlag=false
+            this.$message.error("产品信息第"+(index + 1) +"行品名规格不能为空")
+            return
+          }
+        }
       }
 
       if (submitFlag) {

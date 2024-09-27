@@ -182,7 +182,7 @@
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <ReworkForm v-if="reworkVisible" ref="reworkForm" @refreshDataList="initData" @close="closeForm"></ReworkForm>
     <BatchDispatchForm  v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm"></BatchDispatchForm>
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" ref="printForm" :fullName="fullName" />
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
@@ -246,6 +246,7 @@ export default {
         productionQuantity: "",
         orderNo: ""
       },
+      fullName:'',
       printBrowseVisible: false,
       workOrderVisible: false,
       workOrderForm: {
@@ -740,6 +741,7 @@ export default {
     printFlowCard(enCode) {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
+      this.fullName = '套圈流程卡'
       this.workOrderVisible = true
       this.$nextTick(()=>{
         console.log(this.$refs.work.$refs.JNPFTable);

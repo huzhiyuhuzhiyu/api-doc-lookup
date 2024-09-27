@@ -145,7 +145,7 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" :fullName="fullName"
       ref="printForm" />
     <el-dialog title="二维码" :visible.sync="dialogVisible" width="350px" :close-on-click-modal="false"
       :show-close="false">
@@ -225,6 +225,7 @@ export default {
   components: { Form, SuperQuery, VueQr, PrintBrowse, PrintDialog },
   data() {
     return {
+      fullName:'',
       productClassAttribute: false,
       dialogVisible: false,
       printVisible: false,
@@ -740,6 +741,7 @@ export default {
     printView(enCode) {
       if (!this.selectWarehouse.length) return this.$message.error("请选择您要打印的数据!")
       this.enCode = enCode
+      this.fullName = '仓库二维码'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(enCode)

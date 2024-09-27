@@ -1067,6 +1067,7 @@ export default {
         obj.scheme.safeInventoryFlag = 0
       }
       console.log(obj);
+      if(!obj.scheme.schemeName) return this.$message.error("方案名称不能为空")
       addMrpCalcSchemeList(obj).then(res => {
         this.$message.success("保存方案成功")
         this.getMrpCalcSchemeListFun()

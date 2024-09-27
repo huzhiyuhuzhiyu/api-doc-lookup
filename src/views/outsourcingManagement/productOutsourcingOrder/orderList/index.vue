@@ -611,6 +611,24 @@ export default {
         this.$refs.procureForm.init(id, type)
       })
     },
+    handleDel(id) {
+      this.$confirm('此操作将删除该数据，是否继续？', this.$t('common.tipTitle'), {
+        type: 'warning'
+      })
+        .then(() => {
+          withdrawn(_data).then((res) => {
+            this.$message({
+              type: 'success',
+              message: '删除成功',
+              duration: 1500,
+              onClose: () => {
+                this.initData()
+              }
+            })
+          })
+        })
+        .catch(() => { })
+    },
     // 导出订货单
     orderFormDownload(id) {
       purPurchaseOrderExport(id).then((res) => {

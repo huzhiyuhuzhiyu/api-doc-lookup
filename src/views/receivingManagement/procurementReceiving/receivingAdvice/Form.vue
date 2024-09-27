@@ -1515,6 +1515,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
+            this.fetchData('CGSH')
             // getOrderDetail(res.data.notice.ordersId).then(res1 => {
             //   res1.data.orderLines.map((item) => {
             //     res.data.lines.map((item1) => {
@@ -1528,9 +1529,13 @@ export default {
             //   })
 
             // })
+
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
+
+
+
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
@@ -1545,18 +1550,6 @@ export default {
             }
           }
         })
-      }
-      if (btnType == 'add' || btnType == 'copy') {
-        this.dataForm.salesman = this.userInfo.userName
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-        this.formLoading = true
-        this.getBusInfo()
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('CGSH')
-        }, 500)
       }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'

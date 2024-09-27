@@ -1250,6 +1250,7 @@ export default {
           this.dataForm = oldObj
 
           this.dataForm.inspectionOrderNo = res.data.inspection.orderNo
+          this.dataForm.inspectionUnqualifiedQuantity = this.dataForm.unqualifiedQuantity
           // this.dataForm.inspectionUnqualifiedQuantity = res.data.inspection.unqualifiedQuantity
 
           this.inspectionList = res.data.itemList
@@ -1377,7 +1378,7 @@ export default {
       //   (this.scope.row ? this.scope.row.inspectionUnqualifiedQuantity : 0)
       // return this.scope.row ? tempUnqualifiedQuantity ? tempUnqualifiedQuantity : 0 : 0
 
-      return this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : 0
+      return this.dataForm.inspectionUnqualifiedQuantity ? this.dataForm.inspectionUnqualifiedQuantity : this.dataForm.unqualifiedQuantity
     },
     nowNum() {
       let tempNum = 0

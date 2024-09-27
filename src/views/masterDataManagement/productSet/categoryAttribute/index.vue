@@ -223,7 +223,7 @@ export default {
         item.sort = item.sortCode
       })
       updateSortBatch(data).then(res => {
-        this.$message.success("批量修改排序成功")
+        this.$message.success("排序修改成功")
         this.initData()
       })
     },

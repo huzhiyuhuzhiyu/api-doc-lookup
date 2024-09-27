@@ -499,14 +499,14 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -884,7 +884,7 @@ export default {
     async beforeSubmit(data, paramsObj) {
       let flag = true
       if (paramsObj.oldData.length) {
-        flag = await this.$confirm('切换供应商会更新产品价格信息，是否继续？', '提示', {
+        flag = await this.$confirm('切换供应商将清空产品信息，是否继续？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -1078,10 +1078,10 @@ export default {
       this.dataFormTwo.data = []
     },
     goBack() {
-      this.$emit('close',true)
+      this.$emit('close', true)
     },
-    init(id, type,data) {
-      console.log(id, type,data)
+    init(id, type, data) {
+      console.log(id, type, data)
       // this.fetchData('QGD')
       // 此处判断用户选择新增还是编辑
       this.dataForm.id = id || ''

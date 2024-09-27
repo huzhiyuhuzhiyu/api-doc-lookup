@@ -308,94 +308,94 @@ export default {
           render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
           itemDisabled: true
         }
-      ]),
-        (this.inspectionInfo = [
-          {
-            prop: 'inspectionMethod',
-            label: '检验方式',
-            value: '',
-            type: 'select',
-            clearable: false,
-            change: this.inspectionMethodChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6,
-            // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
-            options: generateInspectionMethodList(this.inspectionType)
-            // options: [
-            //   { label: '免检', value: 'exempt' },
-            //   { label: '抽检', value: 'spot_check' },
-            //   { label: '全检', value: 'all' }
-            // ]
-          },
-          // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
-          {
-            prop: 'samplingQuantity',
-            label: '检验数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读',
-            itemRules: [
-              { required: true, trigger: 'blur' },
-              {
-                validator: (rule, value, callback) => {
-                  if (value > Number(this.dataForm.inspectionQuantity)) {
-                    callback(new Error('检验数量不能大于报检数量'))
-                  } else if (value < Number(this.autosamplingQuantity)) {
-                    callback(new Error('检验数量不能小于规定的抽检数量'))
-                  } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
-                    callback(new Error('请输入正整数'))
-                  } else {
-                    callback()
-                  }
-                },
-                trigger: 'blur'
-              }
-            ]
-          },
-          {
-            prop: 'inspectionResults',
-            label: '检验结果',
-            value: undefined,
-            type: 'select',
-            options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
-            change: this.inspectionResultsChange,
-            itemRules: [{ required: true, trigger: 'change' }],
-            sm: 6
-          },
-          {
-            prop: 'unqualifiedQuantity',
-            label: '不合格数量',
-            value: '',
-            type: 'input',
-            sm: 6,
-            render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
-            itemDisabled: this.dataForm.unqualifiedQuantity == '0' || this.openMode === '只读',
-            itemRules: [
-              { required: true, trigger: 'blur' },
-              {
-                validator: (rule, value, callback) => {
-                  if (value > Number(this.dataForm.samplingQuantity)) {
-                    callback(new Error('不合格数量不能大于检验数量'))
-                  } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
-                    callback(new Error('不合格数量不能为0'))
-                  } else if (/^(?:[1-9]\d*)$/.test(value) == false) {
-                    callback(new Error('请输入正整数'))
-                  } else {
-                    callback()
-                  }
-                },
-                trigger: 'blur'
-              }
-            ]
-          },
-          // {
-          //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
-          //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
-          // },
-          { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
-        ])
+      ])
+      this.inspectionInfo = [
+        {
+          prop: 'inspectionMethod',
+          label: '检验方式',
+          value: '',
+          type: 'select',
+          clearable: false,
+          change: this.inspectionMethodChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6,
+          // itemDisabled: (rowIndex) => this.dataForm.inspectionMethod === 'exempt' || this.openMode === '只读',
+          options: generateInspectionMethodList(this.inspectionType)
+          // options: [
+          //   { label: '免检', value: 'exempt' },
+          //   { label: '抽检', value: 'spot_check' },
+          //   { label: '全检', value: 'all' }
+          // ]
+        },
+        // { prop: "inspectionMethod", label: "检验方式", value: undefined, type: "select", options: [{ label: '全检', value: 'all' }, { label: '抽检', value: 'spot_check' }], itemRules: [{ required: true, trigger: 'change' }], sm: 6 },
+        {
+          prop: 'samplingQuantity',
+          label: '检验数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.dataForm.inspectionMethod == 'all' || this.openMode === '只读',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                if (value > Number(this.dataForm.inspectionQuantity)) {
+                  callback(new Error('检验数量不能大于报检数量'))
+                } else if (value < Number(this.autosamplingQuantity)) {
+                  callback(new Error('检验数量不能小于规定的抽检数量'))
+                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
+                  callback(new Error('请输入整数'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ]
+        },
+        {
+          prop: 'inspectionResults',
+          label: '检验结果',
+          value: undefined,
+          type: 'select',
+          options: [{ label: '合格', value: 'qualified' }, { label: '不合格', value: 'unqualified' }],
+          change: this.inspectionResultsChange,
+          itemRules: [{ required: true, trigger: 'change' }],
+          sm: 6
+        },
+        {
+          prop: 'unqualifiedQuantity',
+          label: '不合格数量',
+          value: '',
+          type: 'input',
+          sm: 6,
+          render: this.inspectionType.indexOf('_batch') === -1 && !this.batchFlag,
+          itemDisabled: this.openMode === '只读',
+          itemRules: [
+            { required: true, trigger: 'blur' },
+            {
+              validator: (rule, value, callback) => {
+                if (value > Number(this.dataForm.samplingQuantity)) {
+                  callback(new Error('不合格数量不能大于检验数量'))
+                } else if (value == 0 && this.dataForm.inspectionResults == 'unqualified') {
+                  callback(new Error('不合格数量不能为0'))
+                } else if (/^(?:[0-9]\d*)$/.test(value) == false) {
+                  callback(new Error('请输入整数'))
+                } else {
+                  callback()
+                }
+              },
+              trigger: 'blur'
+            }
+          ]
+        },
+        // {
+        //   prop: "liableList", label: "责任人", value: undefined, type: "custom", customComponent: "user-select", sm: 6, multiple: true,
+        //   render: ['process', 'finished', 'finished_batch'].includes(this.inspectionType)
+        // },
+        { prop: 'remark', label: '备注', value: '', type: 'textarea', sm: 12 }
+      ]
     },
     // 设置子表结构
     setLinesListItems() {
@@ -1310,7 +1310,7 @@ export default {
         //   })
         // }
       } else {
-        this.dataForm.unqualifiedQuantity = ''
+        this.dataForm.unqualifiedQuantity = '0'
       }
       this.setDataFormItems()
     },

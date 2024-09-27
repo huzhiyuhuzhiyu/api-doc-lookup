@@ -201,13 +201,13 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
+                      <el-form-item label="行业类别" prop="industry">
+                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType=='look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="行业类别" prop="industry">
-                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType=='look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType=='look' ? true : false" />
                       </el-form-item>
                     </el-col>
                   </el-row>

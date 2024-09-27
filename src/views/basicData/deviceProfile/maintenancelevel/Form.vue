@@ -7,10 +7,18 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="保养频次" prop="frequency">
+      <!-- <el-form-item label="保养频次" prop="frequency">
         <el-select v-model="dataForm.frequency" placeholder="请选择保养频次" clearable style="width: 100%;">
           <el-option v-for="item in frequencyList" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
+        </el-select>
+      </el-form-item> -->
+      <el-form-item label="周期" prop="cycle">
+        <el-input v-model="dataForm.cycle" placeholder="请输入周期" maxlength="50" />
+      </el-form-item>
+      <el-form-item label="单位" prop="unit">
+        <el-select v-model="dataForm.unit" placeholder="请选择单位" clearable>
+          <el-option v-for="(item, index) in unitStateList" :key="index" :label="item.label" :value="item.label"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
@@ -27,6 +35,13 @@ import { detailequMaintenanceLevel, updateequMaintenanceLevel, addequMaintenance
 export default {
   data() {
     return {
+      unitStateList: [
+        { label: '天' },
+        { label: '周' },
+        { label: '月' },
+        { label: '季' },
+        { label: '年' }
+      ],
       levelList: [
         { label: "日常保养", value: "日常保养", color: "#EB5050" },
         { label: "二级保养", value: "二级保养", color: "#F0A800" },
@@ -47,16 +62,21 @@ export default {
       btnLoading: false,
       dataForm: {
         level: '',
-        frequency: '',
+        cycle: '',
+        unit: '',
         id: ''
       },
       dataRule: {
         level: [
           { required: true, message: '请选择保养等级', trigger: 'blur' },
         ],
-        frequency: [
-          { required: true, message: '请选择保养频次', trigger: 'blur' },
+        cycle: [
+          { required: true, message: '周期不能为空', trigger: 'change' },
+          { validator: this.formValidate('bigInt'), trigger: 'change' }
         ],
+        unit: [
+          { required: true, message: '单位不能为空', trigger: 'change' }
+        ]
       }
     }
   },

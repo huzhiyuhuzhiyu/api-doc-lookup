@@ -173,6 +173,9 @@ export default {
         visitName: [
           { required: true, message: '请输入拜访计划名称', trigger: 'blur' },
         ],
+        ownerUserId: [
+          { required: true, message: '请选择负责人', trigger: 'blur' },
+        ],
         visitTime: [
           { required: true, message: '请选择预计拜访时间', trigger: 'blur' },
         ],

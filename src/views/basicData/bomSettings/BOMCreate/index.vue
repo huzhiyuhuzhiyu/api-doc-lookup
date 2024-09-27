@@ -133,7 +133,7 @@ export default {
           value: '',
           type: 'select',
           options: [
-            { label: '按生产订单领料', value: 'production_order' },
+            { label: '按生产任务领料', value: 'production_order' },
             { label: '按派工单领料', value: 'dispatch_list' }
           ],
           itemRules: [{ required: true, trigger: 'change' }],

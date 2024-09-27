@@ -106,11 +106,21 @@
                     </el-col>
 
                     <el-col :sm="8" :xs="24">
-                      <el-form-item label="存放地点" prop="storageLocation">
-                        <el-input maxlength="100" v-model="dataForm.storageLocation" placeholder="请输入存放地点" :disabled="disabled" />
+                      <el-form-item label="车间" prop="factoryFloorid">
+                        <el-select v-model="dataForm.factoryFloorid" filterable placeholder="请选择车间" clearable>
+                          <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
+                          </el-option>
+                        </el-select>
                       </el-form-item>
                     </el-col>
-
+                    <el-col :sm="8" :xs="24">
+                      <el-form-item label="安装地点" prop="mountedPlacesid">
+                        <el-select v-model="dataForm.mountedPlacesid" filterable placeholder="请选择安装地点" clearable>
+                          <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="采购金额(万元)" prop="purchaseAmount">
                         <el-input v-model="dataForm.purchaseAmount" placeholder="请输入采购金额" :disabled="disabled">
@@ -238,6 +248,8 @@ export default {
   },
   data() {
     return {
+      mountedPlacesList: [],
+      factoryFloorList: [],
       activeNames: ["basicInfo"],
       getCooperativeData,
       datafilelist: [],
@@ -295,7 +307,8 @@ export default {
         specModel: null, //规格型号
         userDepartmentId: null, //使用部门
         userDepartmentName: null, //使用部门
-        storageLocation: null, //存放位置
+        factoryFloorid: null,
+        mountedPlacesid: null,
         cooperativePartnerId: null, //供应商
         supplier: null, //生产厂家
         serialNo: null, //序列号
@@ -417,8 +430,19 @@ export default {
     }
   },
   created() {
+    this.getfactoryFloor()
   },
   methods: {
+    getfactoryFloor() {
+      let obj = {
+        pageNum: 1,
+        pageSize: -1,
+      }
+      getequMountedPlaces(obj).then(res => {
+        this.factoryFloorList = res.data.records.filter(item => item.type == 'workshop')
+        this.mountedPlacesList = res.data.records.filter(item => item.type == 'location')
+      })
+    },
     changePic(data) {
       if (data.length === 0) {
 

@@ -98,7 +98,7 @@
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm"> 导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -630,7 +630,9 @@ export default {
                 duration: 1500,
                 onClose: () => {
                   this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
                   this.initData()
+                  
                 }
               })
             }

@@ -76,14 +76,14 @@
                                         </el-select>
                                     </el-form-item>
                                 </el-col> -->
-                        <el-col :span="24">
+                        <el-col :span="12">
                           <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
                             <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
                               maxlength="200" :disabled="type == 'look'"></el-input>
                           </el-form-item>
                         </el-col>
 
-                        <el-col :span="24">
+                        <el-col :span="12">
                           <el-form-item label="备注" prop="remark">
                             <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
                               maxlength="200" :disabled="type == 'look'"></el-input>
@@ -98,17 +98,12 @@
                     </el-col> -->
                       </template>
                     </el-form>
-                    <!-- <SelectDialog v-if="selectDialogVisible" :config="currTableConf" :formData="dataForm" ref="selectDialog"
-              @select="addForSelect" @close="selectDialogVisible=false" /> -->
+
                   </el-row>
                 </el-collapse-item>
                 <el-collapse-item title="工序信息" name="processInfo">
                   <el-col :span="24">
-                    <!-- <div
-                            style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
-                          >
-                            <h5>工序信息</h5>
-                          </div> -->
+
                     <div v-if="type !== 'look'">
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         icon="el-icon-plus" :disabled="type == 'look' ? true : false"
@@ -116,14 +111,14 @@
                         选择工序
                       </el-button>
                       |
-                      <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+
                       <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                         :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                         批量删除
                       </el-button>
                       |
                     </div>
-                    <!-- <el-form-item label-width="0" ref="tableForm">  -->
+
                     <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
                       v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
                       size="mini" id="table">
@@ -1143,6 +1138,7 @@ export default {
               }
             }
           } else {
+            this.dataForm.documentStatus = ''
             this.btnLoading = false
           }
         })

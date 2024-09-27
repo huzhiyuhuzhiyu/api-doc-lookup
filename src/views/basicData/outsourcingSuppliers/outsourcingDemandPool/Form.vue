@@ -410,19 +410,19 @@ export default {
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
 
         { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
 
         { prop: 'mainUnit', label: '单位', width: 60 },
         { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
         { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
         { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
-        // { prop: 'productName', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'deliveryDate', label: '交货日期', type: 'date' },
       ],
       getcooperativeProduct,
       productVisible: false,

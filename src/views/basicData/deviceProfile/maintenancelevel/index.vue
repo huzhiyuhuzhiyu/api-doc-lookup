@@ -41,14 +41,16 @@
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column>
             <el-table-column prop="level" label="保养等级" min-width="140">
               <template slot-scope="scope">
-                <div>{{levelfunction(scope.row.level)}}</div>
+                <div><el-tag type="success" :color="colorfun(scope.row.level)" effect="dark">{{levelfunction(scope.row.level)}}</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="frequency" label="保养频次" min-width="140">
+            <el-table-column prop="cycle" label="周期" min-width="120" />
+            <el-table-column prop="unit" label="单位" min-width="110" />
+            <!-- <el-table-column prop="frequency" label="保养频次" min-width="140">
               <template slot-scope="scope">
                 <div>{{frequencyfunction(scope.row.frequency)}}</div>
               </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column prop="createTime" label="创建时间" width="180" />
             <el-table-column prop="createByName" label="创建人" width="120" />
             <el-table-column label="操作" width="140" fixed="right">
@@ -82,7 +84,7 @@
 </template>
 
 <script>
-import { getequMaintenanceLevel,deleteequMaintenanceLevel } from "@/api/basicData/materialSettings";
+import { getequMaintenanceLevel, deleteequMaintenanceLevel } from "@/api/basicData/materialSettings";
 import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 export default {
@@ -96,7 +98,6 @@ export default {
         { label: "三级保养", value: "三级保养", color: "#46C26F" },
         { label: "四级保养", value: "四级保养", color: "#A2C204" },
         { label: "年度保养", value: "年度保养", color: "#00AED1" }
-
       ],
       frequencyList: [
         { label: "每天一次", value: "每天一次", color: "#EB5050" },
@@ -138,10 +139,10 @@ export default {
         {
           prop: 'createTime',
           label: '创建时间',
-          type: 'daterange',
+          type: 'datetimerange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
-          startPlaceholder: '开始日期',
-          endPlaceholder: '结束日期',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
         },
         {
           prop: 'createByName',
@@ -156,6 +157,10 @@ export default {
     this.initData()
   },
   methods: {
+    colorfun(val) {
+      let _data = this.levelList.filter(item => item.value == val)[0]
+      return _data ? _data.color : '#EB5050'
+    },
     levelfunction(val) {
       let _data = this.levelList.filter(item => item.value == val)[0]
       return _data ? _data.label : val
@@ -227,3 +232,8 @@ export default {
 }
 </script>
 <style src="@/assets/scss/index-list.scss" lang="scss" scoped />
+<style scoped>
+::v-deep .el-tag--dark.el-tag--success {
+  border-color: rgb(0, 0, 0, 0);
+}
+</style>

@@ -6,7 +6,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="lastListQuery.drawingNo" placeholder="品名规格" clearable
                       @keyup.enter.native="search()" />
@@ -18,7 +18,25 @@
                     <el-input v-model.trim="lastListQuery.partnerName" placeholder="供应商名称" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
+                <template v-for="item in lastSearchList">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="search('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
 
                 <el-col :span="6">
                   <el-form-item>
@@ -93,7 +111,7 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="historyListQuery.drawingNo" placeholder="品名规格" clearable
                       @keyup.enter.native="search()" />
@@ -105,7 +123,25 @@
                     <el-input v-model.trim="historyListQuery.partnerName" placeholder="供应商名称" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
+                <template v-for="item in historySearchList">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="search('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
 
                 <el-col :span="6">
                   <el-form-item>
@@ -195,6 +231,16 @@ export default {
   components: { ExportForm, SuperQuery },
   data() {
     return {
+      basicQuery: {},
+      superQuery: {},
+      lastSearchList: [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      historySearchList: [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       exportFormVisible: false,
       depFormVisible: false,
       background: true, //分页器背景颜色
@@ -349,7 +395,7 @@ export default {
         },
         {
           prop: 'effectiveTimeStart',
-          label: '创建时间',
+          label: '有效日期起',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
@@ -358,7 +404,7 @@ export default {
         },
         {
           prop: 'effectiveTimeEnd',
-          label: '创建时间',
+          label: '有效日期止',
           type: 'daterange',
           valueFormat: 'yyyy-MM-dd HH:mm:ss',
           startPlaceholder: '开始日期',
@@ -761,6 +807,12 @@ export default {
       })
       this.lastListQuery.pageNum = 1
       // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (this.activeName == 'latestprice') {
+        this.searchList = this.lastSearchList
+      } else {
+        this.searchList = this.historySearchList
+      }
+      console.log(this.searchList, 'this.searchList')
       if (type === 'basic') {
         this.basicQuery = {
           matchLogic: 'AND',
@@ -804,6 +856,44 @@ export default {
         code: '',
         name: ''
       }
+      this.historyListQuery = {
+        classAttribute: '',
+        approvalStatus: 'ok',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'createTime'
+          }
+        ],
+        approvalStatus: '', // 审批状态 审批中ing 审批通过ok 审核未通过rebut,可用值:ing,no,ok,rebut,wait
+        cooperativePartnerCode: '', //	供应商编码
+        cooperativePartnerId: '', // 供应商id
+        cooperativePartnerName: '', // 	供应商名称
+
+        documentStatus: '', // 单据状态:草稿 draft、提交 submit,可用值:draft,normal,submit
+        startAndEndTime: '',
+        listPriceFlag: '', // 是否设置牌价:0否1是
+        orderNo: '', // 单号
+        pageNum: 1,
+        pageSize: 20,
+        startTime: '',
+        submitEndTime: '', //提交时间-结束
+        submitStartTime: ''
+        // startAndEndTime: [],
+      }
+      this.lastSearchList = [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+
+      ]
+      this.historySearchList = [
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '供应商名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.search()
     },
     addSupplier(type) {

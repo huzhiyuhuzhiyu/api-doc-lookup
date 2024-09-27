@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-drawer title="资源配置" :visible.sync="drawer" :direction="direction" :wrapperClosable="false"
+    <el-drawer title="资源配置" :visible.sync="drawer" :direction="direction" :wrapperClosable="false" append-to-body
       :before-close="handleClose" size="40%" columnSettings-drawer class="JNPF-common-drawer">
       <el-tabs v-model="activeName" @tab-click="handleClick" stretch style="padding:10px">
         <div v-if="type !== 'look'">

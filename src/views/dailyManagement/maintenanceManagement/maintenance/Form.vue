@@ -19,131 +19,131 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="任务信息" name="orderInfo">
-            <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>基本信息</h5>
-            </div>
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="3">
-                  <el-form-item label="维修人" prop="maintenancePersonnel">
-                    <user-select v-model="dataForm.maintenancePersonnel" placeholder="请选择维修人" clearable style="width: 100%;" :disabled="btnType == 'look' || btnType == 'end'" @change="hangleSelectSales">
-                    </user-select>
-                    <!-- <el-input v-model="dataForm.maintenancePersonnel" placeholder="请输入维修人" :disabled="btnType == 'look'"
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo">
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="3">
+                      <el-form-item label="维修人" prop="maintenancePersonnel">
+                        <user-select v-model="dataForm.maintenancePersonnel" placeholder="请选择维修人" clearable style="width: 100%;" :disabled="btnType == 'look' || btnType == 'end'" @change="hangleSelectSales">
+                        </user-select>
+                        <!-- <el-input v-model="dataForm.maintenancePersonnel" placeholder="请输入维修人" :disabled="btnType == 'look'"
                       maxlength="50" /> -->
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="4">
-                  <el-form-item label="开始维修时间" prop="startMaintenanceTime">
-                    <el-date-picker v-model="dataForm.startMaintenanceTime" type="datetime" placeholder="请选择开始维修时间" :disabled="btnType == 'look' || btnType == 'end'" style="width: 100%;" clearable @change="nextMaintenanceTimeactionwei" :picker-options="{
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType == 'start' || btnType == 'end' || (dataForm.state == 'maintaining' && btnType == 'look') || (dataForm.state == 'maintained' && btnType == 'look')" key="4">
+                      <el-form-item label="开始维修时间" prop="startMaintenanceTime">
+                        <el-date-picker v-model="dataForm.startMaintenanceTime" type="datetime" placeholder="请选择开始维修时间" :disabled="btnType == 'look' || btnType == 'end'" style="width: 100%;" clearable @change="nextMaintenanceTimeactionwei" :picker-options="{
                         disabledDate(time) {
                           return time.getTime() < timefaultStartTime - 1000 * 3599 * 24;
                         }
                       }">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="设备名称" prop="equipmentId">
-                    <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')" key="5">
-                  <el-form-item label="维修完成时间" prop="repairCompletionTime">
-                    <el-date-picker v-model="dataForm.repairCompletionTime" type="datetime" placeholder="请选择维修完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable @change="nextMaintenanceTimeactionwan" :picker-options="{
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="设备名称" prop="equipmentId">
+                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')" key="5">
+                      <el-form-item label="维修完成时间" prop="repairCompletionTime">
+                        <el-date-picker v-model="dataForm.repairCompletionTime" type="datetime" placeholder="请选择维修完成时间" :disabled="btnType == 'look'" style="width: 100%;" clearable @change="nextMaintenanceTimeactionwan" :picker-options="{
                         disabledDate(time) {
                           return time.getTime() < times - 1000 * 3599 * 24;
                         }
                       }">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="申请部门" prop="departmentId">
-                    <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look' || btnType == 'start' || btnType == 'end'" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="申请人" prop="applicantId">
-                    <el-select v-model="dataForm.applicantIdName" placeholder="请选择申请人" clearable style="width: 100%;" :disabled="btnType === 'look' || btnType == 'start' || btnType == 'end'" filterable @change="selectsales">
-                      <el-option v-for="( item, index ) in  salesList " :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="申请时间" prop="applicationDate">
-                    <el-date-picker v-model="dataForm.applicationDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择申请时间" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="故障开始时间" prop="faultStartTime">
-                    <el-date-picker v-model="dataForm.faultStartTime" type="datetime" placeholder="请选择故障开始时间" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" style="width: 100%;" @change="nextMaintenanceTimeaction" :picker-options="pickerOptions">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
-                  <el-form-item label="状态" prop="state">
-                    <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')" key="6">
-                  <el-form-item label="解决措施" prop="solutionMeasures">
-                    <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-              <h5>故障信息</h5>
-            </div>
-            <div v-if="btnType == 'edit' || btnType == 'add'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-            </div>
-            <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" v-if="btnType == 'edit' || btnType == 'add'" key="1" align="center" />
-                <el-table-column type="index" width="60" label="序号" align="center" />
-                <el-table-column prop="faultTypeCode" label="故障类型编码" width="200" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="faultTypeName" label="故障类型名称" width="200" show-overflow-tooltip>
-                  <template slot="header">
-                    <span class="required">*</span>故障类型名称
-                  </template>
-                </el-table-column>
-                <el-table-column prop="faultLocationName" label="故障部位名称" width="200">
-                  <template slot="header">
-                    <span class="required">*</span>故障部位名称
-                  </template>
-                  <template slot-scope="scope">
-                    <el-form-item :prop="'productData.' + scope.$index + '.' + 'faultLocationName'" :rules='productRules.faultLocationName'>
-                      <el-input v-model="scope.row.faultLocationName" placeholder="请选择故障部位名称" readonly @focus="openSeleceProductDialogs(scope.$index)" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
-                      </el-input>
-                    </el-form-item>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="faultLocationCode" label="故障部位编码" width="200" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="faultDescription" label="故障描述" min-width="230">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' ? true : false" maxlength="200" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
-                  <template slot-scope="scope">
-                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-form>
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="申请部门" prop="departmentId">
+                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look' || btnType == 'start' || btnType == 'end'" placeholder="请选择申请部门" auth :dialogTitle="'请选择申请部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="申请人" prop="applicantId">
+                        <el-select v-model="dataForm.applicantIdName" placeholder="请选择申请人" clearable style="width: 100%;" :disabled="btnType === 'look' || btnType == 'start' || btnType == 'end'" filterable @change="selectsales">
+                          <el-option v-for="( item, index ) in  salesList " :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="申请时间" prop="applicationDate">
+                        <el-date-picker v-model="dataForm.applicationDate" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择申请时间" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="故障开始时间" prop="faultStartTime">
+                        <el-date-picker v-model="dataForm.faultStartTime" type="datetime" placeholder="请选择故障开始时间" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'" style="width: 100%;" @change="nextMaintenanceTimeaction" :picker-options="pickerOptions">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="btnType == 'look'">
+                      <el-form-item label="状态" prop="state">
+                        <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24" v-if="btnType == 'end' || (dataForm.state == 'maintained' && btnType == 'look')" key="6">
+                      <el-form-item label="解决措施" prop="solutionMeasures">
+                        <el-input v-model="dataForm.solutionMeasures" placeholder="请输入解决措施" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="故障信息" name="gzxx">
+                <div v-if="btnType == 'edit' || btnType == 'add'">
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择故障类型</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                </div>
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" @selection-change="handeleProductInfoData">
+                    <el-table-column type="selection" width="60" v-if="btnType == 'edit' || btnType == 'add'" key="1" align="center" />
+                    <el-table-column type="index" width="60" label="序号" align="center" />
+                    <el-table-column prop="faultTypeCode" label="故障类型编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="faultTypeName" label="故障类型名称" width="200" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>故障类型名称
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="faultLocationName" label="故障部位名称" width="200">
+                      <template slot="header">
+                        <span class="required">*</span>故障部位名称
+                      </template>
+                      <template slot-scope="scope">
+                        <el-form-item :prop="'productData.' + scope.$index + '.' + 'faultLocationName'" :rules='productRules.faultLocationName'>
+                          <el-input v-model="scope.row.faultLocationName" placeholder="请选择故障部位名称" readonly @focus="openSeleceProductDialogs(scope.$index)" :disabled="btnType == 'look' || btnType == 'start' || btnType == 'end'">
+                          </el-input>
+                        </el-form-item>
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="faultLocationCode" label="故障部位编码" width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="faultDescription" label="故障描述" min-width="230">
+                      <template slot-scope="scope">
+                        <el-input v-model="scope.row.faultDescription" placeholder="请输入故障描述" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" v-if="btnType == 'edit' || btnType == 'add'" key="30">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="更换零部件信息" name="replacecomponents" v-if="btnType == 'look' || btnType == 'end'" key="36">
             <div style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
@@ -231,8 +231,9 @@ import { getEquEquipmentList, parametersShelveslist } from '@/api/basicData/inde
 import { getOrganization } from '@/api/permission/user'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
-  data () {
+  data() {
     return {
+      activeNames: ["basicInfo", "gzxx"],
       datafilelist: [],
       getcategoryTree,
       ProductTableSearchLists: [
@@ -249,7 +250,7 @@ export default {
           },
           {
             "asc": false,
-            "column": "createTime"
+            "column": "create_time"
           }
         ],
         code: "",
@@ -362,7 +363,7 @@ export default {
         remark: ''
       },
       pickerOptions: {
-        disabledDate (time) {
+        disabledDate(time) {
           return time.getTime() > Date.now()
         }
       },
@@ -404,14 +405,14 @@ export default {
       selectRows: []
     }
   },
-  mounted () {
+  mounted() {
     let tBody = document.querySelectorAll('.el-table')[1]
     tBody.style.height = 'auto'
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
     //数量单价不能为0
-    calcValidate () {
+    calcValidate() {
       return (rule, value, callback) => {
         if (value == 0) {
           this.$message.error('数量不能为"0"')
@@ -422,7 +423,7 @@ export default {
       };
     },
     // 监听主数量输入
-    watchnums (row, index) {
+    watchnums(row, index) {
       row.num = row.num.replace(/[^\d.]/g, '');
 
       if (row.num.length == 1 && row.num == '.') {
@@ -465,11 +466,11 @@ export default {
       }
     },
     //零部件信息删除当前行
-    deltable (row, index) {
+    deltable(row, index) {
       this.dataForms.lines.splice(row.$index, 1)
     },
     // 零部件批量删除
-    batchDeleteling () {
+    batchDeleteling() {
       // 遍历选中的行的数据
       if (!this.selectRowsling.length) {
         this.$message({
@@ -488,7 +489,7 @@ export default {
       this.selectRowsling = []; // 清空选中的行的数据
     },
     //零部件信息新增行
-    addtable () {
+    addtable() {
       this.dataForms.lines.push({
         businessId: '',
         businessType: 'repair',
@@ -499,18 +500,18 @@ export default {
       })
     },
     //零部件选中
-    handeleProductInfoDataling (val) {
+    handeleProductInfoDataling(val) {
       this.selectRowsling = val
     },
     //维修人
-    hangleSelectSales (e, r) {
+    hangleSelectSales(e, r) {
       this.$nextTick(() => {
         this.$refs.dataForm.validateField('maintenancePersonnel')
       })
       this.dataForm.maintenancePersonnel = e
     },
     //故障部位选择
-    submitfaultLocationName (selectedIds, selectedList, ind) {
+    submitfaultLocationName(selectedIds, selectedList, ind) {
       this.$nextTick(() => {
         this.$refs.productForm.validateField('productData.' + ind.index + '.' + 'faultLocationName')
       })
@@ -518,7 +519,7 @@ export default {
       this.$set(this.dataFormTwo.productData[ind.index], 'faultLocationCode', selectedList[0].all.code)
     },
     //故障类型选择
-    submitCustomerProduct (selectedIds, selectedList) {
+    submitCustomerProduct(selectedIds, selectedList) {
       selectedList.map(item => {
         this.dataFormTwo.productData.map((item1) => {
           if (item.all.code == item1.faultTypeCode) {
@@ -546,36 +547,36 @@ export default {
       })
     },
     //故障开始时间
-    nextMaintenanceTimeaction (value) {
+    nextMaintenanceTimeaction(value) {
       this.dataForm.faultStartTime = this.dateFormat(value)
     },
     //维修完成时间
-    nextMaintenanceTimeactionwan (value) {
+    nextMaintenanceTimeactionwan(value) {
       this.dataForm.repairCompletionTime = this.dateFormat(value)
     },
     //维修开始时间
-    nextMaintenanceTimeactionwei (value) {
+    nextMaintenanceTimeactionwei(value) {
       this.dataForm.startMaintenanceTime = this.dateFormat(value)
     },
     // 打开故障部位
-    openSeleceProductDialogs (index) {
+    openSeleceProductDialogs(index) {
       this.index = index
       this.$refs['ComSelect-pages'].openDialog()
     },
     // 打开故障类型
-    openSeleceProductDialog () {
+    openSeleceProductDialog() {
       this.$refs['ComSelect-page'].openDialog()
     },
-    openSeleceProductDialogss () {
+    openSeleceProductDialogss() {
       this.$refs['ComSelect-pagesb'].openDialog()
     },
     //申请人
-    selectsales (val) {
+    selectsales(val) {
       console.log(val);
       this.dataForm.applicantId = val
     },
     //申请部门
-    changedepartment (val) {
+    changedepartment(val) {
       console.log("val,val", val);
       this.dataForm.departmentIdName = ""
       this.dataForm.departmentId = ""
@@ -595,7 +596,7 @@ export default {
       })
     },
     //选择设备
-    changeWarehouse (val, data) {
+    changeWarehouse(val, data) {
       this.$nextTick(() => { this.$refs['dataForm'].validateField('equipmentId') })
       if (!val && !data.length) return
       if (data && data.length) {
@@ -607,7 +608,7 @@ export default {
       }
     },
     //故障开始时间
-    dateFormat (dateData) {
+    dateFormat(dateData) {
       if (!dateData) return
       var date = new Date(dateData)
       var y = date.getFullYear()
@@ -624,16 +625,16 @@ export default {
       const time = y + '-' + m + '-' + d + ' ' + h + ':' + min + ':' + s
       return time
     },
-    goBack () {
+    goBack() {
       this.$emit('close')
     },
     // 产品列表选中 
-    handeleProductInfoData (val) {
+    handeleProductInfoData(val) {
       console.log(val);
       this.selectRows = val
     },
     // 批量删除
-    batchDelete () {
+    batchDelete() {
       // 遍历选中的行的数据
       if (!this.selectRows.length) {
         this.$message({
@@ -652,12 +653,12 @@ export default {
       this.selectRows = []; // 清空选中的行的数据
     },
     // 单个删除
-    handleDel (data) {
+    handleDel(data) {
       console.log("1234", data);
       this.dataFormTwo.productData.splice(data.$index, 1)
     },
     //申请时间
-    dateFormattime (dateData) {
+    dateFormattime(dateData) {
       var date = new Date(dateData)
       var y = date.getFullYear()
       var m = date.getMonth() + 1
@@ -668,10 +669,10 @@ export default {
       return time
     },
     // 切换table
-    handleClick (tab, event) {
+    handleClick(tab, event) {
       console.log(tab, event);
     },
-    init (id, btnType) {
+    init(id, btnType) {
       this.dataForm.id = id || ''
       this.btnType = btnType
       this.formLoading = true
@@ -736,7 +737,7 @@ export default {
         })
       }
     },
-    async handleConfirm (value) {
+    async handleConfirm(value) {
       let submitFlag = false
       let valid_2
       let valid_1 = await this.$refs.dataForm.validate().catch(err => false)
@@ -828,68 +829,57 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
+<style scoped lang="scss">
+::v-deep .el-tabs__header {
+  margin-bottom: 5px;
+}
+.required {
+  color: red;
+  margin-right: 4px;
+}
 ::v-deep .data-form {
+  margin-bottom: 18px;
   .el-form-item--small.el-form-item {
     margin-bottom: 0 !important;
   }
 }
-
-.required {
-  color: red;
-  margin-right: 4px;
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
-</style>
-<style scoped>
-::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0 20px;
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
 }
 
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
 }
-
 ::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-</style>
-<style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
-
-.el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
-}
-
-::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
-}
-
-.el-button span {
-  font-size: 14px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-}
-
-::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+  padding: 5px 10px !important;
 }
 </style>
     

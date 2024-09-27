@@ -97,7 +97,7 @@ export default {
         type: "equipment_supplier",
         orderItems: [{
           asc: false,
-          column: "createTime"
+          column: "create_time"
         }],
       },
       treeList: [],

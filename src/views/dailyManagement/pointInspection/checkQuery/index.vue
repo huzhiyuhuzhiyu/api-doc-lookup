@@ -153,7 +153,7 @@
                     <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun1()" />
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="detailData()" />
                   </el-tooltip>
                 </div>
               </div>
@@ -219,8 +219,8 @@
         </el-tab-pane>
       </el-tabs>
     </div>
-    <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
-    <deForm v-if="formVisible1" ref="deForm" @refreshDataList="initData" @close="closeForm1" />
+    <Form v-if="formVisible" ref="Form" @close="closeForm" />
+    <deForm v-if="formVisible1" ref="deForm" @close="closeForm" />
 
   </div>
 </template>
@@ -442,7 +442,7 @@ export default {
           asc: true,
           column: "next_maintenance_time" /* 使用正序日期作为默认排序 */
         }],
-        superQuery:{}
+        superQuery: {}
       },
       // 超期点检任务
       listsQuery: {
@@ -466,7 +466,7 @@ export default {
           asc: true,
           column: "next_maintenance_time" /* 使用正序日期作为默认排序 */
         }],
-        superQuery:{}
+        superQuery: {}
       },
       total: 0,
       pickerOptions: {
@@ -533,7 +533,11 @@ export default {
         type: 'warning'
       }).then(() => {
         deletecheckmaintenance(id).then(res => {
-          this.initData()
+          if (this.activeName == 'orderList') {
+            this.initData()
+          } else {
+            this.resetDetail()
+          }
           this.$message({
             type: 'success',
             message: "删除成功",
@@ -547,14 +551,6 @@ export default {
       this.$nextTick(() => {
         this.$refs.deForm.init(id, btnType)
       })
-    },
-    // 关闭新建编辑页面
-    closeForm1(isRefresh) {
-      this.formVisible1 = false
-      if (isRefresh) {
-        this.keyword = ''
-        this.initData()
-      }
     },
     // 关闭新建页面
     closeForm(isRefresh = 'ture') {

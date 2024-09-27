@@ -49,8 +49,8 @@
             </div>
           </div>
           <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true" @sort-change="sortChange" custom-column :setColumnDisplayList="columnList">
-            <el-table-column prop="name" label="设备名称" min-width="180" sortable="custom" />
-            <el-table-column prop="code" label="设备编码" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdName" label="设备名称" min-width="180" sortable="custom" />
+            <el-table-column prop="equipmentIdCode" label="设备编码" min-width="180" sortable="custom" />
             <el-table-column prop="maintenanceType" label="维保类型" min-width="130" sortable="custom">
               <template slot-scope="scope">
                 <div>{{maintenancefunction(scope.row.maintenanceType)}}</div>
@@ -59,7 +59,7 @@
             <el-table-column prop="maintenanceDate" label="维保日期" width="160" sortable="custom" />
             <el-table-column prop="contentRecord" label="维保内容记录" min-width="180" />
             <el-table-column prop="partsReplacementRecord" label="零件更新记录" min-width="180" />
-            <el-table-column prop="maintenancePersonnel" label="处理人" width="120" />
+            <el-table-column prop="maintenancePersonnelName" label="处理人" width="120" />
             <el-table-column prop="remark" label="备注" min-width="180" />
             <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
@@ -94,9 +94,9 @@ export default {
       columnList: ["code", "partsReplacementRecord", "createByName"],
       maintenanceTypeList: [
         { label: "维修", value: "repair" },
-        { label: "保养", value: "maintain" },
+        { label: "保养", value: "maintenance" },
         { label: "点检", value: "inspection" },
-        { label: "检定", value: "test" }
+        { label: "检定", value: "verification" }
       ],
       formVisible: false,
       listLoading: false,
@@ -134,9 +134,9 @@ export default {
           type: 'select',
           options: [
             { label: "维修", value: "repair" },
-            { label: "保养", value: "maintain" },
+            { label: "保养", value: "maintenance" },
             { label: "点检", value: "inspection" },
-            { label: "检定", value: "test" }
+            { label: "检定", value: "verification" }
           ]
         },
         { // 日期选择器（区间）

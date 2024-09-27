@@ -3,12 +3,12 @@
     <!--左侧插槽-->
     <slot name="left" />
     <template v-if="isJudgePer">
-      <el-button type="primary" @click="add" icon="el-icon-plus"  size="mini" v-has="addPerCode">
+      <el-button type="primary" @click="add" :icon="icon"  size="mini" v-has="addPerCode">
         {{ addText === '新建' ? $t(`common.addBtn`) : addText }}
       </el-button>
     </template>
     <template v-else>
-      <el-button type="primary" @click="add"  size="mini" icon="el-icon-plus">
+      <el-button type="primary" @click="add"  size="mini" :icon="icon">
         {{ addText === '新建' ? $t(`common.addBtn`) : addText }}
       </el-button>
     </template>
@@ -22,6 +22,10 @@ export default {
     refreshText: {
       type: String,
       default: '刷新'
+    },
+    icon:{
+      type: String,
+      default: 'el-icon-plus'
     },
     addText: {
       type: String,

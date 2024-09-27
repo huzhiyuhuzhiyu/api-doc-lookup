@@ -39,9 +39,9 @@ export function  deleteAbnoramlTypeData(id) {
   })
 }
 // 异常类型-检查编码是否存在
-export function  checkAbnoramlTypeCode(id) {
+export function  checkAbnoramlTypeCode(code,id) {
   return request({
-    url: `/api/mes/ab/abnormal/type/check/code/exist?code=${id}`,
+    url: `/api/mes/ab/abnormal/type/check/code/exist?code=${code}&id=${id}`,
     method: 'GET'
   })
 }
@@ -51,6 +51,14 @@ export function  getAbnoramlData(data) {
   return request({
     url: '/api/mes/ab/apply/record/list',
     method: 'POST',
+    data
+  })
+}
+// 异常申请记录-工具
+export function  getAbnoramlModule(data) {
+  return request({
+    url: '/api/mes/ab/apply/record/stats/module',
+    method: 'GET',
     data
   })
 }

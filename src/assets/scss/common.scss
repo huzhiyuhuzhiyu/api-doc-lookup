@@ -2466,3 +2466,27 @@ textarea.el-textarea__inner {
   width: 100%;
   text-align: left;
 }
+
+
+//原子化样式
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+.justify-center{
+    justify-content: center;
+}
+.justify-between{
+    justify-content: space-between;
+}
+.justify-around{
+    justify-content: space-around;
+}
+.pointer{
+    cursor: pointer;
+}

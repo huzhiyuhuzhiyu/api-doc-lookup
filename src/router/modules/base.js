@@ -79,6 +79,17 @@ const baseRouter = [
 	}
 },
 {
+	path: '/AbmessageDetail',
+	component: (resolve) => require(['@/views/ANDONManagement/processProcessing/AbmessageDetail'], resolve),
+	name: 'AbmessageDetail',
+	meta: {
+		title: 'AbmessageDetail',
+		affix: false,
+		zhTitle: '异常流程详情',
+		icon: 'icon-ym icon-ym-workFlow',
+	}
+},
+{
 	path: '/externalLink',
 	component: (resolve) => require(['@/views/basic/externalLink'], resolve),
 	name: 'externalLink',

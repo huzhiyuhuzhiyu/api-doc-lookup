@@ -71,7 +71,7 @@
                         </template>
                       </el-table-column> -->
 
-                      <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
+                      <el-table-column prop="planDemandQuantity" label="计划需求数量" width="120" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planDemandQuantity'">
                             <div class="viewData">
@@ -81,7 +81,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="purchaseQuantity" label="采购数量" width="100">
+                      <el-table-column prop="purchaseQuantity" label="采购数量" width="90">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
@@ -103,7 +103,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="70" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -123,7 +123,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxRate" label="税率" width="80">
+                      <el-table-column prop="taxRate" label="税率" width="60">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <div class="viewData">
@@ -163,7 +163,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="remark" label="备注" min-width="220">
+                      <el-table-column prop="remark" label="备注" min-width="200">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" disabled maxlength="20"
                             :placeholder="type == 'look' ? '' : '请输入备注'">
@@ -257,7 +257,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
+                  <el-table-column prop="planDemandQuantity" label="计划需求数量" width="120" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'planDemandQuantity'">
                         <div class="viewData">

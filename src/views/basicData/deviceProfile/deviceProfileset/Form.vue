@@ -107,7 +107,7 @@
 
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="车间" prop="factoryFloorid">
-                        <el-select v-model="dataForm.factoryFloorid" filterable placeholder="请选择车间" clearable>
+                        <el-select v-model="dataForm.factoryFloorid" filterable placeholder="请选择车间" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in factoryFloorList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -115,7 +115,7 @@
                     </el-col>
                     <el-col :sm="8" :xs="24">
                       <el-form-item label="安装地点" prop="mountedPlacesid">
-                        <el-select v-model="dataForm.mountedPlacesid" filterable placeholder="请选择安装地点" clearable>
+                        <el-select v-model="dataForm.mountedPlacesid" filterable placeholder="请选择安装地点" clearable style="width: 100%;" :loading="factorylistLoading">
                           <el-option v-for="item in mountedPlacesList" :key="item.id" :label="item.name" :value="item.id">
                           </el-option>
                         </el-select>
@@ -235,7 +235,8 @@ import {
   editEquEquipment, saveEquEquipment
   , getEquEquipmentInfo
 } from '@/api/basicData/index'
-import { getCategoryTrees, getUserList, getCooperativeData, checkEquEquipmentCode } from '@/api/basicData/index'
+import { getequMountedPlaces } from "@/api/basicData/materialSettings";
+import { getCategoryTrees, getCooperativeData, checkEquEquipmentCode } from '@/api/basicData/index'
 
 import singleImg from '@/components/Upload/SingleImg'
 import UploadImg from '@/components/upload-img/index.vue'
@@ -248,6 +249,7 @@ export default {
   },
   data() {
     return {
+      factorylistLoading: false,
       mountedPlacesList: [],
       factoryFloorList: [],
       activeNames: ["basicInfo"],
@@ -438,9 +440,13 @@ export default {
         pageNum: 1,
         pageSize: -1,
       }
+      this.factorylistLoading = true
       getequMountedPlaces(obj).then(res => {
         this.factoryFloorList = res.data.records.filter(item => item.type == 'workshop')
         this.mountedPlacesList = res.data.records.filter(item => item.type == 'location')
+        this.factorylistLoading = false
+      }).catch(() => {
+        this.factorylistLoading = false
       })
     },
     changePic(data) {

@@ -467,7 +467,7 @@ export default {
           width: 120
         }
       ]
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
 
       this.initData()
     },

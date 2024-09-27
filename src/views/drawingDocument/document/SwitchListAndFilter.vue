@@ -32,7 +32,7 @@ export default {
                 this.$emit('update:currentExt',val)
             }
         }
-    }
+    },
 }
 </script>
 
@@ -44,7 +44,7 @@ export default {
                    style="margin-right: 3px" class="pointer iconfont"
                    :class="[cSwitchList ?  'icon-liebiao' : 'icon-pingpu' ]"/>
             </el-tooltip>
-            <el-dropdown @command="$emit('command')">
+            <el-dropdown @command="$emit('command',$event)">
                 <el-link :style="{color: cCurrentExt !== ''? '#3fb9f8':'unset'}" icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"/>
                 <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
@@ -63,5 +63,9 @@ export default {
 </template>
 
 <style scoped lang="scss">
+.dropdown-item-active{
+    background-color: #ecf8fe;
+    color: #65c7f9;
+}
 
 </style>

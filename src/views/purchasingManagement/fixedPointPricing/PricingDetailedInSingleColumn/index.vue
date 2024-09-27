@@ -178,7 +178,7 @@ export default {
       searchList: [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'cooperativePartnerCode',
+          field: 'cooperativePartnerName',
           fieldValue: '',
           label: '供应商名称',
           symbol: 'like',
@@ -186,14 +186,14 @@ export default {
           width: 120
         },
         {
-          field: 'cooperativePartnerName',
+          field: 'cooperativePartnerCode',
           fieldValue: '',
           label: '供应商编码',
           symbol: 'like',
           searchType: 1,
           width: 120
         },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ],
       superQueryVisible: false,
       superQueryJson: [
@@ -634,7 +634,7 @@ export default {
       this.searchList = [
         { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
         {
-          field: 'cooperativePartnerCode',
+          field: 'cooperativePartnerName',
           fieldValue: '',
           label: '供应商名称',
           symbol: 'like',
@@ -642,16 +642,16 @@ export default {
           width: 120
         },
         {
-          field: 'cooperativePartnerName',
+          field: 'cooperativePartnerCode',
           fieldValue: '',
           label: '供应商编码',
           symbol: 'like',
           searchType: 1,
           width: 120
         },
-        { field: 'productsDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 }
       ]
-      this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
+      this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
 
       this.initData()
     },

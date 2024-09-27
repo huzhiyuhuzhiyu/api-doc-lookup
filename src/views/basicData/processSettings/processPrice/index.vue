@@ -49,15 +49,6 @@
             <el-form-item>
               <el-input v-model="listQuery.name" placeholder="工序名称" clearable @keyup.enter.native="search('basic')" />
             </el-form-item>
-          </el-col>
-          <el-col :span="4">
-            <el-form-item>
-              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;">
-                <el-option
-                  v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
-                  :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
           </el-col> -->
           <template v-for="item in searchList">
             <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
@@ -77,6 +68,15 @@
               </el-form-item>
             </el-col>
           </template>
+          <el-col :span="4">
+            <el-form-item>
+              <el-select v-model="listQuery.pricingType" placeholder="计价类型" clearable style="width: 100%;">
+                <el-option
+                  v-for="(item, index) in [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]"
+                  :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="6">
             <el-form-item>
               <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
@@ -130,7 +130,7 @@
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" width="150" />
         </JNPF-table>
-        <pagination :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize"
+        <pagination :total="total" :page.sync="superForm.pageNum" :limit.sync="superForm.pageSize"
           @pagination="initData" />
       </div>
     </div>
@@ -187,15 +187,6 @@ export default {
       searchList: [
         { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        {
-          field: 'pricingType',
-          fieldValue: 'by_time',
-          label: '计价类型',
-          symbol: 'like',
-          searchType: 4,
-          width: 120,
-          options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        }
       ],
       leftFlag: false,
       filterText: '',
@@ -266,7 +257,7 @@ export default {
         ],
         pageNum: 1,
         pageSize: 20,
-        processingType: 'self_produced',
+        processingType: '',
         productCategoryId: ''
       },
       defaultProps: {
@@ -417,15 +408,15 @@ export default {
       this.searchList = [
         { field: 'code', fieldValue: '', label: '工序编码', symbol: 'like', searchType: 1, width: 120 },
         { field: 'name', fieldValue: '', label: '工序名称', symbol: 'like', searchType: 1, width: 120 },
-        {
-          field: 'pricingType',
-          fieldValue: 'by_time',
-          label: '计价类型',
-          symbol: 'like',
-          searchType: 4,
-          width: 120,
-          options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
-        }
+        // {
+        //   field: 'pricingType',
+        //   fieldValue: 'by_time',
+        //   label: '计价类型',
+        //   symbol: 'like',
+        //   searchType: 4,
+        //   width: 120,
+        //   options: [{ label: '计时', value: 'by_time' }, { label: '计件', value: 'by_piece' }]
+        // }
       ]
       this.superForm = JSON.parse(JSON.stringify(this.initListQuery))
       this.initData()

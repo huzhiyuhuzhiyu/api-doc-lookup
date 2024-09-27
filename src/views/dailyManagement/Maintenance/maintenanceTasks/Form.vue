@@ -211,7 +211,6 @@
 </template>
     
 <script>
-import comselectListone from './ComSelect-listone/index.vue'
 import { getcategoryTree } from '@/api/basicData/materialSettings'
 import { addcheckmaintenance, updatecheckmaintenance, detailcheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
@@ -221,9 +220,6 @@ import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import { getOrganization } from '@/api/permission/user'
 // import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 export default {
-  components: {
-    comselectListone
-  },
   data() {
     return {
       datafilelist: [],
@@ -241,7 +237,7 @@ export default {
           },
           {
             "asc": false,
-            "column": "createTime"
+            "column": "create_time"
           }
         ],
         code: "",

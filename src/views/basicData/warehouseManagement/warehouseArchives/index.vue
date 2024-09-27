@@ -106,10 +106,11 @@
           <el-table-column prop="position" label="位置" width="120"></el-table-column>
           <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
           <el-table-column prop="remark" label="备注" min-width="200"></el-table-column>
-          <el-table-column label="操作" width="360" fixed="right">
+          <el-table-column label="操作" width="420" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.parentId, 'edit')"
-                @del="handleDel(scope.row.id, scope.row.parentId)">
+                @del="handleDel(scope.row.id, scope.row.parentId)"
+                :delDisabled="scope.row.warehouseManagementStatus == 'enable'">
                 <!-- <el-popover placement="top-start" trigger="click" style="margin: 0 10px;">
         
 
@@ -120,8 +121,11 @@
                     查看二维码
                   </el-button>
                 </el-popover> -->
-                <el-button type="text" size="mini" @click="enableWareFun(scope.row)">
+                <el-button v-if="scope.row.warehouseManagementStatus=='disabled'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'"  type="text" size="mini" @click="enableWareFun(scope.row)">
                   开启仓库菜单
+                </el-button>
+                <el-button v-if="scope.row.warehouseManagementStatus=='enable'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'" type="text" size="mini" @click="closeWareFun(scope.row)">
+                  关闭仓库菜单
                 </el-button>
                 <el-button type="text" size="mini" @click="openQr(scope.row)">
                   查看二维码
@@ -186,8 +190,8 @@
           <div class="JNPF-common-layout-main JNPF-flex-main">
             <JNPF-table v-loading="listLoading" :data="productList" hasC :fixedNO="true"
               @selection-change="handleSelection" ref="form">
-              <el-table-column prop="name" label="类别名称"  />
-              <el-table-column prop="code" label="类别编码" ></el-table-column>
+              <el-table-column prop="name" label="类别名称" />
+              <el-table-column prop="code" label="类别编码"></el-table-column>
             </JNPF-table>
             <pagination :total="productTotal" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
               @pagination="searchProductClassAttribute" />
@@ -207,10 +211,10 @@
 </template>
 
 <script>
-import {getclassAttributeList} from '@/api/masterDataManagement/index'
+import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getWarehouseList, deleteWarehouse, editWarehouse, editWarehouseState } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, enableWarehouseMenu,closeWarehouseMenu } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import VueQr from 'vue-qr'
 import { getPrintBusInfo } from '@/api/system/printDev'
@@ -225,7 +229,7 @@ export default {
       dialogVisible: false,
       printVisible: false,
       superQueryVisible: false,
-      productTotal:0,
+      productTotal: 0,
       orderForm: {
         code: '',
         name: '',
@@ -312,9 +316,9 @@ export default {
       },
       enCode: '',
       printList: [],
-      currentWarehouseInfo:{},
-      productList:[],
-      selectData:[],
+      currentWarehouseInfo: {},
+      productList: [],
+      selectData: [],
 
     }
   },
@@ -322,23 +326,248 @@ export default {
     this.initData()
   },
   methods: {
+    closeWareFun(row){
+      closeWarehouseMenu(row).then(res=>{
+        location.reload()
+      })
+    },
     // 开启仓库菜单
     enableWareFun(row) {
       console.log(row);
-      this.currentWarehouseInfo=row
-      this.productClassAttribute=true
-      getclassAttributeList(this.orderForm).then(res=>{
+      this.currentWarehouseInfo = row
+      this.productClassAttribute = true
+      getclassAttributeList(this.orderForm).then(res => {
         console.log("类别属性");
-        this.productList=res.data.records
-        this.productTotal=res.data.total
+        this.productList = res.data.records
+        this.productTotal = res.data.total
       })
     },
-    handleSelection(val){
-      this.selectData=val
+    handleSelection(val) {
+      this.selectData = val
     },
     submitAllProduct() {
-      if(!this.selectData.length)return this.$message.error("至少选择一个类别属性")
-
+      if (!this.selectData.length) return this.$message.error("至少选择一个类别属性")
+      let obj = {
+        warehouseClassAttributeList: [],
+        stockWarehouse: this.currentWarehouseInfo,
+        menuList: [],
+        directory: [],
+      }
+      obj.directory = {
+        category: 'Web',
+        description: '',
+        enCode: this.currentWarehouseInfo.code,
+        enabledMark: 1,
+        fullName: this.currentWarehouseInfo.name,
+        icon: 'icon-ym icon-ym-documentPreviewExample left-icon',
+        id: '',
+        isButtonAuthorize: 0,
+        isColumnAuthorize: 0,
+        isDataAuthorize: 0,
+        isFormAuthorize: 0,
+        linkTarget: '_self',
+        parentId: '568721982921638149',
+        propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+        systemId: '309228585019769285',
+        type: 1,
+        urlAddress: ''
+      }
+      obj.menuList = [
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'dbIncomAndOutInventory',
+          enabledMark: 1,
+          fullName: `待办出入库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 10,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' +
+            this.currentWarehouseInfo.code +
+            '}/dbIncomAndOutInventory' +
+            '?' +
+            this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'directInandOutWarehouse',
+          enabledMark: 1,
+          fullName: `直接出入库`,
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 20,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' +
+            this.currentWarehouseInfo.code +
+            '}/directInandOutWarehouse' +
+            '?' +
+            this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'inventoryList',
+          enabledMark: 1,
+          fullName: '出入库列表',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 30,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/inventoryList' + '?' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'inventoryDetaisList',
+          enabledMark: 1,
+          fullName: '出入库明细',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 40,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' +
+            this.currentWarehouseInfo.code +
+            '}/inventoryDetaisList' +
+            '?' +
+            this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'transferManagement',
+          enabledMark: 1,
+          fullName: '调拨管理',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 50,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' +
+            this.currentWarehouseInfo.code +
+            '}/transferManagement' +
+            '?' +
+            this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'directMaterialRequisition',
+          enabledMark: 1,
+          fullName: '直接领料管理',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 60,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/directMaterialRequisition' + '?' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'awaitInspectionInventory',
+          enabledMark: 1,
+          fullName: '待检验库存',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 65,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/awaitInspectionInventory' + '?' + this.currentWarehouseInfo.code
+        },
+        {
+          category: 'Web',
+          description: '',
+          enCode: 'inventory',
+          enabledMark: 1,
+          fullName: '库存查询',
+          icon: 'icon-ym icon-ym-webForm',
+          id: '',
+          isButtonAuthorize: 1,
+          isColumnAuthorize: 1,
+          isDataAuthorize: 1,
+          isFormAuthorize: 1,
+          linkTarget: '_self',
+          parentId: '',
+          propertyJson: '{"moduleId":"","iconBackgroundColor":"","isTree":0}',
+          sortCode: 70,
+          systemId: '309228585019769285',
+          type: 2,
+          urlAddress:
+            'warehouseManagement/${' + this.currentWarehouseInfo.code + '}/inventory' + '?' + this.currentWarehouseInfo.code
+        }
+      ]
+      this.selectData.forEach(item => {
+        let objs={
+          classAttribute:item.code,
+          warehouseId:this.currentWarehouseInfo.id
+        }
+        obj.warehouseClassAttributeList.push(objs)
+      });
+      enableWarehouseMenu(obj).then(res => {
+        location.reload()
+      })
     },
     stateChange(row) {
       editWarehouseState(row).then((res) => {
@@ -536,13 +765,15 @@ export default {
   margin-left: 0 !important;
 }
 
-.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__header{
+.selectPro  ::v-deep .el-dialog .el-dialog__header {
   padding: 0 10px;
 }
-.JNPF-dialog.JNPF-dialog_center ::v-deep .el-dialog .el-dialog__body{
-  padding: 0!important;
+
+.selectPro   ::v-deep .el-dialog .el-dialog__body {
+  padding: 0 !important;
 }
-.productClass .JNPF-common-layout-main{
+
+.productClass .JNPF-common-layout-main {
   padding: 10px 10px 0;
 }
 </style>

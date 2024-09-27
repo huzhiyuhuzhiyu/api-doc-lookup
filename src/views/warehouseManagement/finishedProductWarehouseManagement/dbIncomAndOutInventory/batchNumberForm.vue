@@ -34,6 +34,15 @@
             <el-table-column prop="batchNumber" label="批次号" sortable="custom" min-width="140"></el-table-column>
             <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120"/>
             <el-table-column prop="inventoryQuantity" label="库存数量" sortable="custom" min-width="120"/>
+            <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.inspectionResults=='qualified'">合格</div>
+                    <div v-if="scope.row.inspectionResults=='unqualified'">不合格</div>
+                    <div v-if="scope.row.inspectionResults=='partially_qualified'">部分合格</div>
+                    <div v-if="scope.row.inspectionResults=='discard'">报废</div>
+                    <div v-if="scope.row.inspectionResults=='concessive_acceptance'">让步接收</div>
+                  </template>
+                </el-table-column>
             <el-table-column prop="availableQuantity" label="可用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="occupancyQuantity" label="占用数量" sortable="custom" min-width="120"/>
             <el-table-column prop="sealingCoverTyping" label="打字内容" sortable="custom" min-width="120"/>
@@ -88,6 +97,7 @@ export default {
         productsId:"",
         packagingMethod:"",
         specialRequire:"",
+        inspectStockFlag :true,
       },
       refreshTree: true,
       listLoading: false,
@@ -154,6 +164,7 @@ export default {
         accuracyLevel: "",
         packagingMethod:"",
         specialRequire:"",
+        inspectStockFlag :true,
       }
       this.init(this.cpData, this.cpIndex)
     },

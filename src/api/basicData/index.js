@@ -1671,7 +1671,22 @@ export function saleCluemanagementpoolModel(data) {
     data
   })
 }
-
+// 员工导入
+export function salecooperativepoolModel(data) {
+  return request({
+    url: `/api/crm/baseEmployee/upload`,
+    method: 'post',
+    data
+  })
+}
+// 用户导入
+export function salecooperativeUsers(data) {
+  return request({
+    url: `/api/permission/Users/upload`,
+    method: 'post',
+    data
+  })
+}
 // 查找批次号
 
 export function getBatchNumber(data) {
@@ -1681,6 +1696,15 @@ export function getBatchNumber(data) {
     data
   })
 }
+// 库存明细报表
+export function getInventoryLineReport(data) {
+  return request({
+    url: `/api/wms/stock/inventory/line/report`,
+    method: 'post',
+    data
+  })
+}
+
 
 // 查找批次号
 

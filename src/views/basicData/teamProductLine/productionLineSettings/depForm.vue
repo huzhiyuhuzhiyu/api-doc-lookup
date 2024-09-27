@@ -17,40 +17,38 @@
         </div>
 
         <div class="main">
-          <el-tabs v-model="activeName">
-            <el-tab-pane label="基础信息" name="jcInfo">
-              <el-collapse v-model="activeNames">
-                <el-collapse-item title="产线信息" name="modelInfo" class="orderInfo">
-                  <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
-                      label-position="top">
-                      <template v-if="!loading">
-                        <el-col :span="12">
-                          <el-form-item label="产线编码" prop="code" ref="code">
-                            <el-input v-model="dataForm.code" placeholder="请输入产线编码" clearable :style="{ width: '100%' }"
-                              maxlength="20" :disabled="type == 'look'
-                                ? true
-                                : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
-                                  ? true
-                                  : false
-                                "></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="产线名称" prop="name" ref="name">
-                            <el-input v-model="dataForm.name" placeholder="请输入产线名称" clearable :style="{ width: '100%' }"
-                              maxlength="20" :disabled="type == 'look'"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                          <el-form-item label="加工车间" prop="workshopId">
-                            <el-select v-model="dataForm.workshopId" style="width:100%" :disabled="type == 'look'">
-                              <el-option v-for="item in workshopIdOptions" :key="item.value" :label="item.fullName"
-                                :value="item.id"></el-option>
-                            </el-select>
-                          </el-form-item>
-                        </el-col>
-                        <!-- <el-col :span="12">
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="产线信息" name="modelInfo" class="orderInfo">
+              <el-row :gutter="15" class="" style="margin: 0 10px;">
+                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                  label-position="top">
+                  <template v-if="!loading">
+                    <el-col :span="12">
+                      <el-form-item label="产线编码" prop="code" ref="code">
+                        <el-input v-model="dataForm.code" placeholder="请输入产线编码" clearable :style="{ width: '100%' }"
+                          maxlength="20" :disabled="type == 'look'
+                            ? true
+                            : codeConfig.codeWay == 'auto' && !codeConfig.modifyFlag
+                              ? true
+                              : false
+                            "></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="产线名称" prop="name" ref="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入产线名称" clearable :style="{ width: '100%' }"
+                          maxlength="20" :disabled="type == 'look'"></el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                      <el-form-item label="加工车间" prop="workshopId">
+                        <el-select v-model="dataForm.workshopId" style="width:100%" :disabled="type == 'look'">
+                          <el-option v-for="item in workshopIdOptions" :key="item.value" :label="item.fullName"
+                            :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <!-- <el-col :span="12">
                           <el-form-item label="按产线顺序报工" prop="reportRulesFlag">
                             <el-select v-model="dataForm.reportRulesFlag" style="width:100%" :disabled="type == 'look'">
                               <el-option v-for="item in options" :key="item.value" :label="item.label"
@@ -58,7 +56,7 @@
                             </el-select>
                           </el-form-item>
                         </el-col> -->
-                        <!-- <el-col :span="12">
+                    <!-- <el-col :span="12">
                       <el-form-item label="产线状态" prop="state">
                         <el-select v-model="dataForm.state" style="width:100%" :disabled="type == 'look'">
                        
@@ -67,7 +65,7 @@
                         </el-select>
                       </el-form-item>
                     </el-col> -->
-                        <!-- <el-col :span="12">
+                    <!-- <el-col :span="12">
                                     <el-form-item label="审批状态" prop="status">
                                         <el-select v-model="dataForm.status" style="width:100%">
                                             <el-option label="审批中" value="in_approval" />
@@ -76,7 +74,7 @@
                                         </el-select>
                                     </el-form-item>
                                 </el-col> -->
-                        <!-- <el-col :span="12">
+                    <!-- <el-col :span="12">
                                     <el-form-item label="单据状态" prop="documentStatus">
                                         <el-select v-model="dataForm.documentStatus">
                                             <el-option label="草稿" value="draft" />
@@ -84,113 +82,111 @@
                                         </el-select>
                                     </el-form-item>
                                 </el-col> -->
-                        <el-col :span="24">
-                          <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
-                            <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
-                              maxlength="200" :disabled="type == 'look'"></el-input>
-                          </el-form-item>
-                        </el-col>
+                    <el-col :span="24">
+                      <el-form-item label="驳回理由" prop="documentStatus" v-if="dataForm.status === 'review_failed'">
+                        <el-input v-model="dataForm.reasonRejection" placeholder="请输入驳回理由" clearable type="textarea"
+                          maxlength="200" :disabled="type == 'look'"></el-input>
+                      </el-form-item>
+                    </el-col>
 
-                        <el-col :span="24">
-                          <el-form-item label="备注" prop="remark">
-                            <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
-                              maxlength="200" :disabled="type == 'look'"></el-input>
-                          </el-form-item>
-                        </el-col>
+                    <el-col :span="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" clearable type="textarea"
+                          maxlength="200" :disabled="type == 'look'"></el-input>
+                      </el-form-item>
+                    </el-col>
 
-                        <!-- <el-col :span="12">
+                    <!-- <el-col :span="12">
                       <el-form-item label="人员" prop="personName" >
                         <PersonSelect multiple v-model="dataForm.personName" placeholder="请选择所属人员"  style="width: 100%;"
                         @change="hangleSelectSales" />      
                       </el-form-item>
                     </el-col> -->
-                      </template>
-                    </el-form>
-                    <!-- <SelectDialog v-if="selectDialogVisible" :config="currTableConf" :formData="dataForm" ref="selectDialog"
+                  </template>
+                </el-form>
+                <!-- <SelectDialog v-if="selectDialogVisible" :config="currTableConf" :formData="dataForm" ref="selectDialog"
               @select="addForSelect" @close="selectDialogVisible=false" /> -->
-                  </el-row>
-                </el-collapse-item>
-                <el-collapse-item title="工序信息" name="processInfo">
-                  <el-col :span="24">
-                    <!-- <div
+              </el-row>
+            </el-collapse-item>
+            <el-collapse-item title="工序信息" name="processInfo">
+              <el-col :span="24">
+                <!-- <div
                             style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px"
                           >
                             <h5>工序信息</h5>
                           </div> -->
-                    <div v-if="type !== 'look'">
-                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                        icon="el-icon-plus" :disabled="type == 'look' ? true : false"
-                        @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
-                        选择工序
-                      </el-button>
-                      |
-                      <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
-                      <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
-                        :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
-                        批量删除
-                      </el-button>
-                      |
-                    </div>
-                    <!-- <el-form-item label-width="0" ref="tableForm">  -->
-                    <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;" ref="processRef"
-                      v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo"
-                      size="mini" id="table">
-                      <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
-                      <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
-                      <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
-                        <template slot="header">
-                          <span class="required">*</span>
-                          工序名称
-                        </template>
-                        <template slot-scope="scope">
-                          <div class="viewData">
-                            <span>{{ scope.row.name }}</span>
-                          </div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="code" label="工序编码" min-width="140" />
+                <div v-if="type !== 'look'">
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    icon="el-icon-plus" :disabled="type == 'look' ? true : false"
+                    @click="openSeleceProcessDialog(dataFormTwo.length, 'add')">
+                    选择工序
+                  </el-button>
+                  |
+                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+                  <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
+                    :disabled="type == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
+                    批量删除
+                  </el-button>
+                  |
+                </div>
+                <!-- <el-form-item label-width="0" ref="tableForm">  -->
+                <el-table hasC hasNO fixedNO style="border: 1px solid #e3e7ee;margin: 0 0;" ref="processRef"
+                  v-loading="responseLoading" @selection-change="handeleProductInfoData" :data="dataFormTwo" size="mini"
+                  id="table"  :header-cell-style="{background:'#F5F7FA',color:'#606266'}">
+                  <el-table-column type="selection" width="60" fixed="left" align="center" v-if="type != 'look'" />
+                  <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
+                  <el-table-column prop="name" label="工序名称" width="180" show-overflow-tooltip>
+                    <template slot="header">
+                      <span class="required">*</span>
+                      工序名称
+                    </template>
+                    <template slot-scope="scope">
+                      <div class="viewData">
+                        <span>{{ scope.row.name }}</span>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="code" label="工序编码" min-width="140" />
 
-                      <el-table-column prop="processType" label="工序类型" width="180">
-                        <template slot-scope="scope">
-                          <div class="viewData">
-                            <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
-                            <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
-                          </div>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="processingType" label="加工类型" width="180">
-                        <template slot-scope="scope">
-                          <div class="viewData">
-                            <span v-if="scope.row.processingType === 'self_produced'">自制</span>
-                            <span v-if="scope.row.processingType === 'external_production'">外协</span>
-                          </div>
-                        </template>
-                      </el-table-column>
+                  <el-table-column prop="processType" label="工序类型" width="180">
+                    <template slot-scope="scope">
+                      <div class="viewData">
+                        <div class="viewData" v-if="scope.row.processType == 'normal'">正常工序</div>
+                        <div class="viewData" v-if="scope.row.processType == 'wait_assemble'">待装配工序</div>
+                        <div class="viewData" v-if="scope.row.processType == 'vibrate'">测振工序</div>
+                        <div class="viewData" v-if="scope.row.processType == 'heat_treatment'">热处理工序</div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="processingType" label="加工类型" width="180">
+                    <template slot-scope="scope">
+                      <div class="viewData">
+                        <span v-if="scope.row.processingType === 'self_produced'">自制</span>
+                        <span v-if="scope.row.processingType === 'external_production'">外协</span>
+                      </div>
+                    </template>
+                  </el-table-column>
 
-                      <el-table-column label="操作" min-width="180" fixed="right">
-                        <template slot-scope="scope">
-                          <el-button type="text" class="JNPF-table-delBtn" :disabled="type == 'look'"
-                            @click="delequipment_process_relList(scope.$index)">
-                            删除
-                          </el-button>
-                          <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
-                            产线资源配置
-                          </el-button>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                    <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
+                  <el-table-column label="操作" min-width="180" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button type="text" class="JNPF-table-delBtn" :disabled="type == 'look'"
+                        @click="delequipment_process_relList(scope.$index)">
+                        删除
+                      </el-button>
+                      <el-button type="text" @click="handlerOpenSource(scope.$index, type)">
+                        产线资源配置
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <!-- <div class="table-actions" @click="handlerOpenDialog(dataFormTwo.length, 'add')"
                           v-if="type != 'look'">
                           <el-button type="text" icon="el-icon-plus">添加</el-button>
                         </div> -->
-                    <!-- </el-form-item>   -->
-                  </el-col>
-                </el-collapse-item>
-              </el-collapse>
-            </el-tab-pane>
-          </el-tabs>
+                <!-- </el-form-item>   -->
+              </el-col>
+            </el-collapse-item>
+          </el-collapse>
         </div>
       </div>
     </transition>
@@ -1076,7 +1072,7 @@ export default {
   border: 1px solid #dcdfe6 !important;
   border-top: none;
   margin-bottom: 0;
-  padding: 0 10px 0px;
+  padding: 0 0 0px;
   border-top: none !important;
 
 }
@@ -1087,6 +1083,7 @@ export default {
 
 .JNPF-preview-main .main {
   padding-top: 0;
+  margin-top: 5px;
 }
 
 ::v-deep .el-tabs__item {

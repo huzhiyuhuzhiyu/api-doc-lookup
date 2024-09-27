@@ -1,6 +1,6 @@
 <template>
   <div class="JNPF-common-layout">
-    <component :is="listPageComponent" :classAttribute="classAttribute" v-if="depFormVisible" ref="depForm" @close="close" />
+    <component :is="listPageComponent" :warehouseCode="warehouseCode" v-if="depFormVisible" ref="depForm" @close="close" />
   </div>
 </template>
 
@@ -12,14 +12,15 @@ import inventoryList from "@/views/warehouseManagement/finishedProductWarehouseM
 import inventoryDetaisList from "@/views/warehouseManagement/finishedProductWarehouseManagement/inventoryDetaisList"
 import transferManagement from "@/views/warehouseManagement/finishedProductWarehouseManagement/transferManagement" 
 import directMaterialRequisition from "@/views/warehouseManagement/finishedProductWarehouseManagement/directMaterialRequisition" 
+import awaitInspectionInventory from'@/views/warehouseManagement/finishedProductWarehouseManagement/awaitInspectionInventory'
 export default {
   name: 'quality',
-  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition},
+  components:{dbIncomAndOutInventory,directInandOutWarehouse,inventory,inventoryDetaisList,inventoryList,transferManagement,directMaterialRequisition,awaitInspectionInventory},
   data() {
     return {
       businessType:"",
       listPageComponent:null,
-      classAttribute:"",
+      warehouseCode:"",
       depFormVisible:true,
       form: {
         code: '',
@@ -46,7 +47,7 @@ export default {
     console.log("this",this.$route);
     let path=this.$route.path
     let pathInfo=this.$route
-    this.classAttribute=pathInfo.fullPath.split("?")[1]
+    this.warehouseCode=pathInfo.fullPath.split("?")[1]
     let arr=path.split('/')
     this.businessType=arr[arr.length-1] 
     if(this.businessType=='dbIncomAndOutInventory'){
@@ -69,6 +70,9 @@ export default {
     }
     if(this.businessType=='directMaterialRequisition'){
       this.listPageComponent=directMaterialRequisition
+    }
+    if(this.businessType=='awaitInspectionInventory'){
+      this.listPageComponent=awaitInspectionInventory
     }
     // if()
 

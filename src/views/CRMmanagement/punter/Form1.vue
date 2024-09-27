@@ -223,13 +223,13 @@
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="备注" prop="remark">
-                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType === 'look' ? true : false" />
+                      <el-form-item label="行业类别" prop="industry">
+                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType === 'look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
                       </el-form-item>
                     </el-col>
                     <el-col :sm="6" :xs="24">
-                      <el-form-item label="行业类别" prop="industry">
-                        <el-cascader placeholder="请选择/搜索行业类别" :show-all-levels="false" v-model="dataForm.industry" :disabled="btnType === 'look' ? true : false" :options="industryoptions" :props="{ value: 'enCode',label: 'fullName'}" filterable style="width: 100%;" @change="changeindustry"></el-cascader>
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" maxlength="200" :disabled="btnType === 'look' ? true : false" />
                       </el-form-item>
                     </el-col>
                   </el-row>
@@ -484,7 +484,7 @@
               <el-button type="text" icon="el-icon-plus">添加</el-button>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
+          <!-- <el-tab-pane label="服务记录" name="records" v-if="btnType=='look'">
             <JNPF-table ref="dataTable" :data="tableData" custom-column>
               <el-table-column prop="code" label="客户编码" sortable="custom" min-width="140" />
               <el-table-column prop="name" label="客户名称" sortable="custom" min-width="140" />
@@ -492,7 +492,7 @@
               <el-table-column prop="createTime" label="创建时间" sortable="custom" min-width="180" />
               <el-table-column prop="createBy" label="创建人" min-width="120" />
             </JNPF-table>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <el-tab-pane label="附件" name="annex" v-if="isattachmentswitch=='1'">
             <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
           </el-tab-pane>

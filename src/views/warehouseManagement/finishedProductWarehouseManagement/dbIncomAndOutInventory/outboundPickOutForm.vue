@@ -293,7 +293,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -417,10 +417,11 @@ export default {
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      productClassAttributeList: [],
+      warehouseCode: "",
     }
   },
   created() {
-    this.getWarehouseConfig()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -502,7 +503,7 @@ export default {
       this.orderForm = {
 
         orderNo: this.dataForm.sourceNo,
-        classAttribute: this.classAttribute,
+        productClassAttributeList: this.productClassAttributeList,
         pageNum: 1,
         pageSize: 20,
         productDrawingNo: "",
@@ -662,20 +663,7 @@ export default {
 
 
 
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-      // let obj2 = { "pageSize": -1, "businessCode": "produce" }
-      // getBimBusinessSwitchConfigList(obj2).then(res => {
-      //   console.log('生产配置', res);
-      //   this.collectPickFlag=res.data.produce[2].configValue2 == '1' ? true : false
-      //   // this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      // })
-    },
+    
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -728,7 +716,18 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -742,14 +741,17 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
+    init(data, btnType, businessType, classAttributeList,warehouseCode) {
       console.log("11", data, btnType, businessType);
+      
       // this.visible = true
       this.dataForm.businessType = businessType
-      this.classAttribute = classAttribute
+      this.productClassAttributeList = classAttributeList
+      this.warehouseCode=warehouseCode
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.btnType = btnType
       this.getBusInfo()
+      this.getWarehouseListFun()
       console.log("btnty", btnType);
       // this.refeshDataFormItems()
 
@@ -771,7 +773,7 @@ export default {
 
         detailWithdrawal(data.id).then(res => {
           console.log("详情", res);
-          let filteredArray = res.data.collectLineList.filter(item => item.classAttribute === this.classAttribute && item.unReceiveQuantity);
+          let filteredArray = res.data.collectLineList.filter(item => classAttributeList.includes(item.classAttribute)&& item.unReceiveQuantity);
           if (filteredArray.length) {
             filteredArray.forEach(item => {
               item.classAttribute = this.classAttribute

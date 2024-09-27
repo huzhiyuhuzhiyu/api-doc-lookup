@@ -49,17 +49,33 @@
               <el-table-column prop="occupancyQuantity" label="占用数量" width="120" sortable="custom" />
               <el-table-column prop="safeInventory" label="安全库存" min-width="100" />
               <el-table-column prop="batchNumber" label="批次号" min-width="180" sortable="custom" />
+              <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+                <template slot-scope="scope">
+                  <div v-if="scope.row.inspectionResults == 'qualified'">合格</div>
+                  <div v-if="scope.row.inspectionResults == 'unqualified'">不合格</div>
+                  <div v-if="scope.row.inspectionResults == 'partially_qualified'">部分合格</div>
+                  <div v-if="scope.row.inspectionResults == 'discard'">报废</div>
+                  <div v-if="scope.row.inspectionResults == 'concessive_acceptance'">让步接收</div>
+                </template>
+              </el-table-column>
+              <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom"> </el-table-column>
+              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
               <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
               <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
               <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
-              <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" /> 
-              <el-table-column prop="clearance" label="游隙值" min-width="120" :key="100" sortable="custom"></el-table-column>
-              <el-table-column prop="warehouseName" label="仓库名称" min-width="180" sortable="custom" >
-                <!-- <template slot-scope="scope">
-                  <div>{{ scope.row.warehouseName+'/'+scope.row.shelfSpaceName }}</div>
-                </template> -->
-              </el-table-column>
-              <el-table-column prop="shelfSpaceName" label="库位名称" min-width="120" sortable="custom" />
+              <el-table-column prop="oil" label="油脂" min-width="120" sortable="custom" />
+              <el-table-column prop="clearance" label="游隙" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="packagingMethod" label="包装方式" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="specialRequire" label="特殊要求" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="standardValue" label="规值" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="aperture" label="孔径" min-width="120" :key="100"
+                sortable="custom"></el-table-column>
+              <el-table-column prop="colour" label="颜色" min-width="120" :key="100" sortable="custom"></el-table-column>
+
               <el-table-column prop="latestStorageTime" label="最新入库时间" min-width="180" fixed="right"
                 sortable="custom" />
             </JNPF-table>
@@ -105,9 +121,9 @@ export default {
       originalListQuery: {},
       total: 0,
       totalData: {
-        totalInventory:0,
-        totalAvailable:0,
-        totalOccupancy:0,
+        totalInventory: 0,
+        totalAvailable: 0,
+        totalOccupancy: 0,
       },
 
       listQuery: {
@@ -243,11 +259,11 @@ export default {
       inventorySpaceList(this.listQuery).then(res => {
         this.treeLoading = false
         this.listLoading = false
-        if(!res.data.whPage.records.length) return
+        if (!res.data.whPage.records.length) return
         this.tableData = res.data.whPage.records
         this.total = res.data.whPage.total
         this.totalData = res.data.stockSts
-        
+
       }).catch(err => {
         this.treeLoading = false
         this.listLoading = false

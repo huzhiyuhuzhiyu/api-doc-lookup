@@ -98,7 +98,7 @@
             </el-dropdown>
             <!-- <el-button size="mini" type="primary" icon="el-icon-plus" @click="aiAdd">智能新建</el-button> -->
             <!-- <el-button size="mini" type="primary" icon="el-icon-download" @click="downLoadTemplate">下载模版</el-button> -->
-            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm">导入</el-button>
+            <el-button size="mini" type="primary" icon="el-icon-plus" @click="importForm"> 导入</el-button>
             <el-button :disabled="tableData.length > 0 ? false : true" size="mini" type="primary"
               icon="el-icon-download" @click="exportForm">
               导出
@@ -175,7 +175,8 @@
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="140" fixed="right">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)" :hasDel="false">
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId, configFlag)"
+                :hasDel="false">
                 <el-button type="text" size="mini" @click.native="addOrUpdateHandle(scope.row.id, true)">
                   查看详情
                 </el-button>
@@ -262,7 +263,10 @@
           <template slot="label">
             单位<span class="required">*</span>
           </template>
-          <el-input v-model="quickForm.unit" placeholder="请输入单位"></el-input>
+          <el-select v-model="quickForm.unit" placeholder="请选择单位" style="width: 100%;" filterable>
+            <el-option v-for="item in unitOptions" :key="item.value" :label="item.label"
+              :value="item.value"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="产品来源" prop="productSource">
           <template slot="label">
@@ -376,6 +380,7 @@ export default {
       listQuery: {},
       productStatusList: [{ label: '启用', value: 'enable' }, { label: '禁用', value: 'disabled' }], // 产品状态
       productSourceList: [
+        { label: "组装", value: "assemble" },
         { label: '生产', value: 'produce' },
         { label: '采购', value: 'purchase' },
         { label: '外协', value: 'out' }
@@ -567,7 +572,8 @@ export default {
       ],
       filterText: '',
       uploadVisib: false,
-      configFlag: true
+      configFlag: true,
+      unitOptions: []
     }
   },
   watch: {
@@ -624,7 +630,9 @@ export default {
                 duration: 1500,
                 onClose: () => {
                   this.quickVisible = false
+                  this.$refs.quickForm.resetFields()
                   this.initData()
+                  
                 }
               })
             }
@@ -909,6 +917,7 @@ export default {
           }
           arr.push(obj)
         })
+        this.unitOptions = arr
         // let oilObj = this.superQueryJson.find((item) => item.prop === 'mainUnit')
         this.superQueryJson.forEach((tc) => {
           if (tc.prop === 'mainUnit') {

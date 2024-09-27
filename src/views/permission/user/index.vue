@@ -81,10 +81,13 @@
               </el-dropdown-menu>
             </el-dropdown>
             <el-button icon="el-icon-lock" type="warning" size="mini" @click="plhandleResetPwd">重置密码</el-button>
-            <el-button type="text" icon="el-icon-download" @click="exportForm">导出</el-button>
-            <el-button type="text" icon="el-icon-upload2" @click="uploadForm">导入</el-button>
+            <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" :disabled="!tableData.length" @click="exportForm">导出</el-button>
+            <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -106,6 +109,7 @@
 
           <el-table-column prop="mobilePhone" label="手机号码" width="160" />
           <el-table-column prop="organizeName" label="所属组织" min-width="280" />
+          <el-table-column prop="roleName" label="角色" min-width="140" />
           <!-- <el-table-column prop="employeeStatus" label="员工状态" width="120" align="center" sortable="custom">
             <template slot-scope="{row}">
               <el-tag type="success" disable-transitions v-if="row.employeeStatus == 'on_job'">在职</el-tag>
@@ -171,17 +175,19 @@
     <Form v-if="formVisible" ref="Form" @close="removeForm" />
     <Diagram v-if="diagramVisible" ref="Diagram" @close="diagramVisible = false" />
     <ResetPwdForm v-if="resetFormVisible" ref="ResetPwdForm" @refreshDataList="initData" />
-    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" /> -->
-    <!-- <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" /> -->
+    <ExportForm v-if="exportFormVisible" ref="exportForm" />
+    <ImportForm v-if="importFormVisible" ref="importForm" @refresh="reset()" />
     <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
     <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" />
-
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
+    <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
   </div>
 </template>
 <script>
-import { excelExport, saleCluemanagementpoolModel } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport, salecooperativeUsers } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import {
   updateUserState,
@@ -192,9 +198,9 @@ import {
 import Form from './Form' // 新建
 import Diagram from './Diagram' // 树状列表-组织机构
 import ResetPwdForm from './ResetPassword' // 重设密码
-// import ImportForm from './ImportForm' // 导入数据
-// import ExportForm from './ExportForm' // 导出数据
-import ExportForm from '@/components/no_mount/ExportBox/index'
+import ImportForm from './ImportForm' // 导入数据
+import ExportForm from './ExportForm' // 导出数据
+// import ExportForm from '@/components/no_mount/ExportBox/index'
 import JobTransfer from './JobTransfer' // 岗位调动
 import JobQuit from './JobQuit' // 办理离职
 import JobEntry from './JobEntry' // 重新入职
@@ -206,13 +212,55 @@ export default {
     Diagram,
     ResetPwdForm,
     ExportForm,
-    // ImportForm,
+    ImportForm,
     JobTransfer,
     JobQuit,
-    JobEntry
+    JobEntry,
+    SuperQuery
   },
   data() {
     return {
+      superQueryJson: [
+        {
+          prop: 'account',
+          label: "账户",
+          type: 'input'
+        },
+        {
+          prop: 'realName',
+          label: "姓名",
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: "手机号码",
+          type: 'input'
+        },
+        {
+          prop: 'roleName',
+          label: "角色",
+          type: 'input'
+        },
+        {
+          prop: 'enabledMark',
+          label: "状态",
+          type: 'select',
+          options: [
+            { label: "启用", value: 1 },
+            { label: "锁定", value: 2 },
+            { label: "禁用", value: 3 }
+          ]
+        },
+        {
+          prop: 'creatorTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: 'timestamp',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+        }
+      ],
+      superQueryVisible: false,
       uploadVisib: false,
       columnList: [],
       filterText: "",
@@ -288,6 +336,11 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     // 上传
     UploadProduct(data) {
       this.loadingText = '正在导入数据'
@@ -295,7 +348,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleCluemanagementpoolModel(formData).then(res => {
+      salecooperativeUsers(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.formLoading = false
@@ -578,40 +631,40 @@ export default {
         })
       }).catch(() => { })
     },
-    // exportForm() {
-    //   this.exportFormVisible = true
-    //   this.$nextTick(() => {
-    //     this.$refs.exportForm.init(this.listQuery)
-    //   })
-    // },
-    // 导出
     exportForm() {
       this.exportFormVisible = true
-      let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
-      columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
-      this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+      this.$nextTick(() => {
+        this.$refs.exportForm.init(this.listQuery)
+      })
     },
-    download(data) {
-      if (data) {
-        this.exportFormVisible = false
-        let includeFieldMap = {}
-        for (let i = 0; i < data.selectKey.length; i++) {
-          includeFieldMap[data.selectKey[i]] = data.selectVal[i];
-        }
-        let _data = {
-          ...this.listQuery,
-          exportType: '1223',
-          exportName: '用户信息',
-          includeFieldMap,
-          pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
-        }
-        excelExport(_data).then(res => {
-          this.exportFormVisible = false
-          if (!res.data.url) return
-          this.jnpf.downloadFile(res.data.url)
-        }).catch(() => { })
-      }
-    },
+    // 导出
+    // exportForm() {
+    //   this.exportFormVisible = true
+    //   let columnList = this.$refs.dataTable.columnList.filter(item => !!item.label && !!item.prop)
+    //   columnList = columnList.map(item => { return { label: item.label, prop: item.prop } })
+    //   this.$nextTick(() => { this.$refs.exportForm.init(columnList) })
+    // },
+    // download(data) {
+    //   if (data) {
+    //     this.exportFormVisible = false
+    //     let includeFieldMap = {}
+    //     for (let i = 0; i < data.selectKey.length; i++) {
+    //       includeFieldMap[data.selectKey[i]] = data.selectVal[i];
+    //     }
+    //     let _data = {
+    //       ...this.listQuery,
+    //       exportType: '1223',
+    //       exportName: '用户信息',
+    //       includeFieldMap,
+    //       pageSize: data.dataType == 0 ? this.listQuery.pageSize : -1
+    //     }
+    //     excelExport(_data).then(res => {
+    //       this.exportFormVisible = false
+    //       if (!res.data.url) return
+    //       this.jnpf.downloadFile(res.data.url)
+    //     }).catch(() => { })
+    //   }
+    // },
     uploadForm() {
       // this.importFormVisible = true
       // this.$nextTick(() => {

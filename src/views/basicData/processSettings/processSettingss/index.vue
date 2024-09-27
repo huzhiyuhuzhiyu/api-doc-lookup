@@ -64,11 +64,12 @@
         </div>
         <div class="tableBox">
           <JNPF-table v-loading="listLoading" :data="list" @sort-change="sortChange" highlight-current-row
-            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList" v-if="list.length">
+            :fixedNO="true" class="dataTable" border ref="listTable" custom-column :setColumnDisplayList="columnList">
             <el-table-column prop="code" label="工艺路线编码" align="left" sortable="custom" min-width="180">
               <template slot-scope="scope">
-                <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">{{ scope.row.code
-                  }}</el-link>
+                <el-link type="primary" @click.native="updateHandle(scope.row.id, 'look')">
+                  {{ scope.row.code }}
+                </el-link>
               </template>
             </el-table-column>
             <el-table-column prop="name" label="工艺路线名称" align="left" sortable="custom" min-width="180" />
@@ -78,8 +79,6 @@
                 <div v-if="scope.row.reportRulesFlag == '1'">是</div>
               </template>
             </el-table-column>
-            <el-table-column prop="reasonRejection" label="驳回理由" align="left" min-width="180" />
-            <!-- <el-table-column prop="approvalCompletionDate" label="审批完成时间" align="left" min-width="180" /> -->
             <el-table-column prop="createTime" label="创建时间" align="left" min-width="180" sortable="custom" />
             <el-table-column prop="createByName" label="创建人" align="left" min-width="180" sortable="custom" />
             <el-table-column prop="remark" label="备注" align="left" min-width="180" />
@@ -95,7 +94,8 @@
                 <div v-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"  v-if="showAppCodeFlag">
+            <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" width="120"
+              v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <div v-if="scope.row.approvalStatus == 'ing'"><el-tag type="warning">审批中</el-tag></div>
                 <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
@@ -302,7 +302,7 @@ export default {
       visible: false,
       customerRecognitionTime: [],
       columnList: ['reasonRejection', 'remark', 'createByName', 'createTime'],
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   mounted() {
@@ -310,9 +310,9 @@ export default {
   },
   async created() {
     const res = await this.jnpf.getBusInfo('b024')
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
     this.initData()
@@ -552,7 +552,6 @@ export default {
           item.taxRate = item.enCode.replace('%', '') * 1
         })
         this.taxRateList = res.data.list
-        console.log('税率', this.taxRateList)
       })
     },
     moreQueries() {
@@ -601,7 +600,7 @@ export default {
       columnList = columnList.map((item) => {
         return { label: item.label, prop: item.prop }
       })
-      console.log(columnList, 'columnList')
+
       this.$nextTick(() => {
         this.$refs.exportForm.init(columnList)
       })
@@ -635,7 +634,6 @@ export default {
       this.dataDetail = []
       getProcessList(this.listQuery)
         .then((res) => {
-          console.log(res)
           this.list = res.data.records || []
           this.total = res.data.total
           this.listLoading = false
@@ -668,7 +666,6 @@ export default {
     },
     // 新增数据
     addOrUpdateHandle(id, type) {
-      console.log(id, type)
       this.formVisible = true
       this.$nextTick(() => {
         this.$refs.JNPFForm.init(id, type)
@@ -677,7 +674,7 @@ export default {
     // 编辑数据
     updateHandle(id, type) {
       this.formVisible = true
-      console.log(id, type)
+
       this.$nextTick(() => {
         this.$refs.JNPFForm.init(id, type)
       })
@@ -734,4 +731,3 @@ export default {
   }
 }
 </style>
-

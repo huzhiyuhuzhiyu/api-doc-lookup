@@ -8,7 +8,7 @@
             :disabled="type == 'look' ? true : false"
             @click="openSeleceProcessDialog(personData.length, activeName)">选择{{
               actTitle }}</el-button>|
-          <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
+
           <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
             :disabled="type == 'look' ? true : false" icon="el-icon-delete"
             @click="batchDelete(activeName)">批量删除</el-button>|
@@ -141,10 +141,10 @@
       :listMethod="getGroupList" :listRequestObj="WorkgroupRequestObj" :renderTree="false"
       :searchList="WorkgroupTableSearchList" :elementShow="false" multiple />
     <ComSelect-page ref="ComSelect-page" @change="DeviceSubmit" :tableItems="DeviceTableItems" title="选择设备"
-      treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="stateEquEquipment" :listRequestObj="DeviceRequestObj"
+      treeTitle="设备分类" :methodArr="DeviceMethodArr" :listMethod="getEquEquipmentList" :listRequestObj="DeviceRequestObj"
       :searchList="DeviceTableSearchList" :elementShow="false" multiple />
     <ComSelect-page ref="ComSelect-page2" @change="ToolSubmit" :tableItems="ToolTableItems" title="选择工具"
-      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="stateEquEquipment" :listRequestObj="ToolRequestObj"
+      treeTitle="工具分类" :methodArr="ToolMethodArr" :listMethod="getEquEquipmentList" :listRequestObj="ToolRequestObj"
       :searchList="ToolTableSearchList" :elementShow="false" multiple />
   </div>
 </template>
@@ -802,9 +802,12 @@ export default {
 }
 
 .footer {
-  margin: 20px 20px 20px;
+  /* margin: 20px 20px 20px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-end; */
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 
 ::v-deep .is-stretch {

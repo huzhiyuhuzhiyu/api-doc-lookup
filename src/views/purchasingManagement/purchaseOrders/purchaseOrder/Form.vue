@@ -12,7 +12,7 @@
               <el-collapse v-model="activeNames">
                 <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
                   <el-row :gutter="15" class="">
-                    <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                    <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
                       <el-col :span="6" v-if="type === 'look'">
                         <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
@@ -71,7 +71,7 @@
                         </template>
                       </el-table-column> -->
 
-                      <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
+                      <el-table-column prop="planDemandQuantity" label="计划需求数量" width="120" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'planDemandQuantity'">
                             <div class="viewData">
@@ -81,7 +81,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="purchaseQuantity" label="采购数量" width="100">
+                      <el-table-column prop="purchaseQuantity" label="采购数量" width="90">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'purchaseQuantity'"
                             :rules="productRules.purchaseQuantity">
@@ -103,7 +103,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="mainUnit" label="单位" width="70" show-overflow-tooltip>
+                      <el-table-column prop="mainUnit" label="单位" width="60" show-overflow-tooltip>
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'mainUnit'">
                             <div class="viewData">
@@ -123,7 +123,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="taxRate" label="税率" width="80">
+                      <el-table-column prop="taxRate" label="税率" width="60">
                         <template slot-scope="scope">
                           <el-form-item :prop="'data.' + scope.$index + '.' + 'taxRate'">
                             <div class="viewData">
@@ -163,7 +163,7 @@
                         </template>
                       </el-table-column>
 
-                      <el-table-column prop="remark" label="备注" min-width="220">
+                      <el-table-column prop="remark" label="备注" min-width="200">
                         <template slot-scope="scope">
                           <el-input v-model="scope.row.remark" disabled maxlength="20"
                             :placeholder="type == 'look' ? '' : '请输入备注'">
@@ -197,7 +197,7 @@
           <el-collapse v-model="activeNames" v-else>
             <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
               <el-row :gutter="15" class="">
-                <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
+                <el-form ref="dataForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="6" v-if="type === 'look'">
                     <el-form-item label="采购单号" prop="orderNo" ref="orderNo">
@@ -257,7 +257,7 @@
                     </template>
                   </el-table-column>
 
-                  <el-table-column prop="planDemandQuantity" label="计划需求数量" min-width="140" show-overflow-tooltip>
+                  <el-table-column prop="planDemandQuantity" label="计划需求数量" width="120" show-overflow-tooltip>
                     <template slot-scope="scope">
                       <el-form-item :prop="'data.' + scope.$index + '.' + 'planDemandQuantity'">
                         <div class="viewData">
@@ -532,9 +532,9 @@ export default {
     supplierdata(data) {
       console.log(data, '供应商数据')
       if (data.length === 0) {
-        this.$refs['elForm'].validateField('cooperativePartnerName')
+        this.$refs['dataForm'].validateField('cooperativePartnerName')
       } else {
-        this.$refs['elForm'].fields[0].resetField()
+        this.$refs['dataForm'].fields[0].resetField()
         this.dataForm.cooperativePartnerName = data.name
         this.dataForm.cooperativePartnerCode = data.code
         this.dataForm.cooperativePartnerId = data.id
@@ -575,7 +575,7 @@ export default {
       this.type = type
       this.approvalFlag = approvalFlag
       this.$nextTick(() => {
-        this.$refs['elForm'].resetFields()
+        this.$refs['dataForm'].resetFields()
         if (!this.dataForm.id) {
           this.clearData()
         } else {

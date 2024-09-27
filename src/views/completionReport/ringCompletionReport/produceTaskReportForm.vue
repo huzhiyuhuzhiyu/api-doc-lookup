@@ -199,6 +199,8 @@
 
                   <div v-if="item.processingType == 'self_produced' && item.reportFlag == true">
                     <el-button type="primary" size="mini" @click='report(item)'>报 工</el-button>
+                                        <el-button type="primary" size="mini" @click='transferOutFun()'>转外协</el-button>
+
                     <el-button type="primary" size="mini" @click="reportRecordsFun(item)">查看报工记录</el-button>
                   </div>
                 </el-card>
@@ -269,6 +271,10 @@ export default {
   },
 
   methods: {
+     // 转外协
+     transferOutFun(row){
+
+},
     closeForm(flag) {
       if (flag) this.getRoutingDetailFun(this.dataForm.routingId)
     },

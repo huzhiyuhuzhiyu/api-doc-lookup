@@ -4,11 +4,11 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建外协收货通知单'
+          ? '新建收货单'
           : btnType == 'edit'
-            ? '编辑外协收货通知单'
+            ? '编辑收货单'
             : btnType == 'copy'
-              ? '新建外协收货通知单'
+              ? '新建收货单'
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
@@ -50,8 +50,6 @@
                     </el-col>
                     <el-col :sm="6" :xs="24">
                       <el-form-item label="供应商名称" prop="partnerName">
-                        <!-- <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                          :disabled="btnType == 'look'"></el-input> -->
                         <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                           v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                           @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -108,9 +106,6 @@
                     选择产品
                   </el-button>
                   |
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                  :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择订单</el-button>| -->
-                  <!-- <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" @click="addProduct()">新增行</el-button>| -->
                   <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                     :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">
                     批量删除
@@ -123,13 +118,12 @@
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
 
-                    <el-table-column prop="drawingNo" label="品名规格" width="160" />
-                    <el-table-column prop="productCode" label="产品编码" width="200"
+                    <el-table-column prop="drawingNo" label="品名规格" width="160" show-overflow-tooltip />
+                    <el-table-column prop="productCode" label="产品编码" width="100"
                       show-overflow-tooltip></el-table-column>
-                    <el-table-column prop="mainUnit" label="单位" width="80" />
-                    <el-table-column prop="purchaseQuantity" label="订单数量" width="160" />
-                    <!-- <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160" /> -->
-                    <el-table-column prop="receivedQuantity" label="收货数量" width="170" v-if="!dataForm.exchangeGoodsFlag"
+                    <el-table-column prop="mainUnit" label="单位" width="60" />
+                    <el-table-column prop="purchaseQuantity" label="订单数量" width="100" />
+                    <el-table-column prop="receivedQuantity" label="收货数量" width="150" v-if="!dataForm.exchangeGoodsFlag"
                       key="789">
                       <template slot="header">
                         <span class="required">*</span>
@@ -147,9 +141,9 @@
                       </template>
                     </el-table-column>
 
-                    <el-table-column prop="standardValue" label="规值" min-width="120"></el-table-column>
-                    <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="ordersNo" label="订单号" min-width="160" />
+                    <el-table-column prop="standardValue" label="规值" width="100"></el-table-column>
+                    <el-table-column prop="processName" label="工序" width="100" />
+                    <el-table-column prop="ordersNo" label="订单号" min-width="200" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -205,8 +199,7 @@
                 </el-col>
                 <el-col :sm="6" :xs="24">
                   <el-form-item label="供应商名称" prop="partnerName">
-                    <!-- <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                          :disabled="btnType == 'look'"></el-input> -->
+
                     <ComSelect-page clearable :isdisabled="btnType === 'look'" :treeNodeClick="treeNodeClick"
                       v-model="dataForm.partnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
                       @change="supplierdata" :tableItems="PartnerTableItems" :placeholder="'请选择供应商名称'" title="选择供应商"
@@ -730,8 +723,7 @@ export default {
       flowTaskOperatorRecordList: [],
       endTime: 0,
       scanDialog: false,
-      scanResult: '',
-
+      scanResult: ''
     }
   },
   computed: {
@@ -766,6 +758,7 @@ export default {
   },
   methods: {
     scanFun() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
       this.$nextTick(() => {
         this.$refs.inputRef.$refs.input.focus()
@@ -782,17 +775,29 @@ export default {
       this.ProductListRequestObj.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.ProductListRequestObj.productCode = this.scanResult
       detailpurchaseOrderList(this.ProductListRequestObj).then((res) => {
-        console.log(res.data.records[0], 'p')
+        console.log(res.data.records, 'p')
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
-        if (!this.dataFormTwo.productData) {
-          this.dataFormTwo.productData = []
-          this.dataFormTwo.productData.push(res.data.records[0])
+        const newRecord = res.data.records
+
+        if (newRecord.length !== 0) {
+          if (!this.dataFormTwo.productData || this.dataFormTwo.productData.length == 0) {
+            this.dataFormTwo.productData = newRecord
+          } else {
+            // 使用 Map 来确保唯一性并更新对象
+            const mergedMap = new Map()
+
+            this.dataFormTwo.productData.forEach((item) => mergedMap.set(item.id, item))
+
+            newRecord.forEach((item) => mergedMap.set(item.id, item))
+
+            this.dataFormTwo.productData = Array.from(mergedMap.values())
+          }
         } else {
-          this.dataFormTwo.productData.forEach((item) => {
-            if (item.id !== res.data.records[0].id) {
-              this.dataFormTwo.productData.push(res.data.records[0])
-            }
+          this.$message({
+            message: '未匹配到产品',
+            type: 'warning'
           })
+          this.scanResult = ''
         }
       })
     },
@@ -1278,19 +1283,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
-            //   res1.data.orderLines.map((item) => {
-            //     res.data.lines.map((item1) => {
-            //       if (item.productsId == item1.productId) {
-            //         item1.outboundQuantity = item.outboundQuantity
-            //         item1.returnQuantity = item.returnQuantity
-            //         item1.deliveryQuantity = ''
-
-            //       }
-            //     })
-            //   })
-
-            // })
+            this.fetchData('WXSH')
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1310,18 +1303,7 @@ export default {
           }
         })
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        this.dataForm.salesman = this.userInfo.userName
-        console.log(data, 'ooo')
 
-        this.dataFormTwo.productData = data
-        this.formLoading = true
-        this.getBusInfo()
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('WXSH')
-        }, 500)
-      }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {

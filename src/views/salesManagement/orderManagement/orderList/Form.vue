@@ -966,6 +966,7 @@
                   @selection-change="handleSelectionChangeAllPruduct" ref="dataTable" @row-click="handleRowClick">
                   <el-table-column prop="code" label="产品编码" show-overflow-tooltip></el-table-column>
                   <el-table-column prop="drawingNo" label="品名规格" />
+                  <el-table-column prop="productCategoryName" label="所属分类" />
                   <el-table-column prop="mainUnit" label="单位" />
 
                 </JNPF-table>

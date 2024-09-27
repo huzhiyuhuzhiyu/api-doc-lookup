@@ -49,8 +49,7 @@
 
                           <el-col :sm="6" :xs="24">
                             <el-form-item label="供应商" prop="cooperativePartnerId">
-                              <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" readonly @focus="openDialog"
-                                disabled>
+                              <el-input v-model="dataForm.partnerName" placeholder="请选择供应商" disabled>
                               </el-input>
                             </el-form-item>
                           </el-col>
@@ -284,7 +283,7 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
@@ -403,10 +402,11 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      classAttributeList: [],
+      warehouseCode: "",
     }
   },
   created() {
@@ -465,7 +465,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryEndDate: "",
         deliveryStartDate: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         receiptInboundFlag: true,
 
         pageNum: 1,
@@ -493,18 +493,6 @@ export default {
         this.productTotal = res.data.total
         this.listLoading = false
       })
-      // { label: "销售发货", value: "outbound_sale_send" },
-      //   { label: "销售退货", value: "inbound_sale_return" },
-      //   { label: "采购收货", value: "inbound_purchase" },
-      //   { label: "采购退货", value: "outbound_purchase" },
-      //   { label: "生产领料", value: "outbound_pick_out" },
-      //   { label: "生产退料", value: "inbound_return_materials" },
-      //   { label: "外协发料", value: "outbound_external_send" },
-      //   { label: "外协退料", value: "inbound_external_return" },
-      //   { label: "外协收货", value: "inbound_external" },
-      //   { label: "外协退货", value: "outbound_external" },  
-
-
 
     },
     // 选择产品 (销售发货——多选)
@@ -540,8 +528,6 @@ export default {
         item.noticeId = item.purchaseReceiptReturnGoodsId
         item.noticeLineId = item.id
 
-
-        item.classAttribute = this.classAttribute
 
 
         item.sourceNo = this.dataForm.sourceNo
@@ -690,21 +676,7 @@ export default {
     },
 
 
-    // 打开选择客户弹框
-    openDialog() {
-      this.CustomerForm = true
-      this.$nextTick(() => {
-        this.$refs.CustomerForms.init()
-      })
-    },
-    // 所选择的客户数据
-    handleSelectCustomer(data) {
-      console.log("客户信息", data);
-      this.dataForm['cooperativePartnerId'] = data.id
-      this.dataForm['partnerName'] = data.name
-      this.customerInfo = data
-    },
-
+    // 切换仓库
     changeWarehousex(val, data) {
       console.log("data", data);
       if (!val && !data.length) {
@@ -717,6 +689,19 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+    },
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
     },
     goBack() {
       this.$emit('close', true)
@@ -735,13 +720,14 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
-      console.log("11", data, btnType, businessType);
+    init(data, btnType, businessType, classAttributeList,warehouseCode) {
+      console.log("11", data, btnType, businessType,classAttributeList,warehouseCode);
       // this.visible = true
       this.dataForm.businessType = businessType
+      this.warehouseCode=warehouseCode
       this.selectcustomerObj.type = 'supplier'
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
-      this.classAttribute = classAttribute
+      this.classAttributeList = classAttributeList
       this.btnType = btnType
       this.getBusInfo()
       if (btnType == 'look') {
@@ -761,15 +747,15 @@ export default {
         this.fetchData("RKDH", true)
         this.title = '新建入库单'
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute && item.qualifiedQuantity > item.receiptQuantity);
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute) && item.qualifiedQuantity > item.receiptQuantity);
 
+          console.log("filteredArray", filteredArray);
 
           // if(businessType == 'inbound_purchase'){
           //   filteredArray=filteredArray.filter(item => item.qualifiedQuantity>item.receiptQuantity);
           // }
           if (filteredArray.length) {
             filteredArray.forEach(item => {
-              item.classAttribute = this.classAttribute
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -903,7 +889,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,

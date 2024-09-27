@@ -21,9 +21,9 @@
           <div id="CustomerAnaly" :option="option" style="width: 100%; height: 400px;"></div>
         </div>
         <div class="table-content" v-loading="listLoading">
-          <div class="handle-bar">
+          <!-- <div class="handle-bar">
             <el-button type="primary" size="mini" v-has="'btn_export'" icon="el-icon-download" @click="exportForm" :disabled="!tableList.length">导出</el-button>
-          </div>
+          </div> -->
           <div style="height: 400px;">
             <el-table ref="tabForm" :header-cell-style="headerCellStyle" :data="tableList" border>
               <el-table-column v-for="item in columnsData" :prop="item.prop" :label="item.label" :key="item.prop" min-width="150">

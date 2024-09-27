@@ -127,11 +127,13 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 export default {
   name: 'directMaterialRequisition',
   components: { Form, ExportForm, SuperQuery },
   props:{
-    classAttribute:"",
+    warehouseCode: "", 
   },
   data() {
     return {
@@ -152,7 +154,7 @@ export default {
         pickingStartDate: "",
         pickingEndDate: "",
         documentStatus: "",
-        classAttribute: "finish_product",
+        classAttribute: "",
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -217,25 +219,34 @@ export default {
 
       ],
       selectList: [],
+      classAttributeList:[],
     }
   },
 
 
 
   created() {
-    this.initData()
+    this.getclassAttributeList()
+    
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data
+        this.initData()
+      })
+    },
     viewFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType)
+          this.$refs.Form.init(id,btnType,this.classAttributeList)
       })
     },
     editFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,this.classAttribute)
+          this.$refs.Form.init(id,btnType,this.classAttributeList)
       })
     },
 
@@ -263,9 +274,6 @@ export default {
       let newProp;
       if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
         newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
-
       } else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
@@ -307,7 +315,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.form.classAttribute=this.classAttribute
+      this.form.classAttributeList=this.classAttributeList
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -331,7 +339,7 @@ export default {
         pickingStartDate: "",
         pickingEndDate: "",
         documentStatus: "",
-        classAttribute: "finish_product",
+        classAttribute:this.classAttributeList,
         transferType:"receive_material",
         pageNum: 1,
         pageSize: 20,
@@ -353,7 +361,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',this.classAttribute)
+        this.$refs.Form.init('', 'add',this.classAttributeList)
       })
 
     },

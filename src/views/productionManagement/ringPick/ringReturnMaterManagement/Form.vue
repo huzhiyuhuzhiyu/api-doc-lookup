@@ -454,9 +454,7 @@ export default {
     // 所选的工序物料
     selectProcessMaterialFun(data) {
       console.log("所选的工序物料", data);
-      data.forEach(item => {
-        this.$set(item, 'num', JSON.parse(JSON.stringify(item.waitReceiveQuantity)))
-      });
+
       if (this.dataFormTwo.data.length) {
         let uniqueArr = [];
         let idSet = new Set();

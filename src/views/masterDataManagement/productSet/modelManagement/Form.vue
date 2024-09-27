@@ -110,11 +110,11 @@ export default {
       },
       ProductTableItems: [
         { prop: 'code', label: '产品编码', fixed: 'left' },
-        { prop: 'name', label: '产品名称', fixed: 'left' },
+        // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
-        { prop: 'mainUnit', label: '主单位', minWidth: 0 },
-        { prop: 'productType', label: '产品类别', minWidth: 0 },
-        { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
+        { prop: 'mainUnit', label: '单位', minWidth: 0 },
+        // { prop: 'productType', label: '产品类别', minWidth: 0 },
+        // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
       ],
       requestObj: {
         type: "",
@@ -219,7 +219,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.outerCircleId = data[0].all.id
-        this.dataForm.outerCircle = data[0].all.name
+        this.dataForm.outerCircle = data[0].all.drawingNo
       } else {
       }
 
@@ -231,7 +231,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.innerCircleId = data[0].all.id
-        this.dataForm.innerCircle = data[0].all.name
+        this.dataForm.innerCircle = data[0].all.drawingNo
       } else {
       }
 
@@ -243,7 +243,7 @@ export default {
       console.log(data, '产品产品');
       if (data[0].all) {
         this.dataForm.steelBallId = data[0].all.id
-        this.dataForm.steelBall = data[0].all.name
+        this.dataForm.steelBall = data[0].all.drawingNo
       } else {
       }
 

@@ -47,8 +47,8 @@
                 <el-collapse-item title="产品信息" name="productInfo">
                   <div>
                     <el-button type="text" style="margin-right:8px;font-size:14px!important"
-                        :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
-                          class="iconfont icon-saoma"></i>扫码录入</el-button>|
+                      :disabled="btnType == 'look' ? true : false" @click="scanFun()"><i
+                        class="iconfont icon-saoma"></i>扫码录入</el-button>|
                     <el-button type="text" style="margin-right:8px;margin-left:8px; font-size:14px!important"
                       icon="el-icon-plus" :disabled="btnType == 'look' ? true : false"
                       @click="openSeleceProductDialog()">选择产品</el-button>|
@@ -86,7 +86,8 @@
                           @change="changeWarehousex"></ComSelect-list>
                       </template>
                     </el-table-column>
-                    <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112" v-if="allocationFlag">
+                    <el-table-column prop="inShelfSpaceName" label="目标库位" width="160" :key="10112"
+                      v-if="allocationFlag">
                       <template slot="header">
                         <span class="required">*</span>目标库位
                       </template>
@@ -178,6 +179,15 @@
                 <el-table-column prop="mainUnit" label="单位" min-width="80" />
                 <el-table-column prop="inventoryQuantity" label="批次库存数量" sortable="custom" min-width="160"
                   v-if="btnType != 'look'" />
+                <el-table-column prop="inspectionResults" label="检验结果" sortable="custom" min-width="120">
+                  <template slot-scope="scope">
+                    <div v-if="scope.row.inspectionResults=='qualified'">合格</div>
+                    <div v-if="scope.row.inspectionResults=='unqualified'">不合格</div>
+                    <div v-if="scope.row.inspectionResults=='partially_qualified'">部分合格</div>
+                    <div v-if="scope.row.inspectionResults=='discard'">报废</div>
+                    <div v-if="scope.row.inspectionResults=='concessive_acceptance'">让步接收</div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="warehouseName" label="仓库" sortable="custom" min-width="120" />
                 <el-table-column prop="shelfSpaceName" label="库位" sortable="custom" min-width="120" />
                 <el-table-column prop="standardValue" label="规值" width="120" :key="211" sortable="custom"
@@ -231,15 +241,16 @@
         </span>
       </el-dialog>
       <el-dialog title="扫码录入" append-to-body :close-on-click-modal="false" :close-on-press-escape="false"
-      :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
-      @close="closeScanDiaFun()">
-      <div class="scand">
-        <div class="box">
-          <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()"> </el-input>
-        <div class="tip">说明：根据产品码自动添加对应的产品</div>
-      </div>
-      </div>
-    </el-dialog>
+        :show-close="true" :visible.sync="scanDialog" lock-scroll class="JNPF-dialog JNPF-dialog_center" width="500px"
+        @close="closeScanDiaFun()">
+        <div class="scand">
+          <div class="box">
+            <el-input v-model="scanResult" ref="inputRef" placeholder="请扫产品码" @keyup.enter.native="getProductFun()">
+            </el-input>
+            <div class="tip">说明：根据产品码自动添加对应的产品</div>
+          </div>
+        </div>
+      </el-dialog>
       <!-- 选库位 -->
       <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
       </WareHouseForm>
@@ -250,12 +261,14 @@
 
 <script>
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getCooperativeData, deleteCooperative, excelExport } from '@/api/basicData/index'
 import { getcategoryTrees, getcooperativeProduct, getsaleOrderDetailList } from '@/api/salesManagement/assemblyOrders'
 import { getcategoryTree as productTree } from '@/api/basicData/materialSettings' // 产品分类 编排属性值
 import { getProductList } from '@/api/masterDataManagement/productManage'
 import { addTransferData, updateTransferData, detailTransferData, TransferBarCode } from '@/api/warehouseManagement/transferManagement'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 import {
   getbimProductAttributesList, getbimProductAttributes
 } from "@/api/masterDataManagement/index";
@@ -268,7 +281,7 @@ export default {
 
   data() {
     return {
-      scanDialog:false,
+      scanDialog: false,
       getWarehouseList,
       treeLoading: false,
       ProductTreeData: [],
@@ -293,12 +306,14 @@ export default {
       allProductTotal: 0,
       wareHouseVisible: false,
       ProductListRequestObj: {
-        classAttribute: "",
+        classAttributeList: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
         productCode: "",
+        warehouseId:"",
         productName: "",
         orderItems: [{
           "asc": false,
@@ -323,46 +338,35 @@ export default {
       listLoading: false,
       currentProductIndex: "",
       btnType: false,
-
-
-
-
-
-
-
-
-
-
-
       visible: true,
       wareVisibled: false,
       btnLoading: false,
       formLoading: false,
       allocationFlag: false,
-
-
       spaceLines: [],
       loadingText: '',
       copyLinesData: [],
       previousValue: "",
-
       taxRateList: [],
-      classAttribute:"",
+      classAttribute: "",
+      warehouseCode:"",
+      classAttributeList:[],
+      wareHouseInfo:{},
     }
   },
-  created() {
-    this.getWarehouseConfig()
+  created() { 
   },
 
   methods: {
     getProductFun() {
       console.log(21341234);
       console.log(this.scanResult);
+      if(!this.scanResult) return
       let obj = {
         productName: "",
         productCode: this.scanResult,
         productDrawingNo: '', // 图号
-        classAttribute:this.classAttribute,
+        classAttributeList: this.classAttributeList,
         orderItems: [
           {
             asc: false,
@@ -379,17 +383,21 @@ export default {
       getProductList(obj).then(res => {
         console.log("产品信息", res);
         res.data.records.forEach(item => {
-          item.productCode=item.code
+          item.productCode = item.code
         });
-        this.productData.push(res.data.records[0])
+        this.$nextTick(()=>{
+        if(res.data.records.length){
+          this.productData.push(res.data.records[0])
+        }
         this.scanResult = ""
+       })
       })
     },
     scanFun() {
       this.scanDialog = true
       this.$nextTick(() => {
-      this.$refs.inputRef.$refs.input.focus();
-    });
+        this.$refs.inputRef.$refs.input.focus();
+      });
     },
     closeScanDiaFun() {
       this.scanDialog = false
@@ -424,11 +432,14 @@ export default {
       this.allProVisible = true
       let arr = [];
       this.ProductListRequestObj = {
-        classAttribute: "",
+        classAttributeList: "",
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
+        warehouseId:"",
+
         productCode: "",
         productName: "",
         orderItems: [{
@@ -446,7 +457,9 @@ export default {
     // 获取所有产品列表数据
     initData2() {
       this.listLoading = true
-      this.ProductListRequestObj.classAttribute=this.classAttribute
+      this.ProductListRequestObj.classAttributeList = this.classAttributeList
+      this.ProductListRequestObj.warehouseId=this.wareHouseInfo.id
+      console.log(this.wareHouseInfo);
       getBatchNumber(this.ProductListRequestObj).then(listRes => {
         if (Array.isArray(listRes.data)) {
           this.allproductData = listRes.data
@@ -467,13 +480,15 @@ export default {
     // 所有产品弹框 重置搜索条件
     resetAllProduct() {
       this.ProductListRequestObj = {
-        classAttribute: "",
+        classAttributeList: this.classAttributeList,
         productDrawingNo: "",
         productCategoryId: "",
         batchNumber: "",
         availableBatch: 1,
+        inspectStockFlag:true,
         productCode: "",
         productName: "",
+        warehouseId:"",
         orderItems: [{
           "asc": false,
           "column": ""
@@ -545,14 +560,7 @@ export default {
       }
       this.selectRows = []; // 清空选中的行的数据
     },
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
-
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
+    
     currentIndexFun(index) {
       console.log(index);
     },
@@ -564,6 +572,7 @@ export default {
         this.productData[index.index].warehouseType = ""
         return
       }
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
       this.$set(this.productData[index.index], 'inWarehouseId', data[0].id)
       this.$set(this.productData[index.index], 'inWarehouseName', data[0].name)
       this.$set(this.productData[index.index], 'warehouseType', data[0].all.type)
@@ -573,15 +582,30 @@ export default {
     goBack() {
       this.$emit('close', true)
     },
-    init(id, btnType,classAttribute) {
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
+    init(id, btnType, warehouseCode) {
       // this.visible = true
       this.formLoading = true
       this.oldId = JSON.parse(JSON.stringify(id)) || ""
       this.oldType = JSON.parse(JSON.stringify(btnType))
       this.dataForm.id = id
-      this.classAttribute=classAttribute
+      this.warehouseCode = warehouseCode
       this.btnType = btnType
       console.log("btnty", btnType);
+      this.getclassAttributeList()
+      this.getWarehouseListFun()
       // this.refeshDataFormItems()
       if (id) {
         this.title = btnType == 'look' ? '查看调拨单' : '编辑调拨单'
@@ -622,6 +646,13 @@ export default {
 
 
       }
+
+    },
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data 
+      })
     },
     async fetchData(code, flag) {
       try {
@@ -682,7 +713,7 @@ export default {
                 this.$message.error("产品信息第" + (index + 1) + "行目标仓库不能为空")
                 break
               }
-              if (!item.inShelfSpaceId&&allocationFlag) {
+              if (!item.inShelfSpaceId && allocationFlag) {
                 submitFlag = false
                 this.$message.error("产品信息第" + (index + 1) + "行目标库位不能为空")
                 break
@@ -697,7 +728,7 @@ export default {
 
           // 自动聚焦未使用则提交
           if (submitFlag) {
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.documentStatus = submitModel
             this.dataForm.transferType = 'allocate_transfer'
 
@@ -892,11 +923,12 @@ export default {
   line-height: 36px;
   font-weight: 700;
 }
-.JNPF-common-layout-main.JNPF-flex-main{
+
+.JNPF-common-layout-main.JNPF-flex-main {
   padding-top: 5px;
 }
 
- 
+
 
 .scand ::v-deep.el-input__inner {
   height: 60px;
@@ -905,11 +937,13 @@ export default {
   font-weight: 600;
   border-color: #3fb9f8;
 }
-.scand .box{
+
+.scand .box {
   padding: 40px 20px;
 
 }
-.scand .tip{
+
+.scand .tip {
   margin-top: 10px;
   font-size: 18px;
 }

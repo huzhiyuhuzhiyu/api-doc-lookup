@@ -127,11 +127,13 @@ import Form from './Form'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import moment from 'moment'
 import ExportForm from '@/components/no_mount/ExportBox/index'
+import { getclassAttributelistByCode } from '@/api/masterDataManagement/index'
+
 export default {
   name: 'salesOrderCreation',
   components: { Form, ExportForm, SuperQuery },
   props:{
-    classAttribute:"",
+    warehouseCode: "", 
   },
   data() {
     return {
@@ -150,8 +152,7 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "",
-        classAttribute: "finish_product",
+        documentStatus: "", 
         transferType:"allocate_transfer",
         pageNum: 1,
         pageSize: 20,
@@ -217,15 +218,23 @@ export default {
 
       ],
       selectList: [],
+      classAttributeList:[],
     }
   },
 
 
 
   created() {
-    this.initData()
+   this.getclassAttributeList()
   },
   methods: {
+    getclassAttributeList() {
+      getclassAttributelistByCode({ code: this.warehouseCode }).then(res => {
+        console.log("类别属性", res);
+        this.classAttributeList = res.data 
+        this.initData()
+      })
+    },
     viewFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
@@ -235,7 +244,7 @@ export default {
     editFun(id,btnType){
       this.formVisible=true
       this.$nextTick(()=>{
-          this.$refs.Form.init(id,btnType,this.classAttribute)
+          this.$refs.Form.init(id,btnType,this.warehouseCode)
       })
     },
 
@@ -261,12 +270,9 @@ export default {
 
     sortChange({ prop, order }) {
       let newProp;
-      if (prop === 'productName' || prop === 'productCode' || prop === 'documentStatus') {
+      if (prop === 'productName' || prop === 'productCode' ) {
         newProp = prop
-      } else if (prop === 'createTime') {
-        newProp = 't1.create_time'
-
-      } else {
+      }   else {
         newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
       }
       if (prop == "createByName") {
@@ -307,7 +313,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      this.form.classAttribute=this.classAttribute
+      this.form.classAttributeList=this.classAttributeList
       getTransferList(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -330,8 +336,7 @@ export default {
         orderNo: "",
         pickingStartDate: "",
         pickingEndDate: "",
-        documentStatus: "",
-        classAttribute: "finish_product",
+        documentStatus: "", 
         pageNum: 1,
         transferType:"allocate_transfer",
         pageSize: 20,
@@ -353,7 +358,7 @@ export default {
     addSupplier() {
       this.formVisible = true
       this.$nextTick(() => {
-        this.$refs.Form.init('', 'add',this.classAttribute)
+        this.$refs.Form.init('', 'add',this.warehouseCode)
       })
 
     },

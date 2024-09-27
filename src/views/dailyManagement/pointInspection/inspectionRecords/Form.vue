@@ -2,8 +2,7 @@
   <transition name="el-zoom-in-center">
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
-        <el-page-header @back="goBack"
-          :content="btnType == 'add' ? '新建点检记录' : btnType == 'edit' ? '编辑点检记录' : btnType == 'maintenance' ? '设备点检' : '查看点检记录'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建点检记录' : btnType == 'edit' ? '编辑点检记录' : btnType == 'maintenance' ? '设备点检' : '查看点检记录'" />
         <div class="options" v-if="btnType != 'look'">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button> -->
@@ -15,38 +14,32 @@
       <div class="main" v-loading="formLoading">
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
-          <el-tab-pane label="点检信息" name="orderInfo">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>基本信息</h5>
-            </div>
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="设备名称" prop="equipmentId">
-                    <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="基本信息" name="basicInfo">
+              <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                <el-row :gutter="30" class="custom-row">
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="设备名称" prop="equipmentId">
+                      <!-- <ComSelectListone :requestObj="{ classAttribute: 'equipment' }" :dialogTitle="'请选择设备'"
                       :disrequestobj="{ state: 'discard', classAttribute: 'equipment' }"
                       v-model="dataForm.equipmentIdName" :placeholder="'请选择设备名称'"
                       :isdisabled="btnType == 'look' || btnType == 'maintenance'" :method="editEquEquipmentAll"
                       @change="changeWarehouse"></ComSelectListone> -->
-                    <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly
-                      @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
-                    </el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="点检日期" prop="actualMaintenanceDate">
-                    <el-date-picker v-model="dataForm.actualMaintenanceDate" placeholder="请选择点检日期" type="date"
-                      :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;" @change="cycleaction"
-                      :picker-options="{
+                      <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                      </el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="点检日期" prop="actualMaintenanceDate">
+                      <el-date-picker v-model="dataForm.actualMaintenanceDate" placeholder="请选择点检日期" type="date" :disabled="btnType == 'look'" value-format="yyyy-MM-dd" style="width: 100%;" @change="cycleaction" :picker-options="{
                         disabledDate(time) {
                           return time.getTime() < limit || time.getTime() > Date.now()
                         }
                       }">
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <!-- <el-col :sm="6" :xs="24">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <!-- <el-col :sm="6" :xs="24">
                   <el-form-item label="点检日期" prop="actualMaintenanceDate">
                     <el-date-picker v-model="dataForm.actualMaintenanceDate" type="datetime" placeholder="请选择点检日期"
                       :picker-options="pickerOptions" :disabled="btnType == 'look'" style="width: 100%;" clearable
@@ -54,80 +47,66 @@
                     </el-date-picker>
                   </el-form-item>
                 </el-col> -->
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="点检部门" prop="actualDepartmentId">
-                    <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择点检部门" auth
-                      :dialogTitle="'请选择点检部门'" @change="changedepartment"
-                      :currOrgId="dataForm.actualDepartmentId || '0'" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="点检人" prop="actualMaintenanceId">
-                    <el-select v-model="dataForm.actualMaintenanceIdText" placeholder="请选择点检人" clearable
-                      style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
-                      <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
-                        :disabled="btnType == 'look'" :value="item.id"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea"
-                      maxlength="200" :rows="2" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-              <h5>项目信息</h5>
-            </div>
-            <div v-if="btnType == 'edit' || btnType == 'add'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-            </div>
-            <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO
-                @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" fixed='left' align="center"
-                  v-if="btnType == 'edit' || btnType == 'add'" key="1" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                <el-table-column prop="maintenanceItemCode" label="点检项目编码" width="200" show-overflow-tooltip>
-                  <template slot="header">
-                    <span class="required">*</span>点检项目编码
-                  </template>
-                </el-table-column>
-                <el-table-column prop="maintenanceItemName" label="点检项目名称" width="200" show-overflow-tooltip>
-                  <template slot="header">
-                    <span class="required">*</span>点检项目名称
-                  </template>
-                </el-table-column>
-                <el-table-column prop="maintenanceItemRequirement" label="点检项目要求" width="200" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="inspectionMethod" label="点检项目方法" width="200" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column prop="description" label="说明" min-width="200">
-                  <template slot-scope="scope">
-                    <el-input v-model="scope.row.description" placeholder="请输入说明"
-                      :disabled="btnType == 'look' ? true : false" maxlength="200" />
-                  </template>
-                </el-table-column>
-                <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'edit' || btnType == 'add'"
-                  key="30">
-                  <template slot-scope="scope">
-                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-form>
-          </el-tab-pane>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="点检部门" prop="actualDepartmentId">
+                      <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择点检部门" auth :dialogTitle="'请选择点检部门'" @change="changedepartment" :currOrgId="dataForm.actualDepartmentId || '0'" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="6" :xs="24">
+                    <el-form-item label="点检人" prop="actualMaintenanceId">
+                      <el-select v-model="dataForm.actualMaintenanceIdText" placeholder="请选择点检人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
+                        <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :sm="12" :xs="24">
+                    <el-form-item label="备注" prop="remark">
+                      <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="项目信息" name="xmxx">
+              <div v-if="btnType == 'edit' || btnType == 'add'">
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
+                <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+              </div>
+              <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" hasC hasNO fixedNO @selection-change="handeleProductInfoData">
+                  <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType == 'edit' || btnType == 'add'" key="1" />
+                  <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                  <el-table-column prop="maintenanceItemCode" label="点检项目编码" width="200" show-overflow-tooltip>
+                    <template slot="header">
+                      <span class="required">*</span>点检项目编码
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="maintenanceItemName" label="点检项目名称" width="200" show-overflow-tooltip>
+                    <template slot="header">
+                      <span class="required">*</span>点检项目名称
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="maintenanceItemRequirement" label="点检项目要求" width="200" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="inspectionMethod" label="点检项目方法" width="200" show-overflow-tooltip>
+                  </el-table-column>
+                  <el-table-column prop="description" label="说明" min-width="200">
+                    <template slot-scope="scope">
+                      <el-input v-model="scope.row.description" placeholder="请输入说明" :disabled="btnType == 'look' ? true : false" maxlength="200" />
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="120" fixed="right" v-if="btnType == 'edit' || btnType == 'add'" key="30">
+                    <template slot-scope="scope">
+                      <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </el-form>
+            </el-collapse-item>
+          </el-collapse>
         </el-tabs>
       </div>
-      <el-dialog title="选择点检项目" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-        append-to-body @close="productVisible = false">
+      <el-dialog title="选择点检项目" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="productVisible = false">
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
@@ -159,15 +138,13 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable"
-                @selection-change="handleSelectionChange">
+              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable" @selection-change="handleSelectionChange">
                 <el-table-column prop="code" label="项目编码" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="name" label="项目名称" />
                 <el-table-column prop="itemRequirements" label="点检要求" />
                 <el-table-column prop="inspectionMethod" label="点检方法" />
               </JNPF-table>
-              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
-                @pagination="getcooperativeProduct" />
+              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="getcooperativeProduct" />
             </div>
 
           </div>
@@ -178,10 +155,7 @@
             确定</el-button>
         </span>
       </el-dialog>
-      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备"
-        treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }"
-        :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists"
-        :elementShow="false" />
+      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
 </template>
@@ -197,6 +171,7 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      activeNames: ["basicInfo", "xmxx"],
       getcategoryTree,
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
@@ -667,68 +642,57 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
+<style scoped lang="scss">
+::v-deep .el-tabs__header {
+  margin-bottom: 15px !important;
+}
+.required {
+  color: red;
+  margin-right: 4px;
+}
 ::v-deep .data-form {
+  margin-bottom: 18px;
   .el-form-item--small.el-form-item {
     margin-bottom: 0 !important;
   }
 }
-
-.required {
-  color: red;
-  margin-right: 4px;
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
-</style>
-<style scoped>
-::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0 20px;
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
 }
 
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
 }
-
 ::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-</style>
-<style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
-
-.el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
-}
-
-::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
-}
-
-.el-button span {
-  font-size: 14px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-}
-
-::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+  padding: 5px 10px !important;
 }
 </style>
     

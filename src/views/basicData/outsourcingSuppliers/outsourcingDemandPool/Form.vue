@@ -17,17 +17,11 @@
         <div class="main" ref="main">
           <el-tabs v-model="activeName">
             <el-tab-pane label="基础信息" name="jcInfo" ref="orderInfos">
-              <!-- <div
-                style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-                   <h5>基本信息</h5>
-              </div> -->
               <el-row :gutter="15" class="">
                 <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                   label-position="top">
                   <el-col :span="12">
                     <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
-                      <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
-                      </el-input> -->
                       <!-- 供应商选择弹窗  -->
                       <ComSelect-page clearable :isdisabled="type === 'look'" :treeNodeClick="treeNodeClick"
                         v-model="dataForm.cooperativePartnerName" :beforeSubmit="beforeSubmit" ref="ComSelect-page"
@@ -383,11 +377,12 @@ import {
 } from '@/api/salesManagement/assemblyOrders'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { getBimProcessList } from '@/api/bimProcess/index'
-import { getBusinessFlowInfo  } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
   components: {
-    sourceForm,Process
+    sourceForm,
+    Process
   },
   data() {
     return {
@@ -396,9 +391,8 @@ export default {
       datafilelist: [],
       // 选择客户产品参数
       ProductListRequestObjs: {
-
         demandStatus: 'not_finish', //需求状态 需求状态 未完成 not_finish、完成中 finishing、已完成 finished,可用值:finished,finishing,not_finish
-        poolType: 'procure', //采购池类型  采购 procure、外协 external,可用值:external,procure
+        poolType: 'external', //采购池类型  采购 procure、外协 external,可用值:external,procure
         orderItems: [
           {
             asc: false,
@@ -416,19 +410,19 @@ export default {
         { prop: 'productDrawingNo', label: '品名规格', sortable: 'custom' },
 
         { prop: 'productName', label: '产品名称', sortable: 'custom' },
-        { prop: 'immediatelyBuyFlag', label: '立即采购', sortable: 'custom' },
+        { prop: 'immediatelyBuyFlag', label: '立即外协', sortable: 'custom' },
 
-        { prop: 'mainUnit', label: '单位' },
-        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom' },
-        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom' },
+        { prop: 'mainUnit', label: '单位', width: 60 },
+        { prop: 'planDemandQuantity', label: '计划需求数', sortable: 'custom', minWidth: 130 },
+        { prop: 'orderedQuantity', label: '已下单数量', sortable: 'custom', minWidth: 130 },
         { prop: 'deliveryDate', label: '交货日期', sortable: 'custom' },
-        { prop: 'createTime', label: '创建日期', sortable: 'custom' }
+        { prop: 'createTime', label: '创建日期', sortable: 'custom', minWidth: 180 }
       ],
       // 客户产品查询条件
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
-        { prop: 'productName', label: '产品名称', type: 'input' },
-        { prop: 'productCode', label: '产品编码', type: 'input' }
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productCode', label: '产品编码', type: 'input' },
+        { prop: 'deliveryDate', label: '交货日期', type: 'date' },
       ],
       getcooperativeProduct,
       productVisible: false,
@@ -477,7 +471,7 @@ export default {
         excludingTaxTotalAmount: '', //订单 不含税总金额
         totalAmount: '', //   含税总金额
         taxAmount: '', // 税额
-        approvalFlag:false, 
+        approvalFlag: false
       },
       dataPickerOptions2: {
         // 日期区间选择器通用选项
@@ -661,7 +655,7 @@ export default {
       list8: [],
       taxRateList: [],
       flowTemplateJson: {},
-      flowData:{},
+      flowData: {}
     }
   },
   created() { },
@@ -715,7 +709,7 @@ export default {
   },
   methods: {
     listDataFormatting(res) {
-      console.log(res);
+      console.log(res)
       res.data.records.forEach((item, index) => {
         if (item.immediatelyBuyFlag) {
           item.immediatelyBuyFlag = '是'
@@ -1188,7 +1182,7 @@ export default {
         let _data = {
           ...this.dataForm,
           form,
-          flowData:this.flowData
+          flowData: this.flowData
         }
 
         insertPurchaseOrder(_data)
@@ -1216,24 +1210,26 @@ export default {
       this.dataFormTwo.data.splice(index, 1)
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b010').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+    getBusInfo() {
+      getBusinessFlowInfo('b010')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        }else{
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(()=>{})
-    },  
+        })
+        .catch(() => { })
+    },
     switchStyleheight() {
       const mainRegion = this.$refs.orderInfos.$parent.$parent.$el // 表单页面区域
       const mainRegion1 = this.$refs.main // 表单页面区域
@@ -1286,7 +1282,7 @@ export default {
 }
 
 .main {
-  padding: 10px;
+  /* padding: 10px; */
   height: 100%;
 }
 
@@ -1381,5 +1377,13 @@ export default {
 
 ::v-deep .el-collapse-item__content {
   padding-bottom: 0px;
+}
+
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
+}
+
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
 }
 </style>

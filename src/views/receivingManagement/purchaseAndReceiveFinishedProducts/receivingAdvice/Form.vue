@@ -4,11 +4,11 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购收货通知单'
+          ? '新建收货单'
           : btnType == 'edit'
-            ? '编辑采购收货通知单'
+            ? '编辑收货单'
             : btnType == 'copy'
-              ? '新建采购收货通知单'
+              ? '新建收货单'
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
@@ -117,8 +117,8 @@
                       key="1" />
                     <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                     <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                    <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip>
-                    </el-table-column>
+                    <el-table-column prop="productCode" label="产品编码" width="200"
+                      show-overflow-tooltip></el-table-column>
                     <el-table-column prop="mainUnit" label="单位" width="160" />
                     <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                     <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -177,7 +177,7 @@
             <Process :conf="flowTemplateJson" v-if="flowTemplateJson.nodeId" />
           </el-tab-pane>
           <el-tab-pane v-if="btnType == 'look' && dataForm.approvalFlag" label="流转记录" name="transferList">
-            <recordList :list='flowTaskOperatorRecordList' :endTime='endTime' />
+            <recordList :list="flowTaskOperatorRecordList" :endTime="endTime" />
           </el-tab-pane>
         </el-tabs>
         <el-collapse v-model="activeNames" v-else>
@@ -272,8 +272,7 @@
                   key="1" />
                 <el-table-column type="index" width="60" label="序号" align="center" fixed="left" />
                 <el-table-column prop="drawingNo" label="品名规格" width="160" sortable="custom" />
-                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip>
-                </el-table-column>
+                <el-table-column prop="productCode" label="产品编码" width="200" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="mainUnit" label="单位" width="160" />
                 <el-table-column prop="purchaseQuantity" label="订单数量" width="160" sortable="custom" />
                 <el-table-column v-if="btnType !== 'look'" prop="waitReceiptNum" label="待收货数量" width="160"
@@ -525,7 +524,7 @@ import {
 import { getWarehouseList } from '@/api/basicData/index'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
-import busFlow from '@/mixins/generator/busFlow';
+import busFlow from '@/mixins/generator/busFlow'
 import recordList from '@/views/workFlow/components/RecordList.vue'
 import { mapGetters } from 'vuex'
 export default {
@@ -790,11 +789,11 @@ export default {
       warehouseIdList: [],
       flowTemplateJson: {},
       flowData: {},
-      approvalFlag: false,   // 待办事宜等页面 需要
+      approvalFlag: false, // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
       endTime: 0,
       scanDialog: false,
-      scanResult: '',
+      scanResult: ''
     }
   },
   computed: {
@@ -809,7 +808,7 @@ export default {
       }
 
       return totalNum
-    },
+    }
   },
   watch: {
     filterText(val) {
@@ -829,6 +828,7 @@ export default {
   },
   methods: {
     scanFun() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
       this.$nextTick(() => {
         this.$refs.inputRef.$refs.input.focus()
@@ -854,16 +854,29 @@ export default {
       detailpurchaseOrderList(this.orderForm).then((res) => {
         console.log(res.data.records[0], 'p')
 
-        if (this.dataFormTwo.productData.length == 0) {
-          this.dataFormTwo.productData = []
-          this.dataFormTwo.productData.push(res.data.records[0])
+        const newRecord = res.data.records
+
+        if (newRecord.length !== 0) {
+          if (!this.dataFormTwo.productData || this.dataFormTwo.productData.length == 0) {
+            this.dataFormTwo.productData = newRecord
+          } else {
+            // 使用 Map 来确保唯一性并更新对象
+            const mergedMap = new Map()
+
+            this.dataFormTwo.productData.forEach((item) => mergedMap.set(item.id, item))
+
+            newRecord.forEach((item) => mergedMap.set(item.id, item))
+
+            this.dataFormTwo.productData = Array.from(mergedMap.values())
+          }
         } else {
-          this.dataFormTwo.productData.forEach((item) => {
-            if (item.id !== res.data.records[0].id) {
-              this.dataFormTwo.productData.push(res.data.records[0])
-            }
+          this.$message({
+            message: '未匹配到产品',
+            type: 'warning'
           })
+          this.scanResult = ''
         }
+
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
       })
     },
@@ -1484,19 +1497,8 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
-            //   res1.data.orderLines.map((item) => {
-            //     res.data.lines.map((item1) => {
-            //       if (item.productsId == item1.productId) {
-            //         item1.outboundQuantity = item.outboundQuantity
-            //         item1.returnQuantity = item.returnQuantity
-            //         item1.deliveryQuantity = ''
-
-            //       }
-            //     })
-            //   })
-
-            // })
+            this.fetchData('CGSH')
+  
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1512,20 +1514,9 @@ export default {
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
           }
-
         })
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        console.log(this.userInfo, 'fiii')
-        this.dataForm.salesman = this.userInfo.userName
-        this.dataFormTwo.productData = data
-        this.formLoading = true
-        this.getBusInfo()
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('CGSH')
-        }, 500)
-      }
+
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
@@ -1761,51 +1752,62 @@ export default {
     },
     // 测试审批流
     getBusInfo() {
-      getBusinessFlowInfo('b035').then(res => {
-        if (res.data) {
-          if (res.data.enabledMark) {
-            this.flowData = res.data
-            this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
-            this.dataForm.approvalFlag = res.data.enabledMark
+      getBusinessFlowInfo('b035')
+        .then((res) => {
+          if (res.data) {
+            if (res.data.enabledMark) {
+              this.flowData = res.data
+              this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
+              this.dataForm.approvalFlag = res.data.enabledMark
+            } else {
+              this.flowTemplateJson = {}
+              this.dataForm.approvalFlag = false
+              this.$message.error('未找到审批流程！')
+            }
           } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
-            this.$message.error('未找到审批流程！')
           }
-        } else {
-          this.flowTemplateJson = {}
-          this.dataForm.approvalFlag = false
-        }
-      }).catch(() => { })
+        })
+        .catch(() => { })
     },
     // 流程信息 && 流转记录
     getFlowDetail(id) {
-      getBusinessFlowDetail(id).then(res => {
-        if (res.data) {
-          this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
-          this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
-          this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
-          let flowTaskNodeList = res.data.flowTaskNodeList
-          if (flowTaskNodeList.length) {
-            for (let i = 0; i < flowTaskNodeList.length; i++) {
-              const nodeItem = flowTaskNodeList[i]
-              const loop = data => {
-                if (Array.isArray(data)) data.forEach(d => loop(d))
-                if (data.nodeId === nodeItem.nodeCode) {
-                  if (nodeItem.type == 0) data.state = 'state-past'
-                  if (nodeItem.type == 1) data.state = 'state-curr'
-                  if (nodeItem.nodeType === 'approver' || nodeItem.nodeType === 'start' || nodeItem.nodeType === 'subFlow') data.content = nodeItem.userName
-                  return
+      getBusinessFlowDetail(id)
+        .then((res) => {
+          if (res.data) {
+            this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson
+              ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson)
+              : null
+            this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
+            this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
+            let flowTaskNodeList = res.data.flowTaskNodeList
+            if (flowTaskNodeList.length) {
+              for (let i = 0; i < flowTaskNodeList.length; i++) {
+                const nodeItem = flowTaskNodeList[i]
+                const loop = (data) => {
+                  if (Array.isArray(data)) data.forEach((d) => loop(d))
+                  if (data.nodeId === nodeItem.nodeCode) {
+                    if (nodeItem.type == 0) data.state = 'state-past'
+                    if (nodeItem.type == 1) data.state = 'state-curr'
+                    if (
+                      nodeItem.nodeType === 'approver' ||
+                      nodeItem.nodeType === 'start' ||
+                      nodeItem.nodeType === 'subFlow'
+                    )
+                      data.content = nodeItem.userName
+                    return
+                  }
+                  if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
+                  if (data.childNode) loop(data.childNode)
                 }
-                if (data.conditionNodes && Array.isArray(data.conditionNodes)) loop(data.conditionNodes)
-                if (data.childNode) loop(data.childNode)
+                loop(this.flowTemplateJson)
               }
-              loop(this.flowTemplateJson)
             }
           }
-        }
-      }).catch(() => { })
-    },
+        })
+        .catch(() => { })
+    }
   }
 }
 </script>

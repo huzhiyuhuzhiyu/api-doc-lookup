@@ -115,7 +115,7 @@
                             </el-input>
                           </template>
                         </el-table-column>
-                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112" >
+                        <el-table-column prop="shelfSpaceName" label="库位" width="120" :key="10112">
 
                           <template slot-scope="scope">
 
@@ -123,11 +123,12 @@
                           </template>
                         </el-table-column>
                         <el-table-column prop="mainUnit" label="单位" width="80" :key="8" />
-                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType!='look'"
+                        <el-table-column prop="availableBatchNumber" label="可用数量" width="140" v-if="btnType != 'look'"
                           :key="7"></el-table-column>
 
 
-                        <el-table-column prop="requiredReceivedQuantity" label="待退货数量" width="140" v-if="btnType!='look'" :key="777">
+                        <el-table-column prop="requiredReceivedQuantity" label="待退货数量" width="140"
+                          v-if="btnType != 'look'" :key="777">
                         </el-table-column>
 
 
@@ -294,9 +295,7 @@
       </el-dialog>
       <!-- 选客户 -->
       <CustomerForm v-if="CustomerForm" ref="CustomerForms" @selectCustomer="handleSelectCustomer"></CustomerForm>
-      <!-- 选库位 -->
-      <WareHouseForm v-if="wareHouseVisible" ref="WareHouseForms" @selectWareHouseFun="selectWareHouseFun">
-      </WareHouseForm>
+
       <!-- 选批次号 -->
       <BatchNumberForm v-if="batchNumVisible" ref="BatchNumberForms" @selectBatchNumberFun="selectBatchNumberFun">
       </BatchNumberForm>
@@ -307,11 +306,10 @@
 <script>
 import { getQuotationdatasenddatalist } from '@/api/salesManagement'
 import { addWarehouseData, updateWarehouseData, detailWarehouseData, autoDistribute, getProductRoutingList } from "@/api/warehouseManagement/inboundAndOutbound"
-import { getWarehouseList, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
+import { getWarehouseList,getWarehouseInfo, getStockGoodsShelvesList, getProductionLotList, getBimBusinessSwitchConfigList, getBatchNumber, getStockGoodsShelves } from '@/api/basicData/index'
 import { getQuotationsendlist } from "@/api/salesManagement/index";
 
 import CustomerForm from './customerForm.vue'
-import WareHouseForm from './wareHouseForm.vue'
 import { getpurPurchaseReceiptReturnGoodsdetail, addpurPurchaseReceiptReturnGoods, editpurPurchaseReceiptReturnGoods, detailpurPurchaseReceiptReturnGoods } from '@/api/purchasingManagement/purchaseInquirySheet'  // 询价单
 import { purPurchaseReceiptReturnGoodsDetailList } from '@/api/purchasingManagement/purchaseInquirySheet'
 import { detailordershengchan, detailWithdrawal, addWithdrawal, updateWithdrawal, getWorkList, WithdrawalmxList } from '@/api/productOrdes/index.js'
@@ -319,7 +317,7 @@ import BatchNumberForm from './batchNumberForm.vue'
 import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 export default {
-  components: { CustomerForm, WareHouseForm, BatchNumberForm, Process },
+  components: { CustomerForm, BatchNumberForm, Process },
 
   data() {
     return {
@@ -427,14 +425,14 @@ export default {
       copyLinesData: [],
       previousValue: "",
       orderForm: {},
-      classAttribute: "",
       activeName: "orderInfo",
       flowTemplateJson: {},
       flowData: {},
+      classAttributeList: [],
+      warehouseCode: "",
     }
   },
   created() {
-    this.getWarehouseConfig()
   },
   watch: {
     "dataForm.warehouseId": {
@@ -464,23 +462,8 @@ export default {
       this.$set(this.productData[index], 'availableBatchNumber', num)
       this.$set(this.productData[index], 'batchNumber', data.batchNumber)
     },
-    // 打开选择库位弹框
-    openSeleceWareDialog(row, index) {
-      if (!this.dataForm.warehouseId) return this.$message.error("请先选择仓库!")
-      this.wareHouseVisible = true
-      this.$nextTick(() => {
-        this.$refs.WareHouseForms.initData(this.dataForm.warehouseId)
-      })
-      this.currentProductIndex = index
-    },
-    // 所选的库位信息
-    selectWareHouseFun(data) {
-      console.log("库位信息", data);
-      let index = this.currentProductIndex
-      this.$set(this.productData[index], 'shelfSpaceName', data.name)
-      this.$set(this.productData[index], 'warehouseId', data.warehouseId)
-      this.$set(this.productData[index], 'shelfSpaceId', data.id)
-    },
+
+
 
 
     // 产品信息列表复制功能
@@ -509,7 +492,7 @@ export default {
         customerProductDrawingNo: "",
         deliveryEndDate: "",
         deliveryStartDate: "",
-        classAttribute: this.classAttribute,
+        classAttributeList: this.classAttributeList,
         pageNum: 1,
         pageSize: 20,
         orderNo: this.dataForm.sourceNo,
@@ -579,7 +562,6 @@ export default {
         item.taxAmount = this.jnpf.numberFormat(this.jnpf.math('multiply', [item.num, this.jnpf.numberFormat(this.jnpf.math('subtract', [item.price, item.excludingTaxCostPrice]), 6)]), 6)
         item.excludingTaxTotalAmount = this.jnpf.numberFormat(this.jnpf.math('subtract', [item.totalAmount, item.taxAmount]), 6)
 
-        item.classAttribute = this.classAttribute
         item.sourceNo = this.dataForm.sourceNo
         item.moveId = this.dataForm.id
 
@@ -703,14 +685,7 @@ export default {
 
 
 
-    // 获取仓库设置 是否开启库位管理时
-    getWarehouseConfig() {
 
-      let obj = { "pageSize": -1, "businessCode": "warehouse" }
-      getBimBusinessSwitchConfigList(obj).then(res => {
-        this.allocationFlag = res.data.warehouse[0].configValue1 == '1' ? true : false
-      })
-    },
     // 选择业务类型
     selectSourceTypeFun(val) {
       console.log(val);
@@ -747,7 +722,7 @@ export default {
       this.dataForm['partnerName'] = data.name
       this.customerInfo = data
     },
-
+    // 切换仓库
     changeWarehousex(val, data) {
       console.log("data", data);
       if (!val && !data.length) {
@@ -759,11 +734,24 @@ export default {
       this.dataForm.warehouseId = data[0].id
       this.dataForm.warehouseName = data[0].name
       this.dataForm.warehouseType = data[0].all.type
+      this.allocationFlag = data[0].all.locationStatus == 'disabled' ? false : true
     },
     goBack() {
       this.$emit('close', true)
     },
-
+    // 获取仓库id
+    getWarehouseListFun() {
+      getWarehouseList({ code: this.warehouseCode }).then(res => {
+        this.dataForm.warehouseName = res.data[0].name
+        this.dataForm.warehouseId = res.data[0].id
+        // 获取仓库详情信息
+        getWarehouseInfo(res.data[0].id).then(response => {
+          this.wareHouseInfo = response.data
+          this.dataForm.warehouseType = response.data.type
+          this.allocationFlag = response.data.locationStatus == 'disabled' ? false : true
+        })
+      })
+    },
 
 
 
@@ -777,22 +765,21 @@ export default {
     // { label: "外协退料", value: "inbound_external_return" },
     // { label: "外协收货", value: "inbound_external" },
     // { label: "外协退货", value: "outbound_external" },
-    init(data, btnType, businessType, classAttribute) {
+    init(data, btnType, businessType, classAttributeList, warehouseCode) {
       console.log("11", data, btnType, businessType);
       // this.visible = true
+      this.warehouseCode = warehouseCode
       this.dataForm.businessType = businessType
-      this.classAttribute = classAttribute
-      this.oldType = JSON.parse(JSON.stringify(btnType))
+      this.classAttributeList = classAttributeList
       this.btnType = btnType
+      this.getWarehouseListFun()
       this.getBusInfo()
       this.selectcustomerObj.type = 'supplier'
       this.$set(this.orderForm, 'receivingStatus', 'not_finished')
 
 
-      console.log("btnty", btnType);
-      // this.refeshDataFormItems()
       if (btnType == 'look') {
-        this.title = '查看入库单'
+        this.title = '查看出库单'
         detailWarehouseData(data).then(res => {
           res.data.spaceLines.forEach(item => {
             this.$set(item, 'productDrawingNo', item.drawingNo)
@@ -808,13 +795,14 @@ export default {
         this.title = '新建出库单'
         this.fetchData("CKDH", true)
         getpurPurchaseReceiptReturnGoodsdetail(data.id).then(res => {
-          console.log("详情", res);
-          let filteredArray = res.data.noticeLineList.filter(item => item.classAttribute === this.classAttribute);
+          console.log("classAttributeList",classAttributeList);
+          console.log("详情", res,); 
 
+          let filteredArray = res.data.noticeLineList.filter(item => classAttributeList.includes(item.classAttribute));
+          console.log(filteredArray);
 
           if (filteredArray.length) {
-            filteredArray.forEach(item => {
-              item.classAttribute = this.classAttribute
+            filteredArray.forEach(item => { 
               item.sourceNo = this.dataForm.sourceNo
               item.moveId = this.dataForm.id
               item.num = item.requiredReceivedQuantity
@@ -837,10 +825,6 @@ export default {
         }).catch(() => { this.formLoading = false })
 
       }
-
-
-
-
 
 
 
@@ -967,7 +951,7 @@ export default {
             this.copyLinesData.forEach(element => {
               element.warehouseType = this.dataForm.warehouseType
             });
-            this.dataForm.classAttribute = this.classAttribute
+            this.dataForm.classAttributeList = this.classAttributeList
             this.dataForm.sourceType = 'notice'
             let dataObj = {
               stockMove: this.dataForm,
@@ -1057,7 +1041,7 @@ export default {
   padding: 5px 10px;
 }
 
- 
+
 
 .required {
   color: red;
@@ -1150,6 +1134,7 @@ export default {
 ::v-deep .el-tabs__header {
   margin-bottom: 5px !important;
 }
+
 .productInfo ::v-deep.el-collapse-item__wrap {
   padding: 0;
 }

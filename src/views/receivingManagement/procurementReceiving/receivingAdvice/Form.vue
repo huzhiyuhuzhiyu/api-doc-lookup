@@ -4,11 +4,11 @@
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']" v-if="!approvalFlag">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
         <el-page-header @back="goBack" :content="btnType == 'add'
-          ? '新建采购收货通知单'
+          ? '新建收货单'
           : btnType == 'edit'
-            ? '编辑采购收货通知单'
+            ? '编辑收货单'
             : btnType == 'copy'
-              ? '新建采购收货通知单'
+              ? '新建收货单'
               : '查看收货单'
           " />
         <div class="options" v-if="btnType != 'look'">
@@ -830,6 +830,7 @@ export default {
   },
   methods: {
     scanFun() {
+      if (!this.dataForm.cooperativePartnerId) return this.$message.error('请先选择供应商')
       this.scanDialog = true
       this.$nextTick(() => {
         this.$refs.inputRef.$refs.input.focus()
@@ -853,17 +854,30 @@ export default {
       this.orderForm.cooperativePartnerId = this.dataForm.cooperativePartnerId
       this.orderForm.productCode = this.scanResult
       detailpurchaseOrderList(this.orderForm).then((res) => {
-        console.log(res.data.records[0], 'p')
+        console.log(res.data.records, 'p')
+        this.scanResult = ''
         console.log(this.dataFormTwo.productData, 'this.dataFormTwo.productData')
-        if (!this.dataFormTwo.productData) {
-          this.dataFormTwo.productData = []
-          this.dataFormTwo.productData.push(res.data.records[0])
+        const newRecord = res.data.records
+
+        if (newRecord.length !== 0) {
+          if (!this.dataFormTwo.productData || this.dataFormTwo.productData.length == 0) {
+            this.dataFormTwo.productData = newRecord
+          } else {
+            // 使用 Map 来确保唯一性并更新对象
+            const mergedMap = new Map()
+
+            this.dataFormTwo.productData.forEach((item) => mergedMap.set(item.id, item))
+
+            newRecord.forEach((item) => mergedMap.set(item.id, item))
+
+            this.dataFormTwo.productData = Array.from(mergedMap.values())
+          }
         } else {
-          this.dataFormTwo.productData.forEach((item) => {
-            if (item.id !== res.data.records[0].id) {
-              this.dataFormTwo.productData.push(res.data.records[0])
-            }
+          this.$message({
+            message: '未匹配到产品',
+            type: 'warning'
           })
+          this.scanResult = ''
         }
       })
     },
@@ -1501,6 +1515,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
+            this.fetchData('CGSH')
             // getOrderDetail(res.data.notice.ordersId).then(res1 => {
             //   res1.data.orderLines.map((item) => {
             //     res.data.lines.map((item1) => {
@@ -1514,9 +1529,13 @@ export default {
             //   })
 
             // })
+
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
+
+
+
           } else if (this.btnType == 'edit' || this.btnType == 'look') {
             this.dataFormTwo.productData = res.data.noticeLineList
             this.dataFormTwo.productData.forEach((item) => {
@@ -1531,16 +1550,6 @@ export default {
             }
           }
         })
-      }
-      if (btnType == 'add' || btnType == 'copy') {
-        this.dataForm.salesman = this.userInfo.userName
-        this.dataFormTwo.productData = data
-        this.formLoading = true
-        this.getBusInfo()
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('CGSH')
-        }, 500)
       }
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'

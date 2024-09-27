@@ -45,7 +45,7 @@
           </div>
           <div class="JNPF-common-layout-center JNPF-flex-main" v-loading="formLoading">
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <el-tabs v-model="activeName"  v-if="!approvalFlag">
+              <el-tabs v-model="activeName" v-if="!approvalFlag">
                 <el-tab-pane label="基础信息" name="jcInfo" class="jcInfo">
                   <el-collapse v-model="activeNames">
                     <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
@@ -71,15 +71,15 @@
                 </el-tab-pane>
               </el-tabs>
               <el-collapse v-model="activeNames" v-else>
-                    <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
-                      <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
-                    </el-collapse-item>
+                <el-collapse-item title="基本信息" name="basicInfo" class="orderInfo">
+                  <JNPF-col v-model="dataForm" :tabContent="dataFormItems" ref="dataForm" :btnType="btnType" />
+                </el-collapse-item>
 
-                    <el-collapse-item title="子件信息" name="productInfo">
-                      <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
-                        :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
-                        @deleteth="addOrDelLinesItem" customStyle />
-                    </el-collapse-item>
+                <el-collapse-item title="子件信息" name="productInfo">
+                  <TableForm-product :value="linesList" @input="contentChanges" ref="tableForm"
+                    :tableItems="linesListItems" :btnType="btnType" @addth="addOrDelLinesItem"
+                    @deleteth="addOrDelLinesItem" customStyle />
+                </el-collapse-item>
               </el-collapse>
             </div>
           </div>
@@ -103,12 +103,12 @@ import {
 import { getcategoryTree } from '@/api/basicData/materialSettings' // 产品分类
 import { getProductList } from '@/api/basicData/materialFiles' // 产品列表
 import TableFormProduct from '../BOMCreate/component/TableForm-product/index.vue' // 产品选择组件
-import { getBusinessFlowInfo , getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo, getBusinessFlowDetail } from '@/api/workFlow/FlowEngine'
 import Process from '@/components/Process/Preview'
 import busFlow from '@/mixins/generator/busFlow';
 import recordList from '@/views/workFlow/components/RecordList.vue'
 export default {
-  components: { TableFormProduct ,Process , recordList},
+  components: { TableFormProduct, Process, recordList },
   mixins: [busFlow],
   data() {
     return {
@@ -302,10 +302,10 @@ export default {
       approvalStatus: '',
       statusFlag: false,
       flowTemplateJson: {},
-      flowData:{},
-      approvalFlag:false,   // 待办事宜等页面 需要
+      flowData: {},
+      approvalFlag: false,   // 待办事宜等页面 需要
       flowTaskOperatorRecordList: [],
-      endTime:0
+      endTime: 0
     }
   },
   created() {
@@ -372,7 +372,7 @@ export default {
     })
   },
   methods: {
-    async init(id, btnType,approvalFlag, approvalStatus) {
+    async init(id, btnType, approvalFlag, approvalStatus) {
       console.log(approvalStatus, 'approvalStatus')
       this.visible = true
       this.formLoading = true
@@ -421,9 +421,9 @@ export default {
                 })
               })
             }
-            if (this.btnType === 'edit'){
-                this.getBusInfo()
-            }else{
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
@@ -481,9 +481,9 @@ export default {
                 })
               })
             }
-            if (this.btnType === 'edit'){
-                this.getBusInfo()
-            }else{
+            if (this.btnType === 'edit') {
+              this.getBusInfo()
+            } else {
               // 流程信息和流转记录
               if (this.dataForm.approvalFlag) this.getFlowDetail(this.dataForm.id)
             }
@@ -523,7 +523,7 @@ export default {
             this.dataForm.documentStatus = ''
             this.getBusInfo()
             // 整理BOM树
-    
+
 
             if (res.data.attachmentList) {
               res.data.attachmentList.forEach((item) => {
@@ -570,7 +570,7 @@ export default {
     async handleConfirm(submitModel) {
       this.btnLoading = true
       let submitFlag = true
-     
+
 
       // 校验表单
       let form_1 = this.$refs['dataForm'].$refs.main
@@ -626,7 +626,7 @@ export default {
           attachmentList: this.datafilelist,
           bom: this.dataForm,
           lines: this.linesList,
-          flowData:this.flowData,
+          flowData: this.flowData,
           doubleSubmitFlag: this.isDoubleFlag
         }
         // 检查是否有循环问题
@@ -668,6 +668,7 @@ export default {
       }
     },
     handleNodeClick(nodeData, node) {
+      console.log(nodeData, 'nodeData')
       const msgArr = ['选择节点']
       if (nodeData.productId === this.selectedNodeKey) {
         msgArr.push('和现节点相同')
@@ -741,28 +742,28 @@ export default {
       }
     },
     // 测试审批流
-    getBusInfo(){
-      getBusinessFlowInfo('b023').then(res=>{
-        if (res.data){
-          if (res.data.enabledMark){
+    getBusInfo() {
+      getBusinessFlowInfo('b023').then(res => {
+        if (res.data) {
+          if (res.data.enabledMark) {
             this.flowData = res.data
             this.flowTemplateJson = res.data.flowTemplateJson ? JSON.parse(res.data.flowTemplateJson) : null
             this.dataForm.approvalFlag = res.data.enabledMark
-          }else{
+          } else {
             this.flowTemplateJson = {}
             this.dataForm.approvalFlag = false
             this.$message.error('未找到审批流程！')
           }
-        }else{
+        } else {
           this.flowTemplateJson = {}
           this.dataForm.approvalFlag = false
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
     // 流程信息 && 流转记录
-    getFlowDetail(id){
-      getBusinessFlowDetail(id).then(res=>{
-        if (res.data){
+    getFlowDetail(id) {
+      getBusinessFlowDetail(id).then(res => {
+        if (res.data) {
           this.flowTemplateJson = res.data.flowTaskInfo.flowTemplateJson ? JSON.parse(res.data.flowTaskInfo.flowTemplateJson) : null
           this.flowTaskOperatorRecordList = res.data.flowTaskOperatorRecordList
           this.endTime = res.data.flowTaskInfo.completion == 100 ? res.data.flowTaskInfo.endTime : 0
@@ -785,7 +786,7 @@ export default {
             }
           }
         }
-      }).catch(()=>{})
+      }).catch(() => { })
     },
   }
 }

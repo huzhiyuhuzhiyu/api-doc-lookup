@@ -393,6 +393,7 @@ export default {
         console.log(id, 'id')
         detailBomData(bomId)
           .then((res) => {
+            console.log(res, 'e')
             this.firstId = this.firstId ? this.firstId : res.data.bom.productId
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))

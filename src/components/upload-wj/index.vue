@@ -57,11 +57,11 @@
           </el-table-column>
           <el-table-column label="操作" fixed="right" width="160">
             <template slot-scope="scope">
-              <el-button size="mini" type="text" @click="handlePreview(scope.row)">查看
+              <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleRemove(scope.$index)" :disabled="disabled">删除
               </el-button>
               <el-button size="mini" type="text" @click="handleClick(scope.row)">下载
               </el-button>
-              <el-button size="mini" type="text" class="JNPF-table-delBtn" @click="handleRemove(scope.$index)" :disabled="disabled">删除
+              <el-button size="mini" type="text" @click="handlePreview(scope.row)">查看
               </el-button>
             </template>
           </el-table-column>

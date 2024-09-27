@@ -80,6 +80,9 @@
               </template>
             </el-table-column>
             <el-table-column prop="weight" label="权重(%)" width="100" v-if="dataForm.workType == 'same'">
+              <template slot="header">
+                <span class="required">*</span>权重(%)
+              </template>
               <template slot-scope="scope">
                 <el-input v-model="scope.row.weight" type="number" :disabled="btntype ? true : false"
                   oninput="value = value.replace(/[^0-9]/g,'')">{{

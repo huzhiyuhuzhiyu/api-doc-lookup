@@ -48,7 +48,7 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
-          <el-col :span="4">
+          <!-- <el-col :span="4">
             <el-form-item>
               <el-input v-model="form.code" placeholder="编码" clearable />
             </el-form-item>
@@ -62,11 +62,28 @@
             <el-form-item>
               <el-input v-model="form.mobilePhone" placeholder="手机号" clearable />
             </el-form-item>
-          </el-col>
+          </el-col> -->
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}
               </el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}</el-button>
@@ -120,31 +137,35 @@
             </template>
           </el-table-column>
           <el-table-column prop="taxId" label="税号" min-width="200" />
-          <el-table-column prop="name" label="名称" min-width="120" sortable="custom" />
-          <el-table-column prop="regionCodeText" label="地区" min-width="100" />
-          <el-table-column prop="countryText" label="国家" min-width="150" />
-          <el-table-column prop="provinceText" label="省" min-width="160" />
-          <el-table-column prop="cityText" label="市" min-width="160" />
-          <el-table-column prop="areaText" label="区" min-width="160" />
-          <el-table-column prop="address" label="地址" min-width="160" />
-          <el-table-column prop="billingTypeText" label="开票类型" min-width="160" />
-          <el-table-column prop="taxRate" label="税率%" min-width="100" sortable="custom" />
+          <el-table-column prop="name" label="名称" min-width="150" sortable="custom" />
+          <el-table-column prop="regionCodeText" label="地区" width="80" />
+          <el-table-column prop="countryText" label="国家" width="80" />
+          <el-table-column prop="provinceText" label="省" width="90" />
+          <el-table-column prop="cityText" label="市" width="90" />
+          <el-table-column prop="areaText" label="区" width="90" />
+          <el-table-column prop="address" label="地址" width="140" />
+          <el-table-column prop="billingTypeText" label="开票类型" width="100" />
+          <el-table-column prop="taxRate" label="税率" width="80" sortable="custom">
+            <template slot-scope="scope">
+              {{ scope.row.taxRate }}%
+            </template>
+          </el-table-column>
           <!-- <el-table-column prop="customerRecognitionTime" label="认定日期" width="160" sortable="custom" /> -->
-          <el-table-column prop="personResponsible" label="负责人" min-width="160" />
-          <el-table-column prop="contacts" label="联系人" min-width="160" />
-          <el-table-column prop="phone" label="电话" min-width="160" />
-          <el-table-column prop="mobilePhone" label="手机号" min-width="160" />
+          <el-table-column prop="personResponsible" label="负责人" width="90" />
+          <el-table-column prop="contacts" label="联系人" width="90" />
+          <el-table-column prop="phone" label="电话" width="100" />
+          <el-table-column prop="mobilePhone" label="手机号" width="120" />
           <!-- <el-table-column prop="fax" label="传真" width="160" /> -->
           <!-- <el-table-column prop="zipCode" label="邮编" width="160" /> -->
-          <el-table-column prop="email" label="邮箱" min-width="160" />
-          <el-table-column prop="bank" label="开户银行" min-width="160" />
-          <el-table-column prop="bankInfo" label="银行账号" min-width="160" />
-          <el-table-column prop="gradeText" label="等级" min-width="160"></el-table-column>
-          <el-table-column prop="reconciliationStartDate" label="对账开始日期" min-width="160"></el-table-column>
-          <el-table-column prop="reconciliationEndDate" label="对账结束日期" min-width="160"></el-table-column>
-          <el-table-column prop="createTime" label="创建时间" min-width="180" sortable="custom" />
-          <el-table-column prop="createByName" label="创建人" min-width="160" />
-          <el-table-column label="操作" min-width="180" fixed="right">
+          <el-table-column prop="email" label="邮箱" width="100" />
+          <el-table-column prop="bank" label="开户银行" width="160" />
+          <el-table-column prop="bankInfo" label="银行账号" width="160" />
+          <el-table-column prop="gradeText" label="等级" width="100"></el-table-column>
+          <el-table-column prop="reconciliationStartDate" label="对账开始日期" width="120"></el-table-column>
+          <el-table-column prop="reconciliationEndDate" label="对账结束日期" width="130"></el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="100" />
+          <el-table-column label="操作" width="180" fixed="right">
             <template slot-scope="scope">
               <tableOpts @edit="addOrUpdateHandle(scope.row.id, scope.row.partnerCategoryId)"
                 @del="handleDel(scope.row.id)">
@@ -330,6 +351,14 @@ export default {
           type: 'input'
         }
       ],
+      basicQuery: {},
+      superQuery: {},
+      searchList: [
+        { field: 'code', fieldValue: '', label: '编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'mobilePhone', fieldValue: '', label: '手机号', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
       title: '更多查询',
       exportFormVisible: false,
       background: true, //分页器背景颜色
@@ -453,15 +482,16 @@ export default {
       this.expands = roleFlag
       this.toggleExpand(roleFlag)
     }
+    this.superForm = this.form
     this.getcategoryTree(true)
     this.getDictionaryType()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
     superQuerySearch(query) {
-      this.orderForm.superQuery = query
+      this.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     // 获取打字内容(listP1)、精度等级(listP2)、振动等级(listP3)、油脂(listP4)、油脂量(listP5)、游隙(listP6)、包装方式(listP7)
     getProductClassFun() {
@@ -837,7 +867,7 @@ export default {
     initData() {
       this.listLoading = true
 
-      getCooperativeData(this.form)
+      getCooperativeData(this.superForm)
         .then((res) => {
           this.tableData = res.data.records
           this.total = res.data.total
@@ -848,7 +878,7 @@ export default {
           this.listLoading = false
         })
     },
-    search() {
+    search(type) {
       if (this.form.customerRecognitionTime && this.form.customerRecognitionTime.length > 0) {
         this.form.customerRecognitionStartTime = this.form.customerRecognitionTime[0]
         this.form.customerRecognitionEndTime = this.form.customerRecognitionTime[1]
@@ -857,6 +887,24 @@ export default {
         this.form.customerRecognitionEndTime = ''
       }
       this.form.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
@@ -891,16 +939,22 @@ export default {
       }
       this.filterText = ''
       this.$refs.SuperQuery.conditionList = []
+      this.searchList = [
+        { field: 'code', fieldValue: '', label: '编码', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'name', fieldValue: '', label: '名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'mobilePhone', fieldValue: '', label: '手机号', symbol: 'like', searchType: 1, width: 120 },
+
+      ]
       this.getcategoryTree(true)
 
-      this.search()
+      this.search('basic')
     },
     handleNodeClick(data, node) {
       if (this.form.partnerCategoryId === data.id) return
       this.form.partnerCategoryId = data.id
       const nodePath = this.getNodePath(node)
       this.organizeIdTree = nodePath.map((o) => o.id)
-      this.search()
+      this.search('basic')
     },
     getNodePath(node) {
       let fullPath = []

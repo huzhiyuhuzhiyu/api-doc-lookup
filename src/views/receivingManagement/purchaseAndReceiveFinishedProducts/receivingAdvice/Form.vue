@@ -1497,19 +1497,8 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            // getOrderDetail(res.data.notice.ordersId).then(res1 => {
-            //   res1.data.orderLines.map((item) => {
-            //     res.data.lines.map((item1) => {
-            //       if (item.productsId == item1.productId) {
-            //         item1.outboundQuantity = item.outboundQuantity
-            //         item1.returnQuantity = item.returnQuantity
-            //         item1.deliveryQuantity = ''
-
-            //       }
-            //     })
-            //   })
-
-            // })
+            this.fetchData('CGSH')
+  
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1527,19 +1516,7 @@ export default {
           }
         })
       }
-      if (btnType == 'add' || btnType == 'copy') {
-        console.log(this.userInfo, 'fiii')
-        this.dataForm.salesman = this.userInfo.userName
-        this.dataFormTwo.productData = data
-        this.dataForm.partnerName = data[0].cooperativePartnerName
-        this.dataForm.cooperativePartnerId = data[0].cooperativePartnerId
-        this.formLoading = true
-        this.getBusInfo()
-        setTimeout(() => {
-          this.formLoading = false
-          this.fetchData('CGSH')
-        }, 500)
-      }
+
       if (this.btnType == 'edit') {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {

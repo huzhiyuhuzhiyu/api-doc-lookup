@@ -23,7 +23,7 @@
                   <el-row :gutter="15" class="">
                     <el-form ref="elForm" :model="dataForm" :rules="rules" size="small" label-width="100px"
                       label-position="top">
-                      <el-col :sm="6" :xs="24">
+                      <!-- <el-col :sm="6" :xs="24">
                         <el-form-item label="单号" prop="orderNo">
                           <el-input v-model="dataForm.orderNo" placeholder="请选择单号" :disabled="type == 'look'
                             ? true
@@ -32,7 +32,7 @@
                               : true
                             "></el-input>
                         </el-form-item>
-                      </el-col>
+                      </el-col> -->
                       <el-col :sm="6" :xs="24">
                         <el-form-item label="供应商名称" prop="cooperativePartnerName" ref="cooperativePartnerName">
                           <!-- <el-input v-model="dataForm.cooperativePartnerName" placeholder="请选择供应商名称" @focus="openDialog">
@@ -279,9 +279,10 @@
                     </el-table>
                   </el-form>
                   <div style="height: 40px; line-height: 40px; background: #f5f7fa;" class="text">
-                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
-                    <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span>
                     <span style="font-weight:500;margin-right:10px">总数量：{{ computedValue2 }}</span>
+                    <span style="font-weight:500;margin-right:10px">总金额(含税)：{{ computedValue3 }}</span>
+                    <!-- <span style="font-weight:500;margin-right:10px">总金额(不含税)：{{ computedValue }}</span> -->
+
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -476,14 +477,14 @@ export default {
         { prop: 'drawingNo', label: '品名规格', sortable: 'custom' },
         // { prop: 'name', label: '产品名称', sortable: 'custom' },
         { prop: 'code', label: '产品编码', sortable: 'custom' },
-        { prop: 'classAttributeText', label: '产品分类', sortable: 'custom' },
+        { prop: 'productCategoryName', label: '产品分类', sortable: 'custom' },
         { prop: 'mainUnit', label: '单位' },
         { prop: 'createTime', label: '创建日期', sortable: 'custom' }
       ], // 产品选择弹出框表单展示字段
       ProductTableSearchList: [
-        { prop: 'drawingNo', label: '品名规格', type: 'input' },
+        { prop: 'productDrawingNo', label: '品名规格', type: 'input' },
         // { prop: 'name', label: '产品名称', type: 'input' },
-        { prop: 'code', label: '产品编码', type: 'input' }
+        { prop: 'productCode', label: '产品编码', type: 'input' }
       ], // 产品选择弹出框搜索条件
       formLoading: false,
       codeConfig: {},
@@ -783,7 +784,7 @@ export default {
             purchaseQuantity: item.purchaseQuantity, // 数量
             price: item.price, // 含税单价
             totalAmount: item.totalAmount, // 金额(含税)
-            taxRate: item.taxRate, // 税率
+            taxRate: 13, // 税率
             excludingTaxPrice: item.excludingTaxPrice, // 不含税单价
             taxAmount: item.taxAmount, // 税额
             excludingTaxAmount: item.excludingTaxAmount, // 金额(不含税)

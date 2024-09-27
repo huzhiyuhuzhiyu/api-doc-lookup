@@ -85,6 +85,9 @@
             <el-button size="mini" v-has="'btn_import'" type="primary" icon="el-icon-plus" @click="uploadForm">导入</el-button>
           </div>
           <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+            </el-tooltip>
             <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
               <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
             </el-tooltip>
@@ -177,12 +180,14 @@
     <JobTransfer v-if="jobTransferFormVisible" ref="JobTransfer" @close="removeForm" />
     <JobQuit v-if="jobQuitFormVisible" ref="JobQuit" @close="removeForm" />
     <JobEntry v-if="jobEntryFormVisible" ref="JobEntry" @close="removeForm" />
-
+    <!-- 高级查询 -->
+    <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
     <!-- <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" /> -->
   </div>
 </template>
 <script>
-import { excelExport, saleCluemanagementpoolModel } from '@/api/basicData/index'
+import SuperQuery from '@/components/SuperQuery/index.vue'
+import { excelExport, salecooperativeUsers } from '@/api/basicData/index'
 import { getDepartmentSelectorByAuth } from '@/api/permission/department'
 import {
   updateUserState,
@@ -210,10 +215,52 @@ export default {
     ImportForm,
     JobTransfer,
     JobQuit,
-    JobEntry
+    JobEntry,
+    SuperQuery
   },
   data() {
     return {
+      superQueryJson: [
+        {
+          prop: 'account',
+          label: "账户",
+          type: 'input'
+        },
+        {
+          prop: 'realName',
+          label: "姓名",
+          type: 'input'
+        },
+        {
+          prop: 'mobilePhone',
+          label: "手机号码",
+          type: 'input'
+        },
+        {
+          prop: 'roleName',
+          label: "角色",
+          type: 'input'
+        },
+        {
+          prop: 'enabledMark',
+          label: "状态",
+          type: 'select',
+          options: [
+            { label: "启用", value: 1 },
+            { label: "锁定", value: 2 },
+            { label: "禁用", value: 3 }
+          ]
+        },
+        {
+          prop: 'creatorTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: 'timestamp',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+        }
+      ],
+      superQueryVisible: false,
       uploadVisib: false,
       columnList: [],
       filterText: "",
@@ -289,6 +336,11 @@ export default {
     }
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
     // 上传
     UploadProduct(data) {
       this.loadingText = '正在导入数据'
@@ -296,7 +348,7 @@ export default {
       var formData = new FormData()
       formData.append("file", data)
       //调用上传文件接口
-      saleCluemanagementpoolModel(formData).then(res => {
+      salecooperativeUsers(formData).then(res => {
         if (!res.data) {
           this.$message.success(`导入成功`)
           this.formLoading = false
@@ -614,11 +666,11 @@ export default {
     //   }
     // },
     uploadForm() {
-      this.importFormVisible = true
-      this.$nextTick(() => {
-        this.$refs.importForm.init()
-      })
-      // this.uploadVisib = true
+      // this.importFormVisible = true
+      // this.$nextTick(() => {
+      //   this.$refs.importForm.init()
+      // })
+      this.uploadVisib = true
     },
     plhandleResetPwd() {
       if (!this.selectArr.length) return this.$message.error('请先选择数据')

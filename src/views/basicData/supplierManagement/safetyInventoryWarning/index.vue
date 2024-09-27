@@ -10,6 +10,8 @@
               <el-dropdown-item @click.native="getcategoryTree()">刷新数据</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(true)">展开全部</el-dropdown-item>
               <el-dropdown-item @click.native="toggleExpand(false)">折叠全部</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(true)">设置默认展开</el-dropdown-item>
+              <el-dropdown-item @click.native="setexpand(false)">设置默认收起</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </span>
@@ -297,6 +299,11 @@ export default {
     this.getProductClassFun()
   },
   created() {
+    if (localStorage.getItem('safetyInventoryWarningFlag')) {
+      let roleFlag = JSON.parse(localStorage.getItem('safetyInventoryWarningFlag'))
+      this.expands = roleFlag
+      this.toggleExpand(roleFlag)
+    }
     this.getcategoryTree()
     this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
 
@@ -310,7 +317,15 @@ export default {
     handeleProductInfoData(val) {
       this.selectData = val
     },
-
+    // // 设置默认展开
+    setexpand(expands) {
+      this.refreshTree = false
+      this.expands = expands
+      this.$nextTick(() => {
+        this.refreshTree = true
+        localStorage.setItem('safetyInventoryWarningFlag', expands)
+      })
+    },
     changeLeft() {
       this.leftFlag = !this.leftFlag
     },

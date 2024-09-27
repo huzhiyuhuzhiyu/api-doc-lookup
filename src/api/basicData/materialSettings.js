@@ -343,3 +343,36 @@ export function updateequMountedPlaces(data) {
     data
   })
 }
+
+// 设备履历-列表
+export function getequLifeCyclelist(data) {
+  return request({
+    url: `/api/mes/equLifeCycle/list`,
+    method: 'POST',
+    data
+  })
+}
+// 设备概况分析
+export function gettotalOverview(data) {
+  return request({
+    url: `/api/mes/equReport/totalOverview`,
+    method: 'POST',
+    data
+  })
+}
+// 设备状态分析
+export function gettotalEquStats(data) {
+  return request({
+    url: `/api/mes/equReport/totalEquStats`,
+    method: 'POST',
+    data
+  })
+}
+// 设备状态次数分析
+export function getequReporttotalNum(data) {
+  return request({
+    url: `/api/mes/equReport/totalNum`,
+    method: 'POST',
+    data
+  })
+}

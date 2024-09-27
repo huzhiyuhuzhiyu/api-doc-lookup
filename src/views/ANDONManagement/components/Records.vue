@@ -55,8 +55,6 @@
             <el-table-column v-else :key="item.prop" :prop="item.prop" :label="item.label" :fixed="item.fixed || false"
               :min-width="item.minWidth || 120" :sortable="item.sortable" />
           </template>
-          <el-table-column prop="abnormalType" label="异常类型" min-width="120" sortable="custom" />
-          <el-table-column prop="abnormalContent" label="异常内容" min-width="120" sortable="custom" />
 
           <!-- <el-table-column label="操作" min-width="180" fixed="right">
             <template slot-scope="scope">

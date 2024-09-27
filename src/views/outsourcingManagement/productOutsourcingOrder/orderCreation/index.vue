@@ -178,7 +178,7 @@
                       <el-table-column prop="taxRate" label="税率" min-width="140">
                         <template slot="header">
                           <span class="required">*</span>
-                          税率(%)
+                          税率
                         </template>
                         <template slot-scope="scope">
                           <el-form-item :rules="productRules.taxRate">

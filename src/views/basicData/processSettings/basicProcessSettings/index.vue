@@ -69,7 +69,7 @@
           </template>
           <el-col :span="4">
             <el-form-item>
-              <el-select v-model="listQuery.processingType" placeholder="加工类别">
+              <el-select v-model="listQuery.processingType" placeholder="加工类别" clearable>
                 <el-option v-for="item in processingTypeOptions" :key="item.value" :label="item.label"
                   :value="item.value"></el-option>
               </el-select>

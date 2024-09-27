@@ -555,6 +555,7 @@ export default {
     // 关闭新建页面
     closeForm(isRefresh = 'ture') {
       this.formVisible = false
+      this.formVisible1 = false
       if (isRefresh && this.activeName == 'orderList') {
         this.initData()
       } else {

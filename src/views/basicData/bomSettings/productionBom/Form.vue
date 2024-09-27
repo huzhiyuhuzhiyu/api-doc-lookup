@@ -394,7 +394,7 @@ export default {
         detailBomData(bomId)
           .then((res) => {
             console.log(res, 'e')
-            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
+            this.firstId = this.firstId ? this.firstId : id
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // btnType !== 'look' ? this.getApproverData() : ''
@@ -454,7 +454,7 @@ export default {
         this.title = btnType === 'look' ? '查看BOM' : '编辑BOM'
         detailBomData(approvalStatus.id)
           .then((res) => {
-            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
+            this.firstId = this.firstId ? this.firstId : id
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // btnType !== 'look' ? this.getApproverData() : ''
@@ -501,7 +501,7 @@ export default {
         // let bomId = (await getBomByProductId(productId)).data
         detailBomData(approvalStatus.id)
           .then((res) => {
-            this.firstId = this.firstId ? this.firstId : res.data.bom.productId
+            this.firstId = this.firstId ? this.firstId : id
             this.autoCode = res.data.bom.code
             this.dataForm = JSON.parse(JSON.stringify(res.data.bom))
             // this.getApproverData()
@@ -668,15 +668,23 @@ export default {
         this.btnLoading = false
       }
     },
-    handleNodeClick(nodeData, node) {
+    async handleNodeClick(nodeData, node) {
       console.log(nodeData, 'nodeData')
+      let bomId = ''
+      if (nodeData.childrenList.length !== 0) {
+        bomId = (await getBomByProductId(nodeData.productId)).data
+      }
+      // 获取详情
+
+      console.log(bomId, 'bomId---')
       const msgArr = ['选择节点']
-      if (nodeData.productId === this.selectedNodeKey) {
+      if (bomId === this.selectedNodeKey) {
         msgArr.push('和现节点相同')
-      } else if (nodeData.childrenList.length || nodeData.productId === this.firstId) {
+      } else if (nodeData.childrenList.length !== 0) {
+        console.log('[[]]')
         msgArr.push('切换节点')
-        this.selectedNodeKey = nodeData.productId
-        this.init(nodeData.productId, this.btnType, nodeData)
+        this.selectedNodeKey = bomId
+        this.init(bomId, this.btnType, nodeData)
       } else {
         msgArr.push('点击的节点没有BOM')
         this.$refs.treeBox.setCurrentKey(this.selectedNodeKey)

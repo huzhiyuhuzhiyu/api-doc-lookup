@@ -7,7 +7,8 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <div class="scanCodeTent">
               <div class="searchregion">
-                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()"
+                <!-- <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工单码、工序码、产线码、班组码、员工码、设备码" @keyup.enter.native="searchResult()" -->
+                <el-input v-model="scanResult" placeholder="您可以扫描生产任务码、工序码" @keyup.enter.native="searchResult()"
                   class="scanResultIpt"></el-input>
                 <div style="background: #55d47e;margin-top: 10px">
                   <img src="../../../assets/images/erwmbai.gif" alt="" class="scanImg">
@@ -87,7 +88,7 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="按产线报工" name="produceLine">
+        <!-- <el-tab-pane label="按产线报工" name="produceLine">
           <div class="JNPF-common-layout">
 
             <div class="JNPF-common-layout-center JNPF-flex-main">
@@ -144,7 +145,7 @@
               </div>
             </div>
           </div>
-        </el-tab-pane>
+        </el-tab-pane> -->
         <el-tab-pane label="按工序报工" name="process">
           <div class="JNPF-common-layout">
 
@@ -203,7 +204,7 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="按班组报工" name="workgroup">
+        <!-- <el-tab-pane label="按班组报工" name="workgroup">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
@@ -413,7 +414,7 @@
               </pagination>
             </div>
           </div>
-        </el-tab-pane>
+        </el-tab-pane> -->
       </el-tabs>
     </div>
 

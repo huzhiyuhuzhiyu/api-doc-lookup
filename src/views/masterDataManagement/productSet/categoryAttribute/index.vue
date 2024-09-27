@@ -16,8 +16,8 @@
               <el-input v-model="form.code" placeholder="类别编码" clearable />
             </el-form-item>
           </el-col> -->
-          <template v-for="item in searchList">
-            <el-col :span="item.searchType === 3 ? 6 : 4" :key="item.prop">
+          <template v-for="(item,index) in searchList" >
+            <el-col :span="item.searchType === 3 ? 6 : 4" >
               <el-form-item>
                 <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
                   @keyup.enter.native="search('basic')" />
@@ -71,23 +71,22 @@
           custom-column :setColumnDisplayList="columnList" @sort-change="sortChange" hasMove @changeMove="changeMove">
           <el-table-column prop="name" label="类别名称" width="110" sortable="custom" />
           <el-table-column prop="code" label="类别编码" min-width="150" sortable="custom" />
-          <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
+          <!-- <el-table-column label="仓库启用状态" width="160" align="center" prop="state">
             <template slot-scope="scope">{{ scope.row.state === 'disabled' ? '关闭' : '开启' }}</template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column prop="remark" label="备注" width="160" />
           <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
           <el-table-column prop="createByName" label="创建人" />
           <el-table-column label="操作" width="180" fixed="right" align="center">
             <template slot-scope="scope">
-              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)"
-                :delDisabled="scope.row.defaultFlag || scope.row.state !== 'disabled'">
-                <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
+              <tableOpts @edit="addOrUpdateHandle(scope.row.id)" @del="handleDel(scope.row.id)" >
+                <!-- <el-button v-if="scope.row.state == 'disabled'" type="text" size="mini"
                   @click="onHandle(scope.row, 'edit')">
                   开启仓库
                 </el-button>
                 <el-button v-else type="text" size="mini" @click="offHandle(scope.row.id)">
                   关闭仓库
-                </el-button>
+                </el-button> -->
                 <!-- <el-button type="text" size="mini" @click.native="copyHandle(scope.row.id, true)">
                 复制
               </el-button> -->

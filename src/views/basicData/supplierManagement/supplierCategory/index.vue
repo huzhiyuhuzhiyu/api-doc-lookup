@@ -138,7 +138,7 @@ export default {
         orderItems: [
           {
             asc: false,
-            column: 'createTime'
+            column: 'create_time'
           }
         ]
       },
@@ -161,7 +161,7 @@ export default {
       this.superQueryVisible = false
       this.search()
     },
- 
+
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
     },

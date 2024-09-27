@@ -113,8 +113,8 @@ export default {
         // { prop: 'name', label: '产品名称', fixed: 'left' },
         { prop: 'drawingNo', label: '品名规格', minWidth: 0 },
         { prop: 'mainUnit', label: '单位', minWidth: 0 },
-        { prop: 'productType', label: '产品类别', minWidth: 0 },
-        { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
+        // { prop: 'productType', label: '产品类别', minWidth: 0 },
+        // { prop: 'classAttributeText', label: '产品分类', minWidth: 0 }
       ],
       requestObj: {
         type: "",

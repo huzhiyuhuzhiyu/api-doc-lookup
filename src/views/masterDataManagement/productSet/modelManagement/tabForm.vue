@@ -91,7 +91,8 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }]
+          itemRules: [{ required: true, trigger: 'blur' }],
+
         },
         {
           prop: 'outerCircle',
@@ -107,7 +108,8 @@ export default {
           value: '',
           type: 'custom',
           customComponent: 'ComSelect-page',
-          itemRules: [{ required: true, trigger: 'blur' }]
+          itemRules: [{ required: true, trigger: 'blur' }],
+          minWidth: 120,
         },
         {
           prop: 'steelBallNum',
@@ -128,21 +130,24 @@ export default {
               }),
               trigger: 'blur'
             }
-          ]
+          ],
+          minWidth: 130,
         },
         {
           prop: 'oilNum',
           label: '油脂用量(毫克)',
           value: '',
           type: 'input',
-          itemRules: [{ required: true, message: '油脂用量不能为空', trigger: 'blur' }]
+          itemRules: [{ required: true, message: '油脂用量不能为空', trigger: 'blur' }],
+          minWidth: 140,
         },
         {
           prop: 'holderNum',
           label: '保持架用量(个)',
           value: 0,
           type: 'input',
-          itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }]
+          itemRules: [{ required: true, message: '保持架用量不能为空', trigger: 'blur' }],
+          minWidth: 150,
         }
       ],
       visible: false,
@@ -172,8 +177,27 @@ export default {
       },
       ProductListRequestObj1: {
         classAttribute: 'semi_finished',
-
         productCategoryId: '1810110053677125634',
+        code: '',
+        name: '',
+        orderItems: [
+          {
+            asc: false,
+            column: ''
+          },
+          {
+            asc: false,
+            column: 'create_time'
+          }
+        ],
+        productSource: '',
+        productStatus: 'enable',
+        pageNum: 1,
+        pageSize: 20
+      },
+      ProductListRequestObj2: {
+        classAttribute: 'semi_finished',
+        productCategoryId: '1810110311719096321',
         code: '',
         name: '',
         orderItems: [
@@ -240,7 +264,7 @@ export default {
         if (!item.model) {
           submitFlag = false
           this.$message.error(`第${index + 1}行，型号为空`)
-        } if (item.model) {
+        } else if (item.model) {
           submitFlag = false
           updataBimProductsModelCheck(item.model, '')
             .then((res) => {
@@ -384,9 +408,9 @@ export default {
         if (tc.prop === 'innerCircle') {
           tc.dialogTitle = '选择产品'
           tc.treeTitle = '产品分类'
-          tc.methodArr = this.ProductMethodArr1
+          tc.methodArr = this.ProductMethodArr
           tc.listMethod = getProductList
-          tc.listRequestObj = this.ProductListRequestObj1
+          tc.listRequestObj = this.ProductListRequestObj
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
           tc.change = this.sleeveNameChange1
@@ -394,9 +418,9 @@ export default {
         } else if (tc.prop === 'outerCircle') {
           tc.dialogTitle = '选择产品'
           tc.treeTitle = '产品分类'
-          tc.methodArr = this.ProductMethodArr1
+          tc.methodArr = this.ProductMethodArr
           tc.listMethod = getProductList
-          tc.listRequestObj = this.ProductListRequestObj1
+          tc.listRequestObj = this.ProductListRequestObj
           tc.tableItems = this.ProductTableItems
           tc.searchList = this.ProductTableSearchList
           tc.change = this.sleeveNameChange2

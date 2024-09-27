@@ -3,7 +3,7 @@
     <div class="JNPF-preview-main org-form">
       <div :class="['JNPF-common-page-header', btnType === 'look' ? 'noButtons' : '']">
         <!-- <el-page-header @back="goBack" :content="!parentId ? $t(`customer.addCustomer`) : $t(`customer.editCustomer`)" v-show="!btnType"/> -->
-        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建保养任务' : btnType == 'edit' ? '编辑保养任务' : '查看保养任务'" />
+        <el-page-header @back="goBack" :content="btnType == 'add' ? '新建点检任务' : btnType == 'edit' ? '编辑点检任务' : '查看点检任务'" />
         <div class="options" v-if="btnType != 'look'">
           <!-- <el-button type="success" :loading="btnLoading" @click="handleConfirm('draft')">
             保存草稿</el-button> -->
@@ -16,143 +16,118 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="任务信息" name="orderInfo">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>基本信息</h5>
-            </div>
-            <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
-              <el-row :gutter="30" class="custom-row">
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="任务名称" prop="name">
-                    <el-input v-model="dataForm.name" placeholder="请输入任务名称" :disabled="btnType == 'look'"
-                      maxlength="20" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="设备名称" prop="equipmentId">
-                    <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly
-                      @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'"></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="计划保养部门" prop="departmentId">
-                    <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划保养部门" auth
-                      :dialogTitle="'请选择计划保养部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="计划保养人" prop="maintainerId">
-                    <!-- <el-input v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" :disabled="btnType == 'look'"
-                      maxlength="50" /> -->
-                    <!-- <el-form-item label="所属销售" prop="salesName"> -->
-                    <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划保养人" clearable style="width: 100%;"
-                      :disabled="btnType === 'look'" filterable @change="selectsales">
-                      <el-option v-for="(item, index) in salesList" :key="index" :label="item.name"
-                        :disabled="btnType == 'look'" :value="item.id"></el-option>
-                    </el-select>
-                    <!-- </el-form-item> -->
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="周期类型" prop="cycleType">
-                    <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;"
-                      @change="cycleTypeaction" :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="3">
-                  <el-form-item label="周期" prop="cycle">
-                    <el-input v-model="dataForm.cycle" placeholder="请输入周期" :disabled="btnType == 'look'" maxlength="50" />
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="2">
-                  <el-form-item label="单位" prop="unit">
-                    <el-select v-model="dataForm.unit" placeholder="请选择单位" clearable style="width: 100%;"
-                      :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in unitStateList" :key="index" :label="item.label"
-                        :value="item.label"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="下次保养时间" prop="nextMaintenanceTime">
-                    <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd"
-                      style="width: 100%;" placeholder="请选择下次保养时间" :picker-options="pickerOptions"
-                      :disabled="btnType == 'look'">
-                    </el-date-picker>
-                    <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择下次保养时间"
-                      readonly default-time="12:00:00" style="width: 100%;" :disabled="btnType == 'look'">
-                    </el-date-picker> -->
-                    <!-- <el-date-picker v-model="dataForm.nextMaintenanceTime" type="datetime" placeholder="请选择下次保养时间"
-                      :picker-options="pickerOptions" :disabled="btnType == 'look'" style="width: 100%;" clearable
-                      @change="nextMaintenanceTimeaction">
-                    </el-date-picker> -->
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="6" :xs="24">
-                  <el-form-item label="状态" prop="state">
-                    <!-- <el-input v-model="dataForm.state" placeholder="请选择状态" :disabled="btnType == 'look'" maxlength="50" /> -->
-                    <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;"
-                      :disabled="btnType == 'look'">
-                      <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                        :value="item.value"></el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :sm="12" :xs="24">
-                  <el-form-item label="备注" prop="remark">
-                    <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea"
-                      maxlength="200" :rows="2" />
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-form>
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-              <h5>项目信息</h5>
-            </div>
-            <div v-if="btnType !== 'look'">
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
-                :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
-              <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important"
-                :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
-            </div>
-            <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
-              <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" fixedNO
-                @selection-change="handeleProductInfoData">
-                <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'"
-                  key="1" />
-                <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
-                <el-table-column prop="itemCode" label="项目编码" width="200" show-overflow-tooltip>
-                  <template slot="header">
-                    <span class="required">*</span>项目编码
-                  </template>
-                </el-table-column>
-                <el-table-column prop="itemName" label="项目名称" width="200" show-overflow-tooltip>
-                  <template slot="header">
-                    <span class="required">*</span>项目名称
-                  </template>
-                </el-table-column>
-                <el-table-column prop="itemRequirements" label="保养要求" min-width="200" show-overflow-tooltip>
-                </el-table-column>
-                <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
-                  <template slot-scope="scope">
-                    <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-form>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo">
+                <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
+                  <el-row :gutter="30" class="custom-row">
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="任务名称" prop="name">
+                        <el-input v-model="dataForm.name" placeholder="请输入任务名称" :disabled="btnType == 'look'" maxlength="20" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="设备名称" prop="equipmentId">
+                        <el-input v-model="dataForm.equipmentIdName" placeholder="请选择设备名称" readonly @focus="openSeleceProductDialogss" :disabled="btnType !== 'add'">
+                        </el-input>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="计划点检部门" prop="departmentId">
+                        <ComSelect v-model="organizeIdTrees" :disabled="btnType === 'look'" placeholder="请选择计划点检部门" auth :dialogTitle="'请选择计划点检部门'" @change="changedepartment" :currOrgId="dataForm.departmentId || '0'" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="计划点检人" prop="maintainerId">
+                        <el-select v-model="dataForm.maintainerIdName" placeholder="请选择计划点检人" clearable style="width: 100%;" :disabled="btnType === 'look'" filterable @change="selectsales">
+                          <el-option v-for="(item, index) in salesList" :key="index" :label="item.name" :disabled="btnType == 'look'" :value="item.id"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="周期类型" prop="cycleType">
+                        <el-select v-model="dataForm.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;" :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="369">
+                      <el-form-item label="保养等级" prop="maintenanceLevelId">
+                        <el-cascader v-model="level" ref="mycascader" :props="props" :options="options" @change=changelevel placeholder="请选择保养等级" style="width: 100%;line-height:29px;"></el-cascader>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="1">
+                      <el-form-item label="周期" prop="cycle">
+                        <el-input v-model="dataForm.cycle" placeholder="请输入周期" :disabled="true" maxlength="50" />
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24" v-if="dataForm.cycleType == 'cycle'" key="2">
+                      <el-form-item label="单位" prop="unit">
+                        <el-select v-model="dataForm.unit" placeholder="请选择单位" clearable style="width: 100%;" :disabled="true">
+                          <el-option v-for="(item, index) in unitStateList" :key="index" :label="item.label" :value="item.label"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="下次点检时间" prop="nextMaintenanceTime">
+                        <el-date-picker v-model="dataForm.nextMaintenanceTime" type="date" value-format="yyyy-MM-dd" style="width: 100%;" placeholder="请选择下次点检时间" :picker-options="pickerOptions" :disabled="btnType == 'look'">
+                        </el-date-picker>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="6" :xs="24">
+                      <el-form-item label="状态" prop="state">
+                        <!-- <el-input v-model="dataForm.state" placeholder="请选择状态" :disabled="btnType == 'look'" maxlength="50" /> -->
+                        <el-select v-model="dataForm.state" placeholder="请选择状态" clearable style="width: 100%;" :disabled="btnType == 'look'">
+                          <el-option v-for="(item, index) in stateList" :key="index" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-col>
+                    <el-col :sm="12" :xs="24">
+                      <el-form-item label="备注" prop="remark">
+                        <el-input v-model="dataForm.remark" placeholder="请输入备注" :disabled="btnType == 'look'" type="textarea" maxlength="200" :rows="2" />
+                      </el-form-item>
+                    </el-col>
+                  </el-row>
+                </el-form>
+              </el-collapse-item>
+              <el-collapse-item title="项目信息" name="xmxx">
+                <div v-if="btnType !== 'look'">
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus" :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择项目</el-button>|
+                  <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" :disabled="btnType == 'look' ? true : false" icon="el-icon-delete" @click="batchDelete">批量删除</el-button>|
+                </div>
+                <el-form :model="dataFormTwo" v-bind="dataFormTwo" ref="productForm" class="data-form">
+                  <el-table ref="product" :data="dataFormTwo.productData" v-bind="dataFormTwo.data" fixedNO @selection-change="handeleProductInfoData">
+                    <el-table-column type="selection" width="60" fixed='left' align="center" v-if="btnType !== 'look'" key="1" />
+                    <el-table-column type="index" width="60" label="序号" align="center" fixed='left' />
+                    <el-table-column prop="itemCode" label="项目编码" width="200" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>项目编码
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="itemName" label="项目名称" width="200" show-overflow-tooltip>
+                      <template slot="header">
+                        <span class="required">*</span>项目名称
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="itemRequirements" label="点检要求" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column prop="inspectionMethod" label="点检方法" min-width="200" show-overflow-tooltip>
+                    </el-table-column>
+                    <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="30">
+                      <template slot-scope="scope">
+                        <el-button type="text" @click="handleDel(scope)" style="color: #ff3a3a">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </el-form>
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
-            <UploadWj v-model="datafilelist" :disabled="btnType === 'look'" :detailed="btnType === 'look'"></UploadWj>
+            <UploadWj v-model="datafilelist" :disabled="btnType == 'look'" :detailed="btnType == 'look'"></UploadWj>
           </el-tab-pane>
         </el-tabs>
       </div>
-      <el-dialog title="选择保养项目" :close-on-click-modal="false" :close-on-press-escape="false"
-        :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%"
-        append-to-body @close="productVisible = false">
+      <el-dialog title="选择点检项目" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="productVisible" lock-scroll class="JNPF-dialog JNPF-dialog_center selectPro" width="70%" append-to-body @close="productVisible = false">
         <div class="JNPF-common-layout" style="height: 68vh;overflow: auto;">
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
@@ -184,14 +159,13 @@
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable"
-                @selection-change="handleSelectionChange">
+              <JNPF-table v-loading="listLoading" :data="cusProductData" hasC @row-click="rowaction" ref="dataTable" @selection-change="handleSelectionChange">
                 <el-table-column prop="name" label="项目名称" />
                 <el-table-column prop="code" label="项目编码" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="itemRequirements" label="保养要求" />
+                <el-table-column prop="itemRequirements" label="点检要求" />
+                <el-table-column prop="inspectionMethod" label="点检方法" />
               </JNPF-table>
-              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize"
-                @pagination="getcooperativeProduct" />
+              <pagination :total="total" :page.sync="productForm.pageNum" :limit.sync="productForm.pageSize" @pagination="getcooperativeProduct" />
             </div>
 
           </div>
@@ -202,16 +176,13 @@
             确定</el-button>
         </span>
       </el-dialog>
-      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备"
-        treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }"
-        :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists"
-        :elementShow="false" />
+      <ComSelect-page ref="ComSelect-pagesb" @change="changeWarehouse" :tableItems="ProductTableItemss" title="选择设备" treeTitle="设备分类" :methodArr="{ method: getcategoryTree, requestObj: { classAttribute: 'equipment' } }" :listMethod="getEquEquipmentList" :listRequestObj="ProductListRequestObjs" :searchList="ProductTableSearchLists" :elementShow="false" />
     </div>
   </transition>
 </template>
     
 <script>
-import { getcategoryTree } from '@/api/basicData/materialSettings'
+import { getcategoryTree, getequMaintenanceLevel } from '@/api/basicData/materialSettings'
 import { addcheckmaintenance, updatecheckmaintenance, detailcheckmaintenance } from '@/api/dailyManagement/Maintenance'
 import { parametersShelveslist } from '@/api/basicData/index'
 import { getOrganizeInfo } from '@/api/permission/organize'
@@ -222,6 +193,41 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      activeNames: ["basicInfo", "xmxx"],
+      level: [],
+      options: [
+        { label: "日常保养", value: "日常保养" },
+        { label: "二级保养", value: "二级保养" },
+        { label: "三级保养", value: "三级保养" },
+        { label: "四级保养", value: "四级保养" },
+        { label: "年度保养", value: "年度保养" }
+      ],
+      props: {
+        lazy: true,
+        lazyLoad(node, resolve) {
+          const { level } = node;
+          setTimeout(() => {
+            const nodes = []
+            let initListQuery = {
+              level: node.value,
+              pageNum: 1,
+              pageSize: -1,
+            }
+            if (level > 1) return
+            getequMaintenanceLevel(initListQuery).then(res => {
+              res.data.records.map(item => {
+                let obj = {
+                  value: item.id,
+                  label: item.cycle + ' ' + item.unit,
+                  leaf: level >= 1
+                }
+                nodes.push(obj)
+              })
+              resolve(nodes);
+            })
+          }, 500);
+        }
+      },
       datafilelist: [],
       ProductTableSearchLists: [
         { prop: "code", label: "设备编码", type: 'input' },
@@ -265,7 +271,7 @@ export default {
         }],
         code: "",
         name: "",
-        typeCode: 'maintenanceItem'
+        typeCode: 'inspectionItem'
       },
       selectlist: [],
       productVisible: false,
@@ -300,6 +306,15 @@ export default {
       listLoading: false,
       total: 0,
       tableDataCustomer: [],
+      form: {
+        code: "",
+        name: "",
+        taxId: "",
+        pageNum: 1,
+        pageSize: 20,
+        partnerCategoryId: "",
+        type: "customer",
+      },
       btnType: undefined,
       activeName: "orderInfo",
       visible: false,
@@ -307,6 +322,7 @@ export default {
       formLoading: false,
       dataForm: {
         nextMaintenanceTime: '',
+        maintenanceLevelId: '',
         state: '',
         unit: '',
         cycle: '',
@@ -317,11 +333,10 @@ export default {
         equipmentId: '',
         departmentId: '',
         departmentIdName: '',
-        taskType: 'maintenance',
+        taskType: 'inspection',
         name: '',
         remark: ''
       },
-      anceTime: '',
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() < Date.now() - 1000 * 3600 * 24;
@@ -329,6 +344,9 @@ export default {
       },
       organizeIdTrees: [],
       dataRule: {
+        maintenanceLevelId: [
+          { required: true, message: '保养等级不能为空', trigger: 'change' }
+        ],
         name: [
           { required: true, message: '任务名称不能为空', trigger: 'change' }
         ],
@@ -339,10 +357,13 @@ export default {
           { required: true, message: '设备不能为空', trigger: 'change' }
         ],
         departmentId: [
-          { required: true, message: '计划保养部门不能为空', trigger: 'blur' }
+          { required: true, message: '计划点检部门不能为空', trigger: 'change' }
         ],
         maintainerId: [
-          { required: true, message: '计划保养人不能为空', trigger: 'change' }
+          { required: true, message: '计划点检人不能为空', trigger: 'change' }
+        ],
+        nextMaintenanceTime: [
+          { required: true, message: '下次点检时间不能为空', trigger: 'change' }
         ],
         state: [
           { required: true, message: '状态不能为空', trigger: 'change' }
@@ -353,9 +374,6 @@ export default {
         ],
         unit: [
           { required: true, message: '单位不能为空', trigger: 'change' }
-        ],
-        nextMaintenanceTime: [
-          { required: true, message: `下次保养时间不能为空`, trigger: 'change' }
         ],
       },
       customerData: {},
@@ -369,6 +387,12 @@ export default {
     tBody.querySelector('.el-table__body-wrapper').style.height = 'auto'
   },
   methods: {
+    changelevel(e) {
+      let a = this.$refs['mycascader'].getCheckedNodes()[0].pathLabels[1].split(' ')
+      this.dataForm.maintenanceLevelId = e[1]
+      this.dataForm.cycle = a[0]
+      this.dataForm.unit = a[1]
+    },
     openSeleceProductDialogss() {
       this.$refs['ComSelect-pagesb'].openDialog()
     },
@@ -376,24 +400,18 @@ export default {
     rowaction(row) {
       this.$refs['dataTable'].$refs.JNPFTable.toggleRowSelection(row)
     },
-    //状态
-    cycleTypeaction(value) {
-      if (value) {
-        this.dataForm.cycleType = value
-        if (value == 'cycle') {
-          this.anceTime = '下次'
-        } else {
-          this.anceTime = '计划'
-        }
-      } else {
-        this.dataForm.cycleType = ''
-      }
-    },
-    //下次保养时间
-    // nextMaintenanceTimeaction(value) {
-    //   this.dataForm.nextMaintenanceTime = value 
+    //计划点检时间
+    // planMaintenanceTimeaction(value) {
+    //   this.dataForm.planMaintenanceTime = value
+    //   this.dataForm.nextMaintenanceTime = value
     // },
-    // 打开保养项目
+    //下次点检时间
+    // nextMaintenanceTimeaction(value) {
+    //   console.log(value);
+    //   this.dataForm.nextMaintenanceTime = this.dateFormat(value)
+    //   this.dataForm.planMaintenanceTime = this.dateFormat(value)
+    // },
+    // 打开点检项目
     openSeleceProductDialog() {
       this.productVisible = true
       this.getcooperativeProduct()
@@ -412,7 +430,7 @@ export default {
     handleSelectionChange(e) {
       this.selectlist = e
     },
-    //选择保养项目
+    //选择点检项目
     submitCustomerProduct() {
       this.productVisible = false
       console.log("选中的项目", this.selectlist);
@@ -429,6 +447,7 @@ export default {
             itemName: item.name,
             itemCode: item.code,
             itemRequirements: item.itemRequirements,
+            inspectionMethod: item.inspectionMethod,
             id: ''
           })
         } else {
@@ -440,7 +459,7 @@ export default {
         }
       })
     },
-    // //周期
+    //周期
     // cycleaction(value) {
     //   console.log(value);
     //   if (value > 0 && Number.isInteger(value * 1)) {
@@ -517,12 +536,14 @@ export default {
     //   }
 
     // },
-    //计划保养人
+    //计划点检人
     selectsales(val) {
+      console.log(val);
       this.dataForm.maintainerId = val
     },
-    //计划保养部门
+    //计划点检部门
     changedepartment(val) {
+      console.log("val,val", val);
       this.dataForm.departmentIdName = ""
       this.dataForm.departmentId = ""
       this.$forceUpdate()
@@ -546,25 +567,26 @@ export default {
         this.$refs.dataForm.validateField('equipmentId')
       })
       if (!val && !data.length) return
+      console.log(data, '设备数据');
       this.dataForm.equipmentIdName = data[0].name
       this.dataForm.equipmentId = data[0].id
     },
-    // dateFormat(dateData) {
-    //   var date = new Date(dateData)
-    //   var y = date.getFullYear()
-    //   var m = date.getMonth() + 1
-    //   m = m < 10 ? ('0' + m) : m
-    //   var d = date.getDate()
-    //   d = d < 10 ? ('0' + d) : d
-    //   var h = date.getHours()
-    //   h = h < 10 ? ('0' + h) : h
-    //   var min = date.getMinutes()
-    //   min = min < 10 ? ('0' + min) : min
-    //   // var s = date.getSeconds()
-    //   // s = s < 10 ? ('0' + s) : s
-    //   const time = y + '-' + m + '-' + d + ' ' + h + ':' + min + ':' + '00'
-    //   return time
-    // },
+    dateFormat(dateData) {
+      var date = new Date(dateData)
+      var y = date.getFullYear()
+      var m = date.getMonth() + 1
+      m = m < 10 ? ('0' + m) : m
+      var d = date.getDate()
+      d = d < 10 ? ('0' + d) : d
+      var h = date.getHours()
+      h = h < 10 ? ('0' + h) : h
+      var min = date.getMinutes()
+      min = min < 10 ? ('0' + min) : min
+      // var s = date.getSeconds()
+      // s = s < 10 ? ('0' + s) : s
+      const time = y + '-' + m + '-' + d + ' ' + h + ':' + min + ':' + '00'
+      return time
+    },
     // 重置项目搜索条件
     resetcusProduct() {
       this.productForm = {
@@ -579,7 +601,7 @@ export default {
         }],
         code: "",
         name: "",
-        typeCode: 'maintenanceItem'
+        typeCode: 'inspectionItem'
       }
       this.searchcusProduct()
     },
@@ -593,6 +615,7 @@ export default {
     },
     // 产品列表选中 
     handeleProductInfoData(val) {
+      console.log(val);
       this.selectRows = val
     },
     // 批量删除
@@ -616,7 +639,109 @@ export default {
     },
     // 单个删除
     handleDel(data) {
+      console.log("1234", data);
       this.dataFormTwo.productData.splice(data.$index, 1)
+    },
+
+    // 监听主数量输入
+    watchnums(row, index) {
+      console.log("主数量", row, index);
+      if (!row.receivedQuantity) {
+        return
+      }
+      row.receivedQuantity = row.receivedQuantity.replace(/[^0-9.]/g, '');
+
+      if (row.receivedQuantity.length == 1 && row.receivedQuantity == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.receivedQuantity = '';
+      } else if (row.receivedQuantity.length == 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.receivedQuantity = row.receivedQuantity.slice(0, 1) + '.' + row.receivedQuantity.slice(1);
+      } else if (row.receivedQuantity.length > 2 && row.receivedQuantity[0] == '0' && row.receivedQuantity[1] != '.') {
+        row.receivedQuantity = row.receivedQuantity.substring(1, row.receivedQuantity.length)
+      }
+      if (row.receivedQuantity.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.receivedQuantity.length; i++) {
+          const char = row.receivedQuantity[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+        row.receivedQuantity = result;
+        let arr = row.receivedQuantity.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 2) {
+          arr[1] = arr[1].substring(0, 2)
+        }
+        row.receivedQuantity = arr[0] + '.' + arr[1]
+        console.log(999666, arr);
+      } else {
+        if (row.receivedQuantity.length > 8) {
+          row.receivedQuantity = row.receivedQuantity.substring(0, 8);
+        }
+      }
+      // 计算方向calculationDirection 转换系数ratio  副数量assistantNum
+      // 如果计算方向是乘 则副数量等于主数量*套数*转换系数
+      // 如果计算方向是除 则副数量等于主数量*套数/转换系数
+      // 使用正则表达式验证输入内容
+      if (!row.deliveryQuantity) {
+        return
+      }
+      row.deliveryQuantity = row.deliveryQuantity.replace(/[^0-9.]/g, '');
+
+      if (row.deliveryQuantity.length == 1 && row.deliveryQuantity == '.') {
+        // 如果第一位是小数点，则清空输入框
+        row.deliveryQuantity = '';
+      } else if (row.deliveryQuantity.length == 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        // 如果第一位是0，第二位不是小数点，则在第二位后面插入小数点
+        row.deliveryQuantity = row.deliveryQuantity.slice(0, 1) + '.' + row.deliveryQuantity.slice(1);
+      } else if (row.deliveryQuantity.length > 2 && row.deliveryQuantity[0] == '0' && row.deliveryQuantity[1] != '.') {
+        row.deliveryQuantity = row.deliveryQuantity.substring(1, row.deliveryQuantity.length)
+      }
+      if (row.deliveryQuantity.includes('.')) {
+        let dotCount = 0; // 小数点的数量
+        let result = ''; // 处理后的结果
+        for (let i = 0; i < row.deliveryQuantity.length; i++) {
+          const char = row.deliveryQuantity[i];
+          if (char === '.') {
+            if (dotCount === 0) {
+              // 第一个小数点保留
+              result += char;
+              dotCount++;
+            }
+          } else {
+            result += char;
+          }
+        }
+        row.deliveryQuantity = result;
+        let arr = row.deliveryQuantity.split('.')
+        if (arr[0].length > 8) {
+          arr[0] = arr[0].substring(0, 8)
+        }
+        if (arr[1].length > 2) {
+          arr[1] = arr[1].substring(0, 2)
+        }
+        row.deliveryQuantity = arr[0] + '.' + arr[1]
+        console.log(999666, arr);
+      } else {
+        if (row.deliveryQuantity.length > 8) {
+          row.deliveryQuantity = row.deliveryQuantity.substring(0, 8);
+        }
+      }
+
+    },
+    handleSelectionChangeAllPruduct(val) {
+      this.selectArr = val
     },
     // 切换table
     handleClick(tab, event) {
@@ -657,6 +782,7 @@ export default {
                     item.name = item.fullName.split('/')[0]
                   });
                 }
+                console.log(this.salesList);
                 this.salesList = res.data
               })
             } else {
@@ -665,10 +791,6 @@ export default {
           })
         })
       }
-    },
-    goBack() {
-      this.$emit('close')
-      console.log("cccc");
     },
     handleConfirm(value) {
       this.$refs['dataForm'].validate((valid) => {
@@ -681,9 +803,8 @@ export default {
             })
             return
           }
-          this.dataForm.documentStatus = value
           if (this.datafilelist.length) {
-            this.datafilelist.map((item,index) => {
+            this.datafilelist.map((item, index) => {
               item.bimAttachments = {
                 businessType: '',
                 documentId: item.id,
@@ -692,6 +813,7 @@ export default {
               }
             })
           }
+          this.dataForm.documentStatus = value
           let obj = {
             attachmentList: this.datafilelist,
             task: this.dataForm,
@@ -734,68 +856,57 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
+<style scoped lang="scss">
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+}
+.required {
+  color: red;
+  margin-right: 4px;
+}
 ::v-deep .data-form {
+  margin-bottom: 18px;
   .el-form-item--small.el-form-item {
     margin-bottom: 0 !important;
   }
 }
-
-.required {
-  color: red;
-  margin-right: 4px;
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
-</style>
-<style scoped>
-::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0 20px;
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
 }
 
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
 }
-
 ::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-</style>
-<style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
-
-.el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
-}
-
-::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
-}
-
-.el-button span {
-  font-size: 14px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-}
-
-::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+  padding: 5px 10px !important;
 }
 </style>
     

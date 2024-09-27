@@ -317,6 +317,9 @@ export default {
         serviceDescription: [
           { required: true, message: '请输入跟进内容', trigger: 'blur' },
         ],
+        ownerUserId: [
+          { required: true, message: '请选择负责人', trigger: 'blur' },
+        ],
         name: [
           { required: true, message: '请选择客户', trigger: 'blur' },
         ]

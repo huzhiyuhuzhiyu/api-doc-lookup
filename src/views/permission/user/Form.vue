@@ -158,6 +158,7 @@ export default {
         ],
         mobilePhone: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: this.formValidate('iphone'), trigger: 'blur' }
         ],
         organizeIdTree: [
           { required: true, message: '请选择所属组织', trigger: 'blur' },

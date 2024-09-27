@@ -9,8 +9,7 @@
 
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listQuery.name" placeholder="请输入任务名称" clearable
-                      @keyup.enter.native="search()" />
+                    <el-input v-model.trim="listQuery.name" placeholder="请输入任务名称" clearable @keyup.enter.native="search()" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -20,9 +19,7 @@
                                           style="width: 100%;" start-placeholder="请选择检定开始时间" end-placeholder="请选择检定结束时间"
                                           clearable :picker-options="pickerOptions">
                                       </el-date-picker> -->
-                    <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="检定开始时间" end-placeholder="检定结束时间" clearable
-                      :picker-options="pickerOptions">
+                    <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="检定开始时间" end-placeholder="检定结束时间" clearable :picker-options="pickerOptions">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -35,13 +32,24 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="visible = true">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
-                :data="tableDataList" @sort-change="sortChange" custom-column>
+              <div class="JNPF-common-head">
+                <topOpts @add="handleUserRelation('', 'add')" />
+                <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible = true" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                  </el-tooltip>
+                </div>
+              </div>
+              <JNPF-table v-if="flag" v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" :data="tableDataList" @sort-change="sortChange" custom-column>
                 <el-table-column prop="name" label="任务名称" width="200" sortable="custom" fixed="left">
                 </el-table-column>
                 <el-table-column prop="cycleType" label="周期类型" width="120" fixed="right" align="center" sortable="custom">
@@ -76,16 +84,33 @@
                 <el-table-column prop="createTime" label="创建时间" sortable="custom" width="200" />
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="300" />
-                <el-table-column label="操作" min-width="90" fixed="right" align="center">
+                <el-table-column label="操作" min-width="180" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <el-button type="text" :disabled="scope.row.istime"
-                      @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button>
+                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                      <el-dropdown hide-on-click>
+                        <span class="el-dropdown-link">
+                          <el-button type="text" size="mini">
+                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                          </el-button>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
+                            检定
+                          </el-dropdown-item>
+                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                            查看详情
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </tableOpts>
+                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button> -->
                   </template>
                 </el-table-column>
               </JNPF-table>
-              <pagination :total="total" :page.sync="listQuery.pageNum" :background="background"
-                :limit.sync="listQuery.pageSize" @pagination="initData" />
+              <pagination :total="total" :page.sync="listQuery.pageNum" :background="background" :limit.sync="listQuery.pageSize" @pagination="initData" />
             </div>
+            <!-- 高级查询 -->
+            <SuperQuery partentOrChild="orderList" :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson" @superQuery="superQuerySearch" @close="superQueryVisible = false" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="超期检定任务" name="detailList">
@@ -96,8 +121,7 @@
 
                 <el-col :span="4">
                   <el-form-item>
-                    <el-input v-model.trim="listsQuery.name" placeholder="请输入任务名称" clearable
-                      @keyup.enter.native="searchDetail()" />
+                    <el-input v-model.trim="listsQuery.name" placeholder="请输入任务名称" clearable @keyup.enter.native="searchDetail()" />
                   </el-form-item>
                 </el-col>
                 <el-col :span="4">
@@ -107,9 +131,7 @@
                                           style="width: 100%;" start-placeholder="请选择检定开始时间" end-placeholder="请选择检定结束时间"
                                           clearable :picker-options="pickerOptions">
                                       </el-date-picker> -->
-                    <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="检定开始时间" end-placeholder="检定结束时间" clearable
-                      :picker-options="pickerOptions">
+                    <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd" style="width: 100%;" start-placeholder="检定开始时间" end-placeholder="检定结束时间" clearable :picker-options="pickerOptions">
                     </el-date-picker>
                   </el-form-item>
                 </el-col>
@@ -122,13 +144,24 @@
                     </el-button>
                   </el-form-item>
                 </el-col>
-                <el-button style="float: right;margin-right: 20px;" size="mini" type="primary"
-                  icon="icon-ym icon-ym-report-icon-search-setting" @click="detailVisible = true">更多查询</el-button>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData"
-                :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
+              <div class="JNPF-common-head">
+                <div style="height: 32px;"></div>
+                <div class="JNPF-common-head-right">
+                  <el-tooltip content="高级查询" placement="top">
+                    <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false" @click="superQueryVisible1 = true" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+                    <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun1()" />
+                  </el-tooltip>
+                  <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+                    <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+                  </el-tooltip>
+                </div>
+              </div>
+              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="detailTableData" :data="detailTableData" @sort-change="sortChangeDetail" custom-column>
 
                 <el-table-column prop="name" label="任务名称" width="200" sortable="custom" fixed="left">
                 </el-table-column>
@@ -164,152 +197,137 @@
                 <el-table-column prop="createByName" label="创建人" width="120" />
                 <el-table-column prop="remark" label="备注" min-width="300" />
 
-                <el-table-column label="操作" width="90" fixed="right" align="center">
+                <el-table-column label="操作" width="180" fixed="right" align="center">
                   <template slot-scope="scope">
-                    <el-button type="text" :disabled="scope.row.istime"
-                      @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button>
+                    <tableOpts @edit="handleUserRelation(scope.row.id, 'edit')" @del="handleDel(scope.row.id)">
+                      <el-dropdown hide-on-click>
+                        <span class="el-dropdown-link">
+                          <el-button type="text" size="mini">
+                            {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                          </el-button>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                          <el-dropdown-item :disabled="scope.row.istime" @click.native="maintenanceaction(scope.row.id, 'maintenance')">
+                            检定
+                          </el-dropdown-item>
+                          <el-dropdown-item @click.native="handleUserRelation(scope.row.id, 'look')">
+                            查看详情
+                          </el-dropdown-item>
+                        </el-dropdown-menu>
+                      </el-dropdown>
+                    </tableOpts>
+                    <!-- <el-button type="text" :disabled="scope.row.istime" @click="maintenanceaction(scope.row.id, 'maintenance')" size="mini">检定</el-button> -->
                   </template>
                 </el-table-column>
 
               </JNPF-table>
-              <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background"
-                :limit.sync="listsQuery.pageSize" @pagination="detailData" />
+              <pagination :total="total" :page.sync="listsQuery.pageNum" :background="background" :limit.sync="listsQuery.pageSize" @pagination="detailData" />
             </div>
+            <!-- 高级查询 -->
+            <SuperQuery partentOrChild="detailList" :show="superQueryVisible1" ref="SuperQuery1" :columnOptions="superQueryJson" @superQuery="superQuerySearch1" @close="superQueryVisible1 = false" />
           </div>
         </el-tab-pane>
       </el-tabs>
     </div>
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="visible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="listQuery" label-width="120px" label-position="top">
-
-
-          <el-col :span="12">
-            <el-form-item label="任务名称">
-              <el-input v-model="listQuery.name" placeholder="请输入任务名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="周期类型">
-              <el-select v-model="listQuery.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-select v-model="listQuery.state" placeholder="请选择状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="下次检定时间">
-              <!-- <el-date-picker v-model="createRequirementDate" type="datetimerange"
-                              value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']"
-                              style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" clearable
-                              :picker-options="pickerOptions">
-                          </el-date-picker> -->
-              <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" clearable
-                :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="submitDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width: 100%;"
-                :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="search()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
-
-    <el-dialog :title="'更多查询'" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="detailVisible"
-      lock-scroll class="JNPF-dialog JNPF-dialog_center" width="1000px">
-      <el-row :gutter="20">
-
-        <el-form ref="diaForm" :model="listsQuery" label-width="120px" label-position="top">
-
-          <el-col :span="12">
-            <el-form-item label="任务名称">
-              <el-input v-model="listQuery.name" placeholder="请输入任务名称" clearable />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="周期类型">
-              <el-select v-model="listQuery.cycleType" placeholder="请选择周期类型" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in cycleTypeStateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="状态">
-              <el-select v-model="listQuery.state" placeholder="请选择状态" clearable style="width: 100%;">
-                <el-option v-for="(item, index) in stateList" :key="index" :label="item.label"
-                  :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="下次检定时间">
-              <!-- <el-date-picker v-model="createRequirementDate" type="datetimerange"
-                              value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']"
-                              style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" clearable
-                              :picker-options="pickerOptions">
-                          </el-date-picker> -->
-              <el-date-picker v-model="createRequirementDate" type="daterange" value-format="yyyy-MM-dd"
-                style="width: 100%;" start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" clearable
-                :picker-options="pickerOptions">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="创建时间">
-              <el-date-picker v-model="submitDate" type="datetimerange" value-format="yyyy-MM-dd HH:mm:ss"
-                start-placeholder="请选择开始时间" end-placeholder="请选择结束时间" style="width: 100%;"
-                :default-time="['00:00:00', '23:59:59']">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-
-        </el-form>
-      </el-row>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="detailVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" @click="searchDetail()">
-          {{ $t('common.search') }}
-        </el-button>
-      </span>
-    </el-dialog>
     <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" />
+    <deForm v-if="formVisible1" ref="deForm" @refreshDataList="initData" @close="closeForm" />
   </div>
 </template>
   
 <script>
-
+import deForm from './Form'
+import SuperQuery from '@/components/SuperQuery/index.vue'
 import Form from '@/views/dailyManagement/verificationManagement/verificationrecords/Form.vue'
-import { verificationList } from '@/api/dailyManagement/Maintenance'
+import { verificationList, deleteverification } from '@/api/dailyManagement/Maintenance'
 export default {
   name: 'verificationQuery',
-  components: { Form },
+  components: { Form, deForm, SuperQuery },
   data() {
     return {
+      superQueryJson: [
+        {
+          prop: 'name',
+          label: "任务名称",
+          type: 'input'
+        },
+        {
+          prop: 'cycleType',
+          label: "周期类型",
+          type: 'select',
+          options: [
+            { label: "周期", value: "cycle" },
+            { label: "一次", value: "disposable" }
+          ]
+        },
+        {
+          prop: 'equipmentIdCode',
+          label: "设备编码",
+          type: 'input'
+        },
+        {
+          prop: 'equipmentIdName',
+          label: "设备名称",
+          type: 'input'
+        },
+        {
+          prop: 'departmentIdName',
+          label: "计划检定部门",
+          type: 'input'
+        },
+        {
+          prop: 'maintainerIdName',
+          label: "计划检定人",
+          type: 'input'
+        },
+        {
+          prop: 'cycle',
+          label: "周期",
+          type: 'input'
+        },
+        {
+          prop: 'unit',
+          label: "单位",
+          type: 'input'
+        },
+        {
+          prop: 'nextMaintenanceTime',
+          label: '下次检定时间',
+          type: 'datetimerange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+        },
+        {
+          prop: 'state',
+          label: "状态",
+          type: 'select',
+          options: [
+            { label: "禁用", value: "disabled" },
+            { label: "启用", value: "enable" }
+          ]
+        },
+        {
+          prop: 'createTime',
+          label: '创建时间',
+          type: 'datetimerange',
+          valueFormat: 'yyyy-MM-dd HH:mm:ss',
+          startPlaceholder: '开始时间',
+          endPlaceholder: '结束时间',
+        },
+        {
+          prop: 'createByName',
+          label: "创建人",
+          type: 'input'
+        },
+        {
+          prop: 'remark',
+          label: "备注",
+          type: 'input'
+        }
+      ],
+      superQueryVisible: false,
+      superQueryVisible1: false,
+      formVisible1: false,
       formVisible: false,
       submitDate: [],
       createRequirementDate: [],
@@ -414,9 +432,46 @@ export default {
     this.initData()
   },
   methods: {
+    superQuerySearch(query) {
+      this.listQuery.superQuery = query
+      this.superQueryVisible = false
+      this.search()
+    },
+    superQuerySearch1(query) {
+      this.listsQuery.superQuery = query
+      this.superQueryVisible1 = false
+      this.searchDetail()
+    },
+    columnSetFun() {
+      this.$refs['tableForm'].showDrawer()
+    },
+    columnSetFun1() {
+      this.$refs['detailTableData'].showDrawer()
+    },
+    handleDel(id) {
+      this.$confirm(this.$t('common.delTip'), this.$t('common.tipTitle'), {
+        type: 'warning'
+      }).then(() => {
+        deleteverification(id).then(res => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: "删除成功",
+            duration: 1500,
+          })
+        })
+      }).catch(() => { })
+    },
+    handleUserRelation(id, btnType) {
+      this.formVisible1 = true
+      this.$nextTick(() => {
+        this.$refs.deForm.init(id, btnType)
+      })
+    },
     // 关闭新建页面
     closeForm(isRefresh = 'true') {
       this.formVisible = false
+      this.formVisible1 = false
       if (isRefresh && this.activeName == 'orderList') {
         this.initData()
       } else {
@@ -737,8 +792,9 @@ export default {
           asc: true,
           column: "next_calibration_time" /* 使用正序日期作为默认排序 */
         }],
-      },
-        this.submitDate = []
+      }
+      this.submitDate = []
+      this.$refs.SuperQuery.conditionList = []
       this.createRequirementDate = []
       this.search()
     },
@@ -765,8 +821,9 @@ export default {
           asc: true,
           column: "next_calibration_time" /* 使用正序日期作为默认排序 */
         }],
-      },
-        this.submitDate = []
+      }
+      this.submitDate = []
+      this.$refs.SuperQuery1.conditionList = []
       this.createRequirementDate = []
       this.searchDetail()
     },
@@ -780,71 +837,5 @@ export default {
   }
 }
 </script>
-<style scoped>
-.el-tab-pane {
-  height: calc(100% - 10px);
-}
-
-::v-deep .el-tabs__content {
-  height: calc(100% - 40px);
-}
-
-.el-tabs {
-  height: 100%;
-}
-
-.el-tabs__nav-scroll {
-  padding-left: 10px;
-}
-
-.JNPF-common-head {
-  padding: 10px;
-}
-
-.JNPF-common-search-box {
-  padding-top: 5px;
-  padding-bottom: 10px;
-  margin-bottom: 5px;
-}
-
-.JNPF-common-search-box .el-form-item {
-  margin-bottom: 0px !important;
-}
-
-.pagination-container {
-  background-color: #ebeef5;
-  margin-top: 0px;
-  padding-right: 10px;
-  padding-top: 2px;
-  padding-bottom: 2px;
-}
-
-.main {
-  padding: 10px 30px 0;
-}
-
-::v-deep .el-table__body tr.current-row>td.el-table__cell {
-  background-color: #fff;
-}
-
-::v-deep .el-tabs__header {
-  padding: 0 !important;
-  padding-bottom: 10px !important;
-  margin-bottom: 0;
-  padding-left: 10px !important;
-  background: #fff;
-}
-
-.el-button--small {
-  padding: 1;
-}
-
-::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-
-.JNPF-common-layout-center .JNPF-common-layout-main {
-  padding-bottom: 0;
-}
-</style>
+<style src="@/assets/scss/tabs-list.scss" lang="scss" scoped />
   

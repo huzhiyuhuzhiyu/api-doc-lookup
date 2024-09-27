@@ -297,7 +297,7 @@ export const getEquEquipmentInfo = (id) => {
 
 export const stateEquEquipment = (data) => {
   return request({
-    url: `/api/mes/equEquipment/listWithoutDiscard/condition`,
+    url: `/api/mes/equEquipment/list/condition`,
     method: 'post',
     data
   })

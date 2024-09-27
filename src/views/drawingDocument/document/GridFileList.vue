@@ -25,7 +25,6 @@ export default {
         ext2Icon(ext){
             const txt = ext ? ext.toLowerCase().replace('.','') : ""
             for(let [key,value] of iconMap){
-                console.log(txt)
                 if(key.includes(txt)) return value
             }
         },

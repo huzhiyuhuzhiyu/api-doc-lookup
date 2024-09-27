@@ -187,7 +187,7 @@
     <BatchDispatchForm v-if="BatchDispatchVisible" ref="BatchDispatchForm" @refreshDataList="initData" @close="closeForm">
     </BatchDispatchForm>
 
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" :fullName="fullName"
       ref="printForm" />
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
@@ -254,6 +254,7 @@ export default {
   components: { SuperQuery, Form, ReworkForm, BatchDispatchForm, PrintBrowse, PrintDialog },
   data() {
     return {
+      fullName:'',
       printVisible: false,
       BatchDispatchVisible: false,
       printBrowseVisible: false,
@@ -763,6 +764,7 @@ export default {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.enCode = enCode
+      this.fullName = '装配单'
       this.printVisible = true
       this.$nextTick(() => {
         this.$refs.printTemplate.init(enCode)
@@ -790,6 +792,7 @@ export default {
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.workOrderVisible = true
       this.flowCardCode = enCode
+      this.fullName = '装配流转卡'
       this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
       detailordershengchan(this.selectArr[0].id).then(res => {
         this.workOrderData = res.data.workOrderList

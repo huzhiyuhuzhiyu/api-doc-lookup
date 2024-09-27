@@ -113,7 +113,12 @@ export default {
           if (!res.data.bodyText) return
           this.drawer = false
           const Base64 = require('js-base64').Base64
-          this.$router.push('/workFlowDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
+          let bodyText = JSON.parse(res.data.bodyText)
+          if ([4,5].includes(bodyText.formType)){
+            this.$router.push('/AbmessageDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
+          }else{
+            this.$router.push('/workFlowDetail?config=' + encodeURIComponent(Base64.encode(res.data.bodyText)))
+          }
         }
       })
     },

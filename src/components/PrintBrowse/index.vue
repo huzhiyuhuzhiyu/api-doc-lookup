@@ -389,7 +389,7 @@ export default {
           data[i].index = i + 1
           pagedata.push(data[i])
           pageNum++
-          if (pageNum === pageSize || (i > remainderLength && i === data.length - 1)) {
+          if (pageNum === pageSize || ( i === data.length - 1)) {
 
             printTable.push({
               total: pagedata.reduce((accumulator, currentValue) => (accumulator * 1 ? accumulator * 1 : '') + currentValue.total_amount * 1, 0),

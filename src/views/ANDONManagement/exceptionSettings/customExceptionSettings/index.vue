@@ -61,7 +61,7 @@
             <el-table-column prop="name" min-width="120" label="内容名称" />
             <el-table-column label="操作" width="180" fixed="right">
               <template slot-scope="scope">
-                <el-button size="mini" type="text" @click="flowSet(scope.row.id)">流程设置</el-button>
+                <el-button size="mini" type="text" @click="flowSet(scope.row.id,scope.row.name)">流程设置</el-button>
               </template>
             </el-table-column>
           </JNPF-table>
@@ -245,10 +245,10 @@ export default {
       this.$refs.SuperQuery.conditionList = []
       this.search()
     },
-    flowSet(id) {
+    flowSet(id,name) {
       this.flowFormVisible = true
       this.$nextTick(() => {
-        this.$refs.FlowForm.init(id)
+        this.$refs.FlowForm.init(id,name)
       })
     },
   }

@@ -10,33 +10,88 @@
         </div>
       </div>
       <div class="main" v-loading="formLoading">
-        <AbnormalProcess  ref="processDesign" :conf="flowTemplateJson"  :flowType="0" />
+        <AbnormalProcess :key="flowTemplateJson.nodeId" ref="processDesign" :conf="flowTemplateJson"  :flowType="0" v-if="flowTemplateJson.nodeId" />
+        <AbnormalProcess  ref="processDesign" :conf="flowTemplateJson"  :flowType="0" v-else />
       </div>
     </div>
   </transition>
 </template>
 
 <script>
+import {Update, Create } from '@/api/workFlow/FlowEngine'
+import { getBusinessFlowInfo } from '@/api/workFlow/FlowEngine'
 import AbnormalProcess from "@/components/AbnormalProcess"
+let unique = 0
 export default {
   components: { AbnormalProcess },
   data() {
     return {
-      flowTemplateJson:''
+      flowTemplateJson:{},
+      dataForm:{
+        businessFlow:'',
+        id:'',
+        flowTemplateJson:'',
+        formType:'4',
+        enCode:'',
+        name:'',
+        category:'',
+        enabledMark:1,
+        busCallBack:'AbApplyRecordCallback'
+      },
     }
   },
   methods: {
 
-    init(id) {
+    init(id,fullName) {
       this.visible = true
       this.formLoading = true
-      
+      this.dataForm.businessFlow = id
+      this.dataForm.enCode = this.uuid()
+      this.dataForm.fullName = fullName
+      this.dataForm.category = 'exception'
+      this.getBusInfo(this.dataForm.businessFlow)
+    },
+    uuid() {
+      const time = Date.now()
+      const random = Math.floor(Math.random() * 1000000000)
+      unique++
+      return random + unique + String(time)
+    },
+    getBusInfo(id){
+      getBusinessFlowInfo(id).then(res=>{
+        if (res.data){
+          this.dataForm = {...res.data,formType:'4'}
+          this.dataForm.flowTemplateJson && (this.flowTemplateJson = JSON.parse(this.dataForm.flowTemplateJson))
+        }else{
+          this.flowTemplateJson = {}
+          this.dataForm.flowTemplateJson = {}
+        }
+        this.formLoading = false
+      }).catch(()=>{})
     },
     goBack() {
       this.$emit('close')
     },
     handleConfirm(){
-
+      this.$refs['processDesign'].getData().then(res => {
+        this.btnLoading = true
+        this.flowTemplateJson = res.formData
+        this.dataForm.flowTemplateJson = JSON.stringify(this.flowTemplateJson)
+        const formMethod = this.dataForm.id ? Update : Create
+        formMethod(this.dataForm).then((res) => {
+          this.$message({
+            message: res.msg,
+            type: 'success',
+            duration: 1500,
+            onClose: () => {
+              this.btnLoading = false
+              this.$emit('close')
+            }
+          })
+        }).catch(() => { this.btnLoading = false })
+      }).catch(err => {
+        err.msg && this.$message.warning(err.msg)
+      })
     },
   },
 }

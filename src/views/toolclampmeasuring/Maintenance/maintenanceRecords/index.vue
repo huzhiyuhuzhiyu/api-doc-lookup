@@ -5,12 +5,12 @@
         <el-form @submit.native.prevent>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入设备编码" clearable @keyup.enter.native="search()" />
+              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入工具编码" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable @keyup.enter.native="search()" />
+              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable @keyup.enter.native="search()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
@@ -41,8 +41,8 @@
         </div>
 
         <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" @sort-change="sortChange" fixedNO custom-column style="padding-bottom: 50px;">
-          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" />
-          <el-table-column prop="equipmentIdName" label="设备名称" width="200" sortable="custom" />
+          <el-table-column prop="equipmentIdCode" label="工具编码" width="200" />
+          <el-table-column prop="equipmentIdName" label="工具名称" width="200" sortable="custom" />
           <el-table-column prop="departmentIdText" label="计划保养部门" width="150" />
           <el-table-column prop="maintainerIdText" label="计划保养人" width="120"></el-table-column>
           <el-table-column prop="planMaintenanceDate" label="计划保养日期" width="180" sortable="custom"></el-table-column>
@@ -88,7 +88,7 @@ export default {
       tableData: [],
       listLoading: false,
       orderForm: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         recordType: 'maintenance',
         equipmentIdCode: '',
         equipmentIdName: '',
@@ -152,7 +152,7 @@ export default {
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
       this.orderForm = {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         recordType: 'maintenance',
         equipmentIdCode: '',
         equipmentIdName: '',

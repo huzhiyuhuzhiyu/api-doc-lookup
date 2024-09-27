@@ -16,10 +16,8 @@
 
         <el-tabs v-model="activeName" @tab-click="handleClick" class=".el-table">
           <el-tab-pane label="检定信息" name="orderInfo">
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px">
-              <h5>基本信息</h5>
-            </div>
+            <el-collapse v-model="activeNames">
+              <el-collapse-item title="基本信息" name="basicInfo">
             <el-form ref="dataForm" :model="dataForm" :rules="dataRule" label-width="160px" label-position="top">
               <el-row :gutter="30" class="custom-row">
                 <el-col :sm="6" :xs="24">
@@ -64,10 +62,8 @@
                 </el-col>
               </el-row>
             </el-form>
-            <div
-              style="line-height:33px;font-size:18px;border-bottom:1px solid #dcdfe6;background: #fafafa;padding-left:5px;">
-              <h5>工具信息</h5>
-            </div>
+          </el-collapse-item>
+              <el-collapse-item title="工具信息" name="gjxx">
             <div v-if="btnType == 'edit' || btnType == 'add'">
               <el-button type="text" style="margin-right:8px;margin-left:8px font-size:14px!important" icon="el-icon-plus"
                 :disabled="btnType == 'look' ? true : false" @click="openSeleceProductDialog()">选择工具</el-button>|
@@ -103,6 +99,8 @@
                 </el-table-column>
               </el-table>
             </el-form>
+              </el-collapse-item>
+            </el-collapse>
           </el-tab-pane>
           <el-tab-pane label="附件" name="annex">
           </el-tab-pane>
@@ -126,6 +124,7 @@ import { getOrganization } from '@/api/permission/user'
 export default {
   data() {
     return {
+      activeNames: ["basicInfo", "gjxx"],
       getcategoryTree,
       stateEquEquipment,
       productForm: {
@@ -511,68 +510,57 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// .main {
-//   padding: 10px 30px 0;
-// }
+<style scoped lang="scss">
+::v-deep .el-tabs__header {
+  margin-bottom: 5px !important;
+}
+.required {
+  color: red;
+  margin-right: 4px;
+}
 ::v-deep .data-form {
+  margin-bottom: 18px;
   .el-form-item--small.el-form-item {
     margin-bottom: 0 !important;
   }
 }
-
-.required {
-  color: red;
-  margin-right: 4px;
+.JNPF-preview-main .main {
+  padding-top: 0;
+}
+::v-deep .el-tabs--top .el-tabs__item.is-top:last-child {
+  padding-right: 0 !important;
+}
+::v-deep .el-tabs__item {
+  padding: 0 10px !important;
 }
 
-::v-deep .el-tabs__header {
-  padding: 0 !important;
+::v-deep .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 0px !important;
+}
+::v-deep .el-collapse-item__header {
+  line-height: 33px;
+  font-size: 18px;
+  border-top: 1px solid rgb(220, 223, 230);
+  background: rgb(250, 250, 250);
+  padding-left: 5px;
+  font-weight: 700;
+  border-right: 1px solid #dcdfe6;
+  border-left: 1px solid #dcdfe6;
 }
 
-::v-deep .el-tabs__header {
-  padding-left: 0 !important;
-}
-</style>
-<style scoped>
-::v-deep .el-tabs__content {
-  height: auto !important;
-  padding: 0 20px;
+::v-deep .el-collapse-item__wrap {
+  border: 1px solid #dcdfe6 !important;
+  border-top: none;
+  margin-bottom: 0;
+  padding: 0 10px 0px;
+  border-top: none !important;
 }
 
-::v-deep .JNPF-common-page-header.noButtons {
-  padding: 11px 10px;
+::v-deep .el-collapse-item__content {
+  padding-bottom: 0px;
 }
-
 ::v-deep .JNPF-common-page-header {
-  padding: 5px 10px;
-}
-</style>
-<style scoped>
-.required {
-  color: red;
-  margin-right: 4px;
-}
-
-.el-dialog .el-dialog__body {
-  padding: 20px 0px 2px !important;
-}
-
-::v-deep.selectPro.JNPF-dialog_center .el-dialog .el-dialog__body {
-  padding: 0 5px 0 10px !important;
-}
-
-.el-button span {
-  font-size: 14px !important;
-}
-
-.pagination-container {
-  background-color: #f5f7fa;
-}
-
-::v-deep .el-input-group__append {
-  background-color: #48a2ff;
-  color: #fff;
+  padding: 5px 10px !important;
 }
 </style>
     

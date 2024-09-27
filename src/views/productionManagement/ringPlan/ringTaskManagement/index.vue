@@ -186,39 +186,38 @@
     <!-- 打印流转卡弹窗选择工单数据 -->
     <el-dialog title="工单信息" :close-on-click-modal="false" :close-on-press-escape="false" :visible.sync="workOrderVisible"
       lock-scroll class="JNPF-dialog JNPF-dialog_center" width="800px">
-      <el-row :gutter="20">
-        <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px" label-position="left">
-          <el-col :span="12">
-            <el-form-item label="生产数量：" prop="productionQuantity">
-              <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="打印模版：" prop="enCode">
-              <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
-                <el-option :key="item.id" :label="item.fullName" :value="item.printBus" v-for="item in printList" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-form>
-      </el-row>
-      <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border>
-        <el-table-column prop="orderNo" label="工单号" min-width="160" />
-        <el-table-column prop="processName" label="工序名称" min-width="120" />
-        <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
-        <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
-        <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
-        <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
-        <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
-        <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
-        <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
-      </JNPF-table>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
-        <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
-          打 印</el-button>
-      </span>
+        <el-row :gutter="20">
+          <el-form ref="workOrderForm" :rules='workOrderRule' :model="workOrderForm" label-width="120px" label-position="left">
+            <el-col :span="12">
+              <el-form-item label="生产数量：" prop="productionQuantity">
+                <el-input v-model="workOrderForm.productionQuantity" placeholder="生产数量" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="打印模版：" prop="enCode">
+                <el-select v-model="workOrderForm.enCode" placeholder="选择打印模版">
+                  <el-option :key="item.id" :label="item.fullName" :value="item.id" v-for="item in printList" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-form>
+        </el-row>
+        <JNPF-table ref="work" :data="workOrderData" hasC @selection-change="handleSelectWork" fixedNo v-loading="tableloading" border>
+            <el-table-column prop="orderNo" label="工单号" min-width="160" />
+            <el-table-column prop="processName" label="工序名称" min-width="120" />
+            <el-table-column prop="processCode" label="工序编码" min-width="120"></el-table-column>
+            <el-table-column prop="planStartDate" label="计划开始日期" min-width="150"></el-table-column>
+            <el-table-column prop="planEndDate" label="计划结束日期" min-width="150"></el-table-column>
+            <el-table-column prop="mainUnit" label="单位" min-width="80"></el-table-column>
+            <el-table-column prop="productionQuantity" label="生产数量" min-width="100"></el-table-column>
+            <el-table-column prop="qualifiedQuantity" label="合格数量" min-width="100"></el-table-column>
+            <el-table-column prop="unqualifiedQuantity" label="不合格数量" min-width="130"></el-table-column>
+        </JNPF-table>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="workOrderVisible = false">{{ $t('common.cancelButton') }}</el-button>
+          <el-button type="primary" :loading="btnLoading" :disabled="btnLoading" @click="printSubmit()">
+            打 印</el-button>
+        </span>
     </el-dialog>
   </div>
 </template>
@@ -742,17 +741,21 @@ export default {
       if (!this.selectArr.length) return this.$message.error("请选择您要打印的数据!")
       if (this.selectArr.length > 1) return this.$message.error("打印只支持单条数据操作！")
       this.workOrderVisible = true
-      this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
-      detailordershengchan(this.selectArr[0].id).then(res => {
-        this.workOrderData = res.data.workOrderList
+      this.$nextTick(()=>{
+        console.log(this.$refs.work.$refs.JNPFTable);
+        
+        this.workOrderForm.productionQuantity = this.selectArr[0].productionQuantity
+          detailordershengchan(this.selectArr[0].id).then(res => {
+            this.workOrderData = res.data.workOrderList
+          })
+          getPrintList(this.printQuery).then(res => {
+            if (res.data) {
+              if (res.data.hasOwnProperty(enCode)) {
+                this.printList = res.data[enCode]
+              }
+            }
+          }).catch(() => { })
       })
-      getPrintList(this.printQuery).then(res => {
-        if (res.data) {
-          if (res.data.hasOwnProperty(enCode)) {
-            this.printList = res.data[enCode]
-          }
-        }
-      }).catch(() => { })
     },
     handleSelectWork(val){
       this.selectWorkOrder = val

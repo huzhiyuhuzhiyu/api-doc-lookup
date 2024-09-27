@@ -422,7 +422,7 @@ export default {
       ],
       //保养任务
       listQuery: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         name: "",
         listType: 'onTime',
         taskType: 'maintenance',
@@ -447,7 +447,7 @@ export default {
       },
       // 超期保养任务
       listsQuery: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         name: "",
         listType: 'overtime',
         taskType: 'maintenance',
@@ -557,6 +557,7 @@ export default {
     // 关闭新建页面
     closeForm(isRefresh = 'ture') {
       this.formVisible = false
+      this.formVisible1 = false
       if (isRefresh && this.activeName == 'orderList') {
         this.initData()
       } else {
@@ -857,7 +858,7 @@ export default {
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
       this.listQuery = {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         name: "",
         listType: 'onTime',
         taskType: 'maintenance',
@@ -888,7 +889,7 @@ export default {
     resetDetail() {
       this.$refs['detailTableData'].$refs.JNPFTable.clearSort()
       this.listsQuery = {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         name: "",
         listType: 'overtime',
         taskType: 'maintenance',

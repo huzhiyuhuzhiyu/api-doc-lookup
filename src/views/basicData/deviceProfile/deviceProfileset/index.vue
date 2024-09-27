@@ -89,7 +89,8 @@
               <el-tag  disable-transitions v-if="scope.row.deviceType == 'virtually'">虚拟设备</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="storageLocation" label="存放地点" min-width="200" sortable="custom" />
+          <el-table-column prop="factoryFloor" label="车间" min-width="200" sortable="custom" />
+          <el-table-column prop="mountedPlaces" label="安装地点" min-width="200" sortable="custom" />
           <el-table-column prop="partnerName" label="供应商" min-width="200" sortable="custom" />
           <el-table-column prop="supplier" label="生产厂家" min-width="200" sortable="custom" />
           <el-table-column prop="serialNo" label="序列号" min-width="200" sortable="custom" />

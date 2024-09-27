@@ -95,7 +95,8 @@ export default {
       listQuery: {
         factoryFloorid: '',
         mountedPlacesid: '',
-        maintenanceType: ''
+        maintenanceType: '',
+        classAttribute: "equipment"
       },
       datasetList: [
         { name: '点检设备数量分布', id: 'inspectionquipment', option: {} },
@@ -157,7 +158,8 @@ export default {
       this.listQuery = {
         factoryFloorid: '',
         mountedPlacesid: '',
-        maintenanceType: ''
+        maintenanceType: '',
+        classAttribute: "equipment"
       }
       this.search()
     },

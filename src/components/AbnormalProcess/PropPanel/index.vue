@@ -1410,7 +1410,7 @@
             </el-table>
           </div>
         </el-tab-pane> -->
-        <el-tab-pane label="节点事件">
+        <!-- <el-tab-pane label="节点事件">
           <el-scrollbar class="config-scrollbar">
             <el-form :model="approverForm" class="pd-10-20" label-position="left">
               <el-alert title="开启后可配置触发事件同时进行参数赋值" type="warning" :closable="false" show-icon />
@@ -2018,7 +2018,7 @@
               </div>
             </el-form>
           </el-scrollbar>
-        </el-tab-pane>
+        </el-tab-pane> -->
         </el-tabs>
       </el-scrollbar>
 
@@ -2277,10 +2277,7 @@ const typeOptions = [
   //   value: 9
   // }
 ]
-const assigneeTypeOptions = [...typeOptions, {
-  label: '候选人员',
-  value: 7
-}]
+const assigneeTypeOptions = [...typeOptions]
 const noticeOptions = [{
   value: 1,
   label: '自定义'

@@ -56,6 +56,14 @@ export function Reject(id, data) {
     data
   })
 }
+// 待我审核驳回
+export function batchReject(data) {
+  return request({
+    url: `/api/workflow/Engine/FlowBefore/Reject/batch`,
+    method: 'post',
+    data
+  })
+}
 // 撤回审核
 export function Recall(id, data) {
   return request({

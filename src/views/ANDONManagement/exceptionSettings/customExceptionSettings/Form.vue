@@ -25,7 +25,8 @@ export default {
       btnType: 'add',
       dataFormItems: [],
       dataFormTwo: [],
-      linesListItems: []
+      linesListItems: [],
+      codeConfig: {},
     }
   },
   computed: {
@@ -36,6 +37,17 @@ export default {
   created() {
   },
   methods: {
+    async fetchData(code, flag) {
+      try {
+        const data = await this.jnpf.getBillRuleConfigFun(code);
+        this.codeConfig = data
+        if (flag) {
+          this.dataForm.code = data.number
+        }
+        this.setDataFormItems()
+      } catch (error) {
+      }
+    },
     setDataFormItems() {
       this.dataFormItems = [
         {
@@ -48,7 +60,7 @@ export default {
                 if (!value) { callback() }
                 else if (this.dataForm.code === this.autoCode) { callback() }
                 else {
-                  checkAbnoramlTypeCode(value).then((res) => {
+                  checkAbnoramlTypeCode(value,(this.dataForm.id || '')).then((res) => {
                     if (!res.data) { callback() }
                     else { callback(new Error('此类型编码已存在')) }
                   }).catch((err) => { callback(new Error(" ")) })
@@ -56,7 +68,11 @@ export default {
               },
               trigger: 'blur'
             }
-          ], sm: 12, itemDisabled:this.btnType === 'look' ? true : false
+          ], sm: 12, itemDisabled:this.btnType === 'look' ? true : this.codeConfig.codeWay == 'auto' && !this.codeConfig.modifyFlag ? true : false
+        },
+        { prop: "module", label: "异常模块", value: "", type: "select", itemRules: [{ required: true, message: '异常模块不能为空', trigger: "change" }], 
+          sm: 12,itemDisabled:this.btnType === 'look' ? true : false ,
+          options: [{ label: '质量异常', value: 'quality' },{ label: '物料异常', value: 'material' },{ label: '生产异常', value: 'produce' },{ label: '设备异常', value: 'facility' }]
         },
         { prop: "name", label: "类型名称", value: "", type: "input", itemRules: [{ required: true, message: '类型名称不能为空', trigger: "blur" }], 
           sm: 12,itemDisabled:this.btnType === 'look' ? true : false 
@@ -102,7 +118,9 @@ export default {
                   this.$message.error(`内容编码不能重复`)
                   callback(new Error(''))
                 } else {
-                  checkAbnoramlTypeCode(value).then((res) => {
+                  console.log(this.dataFormTwo[index].id);
+                  
+                  checkAbnoramlTypeCode(value,(this.dataFormTwo[index].id || '')).then((res) => {
                     if (!res.data) { callback() }
                     else {
                       this.$message.error(`异常内容第${index + 1}行：内容编码已存在`)
@@ -143,7 +161,7 @@ export default {
     },
     clearData() {
       this.dataForm = {}
-      this.dataFormTwo = []
+      this.dataFormTwo = [{code:'',name:'',remark:'',category: 'content',id: ''}]
     },
     init(id, btntype) {
       // 此处判断用户选择新增还是编辑
@@ -155,16 +173,19 @@ export default {
         if (btntype == 'add') {
           this.dialogTitle = '新建异常'
           this.clearData()
-          this.setDataFormItems()
+          this.fetchData('ExceptionType',true)
+          // this.setDataFormItems()
           this.setLinesListItems()
+          console.log(this.dataForm);
+          
         } else {
           detailAbnoramlTypeData(id).then(res => {
             this.dialogTitle = `编辑异常`
             this.dataForm = res.data.type
             this.dataFormTwo = res.data.contentList
-
             this.loading = false
-            this.setDataFormItems()
+            // this.setDataFormItems()
+            this.fetchData('ExceptionType',false)
             this.setLinesListItems()
           }).catch(error => { })
         }

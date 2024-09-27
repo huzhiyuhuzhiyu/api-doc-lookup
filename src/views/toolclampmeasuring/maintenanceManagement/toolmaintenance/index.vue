@@ -10,12 +10,12 @@
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入设备编码" clearable @keydown.enter.native="dataFormSubmit()" />
+              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入工具编码" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item>
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable @keydown.enter.native="dataFormSubmit()" />
+              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable @keydown.enter.native="dataFormSubmit()" />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -47,8 +47,8 @@
                             }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column prop="equipmentIdCode" label="设备编码" width="200" fixed="left" sortable="custom" />
-          <el-table-column prop="equipmentIdName" label="设备名称" width="200" fixed="left" sortable="custom"></el-table-column>
+          <el-table-column prop="equipmentIdCode" label="工具编码" width="200" fixed="left" sortable="custom" />
+          <el-table-column prop="equipmentIdName" label="工具名称" width="200" fixed="left" sortable="custom"></el-table-column>
           <el-table-column prop="departmentIdName" label="申请部门" width="120" />
           <el-table-column prop="applicantIdName" label="申请人" width="120"></el-table-column>
           <el-table-column prop="applicationDate" label="申请日期" width="180" sortable="custom"></el-table-column>
@@ -108,13 +108,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备编码">
-              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入设备编码" clearable />
+            <el-form-item label="工具编码">
+              <el-input v-model="orderForm.equipmentIdCode" placeholder="请输入工具编码" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="设备名称">
-              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入设备名称" clearable />
+            <el-form-item label="工具名称">
+              <el-input v-model="orderForm.equipmentIdName" placeholder="请输入工具名称" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -183,7 +183,7 @@ export default {
         { label: "已维修", value: "maintained" }
       ],
       orderForm: {
-        classAttribute: "equipment",
+        classAttribute: "tool",
         maintenanceNo: '',
         equipmentIdCode: '',
         equipmentIdName: '',

@@ -13,7 +13,7 @@
               </div>
               <div class="body-right">
                 <div class="right-top">{{ item.label }}</div>
-                <div class="right-bottom text">当前状态：{{ item.count }}条异常</div>
+                <div class="right-bottom text">当前状态：{{ Number(item.count) ? item.count + '条异常' : '无异常' }}</div>
               </div>
             </div>
           </el-card>
@@ -339,11 +339,12 @@ export default {
     .body-left {
       width: 80px;
       height: 80px;
-
+      display: flex;
+      align-items: center;
       i {
         width: 100%;
         height: 100%;
-        font-size: 4vw;
+        font-size: 3vw;
       }
     }
 
@@ -352,7 +353,7 @@ export default {
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-
+      width: 50%;
       .right-top {
         font-size: 1vw;
       }

@@ -1262,6 +1262,12 @@ export default {
       this.approvalFlag = approvalFlag
       this.btnType = btnType
       console.log(this.btnType, 'this.btnType')
+      if (data) {
+        data.forEach(item => {
+          item.ordersNo = item.orderNo
+        })
+        this.dataFormTwo.productData = data
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1283,7 +1289,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            this.fetchData('WXSH')
+
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
             })
@@ -1308,6 +1314,7 @@ export default {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        this.fetchData('WXSH')
       }
     },
     goBack() {

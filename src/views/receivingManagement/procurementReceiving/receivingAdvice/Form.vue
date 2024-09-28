@@ -155,7 +155,7 @@
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
                     <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
+                    <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom" />
 
                     <el-table-column label="操作" width="120" fixed="right" v-if="btnType != 'look'" key="24">
                       <template slot-scope="scope">
@@ -1492,7 +1492,9 @@ export default {
       this.btnType = btnType
       console.log(btnType, 'iiiiii')
       this.approvalFlag = approvalFlag
-
+      if (data) {
+        this.dataFormTwo.productData = data
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1515,7 +1517,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            this.fetchData('CGSH')
+
             // getOrderDetail(res.data.notice.ordersId).then(res1 => {
             //   res1.data.orderLines.map((item) => {
             //     res.data.lines.map((item1) => {
@@ -1555,6 +1557,7 @@ export default {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        this.fetchData('CGSH')
       }
     },
     goBack() {

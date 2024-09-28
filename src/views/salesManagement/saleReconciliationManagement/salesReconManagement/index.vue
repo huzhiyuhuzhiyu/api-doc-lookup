@@ -3,20 +3,25 @@
     <div class="JNPF-common-layout-center JNPF-flex-main">
       <el-row class="JNPF-common-search-box" :gutter="16">
         <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+            <el-col :span="item.searchType === 3 ? 6 : 4">
+              <el-form-item>
+                <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                  @keyup.enter.native="search('basic')" />
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model.trim="listQuery.orderNo" placeholder="请输入对账单号" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
+                <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                  clearable>
+                  <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                    :value="item2.value"></el-option>
+                </el-select>
+                <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                  :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                  :type="item.dateType"
+                  :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </template>
 
-          <el-col :span="4">
-            <el-form-item>
-              <el-input v-model="listQuery.cooperativePartnerName" placeholder="请输入客户名称" clearable
-                @keyup.enter.native="search()" />
-            </el-form-item>
-          </el-col>
           <el-col :span="4">
             <el-form-item>
               <el-date-picker v-model="reconciliationDate" type="daterange" value-format="yyyy-MM-dd"
@@ -26,7 +31,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item>
-              <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+              <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                 {{ $t('common.search') }}</el-button>
               <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                 $t('common.reset') }}
@@ -56,7 +61,7 @@
         </div>
 
         <JNPF-table v-loading="listLoading" highlight-current-row ref="tableForm" :data="tableDataList"
-          @sort-change="sortChange" custom-column v-if="tableDataList.length">
+          @sort-change="sortChange" custom-column>
           <el-table-column prop="orderNo" label="对账单号" min-width="180" sortable="custom">
             <template slot-scope="scope">
               <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -109,7 +114,8 @@
           <el-table-column prop="remark" label="备注" min-width="180" />
           <el-table-column prop="createTime" label="创建时间" sortable="custom" width="180" />
           <el-table-column prop="createByName" label="创建人" min-width="180" />
-          <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120" v-if="showAppCodeFlag">
+          <el-table-column prop="approvalStatus" label="审批状态" align="center" sortable="custom" min-width="120"
+            v-if="showAppCodeFlag">
             <template slot-scope="scope">
               <div v-if="scope.row.approvalStatus == 'ing'"><el-tag>审批中</el-tag> </div>
               <div v-if="scope.row.approvalStatus == 'ok'"><el-tag type="success">审批通过</el-tag></div>
@@ -129,7 +135,8 @@
               <el-button type="text" size="mini" v-if="scope.row.approvalStatus === 'ing' && showAppCodeFlag"
                 @click.native="withdrawnHandle(scope.row.id, 'withdrawn')"> 审批撤回</el-button>
 
-              <el-dropdown hide-on-click v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn'||scope.row.approvalStatus === 'ing'">
+              <el-dropdown hide-on-click
+                v-if="scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn' || scope.row.approvalStatus === 'ing'">
                 <span class="el-dropdown-link">
                   <el-button type="text" size="mini">
                     {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -141,7 +148,8 @@
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              <el-button v-else type="text" size="mini"  @click.native="handleUserRelation(scope.row.id, 'look')"> 查看详情</el-button>
+              <el-button v-else type="text" size="mini" @click.native="handleUserRelation(scope.row.id, 'look')">
+                查看详情</el-button>
               <!-- </tableOpts> -->
 
               <!-- <el-button type="text" @click="addOrUpdateHandle(scope.row.id, 'edit')">编辑</el-button>
@@ -189,33 +197,31 @@ export default {
   components: { JNPFForm, withdrawnForm, SuperQuery },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+      ],
       withdrawnVisible: false,
-      title: "更多查询",
       background: true,//分页器背景颜色
-      visible: false,
       tableDataList: [
       ],
       formVisible: false,
       listLoading: false,
       reconciliationDate: [],
-      createRequirementDate: [],
       listQuery: {
-        active: true,
-        approvalStatus: "",
+
         cooperativePartnerName: "",
-        createByName: "",
-        createEndTime: "",
-        createStartTime: "",
-        documentStatus: "",
-        endTime: "",
-        keyword: "",
+
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
         reconciliationEndDate: "",
         reconciliationStartDate: "",
         reconciliationType: 'receivable',
-        startTime: "",
+
         orderItems: [{
           asc: false,
           column: ""
@@ -310,23 +316,24 @@ export default {
           pickerOptions: this.global.timePickerOptions
         },
       ],
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
-  async created() {
-    const res = await this.jnpf.getBusInfo('b013')
-    if (res){
+  created() {
+    const res = this.jnpf.getBusInfo('b013')
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
-    this.initData()
+    this.superForm = this.listQuery
+    this.search('basic')
   },
   methods: {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
@@ -354,9 +361,7 @@ export default {
       this.withdrawnVisible = false
       this.reset()
     },
-    moreQueries() {
-      this.visible = true
-    },
+
 
     initData() {
       if (this.reconciliationDate && this.reconciliationDate.length > 0) {
@@ -366,13 +371,7 @@ export default {
         this.listQuery.reconciliationStartDate = ''
         this.listQuery.reconciliationEndDate = ''
       }
-      if (this.createRequirementDate && this.createRequirementDate.length > 0) {
-        this.listQuery.createStartTime = this.createRequirementDate[0] + " 00:00:00"
-        this.listQuery.createEndTime = this.createRequirementDate[1] + " 23:59:59"
-      } else {
-        this.listQuery.createStartTime = ''
-        this.listQuery.createEndTime = ''
-      }
+
       this.listLoading = true
       getfinAccountList(this.listQuery).then(res => {
         console.log(res, '对账单列表');
@@ -383,30 +382,40 @@ export default {
         this.tableDataList = res.data.records
         this.total = res.data.total
         this.listLoading = false
-        this.visible = false
       }).catch(() => {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
+      console.log(type);
       this.listQuery.pageNum = 1
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-      this.listQuery = {
-        approvalStatus: "",
+      this.superForm = this.listQuery = {
         cooperativePartnerName: "",
-        createByName: "",
-        createEndTime: "",
-        createStartTime: "",
-        documentStatus: "",
-        endTime: "",
-        keyword: "",
         orderNo: "",
         pageNum: 1,
         pageSize: 20,
@@ -421,10 +430,15 @@ export default {
           asc: false,
           column: "create_time"
         }],
-      },
-        this.reconciliationDate = []
-      this.createRequirementDate = []
-      this.search()
+      }
+      this.reconciliationDate = []
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '对账单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.$refs.SuperQuery.conditionList = []
+
+      this.search('basic')
     },
     addSupplier(id, type) {
       this.formVisible = true
@@ -486,10 +500,10 @@ export default {
           backAmount: '',                      // 退货总金额
           receiptAmount: '',                   // 收货总金额
           brTotalAmount: '',                   // 收/退货总金额
-          approvalFlag:false, //
+          approvalFlag: false, //
         }
-        res.data.reconciliationLines.forEach(item => { 
-          item.receiptReturnType=item.businessType
+        res.data.reconciliationLines.forEach(item => {
+          item.receiptReturnType = item.businessType
           if (item.noticeBillVO) {
             dataFormTwo.push(item.noticeBillVO)
           } else {

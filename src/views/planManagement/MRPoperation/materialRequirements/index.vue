@@ -6,21 +6,24 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="assembleFormSQ.productDrawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
+                <template v-for="item in searchList1">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getassembleData('basic')" />
 
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="assembleFormSQ.planNo" placeholder="计划单号" clearable />
-                  </el-form-item>
-                </el-col>
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
                 <el-col :span="6">
                   <el-form-item>
                     <el-date-picker v-model="planDateArr" type="daterange" value-format="yyyy-MM-dd"
@@ -30,7 +33,7 @@
                 </el-col>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getassembleData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getassembleData('basic')">
                       {{ $t("common.search") }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetAssembleData()">{{
                       $t("common.reset") }}
@@ -58,12 +61,12 @@
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="getassembleData()" />
+                      @click="getassembleData('basic')" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table  :partentOrChild="'assemble'" ref="assembleRef" v-loading="listLoading" :data="assembleData" :fixedNO="true"
-                @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
+              <JNPF-table :partentOrChild="'assemble'" ref="assembleRef" v-loading="listLoading" :data="assembleData"
+                :fixedNO="true" @sort-change="sortChange" custom-column hasC @selection-change="handleAssemble"
                 :setColumnDisplayList="columnList1" :checkSelectable="disproduceData" :key="1">
                 <el-table-column prop="productDrawingNo" label="品名规格" min-width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -115,26 +118,27 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="produceForm.productDrawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="produceForm.planNo" placeholder="请输入计划单号" clearable />
-                  </el-form-item>
-                </el-col>
+                <template v-for="item in searchList3">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getproduceData('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-date-picker v-model="planDateArr" type="daterange" value-format="yyyy-MM-dd"
-                      style="width: 100%;" start-placeholder="开始日期" end-placeholder="结束日期" clearable>
-                    </el-date-picker>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="6">
-                  <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getproduceData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getproduceData('basic')">
                       {{ $t("common.search") }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetProduceData()">{{
                       $t("common.reset") }}
@@ -160,13 +164,13 @@
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="getproduceData()" />
+                      @click="getproduceData('basic')" />
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table :partentOrChild="'produce'"  ref="produceRef" v-loading="listLoading" :data="produceData" :fixedNO="true" :key="2"
-                :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column hasC 
-                @selection-change="handleProduce" :checkSelectable="disproduceData">
+              <JNPF-table :partentOrChild="'produce'" ref="produceRef" v-loading="listLoading" :data="produceData"
+                :fixedNO="true" :key="2" :setColumnDisplayList="columnList2" @sort-change="sortChange" custom-column
+                hasC @selection-change="handleProduce" :checkSelectable="disproduceData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -251,11 +255,24 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="purchaseForm.productDrawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
+                <template v-for="item in searchList3">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getpurchaseData('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
                 <el-col :span="4">
                   <el-form-item>
                     <el-select v-model="purchaseForm.immediatelyBuyFlag" placeholder="立即采购" clearable
@@ -265,22 +282,17 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="purchaseForm.planNo" placeholder="请输入计划单号" clearable />
-                  </el-form-item>
-                </el-col>
 
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getpurchaseData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getpurchaseData('basic')">
                       {{ $t("common.search") }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetPurchaseData()">{{
                       $t("common.reset") }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -300,13 +312,13 @@
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
+                      @click="getpurchaseData('basic')" />
                   </el-tooltip>
                 </div>
               </div>
 
-              <JNPF-table :partentOrChild="'purchase'" ref="purchaseRef" v-loading="listLoading" :data="purchaseData" :fixedNO="true"
-                :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
+              <JNPF-table :partentOrChild="'purchase'" ref="purchaseRef" v-loading="listLoading" :data="purchaseData"
+                :fixedNO="true" :setColumnDisplayList="columnList3" @sort-change="sortChange" custom-column hasC
                 @selection-change="handlePurchase" :checkSelectable="dispurchaseData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="170" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
@@ -383,27 +395,34 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="outForm.planNo" placeholder="计划单号" clearable />
-                  </el-form-item>
-                </el-col>
+                <template v-for="item in searchList3">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="getouteData('basic')" />
 
-
-                <el-col :span="4">
-                  <el-form-item>
-                    <el-input v-model="outForm.productDrawingNo" placeholder="品名规格" clearable />
-                  </el-form-item>
-                </el-col>
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
+                
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getouteData()">
+                    <el-button type="primary" size="mini" icon="el-icon-search" @click="getouteData('basic')">
                       {{ $t("common.search") }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="resetOuData()">{{ $t("common.reset") }}
                     </el-button>
                   </el-form-item>
-                </el-col> 
+                </el-col>
               </el-form>
             </el-row>
             <div class="JNPF-common-layout-main JNPF-flex-main">
@@ -422,14 +441,14 @@
                   </el-tooltip>
                   <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
                     <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false"
-                      @click="initData()" />
+                      @click="getouteData('basic')" />
                   </el-tooltip>
                 </div>
               </div>
 
-              <JNPF-table :partentOrChild="'out'" ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true" @sort-change="sortChange"
-                :setColumnDisplayList="columnList4" custom-column hasC @selection-change="handleOut"
-                :checkSelectable="disOutData">
+              <JNPF-table :partentOrChild="'out'" ref="outRef" v-loading="listLoading" :data="outData" :fixedNO="true"
+                @sort-change="sortChange" :setColumnDisplayList="columnList4" custom-column hasC
+                @selection-change="handleOut" :checkSelectable="disOutData">
                 <el-table-column prop="productDrawingNo" label="品名规格" width="180" sortable="custom" />
                 <el-table-column prop="productCode" label="产品编码" min-width="140" sortable="custom" />
                 <el-table-column prop="bomFlag" label="是否有BOM" min-width="140" sortable="custom">
@@ -619,22 +638,34 @@ export default {
   data() {
     return {
       superQueryVisible: false,
-      assembleFormSQ: {
-        planNo: "",
-        productDrawingNo: "",
-      },
-      produceFormSQ: {
-        planNo: "",
-        productDrawingNo: "",
-      },
-      purchaseFormSQ: {
-        planNo: "",
-        productDrawingNo: "",
-      },
-      outFormSQ: {
-        planNo: "",
-        productDrawingNo: "",
-      },
+      superQuery1: {},
+      superForm1: {},
+      basicQuery1: {},
+      searchList1: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superQuery2: {},
+      superForm2: {},
+      basicQuery2: {},
+      searchList2: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superQuery3: {},
+      superForm3: {},
+      basicQuery3: {},
+      searchList3: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      superQuery4: {},
+      superForm4: {},
+      basicQuery4: {},
+      searchList4: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
       orderDetailData: [],
       productVisible: false,
       columnList1: ["productCode", "planNo", "sealingCoverTyping", "accuracyLevel", "vibrationLevel", "oil", "oilQuantity", "clearance", "packagingMethod", "specialRequire", "planEndDate"],
@@ -819,7 +850,8 @@ export default {
     },
   },
   created() {
-    this.getassembleData();
+    this.superForm1=this.assembleForm
+    this.getassembleData('basic');
     this.getconfigFun()
 
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
@@ -933,11 +965,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-          {
-            prop: 'outputQuantity',
-            label: "需组装数量",
-            type: 'input',
-          },
+   
           {
             prop: 'sealingCoverTyping',
             label: "打字内容",
@@ -1084,7 +1112,7 @@ export default {
 
 
         ]
-        this.superQueryVisible=true
+        this.superQueryVisible = true
       }
       if (this.activeName == 'purchase') {
         this.superQueryJson = [
@@ -1117,51 +1145,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-          {
-            prop: 'safeInventory',
-            label: "安全库存",
-            type: 'input',
-          },
-          {
-            prop: 'inventoryQuantity',
-            label: "库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'availableQuantity',
-            label: "可用库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'demandQuantity',
-            label: "需求数量",
-            type: 'input',
-          },
-          {
-            prop: 'lossNum',
-            label: "损耗数量",
-            type: 'input',
-          },
-          {
-            prop: 'planInTransitQuantity',
-            label: "计划在途数量",
-            type: 'input',
-          },
-          {
-            prop: 'inTransitUnOccupancyQuantity',
-            label: "实际在途数量",
-            type: 'input',
-          },
-          {
-            prop: 'occupancyQuantity',
-            label: "占用数量",
-            type: 'input',
-          },
-          {
-            prop: 'outputQuantity',
-            label: "需采购数量",
-            type: 'input',
-          },
+          
 
 
 
@@ -1170,7 +1154,7 @@ export default {
 
 
         ]
-        this.superQueryVisible=true
+        this.superQueryVisible = true
       }
       if (this.activeName == 'out') {
         this.superQueryJson = [
@@ -1212,52 +1196,7 @@ export default {
             label: "单位",
             type: 'input',
           },
-          {
-            prop: 'safeInventory',
-            label: "安全库存",
-            type: 'input',
-          },
-          {
-            prop: 'inventoryQuantity',
-            label: "库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'availableQuantity',
-            label: "可用库存数量",
-            type: 'input',
-          },
-          {
-            prop: 'demandQuantity',
-            label: "需求数量",
-            type: 'input',
-          },
-          {
-            prop: 'lossNum',
-            label: "损耗数量",
-            type: 'input',
-          },
-          {
-            prop: 'planInTransitQuantity',
-            label: "计划在制数量",
-            type: 'input',
-          },
-          {
-            prop: 'inTransitUnOccupancyQuantity',
-            label: "实际在制数量",
-            type: 'input',
-          },
-          {
-            prop: 'occupancyQuantity',
-            label: "占用数量",
-            type: 'input',
-          },
-          {
-            prop: '需外协数量',
-            label: "需生产数量",
-            type: 'input',
-          },
-
+           
 
 
 
@@ -1267,7 +1206,7 @@ export default {
 
 
         ]
-        this.superQueryVisible=true
+        this.superQueryVisible = true
       }
     },
 
@@ -1320,22 +1259,35 @@ export default {
     // table切换
     handleClick() {
       console.log(this.activeName);
+    
       if (this.activeName == "assemble") {
         this.planDateArr = []
-        this.getassembleData()
+        this.assembleForm.productDrawingNo = ""
+        this.assembleForm.planNo = ""
+        this.superForm1=this.assembleForm
+        this.getassembleData('basic')
       }
       if (this.activeName == "produce") {
         this.planDateArr = []
-        this.getproduceData()
+        this.produceForm.productDrawingNo = ""
+        this.produceForm.planNo = ""
+        this.superForm2=this.produceForm
+        this.getproduceData('basic')
 
       }
       if (this.activeName == "purchase") {
-        this.getpurchaseData()
+        this.purchaseForm.productDrawingNo = ""
+        this.purchaseForm.planNo = ""
+        this.superForm3=this.purchaseForm
+        this.getpurchaseData('basic')
 
       }
       if (this.activeName == "out") {
+        this.outForm.productDrawingNo = ""
+        this.outForm.planNo = ""
         this.planDateArr = []
-        this.getouteData()
+        this.superForm4=this.outForm
+        this.getouteData('basic')
 
       }
     },
@@ -1365,19 +1317,22 @@ export default {
         this.assembleForm.planSsd = ""
         this.assembleForm.planSed = ""
       }
-      if (this.assembleFormSQ.planNo) {
-        this.assembleForm.superQuery.condition.push(
-          { "field": "planNo", "fieldValue": this.assembleFormSQ.planNo, "symbol": "like" }
-        )
+      if (type === 'basic') {
+        this.basicQuery1 = {
+          matchLogic: 'AND',
+          condition: this.searchList1
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm1.superQuery = this.basicQuery1
       }
-      if (this.assembleFormSQ.productDrawingNo) {
-        this.assembleForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.assembleFormSQ.productDrawingNo, "symbol": "like" }
-        )
-      }
-
-      if (this.assembleFormSQ.planNo || this.assembleFormSQ.productDrawingNo) {
-        this.$set(this.assembleForm.superQuery, 'matchLogic', 'AND')
+      if (type === 'super') {
+        this.superForm1.superQuery = this.superQuery1
       }
       getMaterialDemandReport(this.assembleForm).then(res => {
         console.log("组装res", res);
@@ -1385,7 +1340,7 @@ export default {
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            item.planProductionQuantity=item.outputQuantity
+            item.planProductionQuantity = item.outputQuantity
           });
           this.total1 = res.data.page.total
           this.assembleData = tableData
@@ -1403,7 +1358,7 @@ export default {
     },
     resetAssembleData() {
       this.planDateArr = []
-      this.assembleForm = {
+      this.superForm1 = this.assembleForm = {
         demandType: "assemble",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -1429,10 +1384,14 @@ export default {
         this.assembleFormSQ.planNo = ""
       this.assembleFormSQ.productDrawingNo = ""
       this.$refs.SuperQuery.conditionList = []
-      this.getassembleData()
+      this.searchList1 = [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ],
+      this.getassembleData('basic')
     },
     // 生产列表数据
-    getproduceData() {
+    getproduceData(type) {
       if (this.planDateArr.length) {
         this.produceForm.planSsd = this.planDateArr[0]
         this.produceForm.planSed = this.planDateArr[1]
@@ -1440,18 +1399,22 @@ export default {
         this.produceForm.planSsd = ""
         this.produceForm.planSed = ""
       }
-      if (this.produceFormSQ.planNo) {
-        this.produceForm.superQuery.condition.push(
-          { "field": "planNo", "fieldValue": this.produceFormSQ.planNo, "symbol": "like" }
-        )
+      if (type === 'basic') {
+        this.basicQuery2 = {
+          matchLogic: 'AND',
+          condition: this.searchList2
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm2.superQuery = this.basicQuery2
       }
-      if (this.produceFormSQ.productDrawingNo) {
-        this.produceForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.produceFormSQ.productDrawingNo, "symbol": "like" }
-        )
-      }
-      if (this.produceFormSQ.planNo || this.produceFormSQ.productDrawingNo) {
-        this.$set(this.produceForm.superQuery, 'matchLogic', 'AND')
+      if (type === 'super') {
+        this.superForm2.superQuery = this.superQuery2
       }
       getMaterialDemandReport(this.produceForm).then(res => {
         console.log("生产res", res);
@@ -1459,7 +1422,7 @@ export default {
         let tableData = res.data.page.records
         if (tableData.length) {
           tableData.forEach(item => {
-            item.planProductionQuantity=item.outputQuantity
+            item.planProductionQuantity = item.outputQuantity
           });
           this.produceData = tableData
           this.total2 = res.data.page.total
@@ -1484,7 +1447,7 @@ export default {
     },
     resetProduceData() {
       this.planDateArr = []
-      this.produceForm = {
+      this.superForm2=this.produceForm = {
         demandType: "produce",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -1505,27 +1468,28 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      },
-        this.produceFormFormSQ.planNo = ""
-      this.produceFormFormSQ.productDrawingNo = ""
+      }, 
       this.$refs.SuperQuery.conditionList = []
-      this.getproduceData()
+      this.getproduceData('basic')
     },
     // 采购列表数据
-    getpurchaseData() {
-      if (this.purchaseFormSQ.planNo) {
-        this.purchaseForm.superQuery.condition.push(
-          { "field": "planNo", "fieldValue": this.purchaseFormSQ.planNo, "symbol": "like" }
-        )
+    getpurchaseData(type) {
+      if (type === 'basic') {
+        this.basicQuery3 = {
+          matchLogic: 'AND',
+          condition: this.searchList3
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm3.superQuery = this.basicQuery3
       }
-      if (this.purchaseFormSQ.productDrawingNo) {
-        this.purchaseForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.purchaseFormSQ.productDrawingNo, "symbol": "like" }
-        )
-      }
-
-      if (this.purchaseFormSQ.planNo || this.purchaseFormSQ.productDrawingNo) {
-        this.$set(this.purchaseForm.superQuery, 'matchLogic', 'AND')
+      if (type === 'super') {
+        this.superForm3.superQuery = this.superQuery3
       }
       getMaterialDemandReport(this.purchaseForm).then(res => {
         console.log("采购res", res);
@@ -1555,7 +1519,7 @@ export default {
       })
     },
     resetPurchaseData() {
-      this.purchaseForm = {
+      this.superForm3=this.purchaseForm = {
         productDrawingNo: "",
         planNo: "",
         immediatelyBuyFlag: "",
@@ -1575,11 +1539,13 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      },
-        this.purchaseFormSQ.planNo = ""
-      this.purchaseFormSQ.productDrawingNo = ""
+      } 
+      this.searchList3 = [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ]
       this.$refs.SuperQuery.conditionList = []
-      this.getpurchaseData()
+      this.getpurchaseData('basic')
     },
     // 外协列表数据
     getouteData() {
@@ -1590,19 +1556,22 @@ export default {
         this.outForm.planSsd = ""
         this.outForm.planSed = ""
       }
-      if (this.outFormSQ.planNo) {
-        this.outForm.superQuery.condition.push(
-          { "field": "planNo", "fieldValue": this.outFormSQ.planNo, "symbol": "like" }
-        )
+      if (type === 'basic') {
+        this.basicQuery4 = {
+          matchLogic: 'AND',
+          condition: this.searchList4
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm4.superQuery = this.basicQuery4
       }
-      if (this.outFormSQ.productDrawingNo) {
-        this.outForm.superQuery.condition.push(
-          { "field": "productDrawingNo", "fieldValue": this.outFormSQ.productDrawingNo, "symbol": "like" }
-        )
-      }
-
-      if (this.outFormSQ.planNo || this.outFormSQ.productDrawingNo) {
-        this.$set(this.outForm.superQuery, 'matchLogic', 'AND')
+      if (type === 'super') {
+        this.superForm4.superQuery = this.superQuery4
       }
       getMaterialDemandReport(this.outForm).then(res => {
         console.log("外协res", res);
@@ -1633,7 +1602,7 @@ export default {
     },
     resetOuData() {
       this.planDateArr = []
-      this.outForm = {
+      this.superForm4= this.outForm = {
         demandType: "out",
         demandState: "not_finish",
         documentStatus: "submit",
@@ -1654,11 +1623,13 @@ export default {
         },
         pageNum: 1,
         pageSize: 20,
-      },
-        this.outFormSQ.planNo = ""
-      this.outFormSQ.productDrawingNo = ""
+      }, 
       this.$refs.SuperQuery.conditionList = []
-      this.getouteData()
+      this.searchList4 = [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.getouteData('basic')
     },
 
     // 排序
@@ -1681,28 +1652,28 @@ export default {
       if (this.activeName == "assemble") {
         this.assembleForm.orderItems[0].asc = order === "ascending";
         this.assembleForm.orderItems[0].column = order === null ? "" : newProp;
-        this.getassembleData()
+        this.getassembleData('basic')
       }
       if (this.activeName == "produce") {
         this.produceForm.orderItems[0].asc = order === "ascending";
         this.produceForm.orderItems[0].column = order === null ? "" : newProp;
-        this.getproduceData()
+        this.getproduceData('basic')
 
       }
       if (this.activeName == "purchase") {
         this.purchaseForm.orderItems[0].asc = order === "ascending";
         this.purchaseForm.orderItems[0].column = order === null ? "" : newProp;
-        this.getpurchaseData()
+        this.getpurchaseData('basic')
 
       }
       if (this.activeName == "out") {
         this.outForm.orderItems[0].asc = order === "ascending";
         this.outForm.orderItems[0].column = order === null ? "" : newProp;
-        this.getouteData()
+        this.getouteData('basic')
 
       }
     },
- 
+
     columnSetFun(ref) {
       this.$refs[ref].showDrawer()
 
@@ -1835,7 +1806,7 @@ export default {
         for (let index = 0; index < this.orderDetailData.length; index++) {
           const item = this.orderDetailData[index];
 
-          if ( !item.planProductionQuantity || Number(item.planProductionQuantity) == 0 ) {
+          if (!item.planProductionQuantity || Number(item.planProductionQuantity) == 0) {
             flag = false;
             this.$message({
               type: "error",
@@ -2012,7 +1983,7 @@ export default {
                 this.purchaseArrList[index].materialDemandId;
               ids.deliveryDate = item.deliveryDate;
               ids.poolType = item.poolType;
-              
+
             }
           });
         });
@@ -2106,7 +2077,7 @@ export default {
             item.planProductionQuantity = item.outputQuantity
 
 
-            
+
           });
 
           const mergedData = arr.reduce((acc, curr) => {
@@ -2116,14 +2087,14 @@ export default {
             if (!acc[key]) {
               acc[key] = { ...curr };
             } else {
-              acc[key].outputQuantity += curr.outputQuantity; 
+              acc[key].outputQuantity += curr.outputQuantity;
               acc[key].planProductionQuantity += curr.planProductionQuantity;
               let earliestDate = arr.reduce((earliest, current) => {
                 return earliest.deliveryDate < current.deliveryDate
                   ? earliest
                   : current;
               });
-               
+
             }
             return acc;
           }, {});
@@ -2220,17 +2191,17 @@ export default {
                 4
               );
           });
-          
-           
+
+
           console.log("arr", arr);
           const mergedArr = arr.reduce((acc, curr) => {
             const existingItem = acc.find(
-              (item) => item.productCode === curr.productCode&&item.colour === curr.colour&&item.standardValue === curr.standardValue
+              (item) => item.productCode === curr.productCode && item.colour === curr.colour && item.standardValue === curr.standardValue
             );
             if (existingItem) {
               console.log(6);
               existingItem.outputQuantity += Number(curr.outputQuantity);
-              existingItem.planDemandQuantity += this.jnpf.numberFormat( Number(curr.planDemandQuantity), 4 );
+              existingItem.planDemandQuantity += this.jnpf.numberFormat(Number(curr.planDemandQuantity), 4);
               console.log("curr", curr);
               let earliestDate = arr.reduce((earliest, current) => {
                 return earliest.deliveryDates < current.deliveryDates ? earliest : current;
@@ -2380,9 +2351,9 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
-  padding-top: 0px!important;
-   
+  margin-left: 0 !important;
+  padding-top: 0px !important;
+
   margin-bottom: 5px;
 }
 
@@ -2430,6 +2401,7 @@ export default {
 ::v-deep .el-dialog .el-dialog__body {
   padding: 30px 20px !important;
 }
+
 ::v-deep .el-tabs__item {
   padding: 0 10px;
 }

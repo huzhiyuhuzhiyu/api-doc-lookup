@@ -6,19 +6,27 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="productDrawingNoS" @keyup.enter.native="search()" placeholder="品名规格" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="productCodeS" @keyup.enter.native="search()" placeholder="产品编码" clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -94,8 +102,13 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
-      productCodeS: "",
-      productDrawingNoS: "",
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      ],
       columnList: ["cooperativePartnerName", "cooperativePartnerCode",   "productCode", "createTime", 'createByName'],
       superQueryVisible: false,
       exportFormVisible: false,
@@ -178,8 +191,9 @@ export default {
   },
 
 
-  created() {
-    this.initData()
+  created() { 
+    this.superForm=this.form
+    this.search('basic')
   },
   methods: {
     handleSelectionChange(val) {
@@ -195,7 +209,7 @@ export default {
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -224,17 +238,7 @@ export default {
     },
 
 
-    dataFormSubmit() {
-      this.form.pageNum = 1
-      Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
-        let item = this.form[key]
-        this.form[key] = typeof item === 'string' ? item.trim() : item
-      })
-
-
-      this.initData()
-
-    },
+   
 
 
     // 关闭新建编辑页面
@@ -247,39 +251,7 @@ export default {
     },
     initData() {
       this.listLoading = true
-      if (this.productCodeS) {
-
-        if (this.form.superQuery.condition.length) {
-          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("code"));
-          filteredData.push({ "field": "code", "fieldValue": this.productCodeS, "symbol": "like" })
-          this.form.superQuery.condition = filteredData
-        } else {
-          this.form.superQuery.condition.push(
-            { "field": "code", "fieldValue": this.productCodeS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.productDrawingNoS) {
-
-        if (this.form.superQuery.condition.length) {
-          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("drawingNo"));
-          filteredData.push({ "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" })
-          this.form.superQuery.condition = filteredData
-        } else {
-          this.form.superQuery.condition.push(
-            { "field": "drawingNo", "fieldValue": this.productDrawingNoS, "symbol": "like" }
-          )
-        }
-      }
-
-      if (this.productCodeS || this.productDrawingNoS) {
-        this.$set(this.form.superQuery, 'matchLogic', 'AND')
-      } else {
-        this.form.superQuery = {
-          condition: [],
-          matchLogic: ""
-        }
-      }
+    
       getProducts(this.form).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -293,13 +265,34 @@ export default {
 
 
     search() {
-      this.dataFormSubmit()
+      this.form.pageNum = 1
+      Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
+        let item = this.form[key]
+        this.form[key] = typeof item === 'string' ? item.trim() : item
+      })
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.deliveryDateArr = []
-      this.form = {
+      this.superForm=this.form = {
         classAttribute: "finish_product",
         productDrawingNo: "",
         productCode: "",
@@ -324,10 +317,12 @@ export default {
         },
       }
       this.$refs.SuperQuery.conditionList = []
-
-      this.productCodeS = "",
-        this.productDrawingNoS = "",
-        this.search()
+      this.searchList= [
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productCode', fieldValue: '', label: '产品编码', symbol: 'like', searchType: 1, width: 120 },
+      ]
+ 
+        this.search('basic')
     },
 
 

@@ -281,12 +281,19 @@ export default {
   },
   methods: {
 
-    // 撤回
-    withdrawFun(data) {
-      revokeReport(data.id).then(res=>{
-        this.$message.success("撤回成功")
-        this.initData()
+       // 撤回
+       withdrawFun(data) {
+      this.$confirm("您确定撤回该报工数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        revokeReport(data.id).then(res => {
+          this.$message.success("撤回成功")
+          this.initData()
+        })
+      }).catch(() => {
+
       })
+
     },
 
     // 获取打字内容等

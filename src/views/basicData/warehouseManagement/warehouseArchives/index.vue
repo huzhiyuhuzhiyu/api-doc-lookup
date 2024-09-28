@@ -85,16 +85,16 @@
               </el-popover>
             </template>
           </el-table-column> -->
-          <el-table-column prop="state" label="仓库状态" width="90">
+          <el-table-column prop="state" label="仓库启用状态" width="120">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.state" active-color="#13ce66" inactive-color="#ff4949" active-value="enable"
-                inactive-value="disabled" @change="stateChange(scope.row)"></el-switch>
+                inactive-value="disabled" @change="stateChange(scope)"></el-switch>
             </template>
           </el-table-column>
-          <el-table-column prop="locationStatus" label="库位状态" width="90">
+          <el-table-column prop="locationStatus" label="库位启用状态" width="120">
             <template slot-scope="scope">
               <el-switch v-model="scope.row.locationStatus" active-color="#13ce66" inactive-color="#ff4949"
-                active-value="enable" inactive-value="disabled" @change="locationStatusChange(scope.row)"></el-switch>
+                active-value="enable" inactive-value="disabled" @change="locationStatusChange(scope)"></el-switch>
             </template>
           </el-table-column>
           <el-table-column prop="workshop" label="车间" width="100">
@@ -121,10 +121,14 @@
                     查看二维码
                   </el-button>
                 </el-popover> -->
-                <el-button v-if="scope.row.warehouseManagementStatus=='disabled'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'"  type="text" size="mini" @click="enableWareFun(scope.row)">
+                <el-button v-if="scope.row.warehouseManagementStatus == 'disabled'"
+                  :disabled="scope.row.type == 'line_edge' || scope.row.type == 'scrap' || scope.row.type == 'virtually'"
+                  type="text" size="mini" @click="enableWareFun(scope.row)">
                   开启仓库菜单
                 </el-button>
-                <el-button v-if="scope.row.warehouseManagementStatus=='enable'" :disabled="scope.row.type=='line_edge'||scope.row.type=='scrap'||scope.row.type=='virtually'" type="text" size="mini" @click="closeWareFun(scope.row)">
+                <el-button v-if="scope.row.warehouseManagementStatus == 'enable'"
+                  :disabled="scope.row.type == 'line_edge' || scope.row.type == 'scrap' || scope.row.type == 'virtually'"
+                  type="text" size="mini" @click="closeWareFun(scope.row)">
                   关闭仓库菜单
                 </el-button>
                 <el-button type="text" size="mini" @click="openQr(scope.row)">
@@ -145,8 +149,8 @@
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
-    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm" :fullName="fullName"
-      ref="printForm" />
+    <print-browse :visible.sync="printBrowseVisible" :id="prindId" :formId="formId" :params="workOrderForm"
+      :fullName="fullName" ref="printForm" />
     <el-dialog title="二维码" :visible.sync="dialogVisible" width="350px" :close-on-click-modal="false"
       :show-close="false">
       <div style="margin-left: 27px;">
@@ -214,7 +218,7 @@
 import { getclassAttributeList } from '@/api/masterDataManagement/index'
 import { getWarehouseList, deleteWarehouse, editWarehouse, editWarehouseState } from '@/api/basicData/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
-import { getbimProductAttributesList, getbimProductAttributes, enableWarehouseMenu,closeWarehouseMenu } from '@/api/masterDataManagement/index'
+import { getbimProductAttributesList, getbimProductAttributes, enableWarehouseMenu, closeWarehouseMenu } from '@/api/masterDataManagement/index'
 import Form from './Form'
 import VueQr from 'vue-qr'
 import { getPrintBusInfo } from '@/api/system/printDev'
@@ -225,7 +229,7 @@ export default {
   components: { Form, SuperQuery, VueQr, PrintBrowse, PrintDialog },
   data() {
     return {
-      fullName:'',
+      fullName: '',
       productClassAttribute: false,
       dialogVisible: false,
       printVisible: false,
@@ -327,14 +331,24 @@ export default {
     this.initData()
   },
   methods: {
-    closeWareFun(row){
-      closeWarehouseMenu(row).then(res=>{
-        location.reload()
+    closeWareFun(row) {
+      this.$confirm("确定关闭该仓库菜单吗", "提示", {
+        type: 'warning'
+      }).then(() => {
+        closeWarehouseMenu(row).then(res => {
+          this.$message.success("关闭成功")
+        })
+        setTimeout(() => {
+          location.reload()
+        }, 500);
+      }).catch(() => {
+
       })
+
     },
     // 开启仓库菜单
     enableWareFun(row) {
-      console.log(row);
+
       this.currentWarehouseInfo = row
       this.productClassAttribute = true
       getclassAttributeList(this.orderForm).then(res => {
@@ -560,38 +574,90 @@ export default {
         }
       ]
       this.selectData.forEach(item => {
-        let objs={
-          classAttribute:item.code,
-          warehouseId:this.currentWarehouseInfo.id
+        let objs = {
+          classAttribute: item.code,
+          warehouseId: this.currentWarehouseInfo.id
         }
         obj.warehouseClassAttributeList.push(objs)
       });
+      this.$confirm("确定开启该仓库菜单吗", "提示", {
+        type: 'warning'
+      }).then(() => {
+      this.productClassAttribute = false
       enableWarehouseMenu(obj).then(res => {
-        location.reload()
-      })
-    },
-    stateChange(row) {
-      editWarehouseState(row).then((res) => {
-        this.initData()
-        this.$message({
-          type: 'success',
-          message: row.state == 'enable' ? '开启成功' : '禁用成功',
-          duration: 1500
+          this.$message.success("开启成功")
+          setTimeout(() => {
+            location.reload()
+          }, 500);
         })
+      }).catch(() => {
+
       })
+
     },
-    locationStatusChange(row) {
-      let obj = {
-        stockWarehouse: row
+    stateChange(scope) {
+      let msg;
+      if (scope.row.state == 'disabled') {
+        msg = "禁用"
+      } else {
+        msg = "启用"
+
       }
-      editWarehouse(obj).then((res) => {
-        this.initData()
-        this.$message({
-          type: 'success',
-          message: row.locationStatus == 'enable' ? '开启成功' : '禁用成功',
-          duration: 1500
-        })
+      this.$confirm("确定" + msg + "该仓库吗", "提示", {
+        type: 'warning'
       })
+        .then(() => {
+          editWarehouseState(row).then((res) => {
+            this.initData()
+            this.$message({
+              type: 'success',
+              message: row.state == 'enable' ? '开启成功' : '禁用成功',
+              duration: 1500
+            })
+          })
+        })
+        .catch(() => {
+          if (scope.row.state == 'disabled') {
+            this.treeList[scope.$index].state = 'enable'
+
+          } else {
+            this.treeList[scope.$index].state = 'disabled'
+
+          }
+        })
+    },
+    locationStatusChange(scope) {
+      let msg;
+      if (scope.row.locationStatus == 'disabled') {
+        msg = "禁用"
+      } else {
+        msg = "启用"
+
+      }
+      this.$confirm("确定" + msg + "该库位吗", "提示", {
+        type: 'warning'
+      }).then(() => {
+        let obj = {
+          stockWarehouse: scope.row
+        }
+        editWarehouse(obj).then((res) => {
+          this.initData()
+          this.$message({
+            type: 'success',
+            message: scope.row.locationStatus == 'enable' ? '开启成功' : '禁用成功',
+            duration: 1500
+          })
+        })
+      }).catch(() => {
+        if (scope.row.locationStatus == 'disabled') {
+          this.treeList[scope.$index].locationStatus = 'enable'
+
+        } else {
+          this.treeList[scope.$index].locationStatus = 'disabled'
+
+        }
+      })
+
     },
     superQuerySearch(query) {
       this.form.superQuery = query
@@ -767,11 +833,11 @@ export default {
   margin-left: 0 !important;
 }
 
-.selectPro  ::v-deep .el-dialog .el-dialog__header {
+.selectPro ::v-deep .el-dialog .el-dialog__header {
   padding: 0 10px;
 }
 
-.selectPro   ::v-deep .el-dialog .el-dialog__body {
+.selectPro ::v-deep .el-dialog .el-dialog__body {
   padding: 0 !important;
 }
 

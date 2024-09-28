@@ -17,44 +17,49 @@
             <SwitchListAndFilter @command="allFilterExtHandler" :switch-list.sync="allSwitchList" :current-ext.sync="allCurrentExt" :file-ext-filter-option="fileExtFilterOption"/>
           </div>
           <el-row class="JNPF-common-search-box searchWrapper">
-              <el-col :span="19">
-                  <el-row>
+<!--              <el-col :span="19">-->
+<!--                  <el-row>-->
                       <!--<el-form @submit.native.prevent>-->
-                      <el-col  class="search-left" :span="searchFocus ? 24 : 8"   style="transition: all 300ms;position: relative">
-                          <!-- <el-form-item label="关键词" style="margin: 0!important;">-->
-                          <el-input :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()"/>
-                          <!-- </el-form-item>-->
-                          <div  :style="{transform:searchPlaneTransform}" class="search-panel">
-                              <div class="panel-head">
-                                  <div class="panel-head-left">共0条结果</div>
-                                  <div class="panel-head-right">
-                                      <div class="right-tag-item" v-for="item in searchDropDownList" :key="item.flag">
-                                         <el-dropdown @command="searchPlaneDropCommand(item.flag,$event,item)">
+
+<!--                      <el-col  class="search-left" :span="searchFocus ? 24 : 8"   >-->
+
+              <div class="search-left" style="transition: all 300ms;position: relative;width: calc(100% - 249px)">
+                  <!-- <el-form-item label="关键词" style="margin: 0!important;">-->
+                  <el-input  :class="[searchFocus?'active':'']" class="search-input"  @focus="searchFocusHandler"   suffix-icon="el-icon-search" v-model="keyword" placeholder="请输入关键词查询" clearable @keyup.enter.native="search()"/>
+                  <!-- </el-form-item>-->
+                  <div  :style="{transform:searchPlaneTransform}" class="search-panel">
+                      <div class="panel-head">
+                          <div class="panel-head-left">共0条结果</div>
+                          <div class="panel-head-right">
+                              <div class="right-tag-item" v-for="item in searchDropDownList" :key="item.flag">
+                                  <el-dropdown @command="searchPlaneDropCommand(item.flag,$event,item)">
                                          <span class="el-dropdown-link">
                                              {{ item.currentChoose }}<i class="el-icon-arrow-down el-icon--right"></i>
                                          </span>
-                                              <el-dropdown-menu
-                                                  :append-to-body="false"
-                                                  class="right-tag-dropdown" slot="dropdown">
-                                                  <el-dropdown-item   v-for="(v,k,index) in item.option"
-                                                                      :key="k"
-                                                                      :class="item.currentChoose === v ?'dropdown-item-active':''"
-                                                                      :command="k">{{v}}</el-dropdown-item>
-                                              </el-dropdown-menu>
-                                          </el-dropdown>
-                                      </div>
-                                  </div>
-                              </div>
-                              <div class="panel-body">
-                                  <div class="panel-body-history">
-                                      <div class="history-list">
-                                          <i class=" el-icon-search"></i>
-                                          <div class="history-item"></div>
-                                      </div>
-                                  </div>
+                                      <el-dropdown-menu
+                                          :append-to-body="false"
+                                          class="right-tag-dropdown" slot="dropdown">
+                                          <el-dropdown-item   v-for="(v,k,index) in item.option"
+                                                              :key="k"
+                                                              :class="item.currentChoose === v ?'dropdown-item-active':''"
+                                                              :command="k">{{v}}</el-dropdown-item>
+                                      </el-dropdown-menu>
+                                  </el-dropdown>
                               </div>
                           </div>
-                      </el-col>
+                      </div>
+                      <div class="panel-body">
+                          <div class="panel-body-history">
+                              <div class="history-list">
+                                  <i class=" el-icon-search"></i>
+                                  <div class="history-item"></div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+<!--                      </el-col>-->
                       <!--              <el-col :span="6">-->
                       <!--                <el-form-item>-->
                       <!--                  <el-button type="primary" icon="el-icon-search" @click="search()">-->
@@ -64,12 +69,15 @@
                       <!--                </el-form-item>-->
                       <!--              </el-col>-->
                       <!--</el-form>-->
-                  </el-row>
-              </el-col>
-              <el-col :span="5" style="text-align: right">
-                  <el-button @click="addFolder()">新建文件夹</el-button>
-                  <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
-              </el-col>
+<!--                  </el-row>-->
+<!--              </el-col>-->
+             <div style="width: 249px">
+                 <el-button style="margin-left: 10px" @click="addFolder()">新建文件夹</el-button>
+                 <el-button type="primary" icon="el-icon-upload2" @click="uploadFile()">上传文件</el-button>
+             </div>
+
+
+
           </el-row>
           <div>
             <JNPF-table class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
@@ -154,7 +162,7 @@
             </el-form>
           </el-row>
           <div>
-            <JNPF-table class="table-style" v-if="allSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
+            <JNPF-table class="table-style" v-if="shareSwitchList"  v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini">
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
                   <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
@@ -209,7 +217,7 @@
             </el-form>
           </el-row>
           <div>
-            <JNPF-table class="table-style" v-if="allSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
+            <JNPF-table class="table-style" v-if="shareToMeSwitchList" v-loading="listLoading" :data="list" empty-text="该文件夹为空" size="mini" >
               <el-table-column prop="fullName" label="文件名">
                 <template slot-scope="scope">
                   <i :class='"icon-ym " + toFileExt(scope.row.fileExtension) + " i-default"' />
@@ -485,7 +493,6 @@ export default {
   },
   methods: {
     listItemClick(item){
-        console.log(item)
         if(!isFile(item)){
             this.openFolder(item)
         }
@@ -792,7 +799,6 @@ export default {
     background-color: #ecf8fe;
     color: #65c7f9;
 }
-
  .right-tag-dropdown{
      ::v-deep .el-dropdown-menu__item{
          box-sizing: border-box;
@@ -802,7 +808,12 @@ export default {
          white-space: nowrap;
      }
  }
-
+.search-input{
+    width: 30%;
+}
+.search-input.active{
+    width: 100%;
+}
 .search-input.active ::v-deep .el-input__inner{
     border-color: #3fb9f8;
     outline: 0;

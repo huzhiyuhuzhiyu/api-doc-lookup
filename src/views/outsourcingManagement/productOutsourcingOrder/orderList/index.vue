@@ -102,12 +102,7 @@
                       <el-dropdown-item @click.native="addOrUpdateHandle(scope.row.id, 'look')">
                         查看详情
                       </el-dropdown-item>
-                      <el-dropdown-item @click.native="orderFormDownload(scope.row.id)">
-                        下载订货单
-                      </el-dropdown-item>
-                      <el-dropdown-item @click.native="printPurchaseOrder(scope.row.id)">
-                        打印订货单
-                      </el-dropdown-item>
+                   
                     </el-dropdown-menu>
                   </el-dropdown>
                 </tableOpts>
@@ -128,8 +123,7 @@
     <JNPF-Form v-if="formVisible" ref="procureForm" @refresh="refresh" @close="closeForm" />
     <CreateForm v-if="createFormVisible" ref="createForm" @refresh="refresh" @close="closeForm" />
     <withdrawnForm v-if="withdrawnVisible" ref="withdrawnForm" @refresh="refresh" @close="closeForm" />
-    <PrintForm ref="PrintForm" :value="printData" :dataValue="printForm" :pages="pages" />
-    <ExportForm v-if="exportFormVisible" ref="exportForm" @download="download" />
+
     <!-- 高级查询 -->
     <SuperQuery :show="superQueryVisible" ref="SuperQuery" :columnOptions="superQueryJson"
       @superQuery="superQuerySearch" @close="superQueryVisible = false" />
@@ -151,15 +145,13 @@ import moment from 'moment'
 import { withdrawn } from '@/api/basicData/approvalAdministrator'
 // import withdrawnForm from './withranForm'
 import withdrawnForm from '@/views/purchasingManagement/purchasingDemand/purchasingDemandPool/Form.vue'
-import PrintForm from './printForm'
 import { excelExport } from '@/api/basicData/index'
-import ExportForm from '@/components/no_mount/ExportBox/index'
 import SuperQuery from '@/components/SuperQuery/index.vue'
 import { getbimProductAttributesList, getbimProductAttributes } from '@/api/masterDataManagement/index'
 import { CreateForm } from "../orderCreation/index.vue";
 export default {
   name: 'orderList',
-  components: { JNPFForm, withdrawnForm, PrintForm, ExportForm, SuperQuery, CreateForm },
+  components: { JNPFForm, withdrawnForm, SuperQuery, CreateForm },
   data() {
     return {
       exportFormVisible: false,
@@ -629,12 +621,7 @@ export default {
         })
         .catch(() => { })
     },
-    // 导出订货单
-    orderFormDownload(id) {
-      purPurchaseOrderExport(id).then((res) => {
-        this.jnpf.downloadFile(res.data.url, res.data.name)
-      })
-    },
+ 
     withdrawnHandle(formId) {
       let _data = {
         formId
@@ -687,49 +674,7 @@ export default {
         })
       })
     },
-    // 打印
-    printPurchaseOrder(id) {
-      this.printData = []
-      this.printForm = {}
-      purPurchaseOrderdetail(id).then((res) => {
-        // this.printVisible = true
 
-        this.printData = res.data.purchaseOrderLineVOList
-        this.printForm = res.data
-        // 复制数据测试 打印分页
-        // for (var i = 0; i < 4; i++) {
-        //   this.printData = this.printData.concat(this.printData);
-        // }
-        // console.log(Math.ceil(this.printData.length/20));
-        this.pages = Math.ceil(this.printData.length / 20)
-        console.log(this.printPageDataFn(this.printData, 20))
-        this.printData = this.printPageDataFn(this.printData, 20)
-        this.$nextTick(() => {
-          console.log(this.$refs.PrintForm)
-          console.log(this.$refs.PrintForm.$el)
-          let oldStr = window.document.body.innerHTML
-          let newStr = this.$refs.PrintForm.$el.innerHTML
-
-          const iframe = document.createElement('iframe')
-          iframe.setAttribute('style', 'position: absolute; width: 0;height: 0;')
-          document.body.appendChild(iframe)
-          const doc = iframe.contentWindow.document
-          // 4. 写入内容//
-          doc.write('<style media="print"> @page {size: portrait;margin: 5mm; padding: 0;}</style>')
-          doc.write(`<link href="./printForm.scss" media="print" rel="stylesheet" />`)
-          doc.write(newStr)
-          const link = doc.getElementsByTagName('link')[0]
-          link.onload = () => {
-            // 样式文件加载完毕后打印// 5.执行打印
-            iframe.contentWindow.print()
-            iframe.contentWindow.location.reload(true)
-            // 6.重置工作
-            document.body.removeChild(iframe)
-            this.$refs.PrintForm.$el.removeAttribute('style')
-          }
-        })
-      })
-    },
     // 处理分页
     printPageDataFn(data, pageSize = 20) {
       const printTable = []

@@ -183,7 +183,6 @@ export default {
     this.tabs.forEach((tab, tabInd) => {
       tab.tabContent.forEach((tc) => {
         this.dataForm[tc.prop] = tc.value || '' // 设置默认value
-        console.log(this.flag, '')
 
         // 添加自定义表单元素方法和参数
         if (tc.type == 'custom') {
@@ -395,12 +394,11 @@ export default {
               })
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
-
-              if (this.unitRelList && this.unitRelList.length !== 0) {
-                if (val == this.dataForm.deputyUnit) {
-                  this.dataForm.ratio = 1
-                  this.dataForm.calculationDirection = 'multiplication'
-                } else {
+              if (val == this.dataForm.mainUnit) {
+                this.dataForm.ratio = 1
+                this.dataForm.calculationDirection = 'multiplication'
+              } else {
+                if (this.unitRelList && this.unitRelList.length !== 0) {
                   this.unitRelList.forEach((item) => {
                     if (item.targetName === val) {
                       this.dataForm.ratio = item.ratio

@@ -5,7 +5,7 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-           
+
 
             <el-col :span="4">
               <el-form-item>
@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { getWorkReportList,revokeReport } from "@/api/productOrdes/index.js"
+import { getWorkReportList, revokeReport } from "@/api/productOrdes/index.js"
 import ExportForm from '@/components/no_mount/ExportBox/index'
 
 import SuperQuery from '@/components/SuperQuery/index.vue'
@@ -283,10 +283,17 @@ export default {
 
     // 撤回
     withdrawFun(data) {
-      revokeReport(data.id).then(res=>{
-        this.$message.success("撤回成功")
-        this.initData()
+      this.$confirm("您确定撤回该报工数据吗?", "提示", {
+        type: 'warning'
+      }).then(() => {
+        revokeReport(data.id).then(res => {
+          this.$message.success("撤回成功")
+          this.initData()
+        })
+      }).catch(() => {
+
       })
+
     },
 
     // 获取打字内容等

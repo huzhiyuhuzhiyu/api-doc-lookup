@@ -5,28 +5,34 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" @keyup.enter.native="search()" placeholder="请输入订单号" clearable />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
 
-            <el-col :span="4">
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.deliveryDateArr"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+
+            </template>
+            <el-col :span="5">
               <el-form-item>
-                <el-input v-model="orderForm.cooperativePartnerName" @keyup.enter.native="search()"
-                  placeholder="请输入客户名称" clearable />
+                <el-date-picker v-model="deliveryDateArr" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable
+                  type="daterange" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-date-picker v-model="deliveryDateArr" type="daterange" value-format="yyyy-MM-dd"
-                  style="width: 100%;" start-placeholder="交货开始日期" end-placeholder="交货结束日期" clearable>
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -167,6 +173,18 @@ export default {
   components: { Form, UserRelationList, ExportForm, OrderFollow, SuperQuery },
   data() {
     return {
+
+
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+
+
       superQueryVisible: false,
       columnList: ["cooperativePartnerCode", "departmentName", "workOrderNo", "contractNo", "changesCount", "createByName",],
       orderFollowVisible: false,
@@ -232,28 +250,12 @@ export default {
       paymentCycleList: [],
       orderForm: {
         orderNo: "",
-        cooperativePartnerCode: "",
         cooperativePartnerName: "",
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
         deliveryStartDate: "",
         deliveryEndDate: "",
-        orderCategory: "",
-        shipmentStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
-        startTime: "",
-        endTime: "", 
         superQuery: {
-          condition:[],
-          matchLogic:""
+          condition: [],
+          matchLogic: ""
         },
         pageNum: 1,
         pageSize: 20,
@@ -294,7 +296,7 @@ export default {
       diagramVisible: false,
       formVisible: false,
       filterText: '',
-     
+
       superQueryJson: [
         {
           prop: 'orderNo',
@@ -338,7 +340,7 @@ export default {
           type: 'custom',
           component: 'user-select',
         },
-     
+
         {
           prop: 'orderDate',
           label: '订单日期',
@@ -396,10 +398,10 @@ export default {
 
   },
 
-  created() { 
-    this.getUserList() 
-    
-    this.initData()
+  created() {
+    this.getUserList()
+    this.superForm = this.orderForm
+    this.search('basic')
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
   methods: {
@@ -408,7 +410,7 @@ export default {
     },
 
 
-   
+
     filterateLabel(row, column, cellValue) {
       if (!cellValue) return ""
       if (cellValue.includes(":")) {
@@ -419,7 +421,7 @@ export default {
     },
 
 
-  
+
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'salesName' || prop === 'cooperativePartnerCode' || prop === 'sealingRingName') {
@@ -459,17 +461,13 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     initData() {
       this.listLoading = true
-      if(this.deliveryDateArr.length){
-        this.orderForm.deliveryStartDate=this.deliveryDateArr[0]
-        this.orderForm.deliveryEndDate=this.deliveryDateArr[1]
-      }else{
-        this.orderForm.deliveryStartDate=""
-        this.orderForm.deliveryEndDate=""
-      }
+
+
+
       getsaleOrderList(this.orderForm).then(res => {
         this.tableData = res.data.records
         this.total = res.data.total
@@ -481,38 +479,52 @@ export default {
     },
 
 
-    search() {
+    search(type) {
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+        if (this.deliveryDateArr.length) {
+          this.orderForm.deliveryStartDate = this.deliveryDateArr[0]
+          this.orderForm.deliveryEndDate = this.deliveryDateArr[1]
+        } else {
+          this.orderForm.deliveryStartDate = ""
+          this.orderForm.deliveryEndDate = ""
+        }
+      this.orderForm.pageNum = 1 // 重置页码
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
-      this.CompletionDate = []
-      this.orderForm = {
+      this.deliveryDateArr=[]
+      this.superForm = this.orderForm = {
         orderNo: "",
-        cooperativePartnerCode: "",
         cooperativePartnerName: "",
-        orderType: "",
-        salesName: "",
-        workOrderNo: "",
-        sourceOrderNo: "",
-        orderStartDate: "",
-        orderEndDate: "",
-        contractNo: "",
         deliveryStartDate: "",
         deliveryEndDate: "",
-        orderCategory: "",
-        shipmentStatus: "",
-        orderState: "",
-        productionStatus: "",
-        documentStatus: "",
-        approvalStatus: "",
-        startTime: "",
-        endTime: "",
-
+        superQuery: {
+          condition: [],
+          matchLogic: ""
+        },
         pageNum: 1,
         pageSize: 20,
         orderItems: [{
@@ -522,15 +534,16 @@ export default {
           asc: false,
           column: "create_time"
         }],
-        superQuery: {
-          condition:[],
-          matchLogic:""
-        },
 
       }
+      this.searchList = [
+        { field: 'orderNo', fieldValue: '', label: '订单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+
+      ]
       this.$refs.SuperQuery.conditionList = []
 
-      this.search()
+      this.search('basic')
     },
 
     // 订单跟踪
@@ -636,7 +649,7 @@ export default {
 
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-    margin-left: 0!important;
+  margin-left: 0 !important;
   margin-bottom: 5px;
 }
 

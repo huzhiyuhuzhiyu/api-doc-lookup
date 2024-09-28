@@ -251,12 +251,11 @@ export default {
               })
               this.dataForm.ratio = ''
               this.dataForm.calculationDirection = ''
-
-              if (this.unitRelList && this.unitRelList.length !== 0) {
-                if (val == this.dataForm.deputyUnit) {
-                  this.dataForm.ratio = 1
-                  this.dataForm.calculationDirection = 'multiplication'
-                } else {
+              if (val == this.dataForm.mainUnit) {
+                this.dataForm.ratio = 1
+                this.dataForm.calculationDirection = 'multiplication'
+              } else {
+                if (this.unitRelList && this.unitRelList.length !== 0) {
                   this.unitRelList.forEach((item) => {
                     if (item.targetName === val) {
                       this.dataForm.ratio = item.ratio

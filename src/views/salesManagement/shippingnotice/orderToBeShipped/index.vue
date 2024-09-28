@@ -14,7 +14,7 @@
 
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryStartTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货开始日期" clearable>
+                  style="width: 100%;" placeholder="交货开始日期" clearable>
                 </el-date-picker>-
 
               </el-form-item>
@@ -24,7 +24,7 @@
 
               <el-form-item>
                 <el-date-picker v-model="orderForm.deliveryEndTime" type="date" value-format="yyyy-MM-dd"
-                  style="width: 100%;" placeholder="发货结束日期" clearable>
+                  style="width: 100%;" placeholder="交货结束日期" clearable>
                 </el-date-picker>
               </el-form-item>
             </el-col>

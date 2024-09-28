@@ -150,7 +150,7 @@
                     <el-table-column prop="clearance" label="游隙" width="160" sortable="custom" />
                     <el-table-column prop="packagingMethod" label="包装方式" width="160" sortable="custom" />
                     <el-table-column prop="processName" label="工序" width="160" />
-                    <el-table-column prop="orderNo" label="订单号" width="180" sortable="custom" />
+                    <el-table-column prop="orderNo" label="订单号" width="200" sortable="custom" />
                     <el-table-column prop="remark" label="备注" min-width="200">
                       <template slot-scope="scope">
                         <el-input v-model="scope.row.remark" placeholder="请输入备注"
@@ -1476,6 +1476,9 @@ export default {
       this.dataForm.id = id || ''
       this.approvalFlag = approvalFlag
       this.btnType = btnType
+      if (data) {
+        this.dataFormTwo.productData = data
+      }
       if (this.dataForm.id) {
         getpurPurchaseReceiptReturnGoodsdetail(this.dataForm.id).then((res) => {
           this.dataForm = res.data.notice
@@ -1497,7 +1500,7 @@ export default {
             this.datafilelist = []
             this.dataForm.approvalStatus = ''
             this.dataForm.packingStatus = 'unboxed'
-            this.fetchData('CGSH')
+          
   
             res.data.noticeLineList.forEach((item) => {
               item.receivedQuantity = ''
@@ -1521,6 +1524,7 @@ export default {
         this.btnText = '继续修改'
       } else if (this.btnType == 'add' || this.btnType == 'copy') {
         this.btnText = '继续新增'
+        this.fetchData('CGSH')
       }
     },
     goBack() {

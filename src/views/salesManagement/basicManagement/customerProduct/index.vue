@@ -6,7 +6,26 @@
           <div class="JNPF-common-layout-center JNPF-flex-main">
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
-                <el-col :span="4">
+                <template v-for="item in searchList">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="search('basic')" />
+
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
+
+                <!-- <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
                       @keyup.enter.native="search()" />
@@ -23,13 +42,13 @@
                     <el-input v-model.trim="listQuery.drawingNo" placeholder="请输入品名规格" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
 
 
 
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                       $t('common.reset') }}
@@ -59,7 +78,7 @@
                   </el-tooltip>
                 </div>
               </div>
-              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm" 
+              <JNPF-table v-loading="listLoading" highlight-current-row :fixedNO="true" ref="tableForm"
                 :data="tableDataList" @sort-change="sortChange" custom-column :setColumnDisplayList="columnLists">
                 <el-table-column prop="partnerName" label="客户名称" min-width="260" sortable="custom" />
                 <el-table-column prop="partnerCode" label="客户编码" min-width="160" sortable="custom" />
@@ -85,7 +104,7 @@
             <el-row class="JNPF-common-search-box" :gutter="16">
               <el-form @submit.native.prevent>
 
-                <el-col :span="4">
+                <!-- <el-col :span="4">
                   <el-form-item>
                     <el-input v-model.trim="listQuery.partnerName" placeholder="请输入客户名称" clearable
                       @keyup.enter.native="search()" />
@@ -102,11 +121,28 @@
                     <el-input v-model.trim="listQuery.drawingNo" placeholder="请输入品名规格" clearable
                       @keyup.enter.native="search()" />
                   </el-form-item>
-                </el-col>
+                </el-col> -->
+                <template v-for="item in searchList">
+                  <el-col :span="item.searchType === 3 ? 6 : 4">
+                    <el-form-item>
+                      <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable @keyup.enter.native="search('basic')" />
 
+                      <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                        clearable>
+                        <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                          :value="item2.value"></el-option>
+                      </el-select>
+                      <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                        :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                        :type="item.dateType"
+                        :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </template>
                 <el-col :span="6">
                   <el-form-item>
-                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                    <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                       {{ $t('common.search') }}</el-button>
                     <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                       $t('common.reset') }}
@@ -178,7 +214,13 @@ export default {
   components: { ExportForm, SuperQuery },
   data() {
     return {
-      superQueryVisible:false,
+      searchList: [
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+      superQueryVisible: false,
       columnLists: ["partnerCode", "productName"],
       exportFormVisible: false,
       depFormVisible: false,
@@ -204,8 +246,10 @@ export default {
 
         pageNum: 1,
         pageSize: 20,
-        superQuery: {},
       },
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
 
       total: 0,
       formVisible: false,
@@ -232,11 +276,11 @@ export default {
           label: "客户料号",
           type: 'input',
         },
-    
+
         {
           prop: 'drawingNo',
           label: "品名规格 ",
-          type: 'custom', 
+          type: 'custom',
         },
         {
           prop: 'productCode',
@@ -269,7 +313,7 @@ export default {
           label: "要求",
           type: 'input'
         },
-   
+
 
 
 
@@ -277,6 +321,7 @@ export default {
     }
   },
   created() {
+    this.superForm = this.listQuery
     this.initData()
   },
   watch: {
@@ -288,7 +333,7 @@ export default {
     superQuerySearch(query) {
       this.listQuery.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun(ref) {
       this.$refs[ref].showDrawer()
@@ -362,19 +407,19 @@ export default {
     },
 
     dataFormSubmit() {
-      this.listQuery.pageNum = 1
+      this.superForm.pageNum = 1
 
       this.initData()
     },
     initData() {
       this.listLoading = true
       if (this.activeName == "historicalprice") {
-        this.listQuery.historyFlag = true
+        this.superForm.historyFlag = true
       } else {
-        this.listQuery.historyFlag = false
+        this.superForm.historyFlag = false
 
       }
-      getPartnerOrProductData(this.listQuery).then(res => {
+      getPartnerOrProductData(this.superForm).then(res => {
         console.log(res, '客户产品列表');
         this.tableDataList = res.data.records
         this.total = res.data.total
@@ -383,19 +428,35 @@ export default {
         this.listLoading = false
       })
     },
-    search() {
+    search(type) {
       Object.keys(this.listQuery).forEach(key => {
         let item = this.listQuery[key]
         this.listQuery[key] = typeof item === 'string' ? item.trim() : item
       })
-      this.listQuery.pageNum = 1
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.superForm.pageNum = 1
       this.initData()
     },
     reset() {
       this.$refs['tableForm'].$refs.JNPFTable.clearSort()
-      this.listQuery.priceDateArr2 = []
-      this.listQuery.priceDateArr = []
-      this.listQuery.startAndEndTime = []
+
       this.listQuery = {
         partnerType: "customer",
         orderItems: [{
@@ -413,7 +474,15 @@ export default {
         code: "",
         name: "",
       },
-        this.search()
+        this.searchList = [
+          { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+          { field: 'drawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+        ]
+      this.$refs.SuperQuery.conditionList = []
+      this.search('basic')
+
     },
     addSupplier(type) {
 
@@ -471,8 +540,9 @@ export default {
 ::v-deep .el-tabs__nav-wrap {
   margin-bottom: 0px;
 }
+
 .JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important; 
+  margin-left: 0 !important;
 }
 </style>

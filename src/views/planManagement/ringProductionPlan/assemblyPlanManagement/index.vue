@@ -3,113 +3,118 @@
 
   <div class="JNPF-common-layout">
 
-      <div class="JNPF-common-layout-center JNPF-flex-main">
-        <el-row class="JNPF-common-search-box" :gutter="16">
-          <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.planNo" @keyup.enter.native="search()" placeholder="计划单号" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" @keyup.enter.native="search()" placeholder="品名规格"
-                  clearable />
-              </el-form-item>
-            </el-col>
-          
-            <el-col :span="6">
-              <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
-                  {{ $t('common.search') }}</el-button>
-                <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
-                </el-button>
-              </el-form-item>
-            </el-col>
+    <div class="JNPF-common-layout-center JNPF-flex-main">
+      <el-row class="JNPF-common-search-box" :gutter="16">
+        <el-form @submit.native.prevent>
+          <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
 
-          </el-form>
-        </el-row>
-        <div class="JNPF-common-layout-main JNPF-flex-main">
-          <div class="JNPF-common-head">
-            <el-button type="primary" size="mini" icon="el-icon-download"
-              @click="exportForm('dataTable')">导出</el-button>
-            <div class="JNPF-common-head-right">
-              <el-tooltip content="高级查询" placement="top" v-if="true">
-                <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
-                  @click="superQueryVisible = true" />
-              </el-tooltip>
-              <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
-                <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false"
-                  @click="columnSetFun()" />
-              </el-tooltip>
-              <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
-                <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
-              </el-tooltip>
-            </div>
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+
+          <el-col :span="6">
+            <el-form-item>
+              <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
+                {{ $t('common.search') }}</el-button>
+              <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
+              </el-button>
+            </el-form-item>
+          </el-col>
+
+        </el-form>
+      </el-row>
+      <div class="JNPF-common-layout-main JNPF-flex-main">
+        <div class="JNPF-common-head">
+          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportForm('dataTable')">导出</el-button>
+          <div class="JNPF-common-head-right">
+            <el-tooltip content="高级查询" placement="top" v-if="true">
+              <el-link icon="icon-ym icon-ym-filter JNPF-common-head-icon" :underline="false"
+                @click="superQueryVisible = true" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.columnSettings')" placement="top">
+              <el-link icon="icon-ym icon-ym-shezhi JNPF-common-head-icon" :underline="false" @click="columnSetFun()" />
+            </el-tooltip>
+            <el-tooltip effect="dark" :content="$t('common.refresh')" placement="top">
+              <el-link icon="icon-ym icon-ym-Refresh JNPF-common-head-icon" :underline="false" @click="initData()" />
+            </el-tooltip>
           </div>
-          <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
-            <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom">
-              <template slot-scope="scope">
-                <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
-                  scope.row.planNo
-                }}</el-link>
-              </template>
-            </el-table-column>
-            <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" /> 
-            <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
-            <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
-            <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="80" />
-            <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
-            <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="150" sortable="custom" />
-            <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
-            <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
+        </div>
+        <JNPF-table ref="dataTable" v-loading="listLoading" :data="tableData" :fixedNO="true"
+          :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
+          <el-table-column prop="planNo" label="计划单号" width="180" sortable="custom">
+            <template slot-scope="scope">
+              <el-link type="primary" @click.native="handleUserRelation(scope.row, 'look')">{{
+                scope.row.planNo
+              }}</el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
+          <el-table-column prop="productCode" label="产品编码" width="120" sortable="custom" />
+          <el-table-column prop="planStartDate" label="计划开始日期" min-width="150" sortable="custom" />
+          <el-table-column prop="planEndDate" label="计划结束日期" min-width="150" sortable="custom" />
+          <el-table-column prop="mainUnit" label="单位" width="80" />
+          <el-table-column prop="planQuantity" label="计划数量" min-width="120" sortable="custom" />
+          <el-table-column prop="relaxQuantity" label="宽放计划数量" min-width="150" sortable="custom" />
+          <el-table-column prop="finalPlanQuantity" label="最终计划数量" min-width="150" sortable="custom" />
+          <!-- <el-table-column prop="sealingCoverTyping" label="打字内容" min-width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" min-width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" min-width="120" sortable="custom" />
             <el-table-column prop="oil" label="油脂" width="100" sortable="custom" />
             <el-table-column prop="oilQuantity" label="油脂量" min-width="120" sortable="custom" />
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" min-width="120" sortable="custom" /> -->
-            <el-table-column prop="remark" label="备注" width="120" />
-            <el-table-column prop="planState" label="计划状态" width="120">
-              <template slot-scope="scope">
-                <div v-if="scope.row.planState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
-                <div v-else-if="scope.row.planState == 'finish'"><el-tag type="success">已完成</el-tag></div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
-            <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
-            <el-table-column label="操作" width="180" fixed="right">
-              <template slot-scope="scope">
-                <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="addOrUpdateHandle(scope.row, 'edit')">编辑</el-button>
-                <el-button size="mini" type="text" class="JNPF-table-delBtn"
-                  :disabled="scope.row.documentStatus == 'draft' ? false : true"
-                  @click="handleDel(scope.row.id)">删除</el-button>
-                <el-dropdown hide-on-click>
-                  <span class="el-dropdown-link">
-                    <el-button type="text" size="mini">
-                      {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
-                    </el-button>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
-                      查看详情
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
-            </el-table-column>
-          </JNPF-table>
+          <el-table-column prop="remark" label="备注" width="120" />
+          <el-table-column prop="planState" label="计划状态" width="120">
+            <template slot-scope="scope">
+              <div v-if="scope.row.planState == 'not_finish'"><el-tag type="danger">未完成</el-tag></div>
+              <div v-else-if="scope.row.planState == 'finish'"><el-tag type="success">已完成</el-tag></div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="createTime" label="创建时间" width="180" sortable="custom" />
+          <el-table-column prop="createByName" label="创建人" width="120" sortable="custom" />
+          <el-table-column label="操作" width="180" fixed="right">
+            <template slot-scope="scope">
+              <el-button size="mini" type="text" :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                @click="addOrUpdateHandle(scope.row, 'edit')">编辑</el-button>
+              <el-button size="mini" type="text" class="JNPF-table-delBtn"
+                :disabled="scope.row.documentStatus == 'draft' ? false : true"
+                @click="handleDel(scope.row.id)">删除</el-button>
+              <el-dropdown hide-on-click>
+                <span class="el-dropdown-link">
+                  <el-button type="text" size="mini">
+                    {{ $t('common.moreBtn') }}<i class="el-icon-arrow-down el-icon--right"></i>
+                  </el-button>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item @click.native="handleUserRelation(scope.row, 'look')">
+                    查看详情
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </JNPF-table>
 
-          <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
-            @pagination="initData">
+        <pagination :total="total" :page.sync="orderForm.pageNum" :limit.sync="orderForm.pageSize"
+          @pagination="initData">
 
-          </pagination>
+        </pagination>
 
-        </div>
       </div>
+    </div>
 
 
     <!-- <Form v-if="formVisible" ref="Form" @refreshDataList="initData" @close="closeForm" :customList="customList" /> -->
@@ -140,6 +145,13 @@ export default {
   components: { Form, ExportForm, SuperQuery, OrderForm },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
       CreateFormVisible: false,
       columnList: ["productCode", 'planState'],
       orderFormVisible: false,
@@ -166,8 +178,7 @@ export default {
         superQuery: {},
       },
 
-
-      deliveryDateArr: [],
+ 
       total: 0,
       formVisible: false,
       filterText: '',
@@ -302,7 +313,8 @@ export default {
 
 
   created() {
-    this.initData()
+    this.superForm=this.orderForm
+    this.search('basic')
     // this.getProductClassFun()
   },
   methods: {
@@ -581,7 +593,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -611,18 +623,6 @@ export default {
     },
 
 
-    dataFormSubmit() {
-      this.orderForm.pageNum = 1
-      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
-        let item = this.orderForm[key]
-        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
-      })
-
-
-
-      this.initData()
-
-    },
 
 
     // 关闭新建编辑页面
@@ -648,14 +648,36 @@ export default {
     },
 
 
-    search() {
-      this.dataFormSubmit()
+    search(type) {
+      this.orderForm.pageNum = 1
+      Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
+        let item = this.orderForm[key]
+        this.orderForm[key] = typeof item === 'string' ? item.trim() : item
+      })
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
+      this.initData()
     },
 
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.deliveryDateArr = []
-      this.orderForm = {
+   
+      this.superForm = this.orderForm = {
         classAttribute: "semi_finished",
         productName: "",
         productDrawingNo: "",
@@ -673,22 +695,27 @@ export default {
 
         superQuery: {},
       }
+      this.searchList = [
+        { field: 'planNo', fieldValue: '', label: '计划单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ]
+      this.$refs.SuperQuery.conditionList = []
 
-      this.search()
+      this.search('basic')
     },
 
 
 
-     
+
     addOrUpdateHandle(data, btnType) {
-        // 订单创建计划
-        detailPlanList(data.id).then(res => {
-          console.log("订单计划详情", res);
-          this.orderFormVisible = true
-          this.$nextTick(() => {
-            this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
-          })
+      // 订单创建计划
+      detailPlanList(data.id).then(res => {
+        console.log("订单计划详情", res);
+        this.orderFormVisible = true
+        this.$nextTick(() => {
+          this.$refs.orderForm.init(data.id, btnType, res.data, data.planType)
         })
+      })
     },
 
     handleDel(id) {
@@ -767,9 +794,9 @@ export default {
 
 
 
-.JNPF-common-search-box { 
+.JNPF-common-search-box {
   padding: 8px 0 !important;
-  margin-left: 0!important;
+  margin-left: 0 !important;
   margin-bottom: 5px;
 }
 

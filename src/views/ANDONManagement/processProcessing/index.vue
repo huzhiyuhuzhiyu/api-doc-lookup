@@ -300,7 +300,7 @@ export default {
     },
     reset() {
       this.$refs['listTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.initListQuery.module = ''
+      this.initListQuery.abnormalType = ''
       this.listQuery = JSON.parse(JSON.stringify(this.initListQuery))
       this.searchList.forEach(item => { item.fieldValue = '' })
       this.search()

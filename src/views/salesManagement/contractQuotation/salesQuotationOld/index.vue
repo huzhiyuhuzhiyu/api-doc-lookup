@@ -4,26 +4,28 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="5">
-              <el-form-item>
-                <el-input v-model="quotationNoS" placeholder="请输入报价单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
 
-            <el-col :span="5">
-              <el-form-item>
-                <el-input v-model="cooperativePartnerIdTextS" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="5">
-              <el-form-item>
-                <el-input v-model="bidderS" placeholder="请输入报价人" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+
             <el-col :span="6">
               <el-form-item>
-                <el-button size="mini" type="primary" icon="el-icon-search" @click="search()">
+                <el-button size="mini" type="primary" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{
                   $t('common.reset') }}
@@ -57,7 +59,7 @@
             </div>
           </div>
           <JNPF-table v-loading="listLoading" ref="tableForm" :data="tableDataList" :fixedNO="true"
-            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column >
+            :setColumnDisplayList="columnList" @sort-change="sortChange" custom-column>
             <el-table-column prop="quotationNo" label="报价单号" min-width="160" sortable="custom">
               <template slot-scope="scope">
                 <el-link type="primary" @click.native="handleUserRelation(scope.row.id, 'look')">{{
@@ -82,7 +84,8 @@
                 <div v-else-if="scope.row.documentStatus == 'submit'"><el-tag type="success">提交</el-tag></div>
               </template>
             </el-table-column>
-            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center" v-if="showAppCodeFlag">
+            <el-table-column prop="approvalStatus" label="审批状态" width="120" sortable="custom" align="center"
+              v-if="showAppCodeFlag">
               <template slot-scope="scope">
                 <div v-if="scope.row.approvalStatus == 'ing' && scope.row.documentStatus == 'submit'">
                   <el-tag>审批中</el-tag>
@@ -118,7 +121,7 @@
                   </span>
                   <el-dropdown-menu slot="dropdown">
                     <el-dropdown-item
-                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn')  && showAppCodeFlag"
+                      v-if="(scope.row.approvalStatus === 'rebut' || scope.row.approvalStatus === 'withdrawn') && showAppCodeFlag"
                       @click.native="addSupplier(scope.row.id, 'add')">
                       重新提交
                     </el-dropdown-item>
@@ -166,6 +169,17 @@ export default {
   components: { DepForm, SuperQuery, ExportForm },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+
+
       columnList: ["deliver", "cooperativePartnerCode", "address", "fax", "reasonRejection", "createByName", "remark"],
       superQueryVisible: false,
 
@@ -202,7 +216,7 @@ export default {
         cooperativePartnerIdText: "",
         deliver: "",
         bidder: "",
-  
+
         approvalStatus: '',
         documentStatus: "",
         submitStartDate: '',
@@ -303,8 +317,7 @@ export default {
 
 
 
-      ],
-      quotationTime: [],
+      ], 
       submitDate: [],
       listLoading: false,
       total: 0,
@@ -312,18 +325,19 @@ export default {
       bidderS: "",
       cooperativePartnerIdTextS: "",
       quotationNoS: "",
-      showAppCodeFlag:true
+      showAppCodeFlag: true
     }
   },
   async created() {
     this.form = JSON.parse(JSON.stringify(this.formlist))
+    this.superForm = this.form
     const res = await this.jnpf.getBusInfo('b001')
-    if (res){
+    if (res) {
       this.showAppCodeFlag = res.enabledMark
-    }else{
+    } else {
       this.showAppCodeFlag = false
     }
-    this.search()
+    this.search('basic')
   },
 
   methods: {
@@ -331,7 +345,7 @@ export default {
     superQuerySearch(query) {
       this.form.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.tableForm.showDrawer()
@@ -346,66 +360,20 @@ export default {
       }
       this.form.orderItems[0].asc = order !== 'descending'
       this.form.orderItems[0].column = newProp
-      this.search()
+      this.search('basic')
     },
     // 关闭新建、编辑页面
     closeForm(isRefresh) {
       this.depFormVisible = false
       if (isRefresh) {
-        this.search()
+        this.search('basic')
       }
     },
     initData() {
       this.listLoading = true
 
-      if (this.quotationNoS) {
 
-        if (this.form.superQuery.condition.length) {
-          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("quotationNo"));
-          filteredData.push({ "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" })
-          this.form.superQuery.condition = filteredData
-        } else {
-          this.form.superQuery.condition.push(
-            { "field": "quotationNo", "fieldValue": this.quotationNoS, "symbol": "like" }
-          )
-        }
-      }
-
-
-      if (this.cooperativePartnerIdTextS) {
-
-        if (this.form.superQuery.condition.length) {
-          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("cooperativePartnerIdText"));
-          filteredData.push({ "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" })
-          this.form.superQuery.condition = filteredData
-        } else {
-          this.form.superQuery.condition.push(
-            { "field": "cooperativePartnerIdText", "fieldValue": this.cooperativePartnerIdTextS, "symbol": "like" }
-          )
-        }
-      }
-
-      if (this.bidderS) {
-
-        if (this.form.superQuery.condition.length) {
-          let filteredData = this.form.superQuery.condition.filter(obj => !obj.field.includes("bidder"));
-          filteredData.push({ "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" })
-          this.form.superQuery.condition = filteredData
-        } else {
-          this.form.superQuery.condition.push(
-            { "field": "bidder", "fieldValue": this.bidderS, "symbol": "like" }
-          )
-        }
-      }
-      if (this.quotationNoS || this.cooperativePartnerIdTextS || this.bidderS) {
-        this.$set(this.form.superQuery, 'matchLogic', 'AND')
-      } else {
-        this.form.superQuery = {
-          condition: [],
-          matchLogic: ""
-        }
-      }
-      getQuotationLists(this.form).then(res => {
+      getQuotationLists(this.superForm).then(res => {
         this.tableDataList = res.data.records
         this.listLoading = false
         this.total = res.data.total
@@ -414,29 +382,46 @@ export default {
       })
 
     },
-    search() {
-  
-      
+    search(type) {
+
+
       Object.keys(this.form).forEach(key => { // 清除搜索条件两端空格
         let item = this.form[key]
         this.form[key] = typeof item === 'string' ? item.trim() : item
       })
       this.form.pageNum = 1 // 重置页码
-
+      // 区分 配置查询  和 高级查询  同时存在 高级查询覆盖配置查询
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       console.log(this.$refs);
       this.$refs.tableForm.$refs.JNPFTable.clearSort()
-      this.form = JSON.parse(JSON.stringify(this.formlist))
-      this.quotationNoS = ""
-      this.cooperativePartnerIdTextS = ""
-      this.bidderS = ""
-      this.quotationTime = [],
-        this.submitDate = []
-
+      this.superForm=this.form = JSON.parse(JSON.stringify(this.formlist))
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.searchList= [
+        { field: 'quotationNo', fieldValue: '', label: '报价单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'cooperativePartnerIdText', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'bidder', fieldValue: '', label: '报价人', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+      this.search('basic')
     },
     addSupplier(id, type) {
       this.depFormVisible = true

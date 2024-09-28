@@ -5,16 +5,24 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderNoS" placeholder="单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="partnerNameS" placeholder="客户名称" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template> 
 
 
             <el-col :span="6">
@@ -26,7 +34,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -196,8 +204,17 @@ export default {
   components: { Form, SuperQuery, ExportForm },
   data() {
     return {
-      partnerNameS: "",
-      orderNoS: "",
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+
+
+
       superQueryVisible: false,
       columnList: ["partnerCode", "provinceName", "cityName", "areaName", "address", "countryName", "createByName"],
       rdeDateArr: [],
@@ -289,10 +306,7 @@ export default {
       defaultProps: {
         children: 'childrenList',
         label: 'name'
-      },
-      createTimeArr: [],
-      deliveryDateArr: [],
-      orderDateArr: [],
+      },  
       total: 0,
       diagramVisible: false,
       formVisible: false,
@@ -369,16 +383,13 @@ export default {
   },
   created() {
     this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-    this.search()
+    this.superForm=this.orderForm
+    this.search('basic')
     this.getbimProductAttributesFun()
     // this.getAttributeline()
     // this.form.customerRecognitionTime = moment(Number(new Date().getTime())).format('YYYY-MM-DD')
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+  
   methods: {
     getbimProductAttributesFun() {
       getbimProductAttributes('595170644241464069').then(res => {
@@ -401,7 +412,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     //明细列表取消发货
     Cancelshipmentline(id) {
@@ -492,9 +503,7 @@ export default {
         })
       }).catch(() => { })
     },
-    handleClick(e) {
-      this.activeName = e.name
-    },
+    
     sortChange({ prop, order }) {
       let newProp;
       if (prop === 'partnerCode' || prop === 'partnerName' || prop === 'shipperName' || prop === 'createByName') {
@@ -517,50 +526,12 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.search()
+        this.search('basic')
       }
     },
     initData() {
       this.listLoading = true
-
-
-
-      if (this.partnerNameS) {
-
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("partnerName"));
-          filteredData.push({ "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "partnerName", "fieldValue": this.partnerNameS, "symbol": "like" }
-          )
-        }
-      }
-
-      if (this.orderNoS) {
-
-        if (this.orderForm.superQuery.condition.length) {
-          let filteredData = this.orderForm.superQuery.condition.filter(obj => !obj.field.includes("orderNo"));
-          filteredData.push({ "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" })
-          this.orderForm.superQuery.condition = filteredData
-        } else {
-          this.orderForm.superQuery.condition.push(
-            { "field": "orderNo", "fieldValue": this.orderNoS, "symbol": "like" }
-          )
-        }
-      }
-
-      if (this.orderNoS || this.partnerNameS) {
-        this.$set(this.orderForm.superQuery, 'matchLogic', 'AND')
-      } else {
-        if (!this.orderForm.superQuery.condition.length) {
-          this.orderForm.superQuery = {
-            condition: [],
-            matchLogic: ""
-          }
-        }
-      }
+ 
 
 
 
@@ -573,7 +544,7 @@ export default {
       })
 
     },
-    search() {
+    search(type) {
 
       if (this.rdeDateArr.length > 0) {
         this.orderForm.rdsDate = this.rdeDateArr[0]
@@ -588,19 +559,36 @@ export default {
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
       this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.deliveryDateArr = []
+      this.rdeDateArr=[]
       this.orderForm = JSON.parse(JSON.stringify(this.orderFormlist))
-      this.orderNoS = ""
-      this.partnerNameS = ""
+      this.searchList=[
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+
+      ]
       this.$refs.SuperQuery.conditionList = []
-      this.search()
+      this.search('basic')
     },
     addSupplier(id, btntype) {
       console.log(id, btntype);

@@ -4,32 +4,28 @@
       <div class="JNPF-common-layout-center JNPF-flex-main">
         <el-row class="JNPF-common-search-box" :gutter="16">
           <el-form @submit.native.prevent>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.orderNo" placeholder="请输入单号" clearable @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.partnerName" placeholder="请输入客户名称" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.customerProductNo" placeholder="请输入客户料号" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="4">
-              <el-form-item>
-                <el-input v-model="orderForm.productDrawingNo" placeholder="请输入品名规格" clearable
-                  @keyup.enter.native="search()" />
-              </el-form-item>
-            </el-col>
+            <template v-for="item in searchList">
+              <el-col :span="item.searchType === 3 ? 6 : 4">
+                <el-form-item>
+                  <el-input v-if="item.searchType === 1" v-model="item.fieldValue" :placeholder="item.label" clearable
+                    @keyup.enter.native="search('basic')" />
+
+                  <el-select v-else-if="item.searchType === 4" v-model="item.fieldValue" :placeholder="item.label"
+                    clearable>
+                    <el-option v-for="(item2, index2) in item.options" :key="index2" :label="item2.label"
+                      :value="item2.value"></el-option>
+                  </el-select>
+                  <el-date-picker v-else-if="item.searchType === 3" v-model="item.fieldValue"
+                    :start-placeholder="item.label + '开始'" :end-placeholder="item.label + '结束'" clearable
+                    :type="item.dateType"
+                    :value-format="item.dateType === 'daterange' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"></el-date-picker>
+                </el-form-item>
+              </el-col>
+            </template>
+           
             <el-col :span="6">
               <el-form-item>
-                <el-button type="primary" size="mini" icon="el-icon-search" @click="search()">
+                <el-button type="primary" size="mini" icon="el-icon-search" @click="search('basic')">
                   {{ $t('common.search') }}</el-button>
                 <el-button size="mini" icon="el-icon-refresh-right" @click="reset()">{{ $t('common.reset') }}
                 </el-button>
@@ -76,13 +72,13 @@
               </template>
 
             </el-table-column>
-            <el-table-column prop="partnerName" label="客户名称" width="200" sortable="custom" />
-            <el-table-column prop="deliverDate" label="退货日期" width="180" sortable="custom"></el-table-column>
+            <el-table-column prop="partnerName" label="客户名称" width="160" sortable="custom" />
+            <el-table-column prop="deliverDate" label="退货日期" width="120" sortable="custom"></el-table-column>
             <el-table-column prop="customerProductNo" label="客户料号" width="160" sortable="custom" />
             <el-table-column prop="productDrawingNo" label="品名规格" width="160" sortable="custom" />
             <el-table-column prop="productCode" label="产品编码" width="160" sortable="custom" />
-            <el-table-column prop="mainUnit" label="单位" width="160" />
-            <el-table-column prop="deliveryQuantity" label="退货数量" width="160" sortable="custom" />
+            <el-table-column prop="mainUnit" label="单位" width="80" />
+            <el-table-column prop="deliveryQuantity" label="退货数量" width="120" sortable="custom" />
             <el-table-column prop="sealingCoverTyping" label="打字内容" width="120" sortable="custom" />
             <el-table-column prop="accuracyLevel" label="精度等级" width="120" sortable="custom" />
             <el-table-column prop="vibrationLevel" label="振动等级" width="120" sortable="custom" />
@@ -91,7 +87,7 @@
             <el-table-column prop="clearance" label="游隙" width="100" sortable="custom" />
             <el-table-column prop="packagingMethod" label="包装方式" width="120" sortable="custom" />
             <el-table-column prop="specialRequire" label="特殊要求" width="120" sortable="custom" />
-            <el-table-column prop="ordersNo" label="订单号" width="120" sortable="custom" />
+            <el-table-column prop="ordersNo" label="订单号" width="180" sortable="custom" />
             <el-table-column prop="exchangeGoodsFlag" label="退货标识" width="120" sortable="custom">
               <template slot-scope="scope">
                 <div v-if="scope.row.exchangeGoodsFlag">
@@ -176,6 +172,20 @@ export default {
   components: { Form, ExportForm, SuperQuery },
   data() {
     return {
+      superQuery: {},
+      superForm: {},
+      basicQuery: {},
+      searchList: [
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+
+      ],
+
+      
+
+
       superQueryVisible: false,
       columnList: ["partnerName", "createByName"],
       linesTotal: 0,
@@ -192,46 +202,7 @@ export default {
       listLoading: false,
       authorizeFormVisible: false,
       userRelationListVisible: false,
-      organizeIdTree: [],
-      activeName: "orderList",
-      salespersonList: [],
-      detailFlag: false,
-      exchangeList: [
-        { label: "退货", value: false },
-        { label: "换货", value: true }
-      ],
-      shipmentsStateList: [
-        { label: "待发货", value: "undelivered" },
-        { label: "已发货", value: "delivered" }
-      ],
-      orderStateList: [
-        { label: "待检验", value: "unInspect" },
-        { label: "已检验", value: "inspected" },
-      ],
-      isfullReceiptFlag: [
-        { label: "是", value: 1 },
-        { label: "否", value: 0 },
-      ],
-      documentStateList: [
-        { label: "草稿", value: "draft" },
-        { label: "提交", value: "submit" },
-      ],
-
-      approvalStateList: [
-        { label: "审批中", value: "ing" },
-        { label: " 审批通过", value: "ok" },
-        { label: "审批拒绝", value: "rebut" },
-      ],
-
-      departMentList: [
-        { lebel: "送货", value: "deliver_goods" },
-        { lebel: "自提", value: "self_pickup" },
-        { lebel: "快递", value: "express_delivery" },
-        { lebel: "货运", value: "freight_transport" },
-        { lebel: "到付", value: "collect_payment" },
-      ],
-      paymentMethodList: [],
-      paymentCycleList: [],
+     
       orderForm: {},
       initOrderForm: {
         notifyType: 'sale',
@@ -259,14 +230,8 @@ export default {
         }],
       },
 
-      detailTotal: 0,
-      salespersonList: [],
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > Date.now()
-        },
-      },
-      createTimeArr: [],
+      detailTotal: 0, 
+     
       // deliveryDateArr: [],
       orderDateArr: [],
       total: 0,
@@ -420,14 +385,10 @@ export default {
     }
   },
   created() {
-    this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
-    this.search()
+    this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+    this.search('basic')
   },
-  watch: {
-    activeName() {
-      this.search()
-    }
-  },
+   
   mounted() {
     this.getProductClassFun()
   },
@@ -435,7 +396,7 @@ export default {
     superQuerySearch(query) {
       this.orderForm.superQuery = query
       this.superQueryVisible = false
-      this.search()
+      this.search('super')
     },
     columnSetFun() {
       this.$refs.dataTable.showDrawer()
@@ -465,9 +426,7 @@ export default {
         })
       }).catch(() => { })
     },
-    handleClick(e) {
-      this.activeName = e.name
-    },
+ 
     //   sortChange({ prop, order }) {
     //   const newProp = prop.replace(/[A-Z]/g, match => '_' + match.toLowerCase());
     //   this.listQuery.orderItems[0].asc = order !== 'descending'
@@ -495,7 +454,7 @@ export default {
       this.formVisible = false
       if (isRefresh) {
         this.keyword = ''
-        this.search()
+        this.search('basic')
       }
     },
     initData() {
@@ -510,36 +469,45 @@ export default {
       })
 
     },
-    search() {
-      if (this.orderDateArr && this.orderDateArr.length > 0) {
-        this.orderForm.rdsDate = this.orderDateArr[0]
-        this.orderForm.rdeDate = this.orderDateArr[1]
-      } else {
-        this.orderForm.rdsDate = ''
-        this.orderForm.rdeDate = ''
-      }
-      if (this.createTimeArr && this.createTimeArr.length > 0) {
-        this.orderForm.startTime = this.createTimeArr[0].replace(/ 0(?!0)/g, " ")
-        this.orderForm.endTime = this.createTimeArr[1].replace(/ 0(?!0)/g, " ")
-      } else {
-        this.orderForm.startTime = ''
-        this.orderForm.endTime = ''
-      }
+    search(type) {
+   
+       
       Object.keys(this.orderForm).forEach(key => { // 清除搜索条件两端空格
         let item = this.orderForm[key]
         this.orderForm[key] = typeof item === 'string' ? item.trim() : item
       })
       this.orderForm.pageNum = 1 // 重置页码
-
+      if (type === 'basic') {
+        this.basicQuery = {
+          matchLogic: 'AND',
+          condition: this.searchList
+            .filter((item) => item.fieldValue)
+            .map((item) => {
+              return {
+                ...item,
+                fieldValue: Array.isArray(item.fieldValue) ? item.fieldValue.join(',') : item.fieldValue
+              }
+            })
+        }
+        this.superForm.superQuery = this.basicQuery
+      }
+      if (type === 'super') {
+        this.superForm.superQuery = this.superQuery
+      }
       this.initData()
     },
     reset() {
-      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮
-      this.createTimeArr = []
-      this.orderDateArr = []
-      this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+      this.$refs['dataTable'].$refs.JNPFTable.clearSort() // 清除排序箭头高亮 
+      this.superForm=this.orderForm = JSON.parse(JSON.stringify(this.initOrderForm))
+      this.searchList=[
+        { field: 'orderNo', fieldValue: '', label: '单号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'partnerName', fieldValue: '', label: '客户名称', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'customerProductNo', fieldValue: '', label: '客户料号', symbol: 'like', searchType: 1, width: 120 },
+        { field: 'productDrawingNo', fieldValue: '', label: '品名规格', symbol: 'like', searchType: 1, width: 120 },
+      ],
 
-      this.search()
+      this.$refs.SuperQuery.conditionList = []
+      this.search('basic')
     },
     addSupplier(id, btntype) {
       this.formVisible = true
